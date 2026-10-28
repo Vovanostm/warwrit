@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-26",
+  "tool": "image_gen.imagegen",
+  "operation": "single connected wet-leather material region on Efim left boot",
+  "arguments": {
+    "prompt": "Make ONE local material paintover only on the seated man's anatomical LEFT lower boot/cuff, the screen-right boot nearest the shovel. Keep the entire rest of this existing illustration exactly as it is: all four people, faces, arms, clothing construction, the woman's already-wet hem and its droplets, the rope and visible post knot, tools, window, camera and ink-and-wash style.\n\nThis boot has just come from the flooded route. Preserve its shape, leather seams, folds and old dry scuffs, but make the LOWEST connected leather zone visibly WATER-WET, distinct from the existing pale dry dirt above. Paint one continuous dark brown/slate damp region from toe/sole to the lower ankle, with a clearly identifiable irregular absorbed upper boundary following the boot surface. Keep the upper calf and trouser leg unchanged. Replace some low pale dusty flecks inside this connected region with a broad quiet cool reflection along the existing toe and sole curve. A small water bead at the outer sole and a subdued contact puddle directly beside that same sole establish liquid water; the boot stays firmly on its plank. This is damp leather with a restrained reflection, not bright chrome or a new coating of mud. Keep the original simple graphic-novel brushwork and muted material colour.\n\nOnly this one lower boot's material changes. Do not add speckled mud, bright dots over the whole leg, extra clothing, different footwear, rain, another limb or lettering. Do not repaint anyone's face, the other boot or the rest of the scene.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/rescued-final.png"
+    ],
+    "transparent_background": false
+  },
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a17354-6459-7990-a606-59b224ccf4f7/exec-326702f1-df0b-40ff-9949-880365e58385.png",
+  "output": "output/quest-implementation/swamp/final-polish/rescued-boot.png",
+  "actual_dimensions": [1671, 941],
+  "status": "SELECTED_LOCAL",
+  "input_snapshot": "rescued-final.png retains preceding accepted-for-review hem/rope-anchor geometry",
+  "visual_acceptance": "Full independent six-frame swamp review ACCEPT; all applicable broad scores2 and required visible contacts accepted; wet low hem/left boot and visible near-post rope knot inspected source/dim. Hidden fingers/roots not certified.",
+  "current_asset": "assets/art/quests/swamp/rescued.png",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.swamp",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  }
+}

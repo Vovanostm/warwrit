@@ -1,0 +1,74 @@
+{
+  "tool": "image_gen.imagegen",
+  "model": "NOT_REPORTED",
+  "mode": "One opaque regional environmental-surface repaint using original coordinate guide",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit. Image 1 is the ACTUAL retreat scene to edit. Image 2 is a same-size ORIGINAL CODE-NATIVE COORDINATE PAINT-ZONE GUIDE, not a new composition and not a pixel-accurate mask. Image 3 is the selected graphic-novel character reference for broad ink/matte rendering only. Use NO other rendering model. Make ONE literal OPAQUE REGIONAL SURFACE REPAINT.\n\nIn the grey-green STONE regions indicated by image 2, paint opaque new quiet slate/grey/ochre wash shapes over the old decorative marks. Each large stone/paving area uses TWO OR THREE LARGE MATTE VALUE PLANES. ERASE the old rock mottles, little speckled grains and carpet of leaf-litter flecks by replacing them with these larger coherent painted shapes. Preserve the actual existing major stone silhouettes, steps, joints and support edges; draw only a few selective structural contours, not hundreds of tiny cracks. The ground remains the SAME wet stone paving at the same perspective, without new construction. Small foreground reflected marks may be slightly less saturated, while the important blue threshold remains untouched.\n\nIn the TEAL WATER areas of the guide, repaint the old uniform field of tiny white reflection strokes into broad connected muted slate-water planes with just a FEW long broken quiet reflections. Keep the actual water surface, threshold and character/foot contacts at the same coordinates. No new depth or flood level. Keep the source creatures' existing wet lower contact conditions.\n\nIn the DARK GREEN secondary ROOTS/VEGETATION areas, group incidental internal root ridges, leaves and dry litter into larger quiet matte silhouettes. Preserve the same large roots, trunks and ruined-wall structure; erase the little equally bright flecks and fine decorative internal mesh. Keep selective outer contours and a few essential load-bearing edges. The original atmospheric distance and pale background silhouettes remain coherent.\n\nThe CREAM/RED outlined shapes in image 2 are PROTECTED SOURCE REGIONS, approximate coordinate advice only: all living/creature figures, boughs, tools, ward and boot/contact zones. Retain every actual pixel relationship in those subjects rather than drawing the cream silhouettes. Protect the source TWO humans, ONE living three-head hydra and TWO active guards; same poses, faces, clothing seams and material colors. Preserve exactly TWO INDEPENDENT boughs: the first already grounded along the low foreground, the second thicker bough held by M's two hands with far end resting on ground. Keep their separate continuous trunks, distinct cut endpoints and grounded supports. M's whole shield stays on his back with real strap; sword stays sheathed at anatomical LEFT hip. Both M palms/grips unchanged. Zoya's RIGHT hand keeps the ONE continuous iron prybar with the same bent flattened unforked foot; her LEFT hand remains empty and separate, same wrist/fingers. TWO unused oak wedges stay in her ONE apron pocket. Keep all human boot positions and local damp leather/cloth/skin conditions.\n\nPreserve the ONE raised intact gate slab, guides, overhead connected chain, right winch, left root geography, camera and crop. Preserve the real dull bronze threshold with its necessary local BLUE sheen and the original unlit RIGHT gap; no new glowing shapes. All physical contacts and current source branch conditions stay intact.\n\nThis is replacement of environmental surface mark-making in the specified regions, NOT blur, sharpening, a dark filter or a whole-frame reconstruction. The broad new opaque paint planes must be clearly simpler than the source surfaces at reader scale, with the unchanged people/props reading first. Keep serious restrained folklore graphic-novel ink and matte washes, not photography. Output only the full opaque 1672x941 edited illustration; no guide colors, dashed lines, labels, border, text or UI.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-input.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-guide.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-character-reference.png"
+    ],
+    "transparent_background": false
+  },
+  "generated_source_path": "/Users/vovanostm/.codex/generated_images/01a1756d-3136-7843-b84a-48ec83ba230c/exec-4d7d5411-8405-4970-a467-e83a13c8f9e1.png",
+  "retained_output_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat.png",
+  "frozen_target_original": "output/quest-implementation/review/hydra-final/inputs/retreat.png",
+  "dimensions_observed": {
+    "width": 1672,
+    "height": 941,
+    "alpha": false
+  },
+  "reference_roles": [
+    {
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-input.png",
+      "role": "actual frozen retreat edit target; accepted cast/props/contacts preserved"
+    },
+    {
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-guide.png",
+      "role": "same-size ORIGINAL coordinate paint-zone guide; no embedded source pixels and no strict mask claim"
+    },
+    {
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-character-reference.png",
+      "role": "actual selected graphic-novel character, broad ink/matte rendering only"
+    }
+  ],
+  "fog_reference_attached": false,
+  "author_observations": [
+    "Foreground leaf-litter fleck carpet visibly removed.",
+    "Paving, side masonry and secondary vegetation use quieter larger wash planes.",
+    "Water uses broader connected reflections, though selected small reflective marks remain.",
+    "M two-hand bough hold, back shield and left sheath appear retained; two distinct independent boughs preserve their visible end cuts and grounded supports.",
+    "Zoya right bar grip, continuous single bent iron bar, left free hand, two pocket objects and outfit appear retained.",
+    "All cast count/poses/faces, raised gate, right winch/chain and necessary local blue ward appear retained."
+  ],
+  "remaining_limits": [
+    "Independent full absolute rendering/value/contact critique NOT_RUN by author; no self-ACCEPT.",
+    "Protected beast/garment/bough interior detail intentionally remains; this was an environment-region repaint, not reconstruction.",
+    "Exact hydra hidden leg roots and distant right ward gap remain NOT_VERIFIABLE at this camera, as source permits.",
+    "Guide was coordinate advice, not a strict pixel mask; author observations are native image inspection, not exact pixel-preservation proof."
+  ],
+  "checks": [
+    "Current hydra-retreat dossier read in full",
+    "Frozen input and actual selected character pixels inspected",
+    "Original no-raster code-native guide rendered in normal isolated browser and inspected",
+    "Actual native output inspected at full image/reader scale",
+    "Read-only sips1672x941,no alpha",
+    "Exact arguments/provenance JSON parsed/read back"
+  ],
+  "game_tests": "NOT_RUN; raster-only ignored candidate production",
+  "native_calls_this_assignment": 1,
+  "live_or_shared_writes": [],
+  "selection": "NOT_SELECTED_PENDING_PARENT_CRITIC",
+  "parent_ownership": "Independent absolute critic; stable/tracked integration and shared documentation.",
+  "current_asset": "assets/art/quests/hydra/retreat.png",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_CURRENT6_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.hydra",
+    "scope": "Independentcurrent6absoluteACCEPT; allapplicablescores2/noclose0. Hiddenpartsnotcertified; author generation-time fields remain historical."
+  },
+  "retained_reference_copies": {
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/retreat-guide.png": "assets/art/quests/hydra/retreat-paint-guide.png"
+  }
+}

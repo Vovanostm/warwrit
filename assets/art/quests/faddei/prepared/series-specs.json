@@ -1,0 +1,127 @@
+{
+  "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b",
+  "status": "PREPARED_NOT_EXECUTED; no tool call implied by these texts",
+  "specs": [
+    {
+      "id": "scene-01",
+      "title": "Слова из письма",
+      "source": "1. Слова из письма",
+      "moment": "After midnight by an isolated burned house beside a forest road. Only the old brick oven remains from the house. The oven is LEFT of the road; apple trees stand RIGHT and behind it; distant forest. No occupied village, roof, chimney smoke, church or invented buildings. Damp grass, wind, weak moonlight from upper left. Medium view from road at Pelageya's eye level. Pelageya stands at cold oven bricks and touches the last tightly crowded line of a folded-out letter with one index fingertip, then lifts her worried broad face toward the unseen player, waiting for an answer before releasing money. The paper has only tiny indistinct ink strokes, no readable letters. Loose modest coins lie on bricks before her; a bread basket sits below beside oven. Her free hand stays near her coins, not holding another prop. The separate small white handkerchief can lie folded beside paper on brick, its ONE mended corner visible; do not confuse with her blue headscarf. Two company companions wait at the apple trees, small secondary back silhouettes: bow/quiver on one, left-hip sword/rope on the other, no invented armor. No Klim, bandits or dead body present. Pelageya lower skirt hem slightly darkened by wet grass, upper coat mostly dry. Tension is her held breath and guarded hand near the coins, no theatrical sobbing. Keep face and paper-hand action readable, quiet dark road at one side.",
+      "refs": ["style-character", "style-village", "scene-04"],
+      "roles": "Style-character and style-village: rendering/materials only, no borrowed identity or village geography. Scene04: only the small WHITE handkerchief construction and one repaired corner; do NOT copy Klim, cart or forest camp.",
+      "prompt_file": "prepared/scene-01.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-01.png"
+    },
+    {
+      "id": "scene-02",
+      "title": "За огнём",
+      "source": "2. За огнём",
+      "moment": "Wide elevated view from behind one prone company scout's shoulder at the hidden edge of a night forest camp. The living bandit camp topology must read: fire RIGHT foreground/middle, exactly THREE bandits beside it (Rudoy eating porridge from a pot with a spoon, bandit archer waiting with bow, spearman waiting with spear). Farther away a wooden cart stands crosswise to the clearing. Its HIGH INTACT board side faces the fire and hides the captive from those seated there; its lower broken side faces the dark forest. Behind the cart on the FOREST side, at REAR wheel, captive Klim is visible to the elevated scout, head and face completely covered by the single gray ripped sack over head and shoulders. He reaches with RIGHT hand holding a plain bowl close to where his hidden mouth is; LEFT wrist is tied by hemp rope to rear wheel. Do NOT reveal his beardless face in this scene. Farther off near the FRONT end of cart, sentry Vasily sits on a root and pulls off his RIGHT boot, unaware of scouts. At his tree, the company is concealed, no attack yet. Vasily light hair/sparse moustache/gray shirt/brown coat/dark trousers. His face need only be tiny but he must be same person as scene03. Rudoy broad about40 dark beard/short hair/broken nose/open brown coat, no armor; axe rests at his anatomical RIGHT foot near pot. One faint hanging piece of meat above fire is plausible camp food, not a body. Fence of branches behind cart along forest edge; low washout route beneath not explained yet. The dead body is COMPLETELY hidden, no corpse silhouette/limb/red beard/patch or recognizable body-shaped bundle. Restrained local amber firelight, cold moonlit foreground; not bright daytime. Primary question: who is hidden behind cart? Do not stage the later sword/arrow standoff or tied/gagged sentry.",
+      "refs": ["style-forest", "scene-04", "scene-03", "scene-06"],
+      "roles": "Style forest: rendering only. Scene04: SAME cart construction, one gray sack and modest Klim clothes only, but head MUST now be fully covered and white cloth absent. Scene03: Vasily identity/outfit only, not capture pose or restraints. Scene06: same Rudoy and two other bandits, pot/fire area and cart geography; NOT standoff poses/bows aimed.",
+      "prompt_file": "prepared/scene-02.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-02.png"
+    },
+    {
+      "id": "scene-03",
+      "title": "Часовой",
+      "source": "3. Часовой",
+      "moment": "Close side view at a tree root in the night forest camp, the instant the sentry Vasily freezes before he can cry out. Vasily about25, slim, light short hair, sparse moustache, gray shirt under brown coat, dark trousers. He was seated removing RIGHT boot; that single removed worn boot lies by a visible root at lower frame; right foot has plain cloth sock/foot wrapping, left boot still on if visible. Company swordsman behind him clamps ONE hand firmly across Vasily's mouth and steadies shoulder with other hand; his body's ordinary posture supports the restraint, no dislocated arm. Player outside crop has ONE neutral hand holding a small practical knife gently but decisively against Vasily's CLOTHED side, not a slash or wound. Distinguish player's dark sleeve and swordsman's plain brown sleeve; trace each arm clearly. The company archer is at outer edge taking Vasily's sword away: only a separate gray-sleeved hand at the sword hilt/scabbard, or his partial upper body, not an extra armed captor. Give the sword a simple straight short blade and old plain leather scabbard, no ornate weapon. Captive's eyes go wide and his body stops resisting; no blood or new injury. No ropes/gag yet: those are tied after this moment. Low moonlight through trees, muted faint warm camp light far behind. No Klim, sack, white handkerchief, Faddei or body in frame; cart/fire can stay outside close crop. No added men beyond these three company members plus Vasily, with player only hand. Show distinct silhouette of grip, knife contact and sentry's arrested movement. Do not put knife at throat or have someone cut skin.",
+      "refs": ["style-character", "style-forest"],
+      "roles": "Both are selected drawing/palette references only. Do not copy bearded soldier, weapons/shield or daylight landscape. This keyframe establishes NEW Vasily and supporting company appearance from manuscript, not that reference identity.",
+      "prompt_file": "prepared/scene-03.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-03.png"
+    },
+    {
+      "id": "scene-05",
+      "title": "Под ветвями",
+      "source": "5. Под ветвями",
+      "moment": "Tight overhead view past the player's cloaked shoulder on the dark FOREST side behind the SAME cart. One player's hand lifts aside ONE cut branch. Under that newly moved branch, reveal just a recognizable pale sewn cloth patch UNDER the corpse Faddei's anatomical LEFT armpit on his brown LEATHER jacket and the edge of a red beard streaked with gray at collar. The corpse lies on his side at ground level, not buried. Other branches still cover most of him; do NOT expose full body, full face and all limbs together. The pale patch and red-gray beard are the clear two identity clues. Faddei's dead stillness, cold muted skin where visible, clay on jacket; dried blood at RIGHT temple only if actual temple enters tiny crop, no new gore or vague healthy reclining man. No skeleton/rotting open body/supernatural motion; death third night ago is known, burial not. Keep the cart's high intact wooden side at distant upper plane, blocking unseen fire. No campfire visible, no shovel, grave, pit or disturbed earth. No Klim or Vasily foreground, no different white patch on Klim. The white handkerchief is put away and NOT on Faddei yet. Cold faint moonlight, quiet matte ink/wash, strongest contrast on player's lifting hand and patch/beard; no spectral glow. One immediate discovery, no later carrying action.",
+      "refs": ["style-character", "scene-04"],
+      "roles": "Selected character rendering only; not its warrior identity/gear. Scene04: SAME cart timber, wheel-scale and nighttime forest-side palette only. Do NOT copy Klim as the corpse; Faddei is stockier, older, red-bearded, different brown LEATHER patched jacket.",
+      "prompt_file": "prepared/scene-05.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-05.png"
+    },
+    {
+      "id": "scene-06",
+      "title": "Цена",
+      "source": "6. Цена",
+      "moment": "Wide view from directly behind the company ARCHER at the camp's FRONT cart end. He holds one simple wooden bow with one nocked drawn arrow aimed across a few steps of open ground at the THREE bandits beside the low fire. His plain travel clothing, quiver at back, supported feet and compact controlled posture are clear, no armor or shield. LEFT frame foreground is SAME cart's intact high board side. Behind it only the small dark TOP/BACK of player's head/upper cloak silhouette appears as player rises just enough to negotiate; no player face identity. Klim and Vasily and ALL their wrists/ropes are outside crop or fully behind cart, so frame fits both early/late freedom choices. At fire Rudoy is broad about40, short dark hair, dark beard, broken nose, open plain brown coat, shirt, dark trousers, boots. Rudoy has just put down a plain spoon beside the pot; his RIGHT hand reaches toward the axe lying at his RIGHT foot, before lifting it. He watches the arrow and holds his position, tense and calculating. His archer has stopped with bow lowered and no arrow aimed; third bandit holds a practical spear, no advancing charge. Rudoy is not injured or surrendering. No new bandits, no Klim at fire, no corpse or white cloth visible. Camp geography: cart across clearing, its high intact side toward fire and low broken side toward forest, fence behind along forest; tree of sentry toward cart FRONT. Limit fire to local dull ochre, natural warm readable skin, cold dark forest at back, no orange floodlight or glaring blue shadows. Primary tension is held line of fire and bargaining at fixed distance, not melee or murder.",
+      "refs": ["style-character", "style-forest", "scene-04"],
+      "roles": "Style-character/forest: selected rendering only, no borrowed soldier identity/armor. Scene04: SAME cart construction and night palette only; Klim, captive pose, rope contact and white cloth must NOT be imported into crop.",
+      "prompt_file": "prepared/scene-06.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-06.png"
+    },
+    {
+      "id": "scene-07",
+      "title": "За живого и мёртвого",
+      "source": "7. За живого и мёртвого",
+      "moment": "Medium view by FRONT cart wheel at the moment just BEFORE ransom money passes. Rudoy (same face/outfit as scene06, broad dark-bearded broken nose) stands alone beside cart, anatomical LEFT hand reaching toward the small open heavy money bag offered by player's visible hand. Rudoy's RIGHT hand holds the plain axe lowered beside his leg, not threatening another person's body; no second axe. Keep bag still in player's hand, no coins pouring yet, no modern readable coin marks. Behind Rudoy, company swordsman is removing the cloth gag from light-haired sparse-moustached Vasily's face. Vasily is uninjured and being freed as agreed, without regained sword; his sword remains hidden back at tree, absent here. Company archer farther near front wheel still watches bandits by fire, can be small/cropped; do not add another helper. Klim is on opposite FOREST side of cart, now FREE in both paths, LEFT wrist shows old abrasion but NO rope. He is narrow-faced beardless, short chestnut hair and same brown jacket without patch; no shoulder injury. The gray sack is no longer on him: it lies unfolded on ground with Faddei's dead body prepared to carry on it nearby. Faddei is stockier older red-gray bearded man in patched brown leather jacket; body supported by sack on earth, no levitation. At this pre-exchange instant the WHITE handkerchief is still put away: do not show cloth on Faddei's face yet (player covers face only after money transfer). Body can be partly obscured by cart/figures so scene remains about hand/bag exchange. High intact board side same cart toward fire, lower broken side toward forest. No action from the unchosen escape path. Local weak fire light and moonlight, restrained nighttime ink washes. Same identities/props and clear four hand ownerships, no touching axeblade with money hand.",
+      "refs": ["scene-06", "scene-03", "scene-04", "scene-05", "style-character"],
+      "roles": "Scene06 Rudoy/company archer/camp. Scene03 Vasily/swordsman identity only, NOT clamped-mouth restraint. Scene04 Klim face/outfit/cart only, NOT sack-on-head or LEFT binding/white cloth scene pose. Scene05 Faddei jacket/patch/red beard only. Selected character reference rendering only.",
+      "prompt_file": "prepared/scene-07.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-07.png"
+    },
+    {
+      "id": "scene-08",
+      "title": "Через загородку",
+      "source": "8. Через загородку",
+      "moment": "Low view from safe FOREST side of branch fence behind the same camp cart. Klim kneels on damp earth on camp side and reaches UNDER low interlaced branches toward a company swordsman's open hand from forest side. The moment is BEFORE any arrow, injury or branch break, common to scouted and unscouted approaches. Klim is free, no wrist rope, LEFT wrist abrasion persists; RIGHT fingertips carry ink. Both shoulders whole, no bandage, arrow, blood, tear or grimace of wound. One single gray ripped sack may still hang loosely around his shoulders, head fully uncovered; preserve his beardless face and short chestnut hair and plain brown unpatched jacket. The player crouches behind Klim, visible only dark travel-cloak shoulder/one neutral supporting hand, no fixed face. Company swordsman's arm extends from forest, his supported crouch clear; two separate hands, not extra fingers gripping air. Lower passage between branches and ground must visibly be narrow enough to crawl through, no open gate. The exact cleared/not-cleared condition of the washout is hidden by Klim's knees and bodies; do not depict an obvious freshly cleared open trench or blocking log that decides one preparation branch. Cart edge RIGHT, fixed board construction, forest beyond helper. Company archer/bandits/Vasily/body/fire outside crop. The white handkerchief is inside player's clothing and unseen; no pre-emptive right-shoulder bandage. Tension: living man reaching for help under confined branches before the pursuers arrive. Damp leaves, modest mud at knees/elbows from crawling, upper chest not soaked, no rain. Matte restrained gray/umber midnight palette, readable face, actual hands and ground clearance, no generic running action.",
+      "refs": ["scene-04", "scene-03", "style-forest"],
+      "roles": "Scene04 Klim face/clothes/right ink/left abrasion/cart only; remove LEFT wrist rope because all rescue paths free him, no white cloth pose. Scene03 company swordsman clothing only; not the capture pose. Forest reference selected rendering only.",
+      "prompt_file": "prepared/scene-08.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-08.png"
+    },
+    {
+      "id": "scene-09",
+      "title": "Забрать Фаддея",
+      "source": "9. Забрать Фаддея",
+      "moment": "Medium view from Klim's side of rear wheel on FOREST side of same cart. Klim starts to lift his upper body from sitting, looks pleadingly at dead Faddei on the SINGLE unfolded gray sack being carried away. Show Klim only from lower chest upward so LEFT wrist and exact binding state are FULLY outside crop; do not show wrist rope or a liberated left hand, since earlier choice may still leave him bound. He has same narrow beardless face/short chestnut hair/brown unpatched jacket; NO gray sack on his shoulders now and no shoulder wound. Between Klim and the departing player/company swordsman stands the SAME bandit spearman, holding one long practical spear horizontally/diagonally across the exit to bar the way, not impaling Klim. Spearman's feet planted on ground, spear clearly in his hands. Departing two company members each support one side/end of gray sack so the dead body's weight has a plausible load path; player no face, helper matches swordsman. Faddei lies on sack, stocky shape under brown leather patched clothes, head/face now COVERED by Pelageya's WHITE handkerchief, ONE tiny closed stitched brown pipe burn at one corner. No exposed face/grin/living motion. Cloth distinct from gray sack underneath. Other two company archer and Rudoy/Vasily can stay off camera; no invented fourth mercenary, no hanging captive. Frame the moment before Klim gets up fully or reaches anyone; posture/left wrist hidden makes it neutral to early freedom. Night fixed cart/forest geography, local dull warmth distant, restrained moonlight. No wrong escape injury or body left behind.",
+      "refs": ["scene-04", "scene-05", "scene-06", "scene-03", "style-forest"],
+      "roles": "Scene04 Klim face/clothes/handkerchief/cart only, not LEFT binding. Scene05 Faddei dead body/clothes only, but face now covered in WHITE cloth. Scene06 bandit spearman identity/outfit/camp only. Scene03 company swordsman clothing only. Forest selected rendering.",
+      "prompt_file": "prepared/scene-09.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/scene-09.png"
+    },
+    {
+      "id": "ending-both",
+      "title": "Не за тобой",
+      "source": "Концовки / Не за тобой",
+      "moment": "Close view at SAME roadside ruined brick oven at gray DAWN. Pelageya (same broad face, sturdy body, faded BLUE headscarf/gray wool coat/brown skirt as scene01) holds a clearly EMPTY small ransom bag open in her hands but does not look into it. Her gaze is directed toward the living thin beardless Klim behind her, searching and hurt, before she answers the company's explanation. Her expression stays contained, not angry caricature or neutral portrait. Klim softly in the background/less detail, same face/clothes as scene04, standing alive and uninjured in both shoulders, no sack over him or rope. Avoid showing initiative, offered basket or eye response that selects early-versus-late trust or heard-order branch. At bottom edge a human hand and brown-clothed shoulder of dead Faddei on the SINGLE gray sack are just visible, showing body returned. His FACE if visible is covered by separate WHITE handkerchief with ONE tiny repaired pipe burn corner; no fully exposed dead face or later removal action. Body remains on earth beside oven, not alive on his feet, no other body. Bread basket stays by oven; company mostly outside close crop, no added bystanders/children. Oven LEFT of forest road, apple trees right/behind, wet grass; calm gray dawn from left, no artificial fire/torch unless already established (not). All ransom is spent: no loose coins, no full bag. No injury/bandage from escape ending. Same Pelageya face/material colors, strong focal expression and empty bag, quieter forest.",
+      "refs": ["scene-01", "scene-04", "scene-05", "style-village"],
+      "roles": "Scene01 Pelageya exact face/clothes/blue headscarf and oven/apple-tree layout, but gray dawn and empty bag now. Scene04 Klim identity/uninjured outfit and white handkerchief only; no wheel/rope pose. Scene05 dead Faddei body/clothes identity, face covered now. Village rendering only, not extra houses/citizens.",
+      "prompt_file": "prepared/ending-both.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/ending-both.png"
+    },
+    {
+      "id": "ending-money",
+      "title": "Сохранённые деньги",
+      "source": "Концовки / Сохранённые деньги",
+      "moment": "Medium view from player's eyes at SAME ruined roadside oven at gray DAWN. Player's neutral dark-sleeved hand lowers a visibly FULL tied leather/cloth ransom bag onto the cold oven bricks, weight apparent in taut lower bulge. No pouring coins or modern writing. Pelageya, SAME face/clothes as scene01, looks past the returned money toward unseen player, waiting for the account of her husband. Her broad hands are held close to oven edge, not grabbing bag yet; tense controlled face, faded BLUE headscarf distinct from a white linen cloth. Klim is COMPLETELY outside image: do not show his face, shoulder, hand, shadow-body, bandage or standing/sitting state, because he may be injured or safe depending on route. Faddei's body is NOT returned in this ending: no corpse, gray body-sack or white cloth on a dead face at oven. The WHITE handkerchief is ALSO unseen: it may be clean inside player's clothing OR a right-shoulder bandage on offscreen Klim. Do not resolve that branch in this common image. Bread basket beside oven remains, gray dawn lights wet apple leaves RIGHT/behind and grass; oven LEFT of road, distant forest. No active oven fire: cold bricks from burned house. Two company helpers can stay outside crop; no new villagers or children. Pure moment before explanation, no basket handover/trust branch. Restrained grief in Pelageya's gaze and contrast between heavy saved money and missing person; not victorious smiling or moral judgement.",
+      "refs": ["scene-01", "style-village"],
+      "roles": "Scene01 exact Pelageya face/outfit/blue headscarf, oven construction/apple trees/road geometry only; dawn replaces midnight. Selected village reference rendering only; no inhabited village copied.",
+      "prompt_file": "prepared/ending-money.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/ending-money.png"
+    },
+    {
+      "id": "ending-body",
+      "title": "Вернуть мужа",
+      "source": "Концовки / Вернуть мужа",
+      "moment": "Wide low view from SAME forest road at gray DAWN. Exactly TWO company people (player with face unseen and company swordsman same as scene03) are lowering dead stocky Faddei on the ONE gray ripped sack to damp grass beside the ruined brick oven. Each man grips/supports one side/end of the sack; cloth sags under real dead body weight, feet planted; no one suspended or levitating. A third company archer may remain small behind at road edge, total company exactly three if shown. Pelageya (SAME broad face, sturdy build, faded BLUE headscarf, gray wool coat, brown skirt and leather shoes as scene01) reaches toward the corner of WHITE handkerchief on her husband's FACE, just BEFORE she lifts it. Keep handkerchief on face at this instant; ONE tiny closed stitched pipe burn at actual corner, no separate dark spot or decorative embroidery. Faddei older about45, red-gray beard only tiny edge beneath cloth, brown leather jacket pale patch under LEFT armpit, brown trousers/boots, no movement and no new blood. Basket with bread left beside oven. Klim is ABSENT: not in background, body or shadow, no suggestion he was rescued. No bag open/full/empty in focus, exact 3/4 money already returned can remain unseen and no coins scattered. Gray dawn, wet grass, oven on LEFT of road, apple trees RIGHT/behind, forest distance, no church or village crowd. Capture Pelageya's reaching hand before removal, not everyone standing after unloading. Quiet stark graphic-novel washes and clear grounded group silhouettes, no melodramatic kneeling on corpse or invented grief gestures.",
+      "refs": ["scene-01", "scene-05", "scene-04", "scene-03", "style-village"],
+      "roles": "Scene01 Pelageya exact face/clothes/oven place; gray dawn now. Scene05 dead Faddei identity/jacket/stocky body, face covered now. Scene04 white handkerchief with ONE repaired corner only; Klim/cart MUST NOT transfer. Scene03 supporting company swordsman clothing only. Village rendering only, not a populated village.",
+      "prompt_file": "prepared/ending-body.prompt.txt",
+      "status": "PREPARED_NOT_EXECUTED",
+      "output": "assets/art/quests/faddei/ending-body.png"
+    }
+  ]
+}

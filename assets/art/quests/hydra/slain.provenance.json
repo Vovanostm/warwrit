@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-26",
+  "tool": "image_gen.imagegen",
+  "operation": "Full-scene ink/value-hierarchy reconstruction after second rendering1; geometry/action/identity protected, not surface polish",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit, complete ink/value-hierarchy reconstruction.\nImage1 is ONLY the exact scene geometry, identities and physical action to preserve. Images2–3 are the authoritative fog/wet-stone environment language. Image4 is the authoritative irregular ink/matte figure language. This is a deliberate RE-DRAW of the drawing language across the whole scene, not a photographic repaint, sharpen/blur filter or another stain edit.\n\nReconstruct Image1 as a restrained dark folklore GRAPHIC NOVEL. First erase ALL inherited incidental edgework, tiny bright surface flecks, gravel/stipple, scale-by-scale highlights and glossy water detailing. Build each major material with THREE or FOUR broad opaque MATTE wash shapes. The whole foreground paving/water should read as TWO large quiet slate masses with only a few long broken reflection strokes and soft contact shadows. Foreground stone slabs: one large grey plane, one broad shadow plane and just a few structural cracks; NO mosaic of little mottles. Hydra skin: broad dark silhouette and broad matte ridge shadow; only a few grouped scale hints near the heads, NOT individual outlined scales across the body. Background arches/forest dissolve into two fog silhouettes; no equally crisp distant stones. People retain selective dark hand/face/garment silhouettes like Image4, but use quiet uninterrupted cloth planes between the SAME sparse quilting seams. No blanket crosshatching, grain, glitter, tiny white highlights or smooth glossy CG.\n\nPreserve exactly the pictured aftermath and composition:\n- SAME two living adults: M at left, Zoya kneeling at right. Preserve adult faces/hair, brown quilted CLOTH coat/scarf/boots, Zoya blue CLOTH/brown LEATHER apron/grey braid and garment construction.\n- M anatomical RIGHT hand holds ONE lowered straight steel sword pointing away from people; retain the existing localized dark-red blade stain, plain straight iron guard/dark leather grip/disk pommel. LEFT forearm holds same whole round wooden shield; ONE EMPTY scabbard stays anatomical LEFT hip (may be shield-occluded); never mirror or add another hilt/sword. Feet supported on wet stone, only existing low boot/hem dampness, no soaked upper body.\n- Zoya anatomical RIGHT fingertips touch the exposed dark BRONZE corner already on the RIGHT large fallen stone slab; LEFT hand rests on her own raised knee. Keep both arms unambiguous, no duplicate hands/extra fingers. The ONE continuous square iron prybar with solid bent flat foot lies on paving beside her, NOT in either hand. Exactly two unused oak wedges remain in apron pocket.\n- Exactly ONE inert hydra body with THREE distinct heads still attached by their necks; TWO large fallen stone slab pieces bear across the necks. Heads are not severed trophies. Two distinct inert undead sentries left/right, each with its own spear on the ground. Preserve existing small battle marks without increasing gore.\n- NO raised/hanging duplicate slab above opening. Two broken free chain ends, fixed upper lintel/left roots/right stair-winch/lion water outlet stay where shown. Ward OFF: no blue light, physical dark bronze remains.\n- Preserve camera, frame, scale, foot contacts, branch state and credible material wetness. No new rain/immersion/clean clothing/armour/props/magic. Keep full scene and safe edges inside canvas, opaque landscape.\nFinish with selective irregular ink contours only where action/identity/contact requires them. Wide quiet shapes must be visibly stronger than surface texture. No text, borders or watermark.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/render-final/inputs/slain.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/fog-wet-stone/mill.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/fog-wet-stone/forest.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+    ],
+    "transparent_background": false
+  },
+  "source_output": "/Users/vovanostm/.codex/generated_images/01a17354-6459-7990-a606-59b224ccf4f7/exec-88f5191b-3f5b-48e1-bffb-3fa5baef6671.png",
+  "output": "output/quest-implementation/hydra/render-final/slain.png",
+  "actual_dimensions": [1671, 941],
+  "status": "GENERATED_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "input_roles": [
+    "Frozen current scene geometry/identity/action only",
+    "Fog environment rendering authority",
+    "Fog depth/quiet masses authority",
+    "Graphic-novel figure rendering authority"
+  ],
+  "limits": [
+    "One call, no rerolls. Must independently inspect drawing language, exact anatomy/prop contacts and current reader.",
+    "Not a certified clean sheet or measured texture-reduction percentage."
+  ],
+  "current_asset": "assets/art/quests/hydra/slain.png",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_CURRENT6_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.hydra",
+    "scope": "Independentcurrent6absoluteACCEPT; allapplicablescores2/noclose0. Hiddenpartsnotcertified; author generation-time fields remain historical."
+  }
+}

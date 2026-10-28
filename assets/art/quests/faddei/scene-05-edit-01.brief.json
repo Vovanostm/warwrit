@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-05-attempt-02",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-05",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. Image1 is the scene05 edit target. Make ONE anatomically clear costume/left-arm correction; preserve the rest of this discovery scene.\n\nThe pale cloth patch MUST be sewn onto the SIDE OF THE TORSO of Faddei's brown leather jacket, immediately UNDER his anatomical LEFT ARMPIT. In image1 the patch incorrectly looks like it is on the outer upper sleeve. REMOVE that patch from the sleeve and restore uninterrupted plain brown leather there. Slightly reposition ONLY his LEFT upper arm/elbow/jacket fold so that the side-torso cloth patch under the armpit is clearly revealed. He is lying on his RIGHT side with his LEFT arm uppermost: let the LEFT elbow bend a little forward and the LEFT forearm lie supported across his upper chest, partly hidden by existing branches. This exposes the side seam of his torso just beneath his LEFT armpit. Put ONE modest pale sewn cloth repair onto that torso SIDE area, below the underarm crease and behind the shifted upper arm. Show a clear boundary: the upper sleeve is brown and unpatched; the pale patch belongs to the flat curved torso side under the arm. No shoulder/sleeve patch, no duplicate patch, no jacket collar patch. Keep it period-plausible, irregular hand-sewn light fabric over the brown leather, not a symbol. This positional identification clue must be immediately readable without labels.\n\nDo not mirror the image or rotate/move the whole body. Protect his exact face/closed eyes, red beard with gray, skin/death condition, head placement, existing brown leather material, stocky torso size, same branch cover except the minimum cloth/arm contact, player's branch-lifting hand and cloak, cart boards/wheel, ground/leaves, moonlight and matte ink/wash drawing. Do not expose full body, add wounds/blood/props/people, brighten the scene or change his dead stillness. White handkerchief stays absent; no grave or soil burial. Keep same opaque 1536x1024 canvas. The only intentional region change is LEFT upperarm/elbow and local jacket side under LEFT armpit needed to put the patch in its correct anatomical location.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-05-attempt-01/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-05-attempt-02.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 5. Под ветвями",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. Image1 is the scene05 edit target. Make ONE anatomically clear costume/left-arm correction; preserve the rest of this discovery scene.\n\nThe pale cloth patch MUST be sewn onto the SIDE OF THE TORSO of Faddei's brown leather jacket, immediately UNDER his anatomical LEFT ARMPIT. In image1 the patch incorrectly looks like it is on the outer upper sleeve. REMOVE that patch from the sleeve and restore uninterrupted plain brown leather there. Slightly reposition ONLY his LEFT upper arm/elbow/jacket fold so that the side-torso cloth patch under the armpit is clearly revealed. He is lying on his RIGHT side with his LEFT arm uppermost: let the LEFT elbow bend a little forward and the LEFT forearm lie supported across his upper chest, partly hidden by existing branches. This exposes the side seam of his torso just beneath his LEFT armpit. Put ONE modest pale sewn cloth repair onto that torso SIDE area, below the underarm crease and behind the shifted upper arm. Show a clear boundary: the upper sleeve is brown and unpatched; the pale patch belongs to the flat curved torso side under the arm. No shoulder/sleeve patch, no duplicate patch, no jacket collar patch. Keep it period-plausible, irregular hand-sewn light fabric over the brown leather, not a symbol. This positional identification clue must be immediately readable without labels.\n\nDo not mirror the image or rotate/move the whole body. Protect his exact face/closed eyes, red beard with gray, skin/death condition, head placement, existing brown leather material, stocky torso size, same branch cover except the minimum cloth/arm contact, player's branch-lifting hand and cloak, cart boards/wheel, ground/leaves, moonlight and matte ink/wash drawing. Do not expose full body, add wounds/blood/props/people, brighten the scene or change his dead stillness. White handkerchief stays absent; no grave or soil burial. Keep same opaque 1536x1024 canvas. The only intentional region change is LEFT upperarm/elbow and local jacket side under LEFT armpit needed to put the patch in its correct anatomical location.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-05.png",
+    "transparent_background": false
+  }
+}

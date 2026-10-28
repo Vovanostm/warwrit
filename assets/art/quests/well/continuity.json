@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "PRODUCTION_TARGET",
+  "authority": "Owner 2026-10-27 improve and implement quests; local mission rehearsal. No new general lore.",
+  "cast": {
+    "Prokhor": "P: living male labourer age55, lean wiry adult, long narrow weathered face, short grey hair, sparse short grey beard, hooked nose. Faded soot-brown linen tunic with a horizontal torn slit at stomach, dull grey trousers, low dark-brown leather boots. Red pressure welt across stomach visible through slit, not bloody cut. Short severed hemp rope loop tightly around waist, loose cut end down to right knee. Empty hands until scene explicitly assigns rope. No armour, cloak, sword, amulet or hat.",
+    "Kirill": "K: living male labourer age27, lean adult, angular face, short dark-brown hair and stubble. Faded muted ochre long-sleeved linen tunic, charcoal trousers, dark-brown mid-calf soft boots. Large old square grey repair on anatomical RIGHT knee. LEFT ankle injured in collapse, held free; right boot can bear weight. Clay scrapes on BOTH elbows and trouser seat, matte damp clay at cuffs and boots, not whole-body immersion. Pallor and distressed eyes; not a healthy relaxed sitter. No weapons/armour.",
+    "corpse": "D: one dead adult male soldier, hollow sunken cheeks, dark grey-brown earth-marked skin, dull open eyes, lower lip partly separated from gum, dried earth lodged at mouth; medium non-graphic horror, no exposed viscera. Prerotted dark olive wool tunic over grey rags, dark trousers, no armour, weapons or emblems. Only one own connected hand reaches up. Death/burial duration UNKNOWN. No supernatural glow; never a healthy pale captive.",
+    "Grigory": "G: living male mower age45, broad adult with short chestnut beard, dull grey-brown shirt, olive trousers, dark leather boots, no armour or weapons. Only visible in wait ending, supporting stretcher or patient; two other mowers can be outside crop after their help is stated."
+  },
+  "location": "One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch.",
+  "equipment": "Player company is first-person and outside every frame. No protagonist or sword is pictured, so no arbitrary weapon transfers. One small plain iron axe with brown wooden haft starts on earth beside the well, moved behind lean-to before decision. One old severed belt rope belongs to P. One separate long spare hemp rescue rope is introduced in anchor. It runs from loop under K armpits over overhead beam to lean-to post/hands; knots are continuous not two floating ends.",
+  "condition_persistence": "K clay cuffs/seat and LEFT injury persist through rescue endings; P stomach welt/waist loop persist everywhere. Nothing dries or cleans during these minutes; wait is later same grey daylight. Dead body never appears outside shaft. Wait/now/refuse mutually exclusive.",
+  "reference_limits": "Generated cast sheet and keyframes will be inspected separately. Written descriptions are targets, not certified pixels or mechanical engineering proof.",
+  "production_amendments": [
+    "Parent approved now support against EXISTING coveredwell outercurb, replacing proposed lowfence to preserve yard topology.",
+    "Now gesture RIGHT refusal hand/LEFT ground bearing; hands free in player text. LEFT injured leg/RIGHT knee patch retained.",
+    "Anchor is new closer camera from accepted correcteddepth; bodyloop underarmpits with ONE mainline, only connected corpsehand at cropedge; restraint remains as established in depth.",
+    "Refuse bucket suspended from rearaxle; hidden exactclearance not asserted as failure without visiblecontact.",
+    "Final start staging explicitly selected: one knee down, one curb-bearing hand, free hand urgently extended, attention toward shaft at cry. Player prose does not fix a seated pose; old seated-pose request superseded."
+  ]
+}

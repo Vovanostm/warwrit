@@ -1,0 +1,7 @@
+Use case: precise-object-edit. Image1 is the only scene to edit. Image2 is rendering style only.
+
+ONE ANATOMY FIX. The hand touching the round shield currently grows out of the coat hem with no forearm. Draw one continuous anatomical LEFT arm: sleeve, elbow, forearm, wrist, and that same hand. Strap the existing wooden shield to that left forearm. Do not add a second shield hand.
+
+Keep the other hand on the rope coil at the chest. Keep exactly one sheathed sword at the anatomical LEFT hip (viewer-right of the belt). Do not restore any extra scabbard.
+
+Preserve face, nets, boots in the water, distant platform, stakes, camera, crop, wet boots and graphic-novel ink. No third arm, no text, no restyle. Same opaque 1672×941 frame.

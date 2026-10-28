@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "well-start-emergency",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-start",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "First cry from shaft after workers flee: P rises urgently beside well and reaches toward unseen helper. K and corpse remain invisible below curb.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading."
+  },
+  "references": [
+    {
+      "id": "target",
+      "path": "output/quest-implementation-20261027/well-start.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Preserve cast identity, fixed yard geography and kit; pose and texture are explicitly revised after critic findings."
+    },
+    {
+      "id": "style1",
+      "path": "assets/art/styles/references/graphic-novel/character.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Rendering/adult proportions only; never copy armour, face or weapon into this cast."
+    },
+    {
+      "id": "style2",
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Palette/materials only; location layout comes from continuity, not this village."
+    },
+    {
+      "id": "cast",
+      "path": "output/quest-implementation-20261027/well-cast-fixed.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact newly generated faces/clothes/boots only. Full-body identity sheet does not set scene poses, well topology, injury treatment or threat response. Not yet independently accepted."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "acting",
+      "region": "P pose and immediate footing only",
+      "request": "Move P beside the OUTSIDE left edge of the well, close enough to actually grip it. Show him half-rising from a grounded crouch: RIGHT hand grips top outer curb with fingers curling over wood; RIGHT knee on earth, LEFT sole planted flat bearing weight. LEFT arm extends outward toward unseen player off-screen LEFT in an urgent request for help, one natural open hand. He is looking DOWN into dark well mouth, mouth open calling, brow lifted and tense; no passive sideways portrait. Keep SAME grey hair, narrow weathered face, sparse beard, brown torn tunic, stomach pressure welt, grey trousers, boots and severed waist rope. No new people or new visible shaft interior.",
+      "cause_ids": ["story", "targets"]
+    },
+    {
+      "id": "quiet-washes",
+      "region": "yard earth, spare wood, foliage and background surfaces",
+      "request": "OPAQUE regional repaint: erase at least80percent of tiny dirt marks, stone outlines, wood scratches, grass speckles and evenly sharp black hatching. Replace ground with 4 broad irregular matte umber/ochre/grey wash shapes and sparse contact edges. Replace background foliage/fence texture with quiet shape masses, retain exact gate/shed/well/tree positions and structural silhouettes. Not blur, not desaturating/darkening filter: repaint secondary surfaces as deliberately simple graphic-novel washes matching attached selected village. Strongest black/local contrast only face, reaching hand, right gripping hand and well opening. Keep natural boot/knee/axe/rope contact shadows. Preserve adult anatomy; no glossy smooth CGI.",
+      "cause_ids": ["targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "Same fixed well mouth, 2supportposts/beam, lean-to, gate, birch, buckets, axe resting blade-flat on earth and spare whole rope coiled under shed.",
+    "Same P identity, garment seams/hole, cut waist loop, red pressure welt; no bandage, weapons, new blood or soaking.",
+    "Same muted diffuse daylight and graphic-novel ink medium. No new weather or visible K/D."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/start.png",
+    "transparent_background": false
+  }
+}

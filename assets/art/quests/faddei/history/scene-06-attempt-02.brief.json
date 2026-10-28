@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-06-attempt-02",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-06",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. Image1 is the scene06 edit target. Image2 is only selected forest ink/wash rendering guidance. Correct ONE background geography defect in image1; preserve the scene's people and action.\n\nREMOVE the tall board/log stockade fence and the lean-to/tarp canopy behind the THREE bandits on the middle/right of image1. This is an unfortified temporary camp in a forest clearing. The background beyond Rudoy and his two men must be the natural dark forest: separated tree trunks, a few broad muted foliage masses and dark open depth. No planks, palisade, fortified wall, cabin, roof, canvas shelter, barricade or other new structure behind the fire. Do not replace it with a tall branch wall. The story's LOW barrier made of loose BRANCHES is BEHIND the CART on the forest side (behind camera here), and must stay out of this crop.\n\nChange only those background wall/canopy pixels, replacing them by quiet dark forest in the same matte restrained graphic-novel style and local night values. Do not merely darken the structure; remove its straight board silhouettes and horizontal rails. Keep the existing distant sky/moon and forest view continuous, not a brighter opening. Keep the low clearing ground and its route free, no new ditch or path.\n\nProtect EVERYTHING else: same three men at fire, exactly same Rudoy dark-bearded broken-nose face and reaching right hand on axe; his axe, pot, spoon/food rack/fire; bandit archer with lowered bow and bandit spearman; same company archer with drawn arrow in foreground and his exact hands/bow/string/quiver; same anonymous player back silhouette behind cart; same cart boards/wheel/broken low side, all poses/outfits/faces, proportions, framing, colors and night light. Keep current ink contours/broad matte washes; no re-lighting, photography, extra detail, text, watermark or new people. Do not import the daytime forest reference lighting. Klim/Vasily/body remain hidden. Same opaque 1536x1024 canvas.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-06-attempt-01/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-06-attempt-02.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-2",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/forest.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-06-attempt-02.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 6. Цена",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. Image1 is the scene06 edit target. Image2 is only selected forest ink/wash rendering guidance. Correct ONE background geography defect in image1; preserve the scene's people and action.\n\nREMOVE the tall board/log stockade fence and the lean-to/tarp canopy behind the THREE bandits on the middle/right of image1. This is an unfortified temporary camp in a forest clearing. The background beyond Rudoy and his two men must be the natural dark forest: separated tree trunks, a few broad muted foliage masses and dark open depth. No planks, palisade, fortified wall, cabin, roof, canvas shelter, barricade or other new structure behind the fire. Do not replace it with a tall branch wall. The story's LOW barrier made of loose BRANCHES is BEHIND the CART on the forest side (behind camera here), and must stay out of this crop.\n\nChange only those background wall/canopy pixels, replacing them by quiet dark forest in the same matte restrained graphic-novel style and local night values. Do not merely darken the structure; remove its straight board silhouettes and horizontal rails. Keep the existing distant sky/moon and forest view continuous, not a brighter opening. Keep the low clearing ground and its route free, no new ditch or path.\n\nProtect EVERYTHING else: same three men at fire, exactly same Rudoy dark-bearded broken-nose face and reaching right hand on axe; his axe, pot, spoon/food rack/fire; bandit archer with lowered bow and bandit spearman; same company archer with drawn arrow in foreground and his exact hands/bow/string/quiver; same anonymous player back silhouette behind cart; same cart boards/wheel/broken low side, all poses/outfits/faces, proportions, framing, colors and night light. Keep current ink contours/broad matte washes; no re-lighting, photography, extra detail, text, watermark or new people. Do not import the daytime forest reference lighting. Klim/Vasily/body remain hidden. Same opaque 1536x1024 canvas.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-06.png",
+    "transparent_background": false
+  }
+}

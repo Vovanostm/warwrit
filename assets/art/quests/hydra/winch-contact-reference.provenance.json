@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-26",
+  "kind": "code-native reference diagram; browser capture",
+  "original_png": "output/quest-implementation/hydra/guides/mechanism-contact-guide.png",
+  "current_asset": "assets/art/quests/hydra/winch-contact-reference.png",
+  "editable_source": "assets/art/quests/hydra/winch-contact-reference.svg",
+  "limits": "Code-native mechanical contact layout aid; independent image review still required. Not a pixel mask, exact renderer geometry or proof of hidden chain attachments.",
+  "scope": "Supporting input only, never imported as a quest scene."
+}

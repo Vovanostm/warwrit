@@ -1,0 +1,117 @@
+{
+  "tool": "image_gen.imagegen",
+  "model": "NOT_REPORTED",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit. Image 1 is the ACTUAL lair scene. Image 2 is selected graphic-novel character rendering only. Images 3 and 4 are selected fog-wet-stone environment style only. Image 5 is an ORIGINAL coordinate zone guide, not final art or a strict mask. Edit the actual source locally; do not redraw this whole scene.\n\nMOMENT: the huge hydra has just raised three heads; two undead stand inside the threshold. Preserve the current creature, guards, stone and location exactly. Give the TWO HUMANS a readable but restrained reaction to this reveal, then locally simplify the courtyard surfaces.\n\nM AT LEFT: his eyes ALREADY point toward the hydra. KEEP that direction. In the same recognizable adult face, tighten the lower brow and jaw, tuck the chin a little, draw his shoulders into a compact protective guard, and introduce a slight rearward weight shift through the current bent knees/hips. Same planted boots and physical supports, no new step. His mouth stays controlled, no scream. Preserve exact scarf/quilting/seams, shield on anatomical LEFT forearm, EMPTY scabbard at LEFT hip, single sword in RIGHT grip with the same blade/guard/pommel and low point safely away from his feet. The shield and weapon may follow a very small natural shoulder adjustment but retain all contacts and kit sides. Not a theatrical attack or stumble.\n\nZOYA AT RIGHT: lift her chin/attention slightly toward the towering heads and give her an arrested breath through a tense brow, alert eyes and a subtle part in the lips, with shoulders visibly bracing. Keep her SAME adult identity, white hair streak, braid, blue cloth sleeves, brown LEATHER apron/seams and both current grounded leg supports. Her RIGHT palm remains firmly on the TOP face of the SAME irregular low block; her LEFT palm stays on its separate SIDE edge, each with its own continuous forearm and natural fingers. Only tiny head/shoulder/neck posture changes, no released hand or moved block. Same two unused wedges in the single pocket, ONE iron prybar lying outside right of stone with same bent flattened foot.\n\nCOURTYARD WATER AND FOREGROUND PAVING, indicated by slate/teal in image 5: perform an OPAQUE REGIONAL PAINTOVER replacing the mirror-like reflection stripes and many uniform tiny surface marks with TWO OR THREE LARGE CALM MATTE SLATE WASH PLANES. A few soft broken broad reflections suggest wetness; do not keep a smooth precise mirror image of every head/leg. Quiet broad stone planes and a few selective structural joints replace decorative flecks and repetitive sharp paving grain. Match the restrained value/material hierarchy of images 2–4. Keep the SAME water level, actual paving edges, boot/creature contacts and perspective. Do not blur/darken the whole frame. No new ground structures or pits. Protect the physical dull bronze threshold and its necessary soft BLUE sheen; original RIGHT gap stays unlit.\n\nPROTECT EVERYTHING ELSE: exact original hydra THREE heads/ONE dark segmented body/FOUR actual legs and same scale, posture, crest design and tail; D1 exact existing plated/helmet armor versus D2 ragged grey-haired identity, two spears and their own arms. No new beast anatomy or replacement creature. ONE intact raised slab/guides, overhead chain/pulley/right winch/right steps, left roots/tree, far arches, same camera/crop/horizon and grey daylight. Keep current cast count, materials, wear and low cause-linked wetness. No new pose for guards/beast, new wounds, extra tools or creature, glossy skin, scream, text, border, guide marks or UI. Return the finished opaque full illustration only, same 1672x941 framing. This is one bounded acting/surface correction, not a fresh scene.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/inputs/lair.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/inputs/character.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/inputs/mill.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/inputs/forest.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/guide.png"
+    ],
+    "transparent_background": false
+  },
+  "generated_source_path": "/Users/vovanostm/.codex/generated_images/01a1756d-3136-7843-b84a-48ec83ba230c/exec-c3593b62-5f5e-4c98-becb-36629b96ccbc.png",
+  "retained_output_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/candidate.png",
+  "dimensions_observed": {
+    "width": 1672,
+    "height": 941,
+    "alpha": false
+  },
+  "input_roles": [
+    {
+      "id": "target",
+      "path": "output/quest-emotion-repair/hydra-lair/inputs/lair.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Actual b6b3bcdc lair; geometry/identity/action authority, acting and courtyard surfaces under repair."
+    },
+    {
+      "id": "character",
+      "path": "output/quest-emotion-repair/hydra-lair/inputs/character.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Selected graphic-novel adult drawing/material language only; no new kit or pose copied."
+    },
+    {
+      "id": "mill",
+      "path": "output/quest-emotion-repair/hydra-lair/inputs/mill.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Selected fog-wet-stone calm environmental masses/water handling only; no mill geography inserted."
+    },
+    {
+      "id": "forest",
+      "path": "output/quest-emotion-repair/hydra-lair/inputs/forest.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Selected fog-wet-stone muted atmospheric/stone rendering only; no forest scene replacement."
+    },
+    {
+      "id": "zones",
+      "path": "output/quest-emotion-repair/hydra-lair/guide.png",
+      "role": "layout",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Original code-native coordinate region guide; no raster embedded, not a strict mask or certified new anatomy."
+    }
+  ],
+  "frozen_target_revision": "codex/mission-novel-lab b6b3bcdc; actual live pixels frozen before call in inputs/lair.png",
+  "previous_scene": {
+    "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/inputs/ruins.png",
+    "inspected": true,
+    "attached_to_tool": false,
+    "role": "Previous staging/location/light comparison only, not action or outcome reference"
+  },
+  "guide": {
+    "source": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/guide.html",
+    "rendered": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-emotion-repair/hydra-lair/guide.png",
+    "embedded_source_pixels": false,
+    "strict_mask": false,
+    "renderer": "isolated Playwright hydra-emotion-pilot page.setContent/page.screenshot"
+  },
+  "execution_record": "First actual native call for this current emotion repair assignment. brief.json stays prospective PREPARED_NOT_EXECUTED; exact manual tool prompt/arguments saved independently.",
+  "author_observations": [
+    "Zoya visibly lifts head/attention, parts lips slightly and braces shoulders while both original top/side block palms appear retained.",
+    "M retains gaze toward hydra with a slightly more compact torso/guard and tense face; boots remain on original supports.",
+    "Courtyard water reflections are broader, softer and more broken with fewer little uniform highlights; foreground paving remains same geometry.",
+    "Original dark segmented three-head hydra, two guards/D1 current armor, irregular low block, gate/chain/winch/root/far arches appear retained.",
+    "Right sword/left shield and Zoya outside bar/two pocket objects remain in source carry states."
+  ],
+  "actual_limits": [
+    "Human acting and matte rendering quality require parent independent absolute critic at reader scale; no acceptance claim.",
+    "M acting shift is restrained/subtle; whether it now separates reveal from ruins is not certified.",
+    "Broad vertical reflection masses still remain in water; whether mirror smoothness is sufficiently reduced is not certified.",
+    "Guide is approximate regional advice, not exact masking/pixel-preservation proof.",
+    "Occluded scabbard attachment, fingers and hidden limb roots remain NOT_VERIFIABLE; no unrelated anatomical repair claimed.",
+    "Source/dim integrated reader replay, independent critique and live selection NOT_RUN by this author."
+  ],
+  "checks": [
+    "Brief schema/IDs/causes/paths/edit order/stable output PASS via repository validator",
+    "Frozen actual target/ruins/selected character/mill/forest inspected",
+    "Original no-raster guide browser-rendered and inspected",
+    "Actual native candidate inspected at original and full-frame displayed scale",
+    "Read-only sips1672x941,no alpha",
+    "Exact arguments/preflight/provenance/result JSON parsed/read back"
+  ],
+  "game_tests": "NOT_RUN; raster-only candidate task",
+  "calls_completed_this_assignment": 1,
+  "calls_in_flight": 0,
+  "selection": "NOT_SELECTED_PENDING_PARENT_CRITIC",
+  "tracked_files_written": [],
+  "permissions": "Ignored-only delegated production; parent sole tracked writer, no commit/publication.",
+  "parent_selection": {
+    "date": "2026-10-27",
+    "status": "ASSET_ACCEPT_PARENT_READER_CHECKED",
+    "current_asset": "assets/art/quests/hydra/lair.png",
+    "reviewer": "/root/hydra_final_visual_critic",
+    "scores": "All7 applicable 2; integration source/dim still pending",
+    "previous_live_pixels": "23075f11:assets/art/quests/hydra/lair.png",
+    "reader": "Actual current /missions-lab affected journey source/dim viewed by parent; independent full integrated acceptance remains pending."
+  }
+}

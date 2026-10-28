@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#eee9dd" />
+  <g stroke="#3f3529" stroke-width="6" stroke-linejoin="round">
+    <path d="M170 180L420 180L340 710L305 710Z" fill="#b48d55" />
+    <path d="M420 180L490 140L395 670L340 710Z" fill="#87643d" />
+    <path d="M170 180L240 140L490 140L420 180Z" fill="#d3b075" />
+    <path d="M675 220L915 220L850 710L815 710Z" fill="#b48d55" />
+    <path d="M915 220L980 180L900 670L850 710Z" fill="#87643d" />
+    <path d="M675 220L740 180L980 180L915 220Z" fill="#d3b075" />
+  </g>
+  <g fill="none" stroke="#8b6a40" stroke-width="3">
+    <path d="M225 218L314 660M272 218L325 600M325 218L338 530M370 218L350 440" />
+    <path d="M725 256L823 660M770 256L838 600M815 256L846 530M863 256L855 440" />
+  </g>
+  <g font-family="Arial,sans-serif" fill="#30302b" text-anchor="middle">
+    <text x="600" y="64" font-size="31">TWO SEPARATE TAPERED OAK WEDGES</text>
+    <text x="600" y="105" font-size="23">
+      Broad flat faces, angular side edges, narrow noses — not cylindrical handles
+    </text>
+    <text x="600" y="798" font-size="23">
+      Geometry-only guide. Fit the two solid wedges into the existing apron pocket.
+    </text>
+    <text x="600" y="837" font-size="22">
+      Do not copy labels, background, count duplicates or enlarge the pocket.
+    </text>
+  </g>
+</svg>

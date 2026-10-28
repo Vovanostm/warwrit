@@ -1,5 +1,34 @@
 # Warwrit current delivery plan
 
+## Illustrated novels delivery — 2026-10-28, LOCAL VALIDATED
+
+Branch owner/validation owner: delegated `stand_finalize`; coordinator: parent.
+Branch `codex/novels-readable-illustrated`, base `48d8a2ae`, transplant `8de22870`.
+Nine-story reader; five older stories retain 34 own scene images; mothers omitted.
+Faddei r4.1 has all 12 selected stable images; independent asset ACCEPT reported.
+Final handoff includes selected sidecars/history/references; no candidate imports.
+Accepted text sources: Yakov v5/399d698, Guide r4/67279ba, Savva r4.2/b374298.
+Separate manuscript-to-TS and TS-to-DOM checks: all 16/8/64 routes PASS.
+Savva literary limits remain documented; technical checks are not artistic ACCEPT.
+Legacy browser: 31 routes, 34 nodes, 15 endings, both themes at 1280×720 PASS.
+Parent live Guide failure ending: technical checkpoint only, not a blind reading.
+[Current contract](../work-packages/MISSION-NOVELS-READABLE.md); [evidence](../wiki/mission-testing.md).
+DEV route through main.tsx; App/company/server/maps/dependencies untouched.
+Detached preview 5328 preserves old 5327; both respond 200.
+Full build/types PASS before text replacement; current web types/full lint PASS.
+Current focused 34/scoped format/change audit PASS; artist JSON formatting fixed.
+Faddei browser: 12 routes/96 scene visits/12 images/both themes PASS; 24 images viewed.
+Final independent technical review: no defects; parent live body-ending route PASS.
+Bootstrap attempt 1 stopped on local evidence JS; retained as text, no rule changes.
+Existing bootstrap retry PASS: verify, 10k stress battles, PostgreSQL migrations/integration.
+Unit 1243 PASS/84 SKIPPED; migrations/integration 74 PASS; disposable infra cleaned.
+Current authority: parent final-delivery task message on 2026-10-28, after independent
+technical review of reader/model/DEV route and the accepted texts found no bugs.
+It authorizes final local integration, existing bootstrap and a normal-hook local commit.
+Parent owns PR creation through its connector after final delta review; no push before
+an explicit parent message. No merge/deploy/Orca/automation; prior stop markers retained.
+Final browser/gate/review complete; commit uses ordinary hooks; publication belongs to parent.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.

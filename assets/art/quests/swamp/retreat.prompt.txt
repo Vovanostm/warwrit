@@ -1,0 +1,142 @@
+Use case: precise-object-edit. Warwrit game illustration.
+
+Purpose: Execute bounded structural retreat correction after parent GO; conserve source people, scenery, material/wear maps. No global wetness or new dirt pass.
+Moment: M returned alone to Vera; two stranded people remain offscreen, no battle happened.
+
+Style: Preserve restrained folklore graphic novel: irregular major ink contours, broad matte washes and exact existing adult faces/garments. No whole-frame restyle, glossy fabric, grit filter or photography.
+
+Input image roles, in exact attachment order:
+[
+  {
+    "id": "image1",
+    "path": "assets/art/quests/swamp/retreat-v2.png",
+    "role": "edit_target",
+    "authority": "CANDIDATE_PARTIAL",
+    "inspected": true,
+    "limits": "Exact present staging/faces/materials only; known mounts/contact defects are explicitly being corrected, not certified."
+  },
+  {
+    "id": "image2",
+    "path": "assets/art/quests/swamp/start-v2.png",
+    "role": "identity",
+    "authority": "CANDIDATE_PARTIAL",
+    "inspected": true,
+    "limits": "M/Vera face, clothing and left-side sword/shield identity only; not action/pose or geography; shield underside not certified."
+  },
+  {
+    "id": "image3",
+    "path": "assets/art/styles/references/graphic-novel/character.png",
+    "role": "style",
+    "authority": "SELECTED_STYLE",
+    "inspected": true,
+    "limits": "Adult ink/matte rendering only; do not add its pose/outfit or landscape."
+  }
+]
+
+Change ONLY these regions/details:
+[
+  {
+    "id": "local-change-1",
+    "region": "M anatomical weapon/shield mount region",
+    "request": "EXACT SWORD CORRECTION: rear-view M's source hilt/scabbard is at anatomical RIGHT hip, viewer-RIGHT body edge toward Vera. REMOVE that right-side hilt AND entire right-side scabbard. The SAME SINGLE sword must be SHEATHED at anatomical LEFT hip, viewer-LEFT side beneath/behind back shield. Let only its physically visible left-side portion peek below shield if necessary; hidden hilt may remain honestly occluded. NO weapon at old right-side location, no second sword/sheath, no mirror of entire figure. Retain whole back-slung shield and actual strap.",
+    "cause_ids": [
+      "continuity-target"
+    ]
+  },
+  {
+    "id": "local-change-2",
+    "region": "Named lower contact zones/hand regions only",
+    "request": "Clarify receiving hands only locally if ownership cannot be read; M left hand may remain hidden, not duplicate.",
+    "cause_ids": [
+      "continuity-target",
+      "wet-route",
+      "fall-target",
+      "contact-target"
+    ]
+  },
+  {
+    "id": "local-change-3",
+    "region": "Named lower contact zones/hand regions only",
+    "request": "Retain route dampness on actual visible lower clothing only; hidden boots stay NOT_VERIFIABLE, do not invent wet upper back. Vera only slight rope-contact finger/cuff moisture.",
+    "cause_ids": [
+      "continuity-target",
+      "wet-route",
+      "fall-target",
+      "contact-target"
+    ]
+  }
+]
+
+Causes and evidence, separated from production targets:
+[
+  {
+    "id": "continuity-target",
+    "basis": "PRODUCTION_TARGET",
+    "source": "assets/art/quests/continuity.json#swamp-retreat",
+    "description": "Canonical future hand/prop/contact targets for this scene; existing PNG may conflict."
+  },
+  {
+    "id": "wet-route",
+    "basis": "MANUSCRIPT",
+    "source": "apps/web/src/mission-lab/water.ts#scenes.causeway",
+    "description": "Wet submerged route poles and actual shared/return path. No full-body swimming, rain or drying interval."
+  },
+  {
+    "id": "fall-target",
+    "basis": "PRODUCTION_TARGET",
+    "source": "assets/art/quests/continuity.json#swamp-retreat",
+    "description": "Parent coordinated conservative existing damp map: Efim ANATOMICAL LEFT boot/cuff stronger, no high waterline. Right board-bearing foot independent; no unaccepted fight staining method copied."
+  },
+  {
+    "id": "contact-target",
+    "basis": "PRODUCTION_TARGET",
+    "source": "assets/art/quests/continuity.json#swamp-retreat",
+    "description": "Only actual board/deck/rope hand or lower-clothing contact; Vera remains village baseline and branches remain alternative."
+  }
+]
+
+Material/zone states and persistence:
+[
+  {
+    "subject": "M",
+    "material": "cloth/leather",
+    "zone": "visible lower route-contact zone only",
+    "before": "Two route passages, no combat.",
+    "after": "Persist localized dampness only where visible; do not wet upper back to compensate hidden boots.",
+    "cause_id": "wet-route",
+    "persistence": "No drying; offscreen soles remain NOT_VERIFIABLE."
+  },
+  {
+    "subject": "Vera",
+    "material": "wool/skin",
+    "zone": "fingers/cuff at coil",
+    "before": "Village baseline.",
+    "after": "Small local contact moisture only, no soaked scarf or universal mud.",
+    "cause_id": "contact-target",
+    "persistence": "No island/fight state on witness."
+  }
+]
+
+Preserve:
+M/Vera faces and garments, rear camera
+whole back shield
+right hand offers one coil, two separate unused net bundles
+same village boardwalk/light and no otherpeople/creatures
+
+Avoid:
+No whole-frame redesign, mirroring, new face/armour, extra hand or duplicated sword/scabbard.
+No rain, swimming, whole-body soak, universal mud/rust/blood, photographic wet sheen or glitter.
+Exactly two nets where visible; no outcome injury/creature death or cloak tear imported from alternative fight.
+No global stain/dampness pass or copying unaccepted fight wetness. No whole-image mirror.
+
+Known unresolved parts: ["Hidden fingers/attachments stay NOT_VERIFIABLE; do not certify by preserving.","Parent owns independent critic and selection; conservative condition only, no disputed global dirt method."]. Do not certify them by preserving them.
+
+Acceptance to inspect, not a claim of success:
+one sword/sheath at LEFT hip or honest partial left-side occlusion, no right-hip duplicate
+2living only, one coil/two unused nets; whole shield and no wound
+hands/rope contact clear, no extra fingers
+same rear composition and village baseline; no rain/full-body soak
+Inspect close and reader scale, then compare actual predecessor and alternatives; JSON validation alone is not visual acceptance.
+Wait for independent critic of full corrected frame before selection.
+
+No text or watermark. Keep the same folklore graphic-novel rendering. Physical credibility does not mean photography. Filenames in prose do not attach images.

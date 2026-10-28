@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "faddei-ending-money-attempt-01",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "ending-money",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Medium view from player's eyes at SAME ruined roadside oven at gray DAWN. Player's neutral dark-sleeved hand lowers a visibly FULL tied leather/cloth ransom bag onto the cold oven bricks, weight apparent in taut lower bulge. No pouring coins or modern writing. Pelageya, SAME face/clothes as scene01, looks past the returned money toward unseen player, waiting for the account of her husband. Her broad hands are held close to oven edge, not grabbing bag yet; tense controlled face, faded BLUE headscarf distinct from a white linen cloth. Klim is COMPLETELY outside image: do not show his face, shoulder, hand, shadow-body, bandage or standing/sitting state, because he may be injured or safe depending on route. Faddei's body is NOT returned in this ending: no corpse, gray body-sack or white cloth on a dead face at oven. The WHITE handkerchief is ALSO unseen: it may be clean inside player's clothing OR a right-shoulder bandage on offscreen Klim. Do not resolve that branch in this common image. Bread basket beside oven remains, gray dawn lights wet apple leaves RIGHT/behind and grass; oven LEFT of road, distant forest. No active oven fire: cold bricks from burned house. Two company helpers can stay outside crop; no new villagers or children. Pure moment before explanation, no basket handover/trust branch. Restrained grief in Pelageya's gaze and contrast between heavy saved money and missing person; not victorious smiling or moral judgement.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-01.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/ending-money-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-2",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/village.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/ending-money-attempt-01.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # Концовки / Сохранённые деньги",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "whole new frame",
+      "request": "Use case: illustration-story. Asset type: one opaque landscape 1536x1024 visual-novel keyframe for Warwrit, full bleed, no border, no writing or watermark. Use selected reference pixels only in their specifically assigned roles. Preserve natural adult proportions and humble credible medieval materials. Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.\nNo photorealism, smooth CGI, blue/orange cinematic grading, global dirt filter, dense microtexture, cute silhouettes, magic, gods, religion, heraldry, emblems, invented story facts or extra people. Actual story time and state below control lighting and visible props. Cold moonlight is subdued, fire locally warm, dawn gray. No rain in the story. The player has no fixed face/appearance: show only necessary hands, dark plain travel-cloak parts or anonymous back silhouette.\n\nShared continuity: company is exactly THREE people (player, one archer with wooden bow/quiver, one swordsman with sword at anatomical LEFT hip and rope at belt). Bandits are exactly FOUR (Rudoy, Vasily, one archer, one spearman). No new wounds. Klim: thin about30, narrow BEARDLESS face, short chestnut hair, unbleached shirt, plain brown jacket WITHOUT pale patch, gray trousers, worn boots. Ink stains on RIGHT fingertips; abrasion on LEFT wrist. Faddei is a DIFFERENT dead stocky man about45, red beard with gray, thinning red hair, linen shirt, brown trousers, brown LEATHER jacket with pale cloth patch UNDER LEFT armpit, boots; dried blood at RIGHT temple, clay on clothes. Pelageya about38, sturdy, broad face/hands, dark blond hair under faded BLUE HEADSCARF, linen shirt, brown skirt, gray wool coat, leather shoes. Her WHITE linen HANDKERCHIEF is a separate prop: ONE tiny pipe burn CLOSED by dark stitches on the actual corner, brown scorch immediately around that same repaired tear; no separate second mark. Gray ripped sack is ONE prop.\n\nReference roles: Scene01 exact Pelageya face/outfit/blue headscarf, oven construction/apple trees/road geometry only; dawn replaces midnight. Selected village reference rendering only; no inhabited village copied.\n\nPictured moment (Концовки / Сохранённые деньги): Medium view from player's eyes at SAME ruined roadside oven at gray DAWN. Player's neutral dark-sleeved hand lowers a visibly FULL tied leather/cloth ransom bag onto the cold oven bricks, weight apparent in taut lower bulge. No pouring coins or modern writing. Pelageya, SAME face/clothes as scene01, looks past the returned money toward unseen player, waiting for the account of her husband. Her broad hands are held close to oven edge, not grabbing bag yet; tense controlled face, faded BLUE headscarf distinct from a white linen cloth. Klim is COMPLETELY outside image: do not show his face, shoulder, hand, shadow-body, bandage or standing/sitting state, because he may be injured or safe depending on route. Faddei's body is NOT returned in this ending: no corpse, gray body-sack or white cloth on a dead face at oven. The WHITE handkerchief is ALSO unseen: it may be clean inside player's clothing OR a right-shoulder bandage on offscreen Klim. Do not resolve that branch in this common image. Bread basket beside oven remains, gray dawn lights wet apple leaves RIGHT/behind and grass; oven LEFT of road, distant forest. No active oven fire: cold bricks from burned house. Two company helpers can stay outside crop; no new villagers or children. Pure moment before explanation, no basket handover/trust branch. Restrained grief in Pelageya's gaze and contrast between heavy saved money and missing person; not victorious smiling or moral judgement.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/ending-money.png",
+    "transparent_background": false
+  }
+}

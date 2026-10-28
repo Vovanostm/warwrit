@@ -1,0 +1,42 @@
+{
+  "status": "GENERATED_CANDIDATE_NOT_SELECTED",
+  "tool": "image_gen.imagegen",
+  "operation": "ONE_COORDINATE_GUIDED_ENVIRONMENT_SURFACE_PAINTOVER",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a17543-44e5-7ea0-a80e-9a122d23ccb6/exec-708f63b4-ba28-4723-9101-c32a64c5522c.png",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit / environment-surface paintover. Image1 is the CURRENT SCENE TO EDIT. Image2 is a new pure-code COORDINATE PAINT-ZONE GUIDE, not an image to depict, not a strict pixel mask: purple = stone interiors, teal = water surfaces, olive = secondary vegetation; cream/gold areas and red circles/outlined props = PROTECT. Pale anchor strokes mean preserve their exact position/silhouette. Do NOT copy guide colours, text, outlines, blocks or labels into the finished art. Image3 is the SELECTED GRAPHIC-NOVEL drawing authority for broad opaque matte washes and selective irregular ink ONLY; do not copy its person, pose, background geography or palette over this scene.\nREQUIRED LITERAL PAINT ACTION: inside the indicated environmental surfaces, paint OVER the old marks with OPAQUE large quiet wash planes. Completely erase the mottled/pebbled rock interiors, tiny mortar/stone-edge lattice, leaf-litter flecks, outlined foliage grid and repeated little wet highlights rather than leaving them visible under a translucent tone. Reconstruct those INTERIORS with just TWO OR THREE LARGE CONNECTED MATTE planes per material region, some broad shadow boundaries and very sparse selective marks. This must be a visible change of drawing hierarchy, not a little stain edit, blur, sharpness reduction, grey filter, global darkening or tracing every old edge. Keep local slate/umber/olive colours, current fog, time and diffuse light; do not make it more colourful, darker or photorealistic.\nSTONE ZONES: group foreground rocks, broad wall faces, raised slab interior and secondary stair surfaces into quiet painted masses. Keep outer rock/slab/stair silhouettes, grounded foot/tool contacts, roots, lion outlet, physical ward, chain and wooden winch geometry EXACT. An intact wall can retain a FEW structural seams; never draw every block and pebble. WATER ZONES: replace dense flickering ripples/reflection outlines with a few broad calm horizontal reflection masses. Keep exact shorelines, water height, existing lion stream/short cascade and low damp-contact shapes. VEGETATION ZONES: group incidental leaves, grass and moss into broad dark/olive shapes, with only a few silhouettes, no evenly outlined individual leaves. Do not plant or remove anchor trees/roots.\nABSOLUTE PROTECTIONS: identical two adult humans, faces, hair, proportions, body poses, elbows, fingers and every existing hand contact. Same mercenary brown quilted CLOTH coat/scarf, seams/belt/boots/old wear, RIGHT hand visibly EMPTY by his side, ONE sword fully SHEATHED at anatomical LEFT hip, whole wood shield on LEFT forearm; no sword in his right hand. Same crouching Zoya, grey-streaked braid, blue CLOTH sleeves, matte brown LEATHER apron with EMPTY front pocket, two existing hands and ONE continuous dark iron PRYBAR with a single unbranched bent flattened foot resting on the same rock. Keep her right bar grip and other open left hand as in image1. Exactly TWO separate flat tapered oak WEDGES remain fully visible on the dry flat stone beside her feet; do not hide them or put tool handles in her pocket. Preserve their shapes, separation, colour and supports. No wrench, extra hook/tool/wedge/hand.\nRetain the raised intact gate/connected chain/right winch, left root mass, existing lion face and physical waterflow, current bronze/ward placement. No monsters, new blood/armour, new water immersion or soaked upper clothing. People stand/crouch above the flow; only low soles/real contact edges are damp. Keep detailed faces, hands and current prop CONTACTS readable while secondary environment becomes broad and calm. Same opaque 1672x941 framing, no geometry redraw, no new scene, no text/border.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/start-input.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/start-guide.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/start-style.png"
+    ],
+    "transparent_background": false
+  },
+  "source": "output/quest-implementation/hydra/final-polish/start-visible-wedges.png",
+  "frozen_input": "output/quest-implementation/hydra/surface-guide-final/start-input.png",
+  "guide": {
+    "svg": "output/quest-implementation/hydra/surface-guide-final/start-guide.svg",
+    "png": "output/quest-implementation/hydra/surface-guide-final/start-guide.png",
+    "method": "Pure literal SVG coordinate polygons/labels; PNG rendered with bundled sharp; no embedded/filtered source pixels; explanatory region guide, not strict mask."
+  },
+  "style": {
+    "source": "assets/art/styles/references/graphic-novel/character.png",
+    "frozen": "output/quest-implementation/hydra/surface-guide-final/start-style.png",
+    "role": "broad opaque matte ink/wash only"
+  },
+  "inspection": "output/quest-implementation/hydra/surface-guide-final/start.inspection.json",
+  "independent_visual_acceptance": "NOT_RUN",
+  "calls": 1,
+  "rerolls": 0,
+  "live_writes": false,
+  "current_asset": "assets/art/quests/hydra/start.png",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_CURRENT6_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.hydra",
+    "scope": "Independentcurrent6absoluteACCEPT; allapplicablescores2/noclose0. Hiddenpartsnotcertified; author generation-time fields remain historical."
+  },
+  "retained_reference_copies": {
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/hydra/surface-guide-final/start-guide.png": "assets/art/quests/hydra/start-paint-guide.png"
+  }
+}

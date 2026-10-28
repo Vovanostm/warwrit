@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-03-attempt-01",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-03",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Close side view at a tree root in the night forest camp, the instant the sentry Vasily freezes before he can cry out. Vasily about25, slim, light short hair, sparse moustache, gray shirt under brown coat, dark trousers. He was seated removing RIGHT boot; that single removed worn boot lies by a visible root at lower frame; right foot has plain cloth sock/foot wrapping, left boot still on if visible. Company swordsman behind him clamps ONE hand firmly across Vasily's mouth and steadies shoulder with other hand; his body's ordinary posture supports the restraint, no dislocated arm. Player outside crop has ONE neutral hand holding a small practical knife gently but decisively against Vasily's CLOTHED side, not a slash or wound. Distinguish player's dark sleeve and swordsman's plain brown sleeve; trace each arm clearly. The company archer is at outer edge taking Vasily's sword away: only a separate gray-sleeved hand at the sword hilt/scabbard, or his partial upper body, not an extra armed captor. Give the sword a simple straight short blade and old plain leather scabbard, no ornate weapon. Captive's eyes go wide and his body stops resisting; no blood or new injury. No ropes/gag yet: those are tied after this moment. Low moonlight through trees, muted faint warm camp light far behind. No Klim, sack, white handkerchief, Faddei or body in frame; cart/fire can stay outside close crop. No added men beyond these three company members plus Vasily, with player only hand. Show distinct silhouette of grip, knife contact and sentry's arrested movement. Do not put knife at throat or have someone cut skin.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-03-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-2",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/forest.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-03-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-3",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-01-attempt-01/candidate.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-03-attempt-01.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 3. Часовой",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "whole new frame",
+      "request": "Use case: illustration-story. Asset type: one opaque landscape 1536x1024 visual-novel keyframe for Warwrit, full bleed, no border, no writing or watermark. Use selected reference pixels only in their specifically assigned roles. Preserve natural adult proportions and humble credible medieval materials. Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.\nNo photorealism, smooth CGI, blue/orange cinematic grading, global dirt filter, dense microtexture, cute silhouettes, magic, gods, religion, heraldry, emblems, invented story facts or extra people. Actual story time and state below control lighting and visible props. Cold moonlight is subdued, fire locally warm, dawn gray. No rain in the story. The player has no fixed face/appearance: show only necessary hands, dark plain travel-cloak parts or anonymous back silhouette.\n\nShared continuity: company is exactly THREE people (player, one archer with wooden bow/quiver, one swordsman with sword at anatomical LEFT hip and rope at belt). Bandits are exactly FOUR (Rudoy, Vasily, one archer, one spearman). No new wounds. Klim: thin about30, narrow BEARDLESS face, short chestnut hair, unbleached shirt, plain brown jacket WITHOUT pale patch, gray trousers, worn boots. Ink stains on RIGHT fingertips; abrasion on LEFT wrist. Faddei is a DIFFERENT dead stocky man about45, red beard with gray, thinning red hair, linen shirt, brown trousers, brown LEATHER jacket with pale cloth patch UNDER LEFT armpit, boots; dried blood at RIGHT temple, clay on clothes. Pelageya about38, sturdy, broad face/hands, dark blond hair under faded BLUE HEADSCARF, linen shirt, brown skirt, gray wool coat, leather shoes. Her WHITE linen HANDKERCHIEF is a separate prop: ONE tiny pipe burn CLOSED by dark stitches on the actual corner, brown scorch immediately around that same repaired tear; no separate second mark. Gray ripped sack is ONE prop.\n\nReference roles: Both are selected drawing/palette references only. Do not copy bearded soldier, weapons/shield or daylight landscape. This keyframe establishes NEW Vasily and supporting company appearance from manuscript, not that reference identity.\n\nPictured moment (3. Часовой): Close side view at a tree root in the night forest camp, the instant the sentry Vasily freezes before he can cry out. Vasily about25, slim, light short hair, sparse moustache, gray shirt under brown coat, dark trousers. He was seated removing RIGHT boot; that single removed worn boot lies by a visible root at lower frame; right foot has plain cloth sock/foot wrapping, left boot still on if visible. Company swordsman behind him clamps ONE hand firmly across Vasily's mouth and steadies shoulder with other hand; his body's ordinary posture supports the restraint, no dislocated arm. Player outside crop has ONE neutral hand holding a small practical knife gently but decisively against Vasily's CLOTHED side, not a slash or wound. Distinguish player's dark sleeve and swordsman's plain brown sleeve; trace each arm clearly. The company archer is at outer edge taking Vasily's sword away: only a separate gray-sleeved hand at the sword hilt/scabbard, or his partial upper body, not an extra armed captor. Give the sword a simple straight short blade and old plain leather scabbard, no ornate weapon. Captive's eyes go wide and his body stops resisting; no blood or new injury. No ropes/gag yet: those are tied after this moment. Low moonlight through trees, muted faint warm camp light far behind. No Klim, sack, white handkerchief, Faddei or body in frame; cart/fire can stay outside close crop. No added men beyond these three company members plus Vasily, with player only hand. Show distinct silhouette of grip, knife contact and sentry's arrested movement. Do not put knife at throat or have someone cut skin.\n\nAdditional reference image3 (scene01 candidate): company supporting swordsman/archer plain clothing only. The bearded swordsman standing at right in scene01 is the companion holding Vasily, not Vasily. Do not copy Pelageya, oven, letter, coins, cloth or roadside geography.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-03.png",
+    "transparent_background": false
+  }
+}

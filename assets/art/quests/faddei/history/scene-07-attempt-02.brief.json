@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-07-attempt-02",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-07",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. Fix TWO bounded gear/hand ownership errors in supplied scene07. Preserve faces, people count, body state, cart/fire/night scene and money-bag/player hand placement.\n\n1. Rudoy is the broad dark-bearded broken-nose man in foreground. Keep his SAME face, torso and costume, but redraw ONLY BOTH forearms/hands as needed: his anatomical RIGHT shoulder is on viewer LEFT, its RIGHT arm must drop down naturally along viewer LEFT of his torso, and that RIGHT hand grips the wooden axe handle with axe blade hanging safely downward at his RIGHT hip (viewer LEFT). His anatomical LEFT shoulder is on viewer RIGHT. His LEFT elbow bends and LEFT forearm crosses the front of his coat toward the money bag at viewer LEFT, LEFT fingers reaching above the bag mouth. Trace that crossing arm unambiguously to the LEFT shoulder on viewer RIGHT. Only LEFT hand reaches for/receives money; only RIGHT hand holds the lowered axe. Do not mirror the scene, change his face, swap him with another man or leave a second axe. Player's offered full bag and player's own hand stay where they are; Rudoy's reaching LEFT fingers still hover before transfer. Keep arms distinct, no fused/missing elbows or fingers. The crossing left sleeve can cover a small local area of his coat, nothing else.\n\n2. The ponytailed man with quiver at image RIGHT is the COMPANY ARCHER. He must NOT carry a spear. REMOVE the spear shaft and pointed head from his hand and restore forest where it was. Give him ONE simple wooden BOW held ready in his anatomical LEFT hand, low beside his body, and ONE arrow in his RIGHT hand positioned to nock it, while he watches the unseen bandits beyond the fire. Keep same ponytail, dark travel coat, quiver, face/back silhouette and supported standing feet; only arm/tool pose needed for bow readiness may change. Do not give him a sword, spear, axe, shield or a second bow. No new bandit or extra helper.\n\nKeep Vasily's same light-haired face and the company swordsman removing his gag; no new gag/captive or wounds. Dead Faddei remains in same supported position on the single gray sack, FACE UNCOVERED at this pre-exchange instant; no white cloth yet. Klim can remain occluded on other cart side; do not substitute Vasily for Klim. Same cart wheel/boards, all remaining hands/outfits, pot/fire/food rack, natural dark forest with NO wall/canopy, same moonlight, muted palette and matte graphic-novel ink/wash. No text, emblems, magic, photographic finish or reframing. Same opaque1536x1024.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-07-attempt-01/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-07-attempt-02.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 7. За живого и мёртвого",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. Fix TWO bounded gear/hand ownership errors in supplied scene07. Preserve faces, people count, body state, cart/fire/night scene and money-bag/player hand placement.\n\n1. Rudoy is the broad dark-bearded broken-nose man in foreground. Keep his SAME face, torso and costume, but redraw ONLY BOTH forearms/hands as needed: his anatomical RIGHT shoulder is on viewer LEFT, its RIGHT arm must drop down naturally along viewer LEFT of his torso, and that RIGHT hand grips the wooden axe handle with axe blade hanging safely downward at his RIGHT hip (viewer LEFT). His anatomical LEFT shoulder is on viewer RIGHT. His LEFT elbow bends and LEFT forearm crosses the front of his coat toward the money bag at viewer LEFT, LEFT fingers reaching above the bag mouth. Trace that crossing arm unambiguously to the LEFT shoulder on viewer RIGHT. Only LEFT hand reaches for/receives money; only RIGHT hand holds the lowered axe. Do not mirror the scene, change his face, swap him with another man or leave a second axe. Player's offered full bag and player's own hand stay where they are; Rudoy's reaching LEFT fingers still hover before transfer. Keep arms distinct, no fused/missing elbows or fingers. The crossing left sleeve can cover a small local area of his coat, nothing else.\n\n2. The ponytailed man with quiver at image RIGHT is the COMPANY ARCHER. He must NOT carry a spear. REMOVE the spear shaft and pointed head from his hand and restore forest where it was. Give him ONE simple wooden BOW held ready in his anatomical LEFT hand, low beside his body, and ONE arrow in his RIGHT hand positioned to nock it, while he watches the unseen bandits beyond the fire. Keep same ponytail, dark travel coat, quiver, face/back silhouette and supported standing feet; only arm/tool pose needed for bow readiness may change. Do not give him a sword, spear, axe, shield or a second bow. No new bandit or extra helper.\n\nKeep Vasily's same light-haired face and the company swordsman removing his gag; no new gag/captive or wounds. Dead Faddei remains in same supported position on the single gray sack, FACE UNCOVERED at this pre-exchange instant; no white cloth yet. Klim can remain occluded on other cart side; do not substitute Vasily for Klim. Same cart wheel/boards, all remaining hands/outfits, pot/fire/food rack, natural dark forest with NO wall/canopy, same moonlight, muted palette and matte graphic-novel ink/wash. No text, emblems, magic, photographic finish or reframing. Same opaque1536x1024.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-07.png",
+    "transparent_background": false
+  }
+}

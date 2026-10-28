@@ -1,0 +1,10 @@
+Use case: precise-object-edit. Image1 is the only scene to edit. Image2 is rendering style only, not a new costume or pose.
+
+ONE ANATOMY/PROP FIX. In Image1 the mercenary’s single visible fist closes around BOTH the sword hilt and the shield grip, and the blade lies across the shield face as if it passes through the board.
+
+Separate them:
+- Anatomical RIGHT hand holds only the straight sword: one closed grip, thumb opposed, hilt, crossguard and blade are one continuous object. The blade does not intersect the shield.
+- The round wooden shield is on the anatomical LEFT forearm, held by its strap behind the board. No fingers wrap the boss and the sword at the same time. The left hand may be hidden behind the shield.
+- Exactly one sword and one shield. Two arms, two shoulders. Do not add a third hand.
+
+Preserve the crouch behind the tree, face, quilted brown coat, dark scarf, camp, fire, prisoners, dog, sentry, camera, crop and muted graphic-novel ink. No text, extra bodies, or glossy repaint. Same opaque 1672×941 frame.

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "well-depth-review",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-depth",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "Landscape 3:2. Camera peers steeply down from lip INSIDE the same circular stone well, no diagram/cutaway/x-ray. K sits on broken projecting masonry ledge on RIGHT side, back against stone; right boot on ledge, LEFT leg lifted and tucked away, left ankle hurt. K both hands brace OWN ledge edges, eyes frightened down at D. D below left, torso pinned tightly between collapsed stone sides, unable to pass shoulders through; sunken grey-brown face and earth-filled mouth visible; one connected RIGHT arm reaches UP, five-finger hand stops below right boot separated by clear air gap. Stone ledge and shaft separate figures; D never grips K. Only these two figures visible; P/player outside above crop. Shaft lit by same overcast sky above camera. K charcoal seat/cuffs smeared damp clay. NO rescue rope on K yet: this is first sight before anchor. Show actual vertical distance without impossible perspectives.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading. Backgrounds have large quiet shape masses as accepted start.png; only focal faces/hands carry detail. No uniform fine mud/wood/stone/stubble strokes."
+  },
+  "references": [
+    {
+      "id": "target",
+      "path": "output/quest-implementation-20261027/well-scenes/depth.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Preserve corrected figure/camera/washes. Edit only independently rejected physical contact interface."
+    },
+    {
+      "id": "style",
+      "path": "assets/art/quests/well/start.png",
+      "role": "style",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Accepted quiet wash family and palette only."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "contact",
+      "region": "dead torso and adjacent rubble only",
+      "request": "Change ONLY the rubble contact around the DEAD figure at LOWER LEFT. The torso is physically wedged in a collapsed narrow masonry breach: add one heavy broad angular fallen stone ACROSS upper chest below neck, its two ends firmly bearing on existing side rubble, with visible side stones tightly trapping BOTH shoulder/upper torso margins. The head and exactly the current ONE reaching arm remain exposed, continuous and in same pose; the shoulder cannot fit up through the gap, so the torso cannot climb out. Show pressure/contact at clothing edges, no floating rocks, no gap wide enough for shoulders, no added beam/rope. Do NOT alter D head/face/hand, K any anatomy/boots/patch/LEFT tucked leg/RIGHT boot support/hands, the gap to the reaching fingers, ledge/camera/lighting. Preserve corrected BROAD matte quiet stone washes, not dense individually scratched texture. No new injury, blood, extra limbs, skin colour or corpse. This is a local physical-restraint clarification, not a redesign of well geometry.",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "All existing cast anatomy/face/kit and exact current camera/layout, except explicitly named contact adjustment.",
+    "Current broad matte washes and local action contrast. No new noise, lighting or weather."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/depth.png",
+    "transparent_background": false
+  }
+}

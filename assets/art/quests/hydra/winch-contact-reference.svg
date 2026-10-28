@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect width="1600" height="1000" fill="#f5f1e8" />
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+      fill: #242424;
+      font-size: 23px;
+    }
+    .small {
+      font-size: 19px;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .label {
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .line {
+      fill: none;
+      stroke: #333;
+      stroke-width: 5;
+    }
+    .chain {
+      fill: none;
+      stroke: #465a64;
+      stroke-width: 9;
+      stroke-dasharray: 12 5;
+    }
+    .contact {
+      fill: #b22d25;
+      stroke: #fff;
+      stroke-width: 2;
+    }
+  </style>
+  <text x="40" y="48" class="title">EXISTING ONE-DRUM WINCH — CONTACT / LOAD GUIDE</text>
+  <text x="40" y="81" class="small">
+    A technical production target, not scene pixels or proof. No extra winch, gears, drum or slab.
+  </text>
+  <path d="M680 100V790" stroke="#bbb" stroke-width="2" />
+  <text x="35" y="132" class="label">ONE CONTINUOUS LOAD PATH</text>
+  <rect x="65" y="200" width="60" height="520" fill="#98978f" stroke="#333" stroke-width="4" />
+  <rect x="440" y="200" width="60" height="520" fill="#98978f" stroke="#333" stroke-width="4" />
+  <rect x="125" y="520" width="300" height="200" fill="#bbb9af" stroke="#333" stroke-width="5" />
+  <rect x="125" y="700" width="300" height="20" fill="#83724d" />
+  <text x="144" y="600">ONE MOVING SLAB</text>
+  <text x="150" y="633" class="small">fully seated on threshold</text>
+  <circle cx="405" cy="678" r="16" fill="#f5f1e8" stroke="#333" stroke-width="7" />
+  <path d="M405 662V230Q405 160 450 160Q490 160 490 200L570 350" class="chain" />
+  <circle cx="450" cy="193" r="34" fill="none" stroke="#333" stroke-width="7" />
+  <circle cx="450" cy="193" r="8" fill="#333" />
+  <path d="M450 157V140H505V205H483" class="line" />
+  <text x="40" y="171" class="small">fixed masonry / vertical guides</text>
+  <text x="215" y="318" class="small">single chain</text>
+  <path d="M345 312H395" class="line" />
+  <text x="180" y="400" class="small">one upper guide</text>
+  <path d="M340 385L430 223" class="line" />
+  <rect
+    x="520"
+    y="360"
+    width="110"
+    height="65"
+    rx="16"
+    fill="#7d614a"
+    stroke="#333"
+    stroke-width="5"
+  />
+  <path d="M530 352V460M620 352V460M505 460H650" class="line" />
+  <path
+    d="M540 368V417M557 368V417M574 368V417M591 368V417M608 368V417"
+    stroke="#465a64"
+    stroke-width="7"
+  />
+  <text x="500" y="500" class="small">same drum / two supports</text>
+  <text x="150" y="760" class="small">The closed slab bears on stone.</text>
+  <text x="150" y="786" class="small">The two wedges stop drum rotation.</text>
+  <text x="735" y="132" class="label">TWO DISTINCT WEDGE / BEARING PAIRS</text>
+  <text x="735" y="166" class="small">
+    Front view: expose both existing cheek-to-drum-flange gaps.
+  </text>
+  <rect x="810" y="200" width="50" height="330" fill="#a59883" stroke="#333" stroke-width="5" />
+  <rect x="1340" y="200" width="50" height="330" fill="#a59883" stroke="#333" stroke-width="5" />
+  <path d="M790 530H1410" class="line" />
+  <rect
+    x="880"
+    y="240"
+    width="40"
+    height="240"
+    rx="5"
+    fill="#6f543f"
+    stroke="#333"
+    stroke-width="5"
+  />
+  <rect
+    x="1280"
+    y="240"
+    width="40"
+    height="240"
+    rx="5"
+    fill="#6f543f"
+    stroke="#333"
+    stroke-width="5"
+  />
+  <rect
+    x="920"
+    y="265"
+    width="360"
+    height="190"
+    rx="20"
+    fill="#82634b"
+    stroke="#333"
+    stroke-width="5"
+  />
+  <path d="M810 355H1390" stroke="#333" stroke-width="12" />
+  <path
+    d="M970 270V451M1000 270V451M1030 270V451M1060 270V451M1090 270V451M1120 270V451M1150 270V451M1180 270V451M1210 270V451"
+    stroke="#465a64"
+    stroke-width="8"
+  />
+  <polygon points="860,190 900,190 878,340 860,325" fill="#c8a164" stroke="#333" stroke-width="4" />
+  <polygon
+    points="1300,190 1340,190 1340,325 1322,340"
+    fill="#c8a164"
+    stroke="#333"
+    stroke-width="4"
+  />
+  <path
+    d="M867 212L867 315M874 211L874 296M1326 211L1326 315M1333 212L1333 315"
+    stroke="#9a743f"
+    stroke-width="2"
+  />
+  <circle cx="860" cy="280" r="7" class="contact" />
+  <circle cx="884" cy="280" r="7" class="contact" />
+  <circle cx="1316" cy="280" r="7" class="contact" />
+  <circle cx="1340" cy="280" r="7" class="contact" />
+  <text x="795" y="574" class="small">fixed cheek A</text>
+  <text x="1275" y="574" class="small">fixed cheek B</text>
+  <text x="850" y="220" class="label">A</text>
+  <text x="1320" y="220" class="label">B</text>
+  <text x="925" y="505" class="small">same horizontal wooden drum / same axle</text>
+  <text x="725" y="635" class="label">SHOW THE CONTACTS IN THE SCENE</text>
+  <rect x="740" y="670" width="65" height="190" fill="#a59883" stroke="#333" stroke-width="4" />
+  <rect x="855" y="705" width="60" height="155" fill="#6f543f" stroke="#333" stroke-width="4" />
+  <polygon points="805,650 885,650 855,805 805,790" fill="#c8a164" stroke="#333" stroke-width="4" />
+  <circle cx="805" cy="755" r="8" class="contact" />
+  <circle cx="865" cy="755" r="8" class="contact" />
+  <text x="725" y="900" class="small">A: tapered oak nose between</text>
+  <text x="725" y="927" class="small">stationary cheek / drum flange</text>
+  <rect x="1170" y="705" width="60" height="155" fill="#6f543f" stroke="#333" stroke-width="4" />
+  <rect x="1280" y="670" width="65" height="190" fill="#a59883" stroke="#333" stroke-width="4" />
+  <polygon
+    points="1200,650 1280,650 1280,790 1230,805"
+    fill="#c8a164"
+    stroke="#333"
+    stroke-width="4"
+  />
+  <circle cx="1220" cy="755" r="8" class="contact" />
+  <circle cx="1280" cy="755" r="8" class="contact" />
+  <text x="1095" y="900" class="small">B: independent second nose,</text>
+  <text x="1095" y="927" class="small">same two bearing surfaces</text>
+  <text x="40" y="976" class="small">
+    Red marks locate material contacts only. Do not copy labels, red marks, diagram colours or extra
+    pieces into the illustration.
+  </text>
+</svg>

@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nONE HILT EDIT before any attack. Change the round pommel to a flat iron DISK. Keep the straight iron crossguard, dark brown leather grip, and clean straight double-edged blade. No blood, brass, or gold.\n\nDo not move the sentry, shield, or tree. No text. Overwrite the same 1672×941 frame.\n",
+  "referenced_image_paths": [
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/bandits/sentry.png",
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+  ],
+  "transparent_background": false
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-28",
+  "tool": "built-in image_gen.imagegen",
+  "operation": "generate",
+  "status": "SUPERSEDED_CANDIDATE",
+  "attempt_id": "ending-money-attempt-01",
+  "source": {
+    "path": "/Users/vovanostm/learn/warwrit-writing/drafts/faddei.md",
+    "revision": "r4.1",
+    "writer_commit": "f1f743b",
+    "section": "Концовки / Сохранённые деньги"
+  },
+  "actual_arguments_file": "history/ending-money-attempt-01.arguments.json",
+  "actual_prompt_file": "history/ending-money-attempt-01.prompt.txt",
+  "original_output": "/Users/vovanostm/.codex/generated_images/01a18345-5dc9-7491-99bd-d5ba2ba71e91/exec-fd736a03-8ac1-403f-97b7-18df7a31fcd5.png",
+  "workspace_candidate": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/ending-money-attempt-01/candidate.png",
+  "selected_stable_asset": null,
+  "measured_output": {
+    "width": 1536,
+    "height": 1024,
+    "bit_depth": 8,
+    "color_type": 2,
+    "alpha": false,
+    "method": "Read-only PNG IHDR; no pixel edits/hashes"
+  },
+  "review_report": "Artist+parent: Pelageya right hand touches bag before explanation.",
+  "review_authority": "Parent reports independent critic and personal inspection where stated. Artist is not the independent critic. No numerical scores invented.",
+  "input_resolution": [
+    {
+      "executed_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-01.png",
+      "inspected_before_use": true,
+      "role": "limited_visible_identity_or_layout",
+      "limits": "Exact role/exclusions in actual prompt; hidden/full turnaround not certified.",
+      "frozen_source_original_png": "/Users/vovanostm/.codex/generated_images/01a18345-5dc9-7491-99bd-d5ba2ba71e91/exec-01269be2-fcd0-4c07-a453-f047d4c4c94d.png",
+      "retained_workspace_copy": "work/scene-01-attempt-01/candidate.png"
+    },
+    {
+      "executed_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/village.png",
+      "inspected_before_use": true,
+      "role": "selected_style",
+      "limits": "Exact role/exclusions in actual prompt; hidden/full turnaround not certified.",
+      "frozen_source_original_png": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/village.png",
+      "retained_workspace_copy": "references/style-village.png"
+    }
+  ],
+  "actual_tool_result_metadata": {
+    "output_hint": "Generated images are saved to /Users/vovanostm/.codex/generated_images/01a18345-5dc9-7491-99bd-d5ba2ba71e91 as /Users/vovanostm/.codex/generated_images/01a18345-5dc9-7491-99bd-d5ba2ba71e91/exec-fd736a03-8ac1-403f-97b7-18df7a31fcd5.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "omitted_field": "image_url is PNG data URI; binary pixels preserved in original_output/workspace_candidate, not duplicated as base64 text."
+  },
+  "artist_view": "Every actual candidate viewed locally with view_image.",
+  "reader_integration": "Artist NOT_RUN; parent owns. Only scene04 source/dim live check explicitly reported here.",
+  "hidden_details": "NOT_VERIFIABLE; clean full reference sheets NOT_GENERATED",
+  "external_api_cli_keys_purchases": "NOT_USED"
+}

@@ -27,6 +27,7 @@
     "dev": "pnpm --parallel --filter @warwrit/server --filter @warwrit/web run dev",
     "dev:map": "pnpm --filter @warwrit/game-core build && pnpm --filter @warwrit/web exec vite ../.. --host 127.0.0.1 --port 5326 --strictPort --open /scripts/world-map/navigation-lab.html",
     "dev:combat": "bash scripts/start-sprite-combat.sh",
+    "dev:missions": "pnpm --filter @warwrit/protocol... build && pnpm --filter @warwrit/web dev --host 127.0.0.1 --port 5328 --strictPort",
     "dev:world": "bash scripts/start-world-lab.sh",
     "format": "prettier . --check",
     "format:write": "prettier . --write",

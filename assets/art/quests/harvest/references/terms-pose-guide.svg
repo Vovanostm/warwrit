@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <rect width="1536" height="1024" fill="#a9afb5" />
+  <path d="M0 340H1536V1024H0Z" fill="#b7a185" />
+  <path d="M745 325L1200 370 1230 560 830 590Z" fill="#6a5340" stroke="#3c3530" stroke-width="9" />
+  <ellipse cx="825" cy="470" rx="80" ry="100" fill="#6a5340" stroke="#3c3530" stroke-width="9" />
+  <!-- Timosh stands behind cart: pale shirt, no cap interaction. -->
+  <circle cx="595" cy="180" r="43" fill="#a4b8bc" />
+  <path
+    d="M560 220L640 220 665 430 628 470 627 622 593 625 585 470 564 615 532 614 546 423Z"
+    fill="#a4b8bc"
+  />
+  <path d="M635 240L699 340 751 391" fill="none" stroke="#a4b8bc" stroke-width="29" />
+  <!-- Corpse/cap fixed. -->
+  <path d="M0 850L100 775 560 685 758 640 808 687 824 755 659 833 190 993 0 980Z" fill="#5a5553" />
+  <!-- Older Luka kneels to RIGHT of corpse head facing left, RIGHT hand at cap; LEFT own thigh. -->
+  <circle cx="944" cy="438" r="50" fill="#806747" />
+  <path d="M916 489L985 493 1016 654 970 719 870 752 839 711 905 648Z" fill="#806747" />
+  <path
+    d="M916 516L865 588 770 665M979 520L1011 599 990 669"
+    fill="none"
+    stroke="#806747"
+    stroke-width="31"
+  />
+  <path
+    d="M944 694L1075 749 1110 800 1059 815 979 756M898 716L858 787 807 800"
+    fill="none"
+    stroke="#806747"
+    stroke-width="44"
+  />
+  <!-- Rada stands at right; RIGHT hand down on sheaf left of her boots. -->
+  <circle cx="1290" cy="210" r="45" fill="#bd9353" />
+  <path d="M1249 253L1330 250 1372 602 1351 708 1256 709 1224 599Z" fill="#bd9353" />
+  <path
+    d="M1254 280L1219 432 1178 684M1323 280L1360 420 1334 516"
+    fill="none"
+    stroke="#bd9353"
+    stroke-width="27"
+  />
+  <path d="M1266 690V769M1335 690V775" stroke="#bd9353" stroke-width="27" />
+  <ellipse cx="1174" cy="713" rx="55" ry="45" fill="#ba955b" />
+</svg>

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "well-anchor-restaged",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-anchor",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "Closer natural camera aimed at K upperbody and right ledge in same shaft. Single hemp body loop UNDER BOTH ARMPITS with one front bowline knot and ONE main line ascending out top; no neck loop/shoulder straps. K own separate hands grip mainline/frontbodyloop, RIGHT boot grounded on ledge/RIGHT knee patch; LEFT leg remains tucked free. At lower-left edge only D existing connected reaching hand/forearm enters frame. Corrected stone restraint from depth remains outside closer crop, not removed. No more corpse body introduced.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading. Backgrounds have large quiet shape masses as accepted start.png; only focal faces/hands carry detail. No uniform fine mud/wood/stone/stubble strokes."
+  },
+  "references": [
+    {
+      "id": "base",
+      "path": "assets/art/quests/well/depth.png",
+      "role": "edit_target",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Accepted exact pinned corpse/ledge and K identity, before rope. This correct base supersedes old anchor candidate with weak restraint."
+    },
+    {
+      "id": "cast",
+      "path": "assets/art/quests/well/references/cast.png",
+      "role": "identity",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "K face/clothing/rightknee patch and boots only; no shoulder straps/bandage."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "closer-support",
+      "region": "framing and K supportrope/handpose",
+      "request": "Create the NEXT moment from this accepted shaft base, keeping the same stone construction and light. Move camera CLOSER to K on right ledge; frame his head, torso, both own hands, RIGHT patched knee and RIGHT boot/ledge contact. His LEFT injured leg stays tucked and NOT weight-bearing. Because camera moves closer/right, the pinned corpse HEAD/TORSO naturally stay OUTSIDE lower-LEFT crop: only its SAME connected reaching forearm/hand enters at lower-left, well BELOW K and not touching him. The heavy stone restraining corpse from accepted base still exists outside crop, not broken or moved. Add ONE correctly constructed thick hemp rescue rope: a CLOSED simple body loop passes HORIZONTALLY around K torso JUST BELOW BOTH ARMPITS, across upper chest below arm roots and behind his back. A visible plain bowline knot at front beside anatomical RIGHT armpit joins this loop to exactly ONE taut MAIN LINE ascending UP out of canvas. NO rope over either shoulder, around neck/head, wrists or injured ankle; no paired shoulder straps, duplicate mainline, modern harness or belt. K anatomical RIGHT hand grips the ONE rising mainline below head, LEFT hand grips front horizontal BODY LOOP below his left armpit; each fist connected to its own distinct forearm, arms ABOVE loop. Weight is held by loop beneath armpits, not just his hands. He looks UP to unseen helper, brow pulled high, mouth open from urgent breath, no relaxed smile. Maintain ochre tunic, charcoal pants, right-knee grey patch, both darkbrown boots, clay stains, hair/face and same grounded RIGHT sole. Same quiet broad stone wash masses; NOT etched blocks or pebbled CGI. No extra human, weapon, text, neckcord or unchosen rescue outcome. Landscape1536x1024.",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "Same accepted shaft, ledge, pinning rubble, lighting, K face/hair/outfit/patch/boots and anatomical injury side.",
+    "One dead man remains pinned below; crop is camera change, not escape or teleport.",
+    "Matte graphic-novel values and readable distinction between warm living skin, ochre shirt and grey stone."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/anchor.png",
+    "transparent_background": false
+  }
+}

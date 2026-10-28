@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Prepare a clean illustrated-novel reader
+
+- 2026-10-28, branch `codex/novels-readable-illustrated`, local integration:
+  transplant the nine-story reader and 34 active legacy scene images from
+  `8de22870` onto main `48d8a2ae`. Add a DEV entry in `main.tsx` and port 5328
+  command; preserve the old stand. Import accepted Yakov v5 (`399d698`),
+  Guide r4 (`67279ba`) and Savva r4.2 (`b374298`) verbatim, including shorter
+  structures, conditional prose, independent choices and explicit payment.
+  Separate manuscript-to-TS and TS-to-DOM checks pass all 16/8/64 paths.
+  Faddei uses all 12 selected scene/ending images with provenance and history.
+  No App/company/server/map/dependency changes. Full build/types passed before
+  text changes; current focused 34/web types/full lint/scoped format/audit pass.
+  Legacy browser passes 31 paths in both themes; artist JSON formatting is fixed. Savva predictability and weaker release branch remain literary limits,
+  not an unconditional artistic ACCEPT. Faddei browser passes all 12 paths and images in both themes; final technical
+  review found no defects. Existing final bootstrap passed (1243 unit tests,
+  84 skipped, 10k stress battles, 74 migration/integration tests); an initial
+  lint failure from a local browser-evidence snippet was fixed by retaining it
+  as text, without rule changes. Normal hooks retained; publication not run.
+  [Current scope, evidence and limitations](docs/wiki/mission-testing.md).
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in
