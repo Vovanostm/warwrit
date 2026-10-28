@@ -14,8 +14,9 @@ Initial types failed on unbuilt protocol/testkit; package builds and rerun PASS.
 [Owning result and limits](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 [PR331](https://github.com/Vovanostm/warwrit/pull/331) MERGED as `2ef8bfef`; expected head `5cc2d2a5`.
 CI40665712843 and scope40665746964 PASS; merge/main tree matches tested head.
-This post-merge documentation checkpoint is local and retained in the task archive.
-Next: archive this clean worktree after preserving screenshots; no remaining code work.
+This post-merge documentation checkpoint is local in the clean task worktree.
+Cleanup: server stopped, evidence saved, tree clean. App blocks primary-checkout
+archival; the chat directory must change before removal. No remaining code work.
 No deployment authorized.
 
 ## Networked atlas PR delivery — 2026-10-27, CI CORRECTION

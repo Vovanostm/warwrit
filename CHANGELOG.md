@@ -26,7 +26,8 @@ requests.
   repair bounds. Initial scope check required the coordinator label and tracked
   contract link; corrected without changing art/code. Final CI40665712843 and
   scope40665746964 PASS; expected-head merge/main readback confirmed. This
-  post-merge status correction is local, retained in the task archive.
+  post-merge status correction is local in the clean worktree; the app blocks
+  primary-checkout archival. Test server stopped and evidence preserved.
   [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements

@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "branch": "codex/map-road-continuity",
-  "status": "MERGED2026-10-28 as2ef8bfef in PR331; this post-merge metadata readback is local and retained in the task archive",
+  "status": "MERGED2026-10-28 as2ef8bfef in PR331; local post-merge readback in clean worktree; app blocks primary-checkout archival",
   "tool": "built-in image_gen.imagegen",
   "sourceImage": "atlas-v5.png",
   "activeImage": "atlas-v6.png",
@@ -94,5 +94,6 @@
     "run": 40665712843,
     "head": "5cc2d2a529ffdfcee6ad24a86c45a80728fb5bd1",
     "conclusion": "SUCCESS"
-  }
+  },
+  "cleanup": "Owned Vite5346 stopped; screenshots/production evidence preserved in primary repository output/map-road-continuity. App archive rejected primary checkout; directory switch required before removal."
 }
