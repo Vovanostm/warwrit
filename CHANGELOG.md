@@ -11,7 +11,8 @@ requests.
 
 ### Painted atlas road continuity
 
-- 2026-10-28, branch `codex/map-road-continuity`, published in
+- 2026-10-28, branch `codex/map-road-continuity`, merged2026-10-28 as
+  `2ef8bfef` in
   [PR331](https://github.com/Vovanostm/warwrit/pull/331): owner reported two
   roads terminating against ploughed fields. Add `atlas-v6.png` with local
   imagegen repairs connecting the southern forest road to Tikhaya's junction
@@ -23,7 +24,9 @@ requests.
   at `27b989bc`, six applicable scores2; normal commit hook/audit PASS with a
   syntactic attribution warning. PNG4608×3072; no changed pixel outside the two
   repair bounds. Initial scope check required the coordinator label and tracked
-  contract link; corrected without changing art/code. PR CI/merge pending.
+  contract link; corrected without changing art/code. Final CI40665712843 and
+  scope40665746964 PASS; expected-head merge/main readback confirmed. This
+  post-merge status correction is local, retained in the task archive.
   [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements
