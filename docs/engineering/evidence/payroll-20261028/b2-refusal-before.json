@@ -1,1 +1,98 @@
-{"snapshot": {"claims": [{"dueAt": "1000", "paidQ": "9170000", "earned": [{"toTick": "1000", "fromTick": "83", "maintenanceId": null, "dailyWageMilli": "10000"}], "poolId": "local", "toTick": "1000", "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"83\"]", "fromTick": "83", "reportedQ": "9170000", "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]", "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]", "maintenanceId": null, "dailyWageMilli": "10000", "reportedCoveredQ": "0"}, {"dueAt": "2000", "paidQ": "10000000", "earned": [{"toTick": "2000", "fromTick": "1000", "maintenanceId": null, "dailyWageMilli": "10000"}], "poolId": "local", "toTick": "2000", "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"1000\"]", "fromTick": "1000", "reportedQ": "10000000", "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]", "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]", "maintenanceId": null, "dailyWageMilli": "10000", "reportedCoveredQ": "0"}, {"dueAt": "3000", "paidQ": "0", "earned": [{"toTick": "3000", "fromTick": "2000", "maintenanceId": null, "dailyWageMilli": "10000"}], "poolId": "local", "toTick": "3000", "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"2000\"]", "fromTick": "2000", "reportedQ": "10000000", "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]", "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]", "maintenanceId": null, "dailyWageMilli": "10000", "reportedCoveredQ": "0"}, {"dueAt": "4000", "paidQ": "0", "earned": [{"toTick": "4000", "fromTick": "3000", "maintenanceId": null, "dailyWageMilli": "10000"}], "poolId": "local", "toTick": "4000", "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"3000\"]", "fromTick": "3000", "reportedQ": "10000000", "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]", "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]", "maintenanceId": null, "dailyWageMilli": "10000", "reportedCoveredQ": "0"}], "wallets": [{"cashQ": "830830000", "owner": {"id": "aa69954b-f9ec-487f-8136-37e3ae7260de", "kind": "COMPANY"}, "location": {"kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor"}, "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:company-purse"}, {"cashQ": "0", "owner": {"id": "99605c76-af5e-4085-b4cd-1b54dae10da0", "kind": "CHARACTER"}, "location": {"kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor"}, "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:wallet:99605c76-af5e-4085-b4cd-1b54dae10da0"}, {"cashQ": "69170000", "owner": {"id": "dbabba19-b3f5-4e09-b50d-d2b9b02d74b4", "kind": "CHARACTER"}, "location": {"kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor"}, "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:wallet:dbabba19-b3f5-4e09-b50d-d2b9b02d74b4"}], "publicRevision": "9", "canonicalRevision": "9"}, "auditCount": 9, "receiptCount": 7}
+{
+  "snapshot": {
+    "claims": [
+      {
+        "dueAt": "1000",
+        "paidQ": "9170000",
+        "earned": [
+          { "toTick": "1000", "fromTick": "83", "maintenanceId": null, "dailyWageMilli": "10000" }
+        ],
+        "poolId": "local",
+        "toTick": "1000",
+        "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"83\"]",
+        "fromTick": "83",
+        "reportedQ": "9170000",
+        "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]",
+        "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]",
+        "maintenanceId": null,
+        "dailyWageMilli": "10000",
+        "reportedCoveredQ": "0"
+      },
+      {
+        "dueAt": "2000",
+        "paidQ": "10000000",
+        "earned": [
+          { "toTick": "2000", "fromTick": "1000", "maintenanceId": null, "dailyWageMilli": "10000" }
+        ],
+        "poolId": "local",
+        "toTick": "2000",
+        "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"1000\"]",
+        "fromTick": "1000",
+        "reportedQ": "10000000",
+        "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]",
+        "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]",
+        "maintenanceId": null,
+        "dailyWageMilli": "10000",
+        "reportedCoveredQ": "0"
+      },
+      {
+        "dueAt": "3000",
+        "paidQ": "0",
+        "earned": [
+          { "toTick": "3000", "fromTick": "2000", "maintenanceId": null, "dailyWageMilli": "10000" }
+        ],
+        "poolId": "local",
+        "toTick": "3000",
+        "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"2000\"]",
+        "fromTick": "2000",
+        "reportedQ": "10000000",
+        "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]",
+        "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]",
+        "maintenanceId": null,
+        "dailyWageMilli": "10000",
+        "reportedCoveredQ": "0"
+      },
+      {
+        "dueAt": "4000",
+        "paidQ": "0",
+        "earned": [
+          { "toTick": "4000", "fromTick": "3000", "maintenanceId": null, "dailyWageMilli": "10000" }
+        ],
+        "poolId": "local",
+        "toTick": "4000",
+        "claimId": "[\"wage\",\"[\\\"72827f93-6e7f-4daa-8efa-d199cc549d58\\\",\\\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\\\",\\\"membership\\\"]\",\"3000\"]",
+        "fromTick": "3000",
+        "reportedQ": "10000000",
+        "rateVersion": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"wage\"]",
+        "membershipId": "[\"72827f93-6e7f-4daa-8efa-d199cc549d58\",\"dbabba19-b3f5-4e09-b50d-d2b9b02d74b4\",\"membership\"]",
+        "maintenanceId": null,
+        "dailyWageMilli": "10000",
+        "reportedCoveredQ": "0"
+      }
+    ],
+    "wallets": [
+      {
+        "cashQ": "830830000",
+        "owner": { "id": "aa69954b-f9ec-487f-8136-37e3ae7260de", "kind": "COMPANY" },
+        "location": { "kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor" },
+        "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:company-purse"
+      },
+      {
+        "cashQ": "0",
+        "owner": { "id": "99605c76-af5e-4085-b4cd-1b54dae10da0", "kind": "CHARACTER" },
+        "location": { "kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor" },
+        "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:wallet:99605c76-af5e-4085-b4cd-1b54dae10da0"
+      },
+      {
+        "cashQ": "69170000",
+        "owner": { "id": "dbabba19-b3f5-4e09-b50d-d2b9b02d74b4", "kind": "CHARACTER" },
+        "location": { "kind": "AT", "areaId": "severny-dvor-yard", "siteId": "severny-dvor" },
+        "walletId": "72827f93-6e7f-4daa-8efa-d199cc549d58:wallet:dbabba19-b3f5-4e09-b50d-d2b9b02d74b4"
+      }
+    ],
+    "publicRevision": "9",
+    "canonicalRevision": "9"
+  },
+  "auditCount": 9,
+  "receiptCount": 7
+}

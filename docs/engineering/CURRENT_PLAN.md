@@ -31,7 +31,9 @@ Retained player/lab databases are untouched; test integration harness owns only 
 Parallel command recovery uses `codex/game-command-recovery`; production startup correction is [PR334](https://github.com/Vovanostm/warwrit/pull/334).
 Authorized writing chat continues selected stories under the warwrit-writing contract; no global canon change.
 Final whole-scope normal commit hook/related tests/audit PASS on isolated-prefix DB; no bypass or threshold reduction.
-Next: publish the committed slice and read applicable hosted CI; no merge authorized.
+[PR338](https://github.com/Vovanostm/warwrit/pull/338) published at1afc3f9e; scope SUCCESS; CI40755025345 failed formatting23 files.
+Pinned formatting correction preserves source behavior/parsed evidence; final normal hook/related/audit PASS.
+Next: publish correction and read applicable hosted CI; no merge authorized.
 
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 

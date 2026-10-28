@@ -50,6 +50,20 @@ requests.
   production behavior in this test correction. Final whole-scope normal commit
   hook/related tests/audit PASS on the proper isolated DB, without bypass.
 
+### Payroll hosted formatting correction
+
+- 2026-10-28, branch `codex/game-payroll`, local correction to published
+  PR338: first CI40755025345 stopped at formatting in executor.ts and22
+  native evidence JSON files. Apply the pinned formatter; ordinary source diff
+  changes only line wrapping and parsed evidence values remain equal. No
+  finance/request behavior changed. Normal hooks and current-head CI remain
+  required. The staged-only hook refresh initially omitted unchanged branch
+  client coverage; fresh whole-branch related coverage457 PASS/21 SKIP is reused
+  through the existing source-freshness-checked report merger, with independent
+  source ACCEPT. No audit-base/threshold change; no merge or deployment.
+  Final ordinary hook/related/audit PASS; corrected-head hosted CI remains.
+  See the owning payroll evidence.
+
 ### Pay earned wages through the company panel
 
 - 2026-10-28, branch `codex/game-payroll`, LOCAL: the autonomous game mission

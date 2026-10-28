@@ -655,15 +655,13 @@ async function executePayrollPayment(input: {
     rulesetId: COMPANY_RULESET_ID,
     ...payrollCommandIntent(input.request),
   });
-  if (!parsed.ok || parsed.command.type !== 'PayClaims')
-    return reject('INVALID_COMMAND');
+  if (!parsed.ok || parsed.command.type !== 'PayClaims') return reject('INVALID_COMMAND');
 
   const prepared = prepareCompanyEconomy(observation.next, parsed.command, {
     ...observation.context,
     principal: { kind: 'PLAYER', id: input.accountId },
   });
-  if (prepared.kind !== 'PREPARED')
-    return reject(mapDomainError(prepared.error));
+  if (prepared.kind !== 'PREPARED') return reject(mapDomainError(prepared.error));
   if (
     !ordinaryCommandSucceeded(input.request, prepared, {
       partyId: undefined,

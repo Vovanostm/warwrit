@@ -264,3 +264,25 @@ no suppressed test-failure warning on this final attempt, no bypass or threshold
 change. This is the final committed production source; subsequent record edits
 are documentation only. Hosted clean verification remains the publication gate.
 Detailed diagnostic logs remain under local ignored output/playwright/game-payroll-runtime/.
+
+## First hosted check and formatting correction
+
+PR338 initial head1afc3f9e: scope SUCCESS; CI40755025345 stopped in bootstrap
+format before tests. Its log identifies executor.ts line wrapping and22 native
+evidence JSON files. The pinned formatter corrects those paths; ordinary source
+diff changes only two wrapped if statements, and all22 parsed JSON values equal
+the published files. Gameplay/source reviews and finite browser evidence remain
+applicable. The correction still runs ordinary hooks and new-head hosted CI.
+No financial rules, request bytes or recorded native values were changed.
+
+The formatting-only commit first hit the audit because its staged-executor-only
+related run replaced coverage for the whole branch: unchanged client functions
+appeared untested. No base or threshold changed. Parent reran actual related
+coverage over every branch-changed TS/TSX on the final formatted source:
+457 PASS/21 SKIP (including real PostgreSQL under the isolated-prefix DB).
+Its unchanged genuine Istanbul report is retained outside coverage/ and passed
+through the existing checked report merger after the hook refreshes its focused
+coverage. Independent source review ACCEPT for this evidence use. This preserves
+real measured hits for unchanged source; it does not fabricate counters or turn
+merged coverage into browser acceptance. Final ordinary hook/related checks/audit PASS, with the normal main comparison
+and no bypass. Hosted verification is still required for the corrected head.
