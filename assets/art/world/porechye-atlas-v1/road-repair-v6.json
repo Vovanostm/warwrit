@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/map-road-continuity",
+  "status": "published in PR331; independent visual ACCEPT at 27b989bc; merge awaits CI",
+  "tool": "built-in image_gen.imagegen",
+  "sourceImage": "atlas-v5.png",
+  "activeImage": "atlas-v6.png",
+  "dimensions": [4608, 3072],
+  "scope": "Two reported raster road discontinuities only; retained historical atlas rendering and geometry. No movement, terrain, privacy, server or migration changes.",
+  "repairs": [
+    {
+      "id": "south-field-junction",
+      "crop": {
+        "left": 2100,
+        "top": 1450,
+        "width": 1024,
+        "height": 1024
+      },
+      "prompt": "Use case: precise-object-edit. Edit target: the supplied 1024x1024 crop of Warwrit's existing painted atlas. Repair ONLY broken road connectivity, retain the exact top-down composition, palette, scale, original ink/wash rendering and every landmark. The pale cart road rising from the bottom through the forest currently ends abruptly against the ploughed field at approximately (530,600). Continue it visibly around the WEST/LEFT boundary of that small diagonal field: from (530,600) curve toward (470,535), then (445,470), then (465,410), then turn east/northeast along the existing field boundary through (540,385),(625,355) to connect cleanly with the established main road junction at (700,325), which leads to the village on the right. Make this one continuous worn dirt cart road, same width as the forest road (roughly 9-12 pixels), with two subdued wheel ruts, irregular ink edges and natural grass shoulders. Remove any hedge/tree or plough stroke crossing that road strip; fields end cleanly at its shoulders. Also clarify the existing minor field-access path from (465,410) west to (410,455),(360,525) as a narrower coherent track, connected naturally rather than mistaken for furrows. Do not cut through field interiors, add unrelated roads, bridges, water, buildings, symbols or text. No abrupt stubs or road hidden under crops/hedges. Preserve river, bridges, village, ruins, forest outlines and all outer border pixels exactly; no global redraw, lighting, sharpening or style change. Preserve 1024x1024 size and coordinates. This is a local repair to retained historical map art, not a replacement style.",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a181bb-564a-74b0-9786-a42d5ab11537/exec-d7980956-ee15-434f-b639-e617caea40e9.png",
+      "integration": {
+        "resize": [1024, 1024],
+        "method": "Blend generated pixels only within distance38px of these local polylines; full opacity through22px, linear feather to38px. All other decoded source pixels retained.",
+        "lines": [
+          [
+            [530, 615],
+            [530, 600],
+            [500, 560],
+            [470, 530],
+            [445, 470],
+            [465, 410],
+            [540, 385],
+            [625, 355],
+            [700, 325]
+          ],
+          [
+            [465, 410],
+            [410, 455],
+            [360, 525]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "brod-east-field-junction",
+      "crop": {
+        "left": 2670,
+        "top": 1100,
+        "width": 600,
+        "height": 600
+      },
+      "prompt": "Use case: precise-object-edit. Edit ONLY the supplied square 600x600 top-down Warwrit atlas crop. Preserve exact geography, camera, scale, muted ochre/olive/soot palette, historical hand-inked map technique and landmark coordinates. The dirt cart road from the RIGHT edge reaches (360,360) and wrongly terminates at a hedge against a ploughed field. Connect it to the existing village lane on the LEFT around the NORTH edge of that horizontal-furrow field: bend from (370,360) via (345,350),(336,330),(336,315), then run west along the existing field-edge corridor through (290,307),(230,296),(175,286),(120,280) to the village lane at (75,278). Draw a natural continuous 6-8px wide worn dirt road with irregular ink shoulders and subtle wheel ruts, same material as the existing road from right. Smooth the bend. Replace ONLY narrow strips of hedge/trees/crops where this road passes, leaving field interiors intact. The road must visibly join at both ends; no unexplained dead end, plough lines or hedge across the carriageway. Keep the river, bridge, village roofs, gardens, forest outlines, all other fields/roads and the outer image border unchanged. No invented bridges, river crossing, buildings, text, emblems, lighting or global style change. This is a local repair to retained historical art. Return same framing and proportions.",
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a181bb-564a-74b0-9786-a42d5ab11537/exec-6aa7b181-d3a1-4bad-b040-0b000f76d658.png",
+      "integration": {
+        "resize": [600, 600],
+        "method": "Blend generated pixels only within distance25px of this local polyline; full opacity through14px, linear feather to25px. All other decoded source pixels retained.",
+        "line": [
+          [65, 278],
+          [120, 280],
+          [175, 286],
+          [230, 296],
+          [270, 302],
+          [300, 313],
+          [320, 338],
+          [345, 354],
+          [370, 360],
+          [415, 354]
+        ]
+      }
+    }
+  ],
+  "acceptanceRule": "Trace every edited through-road from one established connection to the other at native and game scale, on overview and close day/night views. A road must not terminate at a field/hedge or be overdrawn by furrows/trees. Inspect the adjacent tile seam as one landscape before accepting.",
+  "limits": [
+    "Raster continuity is checked visually; a unit test cannot prove road plausibility.",
+    "The existing navigation cost geometry is unchanged; this art repair does not claim every painted farm lane has a road speed bonus.",
+    "No deployment or full-MMO acceptance."
+  ],
+  "review": {
+    "revision": "27b989bc",
+    "verdict": "ACCEPT",
+    "scores": {
+      "roadFootprint": 2,
+      "rendering": 2,
+      "valuePalette": 2,
+      "materialsWear": 2,
+      "propsLore": 2,
+      "sceneIntegration": 2
+    },
+    "notApplicable": ["pose", "motion"],
+    "limits": "Independent input replay NOT_RUN; broader atlas has no further clear through-road stubs in visual inspection. Edge/rut texture polish remains at score2; no blocking defect."
+  },
+  "pullRequest": "https://github.com/Vovanostm/warwrit/pull/331"
+}

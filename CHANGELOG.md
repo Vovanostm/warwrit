@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Painted atlas road continuity
+
+- 2026-10-28, branch `codex/map-road-continuity`, published in
+  [PR331](https://github.com/Vovanostm/warwrit/pull/331): owner reported two
+  roads terminating against ploughed fields. Add `atlas-v6.png` with local
+  imagegen repairs connecting the southern forest road to Tikhaya's junction
+  and Brod's eastern approach to its village lane. Both lab consumers now use
+  v6; v5/history retained. Exact prompts, crop/blend geometry and a road-tracing
+  acceptance rule accompany the image. Movement/terrain/SQL remain unchanged.
+  Map20/types and author browser day/night/zoom/overview/arrival PASS after
+  building initially missing protocol/testkit outputs. Independent visual ACCEPT
+  at `27b989bc`, six applicable scores2; normal commit hook/audit PASS with a
+  syntactic attribution warning. PNG4608×3072; no changed pixel outside the two
+  repair bounds. Initial scope check required the coordinator label and tracked
+  contract link; corrected without changing art/code. PR CI/merge pending.
+  [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+
 ### Networked atlas CI measurements
 
 - 2026-10-27, branch `codex/world-map-mmo-design`, local correction to
