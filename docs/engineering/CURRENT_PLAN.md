@@ -1,8 +1,9 @@
 # Warwrit current delivery plan
 
-## Production game readiness — 2026-10-28, LOCAL / source ACCEPT
+## Production game readiness — 2026-10-28, PR334 / source ACCEPT
 
 Coordinator/validation owner: parent; branch `codex/game-production-readiness`, base `caee351b`.
+Integrated main `48d8a2ae` after PR333; only shared-record conflicts, both histories retained.
 Current owner mission: autonomous game implementation, isolated worktrees and PRs.
 No current merge, deployment, paid-resource or Orca/automation permission.
 Outcome: production cannot report a ready health-only process without game dependencies.
@@ -12,10 +13,87 @@ Independent read-only source review ACCEPT; config/app12 PASS, package builds/se
 Actual missing-config production entry process exits with the intended refusal.
 Owning contract: [ID01 identity](ID01-IDENTITY.md); related launch task #176 remains open.
 Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
-Parent owns documentation, commit, PR and applicable hosted-check readback.
+[PR334](https://github.com/Vovanostm/warwrit/pull/334), initial head `efcddb06`; normal commit audit PASS.
+Parent owns integration and applicable hosted-check readback; no merge authorized.
 Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
 
-## Atlas road nodes and routing — 2026-10-28, PR332 / LOCAL CHECKPOINT
+## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
+Owner: «ok, pr, merge» authorizes publication and normal expected-head merge.
+Base/live main `caee351b`; unchanged diagnostic code accepted at `dea28641`.
+Scope: optional lab graph, two corridor checks/tests, concise art skill and research.
+Field-shortcut section explains current costs; no algorithm/balance change.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+Retain map23/types/lint/native and independent absolute visual ACCEPT evidence.
+Independent source ACCEPT applies to unchanged source at published head `2a89ee58`.
+[PR333](https://github.com/Vovanostm/warwrit/pull/333); scope40703225664 PASS.
+CI40703225465 bootstrap PASS; coverage failed negative-test5000ms timeout.
+Test-only correction reuses the compiled field and cuts one existing road edge.
+Focused V8 coverage3 PASS (test bodies37ms); no timeout/assertion/gate reduction.
+Independent test-correction SOURCE ACCEPT; new current-head CI required before merge.
+This publication-status readback is local; production/visual source unchanged.
+No duplicated local full gate; normal commit hooks and PR gates remain.
+Retain worktree and other stands; no deployment, auto/admin merge or automation.
+
+## Bereznyak field shortcut — 2026-10-28, LOCAL DIAGNOSIS
+
+Coordinator/sole writer: parent; branch `codex/map-road-navigation`.
+Owner questions the field shortcut in the supplied screenshot.
+Approximate landmark reconstruction reproduces its three-point path at `09bf9166`.
+Actual planner comparison:929m/797s chosen vs1264m/830s road/trail detour.
+[Result and limits](../wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+Current road/trail/grass speeds1.8/1.4/1; no separate cropland terrain.
+No algorithm, balance or runtime change; full/game/browser/SQL tests NOT_RUN.
+Retain worktree; no publication/deployment.
+
+## Road connectivity diagnostics — 2026-10-28, LOCAL COMPLETE
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
+Owner: implement the recommended first cycle; preserve agent freedom and avoid waste.
+Outcome: lab shows actual road nodes/edges and detects declared disconnected links
+even when free movement can bypass them over a field; ordinary dead ends are allowed.
+Scope: map-lab diagnostics, two repaired-link expectations/tests and concise art skill.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-amendment--2026-10-28).
+Keep pathfinding/game rules/server/plans unchanged; no new dependencies.
+Map23/types/scoped lint/format and skill/plan checks PASS; code `dea28641`.
+Native default-off/toggle/Space/day-night/zoom and overlay-on arrival PASS.
+Normal commit hook/audit PASS; independent visual ACCEPT, five applicable scores2.
+Initial visual input block closed with same-scale paired comparisons/references.
+Independent native replay NOT_RUN; full game/SQL gates NOT_RUN (lab-only change).
+Next: optional owner trial of the existing lab's «Проверка дорог» section.
+Graph indexes another checkout/HEAD; current source is used instead.
+No PR/merge/deployment authorized for this cycle; retain worktree and other stands.
+
+## Map improvement research — 2026-10-28, LOCAL PROPOSAL
+
+Coordinator/sole writer: parent; branch `codex/map-road-navigation`.
+Owner: study further useful web/GitHub examples for the map.
+Scope: source-backed comparison and proposed next step; no code/skill/dependency edit.
+Inspected Tiled/Azgaar/PathFinding.js at pinned commits and Red Blob web guidance.
+Recommend road-subgraph validation and extending existing geometry overlays first.
+Retain current cost-aware smoothing, shared region and accepted-plan timing.
+[Findings, sources and next probe](../wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+Foreign code/tests, benchmark and proposed runtime acceptance NOT_RUN/NOT_MEASURED.
+Documentation formatting/links/plan PASS after correcting initial table formatting.
+Local research only; no publication/deployment.
+Next: owner selects implementation scope; retain worktree and running stands.
+
+## Map skill navigation requirement — 2026-10-28, LOCAL
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
+Owner: always regenerate zones and paths after updating the map.
+Scope: existing warwrit-art skill and owning map workflow documentation only.
+Outcome: every map revision includes zone synchronization, grid/road-graph rebuild,
+fresh-route checks, browser arrival and current geometry evidence for visual critique.
+[Owning rule](../../.agents/skills/warwrit-art/SKILL.md#every-map-revision-rebuild-zones-and-navigation).
+Preserve shared source, accepted-plan timing and runtime authorization boundaries.
+Validation: skill schema, scoped Markdown formatting, local links and plan PASS.
+Initial plan check lacked coordinator naming; corrected, rerun PASS.
+Game/browser checks NOT_RUN: instructions only; prior navigation acceptance retained.
+No new PR/merge/deployment; retain worktree and existing stands.
+
+## Atlas road nodes and routing — 2026-10-28, MERGED / LOCAL READBACK
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
 Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
@@ -30,14 +108,17 @@ Independent absolute playable ACCEPT at `a7bc171f`: six applicable scores2.
 Broader related rerun/coverage739 PASS,66 skipped; first hook test failure unexplained.
 Normal audit PASS; no bypass or lowered thresholds.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
-[PR332](https://github.com/Vovanostm/warwrit/pull/332), published head `a4fa3879`.
+[PR332](https://github.com/Vovanostm/warwrit/pull/332), tested head `52bd7825`.
 Scope40676883890 PASS; CI40676883813 verify1206/stress PASS, SQL73/74.
 Failed SQL bow/terminal case omitted a legitimate successor-choice step.
 Test-only real leadership API handling added; isolated actual PG1 PASS/23 skipped.
 Independent CI-correction SOURCE ACCEPT; optional branch execution not proven.
-No gate/assertion weakening; new hosted CI remains required.
-This publication-status checkpoint is local; reviewed code is unchanged.
-Next: accepted correction, green applicable CI and expected-head merge.
+CI40680047382 PASS: verify/coverage1206, stress10000, SQL74, browser and audit.
+Unit84 skipped; migration smoke PASS; final scope40681842613 PASS.
+Normal expected-head merge `caee351b`; live PR/main read back, tested tree matches.
+No gate/assertion weakening; existing warnings and bounded evidence remain recorded.
+This post-merge documentation checkpoint is local; reviewed code is unchanged.
+Next: owner trial on the retained navigation stand5346; old servers need reload.
 Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
 No deployment authorized.
 
