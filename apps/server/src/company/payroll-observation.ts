@@ -5,6 +5,7 @@ import {
   canonicalJson,
   parseCompanyCommand,
   prepareCompanyEconomy,
+  skillLevels,
 } from '@warwrit/game-core';
 import type {
   CompanyEconomyState,
@@ -12,6 +13,7 @@ import type {
   EconomyReceipt,
   LocalMoneyAccess,
   FoodFulfillmentEvidence,
+  QualificationNoticeEvidence,
 } from '@warwrit/game-core';
 import { payrollEvidenceId, preparePayrollAccess } from './payroll-access.js';
 import type { PayrollScope } from './payroll-access.js';
@@ -65,6 +67,40 @@ function currentContext(
   };
 }
 
+function qualificationNotice(
+  root: CompanyEconomyState,
+  scope: ObservationInput,
+  subjectId: string,
+  membershipId: string,
+  observationId: string,
+): QualificationNoticeEvidence | undefined {
+  const character = root.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === subjectId,
+  );
+  const prior = root.lifecycle.knowledge.characters.find(
+    (entry) => entry.identity.characterId === subjectId,
+  );
+  if (!character) return undefined;
+  const lifetimeLevel = Math.max(...Object.values(skillLevels(character.skills)), 0);
+  const previousLevel = prior
+    ? Math.max(...Object.values(skillLevels(prior.skills)), 0)
+    : undefined;
+  if (previousLevel !== undefined && lifetimeLevel <= previousLevel) return undefined;
+  const id = payrollEvidenceId(scope, `qualification:${subjectId}:${membershipId}`);
+  return {
+    kind: 'QUALIFICATION_NOTICE',
+    id,
+    worldId: scope.worldId,
+    companyId: scope.companyId,
+    revision: root.lifecycle.revision,
+    atTick: scope.atTick,
+    sourceEventId: observationId,
+    membershipId,
+    lifetimeLevel,
+    noticeVersion: observationId,
+  };
+}
+
 function observation(
   root: CompanyEconomyState,
   scope: ObservationInput,
@@ -94,6 +130,12 @@ function observation(
     },
   });
   if (!parsed.ok) return undefined;
+  const membership = root.lifecycle.memberships.find(
+    (entry) => entry.characterId === subjectId && entry.endedAt === null,
+  );
+  const qualification = membership
+    ? qualificationNotice(root, scope, subjectId, membership.membershipId, id)
+    : undefined;
   const factScope = {
     id,
     sourceEventId: id,
@@ -102,7 +144,7 @@ function observation(
     revision: root.lifecycle.revision,
     atTick: scope.atTick,
   };
-  return prepareCompanyEconomy(root, parsed.command, {
+  const facts: EconomyContext = {
     ...context,
     facts: [{ ...factScope, kind: 'COMPANY_OBSERVATION', subject }],
     physicalFacts: [
@@ -123,6 +165,12 @@ function observation(
       sourceEventId: id,
       canonicalRequest: canonicalJson(parsed.command),
     },
+  };
+  const prepared = prepareCompanyEconomy(root, parsed.command, facts);
+  if (prepared.kind === 'PREPARED' || !qualification) return prepared;
+  return prepareCompanyEconomy(root, parsed.command, {
+    ...facts,
+    financeFacts: [...(context.financeFacts ?? []), qualification],
   });
 }
 

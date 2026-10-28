@@ -579,8 +579,10 @@ export function GameShell(props: {
           </div>
           <div hidden={tab !== 'company'}>
             <CompanyPanel
+              accountId={props.freeMovementScope.accountId}
               company={props.company}
               holdings={props.holdings}
+              ticksPerDay={ticksPerDay}
               supplyVenueName={supplyVenueName}
               canBuySupplies={
                 props.company.runStatus === 'ACTIVE' &&
@@ -592,6 +594,7 @@ export function GameShell(props: {
               onBuySupplies={() => {
                 if (party) visitIssuer(party.location, supplyBuilding);
               }}
+              onRefreshPayroll={props.onRefreshWorld}
               equipBusy={props.equipBusy}
               {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
               onEquip={props.onEquip}

@@ -120,6 +120,81 @@ describe('local payroll preparation', () => {
       access: 'PREPARED',
     });
   });
+
+  it('reveals a contacted lifetime tier increase with its prospective wage notice', () => {
+    const { root, foodFacts } = fixture();
+    const workerId = 'a-worker-0';
+    const advanced = {
+      ...root,
+      lifecycle: {
+        ...root.lifecycle,
+        characters: root.lifecycle.characters.map((character) =>
+          character.identity.characterId === workerId
+            ? { ...character, skills: { ...character.skills, blades: 50 } }
+            : character,
+        ),
+      },
+    };
+
+    const result = observeLocalPayees(advanced, { ...input(advanced), foodFacts });
+    if (result.kind !== 'PREPARED') throw new Error(result.reason);
+    const account = result.next.finance.accounts.find((entry) => entry.recipient.id === workerId);
+
+    expect(account?.schedule?.notices).toEqual([
+      expect.objectContaining({ lifetimeLevel: 50, dailyWageMilli: '2', effectiveAt: '3000' }),
+    ]);
+    expect(
+      result.next.lifecycle.knowledge.characters.find(
+        (entry) => entry.identity.characterId === workerId,
+      )?.skills,
+    ).toMatchObject({ blades: 50 });
+  });
+
+  it('does not disclose a higher tier for a scheduled subject outside local contact', () => {
+    const { root, foodFacts } = fixture();
+    const workerId = 'a-worker-0';
+    const advanced = {
+      ...root,
+      lifecycle: {
+        ...root.lifecycle,
+        characters: root.lifecycle.characters.map((character) =>
+          character.identity.characterId !== workerId
+            ? character
+            : {
+                ...character,
+                presence: {
+                  ...character.presence,
+                  assignment: 'NONE' as const,
+                  availability: 'OUT_OF_CONTACT' as const,
+                  fieldPartyId: null,
+                },
+                skills: { ...character.skills, blades: 50 },
+              },
+        ),
+      },
+      finance: {
+        ...root.finance,
+        accounts: root.finance.accounts.map((account) =>
+          account.recipient.kind === 'CHARACTER' && account.recipient.id === workerId
+            ? { ...account, actualPaused: true }
+            : account,
+        ),
+      },
+    };
+
+    const result = observeLocalPayees(advanced, { ...input(advanced), foodFacts });
+    if (result.kind !== 'PREPARED') throw new Error(result.reason);
+
+    expect(
+      result.next.lifecycle.knowledge.characters.find(
+        (entry) => entry.identity.characterId === workerId,
+      )?.skills,
+    ).not.toMatchObject({ blades: 50 });
+    expect(
+      result.next.finance.accounts.find((entry) => entry.recipient.id === workerId)?.schedule
+        ?.notices,
+    ).toEqual([]);
+  });
 });
 
 function observed(

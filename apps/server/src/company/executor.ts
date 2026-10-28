@@ -7,6 +7,9 @@ import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
 import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
+import { observeLocalPayees } from './payroll-observation.js';
+import { payrollCommandIntent } from './payroll-intent.js';
+import type { PayrollRequest } from './payroll-intent.js';
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
@@ -39,6 +42,7 @@ import type {
   CampSiteEvidence,
   CompanyCombatAggregateState,
   EconomyContext,
+  FoodFulfillmentEvidence,
   ItemAccessEvidence,
   PracticeContext,
   TrustedTransitSegment,
@@ -233,6 +237,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
 
   if (
     input.request.type !== 'BuySupplies' &&
+    input.request.type !== 'PayClaims' &&
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
@@ -314,6 +319,21 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       lifecycle.knowledge.revision,
     );
   const foodFacts = food.facts;
+
+  if (input.request.type === 'PayClaims')
+    return executePayrollPayment({
+      transaction: input.transaction,
+      accountId: input.accountId,
+      worldId: input.worldId,
+      companyId,
+      request: input.request,
+      requestKey: input.requestKey,
+      previous,
+      state,
+      due,
+      atTick: clock.tick,
+      foodFacts,
+    });
 
   if (input.request.type === 'BuySupplies') {
     const parsed = parseCompanyCommand({
@@ -580,6 +600,141 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     },
   );
   await persistDueContinuousMovementRoute(input.transaction, due);
+  return { kind: 'COMMITTED', response };
+}
+
+async function executePayrollPayment(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly accountId: string;
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly request: PayrollRequest;
+  readonly requestKey: string;
+  readonly previous: CompanyCombatAggregateState;
+  readonly state: CompanyCombatAggregateState;
+  readonly due: ReturnType<typeof prepareDueContinuousMovement>;
+  readonly atTick: string;
+  readonly foodFacts: readonly FoodFulfillmentEvidence[];
+}): Promise<OrdinaryCompanyCommandExecution> {
+  const reject = (
+    code: CompanyCommandRejectionDto['code'],
+    revision = input.previous.economy.lifecycle.knowledge.revision,
+  ): OrdinaryCompanyCommandExecution => ({
+    kind: 'REJECTED',
+    statusCode: 409,
+    response: { commandId: input.request.commandId, ok: false, publicRevision: revision, code },
+  });
+  const scope = {
+    worldId: input.worldId,
+    companyId: input.companyId,
+    atTick: campaignTick(input.atTick),
+    commandId: input.request.commandId,
+    sourceEventId: randomUUID(),
+    poolId: input.request.payload.poolId,
+    carriedPurse: await readCarriedSupplyPurse(
+      input.transaction,
+      input.worldId,
+      input.companyId,
+      input.accountId,
+    ),
+  };
+  const observation = observeLocalPayees(input.state.economy, {
+    ...scope,
+    foodFacts: input.foodFacts,
+  });
+  if (observation.kind !== 'PREPARED') return reject('CONTACT_OR_ACCESS_REQUIRED');
+
+  const parsed = parseCompanyCommand({
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId: input.request.commandId,
+    worldId: input.worldId,
+    companyId: input.companyId,
+    actorRef: { kind: 'PLAYER', id: input.accountId },
+    expectedRevision: publicRevision(observation.next.lifecycle.knowledge.revision),
+    campaignTick: campaignTick(input.atTick),
+    rulesetId: COMPANY_RULESET_ID,
+    ...payrollCommandIntent(input.request),
+  });
+  if (!parsed.ok || parsed.command.type !== 'PayClaims')
+    return reject('INVALID_COMMAND');
+
+  const prepared = prepareCompanyEconomy(observation.next, parsed.command, {
+    ...observation.context,
+    principal: { kind: 'PLAYER', id: input.accountId },
+  });
+  if (prepared.kind !== 'PREPARED')
+    return reject(mapDomainError(prepared.error));
+  if (
+    !ordinaryCommandSucceeded(input.request, prepared, {
+      partyId: undefined,
+      openAgreementId: undefined,
+    })
+  )
+    return reject('UNSUPPORTED_ACTION');
+
+  let next: CompanyCombatAggregateState;
+  try {
+    next = readCompanyCombatAggregateState({ ...input.state, economy: prepared.next });
+  } catch {
+    return reject('INVALID_COMMAND');
+  }
+  const nextLifecycle = next.economy.lifecycle;
+  const response: CompanyCommandAcceptedDto = {
+    commandId: parsed.command.commandId,
+    ok: true,
+    publicRevision: nextLifecycle.knowledge.revision,
+  };
+  await updateCompanyAggregateWithReceipt(
+    input.transaction,
+    input.previous.economy.lifecycle.revision,
+    nextLifecycle.revision,
+    next,
+    {
+      command: parsed.command,
+      receipt: {
+        receiptId: randomUUID(),
+        commandId: parsed.command.commandId,
+        sourceKey: companySourceKey(parsed.command),
+        requestKey: input.requestKey,
+        response,
+        resultingRevision: nextLifecycle.revision,
+      },
+      auditEvents: [
+        ...input.due.events.map((event) => ({
+          eventId: randomUUID(),
+          revision: nextLifecycle.revision,
+          event,
+        })),
+        ...observation.events.map((event) => ({
+          eventId: event.id,
+          revision: nextLifecycle.revision,
+          event,
+        })),
+        ...prepared.receipt.events.map((event) => ({
+          eventId: event.id,
+          revision: nextLifecycle.revision,
+          event,
+        })),
+        {
+          eventId: randomUUID(),
+          revision: nextLifecycle.revision,
+          event: {
+            type: 'CompanyPayrollPaid',
+            commandId: parsed.command.commandId,
+            poolId: parsed.command.payload.poolId,
+            amountQ: parsed.command.payload.amountQ,
+            mode: parsed.command.payload.mode,
+            allocations: prepared.receipt.allocations.map(({ claimId, amountQ, channel }) => ({
+              claimId,
+              amountQ,
+              channel,
+            })),
+          },
+        },
+      ],
+    },
+  );
+  await persistDueContinuousMovementRoute(input.transaction, input.due);
   return { kind: 'COMMITTED', response };
 }
 
@@ -1284,7 +1439,9 @@ function commandIdFrom(value: unknown): string {
 }
 
 function mapDomainError(error: string): CompanyCommandRejectionDto['code'] {
-  return error === 'INSUFFICIENT_ITEMS' || error === 'INSUFFICIENT_STAMINA'
+  return error === 'INSUFFICIENT_ITEMS' ||
+    error === 'INSUFFICIENT_STAMINA' ||
+    error === 'INSUFFICIENT_FUNDS'
     ? error
     : error === 'CONTACT_OR_ACCESS_REQUIRED'
       ? error

@@ -1,5 +1,38 @@
 # Warwrit current delivery plan
 
+## Playable payroll cycle — 2026-10-28, LOCAL / final source and bounded visual ACCEPT
+
+Coordinator/integration/validation owner: parent; branch `codex/game-payroll`, base `caee351b`; fast-forwarded main `48d8a2ae`, source delta unchanged.
+Owner mission: autonomous development with subagents, isolated worktrees and PRs toward the complete game.
+Current permission covers implementation/tests and PR publication; no merge, deployment, paid provisioning or Orca restart.
+Observable result: earned wages → Company → DEFAULT/TARGETED payment → authoritative cash/history → same-request retry/reload once.
+Active contract: [#167](https://github.com/Vovanostm/warwrit/issues/167), API [#320](https://github.com/Vovanostm/warwrit/issues/320), retry [#322](https://github.com/Vovanostm/warwrit/issues/322).
+Merged predecessors #318/#319/#321 are reused; no new finance policy, migration, ledger or receipt store.
+Sole source editor: payroll_playable; parent owns shared docs, branch commits, resource lifecycle and PR.
+Author protocol build/server-web types/lint/format PASS; payroll-access32, mounted5 and real PostgreSQL/API2 PASS.
+Corrected server and client independent source reviews ACCEPT; prior findings and regressions fixed.
+Parent real DEFAULT19.17kr → dropped successful response → reload → retry PASS:830.83 company/69.17 Rell, one receipt/event, revision4 unchanged.
+[Owning evidence](evidence/payroll-20261028/README.md) records synthetic-time clone provenance and renderer limits.
+Initial unit coverage1220 PASS/84 skipped and auditFAIL retained as history; quality correction realPG+focused47/types/lint/format/audit PASS.
+Final server/client source ACCEPT; accepted-POST/readback-failure wording fix mounted7 and affected-source ACCEPT.
+Current TARGETED9.17kr loss/reload/nightretry PASS on b2:840.83 company/59.17 Rell; one receipt/event, same rev4/claims/wallets.
+First visual REJECT closed by mode/payee and actual deadline labels; same critic second absolute bounded ACCEPT, seven scores2.
+Final-source TARGETED10 loss/reload/retry PASS:830.83 company/69.17 Rell; one receipt/event, revision7 unchanged.
+Real stale-revision refusal exposed erased client message; lifecycle fix mounted8/types/lint and independent affected-source ACCEPT.
+Clean-reloaded refusal keeps its explanation; scoped native state/receipt/audit readback unchanged at revision11.
+Final-source DEFAULT40 loss/reload/natural-night retry PASS:790.83 company/109.17 Rell; one receipt/event, revision13 unchanged.
+New actual PG2 PASS includes same-ID/different-body race, exactly one winner; independent test-source ACCEPT.
+Third absolute bounded payroll ACCEPT: eight scores2, current pending/confirmation night and refusal reviewed.
+First hook audit PASS but related tests failed environment prefix; proper isolated ww_integration DB/migrations supplied.
+Next related failure exposed unordered existing world audit snapshot; one ORDER BY test fix SOURCE ACCEPT, exact regression1PASS13SKIP.
+Whole-scene/map stability/style acceptance remains open; no new map art in this slice.
+Owned fresh PostgreSQL project `warwrit-game-payroll-20261028`; Dex5578, API3188/realtime3189/web5188 reserved.
+Retained player/lab databases are untouched; test integration harness owns only its cloned databases.
+Parallel command recovery uses `codex/game-command-recovery`; production startup correction is [PR334](https://github.com/Vovanostm/warwrit/pull/334).
+Authorized writing chat continues selected stories under the warwrit-writing contract; no global canon change.
+Final whole-scope normal commit hook/related tests/audit PASS on isolated-prefix DB; no bypass or threshold reduction.
+Next: publish the committed slice and read applicable hosted CI; no merge authorized.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
