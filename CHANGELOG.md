@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Continue Savva review and document the prototype story format
+
+- 2026-10-28, branch `codex/novels-readable-illustrated`, local continuation of
+  published [PR336](https://github.com/Vovanostm/warwrit/pull/336) at `d7aa265d`:
+  the parent limits further work to two known Savva literary defects and a
+  source-grounded handoff for a future production story runner. Document current
+  catalog/model/art modules, conditions, history and campaign-contract limits in
+  the [owning result](docs/wiki/mission-testing.md); no production design or code.
+  Transfer finalized Savva r6.2 from writing commit `afba9125`: six scenes,
+  two endings and eight combinations; preserve independent trust/custody/food
+  decisions, remove lost-grain and repair assumptions from its existing tests.
+  All 89 player paragraphs and source conditions match; eight DOM routes,
+  back/reset/switch/scroll/buttons pass. Focused34/V8, web types and scoped
+  lint/format pass; independent delta review found no technical defects.
+  Other stories/runtime/art stay unchanged. Initial d7aa265d CI passed; this is
+  historical evidence, not the new text's acceptance. Use proportional checks
+  and applicable PR CI for this delta. Parent live free/payment route passed;
+  the scoped local commit is authorized with normal hooks, without push.
+
 ### Prepare a clean illustrated-novel reader
 
 - 2026-10-28, branch `codex/novels-readable-illustrated`, local integration:

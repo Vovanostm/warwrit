@@ -1,6 +1,32 @@
 # Warwrit current delivery plan
 
-## Illustrated novels delivery — 2026-10-28, LOCAL VALIDATED
+## PR336 continuation — 2026-10-28, LOCAL SAVVA R6.2 / VALIDATED
+
+Branch/writer: `codex/novels-readable-illustrated` / delegated `stand_finalize`.
+Initial published [PR336](https://github.com/Vovanostm/warwrit/pull/336): `d7aa265d`.
+Parent's current task limits continuation to two known Savva literary defects
+and a source-grounded handoff of the existing prototype story format.
+Frozen Savva r6.2/afba9125 handed off after reading/editorial checks and integrated.
+Six scenes/two endings/eight combinations; only trust/custody/ration facts remain.
+Markdown-to-TS: 89 paragraphs/14 conditional/all8 routes PASS.
+TS-to-DOM: all8 routes/56 visits, back/reset/switch/scroll/buttons at1280x720 PASS.
+All other story/runtime/art code unchanged; Savva existing expectations updated.
+[Contract](../work-packages/MISSION-NOVELS-READABLE.md#pr336-continuation--2026-10-28)
+and [sole owning handoff/result](../wiki/mission-testing.md).
+Document actual catalog/model/art paths, conditions, history and missing campaign contract.
+Do not design/implement a production runner or touch payroll/care/world/shared runtime.
+Parent owns writing commits, CI and PR updates; integrator is sole game-worktree writer.
+Parent authorizes the current six-file local commit with ordinary hooks after live readback.
+No push without a further parent command; no merge/deploy/automation.
+Initial full bootstrap remains historical PASS; docs/prose alone do not rerun it.
+Handoff source/link/format/diff checks PASS; new source checked against frozen copy.
+Initial d7aa265d CI Verify40741126600 and scope40741126157 SUCCESS; not new-head proof.
+Focused34/V8, web types, scoped lint/format PASS; independent delta review no findings.
+Parent live force/free/payment route PASS; informed reading, not blind literary acceptance.
+Commit uses ordinary hooks; current-head CI belongs to parent.
+Proportional checks and PR CI follow the actual delta.
+
+## Illustrated novels delivery — 2026-10-28, INITIAL LOCAL VALIDATION (HISTORY)
 
 Branch owner/validation owner: delegated `stand_finalize`; coordinator: parent.
 Branch `codex/novels-readable-illustrated`, base `48d8a2ae`, transplant `8de22870`.

@@ -73,7 +73,7 @@ it.each(manuscripts)(
       for (const choice of scene.choices)
         expect(choices.has(`${id}/${choice.id}`), `${id}/${choice.id}`).toBe(true);
     }
-    expect(endings.size).toBe(3);
+    expect(endings.size).toBe(mission.id === 'savva' ? 2 : 3);
   },
 );
 
@@ -178,44 +178,27 @@ it.each([
 });
 
 it.each([
-  [false, false, false, false],
-  [false, false, true, true],
-  [false, true, false, true],
-  [false, true, true, true],
-  [true, false, false, false],
-  [true, false, true, true],
-  [true, true, false, true],
-  [true, true, true, true],
-])(
-  'Savva: hurry=%s, cart held=%s, exit closed=%s preserves grain=%s',
-  (hurry, detained, closed, saved) => {
-    for (const trust of [true, false]) {
-      const approach = walk(savva, [
-        hurry ? 'start-c2' : 'start-c1',
-        's2-c1',
-        detained ? 's3-c2' : 's3-c1',
-        closed ? 's4-c1' : 's4-c2',
-      ]);
-      expect(prose(savva, approach)).toContain('Утром Савва мешок принёс');
-      const exposed = advance(savva, approach, trust ? 's5-c1' : 's5-c2');
-      expect(prose(savva, exposed).includes('увозят телегу через задний проход')).toBe(!saved);
-      const decision = advance(savva, exposed, 's6-c1');
-      expect(prose(savva, decision).includes('Я с вами в деревню не пойду')).toBe(!trust);
-      for (const custody of [true, false]) {
-        const history = advance(savva, decision, custody ? 's7-c1' : 's7-c2');
-        expect(prose(savva, history).includes('У стены стоят пять закрытых мешков')).toBe(saved);
-        expect(prose(savva, history).includes('Хотите с мужем в деревню вернуться')).toBe(custody);
-        const suffix = custody ? (saved ? 'saved' : 'lost') : 'free';
-        for (const ration of [true, false]) {
-          const ended = advance(savva, history, `s8-c${ration ? 2 : 1}-${suffix}`);
-          expect(ended.at(-1)?.scene).toBe(custody ? (saved ? 'end1' : 'end2') : 'end3');
-          const text = prose(savva, ended);
-          expect(/дорожную рожь|Мешочек с дорожной рожью|Когда мера полна/.test(text)).toBe(ration);
-          if (custody)
-            expect(/семьи сворачивают к городу|Семьи ушли к городу/.test(text)).toBe(!trust);
-          else expect(text.includes('не подпускает к девочке')).toBe(!trust);
-        }
-      }
-    }
-  },
-);
+  [false, false, false],
+  [false, false, true],
+  [false, true, false],
+  [false, true, true],
+  [true, false, false],
+  [true, false, true],
+  [true, true, false],
+  [true, true, true],
+])('Savva: trust=%s, custody=%s and ration=%s remain independent', (trust, custody, ration) => {
+  const exposed = walk(savva, ['start-c1', 's2-c1', trust ? 's3-c1' : 's3-c2']);
+  expect(prose(savva, exposed).includes('Дарья завязывает начатый мешок')).toBe(trust);
+  expect(prose(savva, exposed)).toContain('пятятся от груза и уходят через задний проход');
+  expect(prose(savva, exposed)).toContain('возвращается к вам и протягивает палку');
+  const measure = advance(savva, advance(savva, exposed, 's4-c1'), custody ? 's5-c1' : 's5-c2');
+  expect(prose(savva, measure)).toContain('пять закрытых мешков и остаток шестого');
+  expect(prose(savva, measure).includes('связывает Савве руки')).toBe(custody);
+  const action = `s6-c${ration ? 2 : 1}-${custody ? 'custody' : 'free'}`;
+  const ended = advance(savva, measure, action);
+  expect(ended.at(-1)?.scene).toBe(custody ? 'end1' : 'end2');
+  const text = prose(savva, ended);
+  expect(/шесть крон остаются у Тихона|Тихон ждёт с закрытым кошелём/.test(text)).toBe(ration);
+  expect(/про сломанную руку она не спорит|благодарит за помощь/.test(text)).toBe(trust);
+  expect(advance(savva, measure, `s6-c1-${custody ? 'free' : 'custody'}`)).toBe(measure);
+});
