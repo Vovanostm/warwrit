@@ -156,3 +156,22 @@ CI40763597352 and scope40763597092 are in progress; no success is inferred.
 The normal source commit and final documentation commit passed ordinary hooks.
 This post-publication record is LOCAL and does not change the PR head or
 invalidate the measured game source. No merge/deployment performed.
+
+## Hosted verification readback — 2026-10-29
+
+PR339 remains OPEN at c2051f3f, with main48d8a2ae. CI40763597352,
+job123081705890 and scope40763597092 SUCCESS. Final decoded job logs read
+independently: synthetic merge a134359b tested this head/base, not actual merge.
+Clean bootstrap/general and repeated coverage run1228 PASS/85 SKIP (same tests);
+actual PostgreSQL75 PASS/no skips; stress10000battles/20reruns/100replays/
+1302384commands; migration smoke and released-migration guard PASS. Existing
+two-authenticated-context world-lab browser journey PASS, including disconnect,
+pursuit and stale STOP retry. That hosted browser is not transfer UI acceptance;
+local transfer evidence above remains the actual proof for this feature.
+Changed-file audit: no issues in53 changed files;20 inherited findings excluded.
+Warnings remain:41 double-casts,1 skipped-spec, ignored out-of-root package entry
+points, graph cache invalidation and web chunks over500kB. Expected injected
+transaction/duplicate-receipt error logs occurred in passing SQL tests. No final
+aggregate coverage percentage was printed after runtime merging. No duplicate
+local full gate. Source unchanged; PR body updated. This checkpoint remains
+local, no merge/deployment or whole-game acceptance.

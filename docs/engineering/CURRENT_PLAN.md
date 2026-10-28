@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Player item transfer — 2026-10-28, PUBLISHED / local checkpoint
+## Player item transfer — 2026-10-29, PUBLISHED / CI SUCCESS
 
 Coordinator/integration/validation owner: parent; branch `codex/game-item-transfer`, base `48d8a2ae`.
 Owner autonomous game mission permits implementations/worktrees/PRs; no merge/deployment/Orca permission.
@@ -26,10 +26,14 @@ Final-source medical1 loss/reload/night retry PASS at revision8 with equal entir
 Same critic final12–14 absolute UI ACCEPT (six applicable scores2); whole-scene rendering/materials/night REJECT.
 Second hook retained only cognitive17; final failure-message extraction/types/focused18/lint/source ACCEPT.
 Final normal hook/related checks/audit PASS without suppressed failures or bypass.
-[PR339](https://github.com/Vovanostm/warwrit/pull/339), published headc2051f3f; live CI40763597352 and scope40763597092 running.
+[PR339](https://github.com/Vovanostm/warwrit/pull/339), published headc2051f3f; CI40763597352 and scope40763597092 SUCCESS; logs read.
 This post-publication checkpoint is LOCAL; reviewed game source and PR head unchanged.
-Care remains separate pending owner rule choice; writing chat active with its own owner.
-Next: inspect exact-head PR339 CI; independent read-only map technique/painted-atlas integration probe is active.
+Care5/10 profile approved; implementation in separate worktree. Writing PR336 green at6e9723a5.
+Next: separate care and map slices continue; retain transfer stand/data.
+
+CI40763597352/job123081705890 logs read:1228 PASS/85 SKIP, actual PG75 PASS, stress/migrations/browser/audit PASS.
+Scope40763597092 SUCCESS; world-lab hosted browser is separate from actual local transfer UI proof.
+PR remains OPEN at c2051f3f; no source change, merge or deployment.
 
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 

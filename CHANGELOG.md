@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Read back hosted transfer verification
+
+- 2026-10-29, branch `codex/game-item-transfer`, local checkpoint for published
+  [PR339](https://github.com/Vovanostm/warwrit/pull/339), unchanged head c2051f3f.
+  CI40763597352/scope SUCCESS; actual logs1228 unit/coverage PASS,85 SKIP,
+  PostgreSQL75 PASS, stress/migrations/world-lab browser/audit PASS.
+  [Evidence and limits](docs/engineering/evidence/item-transfer-20261028/README.md#hosted-verification-readback--2026-10-29).
+  PR body updated; no source edit, merge or deployment.
+
 ### Publish the accepted item-transfer slice
 
 - 2026-10-28, branch `codex/game-item-transfer`, published in
