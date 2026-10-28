@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Map art updates require regenerated navigation
+
+- 2026-10-28, branch `codex/map-road-navigation`, local: owner requires zones
+  and paths regenerated after every map update. Extend
+  [warwrit-art](.agents/skills/warwrit-art/SKILL.md#every-map-revision-rebuild-zones-and-navigation)
+  with zone/road synchronization, navigation-field rebuild, fresh route and
+  browser checks, and combined art/geometry critique evidence. Image-only delivery
+  cannot close a map revision. Preserve shared geometry, frozen accepted plans
+  and runtime permissions. Instruction-only change; game/browser tests NOT_RUN.
+  Skill schema, scoped formatting, local link targets and plan checks PASS;
+  initial plan check required explicit coordinator naming, corrected before commit.
+
 ### Atlas road nodes follow the repaired painting
 
 - 2026-10-28, branch `codex/map-road-navigation`, merged2026-10-28 as

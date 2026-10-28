@@ -1,6 +1,6 @@
 ---
 name: warwrit-art
-description: Produce or fix a Warwrit raster asset (map sheet, place scene, concept) with Codex built-in image_gen and the region-compositing technique — reference-led generation, one-region crop edits pasted back with feathered masks, provenance, and the visual-critic loop. Use for any generated art in assets/art/**; not for 3D characters (warwrit-characters-3d) or code-native UI.
+description: Produce or fix a Warwrit raster asset (map sheet, place scene, concept) with Codex built-in image_gen and region compositing, provenance and visual critique. Every map image update includes synchronizing zones and rebuilding road nodes and navigation. Use for generated art in assets/art/** and map image revisions; not for 3D characters (warwrit-characters-3d) or code-native UI.
 ---
 
 # Warwrit art lane
@@ -50,6 +50,37 @@ After two critic passes with a criterion at 1, switch to regions:
 
 Python with Pillow: run the script with `python3 -I` from an interpreter that
 has Pillow (pyenv on the director's Mac); it is a tool, not game runtime.
+
+## Every map revision: rebuild zones and navigation
+
+Owner requirement — 2026-10-28: after **every map image update**, regenerate
+the zones and navigation before declaring the map complete. Replacing the PNG
+alone is incomplete, including for a local crop repair.
+
+1. Match the new image to its owning coordinate frame and region. For the painted
+   atlas, update [region.ts](../../../packages/game-core/src/world/painted-atlas/region.ts):
+   retrace affected terrain, blocking/water shapes, road overlays and stations,
+   and settlement entry zones/anchors. Remove obsolete geometry. Road surface
+   and graph stations must follow the same traced centreline. Keep one shared
+   source for client and server; preserve unchanged geometry and approved rules.
+2. Rebuild the navigation grid and road graph with `buildNavigationField` from
+   the updated region; rebuild package outputs used by consumers. Even a purely
+   cosmetic revision requires a rebuild and confirmation that the zones still
+   match. Reload the task's local map consumers/server so validation uses this
+   field. Do not restart unrelated stands or deploy without authorization; report
+   any running consumer that still uses the old field.
+3. Recalculate fresh routes through each changed connection and adjoining junction.
+   Inspect actual zone/road-node/path overlays on the current image at game scale.
+   Check surface/speed classification, connected junctions, entry-zone reachability
+   and affected bridge/water boundaries. A removed road must lose its road bonus;
+   the planner must take the corrected bends when their travel cost is lower.
+   Use new orders: already accepted plans retain their frozen path and timing.
+4. Run focused geometry/routing regressions (atlas entry:
+   [region.test.ts](../../../packages/game-core/src/world/painted-atlas/region.test.ts))
+   and try affected journeys to arrival in the browser. Pass current image,
+   geometry overlays and journey evidence to the required independent visual
+   critic. Record the image revision, regenerated field, checks and runtime limits
+   together in the owning map result; image-only acceptance cannot close the task.
 
 ## Record and gate
 

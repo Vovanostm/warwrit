@@ -1,5 +1,19 @@
 # Warwrit current delivery plan
 
+## Map skill navigation requirement — 2026-10-28, LOCAL
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
+Owner: always regenerate zones and paths after updating the map.
+Scope: existing warwrit-art skill and owning map workflow documentation only.
+Outcome: every map revision includes zone synchronization, grid/road-graph rebuild,
+fresh-route checks, browser arrival and current geometry evidence for visual critique.
+[Owning rule](../../.agents/skills/warwrit-art/SKILL.md#every-map-revision-rebuild-zones-and-navigation).
+Preserve shared source, accepted-plan timing and runtime authorization boundaries.
+Validation: skill schema, scoped Markdown formatting, local links and plan PASS.
+Initial plan check lacked coordinator naming; corrected, rerun PASS.
+Game/browser checks NOT_RUN: instructions only; prior navigation acceptance retained.
+No new PR/merge/deployment; retain worktree and existing stands.
+
 ## Atlas road nodes and routing — 2026-10-28, MERGED / LOCAL READBACK
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
