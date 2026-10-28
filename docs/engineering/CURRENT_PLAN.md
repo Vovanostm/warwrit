@@ -17,7 +17,7 @@ Initial source/privacy review ACCEPT; final bounded refactor readback found no c
 Final isolated SQL10/native9 + actual restart, related1007/71 skipped, types/lint/format and audit PASS.
 Persistent PostgreSQL65438/positions/discoveries retained; stand ports3038/3039/5338, legacy5326.
 No PR/merge/deploy/Orca/automation activation; production/MMO load/fun NOT_MEASURED.
-Normal local commit follows this documentation closeout; no hook bypass.
+Source committed locally as `a2388f57`; normal commit hook/source-matched audit PASS, no bypass.
 Next: owner trial on5338; separately define merchant purchase flow and additional regions.
 
 ## Dated history

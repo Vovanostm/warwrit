@@ -355,6 +355,6 @@ case corrected and separately PASS. Third absolute visual ACCEPT, eight criteria
 independent input replay NOT_RUN. Final refactor: isolated SQL10, native9 plus
 actual API restart, related1007/71 skipped, types/lint/format and source-matched
 normal audit PASS. Bounded source readback found no concrete defect; no gate
-thresholds or suppressions changed. Normal local commit follows this closeout.
+thresholds or suppressions changed. Local source commit `a2388f57`; normal hook/audit PASS, no bypass.
 One-time owner-approved fixture ration top-up retained positions/discoveries/money.
 No merchant economy UI, multi-region travel, production rollout or new PR/merge.

@@ -28,6 +28,7 @@ requests.
   refactor: isolated SQL10/native9 + actual restart, related1007/71 skipped,
   types/lint/format and unchanged source-matched audit PASS. Bounded source
   readback found no concrete defect; no thresholds or suppressions changed.
+  Local source commit `a2388f57`, normal hook/audit PASS without bypass.
   Existing persistent lab data retained. No merchant pricing/payment UI,
   production rollout, PR/merge, Orca or automation activation; load/fun NOT_MEASURED.
 
