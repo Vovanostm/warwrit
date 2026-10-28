@@ -1,5 +1,29 @@
 # Warwrit current delivery plan
 
+## Publication assessment — 2026-10-28, LOCAL research complete
+
+Coordinator/documentation owner: parent; branch `codex/game-production-readiness`, assessed source `a1e6f3f5`.
+Owner request: deeply assess the game with subagents and identify publication requirements.
+Read-only product assessment; five independent research directions, no product-code changes.
+Live main `48d8a2ae`; graph indexes another checkout, selected-revision sources used.
+[Owning assessment](../wiki/m1-spec.md#готовность-к-публикации--исследование-2026-10-28).
+Approved final target: private persistent sandbox for10–20 invited players; finite M1 remains intermediate.
+No separately approved reduced pilot, open registration, PvP, commerce or monetization scope.
+PR334 `a1e6f3f5` / PR335 `ab7c59c7` OPEN, NOT_MERGED; exact-head CI/scope SUCCESS refreshed.
+Payroll LOCAL/uncommitted: DEFAULT/TARGETED loss/reload/retry evidence retained with synthetic-time provenance.
+Quality correction/source ACCEPT supersedes the old REWORK checkpoint below; latest mounted8 PASS.
+Payroll new pending/confirmation visual re-pass, normal commit hook/PR/CI and integration remain.
+Main blockers: company upkeep/recovery, terminal surrender/hostile retreat, captive custody, full M1 journey.
+Final-game gaps: recurring causes/economy, offline camp, story runtime, war/restoration, account-bound world knowledge.
+Deployment preparation: reproducible launch, invited identity, HTTPS/WSS, backup/restore, restart and measured capacity.
+Current payroll UI map/company/place read-only view rendered; prior WebGL loss remains unexplained.
+Game tests/payment/restart/deployment NOT_RUN by this research; FPS/capacity/retention NOT_MEASURED.
+Documentation diff/format/9 added local links/short status block PASS; independent report review ACCEPT.
+Normal documentation/evidence commit hook PASS; local report committed without publishing or changing PR heads.
+Existing implementation worktrees, original dirty checkout, databases, runtime and writing chat preserved.
+No merge, deployment, paid operation or automation/Orca restart performed or authorized by this assessment.
+Next recommended implementation: finish current slices, then one new-player loop through upkeep and the next contract.
+
 ## Production game readiness — 2026-10-28, PR334 / source ACCEPT
 
 Coordinator/validation owner: parent; branch `codex/game-production-readiness`, base `caee351b`.
@@ -12,10 +36,17 @@ Development defaults and existing HTTPS, fixture/lab prohibitions remain.
 Independent read-only source review ACCEPT; config/app12 PASS, package builds/server types PASS.
 Actual missing-config production entry process exits with the intended refusal.
 Owning contract: [ID01 identity](ID01-IDENTITY.md); related launch task #176 remains open.
-Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
+Exact-head CI40711657776 and scope40711657884 SUCCESS; actual log readback includes1210 unit PASS/84 skipped and74 PostgreSQL/auth PASS.
+Real DB-down/issuer journey and deployment NOT_RUN.
 [PR334](https://github.com/Vovanostm/warwrit/pull/334), initial head `efcddb06`; normal commit audit PASS.
 Parent owns integration and applicable hosted-check readback; no merge authorized.
-Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
+Parallel recovery published [PR335](https://github.com/Vovanostm/warwrit/pull/335), head `ab7c59c7`; CI40728933879 and scope40728933857 SUCCESS.
+Its normal commit hook/source review PASS; finite ordinary HELP loss/reload/retry remains accepted, real combat loss NOT_RUN.
+Payroll on separate `codex/game-payroll` is based on main `48d8a2ae`: actual DEFAULT19.17kr loss/reload/retry passed on an owned restored clone.
+Company850→830.83 / Rell50→69.17; replay retains one receipt/event and revision4. Synthetic time uses canonical AdvanceCampaign.
+Payroll normal audit remains REWORK; author owns source quality correction, parent owns TARGETED/final browser/critic and delivery.
+The authorized writing chat continues selected stories with separate owners; local novels remain outside campaign acceptance.
+This post-publication checkpoint is LOCAL; source PR heads unchanged, no merge/deploy performed.
 
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 

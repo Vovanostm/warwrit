@@ -9,6 +9,36 @@ requests.
 
 ## Unreleased
 
+### Assess the publication path against the actual game
+
+- 2026-10-28, branch `codex/game-production-readiness`, local research: owner
+  asks for a deep assessment with subagents and remaining publication work.
+  Update the [owning M1 assessment](docs/wiki/m1-spec.md#готовность-к-публикации--исследование-2026-10-28),
+  roadmap/current checkpoint and wiki entry point using five independent
+  source investigations, live main/PR/CI readback and current local UI captures.
+  Distinguish main, open PR334/335, uncommitted payroll and lab-only systems;
+  retain earlier DB7/payroll proof limits. Record company/custody/terminal/world
+  gaps, the longer sandbox scope and hosted launch/restore/capacity acceptance.
+  Later payroll audit/source ACCEPT and TARGETED proof supersede the earlier
+  local rework checkpoint below; final visual/delivery gates remain open.
+  Documentation format/diff, nine added local links and current-plan check PASS;
+  independent report review ACCEPT; normal commit hook PASS. Report committed
+  locally without updating PR heads. No game source or rules changed; no new
+  game tests, merge or deployment.
+
+### Autonomous game mission checkpoint
+
+- 2026-10-28, branch `codex/game-production-readiness`, LOCAL documentation
+  readback: refresh CURRENT_PLAN after actual publication and hosted checks.
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334) at `a1e6f3f5` and
+  [PR335](https://github.com/Vovanostm/warwrit/pull/335) at `ab7c59c7` are open
+  with successful applicable CI and scope checks; neither is merged. Separate
+  payroll worktree's real DEFAULT19.17kr committed-response loss/reload/retry
+  preserves a single receipt/event and balances on replay; synthetic time is
+  an explicit canonical-command fixture on an owned restored DB clone.
+  Payroll quality rework, TARGETED/final acceptance and broader game work remain.
+  No game source change in this checkpoint, deployment or data reset.
+
 ### Require playable dependencies before production startup
 
 - 2026-10-28, branch `codex/game-production-readiness`, published in

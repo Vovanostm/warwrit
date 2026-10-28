@@ -8,6 +8,17 @@ This is the delivery order for the owner's **full M1 alpha on the Mac**, not a n
 
 ## Current frontier
 
+**2026-10-28 amendment:** the source-grounded [publication assessment](../wiki/m1-spec.md#готовность-к-публикации--исследование-2026-10-28)
+separates the intermediate finite M1 from the owner's later approved private,
+weeks-long sandbox for10–20 invited players. Finish the existing payroll/recovery/
+startup slices, close the company/captive/terminal loop, then complete M1 and
+the recurring world/offline/story/crisis systems. Prepare reproducible hosted
+launch, access, restore and measured capacity alongside independent game work.
+These are assessed dependencies, not approval of a smaller pilot or new rules.
+The older dependency map below remains historical engineering context; its
+PlayCanvas selection and obsolete active-work statements do not override
+ADR-0006 or the dated current sources. Game/runtime acceptance is still partial.
+
 The live checkout, worker paths, API readiness, and evidence are recorded only in
 [CURRENT_PLAN](CURRENT_PLAN.md). The task ownership queue is
 [PARALLEL_WAVES](PARALLEL_WAVES.md). This roadmap keeps the durable dependency
