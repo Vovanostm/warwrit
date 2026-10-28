@@ -1,5 +1,20 @@
 # Warwrit current delivery plan
 
+## Production game readiness — 2026-10-28, LOCAL / source ACCEPT
+
+Coordinator/validation owner: parent; branch `codex/game-production-readiness`, base `caee351b`.
+Current owner mission: autonomous game implementation, isolated worktrees and PRs.
+No current merge, deployment, paid-resource or Orca/automation permission.
+Outcome: production cannot report a ready health-only process without game dependencies.
+Guard requires DATABASE_URL and complete validated OIDC before app construction/listen.
+Development defaults and existing HTTPS, fixture/lab prohibitions remain.
+Independent read-only source review ACCEPT; config/app12 PASS, package builds/server types PASS.
+Actual missing-config production entry process exits with the intended refusal.
+Owning contract: [ID01 identity](ID01-IDENTITY.md); related launch task #176 remains open.
+Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
+Parent owns documentation, commit, PR and applicable hosted-check readback.
+Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
+
 ## Atlas road nodes and routing — 2026-10-28, PR332 / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.

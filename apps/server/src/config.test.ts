@@ -119,4 +119,16 @@ describe('server configuration', () => {
     expect(config.identity).toBeDefined();
     expect(config.fixtureEncountersEnabled).toBeUndefined();
   });
+
+  it('requires database-backed OIDC identity before accepting production configuration', () => {
+    expect(() => loadServerConfig({ NODE_ENV: 'production' })).toThrow(
+      'Production server requires DATABASE_URL and complete OIDC identity configuration',
+    );
+    expect(() =>
+      loadServerConfig({
+        NODE_ENV: 'production',
+        DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit',
+      }),
+    ).toThrow('Production server requires DATABASE_URL and complete OIDC identity configuration');
+  });
 });

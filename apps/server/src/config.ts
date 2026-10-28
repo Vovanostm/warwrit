@@ -134,6 +134,10 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
       secureCookies: originUrl.protocol === 'https:',
     };
   }
+  invariant(
+    environment['NODE_ENV'] !== 'production' || (Boolean(databaseUrl) && identity !== undefined),
+    'Production server requires DATABASE_URL and complete OIDC identity configuration',
+  );
   return {
     host,
     port,
