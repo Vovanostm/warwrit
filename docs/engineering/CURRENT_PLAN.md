@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Player item transfer — 2026-10-28, LOCAL / ready for PR
+## Player item transfer — 2026-10-28, PUBLISHED / local checkpoint
 
 Coordinator/integration/validation owner: parent; branch `codex/game-item-transfer`, base `48d8a2ae`.
 Owner autonomous game mission permits implementations/worktrees/PRs; no merge/deployment/Orca permission.
@@ -25,9 +25,11 @@ Initial hook FAILED four introduced web findings; finite panel/terminal correcti
 Final-source medical1 loss/reload/night retry PASS at revision8 with equal entire native readback and one receipt.
 Same critic final12–14 absolute UI ACCEPT (six applicable scores2); whole-scene rendering/materials/night REJECT.
 Second hook retained only cognitive17; final failure-message extraction/types/focused18/lint/source ACCEPT.
-Final normal hook/related checks/audit PASS without suppressed failures or bypass; source committed9dc7717e, final docs follow.
+Final normal hook/related checks/audit PASS without suppressed failures or bypass.
+[PR339](https://github.com/Vovanostm/warwrit/pull/339), published headc2051f3f; live CI40763597352 and scope40763597092 running.
+This post-publication checkpoint is LOCAL; reviewed game source and PR head unchanged.
 Care remains separate pending owner rule choice; writing chat active with its own owner.
-Next: finish independent visual acceptance and normal hook, publish transfer PR, inspect current-head CI.
+Next: inspect exact-head PR339 CI; independent read-only map technique/painted-atlas integration probe is active.
 
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 

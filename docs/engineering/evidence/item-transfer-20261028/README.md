@@ -147,3 +147,12 @@ affected-source ACCEPT, final web types/focused18/lint PASS. The final normal ho
 suppressed-test-failure warning, bypass or threshold change. Final source was
 committed as9dc7717e; the following closeout changes documentation only.
 Hosted clean verification remains the publication gate.
+
+## Publication checkpoint
+
+[PR339](https://github.com/Vovanostm/warwrit/pull/339) is OPEN at
+`c2051f3f998c2b7d4597b147b13cfa7ecd1a2a73`. The first live snapshot confirms
+CI40763597352 and scope40763597092 are in progress; no success is inferred.
+The normal source commit and final documentation commit passed ordinary hooks.
+This post-publication record is LOCAL and does not change the PR head or
+invalidate the measured game source. No merge/deployment performed.

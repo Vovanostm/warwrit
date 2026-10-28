@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Publish the accepted item-transfer slice
+
+- 2026-10-28, branch `codex/game-item-transfer`, published in
+  [PR339](https://github.com/Vovanostm/warwrit/pull/339), head `c2051f3f`:
+  source/core/client acceptance, actual split/full/final-UI loss/reload/retry,
+  final normal hook/related/audit and bounded visual ACCEPT accompany the slice.
+  CI40763597352/scope40763597092 are running; no green result inferred yet.
+  This later documentation checkpoint is local and leaves the PR head unchanged.
+  Payroll PR338 at `e90f7a47` now has successful live CI/scope; actual logs confirm
+  coverage1224 PASS/84 SKIP, PostgreSQL/auth74 PASS, lab browser and audit PASS.
+  Whole-scene map/style/night and full-game acceptance remain open; no merge/deploy.
+
 ### Complete the local item-transfer path and repeated splitting
 
 - 2026-10-28, branch `codex/game-item-transfer`, local implementation for #171:
