@@ -1,5 +1,27 @@
 # Warwrit current delivery plan
 
+## Existing map/combat/quest integration — 2026-10-29, LOCAL / preliminary images
+
+Coordinator/documentation/integration owner: parent; branch codex/game-production-readiness.
+Owner explicitly requests fully painted map from linked thread, existing combat update and unified wiki/docs.
+First deliver concrete map/battle/visual-quest images; implementation follows this preliminary readback.
+[One visual selection](../wiki/vision.md#единая-визуальная-база-и-интеграция--поручение-2026-10-29) links existing owners.
+Map: painted atlas-v6, later accepted road-repaired derivative of linked thread's v5.
+Fog branch974a87e1 lab delivery a2388f57 still usesv5; must reconcile to one revision during integration.
+Battle PROPOSAL: actual heightfield practice screenshot648830d8; local static acceptance only, not main/network/persistence.
+Frontal in sample does not silently replace owner camera default. Babylon remains selected.
+Visual quests: selected graphic-novel mill reference; actual scenario frames have independent acceptance.
+Main remains48d8a2ae; ordinary campaign still selects old V5 region, not complete atlas artwork.
+No blind reinterpretation of retained locations/routes or geography/observation rules.
+Update existing player entry paths and owners; no second game, command state or duplicated living spec.
+Map material experiment preserved separately, visual REJECT; normal commit audit failed3 complexity findings, no bypass.
+Care source frozen in game-company-care at basec2051f3f, unvalidated/uncommitted; owner-approved5/10 recorded.
+PR338/339 remain OPEN/green; transfer logs1228 PASS/85 SKIP, actual PG75 PASS.
+Writing chat continuation explicitly reauthorized; fresh free-ending readback pending there.
+This update changes documentation/evidence only; game/SQL/browser integration NOT_RUN.
+No merge/deployment/paid/Orca permission. Preserve original dirty worktree, data and local stands.
+Next: show three images, then integrate painted map via one lawful server region/cartography context.
+
 ## Publication assessment — 2026-10-28, LOCAL research complete
 
 Coordinator/documentation owner: parent; branch `codex/game-production-readiness`, local report `dec5e7fc` plus current docs.

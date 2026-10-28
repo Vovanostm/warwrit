@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Unify preliminary map, combat and visual-quest direction
+
+- 2026-10-29, branch `codex/game-production-readiness`, local: owner's new
+  instruction selects the existing fully painted atlas for the main game,
+  requests combat update and unified documentation, with image proposals first.
+  [One visual selection](docs/wiki/vision.md#единая-визуальная-база-и-интеграция--поручение-2026-10-29)
+  names atlas-v6, actual local heightfield combat proposal and the selected
+  graphic-novel reference; existing map/combat/quest owners link back to it.
+  Preserve source/status distinctions and saved-world compatibility. No new
+  gameplay/renderer implementation or acceptance, merge or deployment.
+  Scoped Markdown/links/diff and normal documentation commit hook PASS; an initial
+  link into the unimported fog page was corrected. Game/SQL/browser NOT_RUN.
+
 ### Assess the publication path against the actual game
 
 - 2026-10-28, branch `codex/game-production-readiness`, local follow-up research:
