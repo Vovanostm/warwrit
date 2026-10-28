@@ -100,7 +100,8 @@
     "date": "2026-10-28",
     "branch": "codex/map-road-navigation",
     "source": "packages/game-core/src/world/painted-atlas/region.ts",
-    "status": "local: polygons/stations corrected after owner follow-up; independent critique/PR CI pending",
-    "compatibility": "Existing accepted path/speedSpans/timing remain frozen; new plans use rebuilt field. Coordinate frame and profiles unchanged."
+    "status": "local complete: polygons/stations and graph corrected; visual/playable ACCEPT at a7bc171f; hosted CI/publication pending",
+    "compatibility": "Existing accepted path/speedSpans/timing remain frozen; new plans use rebuilt field. Coordinate frame and profiles unchanged.",
+    "worktree": "Retained by explicit owner follow-up on2026-10-28."
   }
 }

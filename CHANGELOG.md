@@ -20,7 +20,9 @@ requests.
   Two public regressions FAIL before correction; atlas5/exact-free22/map20,
   types/build/lint/format and author native two-road journeys now PASS.
   Accepted plans retain timing; only new plans use rebuilt geometry. Independent
-  playable critique/normal commit audit and hosted CI pending.
+  absolute playable ACCEPT at `a7bc171f`, six applicable scores2. The commit hook
+  reported a suppressed related-test failure; exact standalone rerun/coverage
+  PASS739/66 skipped without code changes. Normal audit PASS; hosted CI pending.
   [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity

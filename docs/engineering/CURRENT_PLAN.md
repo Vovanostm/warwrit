@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Atlas road nodes and routing — 2026-10-28, LOCAL
+## Atlas road nodes and routing — 2026-10-28, LOCAL COMPLETE
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
 Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
@@ -11,9 +11,11 @@ Existing pathfinder/profile/coordinate frame stay; accepted plans retain frozen 
 Two public regressions fail before correction; atlas5/exact-free22/map20 now PASS.
 Core build/types, script types, scoped lint/format and current-plan check PASS.
 Author native previews/day/night and both completed route journeys PASS.
-Independent absolute playable critique pending.
+Independent absolute playable ACCEPT at `a7bc171f`: six applicable scores2.
+Broader related rerun/coverage739 PASS,66 skipped; first hook test failure unexplained.
+Normal audit PASS; no bypass or lowered thresholds.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
-Next: focused checks, actual route captures and independent playable critique.
+Next: publish the navigation follow-up, green applicable CI and expected-head merge.
 Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
 No deployment authorized.
 
