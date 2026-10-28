@@ -9,9 +9,77 @@ requests.
 
 ## Unreleased
 
+### Road diagnostics publication activation
+
+- 2026-10-28, branch `codex/map-road-diagnostics`, published in
+  [PR333](https://github.com/Vovanostm/warwrit/pull/333), head `2a89ee58`:
+  owner authorizes «ok, pr, merge» for the current diagnostic overlay, two
+  corridor regressions, concise map-art skill and source-grounded explanation.
+  Diagnostic code remains `dea28641`; prior local/visual checks retained;
+  independent source ACCEPT applies to the initial published head. Scope40703225664
+  PASS; CI40703225465 bootstrap PASS, coverage failed a5000ms negative-test timeout.
+  Test-only correction cuts one actual road edge in a copied compiled field instead
+  of rebuilding the full atlas in the test; assertions and timeout retained. Focused
+  V8 coverage3 PASS, test bodies37ms; independent correction SOURCE ACCEPT,
+  new CI required before merge.
+  Field/road speed values and pathfinding behavior remain unchanged. Retain worktree;
+  no deployment. This publication-status readback is local.
+  [Publication contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+
+### Explain the Bereznyak field shortcut
+
+- 2026-10-28, branch `codex/map-road-navigation`, local diagnostic: reproduce
+  the owner's screenshot route using approximate landmark coordinates. Actual
+  plan comparison gives929m/797s vs1264m/830s via the northern road/trail.
+  Record current speed/classification assumptions and coordinate limits in the
+  [owning map result](docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+  No pathfinding/balance change or new runtime acceptance; game/browser/SQL NOT_RUN.
+
+### Inspect declared road continuity on the atlas
+
+- 2026-10-28, branch `codex/map-road-navigation`, local: owner activates the
+  first proposed diagnostic cycle and prioritizes agent freedom over excess
+  instructions. The optional map-lab overlay shows the actual137 road nodes
+  and140 road edges; checks the two repaired corridors separately from grid
+  bypasses and alternate roads; names missing anchors/disconnections. Ordinary
+  dead ends remain allowed. `pnpm test:map` includes the negative continuity
+  regression and DOM toggle; art skill replaces its fixed recipe with a concise
+  synchronized-result requirement. No movement/server/plan/dependency changes.
+  Map23/types/lint and author native toggle/Space/day-night/zoom/arrival PASS;
+  code `dea28641`, normal commit hook/audit PASS; independent visual ACCEPT,
+  five applicable scores2 after supplying missing paired comparisons/references.
+  Initial test exposed an alternate-road bypass
+  and led to corridor-scoped checks; detached DOM fixture corrected before PASS.
+  Independent native replay/full game/SQL gates NOT_RUN; local lab-only delivery.
+  [Owning result](docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
+
+### Map improvement source research
+
+- 2026-10-28, branch `codex/map-road-navigation`, local proposal: owner asks
+  for more useful web/GitHub examples. Record pinned Tiled, Azgaar and
+  PathFinding.js source comparisons plus Red Blob guidance in the
+  [owning map research](docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+  Recommend road-subgraph checks and extending existing geometry overlays;
+  retain current cost-aware routing. No code, skill or dependency changes;
+  foreign tests/runtime/benchmarks NOT_RUN/NOT_MEASURED. No publication.
+  Scoped formatting, research links and plan check PASS after initial table reformat.
+
+### Map art updates require regenerated navigation
+
+- 2026-10-28, branch `codex/map-road-navigation`, local: owner requires zones
+  and paths regenerated after every map update. Extend
+  [warwrit-art](.agents/skills/warwrit-art/SKILL.md#every-map-revision-rebuild-zones-and-navigation)
+  with zone/road synchronization, navigation-field rebuild, fresh route and
+  browser checks, and combined art/geometry critique evidence. Image-only delivery
+  cannot close a map revision. Preserve shared geometry, frozen accepted plans
+  and runtime permissions. Instruction-only change; game/browser tests NOT_RUN.
+  Skill schema, scoped formatting, local link targets and plan checks PASS;
+  initial plan check required explicit coordinator naming, corrected before commit.
+
 ### Atlas road nodes follow the repaired painting
 
-- 2026-10-28, branch `codex/map-road-navigation`, published in
+- 2026-10-28, branch `codex/map-road-navigation`, merged2026-10-28 as
+  `caee351b` in
   [PR332](https://github.com/Vovanostm/warwrit/pull/332): owner asks whether
   road nodes and pathfinding were rebuilt and requests retaining the worktree.
   Reproduced missing road surfaces at both repaired links and the old eastern
@@ -28,8 +96,12 @@ requests.
   scenario. Its test now handles the same required successor choice as adjacent
   cases via real leadership API, retaining non-null terminal/idempotency assertions.
   Actual isolated PG1 PASS/23 skipped; independent correction SOURCE ACCEPT,
-  optional branch execution unproven, new CI pending. Combat production rules
-  and gate thresholds remain unchanged.
+  optional branch execution unproven. Final CI40680047382 PASS: verify/coverage1206
+  (84 skipped in unit runs), stress10000, migration smoke, all74 real SQL cases,
+  actual browser journeys and audit; final scope40681842613 PASS. Expected head
+  `52bd7825` merged normally; live PR/main read back and merge tree matches the
+  tested tree. Combat production rules and gate thresholds remain unchanged.
+  This post-merge documentation readback is local; worktree retained by owner.
   [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity

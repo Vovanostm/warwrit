@@ -34,7 +34,7 @@
     "prepare": "sh scripts/install-git-hooks.sh",
     "report:quality": "fallow health --hotspots --targets && fallow dupes",
     "test": "pnpm test:unit",
-    "test:map": "tsc -p scripts/world-map/tsconfig.json && vitest run scripts/world-map/navigation-lab.test.ts",
+    "test:map": "tsc -p scripts/world-map/tsconfig.json && vitest run scripts/world-map/navigation-lab.test.ts scripts/world-map/road-diagnostics.test.ts",
     "test:combat:stress": "tsx scripts/combat-stress.ts",
     "test:coverage": "vitest run --coverage --mode coverage",
     "test:migrations": "bash scripts/test-migrations.sh",

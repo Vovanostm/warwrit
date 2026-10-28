@@ -308,3 +308,52 @@ not by itself prove the leader's fate; source establishes the unsupported test
 assumption. Focused actual isolated PostgreSQL case and independent source review
 are required, then current-head hosted CI. Existing map visual evidence remains
 applicable because navigation code/art are unchanged by this correction.
+
+Delivery readback2026-10-28: current-head CI40680047382 PASS (verify/coverage1206,
+84 unit skips, stress10000, migration smoke, SQL74, actual browser journeys and
+normal audit); final scope40681842613 PASS. PR332 merged normally as `caee351b`
+with expected head `52bd78253958f0951613e765c24d379f7711749d`. Live PR/main
+and merge tree read back; tested and merged trees match. This documentation
+checkpoint is local; implementation is merged. Retain this worktree and stand5346;
+older running servers need an updated process reload. No deployment performed.
+
+## Road diagnostics amendment — 2026-10-28
+
+Owner: implement the recommended first cycle, preserving agent freedom and avoiding
+excess instructions/waste. Add local map-lab inspection of the compiled road-only
+graph and checks for the two repaired connections. A disconnected declared link
+must fail even when the general planner finds a walkable field bypass. Display
+actual nodes/edges and affected check endpoints; ordinary dead ends are permitted.
+Do not claim all atlas roads verified from these two expectations. Default overlay
+off; map input, day/night and journeys stay usable. No runtime/game-rule change,
+new dependency, external publication or deployment. Shorten the art skill to the
+required synchronized result and leave implementation/check selection to the author.
+Use focused checks and a native journey; independent visual critique remains.
+
+Local result: code `dea28641`; map23/types/scoped lint/format, skill schema and
+normal commit audit PASS. Initial broad connectivity accepted an alternate-road
+bypass; checking the declared corridor now detects a shifted station despite a
+valid free-movement route. Native overlay toggle/Space/day-night/zoom/arrival PASS.
+Independent absolute visual ACCEPT, five applicable scores2, after paired evidence
+closed the initial missing-input block; independent replay NOT_RUN. Full game/SQL
+gates NOT_RUN for this lab-only slice. No publication/deployment; retain worktree.
+
+## Road diagnostics PR activation — 2026-10-28
+
+Owner: «ok, pr, merge». Publish the current cohesive map-diagnostics/skill slice
+and normally merge after current-head applicable CI/scope and independent review.
+Branch `codex/map-road-diagnostics`, live base `caee351b`. Reuse unchanged code
+and visual evidence from `dea28641`; publication documents change no behavior.
+Includes source research and the measured field-shortcut explanation, not a new
+cropland type, speed change or pathfinder replacement. Retain the worktree; no
+deployment, automation, auto/admin merge or database reset. Read back actual PR
+head/base before the expected-head merge and record its actual result.
+
+CI40703225465 correction: bootstrap passed, but coverage timed out the negative
+road test at7793ms against the unchanged5000ms budget. Reuse the already compiled
+real atlas field and remove one existing bidirectional road edge in a copied map.
+Keep the actual grid/terrain, public planner bypass assertion, continuity failure,
+missing-anchor case and DOM toggle checks; assert the removed edge existed both
+ways. No timeout increase or production change. Focused V8 coverage3 PASS with
+37ms test bodies locally; independent test correction SOURCE ACCEPT. New hosted
+CI required before merge. Prior visual/native evidence remains applicable.

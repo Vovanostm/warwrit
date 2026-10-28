@@ -1,6 +1,6 @@
 ---
 name: warwrit-art
-description: Produce or fix a Warwrit raster asset (map sheet, place scene, concept) with Codex built-in image_gen and the region-compositing technique — reference-led generation, one-region crop edits pasted back with feathered masks, provenance, and the visual-critic loop. Use for any generated art in assets/art/**; not for 3D characters (warwrit-characters-3d) or code-native UI.
+description: Produce or fix a Warwrit raster asset (map sheet, place scene, concept) with Codex built-in image_gen and region compositing, provenance and visual critique. Every map image update includes synchronizing zones and rebuilding road nodes and navigation. Use for generated art in assets/art/** and map image revisions; not for 3D characters (warwrit-characters-3d) or code-native UI.
 ---
 
 # Warwrit art lane
@@ -50,6 +50,19 @@ After two critic passes with a criterion at 1, switch to regions:
 
 Python with Pillow: run the script with `python3 -I` from an interpreter that
 has Pillow (pyenv on the director's Mac); it is a tool, not game runtime.
+
+## Every map revision: rebuild zones and navigation
+
+Owner requirement — 2026-10-28: after **every map image update**, regenerate
+zones, road nodes and paths from the shared geometry and check that they match
+the current image. Image-only delivery is incomplete. Preserve the coordinate
+frame, approved movement rules and already accepted plans; name any consumer
+still using an old field. Choose the simplest useful method and proportional
+checks for the affected area; this is an outcome requirement, not a fixed recipe.
+
+Atlas geometry: [region.ts](../../../packages/game-core/src/world/painted-atlas/region.ts).
+The map lab's optional road overlay and `pnpm test:map` help inspect declared
+connections; they do not establish correctness of every road or zone.
 
 ## Record and gate
 
