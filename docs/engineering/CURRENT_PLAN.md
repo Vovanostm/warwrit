@@ -2,24 +2,25 @@
 
 ## Publication assessment — 2026-10-28, LOCAL research complete
 
-Coordinator/documentation owner: parent; branch `codex/game-production-readiness`, assessed source `a1e6f3f5`.
+Coordinator/documentation owner: parent; branch `codex/game-production-readiness`, local report `dec5e7fc` plus current docs.
 Owner request: deeply assess the game with subagents and identify publication requirements.
-Read-only product assessment; five independent research directions, no product-code changes.
+Read-only product assessment; five initial research directions, three bounded follow-up source passes; no product-code changes.
 Live main `48d8a2ae`; graph indexes another checkout, selected-revision sources used.
 [Owning assessment](../wiki/m1-spec.md#готовность-к-публикации--исследование-2026-10-28).
 Approved final target: private persistent sandbox for10–20 invited players; finite M1 remains intermediate.
 No separately approved reduced pilot, open registration, PvP, commerce or monetization scope.
-PR334 `a1e6f3f5` / PR335 `ab7c59c7` OPEN, NOT_MERGED; exact-head CI/scope SUCCESS refreshed.
-Payroll LOCAL/uncommitted: DEFAULT/TARGETED loss/reload/retry evidence retained with synthetic-time provenance.
-Quality correction/source ACCEPT supersedes the old REWORK checkpoint below; latest mounted8 PASS.
-Payroll new pending/confirmation visual re-pass, normal commit hook/PR/CI and integration remain.
+PR334 `a1e6f3f5` / PR335 `ab7c59c7` / PR337 `22942b6c` OPEN, NOT_MERGED; live exact-head CI/scope SUCCESS.
+Payroll LOCAL commit `f56a1364`; four later doc-only WIP files, no remote branch/PR.
+Final TARGETED10/DEFAULT40 lost-response/reload/retry, stale refusal and night proof retained with synthetic-time limits.
+Payroll third bounded visual ACCEPT and normal hook/related/audit PASS recorded; hosted gate/integration remain.
+Transfer LOCAL/uncommitted; latest stale-error fix formatted, final types/tests/client/browser acceptance still pending.
+PR336 OPEN/DRAFT is a DEV story reader, not campaign persistence or story-runner delivery.
 Main blockers: company upkeep/recovery, terminal surrender/hostile retreat, captive custody, full M1 journey.
 Final-game gaps: recurring causes/economy, offline camp, story runtime, war/restoration, account-bound world knowledge.
 Deployment preparation: reproducible launch, invited identity, HTTPS/WSS, backup/restore, restart and measured capacity.
 Current payroll UI map/company/place read-only view rendered; prior WebGL loss remains unexplained.
 Game tests/payment/restart/deployment NOT_RUN by this research; FPS/capacity/retention NOT_MEASURED.
-Documentation diff/format/9 added local links/short status block PASS; independent report review ACCEPT.
-Normal documentation/evidence commit hook PASS; local report committed without publishing or changing PR heads.
+Follow-up format/diff/anchor/target/22-line plan checks PASS; independent source-grounded report review ACCEPT.
 Existing implementation worktrees, original dirty checkout, databases, runtime and writing chat preserved.
 No merge, deployment, paid operation or automation/Orca restart performed or authorized by this assessment.
 Next recommended implementation: finish current slices, then one new-player loop through upkeep and the next contract.

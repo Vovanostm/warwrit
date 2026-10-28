@@ -11,6 +11,17 @@ requests.
 
 ### Assess the publication path against the actual game
 
+- 2026-10-28, branch `codex/game-production-readiness`, local follow-up research:
+  refresh the same owning assessment after the parallel slices progressed.
+  Live main remains `48d8a2ae`; PR334/335/337 are open with successful exact-head
+  CI/scope. Record payroll's local commit/final finite acceptance and transfer's
+  unfinished validation instead of treating either as main. Three bounded
+  read-only subagents reconfirm company, terminal/captive and long-running-world
+  gaps; qualify company retreat evidence, care producer inputs, and unresolved
+  offline/war details. Parent rechecks the existing launch/access boundaries.
+  No product code, game rule, runtime tests, data, PR head or deployment changed.
+  Documentation checks and independent review are recorded in the owning result.
+
 - 2026-10-28, branch `codex/game-production-readiness`, local research: owner
   asks for a deep assessment with subagents and remaining publication work.
   Update the [owning M1 assessment](docs/wiki/m1-spec.md#готовность-к-публикации--исследование-2026-10-28),
