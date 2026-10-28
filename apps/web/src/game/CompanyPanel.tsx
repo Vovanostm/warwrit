@@ -1,15 +1,18 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { ItemTransferPanel } from './ItemTransferPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
 export function CompanyPanel(props: {
+  readonly accountId: string;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
   readonly supplyVenueName: string;
   readonly canBuySupplies: boolean;
   readonly onBuySupplies: () => void;
+  readonly onRefreshItems: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
@@ -135,6 +138,11 @@ export function CompanyPanel(props: {
       </ul>
       {holdings && (
         <>
+          <ItemTransferPanel
+            accountId={props.accountId}
+            company={company}
+            onRefresh={props.onRefreshItems}
+          />
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (
             <p className="state-note">Общих припасов нет.</p>

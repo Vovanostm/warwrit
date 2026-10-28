@@ -2,6 +2,7 @@ import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 import { projectPayroll } from './payroll-view.js';
+import { itemTransferOptions } from './item-transfer.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -125,7 +126,25 @@ export function projectCompanyHoldings(
     people: partyMembers.length,
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
+  const accessible = itemTransferOptions(state);
   return {
+    ...(accessible
+      ? {
+          transfer: {
+            containers: accessible.containers.map((container) => ({
+              containerId: container.containerId,
+              kind: container.kind,
+              carrierCharacterId:
+                container.carrier?.kind === 'CHARACTER' ? container.carrier.id : null,
+            })),
+            items: accessible.items.map((item) => ({
+              itemId: item.itemId,
+              containerId: item.containerId!,
+              quantity: item.quantity,
+            })),
+          },
+        }
+      : {}),
     cashQ,
     wallets,
     items,
