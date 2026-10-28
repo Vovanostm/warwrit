@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Atlas road nodes and routing — 2026-10-28, PR332 / LOCAL CHECKPOINT
+## Atlas road nodes and routing — 2026-10-28, MERGED / LOCAL READBACK
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
 Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
@@ -15,14 +15,17 @@ Independent absolute playable ACCEPT at `a7bc171f`: six applicable scores2.
 Broader related rerun/coverage739 PASS,66 skipped; first hook test failure unexplained.
 Normal audit PASS; no bypass or lowered thresholds.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
-[PR332](https://github.com/Vovanostm/warwrit/pull/332), published head `a4fa3879`.
+[PR332](https://github.com/Vovanostm/warwrit/pull/332), tested head `52bd7825`.
 Scope40676883890 PASS; CI40676883813 verify1206/stress PASS, SQL73/74.
 Failed SQL bow/terminal case omitted a legitimate successor-choice step.
 Test-only real leadership API handling added; isolated actual PG1 PASS/23 skipped.
 Independent CI-correction SOURCE ACCEPT; optional branch execution not proven.
-No gate/assertion weakening; new hosted CI remains required.
-This publication-status checkpoint is local; reviewed code is unchanged.
-Next: accepted correction, green applicable CI and expected-head merge.
+CI40680047382 PASS: verify/coverage1206, stress10000, SQL74, browser and audit.
+Unit84 skipped; migration smoke PASS; final scope40681842613 PASS.
+Normal expected-head merge `caee351b`; live PR/main read back, tested tree matches.
+No gate/assertion weakening; existing warnings and bounded evidence remain recorded.
+This post-merge documentation checkpoint is local; reviewed code is unchanged.
+Next: owner trial on the retained navigation stand5346; old servers need reload.
 Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
 No deployment authorized.
 

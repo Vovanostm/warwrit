@@ -308,3 +308,11 @@ not by itself prove the leader's fate; source establishes the unsupported test
 assumption. Focused actual isolated PostgreSQL case and independent source review
 are required, then current-head hosted CI. Existing map visual evidence remains
 applicable because navigation code/art are unchanged by this correction.
+
+Delivery readback2026-10-28: current-head CI40680047382 PASS (verify/coverage1206,
+84 unit skips, stress10000, migration smoke, SQL74, actual browser journeys and
+normal audit); final scope40681842613 PASS. PR332 merged normally as `caee351b`
+with expected head `52bd78253958f0951613e765c24d379f7711749d`. Live PR/main
+and merge tree read back; tested and merged trees match. This documentation
+checkpoint is local; implementation is merged. Retain this worktree and stand5346;
+older running servers need an updated process reload. No deployment performed.

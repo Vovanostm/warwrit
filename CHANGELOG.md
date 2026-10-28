@@ -11,7 +11,8 @@ requests.
 
 ### Atlas road nodes follow the repaired painting
 
-- 2026-10-28, branch `codex/map-road-navigation`, published in
+- 2026-10-28, branch `codex/map-road-navigation`, merged2026-10-28 as
+  `caee351b` in
   [PR332](https://github.com/Vovanostm/warwrit/pull/332): owner asks whether
   road nodes and pathfinding were rebuilt and requests retaining the worktree.
   Reproduced missing road surfaces at both repaired links and the old eastern
@@ -28,8 +29,12 @@ requests.
   scenario. Its test now handles the same required successor choice as adjacent
   cases via real leadership API, retaining non-null terminal/idempotency assertions.
   Actual isolated PG1 PASS/23 skipped; independent correction SOURCE ACCEPT,
-  optional branch execution unproven, new CI pending. Combat production rules
-  and gate thresholds remain unchanged.
+  optional branch execution unproven. Final CI40680047382 PASS: verify/coverage1206
+  (84 skipped in unit runs), stress10000, migration smoke, all74 real SQL cases,
+  actual browser journeys and audit; final scope40681842613 PASS. Expected head
+  `52bd7825` merged normally; live PR/main read back and merge tree matches the
+  tested tree. Combat production rules and gate thresholds remain unchanged.
+  This post-merge documentation readback is local; worktree retained by owner.
   [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity
