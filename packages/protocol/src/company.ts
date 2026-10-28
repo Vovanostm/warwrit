@@ -240,6 +240,14 @@ export type OrdinaryPlayerCompanyCommandType =
 
 /** Payloads whose complete ordinary-command effects and public readback are enabled in V2. */
 export interface OrdinaryPlayerCompanyPayloads {
+  /** Pay existing due claims from an accessible company pool; core owns selection and allocation. */
+  readonly PayClaims: {
+    readonly poolId: string;
+    readonly amountQ: string;
+    readonly claimIds: readonly string[];
+    readonly mode: 'DEFAULT' | 'TARGETED';
+    readonly payeeId?: string;
+  };
   readonly BuySupplies: {
     readonly siteId: string;
     readonly quantity: number;

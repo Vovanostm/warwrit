@@ -3338,6 +3338,7 @@ async function inspectCompany(db: Kysely<DatabaseSchema>, actor: SyntheticCompan
         .select(['event_id', 'event'])
         .where('world_id', '=', actor.worldId)
         .where('company_id', '=', actor.companyId)
+        .orderBy('event_id')
         .execute(),
     ]);
     return { state, snapshot, routes, receipts, companyReceipts, events };

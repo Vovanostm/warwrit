@@ -1,15 +1,19 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { PayrollPanel } from './PayrollPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
 export function CompanyPanel(props: {
+  readonly accountId: string;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
+  readonly ticksPerDay: number;
   readonly supplyVenueName: string;
   readonly canBuySupplies: boolean;
   readonly onBuySupplies: () => void;
+  readonly onRefreshPayroll: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
@@ -179,6 +183,13 @@ export function CompanyPanel(props: {
                 </li>
               ))}
           </ul>
+          <PayrollPanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            ticksPerDay={props.ticksPerDay}
+            onRefresh={props.onRefreshPayroll}
+          />
         </>
       )}
     </section>

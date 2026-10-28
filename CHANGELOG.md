@@ -9,6 +9,77 @@ requests.
 
 ## Unreleased
 
+### Complete payroll presentation and exact retry evidence
+
+- 2026-10-28, branch `codex/game-payroll`, local correction superseding the
+  earlier rework checkpoint below: strict parsing/readback, shared record guards
+  and component-owned CSS pass normal audit; server/client source ACCEPT,
+  realPG/focused47 and latest mounted8/types/lint/format PASS. Final controls
+  retain amount/mode/payee across unknown/reload/confirmation and show actual
+  claim deadlines from the server calendar. Current-source TARGETED10kr lost
+  successful response/reload/retry preserves one receipt/event, revision7 and
+  830.83 company/69.17 Rell. Same critic's second absolute bounded payroll ACCEPT,
+  seven applicable scores2; whole-scene visual/stability remains separate.
+  Canonical time preparation is synthetic on owned restored clones. No new
+  finance rule or migration; normal commit/PR/CI/merge not yet performed.
+  [Owning result](docs/engineering/evidence/payroll-20261028/README.md),
+  [player-facing behavior](docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
+
+- Same-day correction: actual stale-revision browser refusal exposed its
+  explanation being cleared during a same-company revision refresh. Preserve
+  terminal messages within that scope, clear on account/company change; mounted8/
+  types/lint and independent affected-source ACCEPT. Clean browser rerun keeps
+  refusal and unchanged scoped state/receipt/audit counts. Real PG routes2 PASS
+  now also covers a fresh same-ID/different-body race, one winning payment and
+  one idempotency conflict; independent test-source ACCEPT. No production server
+  or finance rule change in this correction. Final normal hook/PR/CI pending.
+
+- Final-source browser DEFAULT40 successful-response loss/reload and natural
+  night retry PASS:790.83 company/109.17 Rell, one receipt/event and revision13
+  unchanged on retry. Native prior/default/targeted/refusal records keep their
+  separate source/time provenance; no new full-game acceptance.
+
+- Final third absolute payroll critique ACCEPT, eight applicable scores2 on
+  current refusal and DEFAULT day/night/retry captures. Initial normal hook audit
+  passed but its hidden related tests failed the integration-DB prefix guard;
+  preserve the failure, create a proper empty owned integration DB and migrate
+  without weakening the guard. A subsequent unrelated world assertion compared
+  unchanged audit rows in SQL's unspecified order; add one event_id ORDER BY in
+  its existing test readback. Independent correction SOURCE ACCEPT and exact
+  regression1PASS13filteredSKIP. Final whole-scope normal hook pending; no new
+  production behavior in this test correction. Final whole-scope normal commit
+  hook/related tests/audit PASS on the proper isolated DB, without bypass.
+
+### Payroll hosted formatting correction
+
+- 2026-10-28, branch `codex/game-payroll`, local correction to published
+  PR338: first CI40755025345 stopped at formatting in executor.ts and22
+  native evidence JSON files. Apply the pinned formatter; ordinary source diff
+  changes only line wrapping and parsed evidence values remain equal. No
+  finance/request behavior changed. Normal hooks and current-head CI remain
+  required. The staged-only hook refresh initially omitted unchanged branch
+  client coverage; fresh whole-branch related coverage457 PASS/21 SKIP is reused
+  through the existing source-freshness-checked report merger, with independent
+  source ACCEPT. No audit-base/threshold change; no merge or deployment.
+  Final ordinary hook/related/audit PASS; corrected-head hosted CI remains.
+  See the owning payroll evidence.
+
+### Pay earned wages through the company panel
+
+- 2026-10-28, branch `codex/game-payroll`, LOCAL: the autonomous game mission
+  adds the real PayClaims V2 adapter and company-panel DEFAULT/TARGETED controls,
+  retaining immutable scoped requests across unknown responses and reload.
+  Existing core finance/access rules, transactional root/receipts and prospective
+  qualification observation are reused; no migration or new financial policy.
+  Corrected source server/web ACCEPT; focused32+5 and actual PG2 PASS. Parent
+  browser DEFAULT19.17kr committed-response loss/reload/retry PASS with one
+  receipt/event, revision4 and unchanged balances on retry. Time preparation used
+  canonical AdvanceCampaign on a restored disposable clone, not direct claim or
+  money edits. Fresh unit coverage1220 PASS/84 skipped; normal audit FAILED new
+  complexity/guard clone/selectors and quality rework is active without bypass.
+  TARGETED browser, final-source acceptance/commit/PR/CI and full game remain
+  pending. [Journey and actual limits](docs/engineering/evidence/payroll-20261028/README.md).
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in

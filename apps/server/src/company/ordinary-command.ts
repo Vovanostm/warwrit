@@ -18,6 +18,8 @@ export function ordinaryCommandIntent(
   },
 ) {
   switch (request.type) {
+    case 'PayClaims':
+      return { type: request.type, payload: { ...request.payload } };
     case 'RenameCompany':
       return {
         type: request.type,
@@ -84,6 +86,8 @@ function requestedEffectPresent(
   ids: OrdinaryIds,
 ): boolean {
   switch (request.type) {
+    case 'PayClaims':
+      return paymentCompleted(request, prepared);
     case 'EquipItem':
       return itemEquipped(prepared, request.payload);
     case 'RenameCompany':
@@ -92,6 +96,19 @@ function requestedEffectPresent(
     default:
       return fieldCampChanged(request, prepared, ids);
   }
+}
+
+function paymentCompleted(
+  request: Extract<OrdinaryRequest, { type: 'PayClaims' }>,
+  prepared: PreparedEconomy,
+): boolean {
+  return (
+    prepared.receipt.allocations.length > 0 &&
+    prepared.receipt.allocations.reduce(
+      (paid, allocation) => paid + BigInt(allocation.amountQ),
+      0n,
+    ) === BigInt(request.payload.amountQ)
+  );
 }
 
 function fieldCampChanged(
