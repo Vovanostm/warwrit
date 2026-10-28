@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "branch": "codex/map-road-continuity",
-  "status": "local; independent visual review pending",
+  "status": "local complete; independent visual ACCEPT at 27b989bc; PR/merge authorized, not yet published",
   "tool": "built-in image_gen.imagegen",
   "sourceImage": "atlas-v5.png",
   "activeImage": "atlas-v6.png",
@@ -74,5 +74,19 @@
     "Raster continuity is checked visually; a unit test cannot prove road plausibility.",
     "The existing navigation cost geometry is unchanged; this art repair does not claim every painted farm lane has a road speed bonus.",
     "No deployment or full-MMO acceptance."
-  ]
+  ],
+  "review": {
+    "revision": "27b989bc",
+    "verdict": "ACCEPT",
+    "scores": {
+      "roadFootprint": 2,
+      "rendering": 2,
+      "valuePalette": 2,
+      "materialsWear": 2,
+      "propsLore": 2,
+      "sceneIntegration": 2
+    },
+    "notApplicable": ["pose", "motion"],
+    "limits": "Independent input replay NOT_RUN; broader atlas has no further clear through-road stubs in visual inspection. Edge/rut texture polish remains at score2; no blocking defect."
+  }
 }

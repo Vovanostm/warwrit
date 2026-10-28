@@ -18,8 +18,10 @@ requests.
   v6; v5/history retained. Exact prompts, crop/blend geometry and a road-tracing
   acceptance rule accompany the image. Movement/terrain/SQL remain unchanged.
   Map20/types and author browser day/night/zoom/overview/arrival PASS after
-  building initially missing protocol/testkit outputs. Independent visual
-  review, commit hook and PR CI pending.
+  building initially missing protocol/testkit outputs. Independent visual ACCEPT
+  at `27b989bc`, six applicable scores2; normal commit hook/audit PASS with a
+  syntactic attribution warning. PNG4608×3072; no changed pixel outside the two
+  repair bounds. PR CI/publication/merge pending.
   [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements
