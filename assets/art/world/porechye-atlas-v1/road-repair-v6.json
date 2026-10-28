@@ -1,7 +1,7 @@
 {
   "date": "2026-10-28",
   "branch": "codex/map-road-continuity",
-  "status": "local complete; independent visual ACCEPT at 27b989bc; PR/merge authorized, not yet published",
+  "status": "published in PR331; independent visual ACCEPT at 27b989bc; merge awaits CI",
   "tool": "built-in image_gen.imagegen",
   "sourceImage": "atlas-v5.png",
   "activeImage": "atlas-v6.png",
@@ -88,5 +88,6 @@
     },
     "notApplicable": ["pose", "motion"],
     "limits": "Independent input replay NOT_RUN; broader atlas has no further clear through-road stubs in visual inspection. Edge/rut texture polish remains at score2; no blocking defect."
-  }
+  },
+  "pullRequest": "https://github.com/Vovanostm/warwrit/pull/331"
 }

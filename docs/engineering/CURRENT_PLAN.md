@@ -1,9 +1,9 @@
 # Warwrit current delivery plan
 
-## Painted road continuity — 2026-10-28, LOCAL COMPLETE
+## Painted road continuity — 2026-10-28, PUBLISHED
 
 Owner requests image repair, worktree, tests, PR, normal merge and worktree cleanup.
-Sole writer/validation owner: parent; branch `codex/map-road-continuity`, base `5ecb4eb3`.
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-continuity`, base `5ecb4eb3`.
 Outcome: the two reported roads visibly connect around fields to existing lanes.
 Scope: retained atlas art/provenance and its two lab image references; no rules/SQL.
 Independent absolute visual ACCEPT at `27b989bc`: six applicable map criteria2.
@@ -12,7 +12,8 @@ Focused map20/types and author browser
 day/night, overview/zoom, selection and Bereznyak→Brod arrival PASS.
 Initial types failed on unbuilt protocol/testkit; package builds and rerun PASS.
 [Owning result and limits](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
-Next: publish once, applicable PR CI, expected-head merge and cleanup.
+[PR331](https://github.com/Vovanostm/warwrit/pull/331) published; applicable CI pending.
+Next: green PR CI, expected-head merge and cleanup.
 No deployment authorized.
 
 ## Networked atlas PR delivery — 2026-10-27, CI CORRECTION
