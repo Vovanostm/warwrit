@@ -337,3 +337,14 @@ valid free-movement route. Native overlay toggle/Space/day-night/zoom/arrival PA
 Independent absolute visual ACCEPT, five applicable scores2, after paired evidence
 closed the initial missing-input block; independent replay NOT_RUN. Full game/SQL
 gates NOT_RUN for this lab-only slice. No publication/deployment; retain worktree.
+
+## Road diagnostics PR activation — 2026-10-28
+
+Owner: «ok, pr, merge». Publish the current cohesive map-diagnostics/skill slice
+and normally merge after current-head applicable CI/scope and independent review.
+Branch `codex/map-road-diagnostics`, live base `caee351b`. Reuse unchanged code
+and visual evidence from `dea28641`; publication documents change no behavior.
+Includes source research and the measured field-shortcut explanation, not a new
+cropland type, speed change or pathfinder replacement. Retain the worktree; no
+deployment, automation, auto/admin merge or database reset. Read back actual PR
+head/base before the expected-head merge and record its actual result.

@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+## Road diagnostics PR delivery — 2026-10-28, PREPARING PUBLICATION
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
+Owner: «ok, pr, merge» authorizes publication and normal expected-head merge.
+Base/live main `caee351b`; unchanged diagnostic code accepted at `dea28641`.
+Scope: optional lab graph, two corridor checks/tests, concise art skill and research.
+Field-shortcut section explains current costs; no algorithm/balance change.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+Retain map23/types/lint/native and independent absolute visual ACCEPT evidence.
+Independent source review and applicable hosted CI/scope required before merge.
+No duplicated local full gate; normal commit hooks and PR gates remain.
+Retain worktree and other stands; no deployment, auto/admin merge or automation.
+
 ## Bereznyak field shortcut — 2026-10-28, LOCAL DIAGNOSIS
 
 Coordinator/sole writer: parent; branch `codex/map-road-navigation`.

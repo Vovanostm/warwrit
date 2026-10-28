@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Road diagnostics publication activation
+
+- 2026-10-28, branch `codex/map-road-diagnostics`, local publication preparation:
+  owner authorizes «ok, pr, merge» for the current diagnostic overlay, two
+  corridor regressions, concise map-art skill and source-grounded explanation.
+  Diagnostic code remains `dea28641`; retain prior local/visual checks and require
+  current-head hosted CI/scope plus independent source review before normal merge.
+  Field/road speed values and pathfinding behavior remain unchanged. Retain worktree;
+  no deployment. [Publication contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+
 ### Explain the Bereznyak field shortcut
 
 - 2026-10-28, branch `codex/map-road-navigation`, local diagnostic: reproduce
