@@ -95,5 +95,12 @@
     "head": "5cc2d2a529ffdfcee6ad24a86c45a80728fb5bd1",
     "conclusion": "SUCCESS"
   },
-  "cleanup": "Owned Vite5346 stopped; screenshots/production evidence preserved in primary repository output/map-road-continuity. App archive rejected primary checkout; directory switch required before removal."
+  "cleanup": "Owned Vite5346 stopped; screenshots/production evidence preserved in primary repository output/map-road-continuity. App archive rejected primary checkout; directory switch required before removal.",
+  "navigationFollowUp": {
+    "date": "2026-10-28",
+    "branch": "codex/map-road-navigation",
+    "source": "packages/game-core/src/world/painted-atlas/region.ts",
+    "status": "local: polygons/stations corrected after owner follow-up; independent critique/PR CI pending",
+    "compatibility": "Existing accepted path/speedSpans/timing remain frozen; new plans use rebuilt field. Coordinate frame and profiles unchanged."
+  }
 }

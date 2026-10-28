@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Atlas road nodes follow the repaired painting
+
+- 2026-10-28, branch `codex/map-road-navigation`, local: owner asks whether
+  road nodes and pathfinding were rebuilt and requests retaining the worktree.
+  Reproduced missing road surfaces at both repaired links and the old eastern
+  shortcut across a field. Trace corrected polygons and graph stations in the
+  shared atlas source; both labs and the server rebuild their compiled field
+  from it. Existing algorithms/profiles and accepted-plan timing remain.
+  Two public regressions FAIL before correction; atlas5/exact-free22/map20,
+  types/build/lint/format and author native two-road journeys now PASS.
+  Accepted plans retain timing; only new plans use rebuilt geometry. Independent
+  playable critique/normal commit audit and hosted CI pending.
+  [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
+
 ### Painted atlas road continuity
 
 - 2026-10-28, branch `codex/map-road-continuity`, merged2026-10-28 as

@@ -33,6 +33,38 @@ export function paintedAtlasPixel(point: PointFp): PaintedAtlasPixel {
   ];
 }
 
+// Local atlas-v6 corrections: the same traced centreline owns road surface
+// polygons and graph stations. Both labs and the server consume this region.
+function paintedDirtRoad(
+  id: string,
+  line: readonly PaintedAtlasPixel[],
+  width: number,
+): NavigationRegion['overlayShapes'] {
+  return line.slice(1).map((to, i) => {
+    const from = line[i]!;
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    const length = Math.hypot(dx, dy);
+    const half = width / 2;
+    const corner = (p: PaintedAtlasPixel, along: number, across: number) =>
+      paintedAtlasPoint([
+        p[0] + (dx * along - dy * across) / length,
+        p[1] + (dy * along + dx * across) / length,
+      ]);
+    return {
+      shapeId: `${id}-${i}`,
+      overlayId: 'dirt_road' as const,
+      polygon: [
+        corner(from, -half, half),
+        corner(to, half, half),
+        corner(to, half, -half),
+        corner(from, -half, -half),
+      ],
+      stations: [paintedAtlasPoint(from), paintedAtlasPoint(to)],
+    };
+  });
+}
+
 const atlasGeometry = {
   columns: 252,
   rows: 168,
@@ -2267,70 +2299,44 @@ const atlasGeometry = {
         },
       ],
     },
-    {
-      shapeId: 'center-trunk-south-1',
-      overlayId: 'dirt_road',
-      polygon: [
-        {
-          xFp: 1453,
-          zFp: -376,
-        },
-        {
-          xFp: 1685,
-          zFp: -787,
-        },
-        {
-          xFp: 1694,
-          zFp: -782,
-        },
-        {
-          xFp: 1461,
-          zFp: -371,
-        },
+    ...paintedDirtRoad(
+      'center-trunk-south-junction',
+      [
+        [2721, 1644],
+        [2740, 1686],
+        [2770, 1738],
+        [2800, 1775],
+        [2850, 1798],
+        [2906, 1824],
       ],
-      stations: [
-        {
-          xFp: 1460,
-          zFp: -378,
-        },
-        {
-          xFp: 1687,
-          zFp: -780,
-        },
+      6,
+    ),
+    ...paintedDirtRoad(
+      'center-south-field-link',
+      [
+        [2636, 2048],
+        [2630, 2032],
+        [2615, 2015],
+        [2598, 2000],
+        [2580, 1982],
+        [2565, 1963],
+        [2552, 1942],
+        [2547, 1925],
+        [2548, 1910],
+        [2553, 1895],
+        [2560, 1875],
+        [2572, 1858],
+        [2590, 1846],
+        [2615, 1837],
+        [2640, 1831],
+        [2665, 1824],
+        [2700, 1813],
+        [2725, 1805],
+        [2760, 1793],
+        [2800, 1775],
       ],
-    },
-    {
-      shapeId: 'center-trunk-south-2',
-      overlayId: 'dirt_road',
-      polygon: [
-        {
-          xFp: 1680,
-          zFp: -782,
-        },
-        {
-          xFp: 2109,
-          zFp: -1015,
-        },
-        {
-          xFp: 2114,
-          zFp: -1006,
-        },
-        {
-          xFp: 1685,
-          zFp: -773,
-        },
-      ],
-      stations: [
-        {
-          xFp: 1687,
-          zFp: -780,
-        },
-        {
-          xFp: 2107,
-          zFp: -1008,
-        },
-      ],
-    },
+      8,
+    ),
     {
       shapeId: 'center-trunk-south-3',
       overlayId: 'dirt_road',
@@ -3131,70 +3137,24 @@ const atlasGeometry = {
         },
       ],
     },
-    {
-      shapeId: 'center-center-east-edge-0',
-      overlayId: 'dirt_road',
-      polygon: [
-        {
-          xFp: 1348,
-          zFp: 546,
-        },
-        {
-          xFp: 1883,
-          zFp: 421,
-        },
-        {
-          xFp: 1886,
-          zFp: 431,
-        },
-        {
-          xFp: 1351,
-          zFp: 556,
-        },
+    ...paintedDirtRoad(
+      'center-center-east-edge',
+      [
+        [2691, 1379],
+        [2735, 1378],
+        [2790, 1380],
+        [2845, 1386],
+        [2900, 1396],
+        [2940, 1402],
+        [2970, 1413],
+        [2990, 1438],
+        [2998, 1447],
+        [3015, 1454],
+        [3040, 1460],
+        [3072, 1454],
       ],
-      stations: [
-        {
-          xFp: 1355,
-          zFp: 550,
-        },
-        {
-          xFp: 1880,
-          zFp: 427,
-        },
-      ],
-    },
-    {
-      shapeId: 'center-center-east-edge-1',
-      overlayId: 'dirt_road',
-      polygon: [
-        {
-          xFp: 1873,
-          zFp: 423,
-        },
-        {
-          xFp: 2692,
-          zFp: 281,
-        },
-        {
-          xFp: 2694,
-          zFp: 291,
-        },
-        {
-          xFp: 1875,
-          zFp: 433,
-        },
-      ],
-      stations: [
-        {
-          xFp: 1880,
-          zFp: 427,
-        },
-        {
-          xFp: 2688,
-          zFp: 287,
-        },
-      ],
-    },
+      6,
+    ),
     {
       shapeId: 'center-center-west-edge-0',
       overlayId: 'dirt_road',

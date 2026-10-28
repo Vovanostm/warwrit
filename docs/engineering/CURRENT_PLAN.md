@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+## Atlas road nodes and routing — 2026-10-28, LOCAL
+
+Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
+Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
+Outcome: both repaired links carry road speed and routes follow their field-edge bends.
+Owning source: shared `game-core/world/painted-atlas/region.ts`, consumed by both labs/server.
+Scope: traced road polygons/stations, removed old field shortcut, focused regressions.
+Existing pathfinder/profile/coordinate frame stay; accepted plans retain frozen timing.
+Two public regressions fail before correction; atlas5/exact-free22/map20 now PASS.
+Core build/types, script types, scoped lint/format and current-plan check PASS.
+Author native previews/day/night and both completed route journeys PASS.
+Independent absolute playable critique pending.
+[Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
+Next: focused checks, actual route captures and independent playable critique.
+Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
+No deployment authorized.
+
 ## Painted road continuity — 2026-10-28, MERGED / LOCAL READBACK
 
 Owner requests image repair, worktree, tests, PR, normal merge and worktree cleanup.
