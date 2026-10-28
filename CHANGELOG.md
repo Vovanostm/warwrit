@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Release map resources after interrupted construction
+
+- 2026-10-28, branch `codex/game-map-mount-cleanup`, local: the autonomous
+  game-quality mission identified an acquired canvas-engine lease escaping
+  when map scene setup throws before returning its destroy handle. Guard
+  construction and reuse idempotent cleanup for partial and normal teardown;
+  attempt remaining releases despite individual cleanup errors and preserve
+  the original mount error. Focused constructor-failure regression1, final web
+  types/lint/format/diff PASS; independent source review ACCEPT. Initial types
+  required building missing protocol dist; no dependency or visual setting change.
+  Browser/context-loss recovery and later helper-failure injection NOT_RUN;
+  the cause of earlier blank-map observations remains unproven. Normal commit
+  hook/audit PASS; PR/CI pending. [Owning result](docs/wiki/world/map.md#освобождение-ресурсов-при-ошибке-создания-карты--2026-10-28).
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in
