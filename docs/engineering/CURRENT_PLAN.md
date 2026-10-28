@@ -1,30 +1,26 @@
 # Warwrit current delivery plan
 
-## PR336 continuation — 2026-10-28, LOCAL SAVVA R6.2 / VALIDATED
+## PR336 continuation — 2026-10-28, PUBLISHED DRAFT / CI IN PROGRESS
 
-Branch/writer: `codex/novels-readable-illustrated` / delegated `stand_finalize`.
-Initial published [PR336](https://github.com/Vovanostm/warwrit/pull/336): `d7aa265d`.
-Parent's current task limits continuation to two known Savva literary defects
-and a source-grounded handoff of the existing prototype story format.
-Frozen Savva r6.2/afba9125 handed off after reading/editorial checks and integrated.
-Six scenes/two endings/eight combinations; only trust/custody/ration facts remain.
-Markdown-to-TS: 89 paragraphs/14 conditional/all8 routes PASS.
-TS-to-DOM: all8 routes/56 visits, back/reset/switch/scroll/buttons at1280x720 PASS.
-All other story/runtime/art code unchanged; Savva existing expectations updated.
+Coordinator: parent (`/root`); branch writer: delegated `stand_finalize`.
+Branch `codex/novels-readable-illustrated`; [draft PR336](https://github.com/Vovanostm/warwrit/pull/336).
+Published reviewed implementation: `1f2ae1e3`; original delivery: `d7aa265d`.
+Savva r6.2 from writing `afba9125`: six scenes/two endings/eight combinations.
+Only trust/custody/ration facts remain; other stories/art/model/reader unchanged.
 [Contract](../work-packages/MISSION-NOVELS-READABLE.md#pr336-continuation--2026-10-28)
-and [sole owning handoff/result](../wiki/mission-testing.md).
-Document actual catalog/model/art paths, conditions, history and missing campaign contract.
-Do not design/implement a production runner or touch payroll/care/world/shared runtime.
-Parent owns writing commits, CI and PR updates; integrator is sole game-worktree writer.
-Parent authorizes the current six-file local commit with ordinary hooks after live readback.
-No push without a further parent command; no merge/deploy/automation.
-Initial full bootstrap remains historical PASS; docs/prose alone do not rerun it.
-Handoff source/link/format/diff checks PASS; new source checked against frozen copy.
-Initial d7aa265d CI Verify40741126600 and scope40741126157 SUCCESS; not new-head proof.
-Focused34/V8, web types, scoped lint/format PASS; independent delta review no findings.
-Parent live force/free/payment route PASS; informed reading, not blind literary acceptance.
-Commit uses ordinary hooks; current-head CI belongs to parent.
-Proportional checks and PR CI follow the actual delta.
+and [owning handoff/result](../wiki/mission-testing.md).
+Source89/conditional14/all8 and DOM8/56/back/reset/scroll/buttons PASS.
+Focused34/V8, web types, scoped lint/format and ordinary commit hooks PASS.
+Independent delta review found no defects; parent live free/payment route PASS.
+Parent reading is informed, not blind literary acceptance; residual limits stay in the result.
+Current-head CI is in progress and belongs to the coordinator.
+Scope run40761129631/job123073079526 passed size/linkage but failed the missing
+coordinator line in this status block. This document-only correction names it explicitly.
+Existing check-current-plan.sh and scoped format/diff checks validate this correction;
+no rule changes, runtime changes or repeated full bootstrap.
+Parent authorizes the corrective document commit and ordinary push to the same branch.
+Next: coordinator reads final-head CI and the synthetic PR merge tree; no actual merge.
+No production runner/payroll/care/world work, deployment or automation activation.
 
 ## Illustrated novels delivery — 2026-10-28, INITIAL LOCAL VALIDATION (HISTORY)
 
