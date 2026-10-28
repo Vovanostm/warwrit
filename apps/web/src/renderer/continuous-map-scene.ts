@@ -234,393 +234,436 @@ export function mountContinuousMapScene(
     onPosition?: (point: { xFp: number; zFp: number } | null) => void;
   },
 ) {
-  const engine = acquireCanvasEngine(canvas),
-    scene = new Scene(engine);
-  // Projected prop footings can extend below their gate/root pivot.
-  // Draw all props against each other after terrain, without clipping their painted foreground.
-  scene.setRenderingAutoClearDepthStencil(1, true);
-  // One forward/inverse transform owns all displayed distances and movement speed.
-  const unitsPerFp = (region.worldScale ?? 1) / 1024;
-  const sceneFp = (fp: number) => fp * unitsPerFp;
-  const microScene = (fp: string) => sceneFp(Number(fp) / 65536);
-  const light = new HemisphericLight('continuous-sky', new Vector3(-0.5, 1, -0.6), scene);
-  const surface = createMapSurface(scene, region);
-  const { ground, heightAt } = surface;
-  const material = createTerrainMaterial(scene, region);
-  ground.material = material;
-  const meadow = createMapLife(scene, region, heightAt);
-  const meadowMaterial = meadow.material;
-  const trees = generateForest(region, TREE_FORMS);
-  const wildlife = createMapWildlife(scene, region, heightAt, undefined, {
-    flowers: meadow.flowers,
-    trees,
-  });
-  const roadMaterials = {
-    trail: createRoadMaterial(scene, 'trail'),
-    dirt_road: createRoadMaterial(scene, 'dirt_road'),
-    paved_road: createRoadMaterial(scene, 'paved_road'),
+  const engine = acquireCanvasEngine(canvas);
+  let sceneForCleanup: Scene | undefined;
+  let cameraDispose: (() => void) | undefined;
+  let renderLoop: (() => void) | undefined;
+  let destroyed = false;
+  const cleanupActions: (() => void)[] = [];
+  const cleanup = (clearRoute: boolean) => {
+    if (destroyed) return;
+    destroyed = true;
+    let firstError: unknown;
+    const run = (action: (() => void) | undefined) => {
+      if (!action) return;
+      try {
+        action();
+      } catch (error) {
+        firstError ??= error;
+      }
+    };
+    run(renderLoop ? () => engine.stopRenderLoop(renderLoop) : undefined);
+    if (clearRoute) run(() => callbacks.onRoute(null));
+    run(cameraDispose);
+    for (const action of cleanupActions) run(action);
+    run(sceneForCleanup ? () => sceneForCleanup!.dispose() : undefined);
+    run(() => releaseCanvasEngine(canvas));
+    if (firstError !== undefined) throw firstError;
   };
-  const shoulderMaterials = {
-    trail: createRoadMaterial(scene, 'trail', true),
-    dirt_road: createRoadMaterial(scene, 'dirt_road', true),
-    paved_road: createRoadMaterial(scene, 'paved_road', true),
-  };
-  createMapRoads(scene, region, roadMaterials, shoulderMaterials, heightAt);
-  const sprite = (
-    name: string,
-    url: string,
-    size: number,
-    { foot = 1, aspect = 1, rootX = 0.5 } = {},
-  ) => {
-    const width = size * aspect;
-    const mesh = MeshBuilder.CreatePlane(name, { width, height: size }, scene);
-    // Source art already includes projection. Rotate the whole plane toward the camera,
-    // with its bottom pivot at the terrain contact instead of squashing it a second time.
-    mesh.bakeTransformIntoVertices(
-      Matrix.Translation(width * (0.5 - rootX), size * (foot - 0.5), 0),
+  const construct = () => {
+    const scene = new Scene(engine);
+    sceneForCleanup = scene;
+    // Projected prop footings can extend below their gate/root pivot.
+    // Draw all props against each other after terrain, without clipping their painted foreground.
+    scene.setRenderingAutoClearDepthStencil(1, true);
+    // One forward/inverse transform owns all displayed distances and movement speed.
+    const unitsPerFp = (region.worldScale ?? 1) / 1024;
+    const sceneFp = (fp: number) => fp * unitsPerFp;
+    const microScene = (fp: string) => sceneFp(Number(fp) / 65536);
+    const light = new HemisphericLight('continuous-sky', new Vector3(-0.5, 1, -0.6), scene);
+    const surface = createMapSurface(scene, region);
+    const { ground, heightAt } = surface;
+    const material = createTerrainMaterial(scene, region);
+    ground.material = material;
+    const meadow = createMapLife(scene, region, heightAt);
+    const meadowMaterial = meadow.material;
+    const trees = generateForest(region, TREE_FORMS);
+    const wildlife = createMapWildlife(scene, region, heightAt, undefined, {
+      flowers: meadow.flowers,
+      trees,
+    });
+    const roadMaterials = {
+      trail: createRoadMaterial(scene, 'trail'),
+      dirt_road: createRoadMaterial(scene, 'dirt_road'),
+      paved_road: createRoadMaterial(scene, 'paved_road'),
+    };
+    const shoulderMaterials = {
+      trail: createRoadMaterial(scene, 'trail', true),
+      dirt_road: createRoadMaterial(scene, 'dirt_road', true),
+      paved_road: createRoadMaterial(scene, 'paved_road', true),
+    };
+    createMapRoads(scene, region, roadMaterials, shoulderMaterials, heightAt);
+    const sprite = (
+      name: string,
+      url: string,
+      size: number,
+      { foot = 1, aspect = 1, rootX = 0.5 } = {},
+    ) => {
+      const width = size * aspect;
+      const mesh = MeshBuilder.CreatePlane(name, { width, height: size }, scene);
+      // Source art already includes projection. Rotate the whole plane toward the camera,
+      // with its bottom pivot at the terrain contact instead of squashing it a second time.
+      mesh.bakeTransformIntoVertices(
+        Matrix.Translation(width * (0.5 - rootX), size * (foot - 0.5), 0),
+      );
+      mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
+      const m = new StandardMaterial(name, scene),
+        texture = new Texture(url, scene);
+      texture.hasAlpha = true;
+      m.diffuseTexture = texture;
+      m.useAlphaFromDiffuseTexture = true;
+      m.backFaceCulling = false;
+      m.specularColor = Color3.Black();
+      m.emissiveColor = new Color3(0.3, 0.3, 0.3);
+      mesh.material = m;
+      mesh.isPickable = false;
+      return mesh;
+    };
+    const contacts = createMapShadows(scene, heightAt);
+    const { markers, spriteAlphaMasks } = mountMapSites(
+      scene,
+      region,
+      sites,
+      sceneFp,
+      heightAt,
+      contacts,
     );
-    mesh.billboardMode = Mesh.BILLBOARDMODE_ALL;
-    const m = new StandardMaterial(name, scene),
-      texture = new Texture(url, scene);
-    texture.hasAlpha = true;
-    m.diffuseTexture = texture;
-    m.useAlphaFromDiffuseTexture = true;
-    m.backFaceCulling = false;
-    m.specularColor = Color3.Black();
-    m.emissiveColor = new Color3(0.3, 0.3, 0.3);
-    mesh.material = m;
-    mesh.isPickable = false;
-    return mesh;
-  };
-  const contacts = createMapShadows(scene, heightAt);
-  const { markers, spriteAlphaMasks } = mountMapSites(
-    scene,
-    region,
-    sites,
-    sceneFp,
-    heightAt,
-    contacts,
-  );
-  const componentTrees = createComponentTreeBatch(scene, MAP_TREE_PARTS, trees, sceneFp, heightAt);
-  for (const shadow of componentTrees.shadows)
-    contacts.add(shadow.x, shadow.z, shadow.width / 2, shadow.opacity);
-  contacts.finish();
-  const partySize = 0.48;
-  const partyArt = MAP_ART.partyGroup;
-  const banner = sprite('company-banner', partyArt.url, partySize, {
-    foot: partyArt.groundPivot.y,
-    rootX: partyArt.groundPivot.x,
-  });
-  const partyRing = MeshBuilder.CreateTorus(
-    'party-ground-ring',
-    { diameter: 0.24, thickness: 0.012, tessellation: 24 },
-    scene,
-  );
-  partyRing.scaling.y = 0.1;
-  partyRing.isPickable = false;
-  partyRing.renderingGroupId = 2;
-  const ringMaterial = new StandardMaterial('party-ground-ring', scene);
-  ringMaterial.emissiveColor = new Color3(0.98, 0.86, 0.48);
-  ringMaterial.disableLighting = true;
-  partyRing.material = ringMaterial;
-  (banner.material as StandardMaterial).emissiveColor = new Color3(0.65, 0.6, 0.5);
-  banner.renderingGroupId = 2;
-  const opaqueSiteHit = (hit: PickingInfo) => {
-    const siteId = pickedSiteId(hit);
-    if (typeof siteId !== 'string') return true;
-    const mask = spriteAlphaMasks.get(siteId);
-    if (!mask) return true;
-    const uv = hit.getTextureCoordinates();
-    const cutoff = Math.ceil((hit.pickedMesh!.material as StandardMaterial).alphaCutOff * 255);
-    // Keep an unready sprite hit so it cannot silently turn into a terrain order.
-    return !!uv && spritePixelIsOpaque(mask, uv.x, uv.y, cutoff);
-  };
-  const pickMapTarget = (x: number, y: number) => {
-    // Props render after terrain, so an opaque foreground footing wins over ground depth.
-    const hits = scene.multiPick(x, y, (mesh) => mesh.isPickable && mesh !== ground) ?? [];
-    hits.sort((left, right) => left.distance - right.distance);
-    return hits.find(opaqueSiteHit) ?? scene.pick(x, y, (mesh) => mesh === ground);
-  };
-  let view: WorldFreeMovementV2ResponseDto | null = null,
-    clock = { serverMs: 0, receivedAt: 0 };
-  let routeSpans: Vector3[][] = [];
-  const groundPoint = (x: number, z: number) => new Vector3(x, heightAt(x, z) + 0.018, z);
-  const drapedSegment = surface.drape;
-  const camera = mountThreeQuarterCamera(scene, engine, canvas, {
-    pick: pickMapTarget,
-    elevation: Math.atan(Math.sqrt(0.5)),
-    azimuth: Math.PI / 4,
-    pickGround: (x, y) => scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
-    minZoom: 2,
-    maxZoom: 28,
-    panButtons: [0, 1],
-    wheelTarget: canvas.parentElement ?? canvas,
-    onPick(hit) {
-      const id = pickedSiteId(hit);
-      if (typeof id === 'string' && spriteAlphaMasks.has(id)) callbacks.onSelectSite(id);
-    },
-    onSecondaryPick(hit) {
-      const id = pickedSiteId(hit);
-      if (typeof id === 'string') {
-        if (!spriteAlphaMasks.has(id)) return;
+    const componentTrees = createComponentTreeBatch(
+      scene,
+      MAP_TREE_PARTS,
+      trees,
+      sceneFp,
+      heightAt,
+    );
+    for (const shadow of componentTrees.shadows)
+      contacts.add(shadow.x, shadow.z, shadow.width / 2, shadow.opacity);
+    contacts.finish();
+    const partySize = 0.48;
+    const partyArt = MAP_ART.partyGroup;
+    const banner = sprite('company-banner', partyArt.url, partySize, {
+      foot: partyArt.groundPivot.y,
+      rootX: partyArt.groundPivot.x,
+    });
+    const partyRing = MeshBuilder.CreateTorus(
+      'party-ground-ring',
+      { diameter: 0.24, thickness: 0.012, tessellation: 24 },
+      scene,
+    );
+    partyRing.scaling.y = 0.1;
+    partyRing.isPickable = false;
+    partyRing.renderingGroupId = 2;
+    const ringMaterial = new StandardMaterial('party-ground-ring', scene);
+    ringMaterial.emissiveColor = new Color3(0.98, 0.86, 0.48);
+    ringMaterial.disableLighting = true;
+    partyRing.material = ringMaterial;
+    (banner.material as StandardMaterial).emissiveColor = new Color3(0.65, 0.6, 0.5);
+    banner.renderingGroupId = 2;
+    const opaqueSiteHit = (hit: PickingInfo) => {
+      const siteId = pickedSiteId(hit);
+      if (typeof siteId !== 'string') return true;
+      const mask = spriteAlphaMasks.get(siteId);
+      if (!mask) return true;
+      const uv = hit.getTextureCoordinates();
+      const cutoff = Math.ceil((hit.pickedMesh!.material as StandardMaterial).alphaCutOff * 255);
+      // Keep an unready sprite hit so it cannot silently turn into a terrain order.
+      return !!uv && spritePixelIsOpaque(mask, uv.x, uv.y, cutoff);
+    };
+    const pickMapTarget = (x: number, y: number) => {
+      // Props render after terrain, so an opaque foreground footing wins over ground depth.
+      const hits = scene.multiPick(x, y, (mesh) => mesh.isPickable && mesh !== ground) ?? [];
+      hits.sort((left, right) => left.distance - right.distance);
+      return hits.find(opaqueSiteHit) ?? scene.pick(x, y, (mesh) => mesh === ground);
+    };
+    let view: WorldFreeMovementV2ResponseDto | null = null,
+      clock = { serverMs: 0, receivedAt: 0 };
+    let routeSpans: Vector3[][] = [];
+    const groundPoint = (x: number, z: number) => new Vector3(x, heightAt(x, z) + 0.018, z);
+    const drapedSegment = surface.drape;
+    const cameraHandle = mountThreeQuarterCamera(scene, engine, canvas, {
+      pick: pickMapTarget,
+      elevation: Math.atan(Math.sqrt(0.5)),
+      azimuth: Math.PI / 4,
+      pickGround: (x, y) => scene.pick(x, y, (m) => m === ground)?.pickedPoint ?? null,
+      minZoom: 2,
+      maxZoom: 28,
+      panButtons: [0, 1],
+      wheelTarget: canvas.parentElement ?? canvas,
+      onPick(hit) {
+        const id = pickedSiteId(hit);
+        if (typeof id === 'string' && spriteAlphaMasks.has(id)) callbacks.onSelectSite(id);
+      },
+      onSecondaryPick(hit) {
+        const id = pickedSiteId(hit);
+        if (typeof id === 'string') {
+          if (!spriteAlphaMasks.has(id)) return;
+          callbacks.onMove({
+            kind: 'MOVE_TO',
+            mapEdition: region.mapEdition,
+            target: { kind: 'SITE', siteId: id },
+          });
+          return;
+        }
+        const rect = canvas.getBoundingClientRect();
+        const groundHit = scene.pick(scene.pointerX, scene.pointerY, (m) => m === ground);
+        const point = pickedTerrainPoint(groundHit, rect.width, unitsPerFp);
+        if (!point) return;
+        canvas.focus();
         callbacks.onMove({
           kind: 'MOVE_TO',
           mapEdition: region.mapEdition,
-          target: { kind: 'SITE', siteId: id },
+          target: { kind: 'TERRAIN', ...point },
         });
-        return;
-      }
-      const rect = canvas.getBoundingClientRect();
-      const groundHit = scene.pick(scene.pointerX, scene.pointerY, (m) => m === ground);
-      const point = pickedTerrainPoint(groundHit, rect.width, unitsPerFp);
-      if (!point) return;
-      canvas.focus();
-      callbacks.onMove({
-        kind: 'MOVE_TO',
-        mapEdition: region.mapEdition,
-        target: { kind: 'TERRAIN', ...point },
-      });
-    },
-    onStop() {
-      callbacks.onMove({ kind: 'STOP' });
-    },
-  });
-  let cameraCentered = false;
-  const centerCamera = (point: WorldFreeMovementV2ResponseDto['point']) => {
-    const x = microScene(point.xMicroFp),
-      z = microScene(point.zMicroFp);
-    camera.fit({ minX: x - 5.0, maxX: x + 5.0, minZ: z - 5.0, maxZ: z + 5.0 }, 0.8);
-  };
-  const onContext = (event: MouseEvent) => event.preventDefault();
-  canvas.addEventListener('contextmenu', onContext);
-  const cancel = () => {
-    canvas.blur();
-  };
-  canvas.addEventListener('pointercancel', cancel);
-  const position = (now: number) => {
-    if (!view) return null;
-    if (!view.plan) return { point: view.point, spanIndex: -1 };
-    const p = view.plan,
-      elapsed = Math.max(0, (now - Number(p.startedAtMs)) * 1000);
-    const spanIndex = p.speedSpans.findIndex((s) => elapsed < Number(s.endOffsetUs));
-    const span = p.speedSpans[spanIndex];
-    if (!span) return { point: p.goal, spanIndex: p.speedSpans.length };
-    const t = Math.min(
-      1,
-      Math.max(
-        0,
-        (elapsed - Number(span.startOffsetUs)) /
-          (Number(span.endOffsetUs) - Number(span.startOffsetUs)),
-      ),
-    );
-    const { from, to, along } = spanInterpolation(p, span, t);
-    return {
-      spanIndex,
-      point: {
-        xMicroFp: String(
-          Number(from.xMicroFp) + (Number(to.xMicroFp) - Number(from.xMicroFp)) * along,
-        ),
-        zMicroFp: String(
-          Number(from.zMicroFp) + (Number(to.zMicroFp) - Number(from.zMicroFp)) * along,
-        ),
       },
+      onStop() {
+        callbacks.onMove({ kind: 'STOP' });
+      },
+    });
+    cameraDispose = () => cameraHandle.dispose();
+    const camera = cameraHandle;
+    let cameraCentered = false;
+    const centerCamera = (point: WorldFreeMovementV2ResponseDto['point']) => {
+      const x = microScene(point.xMicroFp),
+        z = microScene(point.zMicroFp);
+      camera.fit({ minX: x - 5.0, maxX: x + 5.0, minZ: z - 5.0, maxZ: z + 5.0 }, 0.8);
     };
-  };
-  const render = () => {
-    const visualTime = performance.now() / 1000;
-    material.setFloat('time', visualTime);
-    meadowMaterial.setFloat('time', visualTime);
-    const progress = position(clock.serverMs + performance.now() - clock.receivedAt);
-    const p = progress?.point;
-    callbacks.onPosition?.(
-      p ? { xFp: Number(p.xMicroFp) / 65536, zFp: Number(p.zMicroFp) / 65536 } : null,
-    );
-    wildlife.update(
-      visualTime,
-      p ? { x: microScene(p.xMicroFp), z: microScene(p.zMicroFp) } : null,
-    );
-    banner.setEnabled(!!p);
-    partyRing.setEnabled(!!p);
-    if (p) {
-      const foot = groundPoint(microScene(p.xMicroFp), microScene(p.zMicroFp));
-      banner.position.copyFrom(foot);
-      partyRing.position.copyFrom(foot);
-    }
-    const plan = view?.plan;
-    const spanIndex = progress?.spanIndex ?? -1;
-    const hasRemaining = !!plan && spanIndex >= 0 && spanIndex < plan.speedSpans.length;
-    scene.render();
-    const transform = scene.getTransformMatrix(),
-      viewport = scene.activeCamera!.viewport.toGlobal(
-        engine.getRenderWidth(),
-        engine.getRenderHeight(),
+    const onContext = (event: MouseEvent) => event.preventDefault();
+    canvas.addEventListener('contextmenu', onContext);
+    cleanupActions.push(() => canvas.removeEventListener('contextmenu', onContext));
+    const cancel = () => {
+      canvas.blur();
+    };
+    canvas.addEventListener('pointercancel', cancel);
+    cleanupActions.push(() => canvas.removeEventListener('pointercancel', cancel));
+    const position = (now: number) => {
+      if (!view) return null;
+      if (!view.plan) return { point: view.point, spanIndex: -1 };
+      const p = view.plan,
+        elapsed = Math.max(0, (now - Number(p.startedAtMs)) * 1000);
+      const spanIndex = p.speedSpans.findIndex((s) => elapsed < Number(s.endOffsetUs));
+      const span = p.speedSpans[spanIndex];
+      if (!span) return { point: p.goal, spanIndex: p.speedSpans.length };
+      const t = Math.min(
+        1,
+        Math.max(
+          0,
+          (elapsed - Number(span.startOffsetUs)) /
+            (Number(span.endOffsetUs) - Number(span.startOffsetUs)),
+        ),
       );
-    const project = (point: Vector3) => {
-      const screen = Vector3.Project(point, Matrix.Identity(), transform, viewport);
+      const { from, to, along } = spanInterpolation(p, span, t);
       return {
-        x: (screen.x * canvas.clientWidth) / engine.getRenderWidth(),
-        y: (screen.y * canvas.clientHeight) / engine.getRenderHeight(),
+        spanIndex,
+        point: {
+          xMicroFp: String(
+            Number(from.xMicroFp) + (Number(to.xMicroFp) - Number(from.xMicroFp)) * along,
+          ),
+          zMicroFp: String(
+            Number(from.zMicroFp) + (Number(to.zMicroFp) - Number(from.zMicroFp)) * along,
+          ),
+        },
       };
     };
-    // Billboard bounds can retain the pre-camera orientation. Project the authored
-    // visible top through its actual rendered transform instead of those bounds.
-    const partyFoot = project(banner.position);
-    const partyTop = project(
-      Vector3.TransformCoordinates(
-        new Vector3(0, partySize * partyArt.visibleHeight, 0),
-        banner.getWorldMatrix(),
-      ),
-    );
-    const bannerHeight = partyFoot.y - partyTop.y;
-    callbacks.onParty(
-      p && bannerHeight < 24
-        ? {
-            ...partyFoot,
-            spriteHeight: bannerHeight,
-          }
-        : null,
-    );
-    callbacks.onLabels(
-      [...markers].map(([siteId, mesh]) => {
-        const project = (world: Vector3) => {
-          const point = Vector3.Project(world, Matrix.Identity(), transform, viewport);
-          return {
+    const render = () => {
+      const visualTime = performance.now() / 1000;
+      material.setFloat('time', visualTime);
+      meadowMaterial.setFloat('time', visualTime);
+      const progress = position(clock.serverMs + performance.now() - clock.receivedAt);
+      const p = progress?.point;
+      callbacks.onPosition?.(
+        p ? { xFp: Number(p.xMicroFp) / 65536, zFp: Number(p.zMicroFp) / 65536 } : null,
+      );
+      wildlife.update(
+        visualTime,
+        p ? { x: microScene(p.xMicroFp), z: microScene(p.zMicroFp) } : null,
+      );
+      banner.setEnabled(!!p);
+      partyRing.setEnabled(!!p);
+      if (p) {
+        const foot = groundPoint(microScene(p.xMicroFp), microScene(p.zMicroFp));
+        banner.position.copyFrom(foot);
+        partyRing.position.copyFrom(foot);
+      }
+      const plan = view?.plan;
+      const spanIndex = progress?.spanIndex ?? -1;
+      const hasRemaining = !!plan && spanIndex >= 0 && spanIndex < plan.speedSpans.length;
+      scene.render();
+      const transform = scene.getTransformMatrix(),
+        viewport = scene.activeCamera!.viewport.toGlobal(
+          engine.getRenderWidth(),
+          engine.getRenderHeight(),
+        );
+      const project = (point: Vector3) => {
+        const screen = Vector3.Project(point, Matrix.Identity(), transform, viewport);
+        return {
+          x: (screen.x * canvas.clientWidth) / engine.getRenderWidth(),
+          y: (screen.y * canvas.clientHeight) / engine.getRenderHeight(),
+        };
+      };
+      // Billboard bounds can retain the pre-camera orientation. Project the authored
+      // visible top through its actual rendered transform instead of those bounds.
+      const partyFoot = project(banner.position);
+      const partyTop = project(
+        Vector3.TransformCoordinates(
+          new Vector3(0, partySize * partyArt.visibleHeight, 0),
+          banner.getWorldMatrix(),
+        ),
+      );
+      const bannerHeight = partyFoot.y - partyTop.y;
+      callbacks.onParty(
+        p && bannerHeight < 24
+          ? {
+              ...partyFoot,
+              spriteHeight: bannerHeight,
+            }
+          : null,
+      );
+      callbacks.onLabels(
+        [...markers].map(([siteId, mesh]) => {
+          const project = (world: Vector3) => {
+            const point = Vector3.Project(world, Matrix.Identity(), transform, viewport);
+            return {
+              x: (point.x * canvas.clientWidth) / engine.getRenderWidth(),
+              y: (point.y * canvas.clientHeight) / engine.getRenderHeight(),
+            };
+          };
+          const point = Vector3.Project(
+            groundPoint(mesh.position.x, mesh.position.z),
+            Matrix.Identity(),
+            transform,
+            viewport,
+          );
+          const anchor = {
             x: (point.x * canvas.clientWidth) / engine.getRenderWidth(),
             y: (point.y * canvas.clientHeight) / engine.getRenderHeight(),
           };
-        };
-        const point = Vector3.Project(
-          groundPoint(mesh.position.x, mesh.position.z),
-          Matrix.Identity(),
-          transform,
-          viewport,
-        );
-        const anchor = {
-          x: (point.x * canvas.clientWidth) / engine.getRenderWidth(),
-          y: (point.y * canvas.clientHeight) / engine.getRenderHeight(),
-        };
-        const spriteBounds = projectedSpriteBounds(mesh, project);
-        const visible = spriteOnScreen(spriteBounds, canvas.clientWidth, canvas.clientHeight);
-        if (siteId === 'kamenny-brod' || spriteBounds.bottom + 36 > canvas.clientHeight) {
+          const spriteBounds = projectedSpriteBounds(mesh, project);
+          const visible = spriteOnScreen(spriteBounds, canvas.clientWidth, canvas.clientHeight);
+          if (siteId === 'kamenny-brod' || spriteBounds.bottom + 36 > canvas.clientHeight) {
+            return {
+              siteId,
+              x: spriteBounds.right + 8,
+              y: spriteBounds.top + 8,
+              alternateX: spriteBounds.left - 8,
+              visible,
+              align: 'start' as const,
+            };
+          }
           return {
             siteId,
-            x: spriteBounds.right + 8,
-            y: spriteBounds.top + 8,
-            alternateX: spriteBounds.left - 8,
+            x: anchor.x,
+            y: spriteBounds.bottom + 8,
             visible,
-            align: 'start' as const,
+            align: 'center' as const,
           };
+        }),
+      );
+      if (hasRemaining && p) {
+        const foot = groundPoint(banner.position.x, banner.position.z);
+        const span = routeSpans[spanIndex]!;
+        const traversed = [
+          ...routeSpans.slice(0, spanIndex).flat(),
+          ...drapedSegment(span[0]!, foot),
+        ].map(project);
+        const remaining = [
+          ...drapedSegment(foot, span[span.length - 1]!),
+          ...routeSpans.slice(spanIndex + 1).flat(),
+        ].map(project);
+        const bounds = (mesh: Mesh) => {
+          const corners = mesh
+            .getBoundingInfo()
+            .boundingBox.vectors.map((corner) =>
+              project(Vector3.TransformCoordinates(corner, mesh.getWorldMatrix())),
+            );
+          const x = Math.min(...corners.map((v) => v.x));
+          const y = Math.min(...corners.map((v) => v.y));
+          return {
+            x,
+            y,
+            width: Math.max(...corners.map((v) => v.x)) - x,
+            height: Math.max(...corners.map((v) => v.y)) - y,
+          };
+        };
+        const goalSite = region.sites.find(
+          (site) =>
+            String(site.anchorFp.xFp * 65536) === plan.goal.xMicroFp &&
+            String(site.anchorFp.zFp * 65536) === plan.goal.zMicroFp,
+        );
+        callbacks.onRoute({
+          width: canvas.clientWidth,
+          height: canvas.clientHeight,
+          traversed,
+          remaining,
+          partyBounds: bounds(banner),
+          goal: remaining[remaining.length - 1]!,
+          goalSiteId: goalSite?.siteId,
+        });
+      } else callbacks.onRoute(null);
+    };
+    renderLoop = render;
+    engine.runRenderLoop(render);
+    return {
+      update(
+        current: WorldFreeMovementV2ResponseDto | null,
+        nextClock: { serverMs: number; receivedAt: number },
+        night: boolean,
+      ) {
+        const changed = current?.plan?.planId !== view?.plan?.planId;
+        if (!cameraCentered && current) {
+          centerCamera(current.point);
+          cameraCentered = true;
         }
-        return {
-          siteId,
-          x: anchor.x,
-          y: spriteBounds.bottom + 8,
-          visible,
-          align: 'center' as const,
-        };
-      }),
-    );
-    if (hasRemaining && p) {
-      const foot = groundPoint(banner.position.x, banner.position.z);
-      const span = routeSpans[spanIndex]!;
-      const traversed = [
-        ...routeSpans.slice(0, spanIndex).flat(),
-        ...drapedSegment(span[0]!, foot),
-      ].map(project);
-      const remaining = [
-        ...drapedSegment(foot, span[span.length - 1]!),
-        ...routeSpans.slice(spanIndex + 1).flat(),
-      ].map(project);
-      const bounds = (mesh: Mesh) => {
-        const corners = mesh
-          .getBoundingInfo()
-          .boundingBox.vectors.map((corner) =>
-            project(Vector3.TransformCoordinates(corner, mesh.getWorldMatrix())),
-          );
-        const x = Math.min(...corners.map((v) => v.x));
-        const y = Math.min(...corners.map((v) => v.y));
-        return {
-          x,
-          y,
-          width: Math.max(...corners.map((v) => v.x)) - x,
-          height: Math.max(...corners.map((v) => v.y)) - y,
-        };
-      };
-      const goalSite = region.sites.find(
-        (site) =>
-          String(site.anchorFp.xFp * 65536) === plan.goal.xMicroFp &&
-          String(site.anchorFp.zFp * 65536) === plan.goal.zMicroFp,
-      );
-      callbacks.onRoute({
-        width: canvas.clientWidth,
-        height: canvas.clientHeight,
-        traversed,
-        remaining,
-        partyBounds: bounds(banner),
-        goal: remaining[remaining.length - 1]!,
-        goalSiteId: goalSite?.siteId,
-      });
-    } else callbacks.onRoute(null);
-  };
-  engine.runRenderLoop(render);
-  return {
-    update(
-      current: WorldFreeMovementV2ResponseDto | null,
-      nextClock: { serverMs: number; receivedAt: number },
-      night: boolean,
-    ) {
-      const changed = current?.plan?.planId !== view?.plan?.planId;
-      if (!cameraCentered && current) {
-        centerCamera(current.point);
-        cameraCentered = true;
-      }
-      view = current;
-      clock = nextClock;
-      material.setColor3(
-        'lighting',
-        night ? new Color3(0.76, 0.81, 0.91) : new Color3(1.04, 1.02, 0.98),
-      );
-      for (const roadMaterial of [
-        ...Object.values(roadMaterials),
-        ...Object.values(shoulderMaterials),
-      ])
-        roadMaterial.setColor3(
+        view = current;
+        clock = nextClock;
+        material.setColor3(
           'lighting',
           night ? new Color3(0.76, 0.81, 0.91) : new Color3(1.04, 1.02, 0.98),
         );
-      meadowMaterial.setColor3(
-        'lighting',
-        night ? new Color3(0.68, 0.74, 0.84) : new Color3(1.04, 1.02, 0.98),
-      );
-      componentTrees.setNight(night);
-      wildlife.setNight(night);
-      for (const mesh of markers.values())
-        (mesh.material as StandardMaterial).emissiveColor.copyFrom(
-          night ? new Color3(0.58, 0.64, 0.74) : new Color3(1, 1, 0.94),
+        for (const roadMaterial of [
+          ...Object.values(roadMaterials),
+          ...Object.values(shoulderMaterials),
+        ])
+          roadMaterial.setColor3(
+            'lighting',
+            night ? new Color3(0.76, 0.81, 0.91) : new Color3(1.04, 1.02, 0.98),
+          );
+        meadowMaterial.setColor3(
+          'lighting',
+          night ? new Color3(0.68, 0.74, 0.84) : new Color3(1.04, 1.02, 0.98),
         );
-      light.intensity = night ? 0.62 : 1.15;
-      light.diffuse = night ? new Color3(0.74, 0.8, 0.96) : new Color3(1, 0.98, 0.92);
-      const edgeMist = night ? new Color3(0.13, 0.15, 0.18) : new Color3(0.2, 0.22, 0.21);
-      material.setColor3('edgeMist', edgeMist);
-      scene.clearColor = new Color4(edgeMist.r, edgeMist.g, edgeMist.b, 1);
-      if (changed) {
-        routeSpans =
-          current?.plan?.speedSpans.map((span) =>
-            drapedSegment(
-              groundPoint(microScene(span.from.xMicroFp), microScene(span.from.zMicroFp)),
-              groundPoint(microScene(span.to.xMicroFp), microScene(span.to.zMicroFp)),
-            ),
-          ) ?? [];
-      }
-    },
-    destroy() {
-      engine.stopRenderLoop(render);
-      callbacks.onRoute(null);
-      camera.dispose();
-      canvas.removeEventListener('contextmenu', onContext);
-      canvas.removeEventListener('pointercancel', cancel);
-      scene.dispose();
-      releaseCanvasEngine(canvas);
-    },
+        componentTrees.setNight(night);
+        wildlife.setNight(night);
+        for (const mesh of markers.values())
+          (mesh.material as StandardMaterial).emissiveColor.copyFrom(
+            night ? new Color3(0.58, 0.64, 0.74) : new Color3(1, 1, 0.94),
+          );
+        light.intensity = night ? 0.62 : 1.15;
+        light.diffuse = night ? new Color3(0.74, 0.8, 0.96) : new Color3(1, 0.98, 0.92);
+        const edgeMist = night ? new Color3(0.13, 0.15, 0.18) : new Color3(0.2, 0.22, 0.21);
+        material.setColor3('edgeMist', edgeMist);
+        scene.clearColor = new Color4(edgeMist.r, edgeMist.g, edgeMist.b, 1);
+        if (changed) {
+          routeSpans =
+            current?.plan?.speedSpans.map((span) =>
+              drapedSegment(
+                groundPoint(microScene(span.from.xMicroFp), microScene(span.from.zMicroFp)),
+                groundPoint(microScene(span.to.xMicroFp), microScene(span.to.zMicroFp)),
+              ),
+            ) ?? [];
+        }
+      },
+      destroy() {
+        cleanup(true);
+      },
+    };
   };
+  try {
+    return construct();
+  } catch (error) {
+    try {
+      cleanup(false);
+    } catch {
+      // Keep the construction failure as the error reported to the caller.
+    }
+    throw error;
+  }
 }

@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+## Map mount resource cleanup — 2026-10-28, LOCAL / source ACCEPT
+
+Coordinator/integration/validation owner: parent; branch `codex/game-map-mount-cleanup`, base `48d8a2ae`.
+Owner mission: autonomous implementation and PRs toward the complete game; no merge/deployment/Orca permission.
+Observable outcome: a failed map construction returns the existing error fallback without retaining its engine lease.
+[Owning result](../wiki/world/map.md#освобождение-ресурсов-при-ошибке-создания-карты--2026-10-28).
+Delegated editor owns continuous-map-scene.ts and one regression; parent owns docs/commit/publication.
+Construction and normal destroy share idempotent cleanup, attempting scene/camera/listener/render-loop/engine release.
+Original construction error is preserved; successful rendering/update and Babylon context restoration are unchanged.
+Focused Scene-constructor failure regression1 PASS, web types/lint/format/diff PASS; independent source ACCEPT.
+Initial types failed on absent protocol dist and narrowing; prerequisite protocol build and final types PASS.
+Successful mount/destroy and later helper-failure injection NOT_RUN; real browser/WebGL recovery NOT_RUN.
+This fixes a source-confirmed ownership defect, not the unknown cause of prior observed context loss.
+Normal commit hook/audit PASS; hosted CI pending; no thresholds or renderer settings changed.
+Payroll remains separately owned; writing chat continues its four existing stories/PR336.
+Next: normal commit and PR; preserve existing world/lab databases and runtimes.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
