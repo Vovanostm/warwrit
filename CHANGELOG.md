@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### City/place charts and quest location clues
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local wiki update: owner
+  added city and individual-place maps, and distinguished explicit quest marks
+  from approximate verbal directions without a map point. The [owning rule](docs/wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28)
+  and quest wiki preserve chart coverage and live-visibility boundaries; verbal
+  clues do not automatically gain a search area or hidden coordinate payload.
+  Documentation only; Markdown format/local links/new anchors/scoped diff PASS. Game/browser/SQL
+  NOT_RUN; runtime and existing quest cards unchanged.
+
 ### Company home-region atlas
 
 - 2026-10-28, branch `codex/world-map-fog-design`, local: owner clarified that

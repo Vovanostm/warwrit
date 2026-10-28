@@ -1,6 +1,21 @@
 # Warwrit current delivery plan
 
-## Company regional atlas — 2026-10-28, LOCAL COMPLETE
+## City/place charts and quest clues — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `fe2d6b90`.
+Owner: maps exist for cities/additional places; quests mark a location or give verbal clues without a map point.
+[Owning rule](../wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28).
+Updated fog/map and quest wiki, with reciprocal navigation and dated authority.
+Verbal clues have no automatic search area or hidden coordinates; chart coverage is scoped.
+Home-region start, purchased maps, personal exploration and live observation stay distinct.
+Markdown format/local links/new anchors/scoped diff PASS.
+Game/browser/SQL NOT_RUN for documentation; no runtime/gallery changes.
+No publication/merge/deploy/Orca/automation activation.
+Next: implement server observation and company cartographic knowledge in a separate slice.
+
+## Dated history
+
+### Company regional atlas — 2026-10-28, LOCAL COMPLETE
 
 Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`, base `7b6387a1`.
 Owner: initially only the company's home-region chart; other regions require maps or exploration.
@@ -15,8 +30,6 @@ Affected example09 independent visual ACCEPT, four criteria2; input replay NOT_R
 No server/core/SQL or actual purchasing implementation.
 Persistent lab data preserved; no publication/merge/deploy/Orca/automation activation.
 Next separate slice: server observation and company regional knowledge/grants.
-
-## Dated history
 
 ### Fog of war design — 2026-10-27, LOCAL COMPLETE
 
