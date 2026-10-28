@@ -21,9 +21,19 @@ import { inspectEncounterUnit } from './encounter/selection.js';
 import { encounterUnitLabel } from './encounter/unit-label.js';
 import { LeadershipChoice } from './encounter/LeadershipChoice.js';
 import {
+  createEncounterCommand,
+  postEncounterCommand,
+  prepareEncounterCommandAttempt,
+  settleEncounterCommandAttempt,
+} from './encounter/command-attempt.js';
+import {
+  browserEncounterCommandAttemptStorage,
+  readEncounterCommandAttempt,
+  type EncounterCommandAttempt,
+} from './encounter/command-attempt-storage.js';
+import {
   canIssueEncounterIntent,
   encounterConditionAllows,
-  readEncounterCommandResponse,
   retainedSelection,
 } from './renderer/projection.js';
 
@@ -35,6 +45,7 @@ interface EncounterPanelState {
   readonly commandSender?: EncounterCommandSender;
   readonly pendingCommand?: EncounterCommandDto;
   readonly commandPending?: boolean;
+  readonly commandStorageBlocked?: boolean;
   readonly resumePending?: boolean;
   readonly message?: string;
 }
@@ -86,13 +97,20 @@ export function EncounterPanel(props: {
   const grantRef = useRef<EncounterControlGrantDto | undefined>(undefined);
   const commandSenderRef = useRef<EncounterCommandSender | undefined>(undefined);
   const pendingCommandRef = useRef<EncounterCommandDto | undefined>(undefined);
+  const pendingAttemptRef = useRef<EncounterCommandAttempt | undefined>(undefined);
+  const commandSending = useRef(false);
+  const commandGeneration = useRef(0);
   const selectedRef = useRef<string | null>(null);
   const unauthorizedRef = useRef(props.onUnauthorized);
   const notifiedTerminalEncounter = useRef<string | undefined>(undefined);
   unauthorizedRef.current = props.onUnauthorized;
 
   useEffect(() => {
+    const generation = ++commandGeneration.current;
     const scopeKey = `${props.scope.accountId}:${props.scope.companyId}`;
+    pendingCommandRef.current = undefined;
+    pendingAttemptRef.current = undefined;
+    commandSending.current = false;
     const updateSelection = (next: string | null) => {
       selectedRef.current = next;
       setSelectedUnitId(next);
@@ -102,10 +120,11 @@ export function EncounterPanel(props: {
     grantRef.current = undefined;
     updateSelection(null);
 
-    return startEncounterConnection({
+    const stopConnection = startEncounterConnection({
       scope: props.scope,
       observer: {
         onStatus(status) {
+          if (generation !== commandGeneration.current) return;
           if (status !== 'connected') {
             grantRef.current = undefined;
             commandSenderRef.current = undefined;
@@ -114,6 +133,7 @@ export function EncounterPanel(props: {
           setState((current) => ({ ...current, scopeKey, status }));
         },
         onProjection(projection) {
+          if (generation !== commandGeneration.current) return;
           projectionRef.current = projection;
           if (!projection) {
             grantRef.current = undefined;
@@ -127,12 +147,38 @@ export function EncounterPanel(props: {
             grantRef.current,
           );
           updateSelection(nextSelection);
+          const storage = browserEncounterCommandAttemptStorage();
+          const storedAttempt = storage
+            ? readEncounterCommandAttempt(storage, props.scope, projection.encounterId)
+            : { kind: 'UNAVAILABLE' as const };
+          if (storedAttempt.kind === 'FOUND') {
+            pendingAttemptRef.current = storedAttempt.attempt;
+            pendingCommandRef.current = storedAttempt.attempt.command;
+          } else {
+            pendingAttemptRef.current = undefined;
+            pendingCommandRef.current = undefined;
+          }
           setState((current) => {
-            const { message: _message, ...rest } = current;
-            return { ...rest, scopeKey, projection };
+            const { message: _message, pendingCommand: _pending, ...rest } = current;
+            return {
+              ...rest,
+              scopeKey,
+              projection,
+              ...(storedAttempt.kind === 'FOUND'
+                ? { pendingCommand: storedAttempt.attempt.command }
+                : {}),
+              ...(storedAttempt.kind === 'INVALID' || storedAttempt.kind === 'UNAVAILABLE'
+                ? {
+                    commandStorageBlocked: true,
+                    message:
+                      'Не удалось восстановить команду боя; новые команды временно недоступны.',
+                  }
+                : { commandStorageBlocked: false }),
+            };
           });
         },
         onControlGrant(grant) {
+          if (generation !== commandGeneration.current) return;
           grantRef.current = grant;
           const projection = projectionRef.current;
           updateSelection(
@@ -144,6 +190,7 @@ export function EncounterPanel(props: {
           });
         },
         onCommandSender(sender) {
+          if (generation !== commandGeneration.current) return;
           commandSenderRef.current = sender;
           setState((current) => {
             const { commandSender: _previousSender, ...rest } = current;
@@ -151,13 +198,20 @@ export function EncounterPanel(props: {
           });
         },
         onUnauthorized() {
+          if (generation !== commandGeneration.current) return;
           unauthorizedRef.current();
         },
         onError(message) {
+          if (generation !== commandGeneration.current) return;
           setState((current) => ({ ...current, scopeKey, message }));
         },
       },
     });
+    return () => {
+      if (commandGeneration.current === generation) commandGeneration.current += 1;
+      commandSending.current = false;
+      stopConnection();
+    };
   }, [props.scope.accountId, props.scope.companyId, connectionGeneration]);
 
   useEffect(() => {
@@ -200,7 +254,8 @@ export function EncounterPanel(props: {
     scopedState?.status === 'connected' &&
     scopedState.commandSender !== undefined &&
     scopedState.commandPending !== true &&
-    scopedState.pendingCommand === undefined;
+    scopedState.pendingCommand === undefined &&
+    scopedState.commandStorageBlocked !== true;
   const actorIsOurs =
     projection !== undefined &&
     actorUnitId !== null &&
@@ -541,79 +596,108 @@ export function EncounterPanel(props: {
     const projection = projectionRef.current;
     const grant = grantRef.current;
     const sender = commandSenderRef.current;
+    const generation = commandGeneration.current;
     const retry = 'commandId' in intentOrCommand;
-    const command: EncounterCommandDto | undefined = retry
-      ? intentOrCommand
-      : projection && grant && projection.actorUnitId
-        ? ({
-            ...encounterIntentVersion(grant),
-            encounterId: projection.encounterId,
-            commandId: crypto.randomUUID(),
-            expectedRevision: projection.revision,
-            activationId: projection.activationId!,
-            actorId: projection.actorUnitId,
-            intent: intentOrCommand,
-          } as EncounterCommandDto)
-        : undefined;
-    if (
-      !command ||
-      !sender ||
-      pendingCommandRef.current !== undefined ||
-      (!retry &&
-        (!projection ||
-          !canIssueEncounterIntent(projection, grant, selectedRef.current) ||
-          command.actorId !== selectedRef.current ||
-          projection.activationId === null ||
-          !encounterConditionAllows(
-            grant,
-            command.activationId,
-            command.actorId,
-            command.intent.type,
-          )))
-    )
+    const command = createEncounterCommand({
+      value: intentOrCommand,
+      projection,
+      grant,
+      selectedUnitId: selectedRef.current,
+      pending: pendingCommandRef.current,
+    });
+    if (!command || !sender || commandSending.current) return;
+    const storage = browserEncounterCommandAttemptStorage();
+    if (!storage) {
+      setState((current) => ({
+        ...current,
+        commandStorageBlocked: true,
+        message: 'Не удалось сохранить команду боя. Команда не отправлена.',
+      }));
       return;
+    }
+    const prepared = prepareEncounterCommandAttempt({
+      storage,
+      scope: props.scope,
+      command,
+      retry,
+      pending: pendingAttemptRef.current,
+    });
+    if (prepared.kind !== 'READY') {
+      setState((current) => ({
+        ...current,
+        commandStorageBlocked: true,
+        message:
+          prepared.kind === 'RETRY_MISMATCH'
+            ? 'Не удалось подтвердить сохранённую команду. Команда не отправлена.'
+            : 'Не удалось проверить или сохранить команду боя. Команда не отправлена.',
+      }));
+      return;
+    }
+    const attempt = prepared.attempt;
+    if (!retry) pendingAttemptRef.current = attempt;
+    commandSending.current = true;
     pendingCommandRef.current = command;
     setState((current) => {
       const { message: _message, ...rest } = current;
-      return { ...rest, pendingCommand: command, commandPending: true };
+      return {
+        ...rest,
+        pendingCommand: command,
+        commandPending: true,
+        commandStorageBlocked: false,
+      };
     });
     try {
-      const raw = await sender(command);
-      const response = readEncounterCommandResponse(raw, command);
-      if (!response) throw new Error('Ответ боя не подтверждает отправленную команду.');
-      pendingCommandRef.current = undefined;
-      if (response.status === 'rejected') {
-        if (response.code === 'UNAUTHORIZED') unauthorizedRef.current();
-        setState((current) => {
-          const { pendingCommand: _pending, ...rest } = current;
-          return {
-            ...rest,
-            commandPending: false,
-            message:
-              response.code === 'CONFLICT'
-                ? 'Состояние хода изменилось. Сверяем бой перед новой командой.'
-                : 'Сервер не принял команду; состояние боя не изменено.',
-          };
-        });
-        setConnectionGeneration((generation) => generation + 1);
+      const posted = await postEncounterCommand(sender, command);
+      if (generation !== commandGeneration.current) return;
+      if (posted.kind === 'UNKNOWN') {
+        setState((current) => ({
+          ...current,
+          pendingCommand: command,
+          commandPending: false,
+          commandStorageBlocked: false,
+          message: posted.message,
+        }));
         return;
       }
+      const response = posted.response;
+      const settlement = settleEncounterCommandAttempt(storage, attempt, response);
+      if (settlement === 'UNAUTHORIZED') {
+        setState((current) => ({
+          ...current,
+          commandPending: false,
+          message: 'Сеанс не подтверждён. Сохранённая команда останется до входа снова.',
+        }));
+        unauthorizedRef.current();
+        return;
+      }
+      if (settlement === 'RETAINED') {
+        setState((current) => ({
+          ...current,
+          commandPending: false,
+          message:
+            'Ответ подтверждён, но запись команды не удалена. Повтор отправит тот же запрос.',
+        }));
+        return;
+      }
+      pendingCommandRef.current = undefined;
+      pendingAttemptRef.current = undefined;
       setState((current) => {
         const { pendingCommand: _pending, ...rest } = current;
         return {
           ...rest,
           commandPending: false,
-          message: 'Команда принята сервером. Обновляем состояние боя.',
+          commandStorageBlocked: false,
+          message:
+            response.status === 'accepted'
+              ? 'Команда принята сервером. Обновляем состояние боя.'
+              : response.code === 'CONFLICT'
+                ? 'Состояние хода изменилось. Сверяем бой перед новой командой.'
+                : 'Сервер не принял команду; состояние боя не изменено.',
         };
       });
-    } catch (error) {
-      pendingCommandRef.current = undefined;
-      setState((current) => ({
-        ...current,
-        pendingCommand: command,
-        commandPending: false,
-        message: error instanceof Error ? error.message : 'Не удалось подтвердить команду.',
-      }));
+      if (response.status === 'rejected') setConnectionGeneration((value) => value + 1);
+    } finally {
+      if (generation === commandGeneration.current) commandSending.current = false;
     }
   }
 
@@ -672,8 +756,4 @@ export function EncounterPanel(props: {
       }));
     }
   }
-}
-
-function encounterIntentVersion(grant: EncounterControlGrantDto): { version: 1 | 2 } {
-  return { version: grant.tactical ? 2 : 1 };
 }

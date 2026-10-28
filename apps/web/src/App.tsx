@@ -1543,6 +1543,7 @@ export function App() {
           <>
             <ContractBoard
               {...contractVisit}
+              scope={scope}
               siteId={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
               onUnauthorized={onContractUnauthorized}
