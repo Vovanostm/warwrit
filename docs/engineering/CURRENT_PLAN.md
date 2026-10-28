@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+## Production game readiness — 2026-10-28, PR334 / source ACCEPT
+
+Coordinator/validation owner: parent; branch `codex/game-production-readiness`, base `caee351b`.
+Integrated main `48d8a2ae` after PR333; only shared-record conflicts, both histories retained.
+Current owner mission: autonomous game implementation, isolated worktrees and PRs.
+No current merge, deployment, paid-resource or Orca/automation permission.
+Outcome: production cannot report a ready health-only process without game dependencies.
+Guard requires DATABASE_URL and complete validated OIDC before app construction/listen.
+Development defaults and existing HTTPS, fixture/lab prohibitions remain.
+Independent read-only source review ACCEPT; config/app12 PASS, package builds/server types PASS.
+Actual missing-config production entry process exits with the intended refusal.
+Owning contract: [ID01 identity](ID01-IDENTITY.md); related launch task #176 remains open.
+Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
+[PR334](https://github.com/Vovanostm/warwrit/pull/334), initial head `efcddb06`; normal commit audit PASS.
+Parent owns integration and applicable hosted-check readback; no merge authorized.
+Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
