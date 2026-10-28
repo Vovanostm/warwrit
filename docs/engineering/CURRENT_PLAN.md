@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Atlas road nodes and routing — 2026-10-28, LOCAL COMPLETE
+## Atlas road nodes and routing — 2026-10-28, PR332 / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
 Owner follow-up: retain worktree; make road nodes/pathfinding match repaired art.
@@ -15,7 +15,13 @@ Independent absolute playable ACCEPT at `a7bc171f`: six applicable scores2.
 Broader related rerun/coverage739 PASS,66 skipped; first hook test failure unexplained.
 Normal audit PASS; no bypass or lowered thresholds.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
-Next: publish the navigation follow-up, green applicable CI and expected-head merge.
+[PR332](https://github.com/Vovanostm/warwrit/pull/332), published head `a4fa3879`.
+Scope40676883890 PASS; CI40676883813 verify1206/stress PASS, SQL73/74.
+Failed SQL bow/terminal case omitted a legitimate successor-choice step.
+Test-only real leadership API handling added; isolated actual PG1 PASS/23 skipped.
+Independent CI-correction source review pending; no gate/assertion weakening.
+This publication-status checkpoint is local; reviewed code is unchanged.
+Next: accepted correction, green applicable CI and expected-head merge.
 Initial road-repair mission permits PR/normal merge after checks; retain this worktree.
 No deployment authorized.
 

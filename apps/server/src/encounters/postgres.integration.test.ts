@@ -4146,7 +4146,33 @@ it.skipIf(connectionString === undefined)(
         await reopened.destroy();
       }
       await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
-      await applyPendingFirstHuntTerminalEffects(database);
+      const applied = await applyPendingFirstHuntTerminalEffects(database);
+      if (!applied.includes(encounterId)) {
+        // Victory can still require the real owner to choose a fallen leader's successor.
+        for (const actor of [owner, helper]) {
+          const leadership = await app.inject({
+            method: 'GET',
+            url: `/encounters/${encounterId}/leadership`,
+            headers: actor.headers,
+          });
+          expect(leadership.statusCode, leadership.body).toBe(200);
+          const view = leadership.json();
+          if (!view.required) continue;
+          expect(view.candidates.length).toBeGreaterThan(0);
+          const chosen = await app.inject({
+            method: 'POST',
+            url: `/encounters/${encounterId}/leadership`,
+            headers: actor.headers,
+            payload: {
+              version: 1,
+              candidateId: view.candidates[0].characterId,
+              mode: 'PERMANENT',
+            },
+          });
+          expect(chosen.statusCode, chosen.body).toBe(202);
+        }
+        await applyPendingFirstHuntTerminalEffects(database);
+      }
       expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
       const terminal = await database
         .selectFrom('encounter_admissions')

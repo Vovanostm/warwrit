@@ -296,3 +296,15 @@ and beat the straight off-road cut. Existing bridge/water/frame tests continue.
 Author verifies the two paths in the browser with current captures and an
 independent read-only playable/visual critic. Retain the original mission's
 PR/normal-merge permission and proportional gates; do not remove the worktree.
+
+### Navigation PR CI correction
+
+CI40676883813 passed verify1206/stress but SQL73/74 failed the bridge-v5 bow
+terminal scenario. That test omitted a legitimate successor-selection step,
+which adjacent cases already exercise via the real leadership API. Correct only
+that test's orchestration; retain terminal/replay/idempotency assertions and all
+existing gates. No combat production-policy change. The observed null marker does
+not by itself prove the leader's fate; source establishes the unsupported test
+assumption. Focused actual isolated PostgreSQL case and independent source review
+are required, then current-head hosted CI. Existing map visual evidence remains
+applicable because navigation code/art are unchanged by this correction.

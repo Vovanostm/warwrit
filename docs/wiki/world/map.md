@@ -2200,8 +2200,11 @@ map20/типы, game-core build/types и scoped lint — PASS. Два новых
 `output/map-road-continuity/` основного checkout. Первый южный браузерный
 пробный клик использовал старую проекцию из диагностического helper;
 проверка повторена с текущими DOM viewBox/bounds. Ошибка пробника не
-считалась дефектом продукта. PR/merge новой навигационной правки ещё
-не выполнены; worktree сохраняется по текущему указанию владельца.
+считалась дефектом продукта. [PR332](https://github.com/Vovanostm/warwrit/pull/332)
+опубликован с head `a4fa3879`; scope40676883890 — PASS, полный
+CI40676883813 тогда выполнялся; его итоговая ошибка SQL и коррекция описаны ниже.
+Merge ожидает нового CI. Этот статусный checkpoint —
+локальный; worktree сохраняется по текущему указанию владельца.
 
 Штатный commit audit — PASS, без обхода и изменения порогов. Его related
 тесты сообщили о сбое с подавленным выводом; причина первого сбоя неизвестна.
@@ -2209,3 +2212,19 @@ map20/типы, game-core build/types и scoped lint — PASS. Два новых
 coverage сформирован, код между запусками не менялся. Лог — локальный
 `output/map-road-continuity/navigation-related.log` в основном checkout.
 Обязательный hosted CI ожидается; полный локальный gate не дублировался.
+
+**Коррекция CI.** CI40676883813: verify1206 и stress10000 — PASS;
+SQL73 PASS/1 FAIL. Сценарий bow/bridge-v5 в
+`apps/server/src/encounters/postgres.integration.test.ts` требовал немедленные
+terminal effects, хотя обработчик допускает ожидание выбора преемника.
+В соседних SQL-сценариях этот шаг уже выполнялся через leadership API.
+В упавший сценарий добавлен тот же настоящий GET/POST при required choice;
+проверки effects_applied_at, replay и идемпотентности сохранены. Код боя,
+правила выбора и пороги CI не меняются. Значение null в effects_applied_at в логе
+CI само по себе не доказывает конкретную судьбу лидера; исправляется
+подтверждённый исходным кодом пропуск легитимного шага сценария.
+Фокусированный реальный PostgreSQL-запуск — PASS1/23 skipped по фильтру;
+использован отдельный Compose project, только его базы/том удалены после
+проверки. Существующий world-lab volume сохранён. Независимое source-review
+коррекции и новый hosted CI ожидаются. Лог локальный:
+`output/map-road-continuity/terminal-sql-check.log` основного checkout.

@@ -11,7 +11,8 @@ requests.
 
 ### Atlas road nodes follow the repaired painting
 
-- 2026-10-28, branch `codex/map-road-navigation`, local: owner asks whether
+- 2026-10-28, branch `codex/map-road-navigation`, published in
+  [PR332](https://github.com/Vovanostm/warwrit/pull/332): owner asks whether
   road nodes and pathfinding were rebuilt and requests retaining the worktree.
   Reproduced missing road surfaces at both repaired links and the old eastern
   shortcut across a field. Trace corrected polygons and graph stations in the
@@ -22,7 +23,12 @@ requests.
   Accepted plans retain timing; only new plans use rebuilt geometry. Independent
   absolute playable ACCEPT at `a7bc171f`, six applicable scores2. The commit hook
   reported a suppressed related-test failure; exact standalone rerun/coverage
-  PASS739/66 skipped without code changes. Normal audit PASS; hosted CI pending.
+  PASS739/66 skipped without code changes. Normal audit PASS; scope40676883890
+  PASS; CI40676883813 verify1206/stress PASS but SQL73/74 failed one bow/terminal
+  scenario. Its test now handles the same required successor choice as adjacent
+  cases via real leadership API, retaining non-null terminal/idempotency assertions.
+  Actual isolated PG1 PASS/23 skipped; independent correction review and new CI
+  pending. Combat production rules and gate thresholds remain unchanged.
   [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity
