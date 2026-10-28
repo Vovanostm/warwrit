@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Personal cartographic persistence proposal
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local documentation:
+  owner confirmed visit-based place discovery and asked how personal map/fog
+  knowledge should persist. [Owning proposal](docs/wiki/world/fog-of-war.md#предлагаемое-хранение--postgresql-и-знание-компании)
+  specifies one shared world, company-scoped immutable map grants, sparse
+  exploration bitmaps, observed/visited-place evidence and region revisions.
+  Live FOV remains server-derived; purchases preserve their actual information
+  coverage. Reviewed current PostgreSQL/world knowledge seams; no schema/runtime
+  mutation. Markdown format/local links/new anchor/scoped diff PASS;
+  SQL/game/browser/load NOT_RUN/NOT_MEASURED.
+
 ### Merchant chart content correction
 
 - 2026-10-28, branch `codex/world-map-fog-design`, local documentation:

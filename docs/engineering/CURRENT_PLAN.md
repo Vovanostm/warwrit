@@ -1,6 +1,22 @@
 # Warwrit current delivery plan
 
-## Merchant chart meaning correction — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+## Company cartographic storage — 2026-10-28, LOCAL PROPOSAL
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `21041651`.
+Owner: visited places enter the atlas; asks how personal map/fog/zones persist.
+[Owning proposal](../wiki/world/fog-of-war.md#предлагаемое-хранение--postgresql-и-знание-компании).
+Current source confirms PostgreSQL world/company boundaries; graph indexes another checkout.
+Shared geometry/map editions; company grants, sparse explored chunks, observed/visited places and region revisions.
+Charted, explored and visibleNow remain separate; live FOV is derived, not per-frame DB state.
+Visit discovery uses trusted world evidence; partial map grants do not unlock whole regions.
+Documentation format/local links/new anchor/scoped diff PASS.
+SQL/runtime/load NOT_RUN/NOT_MEASURED; storage remains a proposal.
+No new migrations/services, publication/merge/deploy/Orca/automation activation.
+Next: owner review of storage proposal, then one bounded server implementation slice.
+
+## Dated history
+
+### Merchant chart meaning correction — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
 
 Sole author: parent; branch `codex/world-map-fog-design`, base `4c3db3de`.
 Owner: merchant maps can contain the whole region, cities only, one location or other subsets.
@@ -11,8 +27,6 @@ Quest marker/verbal-clue policy unchanged; no runtime/gallery/economic edits.
 Markdown format/local links/scoped diff PASS; game/browser/SQL NOT_RUN for documentation.
 No publication/merge/deploy/Orca/automation activation.
 Next separate slice: server observation and cartographic knowledge with scoped grants.
-
-## Dated history
 
 ### City/place charts and quest clues — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
 
