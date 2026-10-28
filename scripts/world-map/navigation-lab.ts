@@ -24,6 +24,7 @@ import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
 import { mapProfiles } from './navigation-maps.js';
 import { mountContractPreview } from './navigation-contracts.js';
 import { canEnterPlace, planPlaceArrival, type PlaceEntry } from './place-entries.js';
+import { inspectRoadNetwork, mountRoadDiagnostics } from './road-diagnostics.js';
 
 const requested = new URLSearchParams(location.search).get('map');
 const editionId = requested === 'v5' || requested === 'v2' ? requested : 'atlas';
@@ -646,6 +647,12 @@ async function initialize() {
   // Yield once so the image and loading message paint before compiling geometry.
   await new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
   field = buildNavigationField(region);
+  mountRoadDiagnostics(
+    element<HTMLElement>('road-diagnostics'),
+    element<SVGElement>('road-network'),
+    inspectRoadNetwork(field, mapInfo.roadConnections),
+    pixel,
+  );
   drawPlaces();
   if (expanded)
     mountContractPreview((name) => {

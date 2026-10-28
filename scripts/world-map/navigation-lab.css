@@ -338,6 +338,35 @@ dd {
   fill: #f1dfac;
   fill-opacity: 0.4;
 }
+#road-network {
+  pointer-events: none;
+}
+#road-network path,
+#road-network circle {
+  vector-effect: non-scaling-stroke;
+  stroke: #d1c18e;
+  stroke-width: 1.2;
+  fill: #263b34;
+}
+#road-network path {
+  fill: none;
+}
+#road-network .road-disconnected {
+  stroke: #e99078;
+  stroke-width: 3;
+  stroke-dasharray: 5 4;
+}
+#road-diagnostics {
+  margin-top: 14px;
+}
+#road-diagnostics ul {
+  padding-left: 17px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+#road-diagnostics [data-state='disconnected'] {
+  color: #e99078;
+}
 #route,
 #route-edge {
   fill: none;

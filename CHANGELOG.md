@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Inspect declared road continuity on the atlas
+
+- 2026-10-28, branch `codex/map-road-navigation`, local: owner activates the
+  first proposed diagnostic cycle and prioritizes agent freedom over excess
+  instructions. The optional map-lab overlay shows the actual137 road nodes
+  and140 road edges; checks the two repaired corridors separately from grid
+  bypasses and alternate roads; names missing anchors/disconnections. Ordinary
+  dead ends remain allowed. `pnpm test:map` includes the negative continuity
+  regression and DOM toggle; art skill replaces its fixed recipe with a concise
+  synchronized-result requirement. No movement/server/plan/dependency changes.
+  Map23/types/lint and author native toggle/day-night/zoom/arrival PASS; independent
+  critique and commit audit pending. Initial test exposed an alternate-road bypass
+  and led to corridor-scoped checks; detached DOM fixture corrected before PASS.
+  [Owning result](docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
+
 ### Map improvement source research
 
 - 2026-10-28, branch `codex/map-road-navigation`, local proposal: owner asks

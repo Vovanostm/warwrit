@@ -316,3 +316,16 @@ with expected head `52bd78253958f0951613e765c24d379f7711749d`. Live PR/main
 and merge tree read back; tested and merged trees match. This documentation
 checkpoint is local; implementation is merged. Retain this worktree and stand5346;
 older running servers need an updated process reload. No deployment performed.
+
+## Road diagnostics amendment — 2026-10-28
+
+Owner: implement the recommended first cycle, preserving agent freedom and avoiding
+excess instructions/waste. Add local map-lab inspection of the compiled road-only
+graph and checks for the two repaired connections. A disconnected declared link
+must fail even when the general planner finds a walkable field bypass. Display
+actual nodes/edges and affected check endpoints; ordinary dead ends are permitted.
+Do not claim all atlas roads verified from these two expectations. Default overlay
+off; map input, day/night and journeys stay usable. No runtime/game-rule change,
+new dependency, external publication or deployment. Shorten the art skill to the
+required synchronized result and leave implementation/check selection to the author.
+Use focused checks and a native journey; independent visual critique remains.
