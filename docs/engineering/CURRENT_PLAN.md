@@ -1,6 +1,20 @@
 # Warwrit current delivery plan
 
-## City/place charts and quest clues — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+## Merchant chart meaning correction — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `4c3db3de`.
+Owner: merchant maps can contain the whole region, cities only, one location or other subsets.
+[Owning rule](../wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28).
+Corrected author misinterpretation of city maps as street plans in fog/map/quest wiki.
+Purchases enrich one company atlas; grants require actual content/coverage, not region IDs alone.
+Quest marker/verbal-clue policy unchanged; no runtime/gallery/economic edits.
+Markdown format/local links/scoped diff PASS; game/browser/SQL NOT_RUN for documentation.
+No publication/merge/deploy/Orca/automation activation.
+Next separate slice: server observation and cartographic knowledge with scoped grants.
+
+## Dated history
+
+### City/place charts and quest clues — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
 
 Sole author: parent; branch `codex/world-map-fog-design`, base `fe2d6b90`.
 Owner: maps exist for cities/additional places; quests mark a location or give verbal clues without a map point.
@@ -12,8 +26,6 @@ Markdown format/local links/new anchors/scoped diff PASS.
 Game/browser/SQL NOT_RUN for documentation; no runtime/gallery changes.
 No publication/merge/deploy/Orca/automation activation.
 Next: implement server observation and company cartographic knowledge in a separate slice.
-
-## Dated history
 
 ### Company regional atlas — 2026-10-28, LOCAL COMPLETE
 

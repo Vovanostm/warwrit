@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Merchant chart content correction
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local documentation:
+  corrected the author's mistaken city-street-plan interpretation. Owner means
+  merchant maps with different information coverage: a whole region, cities
+  only, one location or another stated subset, all enriching the company atlas.
+  [Owning rule](docs/wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28)
+  now requires per-map content/coverage grants rather than region IDs alone.
+  Wiki only; Markdown format/local links/scoped diff PASS. Runtime/purchasing
+  unchanged; game/browser/SQL NOT_RUN.
+
 ### City/place charts and quest location clues
 
 - 2026-10-28, branch `codex/world-map-fog-design`, local wiki update: owner
