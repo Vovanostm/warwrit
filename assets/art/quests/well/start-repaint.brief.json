@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "id": "well-start-regional-repaint",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-start",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "First cry from shaft after workers flee: P rises urgently beside well and reaches toward unseen helper. K and corpse remain invisible below curb.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading."
+  },
+  "references": [
+    {
+      "id": "target",
+      "path": "output/quest-implementation-20261027/well-start-edited.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Current accepted acting/identity, rejected secondary texture; preserve actual person and fixed geometry."
+    },
+    {
+      "id": "zones",
+      "path": "output/quest-implementation-20261027/well-region-guide.png",
+      "role": "layout",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Original coarse paint-zone diagram only. Blue protects figure/axe; coral marks surfaces to repaint; grey sky. Not a literal image mask, palette or final artwork."
+    },
+    {
+      "id": "style",
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Broad secondary wash planes, selected palette and selective contours; never copy houses/people or layout."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "opaque-regions",
+      "region": "CORAL secondary zones of supplied original region guide: ground, front well curb/stone, background shed/fence surfaces",
+      "request": "Technique change: use the supplied paint-zone diagram to OPAQUELY REPAINT the marked secondary surfaces from scratch into a handful of broad FLAT MATTE COLOUR MASSES like the village style reference. This is a graphic-novel regional redraw, NOT smoothing or a colour filter over old texture. ERASE original fine clod marks, tiny grass specks, stone-by-stone edge lines and timber scratches almost entirely from all coral zones. Ground should read as four calm umber/ochre/grey shape bands, at most a dozen isolated broad mud patches in entire foreground. Well timber: flat dark-umber face, two broad lighter wear planes, only primary silhouette and 2structural joint contours; NO linear grain hatching. Stone base: one quiet grey plane, 3coarse stone suggestions, NOT dozens of sharply outlined rocks. Shed/fence: quiet linked dark shape masses, very few structural strokes. Keep exact gate/well/beam/lean-to/birch positions. Preserve BLUE protected figure/axe in ORIGINAL target: same P face, reaching arm, curb-contact hand, feet/knee, torn tunic, waist rope/welt and exact anatomy. Preserve proper contact shadows. Guide coordinates are approximate: protect real P silhouette precisely from original image, not a blue polygon edge. Sky same quiet grey. Result must contain NONE of the guide coral/blue colours or diagram lines, no added labels/text. Final image stays entirely in selected slate/umber/ochre and hand-inked matte medium.",
+      "cause_ids": ["targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "Keep P actual emergency pose, both connected arms/hands, right knee and planted left foot, eyes into shaft, costume/rope/welt and matte face unchanged.",
+    "Keep fixed structural silhouettes and yard topology. Repaint surfaces without moving or shrinking buildings/well.",
+    "Only original continuous image returned; no split-panel, coloured zones, photograph, blanket blur or clean plastic surfaces."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/start.png",
+    "transparent_background": false
+  }
+}

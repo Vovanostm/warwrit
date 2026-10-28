@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-05-attempt-03",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-05",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. Image1 is the current scene05 target. ONE final bounded anatomical clarification, preserving the discovery composition and existing patch on torso.\n\nThe actual anatomical LEFT side must be clear from an unbroken LEFT shoulder-to-elbow-to-wrist-to-hand connection, while this dead man stays lying on his RIGHT side. Keep the current unpatched brown LEFT upper sleeve and the pale sewn patch in its correct current place on the SIDE OF TORSO BELOW LEFT ARMPIT. In the small foreground chest region directly below the beard, reveal his LEFT forearm and LEFT hand resting lifelessly across his upper chest. His LEFT elbow is bent forward and remains supported low on the ground; forearm returns toward chest. Draw a readable normal LEFT hand, back of hand toward viewer, thumb on the anatomically correct side toward neck/chin, loosely curved relaxed fingers. No raised/active/reaching hand. Let existing branches occlude only a part of forearm, NOT the continuous shoulder/elbow/wrist ownership or thumb that makes LEFT side identifiable. The pale torso patch must remain BELOW the visible armpit fold, never on sleeve. Do not add another hand or limb. Do not uncover the entire body or display gore.\n\nPreserve exact head angle/location, closed dead face/skin and red-gray beard, stocky torso lying in same position, brown leather material and color, pale patch current size and torso location, existing branch cover elsewhere, player's lifting hand/cloak, cart wheel/boards, leaf ground and subdued moonlight/matte ink-wash. Do not mirror/rotate the image or body. Do not change the whole pose or invent new injury. White handkerchief remains absent. Only uncover/clarify local LEFT forearm and resting LEFT hand below beard, and minimum nearby branch/contact pixels. Same opaque1536x1024.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-05-attempt-02/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-05-attempt-03.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 5. Под ветвями",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. Image1 is the current scene05 target. ONE final bounded anatomical clarification, preserving the discovery composition and existing patch on torso.\n\nThe actual anatomical LEFT side must be clear from an unbroken LEFT shoulder-to-elbow-to-wrist-to-hand connection, while this dead man stays lying on his RIGHT side. Keep the current unpatched brown LEFT upper sleeve and the pale sewn patch in its correct current place on the SIDE OF TORSO BELOW LEFT ARMPIT. In the small foreground chest region directly below the beard, reveal his LEFT forearm and LEFT hand resting lifelessly across his upper chest. His LEFT elbow is bent forward and remains supported low on the ground; forearm returns toward chest. Draw a readable normal LEFT hand, back of hand toward viewer, thumb on the anatomically correct side toward neck/chin, loosely curved relaxed fingers. No raised/active/reaching hand. Let existing branches occlude only a part of forearm, NOT the continuous shoulder/elbow/wrist ownership or thumb that makes LEFT side identifiable. The pale torso patch must remain BELOW the visible armpit fold, never on sleeve. Do not add another hand or limb. Do not uncover the entire body or display gore.\n\nPreserve exact head angle/location, closed dead face/skin and red-gray beard, stocky torso lying in same position, brown leather material and color, pale patch current size and torso location, existing branch cover elsewhere, player's lifting hand/cloak, cart wheel/boards, leaf ground and subdued moonlight/matte ink-wash. Do not mirror/rotate the image or body. Do not change the whole pose or invent new injury. White handkerchief remains absent. Only uncover/clarify local LEFT forearm and resting LEFT hand below beard, and minimum nearby branch/contact pixels. Same opaque1536x1024.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-05.png",
+    "transparent_background": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "tool": "image_gen.imagegen",
+  "model": "NOT_REPORTED",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit. Image 1 is the finished island composition to retain. Image 2 is the selected MARSH PAINTING reference for quiet environmental color, simple atmosphere and broad water shapes. Image 3 is selected CHARACTER RENDERING reference only. Make ONE ENVIRONMENT-REGION PAINTOVER, preserving all people, equipment and physical contacts exactly.\n\nRepaint ONLY the sky, distant landscape, open water, reeds and non-contact decorative surface marks of the decking. Replace the dominant orange-red sky/sunset and its orange reflection stripe with restrained slate-grey cloud planes and a small quiet ochre horizon glow. Water reads as broad matte slate-blue/grey planes with a few broken low-contrast ripples. Distant trees and reeds group into soft silhouettes like image 2. Simplify the equal-bright scratch/gravel/plank/reed microdetail into larger quiet painted shapes; keep selective irregular ink where it describes a real silhouette, joint or necessary structural edge. Preserve dusk readability and local material colors with varied tonal masses, rather than applying any overall dark overlay. Preserve the full perspective and structural timber geometry.\n\nPROTECTED EXACTLY: all FIVE figures, their faces, hair, garments, hand anatomy and poses; all sleeves and fingers; Efim's continuous shovel, both grips and same upper-chest contact below the grey figure's clear head; Efim's forward sole on the board, board top and its two bearing contacts; Nastasya's two hands on the supported end; M's shield, single sheathed left-side sword, free right arm and existing garment values; one rope coil and two rolled nets. Do not repaint the characters or their material-condition patches. Keep the same round charcoal mound, shelter, posts, channels and camera framing, with their legible structural contours. The physical contact regions must stay exact and clear. This task changes environmental rendering/value grouping only, not composition or contact geometry.\n\nFinish as the same coherent serious folklore graphic-novel scene with irregular major ink contours and broad matte washes. Quiet environmental planes let the existing characters and essential support edges read first. No text, border or UI. Opaque wide frame; preserve the input crop and dimensions.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/island.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/marsh.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/character.png"
+    ],
+    "transparent_background": false
+  },
+  "generated_source_path": "/Users/vovanostm/.codex/generated_images/01a1756d-3136-7843-b84a-48ec83ba230c/exec-2a298be4-4fd5-4e26-9f6d-0fe592645f6c.png",
+  "retained_output_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/island.png",
+  "frozen_inputs": [
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/island.png",
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/marsh.png",
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/swamp/final-polish/inputs/character.png"
+  ],
+  "reference_roles": [
+    "edit target; accepted contact/board/carry geometry preserved",
+    "selected graphic-novel marsh environment style/value",
+    "selected graphic-novel character rendering only"
+  ],
+  "author_observations": [
+    "Dominant orange-red sky and bright reflection stripe replaced by slate-grey clouds and small ochre dusk horizon.",
+    "Figures, hands, shovel/chest, board sole/bearings, equipment and count appear retained at full-frame inspection.",
+    "Wood/reeds remain selectively detailed; final rendering/value score belongs to independent critic."
+  ],
+  "visual_acceptance": "Independent full current swamp pass: this island frame has all applicable scores2, required visible shovel/chest/board/sole/carry contacts accepted; rescued material defect is a separate scene.",
+  "live_assets_modified": false,
+  "dimensions_observed": {
+    "width": 1671,
+    "height": 941,
+    "alpha": false
+  },
+  "current_asset": "assets/art/quests/swamp/island.png",
+  "status": "SELECTED_LOCAL",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.swamp",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  }
+}

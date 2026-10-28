@@ -1,0 +1,31 @@
+{
+  "status": "SELECTED_LOCAL",
+  "tool": "image_gen.imagegen",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a17543-44e5-7ea0-a80e-9a122d23ccb6/exec-c9c83e79-32fb-472f-a6d6-12a46f01c889.png",
+  "arguments": {
+    "prompt": "Inputs: image 1 is the EXACT current Warwrit quest scene to edit; its people, props, composition and story are locked. Image 2 is the owner-selected GRAPHIC-NOVEL FOREST reference: copy its quiet broad matte environmental masses, sparse selective detail and muted slate/umber/olive/ochre balance, not its geography. Image 3 is selected graphic-novel CHARACTER rendering only: keep image 1 identities and equipment, never replace them with image 3.\nThis is a local ENVIRONMENT REGION PAINTOVER, not an overall dark filter or a fresh scene redraw. Preserve all human silhouettes, face/hair pixels, anatomy, hand contacts, clothing/armour parts, kit, wear, pose, proportions and cast counts exactly. Keep all object and terrain geometry/camera/crop/horizon/light direction; only simplify and rebalance environmental marks/colour in the named regions. No photography, blur filter, glossy CGI, new fog, rain, waterline, text or border.\nEDIT ONLY the exposed ROAD, surrounding FOLIAGE, ROCK SURFACES and DISTANT FOREST behind/around the people and cart. Merge the many tiny bright gravel, leaf and pine-needle marks into a few larger irregular MATTE SLATE/UMBER ground masses and quiet olive/umber foliage groups, comparable to image 2. Reserve sharper contours for the people and a few major trunks/rocks. Reduce the strong golden-yellow environmental saturation and scattered pinpoint highlights while keeping the same late-day light direction and readable warm faces. Keep the already drawn road shape, stones and trunks in place; reduce their internal markings rather than remove anchors.\nFLOUR: preserve one torn sack and the causal powder spill from its opening to the ground. Repaint only the existing flour powder regions as a LOCAL DULL WARM OFF-WHITE spill near the sack and feet, with fewer larger soft-edged matte patches, not bright white peppered flecks or a luminous continuous band sweeping across the entire lower road. It remains unmistakably flour, clearly visible but lower contrast than faces/hands. Do not move the sack, cart, wheel, attached broken shaft or Irina’s two supporting hand contacts.\nPROTECT explicitly: same Irina ochre head covering, slate-blue outer dress, pale cuffs, thin tied CORD belt, left-side earth abrasion, brown underdress; same mercenary right hand at chin, left working shield, one LEFT-hip SHEATHED sword, brown quilted coat/scarf/boots. Preserve wood structure and support geometry. Keep the same opaque wide frame. The visual improvement is calmer environment and flour, not a darker or different person.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/output/quest-implementation/bandits/final-style/inputs/start.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/forest.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+    ],
+    "transparent_background": false
+  },
+  "reference_roles": [
+    "exact current scene snapshot: preserve actors/props/geometry",
+    "selected forest: environment rendering/palette only",
+    "selected character: rendering only, not replacement identity"
+  ],
+  "base_source": "assets/art/quests/bandits/start.png",
+  "exact_input_snapshot": "output/quest-implementation/bandits/final-style/inputs/start.png",
+  "scope": "ONE_ENVIRONMENT_REGION_PAINTOVER_ONLY",
+  "visual_acceptance": "ACCEPT broad rubric>=2 and pictured required contacts; /root/bandits_final_visual_critic. Full hidden construction not certified.",
+  "live_writes": false,
+  "current_asset": "assets/art/quests/bandits/start.png",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.bandits",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  }
+}

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941">
+  <rect width="1672" height="941" fill="#a1a8a9" />
+  <path d="M0 0H530V650H0ZM1162 0H1672V650H1162ZM530 0H1162V113H530Z" fill="#737b7b" />
+  <path d="M0 646H1672V941H0Z" fill="#53616a" />
+  <g fill="#f7f2e7" stroke="#353b3e" stroke-width="3">
+    <path d="M0 269H430V811H0Z" />
+    <path d="M588 119H1175V651H588Z" />
+    <path d="M479 306H625V657H479Z" />
+    <path d="M1110 306H1255V659H1110Z" />
+    <path d="M1277 440H1664V808H1277Z" />
+    <path d="M1162 734H1588V837H1162Z" />
+    <path d="M1398 777H1672V859H1398Z" />
+    <path d="M0 775H1672V832H0Z" />
+    <path d="M1432 130H1645V289H1432Z" />
+    <path d="M478 0H538V388H478ZM1170 0H1218V265H1170Z" />
+  </g>
+  <path d="M1168 89L1202 8L1453 187" fill="none" stroke="#f7f2e7" stroke-width="33" />
+  <g font-family="Arial,sans-serif" text-anchor="middle" fill="#f8f3e8" font-size="27">
+    <text x="840" y="50">ENVIRONMENT PAINT ONLY</text>
+    <text x="840" y="88" font-size="21">same major joints / 2–3 opaque quiet wash planes</text>
+    <text x="804" y="700">QUIET WATER / PAVING</text>
+    <text x="804" y="740" font-size="21">
+      no granular bright reflection grid / retain foot contacts
+    </text>
+    <text x="837" y="881">WHITE = KEEP ALL ACTUAL ORIGINAL PIXELS / IDENTITIES / CONTACTS</text>
+    <text x="837" y="918" font-size="21">
+      Original dark segmented hydra, D1 armour, irregular low stone and bronze gap stay unchanged.
+    </text>
+  </g>
+  <g font-family="Arial,sans-serif" text-anchor="middle" fill="#333b40" font-size="27">
+    <text x="847" y="370">PROTECT ORIGINAL HYDRA</text>
+    <text x="847" y="410">ALL THREE HEADS / SCALE PLATES</text>
+    <text x="847" y="450">FOUR LEGS / BODY / NECK ROOTS</text>
+    <text x="211" y="440">KEEP ORIGINAL M</text>
+    <text x="1463" y="560">KEEP ZOYA / TWO HANDS</text>
+    <text x="1370" y="792" font-size="21">KEEP SAME IRREGULAR LOW STONE</text>
+  </g>
+</svg>

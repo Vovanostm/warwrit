@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941">
+  <rect width="1672" height="941" fill="#c6c8c3" />
+  <path d="M0 235L800 180 1672 230V941H0Z" fill="#837994" />
+  <path
+    d="M835 454L1672 446 1672 557 1240 563 1140 607 1010 600 990 714 928 773 1672 792V941H427L535 839 829 771 884 729 899 673 908 596 835 550Z"
+    fill="#5b8f98"
+  />
+  <path d="M0 0H801L810 235 660 279 507 256 421 414 0 600Z" fill="#8a944f" />
+  <path d="M1330 278L1672 267V574L1391 581 1312 502Z" fill="#837994" />
+  <path d="M0 522L530 516 501 620 346 690 0 770Z" fill="#8a944f" />
+  <rect x="831" y="26" width="453" height="150" fill="#837994" />
+  <path
+    d="M94 100L145 43 391 48 456 180 500 259 488 569 442 769 81 766 63 556 69 350Z"
+    fill="#e7e1d4"
+    stroke="#e1b75b"
+    stroke-width="5"
+  />
+  <path
+    d="M479 300L609 265 729 268 810 382 910 504 909 618 845 753 486 742 457 580Z"
+    fill="#e7e1d4"
+    stroke="#e1b75b"
+    stroke-width="5"
+  />
+  <path d="M511 620L699 622 726 704 501 708Z" fill="#e7e1d4" stroke="#b95245" stroke-width="7" />
+  <path
+    d="M643 513L681 515 827 692 819 718 777 706 655 566Z"
+    fill="#e7e1d4"
+    stroke="#b95245"
+    stroke-width="5"
+  />
+  <rect
+    x="1082"
+    y="568"
+    width="132"
+    height="182"
+    rx="38"
+    fill="#e7e1d4"
+    stroke="#e1b75b"
+    stroke-width="5"
+  />
+  <path d="M1321 0L1451 180" fill="none" stroke="#e7e1d4" stroke-width="17" />
+  <rect
+    x="1410"
+    y="171"
+    width="230"
+    height="131"
+    fill="#e7e1d4"
+    stroke="#e1b75b"
+    stroke-width="5"
+  />
+  <path
+    d="M831 26L1284 26 1284 176 878 176M829 26V457M1285 26V448M1381 282L1672 281M1355 332L1672 332M1335 384L1672 384M1315 435L1672 435M1311 479L1672 479"
+    fill="none"
+    stroke="#e7e1d4"
+    stroke-width="8"
+  />
+  <path d="M913 463L1240 459" stroke="#e7e1d4" stroke-width="9" />
+  <path
+    d="M600 3L674 170 743 281 803 441M662 0L721 167 791 294"
+    fill="none"
+    stroke="#e7e1d4"
+    stroke-width="8"
+  />
+  <g font-family="sans-serif" font-size="27" fill="#f6f0dc">
+    <text x="870" y="97">STONE: OPAQUE QUIET PLANES</text>
+    <text x="950" y="518">WATER: FEW BROAD MASSES</text>
+    <text x="108" y="864">STONE</text>
+    <text x="1345" y="867">STONE</text>
+    <text x="1118" y="902">WATER</text>
+    <text x="42" y="210">VEGETATION</text>
+    <text x="1440" y="381">STONE</text>
+  </g>
+  <g font-family="sans-serif" font-size="23" fill="#514a40">
+    <text x="128" y="156">PROTECT M</text>
+    <text x="520" y="333">PROTECT ZOYA</text>
+    <text x="523" y="655">2 WEDGES</text>
+    <text x="689" y="599">ONE BAR</text>
+    <text x="1098" y="657">LION</text>
+    <text x="1430" y="221">WINCH</text>
+  </g>
+  <g stroke="#b95245" fill="none" stroke-width="4">
+    <ellipse cx="319" cy="143" rx="61" ry="63" />
+    <ellipse cx="131" cy="409" rx="31" ry="46" />
+    <ellipse cx="650" cy="344" rx="66" ry="63" />
+    <ellipse cx="663" cy="530" rx="36" ry="36" />
+    <ellipse cx="843" cy="559" rx="40" ry="43" />
+  </g>
+</svg>

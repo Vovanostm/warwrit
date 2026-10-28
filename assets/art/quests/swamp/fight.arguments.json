@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nONE SWORD EDIT. The sword lying on the boards must be the series weapon: straight double-edged matte grey blade, one simple straight iron crossguard, dark brown leather grip with three wraps, flat iron DISK pommel. No brass or ball pommel.\n\nThis is after the fight. Add a short matte dark-red smear on the blade near the tip. Do not paint the deck, faces, or the drowned bodies. Keep the bandage blood already on the palm.\n\nDo not move anyone or the split shield. No text. Overwrite the same 1672×941 frame.\n",
+  "referenced_image_paths": [
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/swamp/fight.png",
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+  ],
+  "transparent_background": false
+}

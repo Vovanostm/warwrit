@@ -1,0 +1,92 @@
+{
+  "asset": "swamp/start",
+  "status": "generated_author_inspected_pending_parent_critic",
+  "tool": "built-in image_gen",
+  "mode": "generate",
+  "model": "tool_default_not_overridden",
+  "prompt_file": "start-v2.prompt.txt",
+  "reference_handling": "References below were inspected by the artist; no image pixels/edit targets passed for this brand-new generation.",
+  "observed_references": [
+    {
+      "path": "assets/art/styles/references/graphic-novel/character.png",
+      "role": "rendering, adult proportions, practical equipment"
+    },
+    {
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "restrained wash and settlement materials"
+    },
+    {
+      "path": "assets/art/styles/references/graphic-novel/marsh.png",
+      "role": "palette, depth and readable reeds/water"
+    },
+    {
+      "path": "assets/art/m1/style/unit-c-ink.png",
+      "role": "historical body/equipment proportion"
+    },
+    {
+      "path": "assets/art/m1/places/tikhaya-gat.png",
+      "role": "historical boardwalk/stilt village construction"
+    }
+  ],
+  "input_image_pixels": [],
+  "parent_integration": "Parent owns tracked assets, code, docs and acceptance; this handoff is not an independent ACCEPT.",
+  "stop": "One v2 image generated as assigned; wait for parent authorization before remaining5.",
+  "operation": "new generation, not edit",
+  "story_source": "apps/web/src/mission-lab/water.ts#swamp/start",
+  "technique_change": "Flat graphic ink drawing with3–4 large value shapes/material, no surface microtexture; explicit coiled rope and exactly2 bundled fishing nets; hands offer rather than point.",
+  "generated_source_path": "/Users/vovanostm/.codex/generated_images/01a17543-44e5-7ea0-a80e-9a122d23ccb6/exec-c122c64f-efdf-43ff-a5f5-484787ff5dc2.png",
+  "output_path": "output/quest-art/swamp/start.png",
+  "actual_dimensions": {
+    "width": 1672,
+    "height": 941
+  },
+  "file_format": "PNG",
+  "png_bit_depth": 8,
+  "png_color_type": 2,
+  "byte_size": 2824541,
+  "iterations": [
+    {
+      "version": 2,
+      "operation": "new built-in generation; v1 preserved",
+      "prompt_file": "start-v2.prompt.txt",
+      "input_image_pixels": [],
+      "critic_verdict": "PENDING_PARENT",
+      "observed": "Exactly Vera and M foreground, with readable faces, Vera holding a large rope coil and two separate bundled fishing nets on the boardwalk. Full figures, plain round shield and sheathed sword. Village stilt houses, one warm window and cold marsh causeway. No creatures or stranded villagers.",
+      "author_concerns": [
+        "Some selective boardwalk and net-mesh detail remains, although coat/skin planes are much flatter than v1.",
+        "Figures extend outside the requested central80-percent safe band, but output itself is near16:9 and complete heads/boots/nets are within the canvas. Verify actual reader framing."
+      ]
+    }
+  ],
+  "checks": {
+    "png_header_and_dimensions": "PASS",
+    "output_opened_with_view_image": "PASS",
+    "rope_and_two_net_bundles_visible": "PASS_AUTHOR_OBSERVATION",
+    "separate_final_prompt_saved_before_generation": "PASS",
+    "independent_visual_critique": "NOT_RUN_BY_ARTIST",
+    "in_game_acceptance": "NOT_RUN_BY_ARTIST"
+  },
+  "artifact_path": "assets/art/quests/swamp/start.png",
+  "parent_status": "selected_integrated_local",
+  "parent_review": {
+    "verdict": "ACCEPT",
+    "date": "2026-10-26",
+    "scope": "six-scene swamp cycle; independent visual review of raw, reference comparisons and actual reader source/dim captures",
+    "record": "docs/wiki/mission-testing.md#иллюстрированные-квесты--2026-10-26"
+  },
+  "parent_delivery": {
+    "date": "2026-10-26",
+    "status": "local complete; selected in /missions-lab",
+    "independent_visual": "ACCEPT current 6-frame integrated swamp set; all applicable game-scale criteria at least2; no close-view0",
+    "browser": "PASS current images decoded, all three endings;1440/1200 desktop and source/dim reader views",
+    "text_review": "bounded RU ACCEPT; hydra pose-line corrections separately ACCEPT",
+    "publication": "NOT_PUBLISHED; no merge or deployment"
+  },
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.swamp",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  },
+  "current_asset": "assets/art/quests/swamp/start.png"
+}

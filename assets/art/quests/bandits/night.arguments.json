@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nReplace ONLY the mercenary’s curved single-edged knife with his one series sword, in the same right hand and the same lowered angle. The sword is straight and double-edged, matte grey, with one simple straight iron crossguard, a dark brown leather grip of three wraps, and a flat iron DISK pommel. No brass, gold, ball pommel, or curve.\n\nKeep a few matte dark-red blood streaks on the lower blade only. Do not clean it. Do not add blood to faces or the captives.\n\nPreserve every other pixel: faces, rope, bodies, dog, fire, shield on his back, camera, graphic-novel ink. No text. Overwrite the same 1672×941 frame.\n",
+  "referenced_image_paths": [
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/bandits/night.png",
+    "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+  ],
+  "transparent_background": false
+}

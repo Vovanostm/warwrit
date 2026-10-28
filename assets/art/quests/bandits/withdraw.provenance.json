@@ -1,0 +1,26 @@
+{
+  "status": "GENERATED_CANDIDATE_NOT_SELECTED",
+  "tool": "image_gen.imagegen",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a17543-44e5-7ea0-a80e-9a122d23ccb6/exec-cf5a92b3-e83e-4035-8b10-3ab3660f7ca5.png",
+  "arguments": {
+    "prompt": "Edit input 1 in TWO tightly bounded regions only. Input 2 is the same Irina and mercenary in the opening: copy ONLY Irina’s tied thin cord belt construction and the mercenary’s wrist-level cloth sleeve length. It is not a composition, pose, daylight or facial replacement reference.\nREGION A, IRINA WAIST: remove her newly invented wide leather belt and rectangular metal buckle. Replace them with the same several thin brown CORD wraps and small tied knot visible around her waist in input 2. The cord gathers the same slate-blue dress without changing its cut, colour, old wear or folds. Do not change the mercenary’s separate real leather belt.\nREGION B, MERCENARY ANATOMICAL RIGHT ARM, the bent arm whose hand holds the strap at his chest: extend his existing brown CLOTH sleeve down to the RIGHT WRIST, matching his unchanged long LEFT pointing sleeve. Replace only the currently bare right forearm between elbow/cuff and wrist with the same cloth and small turned cuff at wrist. Keep the RIGHT hand bare and gripping exactly the same back-shield sling at his chest. This is sleeve length, no leather bracer, armour, wristband, glove, rivet or new strap. Keep both elbows, hands and shoulders in exactly the same positions.\nPROTECT ALL ELSE: Irina’s identical face, ochre HEAD kerchief, pale inner cuffs, one shoulder bag and right hand on its strap/left hand down; existing small dry-earth wear. Mercenary identical face, scarf, quilted coat, LEFT finger pointing, whole round wood shield on visible BACK sling, RIGHT hand on that sling, one sword SHEATHED at LEFT hip, no duplicate weapon. Preserve the lantern hung on the cart, cart broken shaft, torn flour sack, pine road, night light, crop and pose. Matte restrained ink graphic novel, broad quiet washes, no global redraw, no rain/blood/combat marks, no text.",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/bandits/withdraw.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/bandits/start.png"
+    ],
+    "transparent_background": false
+  },
+  "reference_roles": [
+    "withdraw-v2 bounded edit target",
+    "start-v2 tied thin cord belt and wrist-level sleeve construction only"
+  ],
+  "review_source": "output/quest-implementation/review/bandits/critic.txt",
+  "visual_acceptance": "NOT_RUN",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.bandits",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  },
+  "current_asset": "assets/art/quests/bandits/withdraw.png"
+}

@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-26",
+  "tool": "image_gen.imagegen",
+  "model": "tool-managed; not exposed",
+  "operation": "precise-object-edit: series sword and dark-red smear near tip",
+  "source": "assets/art/quests/swamp/fight.png",
+  "source_note": "Pre-generation pixels at the same path; overwritten by this request.",
+  "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nONE SWORD EDIT. The sword lying on the boards must be the series weapon: straight double-edged matte grey blade, one simple straight iron crossguard, dark brown leather grip with three wraps, flat iron DISK pommel. No brass or ball pommel.\n\nThis is after the fight. Add a short matte dark-red smear on the blade near the tip. Do not paint the deck, faces, or the drowned bodies. Keep the bandage blood already on the palm.\n\nDo not move anyone or the split shield. No text. Overwrite the same 1672×941 frame.\n",
+  "prompt_file": "assets/art/quests/swamp/fight.prompt.txt",
+  "references": [
+    {
+      "path": "assets/art/quests/swamp/fight.png",
+      "role": "only scene; pre-generation pixels"
+    },
+    {
+      "path": "assets/art/styles/references/graphic-novel/character.png",
+      "role": "style only"
+    }
+  ],
+  "arguments": {
+    "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nONE SWORD EDIT. The sword lying on the boards must be the series weapon: straight double-edged matte grey blade, one simple straight iron crossguard, dark brown leather grip with three wraps, flat iron DISK pommel. No brass or ball pommel.\n\nThis is after the fight. Add a short matte dark-red smear on the blade near the tip. Do not paint the deck, faces, or the drowned bodies. Keep the bandage blood already on the palm.\n\nDo not move anyone or the split shield. No text. Overwrite the same 1672×941 frame.\n",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/swamp/fight.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+    ],
+    "transparent_background": false
+  },
+  "generated_output": "/Users/vovanostm/.codex/generated_images/01a1784b-8433-77d0-9a15-49c636559f6e/exec-4b89bb17-ce77-48d1-b324-66e47e98c02a.png",
+  "current_asset": "assets/art/quests/swamp/fight.png",
+  "pixel_size": {
+    "width": 1672,
+    "height": 941
+  },
+  "generation_calls": 1,
+  "status": "LOCAL_OVERWRITE",
+  "visual_acceptance": "NOT_RUN",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.swamp",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  },
+  "pre_edit_input_resolution": {
+    "status": "NOT_RECOVERED_EXACT",
+    "raw_argument_path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/swamp/fight.png",
+    "boundary": "Raw executed request is known. The stable input was subsequently overwritten; no inspected lineage proves exact pre-edit pixels. Never substitute the current result as its own source.",
+    "uncertified_candidates": [
+      "output/quest-implementation/review/swamp-final/inputs/fight.png",
+      "71205b61:assets/art/quests/swamp/fight-v7.png"
+    ],
+    "excluded_post_edit_copy": "output/quest-implementation/review/swamp-final/inputs/fight-latest.png",
+    "independent_metadata_check": "/root/stable_asset_metadata_review; finite read-only lineage pass"
+  }
+}

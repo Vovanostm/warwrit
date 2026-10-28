@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "well-decision-review",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-decision",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "Landscape 3:2 outside well, medium three-quarter P beside thick FRONT upright of lean-to. He crouches looking down at his own cut waist rope, shoulders collapsed with shame, RIGHT hand open palm upward near waist, LEFT hand on own thigh, no floating limbs. His red pressure welt visible through tunic slit. In foreground spare hemp rescue rope comes from well overhead bucket beam and is secured in visible turns around stout upright; taut continuation runs back toward well, no free-hanging fake anchor. P is NOT holding this rope yet. Well right-middle, dark open mouth; no future rescue or corpse outside. Axe already put behind lean-to and out of crop. One living figure P visible only; patient below curb. Grey day matching start, no orange light. Exact moment confession ends and decision is pending.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading. Backgrounds have large quiet shape masses as accepted start.png; only focal faces/hands carry detail. No uniform fine mud/wood/stone/stubble strokes."
+  },
+  "references": [
+    {
+      "id": "target",
+      "path": "output/quest-implementation-20261027/well-scenes/decision.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Preserve corrected figure/camera/washes. Edit only independently rejected physical contact interface."
+    },
+    {
+      "id": "style",
+      "path": "assets/art/quests/well/start.png",
+      "role": "style",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Accepted quiet wash family and palette only."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "contact",
+      "region": "rope-beam and rope-post interfaces only",
+      "request": "Edit ONLY hemp rope interfaces with existing overhead bucket beam and stout foreground upright. REMOVE ALL helical coils and multiple wraps from OVERHEAD beam. ONE continuous rescue rope approaches diagonally from the foreground post, passes OVER the rounded top of the overhead beam in exactly ONE smooth U bend, then descends vertically into shaft. It must slide over that beam for lifting: no knot, loop winding, friction lock, pulley, metal fitting or extra rope on top beam. Keep rope taut and visibly continuous. At FOREGROUND post keep ~3 existing securing turns, finish with a visible simple tied-off hitch on FRONT face and ONE short10–15cm free tail so anchor is inspectable; this tail is not a second working rope. No disconnected ends, no rope passing through solid timber. Do NOT change P face/body/hand sides/tornbrown tunic/welt/cut WAIST rope, boots, well/beam/post/shed topology, buckets, sky, broad matte wash treatment or camera. Keep the separate short severed waist rope as it is. No text, extra people or new tools.",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "All existing cast anatomy/face/kit and exact current camera/layout, except explicitly named contact adjustment.",
+    "Current broad matte washes and local action contrast. No new noise, lighting or weather."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/decision.png",
+    "transparent_background": false
+  }
+}

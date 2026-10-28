@@ -1,0 +1,28 @@
+{
+  "status": "GENERATED_CANDIDATE_NOT_SELECTED",
+  "tool": "image_gen.imagegen",
+  "generated_source": "/Users/vovanostm/.codex/generated_images/01a1784b-8436-7a32-a6ad-89040ea507ab/exec-c04bf221-e613-4ec9-83a9-cd3f5e35ea89.png",
+  "prompt_file": "assets/art/quests/bandits/night.prompt.txt",
+  "arguments": {
+    "prompt": "Use case: precise-object-edit. Image1 is the only scene. Image2 is style only.\n\nReplace ONLY the mercenary’s curved single-edged knife with his one series sword, in the same right hand and the same lowered angle. The sword is straight and double-edged, matte grey, with one simple straight iron crossguard, a dark brown leather grip of three wraps, and a flat iron DISK pommel. No brass, gold, ball pommel, or curve.\n\nKeep a few matte dark-red blood streaks on the lower blade only. Do not clean it. Do not add blood to faces or the captives.\n\nPreserve every other pixel: faces, rope, bodies, dog, fire, shield on his back, camera, graphic-novel ink. No text. Overwrite the same 1672×941 frame.\n",
+    "referenced_image_paths": [
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/bandits/night.png",
+      "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/character.png"
+    ],
+    "transparent_background": false
+  },
+  "reference_roles": [
+    "only scene and precise-object edit target (pre-overwrite night.png)",
+    "style only"
+  ],
+  "output": "assets/art/quests/bandits/night.png",
+  "pixel_size": [1672, 941],
+  "visual_acceptance": "NOT_RUN",
+  "parent_selection": {
+    "date": "2026-10-26",
+    "status": "SELECTED_LOCAL_VISIBLE_ACCEPT",
+    "review": "assets/art/quests/correction-execution.json#current_sequence_reviews.bandits",
+    "boundary": "Later parent verdict for current selected pixels; does not relabel old artist observations or failed calls."
+  },
+  "current_asset": "assets/art/quests/bandits/night.png"
+}

@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-28",
+  "source": "r4.1 f1f743b",
+  "status": "12 SELECTED_LOCAL; independent asset ACCEPT reported by parent; integration separate",
+  "images": [
+    {
+      "id": "ending-body",
+      "attempt": "ending-body-attempt-01",
+      "file": "ending-body.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Final independent ACCEPT + parent; two supported carriers lower body by oven, Pelageya reaches white cloth, no Klim.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "ending-both",
+      "attempt": "ending-both-attempt-01",
+      "file": "ending-both.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent; empty bag, living/uninjured/free Klim, returned body on gray sack with white face cloth, conditional attitudes not fixed.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "ending-money",
+      "attempt": "ending-money-attempt-02",
+      "file": "ending-money.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent on attempt02; full bag touched by player only, both Pelageya hands on bricks, Klim/body/white cloth offscreen.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-01",
+      "attempt": "scene-01-attempt-01",
+      "file": "scene-01.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent visual acceptance; Pelageya, oven and supporting companions established.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-02",
+      "attempt": "scene-02-attempt-03",
+      "file": "scene-02.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent; explicit owner-authorized composition reduction hides captive entirely behind cart, with empty cart bed.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-03",
+      "attempt": "scene-03-attempt-01",
+      "file": "scene-03.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent; right boot removed, separate grips/knife with no wound.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-04",
+      "attempt": "scene-04-attempt-02",
+      "file": "scene-04.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent source/dim live1280x720 reader check; ONE closed stitched pipe burn at corner, beardless face/right ink/left binding readable.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-05",
+      "attempt": "scene-05-attempt-03",
+      "file": "scene-05.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent on attempt03; patch on torso UNDER LEFT armpit and side/arm clarified; body partly covered.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-06",
+      "attempt": "scene-06-attempt-02",
+      "file": "scene-06.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent on attempt02; natural forest replaces unapproved stockade/canopy.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-07",
+      "attempt": "scene-07-attempt-02",
+      "file": "scene-07.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent on attempt02; LEFT receives money, RIGHT holds lowered axe, company archer carries bow; face not covered until after exchange.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-08",
+      "attempt": "scene-08-attempt-01",
+      "file": "scene-08.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent; free/uninjured Klim before branch split, right ink and left abrasion, neutral passage condition.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    },
+    {
+      "id": "scene-09",
+      "attempt": "scene-09-attempt-02",
+      "file": "scene-09.png",
+      "status": "SELECTED_LOCAL",
+      "review": "Independent ACCEPT + parent on attempt02; background tent removed with no visible regressions, left wrist hidden and body on one sack with white face cloth.",
+      "dimensions": {
+        "width": 1536,
+        "height": 1024,
+        "bit_depth": 8,
+        "color_type": 2,
+        "alpha": false,
+        "method": "Read-only PNG IHDR; no pixel edits/hashes"
+      }
+    }
+  ]
+}

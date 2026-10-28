@@ -1,0 +1,93 @@
+Use case: precise-object-edit. Warwrit game illustration.
+
+Purpose: TECHNIQUE CHANGE: local dog anatomy/silhouette repaint after the previous dog still read asleep. Protect the human acting and dusk that the critic now scored 2.
+Moment: Immediately after open combat and the final wrist-rope cut. Klim is free, wounded in anatomical LEFT shoulder; Anna attends him. No wait-for-night occurred.
+
+Style: Restrained folklore graphic novel: irregular major ink contours, broad matte muted slate/soot/umber washes, coherent shadow masses and selective detail. Keep adult anatomy, credible cloth/leather/iron, readable action.
+
+Input image roles, in exact attachment order:
+[
+  {
+    "id": "image1",
+    "path": "output/quest-emotion-repair/bandits/attempt01/assault.png",
+    "role": "edit_target",
+    "authority": "CANDIDATE_PARTIAL",
+    "inspected": true,
+    "limits": "Immutable first candidate. All human faces, exact hands, gestures, outfits, kit, camp, lighting and corpses are PROTECTED. Only foreground dog pose may change."
+  },
+  {
+    "id": "image2",
+    "path": "output/quest-emotion-repair/bandits/assault-dog.pose.png",
+    "role": "layout",
+    "authority": "CANDIDATE_PARTIAL",
+    "inspected": true,
+    "limits": "Original code-native regional geometry guide: anatomical relaxation, shoulder/hip attachments, non-crossed limbs and slack jaw. Schematic only, not final anatomy/rendering, and not a strict mask. Do not copy diagram text, colours or shapes literally."
+  }
+]
+
+Change ONLY these regions/details:
+[
+  {
+    "id": "dog-lateral-collapse",
+    "region": "ONLY the existing foreground dog body, head/neck and legs, x≈1080–1672 y≈510–810. Keep all surrounding pixels/content as the edit base.",
+    "request": "Repaint the dog anatomically into a lateral collapsed inert weight, guided by image2. Ribs/flank and cheek rest fully on earth; extended relaxed neck has no held-up tension. Head/muzzle fall slack: slightly parted lower jaw with a narrow dark gap, not a closed sleeping mouth; no bared teeth/snarl. Legs must NOT be neatly crossed or tucked. Show distinct forelegs relaxed at different angles: nearer foreleg loosely bent down toward foreground with paw heavy on earth, farther foreleg extending obliquely toward the right, separated with a visible space. Hindlegs relaxed unevenly to the right, with real shoulder/hip attachments; exactly four legs total, unseen roots/parts can be occluded naturally. Each paw belongs to one continuous leg, do not duplicate or float. Preserve same grey-brindle wiry fur, light muzzle, long head, normal adult dog proportions, collar, size and exact camp footprint. Keep existing small shoulder/chest cut and blood amount, do not increase gore. One slack chain lies on earth from collar ring, unconnected to post. Keep realistic dead weight, not sleeping, running, crouching or rigor-stiff legs. The schematic is a pose aid, not a new design.",
+    "cause_ids": [
+      "dog-dead",
+      "pose-change"
+    ]
+  }
+]
+
+Causes and evidence, separated from production targets:
+[
+  {
+    "id": "dog-dead",
+    "basis": "MANUSCRIPT",
+    "source": "apps/web/src/mission-lab/forest.ts#scenes.assault.battle",
+    "description": "Dog was released, struck with sword and is dead after the open fight. It must read inert, not sleeping."
+  },
+  {
+    "id": "pose-change",
+    "basis": "PRODUCTION_TARGET",
+    "source": "Parent relay of independent critic after first assault candidate, 2026-10-27",
+    "description": "Humans acting/light scored 2; only dog rejected: closed muzzle/head naturally resting and neatly crossed forepaws read sleep despite small wound. Change localized pose construction, not stain intensity."
+  }
+]
+
+Material/zone states and persistence:
+[
+  {
+    "subject": "Hound",
+    "material": "Grey-brindle wiry fur, skin, dark leather collar and iron chain",
+    "zone": "Existing foreground dog only",
+    "before": "First candidate has wound but closed muzzle and crossed paws still read sleep.",
+    "after": "Lateral inert collapsed mass, head/neck slack and jaw slightly parted, irregularly separated relaxed legs. Same localized wound and loose chain.",
+    "cause_id": "dog-dead",
+    "persistence": "Assault only; dog is released and dead. No living/tethered second dog, no additional wound or larger blood pool."
+  }
+]
+
+Preserve:
+All image1 HUMANS EXACTLY as current: Klim lowered exhausted ginger-bearded head, slumped seated posture and anatomical LEFT shoulder wound; Anna concentrated downward attention, anatomical LEFT hand pressure cloth on LEFT shoulder, anatomical RIGHT bracing healthy RIGHT forearm. Do not repaint human faces/hands/arms or change their pose.
+Mercenary same head/gaze/kneel, sword lowered in anatomical RIGHT hand, cut rope in anatomical LEFT hand, empty scabbard at anatomical LEFT hip, whole shield BACK-slung, both sleeves rolled. Same coat/scarf/seams/boots.
+Exact first-candidate dusk sky, restrained slate background, foreground people values, one small existing fire and light influence. Do not brighten or regrade whole scene.
+Same exact camera/crop/1672:941 aspect and camp: pine, right shelter, rocks, fallen tree, pots/bowls/axe/spear/crates/barrels. Three original inert bandit bodies stay where shown. No new or missing person.
+Same single dog location, coat identity and collar, same modest existing shoulder wound. Maintain image1 irregular ink and broad matte washes. Only a local anatomical silhouette repaint is requested.
+
+Avoid:
+Any human change, switched side, new hand/finger/weapon, altered emotion, armour or sleeve state
+Dog sleeping curled or tidy crossed front paws; held-up head; snarling aggressive face
+Detached or extra legs/paws; collar floating; chain taut or tethered to stake
+More blood, gore, open cavity, organs, tongue spectacle
+Global relighting, new backdrop, second dog/fire/shelter, diagram text/colours
+
+Known unresolved parts: ["Occluded limb roots/fingertips and hidden human kit hardware remain NOT_VERIFIABLE. No certified dog model sheet exists."]. Do not certify them by preserving them.
+
+Acceptance to inspect, not a claim of success:
+At reader scale one dog reads heavy and dead through lateral collapse, slack neck/jaw and unequal relaxed legs, not blood alone.
+Trace each visible paw back to a shoulder/hip chain; four limbs total with allowed occlusion, no neat crossed paws.
+Compare image1: human faces/emotions and exact hands/contacts/kit unchanged, dusk and camp/corpse count unchanged.
+Same dog identity/wound/collar, one loose earth-supported chain; no extra gore.
+Independent full absolute critic required; author inspection does not accept this frame.
+
+No text or watermark. Keep the same folklore graphic-novel rendering. Physical credibility does not mean photography. Filenames in prose do not attach images.

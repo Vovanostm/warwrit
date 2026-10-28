@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-09-attempt-02",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-09",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. Image1 is current scene09 edit target. Image2 is accepted scene06 ONLY as the natural forest-beyond-fire/background rendering guide, not a source of new people or a new composition.\n\nRemove ONE unapproved background structure in image1: the little canvas/tarp screen or tent and its horizontal/vertical supporting poles immediately BEHIND the distant fire, between the departing body carriers and the spearman. This is an unfortified temporary forest clearing: no tent, lean-to, screen, wooden cabin, board wall, fence or canopy behind the fire. Replace only those small background structure pixels with quiet dark natural forest depth, a few tree trunks/foliage masses and ordinary clearing ground, matching accepted image2's woods behind the men. Preserve current fire itself and its light, not a larger blaze. Do not simply darken the tarp or turn it into a log wall; remove its roof/panel silhouette and geometric supports entirely.\n\nProtect all foreground and action: exact same Klim face/hair/unpatched brown jacket cropped at chest, his LEFT wrist remains unseen; same two supported body carriers with exact hands/grips/clothes/swords and feet; same dead Faddei on the single sagging gray sack, WHITE handkerchief covering his face and its ONE repaired pipe-burn corner; same spearman face/outfit and the long spear crossing the foreground; same cart boards/wheel and all other trees/ground, moon, palette, silhouettes, shadows and framing. Do NOT erase or change the spearman's long foreground spear while removing background tent poles. Do not import the archer/Rudoy/extra cart/props from image2. No new body parts, ropes, injuries, people, writing, symbols, glow or photographic finish. Keep matte restrained graphic-novel inks/washes and same opaque1536x1024. Only the distant tent/screen and its support poles are intentionally replaced.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-09-attempt-01/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-02.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-2",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-06.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-02.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 9. Забрать Фаддея",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. Image1 is current scene09 edit target. Image2 is accepted scene06 ONLY as the natural forest-beyond-fire/background rendering guide, not a source of new people or a new composition.\n\nRemove ONE unapproved background structure in image1: the little canvas/tarp screen or tent and its horizontal/vertical supporting poles immediately BEHIND the distant fire, between the departing body carriers and the spearman. This is an unfortified temporary forest clearing: no tent, lean-to, screen, wooden cabin, board wall, fence or canopy behind the fire. Replace only those small background structure pixels with quiet dark natural forest depth, a few tree trunks/foliage masses and ordinary clearing ground, matching accepted image2's woods behind the men. Preserve current fire itself and its light, not a larger blaze. Do not simply darken the tarp or turn it into a log wall; remove its roof/panel silhouette and geometric supports entirely.\n\nProtect all foreground and action: exact same Klim face/hair/unpatched brown jacket cropped at chest, his LEFT wrist remains unseen; same two supported body carriers with exact hands/grips/clothes/swords and feet; same dead Faddei on the single sagging gray sack, WHITE handkerchief covering his face and its ONE repaired pipe-burn corner; same spearman face/outfit and the long spear crossing the foreground; same cart boards/wheel and all other trees/ground, moon, palette, silhouettes, shadows and framing. Do NOT erase or change the spearman's long foreground spear while removing background tent poles. Do not import the archer/Rudoy/extra cart/props from image2. No new body parts, ropes, injuries, people, writing, symbols, glow or photographic finish. Keep matte restrained graphic-novel inks/washes and same opaque1536x1024. Only the distant tent/screen and its support poles are intentionally replaced.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-09.png",
+    "transparent_background": false
+  }
+}

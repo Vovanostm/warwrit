@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "id": "well-anchor-regenerate",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-anchor",
+  "purpose": "Prospective regeneration of one selected local quest moment. This request has NOT been executed; execution.json is actual history.",
+  "moment": "Closer natural camera aimed at K upperbody and right ledge in same shaft. Single hemp body loop UNDER BOTH ARMPITS with one front bowline knot and ONE main line ascending out top; no neck loop/shoulder straps. K own separate hands grip mainline/frontbodyloop, RIGHT boot grounded on ledge/RIGHT knee patch; LEFT leg remains tucked free. At lower-left edge only D existing connected reaching hand/forearm enters frame. Corrected stone restraint from depth remains outside closer crop, not removed. No more corpse body introduced.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading."
+  },
+  "references": [
+    {
+      "id": "style",
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Rendering/value masses only; do not copy cast or geography."
+    },
+    {
+      "id": "identity",
+      "path": "assets/art/quests/well/references/cast.png",
+      "role": "identity",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Inspected front/threequarter face/outfit only; not pose/hidden anatomy."
+    },
+    {
+      "id": "establishing",
+      "path": "assets/art/quests/well/start.png",
+      "role": "layout",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Fixed yard/field topology and material palette; camera may move. Do not preserve pre-branch condition after an established change."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "Current playable Russian text; local authored incident only."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "one-moment",
+      "region": "whole new canvas",
+      "request": "Closer natural camera aimed at K upperbody and right ledge in same shaft. Single hemp body loop UNDER BOTH ARMPITS with one front bowline knot and ONE main line ascending out top; no neck loop/shoulder straps. K own separate hands grip mainline/frontbodyloop, RIGHT boot grounded on ledge/RIGHT knee patch; LEFT leg remains tucked free. At lower-left edge only D existing connected reaching hand/forearm enters frame. Corrected stone restraint from depth remains outside closer crop, not removed. No more corpse body introduced.\nFixed identities and continuity:\n{\"Prokhor\": \"P: living male labourer age55, lean wiry adult, long narrow weathered face, short grey hair, sparse short grey beard, hooked nose. Faded soot-brown linen tunic with a horizontal torn slit at stomach, dull grey trousers, low dark-brown leather boots. Red pressure welt across stomach visible through slit, not bloody cut. Short severed hemp rope loop tightly around waist, loose cut end down to right knee. Empty hands until scene explicitly assigns rope. No armour, cloak, sword, amulet or hat.\", \"Kirill\": \"K: living male labourer age27, lean adult, angular face, short dark-brown hair and stubble. Faded muted ochre long-sleeved linen tunic, charcoal trousers, dark-brown mid-calf soft boots. Large old square grey repair on anatomical RIGHT knee. LEFT ankle injured in collapse, held free; right boot can bear weight. Clay scrapes on BOTH elbows and trouser seat, matte damp clay at cuffs and boots, not whole-body immersion. Pallor and distressed eyes; not a healthy relaxed sitter. No weapons/armour.\", \"corpse\": \"D: one dead adult male soldier, hollow sunken cheeks, dark grey-brown earth-marked skin, dull open eyes, lower lip partly separated from gum, dried earth lodged at mouth; medium non-graphic horror, no exposed viscera. Prerotted dark olive wool tunic over grey rags, dark trousers, no armour, weapons or emblems. Only one own connected hand reaches up. Death/burial duration UNKNOWN. No supernatural glow; never a healthy pale captive.\", \"Grigory\": \"G: living male mower age45, broad adult with short chestnut beard, dull grey-brown shirt, olive trousers, dark leather boots, no armour or weapons. Only visible in wait ending, supporting stretcher or patient; two other mowers can be outside crop after their help is stated.\"}",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "Visible cast and props",
+      "material": "linen/wool/hemp/wood/iron/leather",
+      "zone": "established clothing/contact zones",
+      "before": "Per current continuity and actual branch, not an imagined pristine start.",
+      "after": "Preserve dust/clay/patches/wounds and gouges unless an explicit scene event changes them. No unjustified soaking, drying, decomposition timer or weapon transfer.",
+      "cause_id": "story",
+      "persistence": "Across the selected path; mutually exclusive endings do not accumulate."
+    }
+  ],
+  "preserve": [
+    "One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch.",
+    "Exactly one moment; preserve anatomical sides, material wear and actual branch chronology. Do not transfer weapons/hands/clothing across actors.",
+    "Broad quiet matte background masses; focal faces/contacts readable at1280x720 reader scale."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": [
+    "Prospective regenerated result not inspected.",
+    "Occluded anatomy/rope backs and tiny lip-corner laterality are not certified by reference sheets."
+  ],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/anchor.png",
+    "transparent_background": false
+  }
+}

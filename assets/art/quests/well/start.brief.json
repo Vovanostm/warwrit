@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "id": "well-start",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "well-start",
+  "purpose": "One distinct playable novel scene; no UI text or future ending.",
+  "moment": "Landscape 3:2, one exterior establishing scene. P sits on trampled earth SCREEN LEFT of the well, hunched, looking anxiously at unseen player; anatomical RIGHT hand gripping severed loop at waist, LEFT hand braced on earth. His stomach slit and pressure welt readable. Open well SCREEN RIGHT, lean-to left background, open gate far left. Axe on ground alongside curb, blade flat not floating; two wooden buckets abandoned farther from edge. Spare whole rescue rope coiled under lean-to. Only P visible: K and D below rim and fleeing workers already outside crop. Camera outside at adult eye level, no cutaway into well. Clear urgency, no theatrical smile. Exact instant after workers refuse and K cries from below, BEFORE the player looks inside.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading."
+  },
+  "references": [
+    {
+      "id": "style1",
+      "path": "assets/art/styles/references/graphic-novel/character.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Rendering/adult proportions only; never copy armour, face or weapon into this cast."
+    },
+    {
+      "id": "style2",
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Palette/materials only; location layout comes from continuity, not this village."
+    },
+    {
+      "id": "cast",
+      "path": "output/quest-implementation-20261027/well-cast-fixed.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact newly generated faces/clothes/boots only. Full-body identity sheet does not set scene poses, well topology, injury treatment or threat response. Not yet independently accepted."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/well.ts",
+      "description": "One failed well excavation, injured left ankle, severed rope, optional rescue; local authored incident, no global undead rule."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/well/continuity.json",
+      "description": "Exact stable cast, costume, body condition and yard plan. One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch."
+    }
+  ],
+  "changes": [
+    {
+      "id": "frame",
+      "region": "whole new canvas",
+      "request": "Landscape 3:2, one exterior establishing scene. P sits on trampled earth SCREEN LEFT of the well, hunched, looking anxiously at unseen player; anatomical RIGHT hand gripping severed loop at waist, LEFT hand braced on earth. His stomach slit and pressure welt readable. Open well SCREEN RIGHT, lean-to left background, open gate far left. Axe on ground alongside curb, blade flat not floating; two wooden buckets abandoned farther from edge. Spare whole rescue rope coiled under lean-to. Only P visible: K and D below rim and fleeing workers already outside crop. Camera outside at adult eye level, no cutaway into well. Clear urgency, no theatrical smile. Exact instant after workers refuse and K cries from below, BEFORE the player looks inside.\nCAST IDENTITIES, include only actors named in this moment:\nP: living male labourer age55, lean wiry adult, long narrow weathered face, short grey hair, sparse short grey beard, hooked nose. Faded soot-brown linen tunic with a horizontal torn slit at stomach, dull grey trousers, low dark-brown leather boots. Red pressure welt across stomach visible through slit, not bloody cut. Short severed hemp rope loop tightly around waist, loose cut end down to right knee. Empty hands until scene explicitly assigns rope. No armour, cloak, sword, amulet or hat.\nK: living male labourer age27, lean adult, angular face, short dark-brown hair and stubble. Faded muted ochre long-sleeved linen tunic, charcoal trousers, dark-brown mid-calf soft boots. Large old square grey repair on anatomical RIGHT knee. LEFT ankle injured in collapse, held free; right boot can bear weight. Clay scrapes on BOTH elbows and trouser seat, matte damp clay at cuffs and boots, not whole-body immersion. Pallor and distressed eyes; not a healthy relaxed sitter. No weapons/armour.\nD: one dead adult male soldier, hollow sunken cheeks, dark grey-brown earth-marked skin, dull open eyes, lower lip partly separated from gum, dried earth lodged at mouth; medium non-graphic horror, no exposed viscera. Prerotted dark olive wool tunic over grey rags, dark trousers, no armour, weapons or emblems. Only one own connected hand reaches up. Death/burial duration UNKNOWN. No supernatural glow; never a healthy pale captive.\nG: living male mower age45, broad adult with short chestnut beard, dull grey-brown shirt, olive trousers, dark leather boots, no armour or weapons. Only visible in wait ending, supporting stretcher or patient; two other mowers can be outside crop after their help is stated.",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "K/P/D as visible",
+      "material": "linen, wool, hemp, oak and leather",
+      "zone": "existing garment cuffs/seat, boots and P stomach",
+      "before": "Stable construction and old wear per continuity.",
+      "after": "Maintain K clay contact and left injury; P pressure welt and old severed rope. No new water immersion, blood, rust or injury.",
+      "cause_id": "story",
+      "persistence": "Same outfit and marks along actual branch; endings mutually exclusive."
+    }
+  ],
+  "preserve": [
+    "One isolated work yard near Tikhaya Gat, late autumn overcast dry daylight; no rain. Square low weathered oak well curb, round irregular grey stone shaft below. Two vertical oak posts at opposite sides support one smooth horizontal bucket beam above the open mouth. A lean-to left of the well has a thick firmly planted front upright post for securing rope. Open simple gate on left background; crooked leafless birch on right; low timber fence; no church/castle/new buildings. Damp clay only around well and from excavation; straw-brown trampled grass elsewhere. Camera may move, layout may not. No modern pulley, steel crane or invented new winch.",
+    "No protagonist figure or sword; camera outside player. Reference actors retain distinct faces, outfit panels and anatomical injury side."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": ["Not yet generated or visually reviewed."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/well/start.png",
+    "transparent_background": false
+  }
+}

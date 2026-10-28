@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-09-attempt-01",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-09",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Medium view from Klim's side of rear wheel on FOREST side of same cart. Klim starts to lift his upper body from sitting, looks pleadingly at dead Faddei on the SINGLE unfolded gray sack being carried away. Show Klim only from lower chest upward so LEFT wrist and exact binding state are FULLY outside crop; do not show wrist rope or a liberated left hand, since earlier choice may still leave him bound. He has same narrow beardless face/short chestnut hair/brown unpatched jacket; NO gray sack on his shoulders now and no shoulder wound. Between Klim and the departing player/company swordsman stands the SAME bandit spearman, holding one long practical spear horizontally/diagonally across the exit to bar the way, not impaling Klim. Spearman's feet planted on ground, spear clearly in his hands. Departing two company members each support one side/end of gray sack so the dead body's weight has a plausible load path; player no face, helper matches swordsman. Faddei lies on sack, stocky shape under brown leather patched clothes, head/face now COVERED by Pelageya's WHITE handkerchief, ONE tiny closed stitched brown pipe burn at one corner. No exposed face/grin/living motion. Cloth distinct from gray sack underneath. Other two company archer and Rudoy/Vasily can stay off camera; no invented fourth mercenary, no hanging captive. Frame the moment before Klim gets up fully or reaches anyone; posture/left wrist hidden makes it neutral to early freedom. Night fixed cart/forest geography, local dull warmth distant, restrained moonlight. No wrong escape injury or body left behind.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-04.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-2",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-05.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-3",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-06.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-4",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/scene-03.png",
+      "role": "identity",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-01.prompt.txt; not a certified full model sheet."
+    },
+    {
+      "id": "input-5",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/styles/references/graphic-novel/forest.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-09-attempt-01.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 9. Забрать Фаддея",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "whole new frame",
+      "request": "Use case: illustration-story. Asset type: one opaque landscape 1536x1024 visual-novel keyframe for Warwrit, full bleed, no border, no writing or watermark. Use selected reference pixels only in their specifically assigned roles. Preserve natural adult proportions and humble credible medieval materials. Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.\nNo photorealism, smooth CGI, blue/orange cinematic grading, global dirt filter, dense microtexture, cute silhouettes, magic, gods, religion, heraldry, emblems, invented story facts or extra people. Actual story time and state below control lighting and visible props. Cold moonlight is subdued, fire locally warm, dawn gray. No rain in the story. The player has no fixed face/appearance: show only necessary hands, dark plain travel-cloak parts or anonymous back silhouette.\n\nShared continuity: company is exactly THREE people (player, one archer with wooden bow/quiver, one swordsman with sword at anatomical LEFT hip and rope at belt). Bandits are exactly FOUR (Rudoy, Vasily, one archer, one spearman). No new wounds. Klim: thin about30, narrow BEARDLESS face, short chestnut hair, unbleached shirt, plain brown jacket WITHOUT pale patch, gray trousers, worn boots. Ink stains on RIGHT fingertips; abrasion on LEFT wrist. Faddei is a DIFFERENT dead stocky man about45, red beard with gray, thinning red hair, linen shirt, brown trousers, brown LEATHER jacket with pale cloth patch UNDER LEFT armpit, boots; dried blood at RIGHT temple, clay on clothes. Pelageya about38, sturdy, broad face/hands, dark blond hair under faded BLUE HEADSCARF, linen shirt, brown skirt, gray wool coat, leather shoes. Her WHITE linen HANDKERCHIEF is a separate prop: ONE tiny pipe burn CLOSED by dark stitches on the actual corner, brown scorch immediately around that same repaired tear; no separate second mark. Gray ripped sack is ONE prop.\n\nReference roles: Scene04 Klim face/clothes/handkerchief/cart only, not LEFT binding. Scene05 Faddei dead body/clothes only, but face now covered in WHITE cloth. Scene06 bandit spearman identity/outfit/camp only. Scene03 company swordsman clothing only. Forest selected rendering.\n\nPictured moment (9. Забрать Фаддея): Medium view from Klim's side of rear wheel on FOREST side of same cart. Klim starts to lift his upper body from sitting, looks pleadingly at dead Faddei on the SINGLE unfolded gray sack being carried away. Show Klim only from lower chest upward so LEFT wrist and exact binding state are FULLY outside crop; do not show wrist rope or a liberated left hand, since earlier choice may still leave him bound. He has same narrow beardless face/short chestnut hair/brown unpatched jacket; NO gray sack on his shoulders now and no shoulder wound. Between Klim and the departing player/company swordsman stands the SAME bandit spearman, holding one long practical spear horizontally/diagonally across the exit to bar the way, not impaling Klim. Spearman's feet planted on ground, spear clearly in his hands. Departing two company members each support one side/end of gray sack so the dead body's weight has a plausible load path; player no face, helper matches swordsman. Faddei lies on sack, stocky shape under brown leather patched clothes, head/face now COVERED by Pelageya's WHITE handkerchief, ONE tiny closed stitched brown pipe burn at one corner. No exposed face/grin/living motion. Cloth distinct from gray sack underneath. Other two company archer and Rudoy/Vasily can stay off camera; no invented fourth mercenary, no hanging captive. Frame the moment before Klim gets up fully or reaches anyone; posture/left wrist hidden makes it neutral to early freedom. Night fixed cart/forest geography, local dull warmth distant, restrained moonlight. No wrong escape injury or body left behind.\n\nKlim is the cropped FOREGROUND LEFT upper-body figure, seen only from chest UP; both anatomical LEFT wrist and its rope/free-hand state below chest are completely outside canvas or behind opaque cart. Do NOT depict a wrist release or rope on him. His head no longer carries gray sack. The gray sack is solely under Faddei now. Spearman is the dark-haired man at far RIGHT of reference06, not the ponytailed company archer. Company archer uses BOW, never spear; he can stay offscreen. The two body carriers must be player (face unseen) plus quilted-brown swordsman from reference03, no fourth mercenary.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-09.png",
+    "transparent_background": false
+  }
+}

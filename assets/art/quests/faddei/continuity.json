@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "quest": "Выкуп за Фаддея",
+  "date": "2026-10-28",
+  "source": {
+    "path": "/Users/vovanostm/learn/warwrit-writing/drafts/faddei.md",
+    "revision": "r4.1",
+    "writer_commit": "f1f743b",
+    "source_status": "AUTHOR_PROPOSAL; no new world rules"
+  },
+  "scope": "Full 12-frame series generated and selected locally after independent asset ACCEPT and parent inspection for every selected candidate; integrated reader acceptance belongs to parent.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "inspected": ["character.png", "forest.png", "village.png"],
+    "attached": ["character.png", "forest.png"],
+    "limits": "Style and rendering only, no identity/gear/geography transfer."
+  },
+  "characters": {
+    "Klim": {
+      "source_facts": "Около 30; худой; узкое безбородое лицо; короткие каштановые волосы. Небелёная рубаха, серые штаны, коричневая куртка без светлой заплаты, стоптанные ботинки. Серый мешок с распоротым боком один.",
+      "anatomical_hands": {
+        "left": "До освобождения привязана к заднему колесу; запястье стёрто. После срезания верёвки петли на руке нет.",
+        "right": "Чернильные пятна на пальцах. В сцене 4 тянется к белому платку."
+      },
+      "branch_state": "Сцена 4: плечи целы. Только неразведанный побег сцены 8: стрела в ПРАВОМ плече; затем повязка белым платком и полосой рубахи.",
+      "sheet_status": "NOT_GENERATED; candidate is not certified identity sheet"
+    },
+    "Pelageya": {
+      "source_facts": "Около 38; крепкая; широкое лицо и ладони; тёмно-русые волосы под ВЫЦВЕТШИМ СИНИМ головным платком. Льняная рубаха, коричневая юбка, серый шерстяной кафтан, кожаные башмаки; без оружия. Влажный от травы подол.",
+      "scene_state": "Ждёт у печи, в лагере отсутствует. Её белый ручной платок — отдельный предмет от синего головного.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "Faddei": {
+      "source_facts": "Около 45; плотный; широкое лицо; рыжая борода с сединой; редеющие рыжие волосы. Льняная рубаха, коричневые штаны, коричневая кожаная куртка со светлой тканевой заплатой ПОД ЛЕВОЙ МЫШКОЙ; сапоги. Засохшая кровь у ПРАВОГО виска, глина на одежде.",
+      "scene_state": "Мёртв; третья ночь с гибели. Лежит на боку за телегой под ветвями, целиком скрыт до сцены 5. В сцене 4 даже намёк на контур/конечность не показывать. Не оживает.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "Rudoy": {
+      "source_facts": "Около 40; широкий; тёмная борода; короткие волосы; сломанный нос. Рубаха, тёмные штаны, расстёгнутый коричневый кафтан, сапоги.",
+      "prop_state": "Ест ложкой из котла; топор у ПРАВОЙ ноги. При обмене топор в ПРАВОЙ руке, деньги принимает ЛЕВОЙ. Ран нет.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "Vasily": {
+      "source_facts": "Около 25; худощавый; светлые волосы; редкие усы. Серая рубаха, бурый кафтан, тёмные штаны, сапоги.",
+      "scene_state": "Сцена 2 снимает ПРАВЫЙ сапог. Сцена 3 обезоружен; меч в кустах, руки связаны, рот закрыт тканью. Сцена 4 у ПЕРЕДНЕГО колеса под присмотром, вне данного кадра.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "company": {
+      "source_facts": "Ровно трое: игрок, лучник, мечник. Внешность игрока не задана; можно показывать только руки и дорожный плащ. Лучник: лук и колчан; мечник: меч на ЛЕВОМ бедре, верёвка на поясе. Без новых гербов.",
+      "branch_state": "У раненого Клима повязка из рубахи мечника, его рукав с этого момента надорван.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "bandits": "Четверо всего: Рудой, Василий, лучник, человек с копьём. У костра трое, Василий отдельно. Не добавлять людей."
+  },
+  "places": {
+    "camp": {
+      "topology": "При подходе костёр справа впереди; дальше телега поперёк поляны. Высокий ЦЕЛЫЙ борт к костру, низкий СЛОМАННЫЙ к лесу. Клим у ЗАДНЕГО колеса за высоким бортом. Тело за ним под ветвями. Загородка позади вдоль леса, под ней промоина. Передний край телеги к дереву часового; там лучник компании. После сцены 3 Василий за ПЕРЕДНИМ колесом.",
+      "time_weather": "Ночь, после двухчасового пути от печи; костёр освещает поляну, за телегой темно. Мокрые листья/трава; дождя в действии нет.",
+      "pilot_camera": "Средний план с уровня заднего колеса на лесной стороне. Клим центр, колесо справа в кадре — анатомическая левая сторона Клима. Это выбор постановки, не новый факт мира.",
+      "sheet_status": "NOT_GENERATED"
+    },
+    "oven": "Печь слева от дороги среди сгоревшего дома; яблони справа и позади, лес вдали. Начало после полуночи, финалы рассвет. Пелагея и корзина с хлебом здесь."
+  },
+  "props": {
+    "white_handkerchief": "Белый льняной платок Пелагеи, прожжённый трубкой и зашитый в углу; маленькое бурое пятно. Сцены 1–4 у игрока; затем убран. При возврате тела — на лице Фаддея; при раненом побеге — повязка; при удачном — чистым у игрока. Прожог и стежки образуют ОДИН зашитый прожог на самом углу; отдельного второго пятна нет.",
+    "gray_sack": "Один серый мешок с распоротым боком. До сцены 4 скрывает голову Клима. В сцене 4 сползает на плечи. Сцены 7/9 под тело, раненый побег — носилки у печи.",
+    "ransom": "Полная сумка у игрока до сделки; покупка обоих — пуста; тело — три четверти; побег — полна.",
+    "bowl": "Пленник ставит миску перед сценой раскрытия. В пилоте на земле сбоку, второстепенная."
+  },
+  "scene_04": {
+    "moment": "Мешок сползает с головы; чернильные пальцы правой руки замерли над белым платком в руке игрока; безбородое лицо впервые видно.",
+    "off_camera": [
+      "Пелагея",
+      "Василий",
+      "мечник компании",
+      "лучник компании",
+      "трое у костра",
+      "сам костёр",
+      "целиком тело Фаддея"
+    ],
+    "production_targets": [
+      "Обнажить контакт петли на левом запястье и связь с деревянной спицей.",
+      "Холодный слабый лунный свет слева сверху; слабое отражение огня не добавляет яркий оранжевый фильтр.",
+      "Руки и платок крупные и читаемые; нейтральная рука игрока без навязанной внешности."
+    ],
+    "unknowns": [
+      "Рукопись не задаёт точные размеры телеги/платка/узла; они практичные визуальные решения, не измерения.",
+      "Все скрытые пальцы и точная влажность NOT_VERIFIABLE.",
+      "В общей сцене02 пленник скрыт целиком по явному разрешению владельца через основного агента; это сокращение кадра, не изменение рукописи."
+    ]
+  },
+  "common_actual_references": {
+    "Klim/cart/handkerchief": {
+      "path": "assets/art/quests/faddei/scene-04.png",
+      "scope": "Scene candidate accepted independently for scene04; limited visible identity/wardrobe/cart/handkerchief reference, not hidden full turnaround."
+    },
+    "Pelageya/oven/company": {
+      "path": "assets/art/quests/faddei/scene-01.png",
+      "scope": "Accepted visible identity/place only"
+    },
+    "Vasily/swordsman": {
+      "path": "assets/art/quests/faddei/scene-03.png",
+      "scope": "Accepted visible faces/outfits only, no capture pose copied"
+    },
+    "Faddei": {
+      "path": "assets/art/quests/faddei/scene-05.png",
+      "scope": "Accepted stocky dead build, red-gray beard, torso patch under LEFT armpit; hidden construction not certified"
+    },
+    "Rudoy/bandits/fire-side": {
+      "path": "assets/art/quests/faddei/scene-06.png",
+      "scope": "Accepted faces/outfits/natural forest behind fire; rejected stockade must not reappear"
+    }
+  },
+  "scene_02_owner_composition_amendment": {
+    "date": "2026-10-28",
+    "basis": "Parent explicitly permits hiding captive entirely after two wrong visible placements.",
+    "current_target": "Bandit camp/sentry/cart only; Klim completely occluded on forest side behind cart, never inside bed. Manuscript unchanged."
+  },
+  "selection_record": "selection.json"
+}

@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "harvest-edge-regenerate",
+  "operation": "generate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "harvest-edge",
+  "purpose": "Prospective regeneration of one selected local quest moment. This request has NOT been executed; execution.json is actual history.",
+  "moment": "immediately after withdrawal, one gouged shield held low in foreground/left by a connected player forearm or entirely outside crop if no readable grip can be staged. Creature half-risen behind rye east, its nearest open hand still at the crop boundary; no contact presently required. Luka arrives from west with intact second shield, kept outside crop. Rada/Timosh by the moved cart farther back; eyes on threat, no generic frontal portrait. No illustration of winning harvest yet.",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Mature restrained folklore graphic novel matching the attached selected rendering references: irregular hand-inked major contours, broad matte flat washes, coherent shadow masses, selective interior strokes. Quiet slate, soot, umber, ochre and moss olive; naturally warm skin. Clear action silhouette and strong local value hierarchy; no uniform microtexture, photographic finish, glossy CGI or blue/orange grading."
+  },
+  "references": [
+    {
+      "id": "style",
+      "path": "assets/art/styles/references/graphic-novel/field.png",
+      "role": "style",
+      "authority": "SELECTED_STYLE",
+      "inspected": true,
+      "limits": "Rendering/value masses only; do not copy cast or geography."
+    },
+    {
+      "id": "identity",
+      "path": "assets/art/quests/harvest/references/humans.png",
+      "role": "identity",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Inspected front/threequarter face/outfit only; not pose/hidden anatomy."
+    },
+    {
+      "id": "establishing",
+      "path": "assets/art/quests/harvest/start.png",
+      "role": "layout",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Fixed yard/field topology and material palette; camera may move. Do not preserve pre-branch condition after an established change."
+    },
+    {
+      "id": "creature",
+      "path": "assets/art/quests/harvest/references/creature.png",
+      "role": "identity",
+      "authority": "CERTIFIED_FOR_SCOPE",
+      "inspected": true,
+      "limits": "Creature identity only; include solely if this moment names visible creature."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "apps/web/src/mission-lab/harvest.ts",
+      "description": "Current playable Russian text; local authored incident only."
+    },
+    {
+      "id": "targets",
+      "basis": "PRODUCTION_TARGET",
+      "source": "assets/art/quests/harvest/continuity.json",
+      "description": "Same established field/road/grove/cart, dry late summer. No invented rain or clean reset."
+    }
+  ],
+  "changes": [
+    {
+      "id": "one-moment",
+      "region": "whole new canvas",
+      "request": "immediately after withdrawal, one gouged shield held low in foreground/left by a connected player forearm or entirely outside crop if no readable grip can be staged. Creature half-risen behind rye east, its nearest open hand still at the crop boundary; no contact presently required. Luka arrives from west with intact second shield, kept outside crop. Rada/Timosh by the moved cart farther back; eyes on threat, no generic frontal portrait. No illustration of winning harvest yet.\nFixed identities (include only actors visible in this moment):\nCommon setting: small rye plot beside the road to Severny Dvor, late summer. West boundary is cut stubble and compacted dry clay road; an elm boundary stake at northwest; a wooden two-wheeled handcart at the west edge, moved back along the road after edge inspection; standing rye remains to east, low alder grove and growing grey cloud behind it. Midday warm diffuse sun from upper west; afternoon warmth lowers gradually in E03 only. No rain in any pictured moment. No relocation of road, elm stake or grove with camera angle.\n\nFixed cast:\n- **Rada**, adult 31, lean working build, angular face, dark brown hair in one braid under dull ochre linen headscarf. Faded charcoal-grey coarse linen shirt, earth-brown wool skirt to mid-calf, dull flax apron, brown ankle boots; patched right elbow. Lower lip split (exact corner is not established by player text and is NOT_VERIFIABLE in current small reference) from the attempted rescue before story; short dark dried blood line only at the corner, no fresh red coat or clean reset. Dust at hem, knees and palms persists. Iron sickle: simple inward-curved darkened blade, plain ash handle; no ornament, no sword.\n- **Luka**, adult 49, sturdy and stooped, thinning grey-brown hair, short greying beard. Undyed flax shirt with worn cuffs, dark umber sleeveless wool over-tunic, charcoal trousers, brown calf boots, plain narrow leather belt. Dry dust at boots/hem, straw on cuffs after trial; no armour, noble finery or magically immaculate change of clothes. Sweat at collar accumulates by E03; not drenched.\n- **Timosh**, adult 19 (young, not a child), slim, short straight dark hair, clean-shaven. Faded clay-beige linen shirt, narrow dark-grey trousers, brown boots, simple rope belt. Shirt sleeves rolled once at forearms. No weapon; handles rope, cart and harvested stalks. Same hands/clothing in every view; no new cut or bandage.\n- **One dead worker**, adult male, rough dull brown shirt slit from throat to upper chest by the established attack; dark grey trousers/boots. Face covered by the same dark cap, then by plain unbleached linen sheet on cart. Body was already pulled onto the stubble before arrival; no living character approaches the creature to retrieve him. Death is recent, not a revenant: no decomposition timeline or postmortem motion.\n- **Creature**, one local encounter: 2.1m target upright height, unnaturally long continuous arms, narrow torso under weathered flax-coloured hanging garment, grey clay-coloured non-reflective skin; matted dark hair covers the face. Two arms/two hands, long jointed fingers with dark nails, no extra limbs, antlers, wings, sickle or glowing runes. Character appears through the rye, never smiling toward the viewer or posing as a healthy woman. Do not mirror anatomy to copy a shot. It may bend below rye without vanishing magically. Head orientation follows nearest exposed hand/shield rather than camera.\n- **Shields**, two company-owned plain ROUND timber shields already on the cart from arrival; weathered dark wood, simple iron rim, leather forearm straps/central grip. First shield gets fresh gouges at edge inspection; second initially intact. Both remain serviceable; neither is shattered or repaired between cuts. No protagonist sword needs to be displayed. If player hand appears, use only the required connected hand/forearm; do not invent multiple identical soldiers for «company».",
+      "cause_ids": ["story", "targets"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "Visible cast and props",
+      "material": "linen/wool/hemp/wood/iron/leather",
+      "zone": "established clothing/contact zones",
+      "before": "Per current continuity and actual branch, not an imagined pristine start.",
+      "after": "Preserve dust/clay/patches/wounds and gouges unless an explicit scene event changes them. No unjustified soaking, drying, decomposition timer or weapon transfer.",
+      "cause_id": "story",
+      "persistence": "Across the selected path; mutually exclusive endings do not accumulate."
+    }
+  ],
+  "preserve": [
+    "Same established field/road/grove/cart, dry late summer. No invented rain or clean reset.",
+    "Exactly one moment; preserve anatomical sides, material wear and actual branch chronology. Do not transfer weapons/hands/clothing across actors.",
+    "Broad quiet matte background masses; focal faces/contacts readable at1280x720 reader scale."
+  ],
+  "forbidden": [
+    "No words, panels, letters, logos, runes or emblems. Cast reference plate may contain three separate figures; scenes must be a single moment.",
+    "No arbitrary extra adult/hand/weapon/rope, mirrored left injury, clean clothes reset, blue/orange filter, photographic textures."
+  ],
+  "acceptance_checks": [
+    "Compare with selected style: matte washes, quiet background, readable action at reader scale.",
+    "Trace each visible hand/arm, every foot bearing, rope connection and prop support; unknown hidden details explicitly NOT_VERIFIABLE.",
+    "One pictured story moment; corpse danger and human response spatially credible; no pre-choice ending."
+  ],
+  "known_unfixed": [
+    "Prospective regenerated result not inspected.",
+    "Occluded anatomy/rope backs and tiny lip-corner laterality are not certified by reference sheets."
+  ],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/harvest/edge.png",
+    "transparent_background": false
+  }
+}

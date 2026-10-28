@@ -1,5 +1,56 @@
 # Warwrit current delivery plan
 
+## PR336 continuation — 2026-10-28, PUBLISHED DRAFT / CI IN PROGRESS
+
+Coordinator: parent (`/root`); branch writer: delegated `stand_finalize`.
+Branch `codex/novels-readable-illustrated`; [draft PR336](https://github.com/Vovanostm/warwrit/pull/336).
+Published reviewed implementation: `1f2ae1e3`; original delivery: `d7aa265d`.
+Savva r6.2 from writing `afba9125`: six scenes/two endings/eight combinations.
+Only trust/custody/ration facts remain; other stories/art/model/reader unchanged.
+[Contract](../work-packages/MISSION-NOVELS-READABLE.md#pr336-continuation--2026-10-28)
+and [owning handoff/result](../wiki/mission-testing.md).
+Source89/conditional14/all8 and DOM8/56/back/reset/scroll/buttons PASS.
+Focused34/V8, web types, scoped lint/format and ordinary commit hooks PASS.
+Independent delta review found no defects; parent live free/payment route PASS.
+Parent reading is informed, not blind literary acceptance; residual limits stay in the result.
+Current-head CI is in progress and belongs to the coordinator.
+Scope run40761129631/job123073079526 passed size/linkage but failed the missing
+coordinator line in this status block. This document-only correction names it explicitly.
+Existing check-current-plan.sh and scoped format/diff checks validate this correction;
+no rule changes, runtime changes or repeated full bootstrap.
+Parent authorizes the corrective document commit and ordinary push to the same branch.
+Next: coordinator reads final-head CI and the synthetic PR merge tree; no actual merge.
+No production runner/payroll/care/world work, deployment or automation activation.
+
+## Illustrated novels delivery — 2026-10-28, INITIAL LOCAL VALIDATION (HISTORY)
+
+Branch owner/validation owner: delegated `stand_finalize`; coordinator: parent.
+Branch `codex/novels-readable-illustrated`, base `48d8a2ae`, transplant `8de22870`.
+Nine-story reader; five older stories retain 34 own scene images; mothers omitted.
+Faddei r4.1 has all 12 selected stable images; independent asset ACCEPT reported.
+Final handoff includes selected sidecars/history/references; no candidate imports.
+Accepted text sources: Yakov v5/399d698, Guide r4/67279ba, Savva r4.2/b374298.
+Separate manuscript-to-TS and TS-to-DOM checks: all 16/8/64 routes PASS.
+Savva literary limits remain documented; technical checks are not artistic ACCEPT.
+Legacy browser: 31 routes, 34 nodes, 15 endings, both themes at 1280×720 PASS.
+Parent live Guide failure ending: technical checkpoint only, not a blind reading.
+[Current contract](../work-packages/MISSION-NOVELS-READABLE.md); [evidence](../wiki/mission-testing.md).
+DEV route through main.tsx; App/company/server/maps/dependencies untouched.
+Detached preview 5328 preserves old 5327; both respond 200.
+Full build/types PASS before text replacement; current web types/full lint PASS.
+Current focused 34/scoped format/change audit PASS; artist JSON formatting fixed.
+Faddei browser: 12 routes/96 scene visits/12 images/both themes PASS; 24 images viewed.
+Final independent technical review: no defects; parent live body-ending route PASS.
+Bootstrap attempt 1 stopped on local evidence JS; retained as text, no rule changes.
+Existing bootstrap retry PASS: verify, 10k stress battles, PostgreSQL migrations/integration.
+Unit 1243 PASS/84 SKIPPED; migrations/integration 74 PASS; disposable infra cleaned.
+Current authority: parent final-delivery task message on 2026-10-28, after independent
+technical review of reader/model/DEV route and the accepted texts found no bugs.
+It authorizes final local integration, existing bootstrap and a normal-hook local commit.
+Parent owns PR creation through its connector after final delta review; no push before
+an explicit parent message. No merge/deploy/Orca/automation; prior stop markers retained.
+Final browser/gate/review complete; commit uses ordinary hooks; publication belongs to parent.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.

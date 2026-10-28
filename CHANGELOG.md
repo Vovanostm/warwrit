@@ -9,6 +9,45 @@ requests.
 
 ## Unreleased
 
+### Continue Savva review and document the prototype story format
+
+- 2026-10-28, branch `codex/novels-readable-illustrated`, local continuation of
+  published [PR336](https://github.com/Vovanostm/warwrit/pull/336) at `d7aa265d`:
+  the parent limits further work to two known Savva literary defects and a
+  source-grounded handoff for a future production story runner. Document current
+  catalog/model/art modules, conditions, history and campaign-contract limits in
+  the [owning result](docs/wiki/mission-testing.md); no production design or code.
+  Transfer finalized Savva r6.2 from writing commit `afba9125`: six scenes,
+  two endings and eight combinations; preserve independent trust/custody/food
+  decisions, remove lost-grain and repair assumptions from its existing tests.
+  All 89 player paragraphs and source conditions match; eight DOM routes,
+  back/reset/switch/scroll/buttons pass. Focused34/V8, web types and scoped
+  lint/format pass; independent delta review found no technical defects.
+  Other stories/runtime/art stay unchanged. Initial d7aa265d CI passed; this is
+  historical evidence, not the new text's acceptance. Use proportional checks
+  and applicable PR CI for this delta. Parent live free/payment route passed;
+  the scoped local commit is authorized with normal hooks, without push.
+
+### Prepare a clean illustrated-novel reader
+
+- 2026-10-28, branch `codex/novels-readable-illustrated`, local integration:
+  transplant the nine-story reader and 34 active legacy scene images from
+  `8de22870` onto main `48d8a2ae`. Add a DEV entry in `main.tsx` and port 5328
+  command; preserve the old stand. Import accepted Yakov v5 (`399d698`),
+  Guide r4 (`67279ba`) and Savva r4.2 (`b374298`) verbatim, including shorter
+  structures, conditional prose, independent choices and explicit payment.
+  Separate manuscript-to-TS and TS-to-DOM checks pass all 16/8/64 paths.
+  Faddei uses all 12 selected scene/ending images with provenance and history.
+  No App/company/server/map/dependency changes. Full build/types passed before
+  text changes; current focused 34/web types/full lint/scoped format/audit pass.
+  Legacy browser passes 31 paths in both themes; artist JSON formatting is fixed. Savva predictability and weaker release branch remain literary limits,
+  not an unconditional artistic ACCEPT. Faddei browser passes all 12 paths and images in both themes; final technical
+  review found no defects. Existing final bootstrap passed (1243 unit tests,
+  84 skipped, 10k stress battles, 74 migration/integration tests); an initial
+  lint failure from a local browser-evidence snippet was fixed by retaining it
+  as text, without rule changes. Normal hooks retained; publication not run.
+  [Current scope, evidence and limitations](docs/wiki/mission-testing.md).
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in

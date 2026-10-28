@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "faddei-scene-02-attempt-03",
+  "operation": "edit",
+  "status": "PREPARED_NOT_EXECUTED",
+  "authorization_scope": "IMAGE_REQUEST",
+  "scene_id": "scene-02",
+  "purpose": "One current authored frame; exact executed call, actual pixels and independent result recorded separately.",
+  "moment": "Use case: precise-object-edit. ONE small removal in supplied scene02 image. Remove the entire sack-covered captive head/shoulders and the raised bowl-hand that currently appear INSIDE the cart at the upper-left of its bed. Restore an EMPTY, quiet cart bed/wood planes and natural dark forest/ground behind the far edge where the removed shape was. No person, sack, body-shaped cargo, bowl, hand, rope or face may remain visible inside or immediately above the cart. Do not relocate the captive to a new visible position. The captive stays COMPLETELY OUT OF SIGHT behind the cart, on its far FOREST side. Same for Faddei's hidden body: absolutely no visible clue, silhouette, limb, patch or beard.\n\nThis deliberate composition reduction is owner-authorized: the frame depicts the watched camp and sentry, while the text describes the hidden prisoner. It must NOT imply that the prisoner sits in the cart bed. No invented escape or absence of prisoner in the story; just occlusion in this camera crop.\n\nProtect all remaining pixels intentionally: same cart construction/empty bed/high intact fire-side wall/far lower side/wheels, same three bandits at fire (Rudoy eating, archer and spearman waiting), same sentry removing right boot by tree, same foreground prone scout, low branch fence beyond cart, trees, moon, fire/pot/meat rack, palette, lighting and framing. No other human removed or added. No board wall, canopy, fortification, new object or writing. Preserve graphic-novel matte inks/washes and opaque1536x1024. Only erase the incorrect small visible captive+hand+bowl shape and restore background/cart behind it.\n",
+  "style": {
+    "profile": "assets/art/styles/graphic-novel.json",
+    "description": "Selected restrained mature matte ink graphic novel, broad washes and selective detail."
+  },
+  "references": [
+    {
+      "id": "input-1",
+      "path": "/Users/vovanostm/.codex/worktrees/warwrit-art-style-profiles/warwrit/assets/art/quests/faddei/work/scene-02-attempt-02/candidate.png",
+      "role": "edit_target",
+      "authority": "CANDIDATE_PARTIAL",
+      "inspected": true,
+      "limits": "Exact role/exclusions in history/scene-02-attempt-03.prompt.txt; not a certified full model sheet."
+    }
+  ],
+  "causes": [
+    {
+      "id": "story",
+      "basis": "MANUSCRIPT",
+      "source": "warwrit-writing/drafts/faddei.md r4.1 f1f743b # 2. За огнём",
+      "description": "Authored event/branch facts; camera and exact contact design are production targets. Scene02 final omission is explicitly authorized by parent, manuscript unchanged."
+    }
+  ],
+  "changes": [
+    {
+      "id": "pictured-frame",
+      "region": "bounded local region stated in exact prompt",
+      "request": "Use case: precise-object-edit. ONE small removal in supplied scene02 image. Remove the entire sack-covered captive head/shoulders and the raised bowl-hand that currently appear INSIDE the cart at the upper-left of its bed. Restore an EMPTY, quiet cart bed/wood planes and natural dark forest/ground behind the far edge where the removed shape was. No person, sack, body-shaped cargo, bowl, hand, rope or face may remain visible inside or immediately above the cart. Do not relocate the captive to a new visible position. The captive stays COMPLETELY OUT OF SIGHT behind the cart, on its far FOREST side. Same for Faddei's hidden body: absolutely no visible clue, silhouette, limb, patch or beard.\n\nThis deliberate composition reduction is owner-authorized: the frame depicts the watched camp and sentry, while the text describes the hidden prisoner. It must NOT imply that the prisoner sits in the cart bed. No invented escape or absence of prisoner in the story; just occlusion in this camera crop.\n\nProtect all remaining pixels intentionally: same cart construction/empty bed/high intact fire-side wall/far lower side/wheels, same three bandits at fire (Rudoy eating, archer and spearman waiting), same sentry removing right boot by tree, same foreground prone scout, low branch fence beyond cart, trees, moon, fire/pot/meat rack, palette, lighting and framing. No other human removed or added. No board wall, canopy, fortification, new object or writing. Preserve graphic-novel matte inks/washes and opaque1536x1024. Only erase the incorrect small visible captive+hand+bowl shape and restore background/cart behind it.\n",
+      "cause_ids": ["story"]
+    }
+  ],
+  "conditions": [
+    {
+      "subject": "scene-01",
+      "material": "cloth/leather/wood/skin/soil",
+      "zone": "only visible event/contact areas",
+      "before": "Source branch state specified in moment.",
+      "after": "Preserve exact source state; no new wounds, immersion, rain or cleanup.",
+      "cause_id": "story",
+      "persistence": "Continuation only on authored edge, not another ending; all hidden details NOT_VERIFIABLE."
+    }
+  ],
+  "preserve": [
+    "Manuscript cast/props/anatomical sides and event in moment.",
+    "Selected style and existing same character/place actual references within declared scope.",
+    "One gray sack; white handkerchief distinct from blue headscarf and one sewn corner burn."
+  ],
+  "forbidden": [
+    "Future or unchosen injury/body/binding state.",
+    "Unstated people, high stockade/canopy, religion/emblems/magic, text."
+  ],
+  "acceptance_checks": [
+    "Compare actual output at close/reader scale with referenced pixels and source moment.",
+    "Trace all visible hands/props/load paths and fixed cart/fire/branch-fence geography.",
+    "Check actor response, branch-neutral occlusions and exact patch/cloth locations.",
+    "Independent review before stable selection; integration is separate."
+  ],
+  "known_unfixed": ["Hidden details NOT_VERIFIABLE; clean full turnarounds NOT_GENERATED."],
+  "missing_required_references": [],
+  "output": {
+    "path": "assets/art/quests/faddei/scene-02.png",
+    "transparent_background": false
+  }
+}
