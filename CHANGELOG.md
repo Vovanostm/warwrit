@@ -11,13 +11,20 @@ requests.
 
 ### Road diagnostics publication activation
 
-- 2026-10-28, branch `codex/map-road-diagnostics`, local publication preparation:
+- 2026-10-28, branch `codex/map-road-diagnostics`, published in
+  [PR333](https://github.com/Vovanostm/warwrit/pull/333), head `2a89ee58`:
   owner authorizes «ok, pr, merge» for the current diagnostic overlay, two
   corridor regressions, concise map-art skill and source-grounded explanation.
-  Diagnostic code remains `dea28641`; retain prior local/visual checks and require
-  current-head hosted CI/scope plus independent source review before normal merge.
+  Diagnostic code remains `dea28641`; prior local/visual checks retained;
+  independent source ACCEPT applies to the initial published head. Scope40703225664
+  PASS; CI40703225465 bootstrap PASS, coverage failed a5000ms negative-test timeout.
+  Test-only correction cuts one actual road edge in a copied compiled field instead
+  of rebuilding the full atlas in the test; assertions and timeout retained. Focused
+  V8 coverage3 PASS, test bodies37ms; independent correction SOURCE ACCEPT,
+  new CI required before merge.
   Field/road speed values and pathfinding behavior remain unchanged. Retain worktree;
-  no deployment. [Publication contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+  no deployment. This publication-status readback is local.
+  [Publication contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
 
 ### Explain the Bereznyak field shortcut
 

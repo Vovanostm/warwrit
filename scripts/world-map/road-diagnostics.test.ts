@@ -20,20 +20,29 @@ test('both repaired road connections are linked without treating ordinary dead e
   ).toBe(true);
 });
 
-test('a shifted station breaks the declared road even though the field remains traversable', () => {
-  const broken = buildNavigationField({
-    ...atlas.region,
-    overlayShapes: atlas.region.overlayShapes.map((road) =>
-      road.shapeId !== 'center-south-field-link-8'
-        ? road
-        : {
-            ...road,
-            stations: road.stations!.map((point, i) =>
-              i ? point : { ...point, xFp: point.xFp + 1 },
-            ),
-          },
-    ),
+test('a broken road edge is detected even though the field remains traversable', () => {
+  const [a, b] = [
+    [2548, 1910],
+    [2553, 1895],
+  ].map(([x, y]) => {
+    const at = atlas.point([x!, y!]);
+    const index = field.roadPoints!.findIndex((p) => p.xFp === at.xFp && p.zFp === at.zFp);
+    expect(index).toBeGreaterThanOrEqual(0);
+    return field.walkable.length + index;
   });
+  expect(field.roadEdges!.get(a!)).toContain(b);
+  expect(field.roadEdges!.get(b!)).toContain(a);
+  // Keep the real terrain/grid and remove only this actual bidirectional road edge.
+  const roadEdges = new Map(field.roadEdges);
+  roadEdges.set(
+    a!,
+    roadEdges.get(a!)!.filter((node) => node !== b),
+  );
+  roadEdges.set(
+    b!,
+    roadEdges.get(b!)!.filter((node) => node !== a),
+  );
+  const broken = { ...field, roadEdges };
   const connection = atlas.roadConnections[1]!;
   expect(findTravelPath(broken, connection.from, connection.to)).toBeDefined();
   const report = inspectRoadNetwork(broken, atlas.roadConnections);

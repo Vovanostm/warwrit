@@ -348,3 +348,12 @@ Includes source research and the measured field-shortcut explanation, not a new
 cropland type, speed change or pathfinder replacement. Retain the worktree; no
 deployment, automation, auto/admin merge or database reset. Read back actual PR
 head/base before the expected-head merge and record its actual result.
+
+CI40703225465 correction: bootstrap passed, but coverage timed out the negative
+road test at7793ms against the unchanged5000ms budget. Reuse the already compiled
+real atlas field and remove one existing bidirectional road edge in a copied map.
+Keep the actual grid/terrain, public planner bypass assertion, continuity failure,
+missing-anchor case and DOM toggle checks; assert the removed edge existed both
+ways. No timeout increase or production change. Focused V8 coverage3 PASS with
+37ms test bodies locally; independent test correction SOURCE ACCEPT. New hosted
+CI required before merge. Prior visual/native evidence remains applicable.

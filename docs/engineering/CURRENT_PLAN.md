@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Road diagnostics PR delivery — 2026-10-28, PREPARING PUBLICATION
+## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
 Owner: «ok, pr, merge» authorizes publication and normal expected-head merge.
@@ -9,7 +9,13 @@ Scope: optional lab graph, two corridor checks/tests, concise art skill and rese
 Field-shortcut section explains current costs; no algorithm/balance change.
 [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
 Retain map23/types/lint/native and independent absolute visual ACCEPT evidence.
-Independent source review and applicable hosted CI/scope required before merge.
+Independent source ACCEPT applies to unchanged source at published head `2a89ee58`.
+[PR333](https://github.com/Vovanostm/warwrit/pull/333); scope40703225664 PASS.
+CI40703225465 bootstrap PASS; coverage failed negative-test5000ms timeout.
+Test-only correction reuses the compiled field and cuts one existing road edge.
+Focused V8 coverage3 PASS (test bodies37ms); no timeout/assertion/gate reduction.
+Independent test-correction SOURCE ACCEPT; new current-head CI required before merge.
+This publication-status readback is local; production/visual source unchanged.
 No duplicated local full gate; normal commit hooks and PR gates remain.
 Retain worktree and other stands; no deployment, auto/admin merge or automation.
 
