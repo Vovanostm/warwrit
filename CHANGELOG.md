@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Map improvement source research
+
+- 2026-10-28, branch `codex/map-road-navigation`, local proposal: owner asks
+  for more useful web/GitHub examples. Record pinned Tiled, Azgaar and
+  PathFinding.js source comparisons plus Red Blob guidance in the
+  [owning map research](docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+  Recommend road-subgraph checks and extending existing geometry overlays;
+  retain current cost-aware routing. No code, skill or dependency changes;
+  foreign tests/runtime/benchmarks NOT_RUN/NOT_MEASURED. No publication.
+  Scoped formatting, research links and plan check PASS after initial table reformat.
+
 ### Map art updates require regenerated navigation
 
 - 2026-10-28, branch `codex/map-road-navigation`, local: owner requires zones

@@ -1,5 +1,19 @@
 # Warwrit current delivery plan
 
+## Map improvement research — 2026-10-28, LOCAL PROPOSAL
+
+Coordinator/sole writer: parent; branch `codex/map-road-navigation`.
+Owner: study further useful web/GitHub examples for the map.
+Scope: source-backed comparison and proposed next step; no code/skill/dependency edit.
+Inspected Tiled/Azgaar/PathFinding.js at pinned commits and Red Blob web guidance.
+Recommend road-subgraph validation and extending existing geometry overlays first.
+Retain current cost-aware smoothing, shared region and accepted-plan timing.
+[Findings, sources and next probe](../wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+Foreign code/tests, benchmark and proposed runtime acceptance NOT_RUN/NOT_MEASURED.
+Documentation formatting/links/plan PASS after correcting initial table formatting.
+Local research only; no publication/deployment.
+Next: owner selects implementation scope; retain worktree and running stands.
+
 ## Map skill navigation requirement — 2026-10-28, LOCAL
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-navigation`.
