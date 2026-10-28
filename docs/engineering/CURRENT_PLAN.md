@@ -1,5 +1,26 @@
 # Warwrit current delivery plan
 
+## Recover exact pending commands — 2026-10-28, LOCAL / quality PASS, source ACCEPT
+
+Coordinator/validation owner: parent; branch `codex/game-command-recovery`, base `caee351b`.
+Fast-forwarded current main `48d8a2ae`; recovery source unchanged by integration.
+Owner mission authorizes autonomous implementation/worktrees/PRs, not merge/deployment/Orca.
+Outcome: ordinary contract and encounter requests survive reload as the same scoped command.
+Storage precedes send; unknown/auth-loss retains, matching terminal response clears exactly.
+Independent source REWORK caught unreachable encounter cleanup; combined disposer and mounted regression fix it.
+Earlier focused8 files/31 tests PASS; final hook extraction focused6 files/17 tests with fresh V8, web types/lint/format PASS.
+Initial audit FAILED callback complexity/storage clones; scoped lifecycle hook/shared storage fixed the owning delta.
+Final pnpm check:changes PASS; independent post-extraction source ACCEPT, no bypass/threshold change.
+Parent ordinary OIDC/company creation for two accounts → real HELP response loss → reload → exact retry PASS.
+Native PostgreSQL retains the same receipt, total2 receipts and contract revision2;850 crowns unchanged.
+[Owning evidence/limits](evidence/command-recovery-20261028/README.md), related recovery task #174 remains open.
+Independent finite ordinary HELP/reload/retry playable ACCEPT; full day/night visual/full-M1 acceptance NOT_RUN.
+New actual encounter/WebSocket response-loss journey NOT_RUN; mounted late-unmount/remount proof PASS.
+One generic map-init failure observed; later reload worked, cause unproven, map source unchanged.
+Final source browser reload/Place readback PASS; same company850 crowns and helper state.
+Next: normal commit hook, PR publication and hosted gates.
+Owned local API3188/realtime3189/web5188/proxy3190 and fresh DB/Dex retained for payroll successor QA.
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.

@@ -1,0 +1,9 @@
+{
+  "phase": "after-reload-and-exact-retry",
+  "commandId": "d118acbf-7491-42dc-a174-52ae7983083d",
+  "receiptCount": 2,
+  "receiptCountUnchanged": true,
+  "sameStoredResponse": true,
+  "contractRevision": "2",
+  "originalResponseRevision": "2"
+}

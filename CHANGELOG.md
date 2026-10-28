@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Restore exact ordinary and encounter requests after reload
+
+- 2026-10-28, branch `codex/game-command-recovery`, local: the owner's
+  autonomous game-completion mission includes keeping uncertain commands
+  recoverable across page reload. Account/company-scoped ordinary attempts and
+  additional encounter-scoped attempts persist before send, retain unknown/auth
+  outcomes and clear only the matching terminal response. Storage failures block
+  unsafe sends; scope/unmount generations fence late responses. An independent
+  source finding corrected an unreachable encounter disposer and gained a mounted
+  regression. Focused8 files/31 tests, web types/lint/format PASS; source ACCEPT
+  before quality rework. Normal commit audit FAILED new callback complexity and
+  storage clones; corrected with one scoped lifecycle hook/shared storage owner.
+  Final focused6 files/17 tests with fresh V8, lint/types/format/diff and normal
+  pnpm check:changes PASS; independent post-extraction source ACCEPT, no bypass.
+  Actual local OIDC/two-company HELP response-loss/reload/retry and PostgreSQL
+  unchanged receipt/revision/count PASS. New real battle/WebSocket loss, full
+  day/night visual acceptance and full M1 NOT_RUN. No protocol/server/migration
+  or finance change. [Journey, screenshots and limits](docs/engineering/evidence/command-recovery-20261028/README.md).
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in
