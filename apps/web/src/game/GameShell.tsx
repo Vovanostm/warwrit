@@ -107,6 +107,10 @@ export function GameShell(props: {
     setBuildingVisit(null);
   }, [party?.location, travelling, movement.current?.mode]);
 
+  const placeRefreshRequired =
+    movement.current?.mode === 'STATIONARY_SITE' &&
+    movement.current.publicRevision !== props.world.publicRevision;
+
   // A selection that the server no longer offers is dropped.
   const departures = props.world.availableDepartures ?? [];
   const selectedKey = selected ? departureKey(selected) : null;
@@ -117,6 +121,16 @@ export function GameShell(props: {
 
   // While on the road, the server worker advances the route; re-read it periodically.
   const { onRefreshWorld, onRefreshFreeMovement, travelBusy } = props;
+  useEffect(() => {
+    if (!placeRefreshRequired) return;
+    const refresh = () => {
+      if (!travelBusy) onRefreshWorld();
+    };
+    refresh();
+    const id = setInterval(refresh, TRANSIT_REFRESH_MS);
+    return () => clearInterval(id);
+  }, [placeRefreshRequired, onRefreshWorld, travelBusy]);
+
   useEffect(() => {
     if (!travelling) return;
     const id = setInterval(() => {
@@ -172,7 +186,7 @@ export function GameShell(props: {
     !travelling &&
     Boolean(party) &&
     (continuousPlayable
-      ? movement.current?.mode === 'STATIONARY_SITE'
+      ? movement.current?.mode === 'STATIONARY_SITE' && !placeRefreshRequired
       : !movement.current || movement.current.mode === 'STATIONARY_SITE');
   const currentSite = canVisit
     ? map.sites.find((site) => site.siteId === party?.location)
@@ -257,11 +271,7 @@ export function GameShell(props: {
           region={map.continuous}
           point={soundPoint}
           night={light.phase === 'NIGHT'}
-          siteId={
-            !travelling && (!movement.current || movement.current.mode === 'STATIONARY_SITE')
-              ? (party?.location ?? null)
-              : null
-          }
+          siteId={currentSite?.siteId ?? null}
         />
         <Clocks tick={tick} ticksPerDay={ticksPerDay} light={light} stale={surroundings.stale} />
         <button className="action action-quiet" type="button" onClick={props.onSignOut}>
@@ -308,9 +318,8 @@ export function GameShell(props: {
               }}
               observations={
                 !surroundings.stale &&
-                !travelling &&
-                (!movement.current || movement.current.mode === 'STATIONARY_SITE') &&
-                reading.dto.observerSiteId === party?.location
+                canVisit &&
+                reading.dto.observerSiteId === currentSite?.siteId
                   ? reading.dto
                   : null
               }
@@ -541,7 +550,7 @@ export function GameShell(props: {
                   <p className="state-note">
                     {travelling
                       ? 'Отряд в пути. Поселение можно открыть после прибытия.'
-                      : continuousPlayable && !movement.current
+                      : continuousPlayable && (!movement.current || placeRefreshRequired)
                         ? 'Сверяем положение отряда…'
                         : 'Отряд вне поселения. Здания и услуги доступны после прибытия.'}
                   </p>

@@ -82,7 +82,10 @@ See [identity boundary](ID01-IDENTITY.md#four-local-company-profiles).
 **Место** means the party's actual stationary settlement/landmark. Selecting a
 remote site on the map stays on **Путь** and does not open that settlement.
 Continuous movement must confirm `STATIONARY_SITE` before settlement entry;
-pending, moving and terrain states do not expose settlement buildings. A building
+pending, moving and terrain states do not expose settlement buildings. The
+movement and party public revisions must agree before Place/local observations
+are enabled; mismatched stationary arrivals refresh the world immediately and
+every15seconds until confirmed, respecting a busy world request. A building
 visit closes on departure or location change. The journal uses place names or
 travel/terrain labels, not raw coordinates. Existing server access checks remain
 unchanged. Related travel contract: [M1 world travel](../work-packages/M1-WORLD-TRAVEL.md).

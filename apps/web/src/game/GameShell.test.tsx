@@ -9,15 +9,25 @@ import type * as SurroundingsModule from './surroundings.js';
 
 vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
 
-const movement = vi.hoisted(() => ({ mode: 'STATIONARY_SITE' as string | null }));
+const movement = vi.hoisted(() => ({
+  mode: 'STATIONARY_SITE' as string | null,
+  revision: '0',
+}));
 vi.mock('./continuous-movement.js', () => ({
   useContinuousMovement: () => ({
-    current: movement.mode === null ? null : { mode: movement.mode, plan: null },
+    current:
+      movement.mode === null
+        ? null
+        : { mode: movement.mode, plan: null, publicRevision: movement.revision },
     clock: { current: { serverMs: 0, receivedAt: 0 } },
   }),
 }));
 vi.mock('./MovementTerrain.js', () => ({ MovementTerrain: () => null }));
-vi.mock('./WorldAmbience.js', () => ({ WorldAmbience: () => null }));
+vi.mock('./WorldAmbience.js', () => ({
+  WorldAmbience: ({ siteId }: { siteId: string | null }) => (
+    <output data-testid="ambient-site">{siteId}</output>
+  ),
+}));
 vi.mock('./ContinuousMapCanvas.js', () => ({
   ContinuousMapCanvas: ({ onSelectSite }: { onSelectSite: (id: string) => void }) => (
     <button onClick={() => onSelectSite('bereznyak')}>Выбрать Березняк на карте</button>
@@ -85,6 +95,7 @@ const props = {
   freeMovementScope: { accountId: 'account', companyId: 'company' },
   placeSlot: () => null,
   onSignOut: () => undefined,
+  onRefreshWorld: () => undefined,
 } as unknown as ComponentProps<typeof GameShell>;
 
 let cleanup: (() => void) | undefined;
@@ -92,19 +103,26 @@ afterEach(() => {
   cleanup?.();
   cleanup = undefined;
   movement.mode = 'STATIONARY_SITE';
+  movement.revision = '0';
+  vi.useRealTimers();
 });
 
-async function mount() {
+async function mount(overrides: Partial<ComponentProps<typeof GameShell>> = {}) {
+  let currentProps = { ...props, ...overrides };
   const element = document.createElement('div');
   document.body.append(element);
   const root = createRoot(element);
-  await act(async () => root.render(<GameShell {...props} />));
+  await act(async () => root.render(<GameShell {...currentProps} />));
   cleanup = () => {
     act(() => root.unmount());
     element.remove();
   };
   return {
     element,
+    rerender: async (changes: Partial<ComponentProps<typeof GameShell>>) => {
+      currentProps = { ...currentProps, ...changes };
+      await act(async () => root.render(<GameShell {...currentProps} />));
+    },
     click: async (label: string) => {
       const button = [...element.querySelectorAll('button')].find(
         (node) => node.textContent === label,
@@ -138,4 +156,40 @@ it.each([
   await ui.click('Место');
   expect(ui.element.querySelector('[aria-label^="Локация:"]')).toBeNull();
   expect(ui.element.querySelector('.place-panel')?.textContent).toContain(message!);
+});
+
+it('keeps Place closed and retries refresh until arrival projections agree', async () => {
+  vi.useFakeTimers();
+  movement.revision = '1';
+  const onRefreshWorld = vi.fn();
+  const placeSlot = vi.fn(
+    (_context: Parameters<ComponentProps<typeof GameShell>['placeSlot']>[0]) => null,
+  );
+  const ui = await mount({ onRefreshWorld, placeSlot });
+  await ui.click('Место');
+  expect(ui.element.querySelector('[aria-label^="Локация:"]')).toBeNull();
+  expect(ui.element.querySelector('.place-panel')?.textContent).toContain('Сверяем положение');
+  expect(ui.element.querySelector('[data-testid="ambient-site"]')?.textContent).toBe('');
+  expect(placeSlot.mock.calls.at(-1)?.[0].canVisit).toBe(false);
+  expect(onRefreshWorld).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    vi.advanceTimersByTime(15_000);
+  });
+  expect(onRefreshWorld).toHaveBeenCalledTimes(2);
+  await ui.rerender({
+    world: {
+      ...props.world,
+      publicRevision: '1',
+      party: { ...props.world.party!, location: 'bereznyak' },
+    },
+  });
+  expect(ui.element.querySelector('[aria-label^="Локация:"]')?.getAttribute('aria-label')).toBe(
+    'Локация: Березняк',
+  );
+  expect(ui.element.querySelector('[data-testid="ambient-site"]')?.textContent).toBe('bereznyak');
+  expect(placeSlot.mock.calls.at(-1)?.[0].canVisit).toBe(true);
+  await act(async () => {
+    vi.advanceTimersByTime(15_000);
+  });
+  expect(onRefreshWorld).toHaveBeenCalledTimes(2);
 });

@@ -20,8 +20,12 @@ requests.
   GameShell, focused tests and [local instructions](docs/engineering/LOCAL_DEVELOPMENT.md#quick-company-entry-and-current-place).
   Scope excludes unpublished painted-map/combat WIP and migrations. Owner's
   «pr, review, merge» authorizes this bounded delivery after review/green checks;
-  exact-main types/lint/focused17 PASS; normal hook, independent review/CI and
-  merge currently pending, no bypass/deploy.
+  initial exact-main types/lint/focused17 and normal hook PASS at0b9e71ac.
+  Independent review found old-place display during arrival projection lag;
+  require matching party/movement revisions and retry world refresh, sharing
+  the confirmed boundary with ambience/observations. Correction types/lint and
+  UI/contract8 PASS; independent final source ACCEPT. Correction hook/CI/merge
+  pending, no bypass/deploy.
 
 ### Road diagnostics publication activation
 
