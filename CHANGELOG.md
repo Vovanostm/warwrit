@@ -24,8 +24,9 @@ requests.
   Independent review found old-place display during arrival projection lag;
   require matching party/movement revisions and retry world refresh, sharing
   the confirmed boundary with ambience/observations. Correction types/lint and
-  UI/contract8 PASS; independent final source ACCEPT. Correction hook/CI/merge
-  pending, no bypass/deploy.
+  UI/contract8 PASS; independent final source ACCEPT and normal correction
+  hook PASS atd559e283, no introduced findings. PR/clean-checkout CI/merge pending;
+  no bypass/deploy.
 
 ### Road diagnostics publication activation
 

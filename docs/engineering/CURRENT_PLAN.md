@@ -14,12 +14,12 @@ Existing live preview5259 and original dirty worktrees remain untouched.
 [Behavior](LOCAL_DEVELOPMENT.md#quick-company-entry-and-current-place) ·
 [Identity](ID01-IDENTITY.md#four-local-company-profiles) ·
 [Travel contract](../work-packages/M1-WORLD-TRAVEL.md).
-Initial main-adapted types/lint/focused17 and normal commit hook PASS at0b9e71ac.
-Independent review found arrival projection lag; fixed matching public revisions
-and retrying world refresh, including ambience/local observations. New mounted
-arrival-lag regression plus existing UI/contract8 and types/lint PASS. Independent final source review ACCEPT;
-correction hook pending; PR/clean-checkout CI/merge remain pending.
-No bypass.
+Auth/config10 and final UI/contract8 tests PASS; web/server types/scoped lint PASS.
+Normal commit hooks PASS at0b9e71ac and correction d559e283; no introduced findings.
+Independent reviewer REJECTed arrival projection lag, then ACCEPTed the correction:
+shared revision binding, retrying refresh and guarded local observations/ambience.
+Source frozen atd559e283; final publication docs and PR/clean-checkout CI pending.
+No bypass. Normal expected-head merge is authorized only after green PR gates.
 Prior browser evidence belongs to preview, not this exact-main checkout.
 Whole-game/art acceptance and hosted operation remain outside this slice.
 
