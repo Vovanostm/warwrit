@@ -73,6 +73,80 @@ export interface IdentityRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
 }
 
+async function createAccountSession(
+  database: Kysely<DatabaseSchema>,
+  issuer: string,
+  subject: string,
+  oldToken: string | undefined,
+): Promise<string> {
+  const token = randomToken();
+  await database.transaction().execute(async (transaction) => {
+    await transaction
+      .insertInto('identity_accounts')
+      .values({ id: randomUUID(), issuer, subject })
+      .onConflict((conflict) => conflict.columns(['issuer', 'subject']).doNothing())
+      .execute();
+    const account = await transaction
+      .selectFrom('identity_accounts')
+      .select('id')
+      .where('issuer', '=', issuer)
+      .where('subject', '=', subject)
+      .executeTakeFirstOrThrow();
+    if (oldToken !== undefined) {
+      await transaction
+        .updateTable('identity_sessions')
+        .set({ revoked_at: sql<Date>`now()` })
+        .where('token_digest', '=', digest(oldToken))
+        .where('revoked_at', 'is', null)
+        .execute();
+    }
+    await transaction
+      .insertInto('identity_sessions')
+      .values({
+        token_digest: digest(token),
+        account_id: account.id,
+        expires_at: new Date(Date.now() + sessionLifetimeSeconds * 1000),
+      })
+      .execute();
+  });
+  return token;
+}
+
+function registerLocalCompanyLogin(
+  app: FastifyInstance,
+  { config, database }: IdentityRoutesOptions,
+) {
+  if (config.localCompanyLogin !== true || process.env['NODE_ENV'] === 'production') return;
+
+  app.get('/auth/local-companies', async (_request, reply) => {
+    reply.header('cache-control', 'no-store');
+    return { companies: [1, 2, 3, 4] };
+  });
+  app.post<{ Body: { companyNumber: number } }>(
+    '/auth/local-companies',
+    {
+      schema: {
+        body: {
+          type: 'object',
+          required: ['companyNumber'],
+          additionalProperties: false,
+          properties: { companyNumber: { type: 'integer', enum: [1, 2, 3, 4] } },
+        },
+      },
+    },
+    async (request, reply) => {
+      const token = await createAccountSession(
+        database,
+        'urn:warwrit:local-test-company',
+        String(request.body.companyNumber),
+        request.cookies[sessionCookie],
+      );
+      reply.setCookie(sessionCookie, token, sessionCookieOptions(config));
+      return reply.code(204).send();
+    },
+  );
+}
+
 export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRoutesOptions): void {
   const { config, database } = options;
   let oidcConfiguration: Promise<oidc.Configuration> | undefined;
@@ -98,6 +172,8 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
       return reply.code(403).send({ error: 'request origin rejected' });
     }
   });
+
+  registerLocalCompanyLogin(app, options);
 
   app.get('/auth/login', async (_request, reply) => {
     const state = oidc.randomState();
@@ -189,41 +265,12 @@ export function registerIdentityRoutes(app: FastifyInstance, options: IdentityRo
         return reply.code(400).send({ error: 'identity callback rejected' });
       }
 
-      const newSessionToken = randomToken();
-      await database.transaction().execute(async (transaction) => {
-        await transaction
-          .insertInto('identity_accounts')
-          .values({ id: randomUUID(), issuer: claims.iss, subject: claims.sub })
-          .onConflict((conflict) => conflict.columns(['issuer', 'subject']).doNothing())
-          .execute();
-        const account = await transaction
-          .selectFrom('identity_accounts')
-          .select('id')
-          .where('issuer', '=', claims.iss)
-          .where('subject', '=', claims.sub)
-          .executeTakeFirst();
-        if (account === undefined) {
-          throw new Error('identity account unavailable');
-        }
-
-        const oldToken = request.cookies[sessionCookie];
-        if (oldToken !== undefined) {
-          await transaction
-            .updateTable('identity_sessions')
-            .set({ revoked_at: sql<Date>`now()` })
-            .where('token_digest', '=', digest(oldToken))
-            .where('revoked_at', 'is', null)
-            .execute();
-        }
-        await transaction
-          .insertInto('identity_sessions')
-          .values({
-            token_digest: digest(newSessionToken),
-            account_id: account.id,
-            expires_at: new Date(Date.now() + sessionLifetimeSeconds * 1000),
-          })
-          .execute();
-      });
+      const newSessionToken = await createAccountSession(
+        database,
+        claims.iss,
+        claims.sub,
+        request.cookies[sessionCookie],
+      );
 
       reply.clearCookie(flowCookie, {
         path: '/auth',

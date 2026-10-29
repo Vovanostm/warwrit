@@ -61,6 +61,40 @@ Local overrides live in one root `.env` file, normally created from `.env.exampl
 
 ## Development processes
 
+### Quick company entry and current place
+
+Owner requests, 2026-10-29/30: the development sign-in screen has four buttons
+**Войти за компанию 1 / 2 / 3 / 4**. Each slot has a separate persisted local
+identity. First use creates **Тестовая компания N** with **Капитан N** and two
+existing companions through the ordinary opening and command APIs; repeat entry
+restores that company's progress. The current start grants 800 crowns after
+hiring and 30 rations. Choose **Выйти** to switch; use separate browser profiles
+for concurrent players, since tabs share the session cookie.
+
+Quick entry requires complete database-backed identity configuration,
+`NODE_ENV=development`, a loopback listener and a local HTTP `PUBLIC_ORIGIN`.
+It uses the ordinary HttpOnly rotating session, enforces the configured request
+Origin and accepts only slots1–4. Production UI hides the controls; production
+servers do not register these routes. No external identity-provider request,
+password entry, migration or existing-save reset occurs in this shortcut.
+See [identity boundary](ID01-IDENTITY.md#four-local-company-profiles).
+
+**Место** means the party's actual stationary settlement/landmark. Selecting a
+remote site on the map stays on **Путь** and does not open that settlement.
+Continuous movement must confirm `STATIONARY_SITE` before settlement entry;
+pending, moving and terrain states do not expose settlement buildings. A building
+visit closes on departure or location change. The journal uses place names or
+travel/terrain labels, not raw coordinates. Existing server access checks remain
+unchanged. Related travel contract: [M1 world travel](../work-packages/M1-WORLD-TRAVEL.md).
+
+The painted-atlas preview on5259 is a separate unpublished checkout at
+`/Users/vovanostm/.codex/worktrees/local-painted-login/warwrit`, with its own
+retained local configuration. Its map/combat WIP and private world are outside
+this PR; no painted assets, migration0018 or game rules are delivered here.
+This clean-main slice uses main's existing continuous renderer. Earlier actual
+browser creation/re-entry for all4 and Каменный Брод versus selected Тихая Гать
+are preview evidence; fresh exact-main checks/review/CI are recorded in CURRENT_PLAN.
+
 For the separate networked painted-atlas laboratory:
 
 ```bash

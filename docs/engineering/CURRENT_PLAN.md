@@ -1,5 +1,26 @@
 # Warwrit current delivery plan
 
+## Local entry and current-place delivery — 2026-10-30, LOCAL
+
+Owner explicitly requested «pr, review, merge» for this chat's local-entry and
+Place corrections. This permits the scoped PR and normal expected-head merge
+after independent review and applicable green checks; no deploy/auto-merge.
+Coordinator/sole writer/check owner: parent; branch `codex/local-entry-and-current-place`,
+base `48d8a2ae`, clean-main worktree `local-entry-delivery/warwrit`.
+Scope: four development-only persisted test-company logins; Place binds to actual
+stationary location, never remote map selection; focused regressions/docs.
+No painted-map/combat WIP, art, migration, game rule or other open PR is included.
+Existing live preview5259 and original dirty worktrees remain untouched.
+[Behavior](LOCAL_DEVELOPMENT.md#quick-company-entry-and-current-place) ·
+[Identity](ID01-IDENTITY.md#four-local-company-profiles) ·
+[Travel contract](../work-packages/M1-WORLD-TRAVEL.md).
+Fresh main-adapted types/lint and focused tests17 PASS; independent source review running.
+Normal commit hook, PR/clean-checkout CI and merge remain pending. No bypass.
+Prior browser evidence belongs to preview, not this exact-main checkout.
+Whole-game/art acceptance and hosted operation remain outside this slice.
+
+## Prior delivery history
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
