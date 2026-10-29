@@ -1,0 +1,34 @@
+.journey-card:has(.local-company-login) {
+  padding-block: 3rem;
+}
+
+.local-company-login {
+  position: relative;
+  margin-top: 1.5rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid #49413a;
+}
+
+.local-company-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+
+.local-company-actions .primary-action {
+  margin-top: 0;
+  padding: 0.75rem;
+  background: #292923;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.local-company-actions .primary-action:hover {
+  background: #3a372c;
+}
+
+.local-company-actions .primary-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

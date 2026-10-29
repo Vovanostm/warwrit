@@ -105,3 +105,23 @@ PostgreSQL integration spec passed again. A real empty-schema probe returned 503
 with identity enabled and 200 with identity disabled; the migrated database
 returned 200 with identity enabled. These are local fixture results, not
 external-provider, lost-credential recovery or company-persistence evidence.
+
+## Four local company profiles
+
+Owner request, 2026-10-29; publication scope confirmed 2026-10-30. In development
+with a loopback HTTP listener/origin, `GET /auth/local-companies` advertises slots
+1–4 and `POST /auth/local-companies` accepts only `{ companyNumber: 1|2|3|4 }`.
+Unsafe-method Origin checks apply before session creation. The identities use the
+reserved issuer `urn:warwrit:local-test-company` and fixed numbered subjects;
+they cannot select or merge an OIDC account. Account upsert, previous-browser
+session revocation and new session persistence share one transaction using the
+same helper as OIDC. The ordinary HttpOnly/SameSite cookie and expiry apply.
+
+These routes are absent outside explicit `NODE_ENV=development` plus local
+listener/origin configuration, and are additionally unavailable in a production
+process even if handed a manually enabled option. The Vite production UI never
+requests their capability. The client creates each first-use company through the
+ordinary authenticated opening/command endpoints; later logins do not reset it.
+No additional privilege, provider request, schema or saved-company mutation is
+introduced by session entry itself. This is local test functionality, not a
+production account-login or recovery method.

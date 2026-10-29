@@ -38,5 +38,58 @@ describe('OIDC identity HTTP boundary', () => {
     expect(session.statusCode).toBe(401);
     expect(session.json()).toEqual({ error: 'authentication required' });
     expect(rejectedMutation.statusCode).toBe(403);
+    expect((await app.inject('/auth/local-companies')).statusCode).toBe(404);
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/auth/local-companies',
+          headers: { origin: config.identity!.publicOrigin },
+          payload: { companyNumber: 1 },
+        })
+      ).statusCode,
+    ).toBe(404);
+  });
+
+  it('rejects foreign origins and numbers outside the four local profiles before database access', async () => {
+    const config = loadServerConfig({
+      NODE_ENV: 'development',
+      DATABASE_URL: 'postgres://unused:unused@127.0.0.1:55433/unused',
+      OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+      OIDC_CLIENT_ID: 'warwrit-local',
+      OIDC_CLIENT_SECRET: 'local-only-secret',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:3107/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:3107',
+      HOST: '127.0.0.1',
+    });
+    const database = createDatabase(config.databaseUrl!);
+    databases.push(database);
+    const app = buildApp({ logger: false, identity: { config: config.identity!, database } });
+    apps.push(app);
+    expect((await app.inject('/auth/local-companies')).json()).toEqual({ companies: [1, 2, 3, 4] });
+    for (const origin of [undefined, 'http://attacker.example.test']) {
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/auth/local-companies',
+            headers: origin ? { origin } : {},
+            payload: { companyNumber: 1 },
+          })
+        ).statusCode,
+      ).toBe(403);
+    }
+    for (const companyNumber of [0, 5, -1, 1.5, 'another-account']) {
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/auth/local-companies',
+            headers: { origin: config.identity!.publicOrigin },
+            payload: { companyNumber },
+          })
+        ).statusCode,
+      ).toBe(400);
+    }
   });
 });

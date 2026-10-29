@@ -3,6 +3,33 @@ import { describe, expect, it } from 'vitest';
 import { loadServerConfig } from './config.js';
 
 describe('server configuration', () => {
+  it('permits quick company login only in development with a loopback listener and origin', () => {
+    const local = {
+      NODE_ENV: 'development',
+      HOST: '127.0.0.1',
+      DATABASE_URL: 'postgres://unused:unused@127.0.0.1:55433/unused',
+      OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+      OIDC_CLIENT_ID: 'warwrit-local',
+      OIDC_CLIENT_SECRET: 'local-only-secret',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:5173/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:5173',
+    };
+    expect(loadServerConfig(local).identity?.localCompanyLogin).toBe(true);
+    for (const NODE_ENV of ['production', 'test', '']) {
+      expect(loadServerConfig({ ...local, NODE_ENV }).identity?.localCompanyLogin).toBeUndefined();
+    }
+    const hosted = {
+      ...local,
+      OIDC_ISSUER: 'https://identity.example.test',
+      OIDC_REDIRECT_URI: 'https://game.example.test/auth/callback',
+      PUBLIC_ORIGIN: 'https://game.example.test',
+    };
+    expect(loadServerConfig(hosted).identity?.localCompanyLogin).toBeUndefined();
+    expect(
+      loadServerConfig({ ...hosted, HOST: '0.0.0.0' }).identity?.localCompanyLogin,
+    ).toBeUndefined();
+  });
+
   it('loads deterministic defaults', () => {
     expect(loadServerConfig({})).toEqual({
       host: '0.0.0.0',

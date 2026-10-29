@@ -1,5 +1,30 @@
 # Warwrit current delivery plan
 
+## Local entry and current-place delivery — 2026-10-30, LOCAL
+
+Owner explicitly requested «pr, review, merge» for this chat's local-entry and
+Place corrections. This permits the scoped PR and normal expected-head merge
+after independent review and applicable green checks; no deploy/auto-merge.
+Coordinator/sole writer/check owner: parent; branch `codex/local-entry-and-current-place`,
+base `48d8a2ae`, clean-main worktree `local-entry-delivery/warwrit`.
+Scope: four development-only persisted test-company logins; Place binds to actual
+stationary location, never remote map selection; focused regressions/docs.
+No painted-map/combat WIP, art, migration, game rule or other open PR is included.
+Existing live preview5259 and original dirty worktrees remain untouched.
+[Behavior](LOCAL_DEVELOPMENT.md#quick-company-entry-and-current-place) ·
+[Identity](ID01-IDENTITY.md#four-local-company-profiles) ·
+[Travel contract](../work-packages/M1-WORLD-TRAVEL.md).
+Auth/config10 and final UI/contract8 tests PASS; web/server types/scoped lint PASS.
+Normal commit hooks PASS at0b9e71ac and correction d559e283; no introduced findings.
+Independent reviewer REJECTed arrival projection lag, then ACCEPTed the correction:
+shared revision binding, retrying refresh and guarded local observations/ambience.
+Source frozen atd559e283; final publication docs and PR/clean-checkout CI pending.
+No bypass. Normal expected-head merge is authorized only after green PR gates.
+Prior browser evidence belongs to preview, not this exact-main checkout.
+Whole-game/art acceptance and hosted operation remain outside this slice.
+
+## Prior delivery history
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
