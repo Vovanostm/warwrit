@@ -19,6 +19,13 @@ provides live PR/CI and merge links. Use that receipt for delivery state.
 Continuation requires reviewed-head CI and expected-head merge, then local main.
 Deployment, purchases and restarting automation retain separate permission requirements.
 
+Follow-up observation — 2026-11-05. Owner requested actual effectiveness review.
+Analysis branch `codex/harness-effectiveness-review`, base `e31c5a56`.
+[Observed delivery and remaining controls](HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
+PR344 now has green CI at `2a63e830` and remains OPEN. Its writer has PR342,
+while PR345 is absent from that branch. Overall causal/cost effect is unmeasured.
+This review changes documentation only. The game writer owns its active source.
+
 ## History
 
 [Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated decisions/results.

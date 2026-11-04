@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Observed harness effectiveness
+
+- 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.
+  Per owner request, compared the current publication-readiness chat with actual
+  writer source and live PR344/CI. Recorded committed/player-visible map progress,
+  verified removal of hidden commit checks, partial harness adoption, parent token
+  telemetry, three corrected integration defects and remaining startup diagnostics.
+  [Owning assessment](docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
+  Analysis is observational. Controlled efficiency/cost and whole-game acceptance
+  remain unmeasured. Source/CI readback, scoped documentation formatting, current
+  plan validation and diff checks PASS. Game tests NOT_RUN for this documentation.
+
 ### Gameplay-focused agent harness
 
 - 2026-11-04, originating branch `codex/gameplay-focused-harness`, PUBLISHED. Per owner

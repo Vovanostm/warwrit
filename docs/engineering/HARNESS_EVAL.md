@@ -1,5 +1,77 @@
 # Harness evaluation
 
+## Observed delivery follow-up — 2026-11-05
+
+Owner requested an effectiveness check of chat «Оценить готовность игры к публикации»,
+`01a182d5-a42b-7f71-be34-149cf554d19a`. Observed window is 2026-11-04
+22:56:30 through 2026-11-05 00:50:20 Moscow time, plus live PR/CI readback.
+Source is the chat API, timestamped command/token records in its local rollout,
+the writer's actual checkout and GitHub. Local transcript path is
+`/Users/vovanostm/.codex/sessions/2026/10/28/rollout-2026-10-28T17-06-41-01a182d5-a42b-7f71-be34-149cf554d19a.jsonl`.
+Only command/message/usage records informed this review.
+
+### Result and intervention coverage
+
+There is concrete delivery progress. The atlas became committed, the normal
+entry/company/map/movement/STOP/reload journey was demonstrated, and
+[PR344](https://github.com/Vovanostm/warwrit/pull/344) was published. At this
+readback, head `2a63e830` is OPEN. CI41918700198 SUCCESS includes both world-lab
+and ordinary painted-map journeys, coverage and the quality audit. That accepts
+the tested map boundary. The full contract/combat/reward/care/restart journey
+remains open.
+
+PR342 is present in the writer's branch. Three older commit invocations took
+207, 770 and 486 seconds including hidden coverage/audit work. After integrating
+PR342, staging plus the normal integration commit took about 1.5 seconds and the
+checked-out hook contains only the staged whitespace check. This directly
+confirms removal of that delay. Workloads differed across those invocations.
+
+The newer PR345 commit `e31c5a56` is absent from the writer's ancestry. Its root
+AGENTS remains 199 lines/12,783 bytes, versus 163/9,759 on main. The complete newer
+role/context intervention has therefore not reached this checkout. Native
+instruction refresh is also unmeasured. The partial adoption cannot support a
+causal verdict about the entire new harness.
+
+The window contains 147 shell commands. Parent usage is 38,373,937 input tokens,
+including 37,800,320 cached, and 129,695 output tokens. Last-call input was 225,028.
+These are cumulative request inputs with cache reuse. Parent telemetry excludes
+child usage and provides no billing total.
+Token/cost or success-rate improvement against a matched baseline is NOT_MEASURED.
+The prior 103-minute/176-command observation used a different task state and
+includes different waits. Treat that comparison as descriptive only.
+
+### Errors and smallest systemic controls
+
+1. **Guidance reaches main before the active branch.** PR342 was noticed at
+   23:44 Moscow time, while the older coverage-bearing commit finished at 23:52.
+   The new hook entered the branch at 23:59. At the next bounded work step, check
+   relevant upstream instruction/role/hook changes and record the writer's actual
+   adopted revision. Preserve exclusive ownership and review any integration.
+   Main publication alone establishes availability.
+2. **Fresh-boundary defects surface serially in full CI.** Confirmed repairs were
+   Vite `?url` resolution in the architecture checker, camera types depending on
+   authored navigation/game-core, and Dex private storage owned by the wrong UID.
+   Before publication, exercise the changed import/type/startup boundary with its
+   smallest check on fresh inputs. A local run reusing existing Dex exercises a
+   different launch path from CI's new container. The author already fixed these
+   three defects in PR344.
+3. **Failed startup loses its cause.** Current `check-painted-game-ci.sh` starts
+   Dex with `--rm` and removes owned resources in cleanup. It neither retains Dex
+   logs nor prints them when discovery readiness fails. Capture stdout/stderr and
+   container state before removal, expose a bounded failure excerpt, and attach
+   focused startup evidence. This is the next narrow tooling fix, owned by that
+   script's writer while PR344 remains active.
+4. **Long-lived context remains expensive.** Use a concise checkpoint for each
+   accepted slice and consult detailed history for an identified question. Compare
+   actual request/uncached/output usage and delivered acceptance on subsequent work.
+   Preserve the full evidence externally. Extra root prose alone cannot establish
+   a reduction in the already-large live prompt.
+
+This is an observational review with source/CI readback. New gameplay execution,
+controlled A/B, dollar cost and player enjoyment measurements are NOT_RUN or
+NOT_MEASURED. Proposed controls above are recommendations, with the current author's
+three concrete fixes and PR342 adoption recorded separately as actual changes.
+
 ## Current use — 2026-11-04
 
 Use this on demand for a defined harness hypothesis. Routine game work follows
