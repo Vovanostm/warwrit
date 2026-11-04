@@ -15,8 +15,10 @@ Web/server types,15 focused tests and8 ordinary browser checkpoints PASS.
 Independent final source ACCEPT covers the resolved game source and artifact upload.
 Local V8 editor rerun FAIL with3timeouts/15PASS; ordinary rerun18/18PASS.
 [PR344](https://github.com/Vovanostm/warwrit/pull/344) published at`49d4ca4e`; scope PASS.
-First CI stopped at the architecture resolver on a valid Vite ?url asset import.
-Exact-suffix resolution now passes the positive/missing-asset probes and source review.
+First CI stopped at Vite ?url resolution; its correction and source review PASS.
+Second CI passed architecture, then exposed a camera type dependency on unbuilt core.
+Pixel now belongs to the shared camera with its former navigation export retained.
+Web types/compiler boundary,3camera checks, lint/format and source review PASS.
 Retained local trial is http://127.0.0.1:5228 with its own preview database.
 Quick entry opens a company on the painted atlas. Original saves remain preserved.
 At most two active writing worktrees. Combat WIP stays parked in codex/game-painted-map.
@@ -25,7 +27,7 @@ Temporary care difficulty is owner-approved at5 for wound care and10 for stabili
 PR334–339 remain open. Reuse their existing source after this map delivery.
 ROADMAP/PROMPTS in ~/learn/warwrit-roadmap remain proposals awaiting approval.
 PR publication is authorized. Main merge/deploy/paid/Orca need current owner permission.
-Next action is publish the resolver correction and monitor current-head PR CI.
+Next action is publish the type correction and monitor corrected-head PR CI.
 
 ## History
 

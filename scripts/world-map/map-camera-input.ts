@@ -1,5 +1,4 @@
-import type { Pixel } from './porechye-navigation.js';
-import type { MapView } from './map-camera.js';
+import type { MapView, Pixel } from './map-camera.js';
 
 const panKeyCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
 

@@ -1,4 +1,4 @@
-import type { Pixel } from './porechye-navigation.js';
+export type Pixel = readonly [number, number];
 
 export interface MapView {
   readonly x: number;

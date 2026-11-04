@@ -847,3 +847,13 @@ game/coverage/browser gates were NOT_RUN. Resolve the exact trailing ?url before
 normal file lookup. Ordinary architecture485files, missing-asset rejection,
 scoped lint/format and independent source review PASS. No asset existence or
 dependency/cycle rule was skipped. Corrected-head hosted gates remain pending.
+
+Second hosted correction — 2026-11-05. CI41913320457 passed architecture but
+web compilation resolved the camera's Pixel type through authored navigation,
+which requires game-core's dist declarations before they finish building.
+Move the unchanged tuple to map-camera.ts and retain its navigation re-export.
+Camera/input now depend only on that shared module. Final affected source review
+ACCEPT. Web types PASS; its compiler inputs contain neither game-core nor authored
+navigation. Three existing camera checks PASS/17filtered SKIP; scoped lint/format
+PASS. Runtime camera
+logic is unchanged. Later hosted game/coverage/browser gates remain NOT_RUN.

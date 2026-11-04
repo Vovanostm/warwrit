@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Keep camera types independent of authored navigation
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). CI41913320457 exposed
+  a clean-build race through the camera's Pixel type. Move that unchanged type
+  to the shared camera and retain the navigation re-export. Source review ACCEPT.
+  Web types/compiler inputs,3camera checks and scoped lint/format PASS.
+  [Checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
 ### Resolve Vite URL assets in architecture checks
 
 - 2026-11-05, `codex/game-painted-delivery`, local correction to published
