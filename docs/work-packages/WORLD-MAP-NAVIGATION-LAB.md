@@ -839,3 +839,11 @@ The same editor suite without V8 instrumentation passed18/18; its earlier V8
 rerun remains FAIL. The machine load was23.93 at diagnostic readback. No other
 process was stopped and no test timeout changed. Current clean hosted coverage
 is still required. Scoped format, plan-limit and whitespace checks PASS.
+
+Hosted correction — 2026-11-05. [PR344](https://github.com/Vovanostm/warwrit/pull/344)
+is published at`49d4ca4e`; scope41912099860PASS. CI41912100206 failed architecture
+resolution of the actual paper.png?url import after format/lint passed. Later
+game/coverage/browser gates were NOT_RUN. Resolve the exact trailing ?url before
+normal file lookup. Ordinary architecture485files, missing-asset rejection,
+scoped lint/format and independent source review PASS. No asset existence or
+dependency/cycle rule was skipped. Corrected-head hosted gates remain pending.

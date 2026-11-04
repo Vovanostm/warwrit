@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Resolve Vite URL assets in architecture checks
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). Resolve trailing `?url`
+  before normal asset lookup after CI41912100206 stopped on the paper import.
+  Positive and missing-asset probes, scoped lint/format and source review PASS.
+  [Current gate limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
 ### Close the paused painted-map integration
 
 - 2026-11-04, `codex/game-painted-delivery` (local). Give the map's DOM,
