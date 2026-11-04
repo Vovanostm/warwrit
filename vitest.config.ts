@@ -41,8 +41,8 @@ export default defineConfig(({ mode }) => ({
     passWithNoTests: false,
     restoreMocks: true,
     coverage: {
-      // The commit audit consumes measured coverage even when a related test
-      // fails; keep that evidence instead of deleting it on a timeout.
+      // Preserve failed-run coverage for diagnostics and explicit local audits.
+      // A coverage report does not turn a failing test into a pass.
       reportOnFailure: true,
       // `pnpm test:coverage` evidence for `fallow health --coverage`.
       // No percentage threshold: AGENTS.md sets no coverage targets.

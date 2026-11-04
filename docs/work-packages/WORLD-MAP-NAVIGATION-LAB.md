@@ -815,3 +815,20 @@ target main`5c2b3cd7`, matching the prospective PR base. CI now retains sanitize
 ordinary journey JSON and map screenshots for7days. Hosted execution is NOT_RUN.
 Local outputs are under output/painted-delivery/close-20261104/. Normal integration
 commit and publication are pending.
+
+The normal PR340 integration commit completed as `7903a587`; its audit PASS used
+existing observation tests measured separately (7PASS) after the hook replaced
+that coverage. The hook's broad related run reported an editor test-file failure.
+An isolated V8 rerun of the unchanged custom-battle suite is FAIL with15PASS and
+3timeouts at the existing5000ms deadline. Its import took114s on this local run.
+This remains failed local evidence; hosted clean CI must establish its result.
+
+Main advanced to `b89bed3e` through PR342 during delivery. The second normal merge
+preserves its explicit-check hooks and concise CURRENT_PLAN with dated history
+in CURRENT_PLAN_HISTORY. Game production source is unchanged by this merge.
+The CI composition retains main's hook regression plus the map artifact step.
+A separate retained preview at http://127.0.0.1:5228 uses a new database named
+warwrit_painted_preview_20261104 on the existing local PostgreSQL service.
+Actual quick company entry and painted atlas rendering PASS in the owner's
+browser. Original campaigns remain preserved. No new game balance or rewards
+were added for this preview. Current-head publication/hosted gates are pending.
