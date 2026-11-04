@@ -41,8 +41,8 @@ retained both writers' entries. Four regressions and scoped checks passed again.
 merge status for this continued harness mission.
 The run changes were tested with isolated local Git fixtures. Native Codex/Claude
 session reload and improved gameplay throughput remain NOT_RUN/NOT_MEASURED.
-The active game writer still owns its launch scripts and delivery. Startup-log
-capture remains a separate recommendation for that owner.
+Startup-log capture remains a separate follow-up. Confirm the launch script's
+current writer before editing.
 
 ## Observed delivery follow-up — 2026-11-05
 
@@ -103,8 +103,8 @@ includes different waits. Treat that comparison as descriptive only.
    Dex with `--rm` and removes owned resources in cleanup. It neither retains Dex
    logs nor prints them when discovery readiness fails. Capture stdout/stderr and
    container state before removal, expose a bounded failure excerpt, and attach
-   focused startup evidence. This is the next narrow tooling fix, owned by that
-   script's writer while PR344 remains active.
+   focused startup evidence. This is a separate narrow tooling follow-up. Confirm
+   the launch script's current writer before implementation.
 4. **Long-lived context remains expensive.** Use a concise checkpoint for each
    accepted slice and consult detailed history for an identified question. Compare
    actual request/uncached/output usage and delivered acceptance on subsequent work.
