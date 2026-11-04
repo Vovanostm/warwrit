@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Gameplay-focused agent harness
+
+- 2026-11-04, originating branch `codex/gameplay-focused-harness`, LOCAL. Per owner
+  research follow-up, trim always-loaded rules/role prerequisites, attach gameplay
+  completion to the existing contract's observed player actions and next failing
+  step, and keep evaluation replay optional. Existing local validation now exposes
+  failed diagnostics and an exact rerun command while retaining nonzero status/logs.
+  Correct source interpretation and stale audit-on-commit advice. Preserve the
+  prior checkpoint with PR342's actual merge/CI receipt. Affected AGENTS, roles,
+  context/domain/delivery skills, local checker/fixture and owning process docs.
+  [Research and application](docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+  Shell routing/stop/scope/failure-feedback fixtures, Node3/3, syntax/format,
+  role TOML, links/anchors and diff PASS. Final independent source review ACCEPT.
+  [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) tracks PR/CI/merge.
+  Gameplay/adherence/cost benefit NOT_RUN/NOT_MEASURED.
+
 ### Agent context and commit-hook cleanup
 
 - 2026-11-04, originating branch `codex/agent-harness-cleanup`, PUBLISHED. Per owner

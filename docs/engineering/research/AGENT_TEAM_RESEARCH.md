@@ -5,6 +5,55 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Research correction and application — 2026-11-04
+
+The owner asked for a game-focused harness after supplying the four sources below.
+These are bounded observations and design inputs. Warwrit efficiency remains
+NOT_MEASURED. This section supersedes broader readings of the older source table.
+
+- ETH's v3 finds no significant average task-success improvement from generated
+  context, with 20–23% average extra cost. Developer-written context has a +2.4
+  percentage-point estimate with p=0.21. The study does not establish an exclusive
+  beneficial instruction category. Keep project-specific authority/invariants and
+  inspect local behavior before claiming savings. [ETH v3, sections 4.2/4.4](https://arxiv.org/html/2602.11988v3).
+- OpenAI describes custom lints whose errors explain the repair, alongside a compact
+  instruction map. This is an engineering experience report. [Primary source](https://openai.com/index/harness-engineering/).
+- SWE-agent's editor ablation reports 15% to 18% resolution on SWE-bench Lite when
+  linting rejects faulty edits. This tested syntax/selected error recovery. A useful
+  local application is an existing check exposing its diagnostic and rerun command.
+  [SWE-agent, Table 3 and section 5.1](https://arxiv.org/html/2405.15793v3).
+- Anthropic describes incremental features, explicit passing/failing acceptance and
+  browser verification. Use the existing task's player-action checklist and current
+  journey before declaring completion. [Primary source](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents).
+- The factorial study reports OR 0.944 for compliance per later generated function
+  within tested sessions, with a non-monotonic association. Its scope is a target
+  annotation in selected Claude/TypeScript tasks. This motivates inspecting long
+  attempts, without a universal feature/function quota or a causal savings claim.
+  [Study abstract and scope](https://arxiv.org/abs/2605.10039).
+
+Local changes follow confirmed harness friction. Root rules retain the mandatory
+project boundaries and route detailed work to its owning skill. Roles use the
+scoped brief and load team/history only for an unresolved question. Gameplay
+acceptance stays in its existing contract, naming player action, visible/saved
+result and normal-entry verification. Work proceeds from the next failing item.
+The existing local checker now exposes a bounded failed-command diagnostic and
+an exact rerun command, retaining the full log and failure status. No new runner, scheduler or acceptance-list file is introduced.
+
+The supplied GAMES-specific `legacy-button-class`, QA-07b and 14.5 KB context example
+were not found in this Warwrit checkout. They are external examples, not local
+implementation evidence. [Evaluation use](../HARNESS_EVAL.md) records how to assess
+subsequent real slices without adding benchmark preparation to each game task.
+Existing shell fixtures PASS, including visible short failures, bounded noisy
+output, retained full logs and nonzero status. Node hook regressions3/3 PASS.
+Bash syntax, scoped formatting, role TOML, new links/inbound root anchors and
+diff checks PASS. Root context fell from12783 to9759 bytes (199 to163 lines).
+Final independent static infrastructure review ACCEPT after bounding failure logs.
+[Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) owns live PR/CI
+and merge links. Native role-loading/behavior and gameplay pilot NOT_RUN.
+Agent adherence and quality/cost benefit NOT_MEASURED.
+
+## Historical research — 2026-09-27
+
 Reviewed 2026-09-27. These sources justify a conservative design, not an “ideal”
 team or measured Warwrit speedup. Sources are versioned where possible.
 
@@ -45,7 +94,7 @@ after a repeated concrete failure establishes its input, action and verification
 
 ## Reproducible evaluation boundary
 
-Configuration evidence should include parsed files, their hashes, actual CLI version
+Configuration evidence should include parsed files, actual CLI version
 and `config/read` showing the effective role paths and concurrency limit. This is
 configuration loading, not proof that the desktop app spawned each native role or
 enforces each role's sandbox. Existing sessions may retain earlier configuration.

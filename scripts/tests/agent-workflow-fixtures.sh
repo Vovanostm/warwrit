@@ -158,7 +158,13 @@ mkdir -p "$fixture/checkbin"
 cat > "$fixture/checkbin/pnpm" <<'STUB'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >> "$FIXTURE_CHECK_LOG"
-if [[ "$*" == *'vitest run'* && "${FIXTURE_NO_TESTS:-}" == 1 ]]; then exit 1; fi
+if [[ "$*" == *'vitest run'* && "${FIXTURE_NO_TESTS:-}" == 1 ]]; then
+  if [[ "${FIXTURE_NOISY:-}" == 1 ]]; then
+    printf 'diagnostic-start-marker\n%12000s\n' ''
+  fi
+  echo 'No test files found. Select an existing public-boundary test.' >&2
+  exit 1
+fi
 exit 0
 STUB
 chmod +x "$fixture/checkbin/pnpm"
@@ -179,5 +185,13 @@ for scenario in docs consumers broad; do
 done
 route_case packages/protocol/src/new.ts consumers
 expect_exit 1 env PATH="$fixture/checkbin:$PATH" FIXTURE_NO_TESTS=1 bash "$root/scripts/orca-validate.sh" "$repo" "$base"
-echo 'PASS commands: docs omit game checks; shared contracts check consumers; unknown uses verify; zero-tests failure retained'
+grep -q 'No test files found. Select an existing public-boundary test.' "$fixture/output" || fail 'test diagnostic hidden'
+grep -q 'Rerun after fixing the diagnostic: pnpm exec vitest run packages apps' "$fixture/output" || fail 'repair command missing'
+grep -q 'No test files found' "$repo/.orca/validate-tests.log" || fail 'failure log lost'
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" FIXTURE_NO_TESTS=1 FIXTURE_NOISY=1 bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'No test files found' "$fixture/output" || fail 'noisy failure diagnostic missing'
+if grep -q 'diagnostic-start-marker' "$fixture/output"; then fail 'full noisy log leaked into output'; fi
+[[ "$(wc -c < "$fixture/output")" -lt 10000 ]] || fail 'diagnostic output unbounded'
+grep -q 'diagnostic-start-marker' "$repo/.orca/validate-tests.log" || fail 'full noisy log lost'
+echo 'PASS commands: docs omit game checks; shared contracts check consumers; unknown uses verify; zero-tests failure/repair/log retained; long diagnostics bounded'
 echo 'PASS scope: small/large/multiple issues/deletion/rename; missing linkage/description/body/base/diff fail'

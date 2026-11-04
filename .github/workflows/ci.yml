@@ -31,8 +31,10 @@ jobs:
         with:
           node-version-file: .node-version
 
-      - name: Check local commit hooks
-        run: node --test scripts/git-hooks/check-hooks.mjs
+      - name: Check agent harness regressions
+        run: |
+          node --test scripts/git-hooks/check-hooks.mjs
+          bash scripts/tests/agent-workflow-fixtures.sh
 
       - name: Reject edits to released migrations
         if: github.event_name == 'pull_request'

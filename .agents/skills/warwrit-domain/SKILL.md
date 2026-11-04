@@ -13,7 +13,9 @@ For items/care/outcomes read [physical-state.md](references/physical-state.md).
 
 ## Work from behavior to one owner
 
-For each affected transition write a short table:
+Use the task's acceptance to identify the affected transition and normal consumer.
+Reuse an existing decision record. When the state/observer boundary is unclear,
+this compact table can resolve it.
 
 | Input / trusted fact               | Required preconditions          | Actual state delta                      | Unmet requirement                   | Observable delta             |
 | ---------------------------------- | ------------------------------- | --------------------------------------- | ----------------------------------- | ---------------------------- |
