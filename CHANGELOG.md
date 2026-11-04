@@ -23,7 +23,9 @@ requests.
   Shell routing/stop/scope/failure-feedback fixtures, Node 3/3, syntax/format,
   role TOML, links/anchors and diff PASS. Final independent source review ACCEPT.
   [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) tracks PR/CI/merge.
-  Gameplay/adherence/cost benefit NOT_RUN/NOT_MEASURED.
+  First PR CI failed archive formatting. Corrected the file and checked every
+  changed path. Fresh full CI required. Gameplay/adherence/cost benefit
+  NOT_RUN/NOT_MEASURED.
 
 ### Agent context and commit-hook cleanup
 

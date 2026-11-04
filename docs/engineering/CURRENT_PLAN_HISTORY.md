@@ -24,10 +24,8 @@ Local game checks NOT_RUN. Efficiency gains NOT_MEASURED.
 Continuation uses the live PR receipt and local-main ref. Preserve other writers' WIP.
 Previous local-entry status is superseded by main's PR340 merge at the base above.
 
-
 Receipt correction — 2026-11-04. PR342 merged at `b89bed3e`, PR CI41906159640
 and latest scope41906344940 SUCCESS. Local main fast-forwarded to that merge.
-
 
 Moved from CURRENT_PLAN on 2026-11-04. Entries below retain their original
 dates, permission scope and evidence limits. Consult a named entry when needed.

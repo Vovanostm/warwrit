@@ -48,6 +48,9 @@ output, retained full logs and nonzero status. Node hook regressions 3/3 PASS.
 Bash syntax, scoped formatting, role TOML, new links/inbound root anchors and
 diff checks PASS. Root context fell from 12,783 to 9,759 bytes (199 to 163 lines).
 Final independent static infrastructure review ACCEPT after bounding failure logs.
+First PR CI41912293483 stopped on archive formatting omitted from the local file
+selection. Corrected that file and checked formatting across every changed path.
+Fresh full CI is required for the corrected head.
 [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) owns live PR/CI
 and merge links. Native role-loading/behavior and gameplay pilot NOT_RUN.
 Agent adherence and quality/cost benefit NOT_MEASURED.
