@@ -27,7 +27,9 @@ requests.
   failure remains recorded; isolated V8 rerun has15PASS/3timeouts.
   A second normal merge includes main`b89bed3e` / PR342 with its explicit checks
   and concise current plan, retaining both histories. Game production source
-  is unchanged by that second merge. Current-head hosted CI is pending.
+  is unchanged by that second merge, saved as`0d52c37b`. Final affected source
+  review accepted CI/history integration. Ordinary editor rerun18/18PASS; V8
+  failure remains recorded. Current-head hosted CI is pending.
   A separate retained preview on5228 opens a company on the painted atlas in
   the owner's browser, using a new database and preserving prior campaigns.
   The original campaign databases are preserved. [Delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).

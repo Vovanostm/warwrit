@@ -832,3 +832,10 @@ warwrit_painted_preview_20261104 on the existing local PostgreSQL service.
 Actual quick company entry and painted atlas rendering PASS in the owner's
 browser. Original campaigns remain preserved. No new game balance or rewards
 were added for this preview. Current-head publication/hosted gates are pending.
+
+The second integration is committed as `0d52c37b` with the current normal hook.
+Final affected source review ACCEPT covers the composed CI and history resolution.
+The same editor suite without V8 instrumentation passed18/18; its earlier V8
+rerun remains FAIL. The machine load was23.93 at diagnostic readback. No other
+process was stopped and no test timeout changed. Current clean hosted coverage
+is still required. Scoped format, plan-limit and whitespace checks PASS.
