@@ -49,6 +49,16 @@
           </p>
         </section>
         <section>
+          <h2>Картография</h2>
+          <div class="fog-legend" aria-label="Слои карты">
+            <span><i class="legend-charted"></i>Полученная карта</span>
+            <span><i class="legend-explored"></i>Осмотрено отрядом</span>
+            <span><i class="legend-visible"></i>Видно сейчас</span>
+            <span><i class="legend-unknown"></i>Неизвестно</span>
+          </div>
+          <p id="cartography-status" class="fine">Ожидаем разрешённую сервером карту…</p>
+        </section>
+        <section>
           <h2>Рядом</h2>
           <div id="nearby-groups" class="group-list">
             <p class="fine">Ожидаем серверные наблюдения…</p>
@@ -93,7 +103,7 @@
           <span>ПКМ по земле — идти · по врагу — преследовать</span>
           <div class="toolbar-actions">
             <button id="center-own" type="button" disabled>К своему отряду</button>
-            <button id="fit" type="button">Вся карта</button>
+            <button id="fit" type="button">Известная область</button>
           </div>
         </div>
         <div id="map-wrap">
@@ -104,17 +114,39 @@
             aria-label="Общая карта с разрешёнными сервером наблюдениями"
             tabindex="0"
           >
+            <defs>
+              <mask
+                id="known-terrain-reveal"
+                x="0"
+                y="0"
+                width="4608"
+                height="3072"
+                maskUnits="userSpaceOnUse"
+                style="mask-type: alpha"
+              >
+                <image id="terrain-reveal-mask-image" x="0" y="0" width="4608" height="3072" />
+              </mask>
+            </defs>
+            <rect class="unmapped-ground" x="0" y="0" width="4608" height="3072" />
             <image
+              id="unknown-paper"
+              x="0"
+              y="0"
               width="4608"
               height="3072"
-              href="../../assets/art/world/porechye-atlas-v1/atlas-v6.png"
+              href="/assets/art/world/fog-paper-v1/unknown-paper.png"
+              preserveAspectRatio="none"
+              aria-hidden="true"
             />
+            <g id="map-tiles" mask="url(#known-terrain-reveal)" aria-hidden="true"></g>
+            <image id="knowledge-overlay" mask="url(#known-terrain-reveal)" aria-hidden="true" />
+            <path id="visible-frontier" aria-hidden="true" />
             <g id="site-markers" aria-label="Поселения и места интереса"></g>
             <path id="own-route" aria-hidden="true" />
             <g id="observed-groups" aria-hidden="true"></g>
             <g id="own-marker" class="group own" aria-label="Ваш отряд">
-              <circle class="marker-halo" r="20" />
-              <circle class="marker-inner" r="17" />
+              <circle class="marker-halo" r="16" />
+              <circle class="marker-inner" r="14" />
             </g>
           </svg>
         </div>

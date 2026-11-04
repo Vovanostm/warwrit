@@ -1,5 +1,24 @@
 # Historical delivery checkpoints
 
+## Gameplay-focused harness follow-up — 2026-11-04, PUBLISHED / REVIEW ACCEPT
+
+The coordinator, sole writer and check owner is the parent of the harness chat.
+Branch `codex/gameplay-focused-harness`, base `b89bed3e` (PR342 merged).
+Owner asks to apply the research so agents concentrate on finishing a playable,
+artistically coherent game. This continues the harness mission authorized for
+review, improvement, merge and local main update. Required review/CI still apply.
+Scope is root/role/skill context, existing failure feedback and focused regressions,
+research/evaluation guidance. The separately owned game worktree stays with its writer.
+For gameplay, the next result remains the normal-entry player journey recorded in
+AGENTS. Acceptance belongs to the existing game contract and its actual checks.
+[Research and application](research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+Existing shell fixtures and Node 3/3, syntax/format, TOML, links/anchors and diff PASS.
+Final independent infrastructure review ACCEPT. Gameplay/adherence/cost pilot
+NOT_RUN/NOT_MEASURED. [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343)
+provides live PR/CI and merge links. Use that receipt for delivery state.
+Continuation requires reviewed-head CI and expected-head merge, then local main.
+Deployment, purchases and restarting automation retain separate permission requirements.
+
 ## Agent harness cleanup — 2026-11-04, PUBLISHED / MERGE AUTHORIZED
 
 The coordinator, sole writer and check owner is the parent of the harness-cleanup chat.
@@ -30,6 +49,131 @@ and latest scope41906344940 SUCCESS. Local main fast-forwarded to that merge.
 Moved from CURRENT_PLAN on 2026-11-04. Entries below retain their original
 dates, permission scope and evidence limits. Consult a named entry when needed.
 Current work starts at [CURRENT_PLAN](CURRENT_PLAN.md).
+
+## Painted-atlas integration — 2026-11-04, LOCAL
+
+Author/integrator/validator is parent. Full-game objective remains ACTIVE.
+Current playable-cycle target is sign-in → company → contract → travel → combat →
+reward → care/payroll → next contract → server restart.
+The current step delivers the ordinary company-private painted atlas.
+Branch codex/game-painted-delivery has source commit d9c0f303 with normal hooks PASS.
+Resolved main5c2b3cd7 / PR340 integration preserves quick entry and actual-place binding.
+Apply the same stationary/revision guard to both painted and continuous maps.
+Integrated web/server types,15 affected tests and8 ordinary browser checkpoints PASS.
+Independent final SOURCE ACCEPT covers the resolved source and CI artifact retention.
+Integration audit PASS against target main5c2b3cd7. Normal merge commit is pending.
+[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29) owns implementation, checks and limits.
+Current map refs/coverage correction has web types/lint,8 browser checkpoints and audit PASS.
+Old and new gameplay evidence remains separate from full M1 acceptance.
+Existing PR334–339 are still open/conflicting at2026-11-04 readback. Reuse their work.
+At most two active worktrees. Combat in codex/game-painted-map stays preserved/frozen.
+Owner2026-10-30 prioritizes the complete playable path and final acceptance reviews.
+Detailed execution output belongs in output/ or CI artifacts.
+ROADMAP/PROMPTS in ~/learn/warwrit-roadmap remain proposals awaiting owner approval.
+[Combat reference](../wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30) owns the selected camera/grid.
+Temporary care profile is approved at difficulty5 for wound care and10 for stabilization.
+Original databases, saves, positions and unrelated WIP must be preserved.
+PR publication is authorized. Main merge/deploy/paid/Orca need current owner permission.
+Next action is integrated native verification, normal commit and map PR publication.
+
+## Dated integration history
+
+## Authoritative cartography implementation — 2026-10-28, LOCAL COMPLETE
+
+Parent author/integrator/sole validator; branch `codex/world-map-fog-design`, base `aa2ab35d`.
+Owner: “Implement with subagents”; separate approval refilled only test rations once.
+[Owning result](../wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28) · [Contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#cartography-implementation-activation--2026-10-28).
+Outcome: company charts/exploration/visits persist; server sight filters groups and masked map assets.
+Three isolated delegated slices integrated; parent owns final source/resources/docs/verification.
+Protocol world state v2/cartography v1; migration0018 retains sparse knowledge and immutable grants.
+Day/night/weather/terrain sight parameters are provisional lab rules, not accepted balance.
+Home chart and finite trusted grants work; merchant prices/payment UI and multi-region travel separate.
+Native movement/STOP/visit, privacy, camera, company isolation and actual API recovery PASS.
+Clean verify1222/stress10000/migration smoke PASS; SQL78 PASS + one fixed migration-list case rerun PASS.
+Third full visual ACCEPT (eight applicable criteria2); independent input replay NOT_RUN.
+Initial source/privacy review ACCEPT; final bounded refactor readback found no concrete defect.
+Final isolated SQL10/native9 + actual restart, related1007/71 skipped, types/lint/format and audit PASS.
+Persistent PostgreSQL65438/positions/discoveries retained; stand ports3038/3039/5338, legacy5326.
+No PR/merge/deploy/Orca/automation activation; production/MMO load/fun NOT_MEASURED.
+Source committed locally as `a2388f57`; normal commit hook/source-matched audit PASS, no bypass.
+Next: owner trial on5338; separately define merchant purchase flow and additional regions.
+
+## Dated history
+
+### Company cartographic storage — 2026-10-28, LOCAL PROPOSAL
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `21041651`.
+Owner: visited places enter the atlas; asks how personal map/fog/zones persist.
+[Owning proposal](../wiki/world/fog-of-war.md#предлагаемое-хранение--postgresql-и-знание-компании).
+Current source confirms PostgreSQL world/company boundaries; graph indexes another checkout.
+Shared geometry/map editions; company grants, sparse explored chunks, observed/visited places and region revisions.
+Charted, explored and visibleNow remain separate; live FOV is derived, not per-frame DB state.
+Visit discovery uses trusted world evidence; partial map grants do not unlock whole regions.
+Documentation format/local links/new anchor/scoped diff PASS.
+SQL/runtime/load NOT_RUN/NOT_MEASURED; storage remains a proposal.
+No new migrations/services, publication/merge/deploy/Orca/automation activation.
+Next: owner review of storage proposal, then one bounded server implementation slice.
+
+### Merchant chart meaning correction — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `4c3db3de`.
+Owner: merchant maps can contain the whole region, cities only, one location or other subsets.
+[Owning rule](../wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28).
+Corrected author misinterpretation of city maps as street plans in fog/map/quest wiki.
+Purchases enrich one company atlas; grants require actual content/coverage, not region IDs alone.
+Quest marker/verbal-clue policy unchanged; no runtime/gallery/economic edits.
+Markdown format/local links/scoped diff PASS; game/browser/SQL NOT_RUN for documentation.
+No publication/merge/deploy/Orca/automation activation.
+Next separate slice: server observation and cartographic knowledge with scoped grants.
+
+### City/place charts and quest clues — 2026-10-28, LOCAL DOCUMENTATION COMPLETE
+
+Sole author: parent; branch `codex/world-map-fog-design`, base `fe2d6b90`.
+Owner: maps exist for cities/additional places; quests mark a location or give verbal clues without a map point.
+[Owning rule](../wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28).
+Updated fog/map and quest wiki, with reciprocal navigation and dated authority.
+Verbal clues have no automatic search area or hidden coordinates; chart coverage is scoped.
+Home-region start, purchased maps, personal exploration and live observation stay distinct.
+Markdown format/local links/new anchors/scoped diff PASS.
+Game/browser/SQL NOT_RUN for documentation; no runtime/gallery changes.
+No publication/merge/deploy/Orca/automation activation.
+Next: implement server observation and company cartographic knowledge in a separate slice.
+
+### Company regional atlas — 2026-10-28, LOCAL COMPLETE
+
+Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`, base `7b6387a1`.
+Owner: initially only the company's home-region chart; other regions require maps or exploration.
+[Owning specification](../wiki/world/fog-of-war.md#уточнение-владельца--2026-10-28).
+Outcome: example09 names the home region and excludes unacquired regional towns.
+Scope: specification, illustrative region filter/labels, one regression and owning records.
+Chart knowledge, personal exploration and live sightings remain separate.
+No full-region reveal on border entry; purchased charts do not grant live vision.
+Current rules supersede the globally public atlas proposal; prices/trade details stay open.
+Seven model cases/types/lint/format,20 native states and source-checked audit PASS.
+Affected example09 independent visual ACCEPT, four criteria2; input replay NOT_RUN.
+No server/core/SQL or actual purchasing implementation.
+Persistent lab data preserved; no publication/merge/deploy/Orca/automation activation.
+Next separate slice: server observation and company regional knowledge/grants.
+
+### Fog of war design — 2026-10-27, LOCAL COMPLETE
+
+Sole author/integrator/validation owner: parent; branch `codex/world-map-fog-design`.
+Owner: server visibility, terrain/weather/light, public atlas and progressive exploration.
+DoD: specification and ten paired visual/executable-code examples, not full server rollout.
+[Owning specification](../wiki/world/fog-of-war.md) · [Existing map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md).
+Outcome: compare ten before/after scenarios in `/scripts/world-map/fog-design/index.html` on5338.
+Public strategic knowledge, explored terrain and current observation stay distinct.
+Private NPCs/POIs/assets must be filtered before delivery; a client overlay cannot protect them.
+Read live full WORLD/RC/lore Notes+Purpose and current source; graph indexes another checkout.
+Code-native synthetic schematic only; no new raster art or game/core/server/protocol/SQL changes.
+Six model cases/types/lint/architecture/format PASS;20 native states, metadata/keyboard/1050 PASS.
+First critic REJECT fixed source/age and terrain cues; full repeat ACCEPT, four criteria2.
+Actual source-checked browser/unit coverage and unchanged audit PASS; CSS advisories retained.
+Browser fixture differs from production; server/privacy/load/fun NOT_RUN/NOT_MEASURED.
+Persistent lab DB preserved; no GitHub publication/merge/deploy/Orca/automation permission.
+DoD complete for specification/examples; next separate slice: authoritative server observation/chunks.
+
+### Networked atlas PR delivery — 2026-10-27, MERGED
 
 # Warwrit current delivery plan
 

@@ -26,6 +26,7 @@ const page = await context.newPage();
 const errors = [];
 page.on('pageerror', (error) => errors.push(String(error)));
 const results = [];
+const authoringEntries = [];
 
 function response(path) {
   return page.waitForResponse(
@@ -35,26 +36,117 @@ function response(path) {
 async function state() {
   return page.evaluate(async () => (await fetch('/world-lab-api/world-lab/state')).json());
 }
+async function waitForFreshMap(target = page, afterSequence) {
+  await target.waitForFunction(
+    (previous) =>
+      globalThis.document.body.dataset.connection === 'live' &&
+      (previous === undefined ||
+        globalThis.document.querySelector('#world-sequence').textContent !== previous),
+    afterSequence,
+  );
+}
 async function rightClickMarker(selector) {
-  const at = await page.locator(selector).evaluate((marker) => {
-    const point = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
-    return { x: point.x, y: point.y };
-  });
+  const previous = await page.locator('#world-sequence').textContent();
+  const point = await page.waitForFunction(
+    ({ selector, previous }) => {
+      if (
+        globalThis.document.body.dataset.connection !== 'live' ||
+        globalThis.document.querySelector('#world-sequence').textContent === previous
+      )
+        return false;
+      const marker = globalThis.document.querySelector(selector);
+      if (!marker) return false;
+      const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
+      return { x: at.x, y: at.y };
+    },
+    { selector, previous },
+  );
+  const at = await point.jsonValue();
   await page.mouse.click(at.x, at.y, { button: 'right' });
+  await point.dispose();
+}
+async function rightClickMapPoint(x, y) {
+  const at = await page.evaluate(
+    ([mapX, mapY]) => {
+      const map = globalThis.document.querySelector('#map');
+      const point = new globalThis.DOMPoint(mapX, mapY).matrixTransform(map.getScreenCTM());
+      return { x: point.x, y: point.y };
+    },
+    [x, y],
+  );
+  const ready = await page.evaluate(
+    ({ x, y }) => ({
+      unobstructed: Boolean(globalThis.document.elementFromPoint(x, y)?.closest('#map')),
+      sequence: globalThis.document.querySelector('#world-sequence').textContent,
+    }),
+    at,
+  );
+  assert.ok(ready.unobstructed, 'movement point must be visible and unobstructed');
+  // A level can be almost expired. Start the native order at a newly received
+  // UI observation, after the coordinate IPCs, keeping the real freshness guard.
+  await waitForFreshMap(page, ready.sequence);
+  const accepted = response('movement');
+  await page.mouse.click(at.x, at.y, { button: 'right' });
+  return accepted;
 }
 async function stop() {
-  if (await page.locator('#stop').isDisabled()) return;
-  const accepted = response('movement');
   await page.locator('#map').focus();
-  await page.keyboard.press('Space');
-  assert.equal((await accepted).status(), 200);
-  await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
+  const previous = await page.locator('#world-sequence').textContent();
+  await waitForFreshMap(page, previous);
+  if (await page.locator('#stop').isDisabled()) {
+    const stopped = await state();
+    assert.notEqual(stopped.own.movement.mode, 'MOVING');
+    assert.equal(stopped.pursuit, null);
+    return;
+  }
+  const statuses = [];
+  const isStop = (reply) =>
+    reply.url().endsWith('/world-lab/movement') &&
+    reply.request().method() === 'POST' &&
+    reply.request().postDataJSON()?.action?.kind === 'STOP';
+  const record = (reply) => {
+    if (isStop(reply)) statuses.push(reply.status());
+  };
+  page.on('response', record);
+  try {
+    const accepted = page.waitForResponse((reply) => isStop(reply) && reply.status() === 200);
+    await page.keyboard.press('Space');
+    await accepted;
+    assert.ok(
+      JSON.stringify(statuses) === '[200]' || JSON.stringify(statuses) === '[409,200]',
+      `STOP must settle directly or through the existing one stale retry: ${statuses}`,
+    );
+    await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
+    const stopped = await state();
+    assert.notEqual(stopped.own.movement.mode, 'MOVING');
+    assert.equal(stopped.pursuit, null);
+  } finally {
+    page.off('response', record);
+  }
 }
 async function selectPlayer(target, slot) {
   await target.goto(url);
   await target.locator('[data-slot="company-a"]').waitFor();
+  let interruptedTile;
+  const recoveredTile = target.waitForResponse(
+    (reply) => reply.url() === interruptedTile && reply.status() === 200,
+  );
+  await target.route(
+    '**/world-lab-api/world-lab/map/**',
+    (route) => {
+      interruptedTile = route.request().url();
+      return route.abort('connectionfailed');
+    },
+    { times: 1 },
+  );
   await target.locator(`[data-slot="${slot}"]`).click();
-  await target.waitForFunction(() => globalThis.document.body.dataset.connection === 'live');
+  await recoveredTile;
+  assert.ok(interruptedTile, 'a real scoped tile request must have been interrupted and retried');
+  await waitForFreshMap(target);
+  await target.waitForFunction(() => {
+    const images = [...globalThis.document.querySelectorAll('#map-tiles image')];
+    return images.length > 0 && images.every((image) => image.getAttribute('opacity') === '1');
+  });
 }
 async function visit() {
   await page.locator('#fit').click();
@@ -109,16 +201,18 @@ async function cameraAndMovement() {
   await page.mouse.wheel(0, -150);
   await page.waitForTimeout(800);
   assert.equal(await page.locator('#follow-own').isChecked(), true);
-  const at = await page.evaluate(() => {
-    const point = new globalThis.DOMPoint(1850, 1244).matrixTransform(
-      globalThis.document.querySelector('#map').getScreenCTM(),
-    );
-    return { x: point.x, y: point.y };
+  const target = await page.evaluate(() => {
+    const map = globalThis.document.querySelector('#map');
+    const own = globalThis.document.querySelector('#own-marker');
+    const point = new globalThis.DOMPoint(0, 0)
+      .matrixTransform(own.getScreenCTM())
+      .matrixTransform(map.getScreenCTM().inverse());
+    const width = map.viewBox.baseVal.width;
+    return { x: point.x + Math.min(26, width * 0.18), y: point.y };
   });
   const before = (await state()).own.movement.point;
-  const accepted = response('movement');
-  await page.mouse.click(at.x, at.y, { button: 'right' });
-  assert.equal((await accepted).status(), 200);
+  const accepted = await rightClickMapPoint(target.x, target.y);
+  assert.equal(accepted.status(), 200);
   await page.waitForTimeout(1000);
   assert.notDeepEqual((await state()).own.movement.point, before);
   await stop();
@@ -132,11 +226,31 @@ async function cameraAndMovement() {
   await page.screenshot({ path: resolve(output, 'map.png') });
   results.push('ground movement, STOP, checkbox WASD, follow, zoom, drag and resize');
 }
+function movingThreats(observed) {
+  return observed.groups.filter((group) => group.pursuable && group.state === 'MOVING');
+}
+async function approachMovingThreat(observed) {
+  // This midpoint belongs to a public home-charted road, not an NPC position.
+  const before = observed.own.movement.point;
+  const accepted = await rightClickMapPoint(1654, 1229);
+  assert.equal(accepted.status(), 200);
+  const deadline = Date.now() + 45000;
+  while (Date.now() < deadline) {
+    const current = await state();
+    const progressed =
+      current.own.movement.point.xMicroFp !== before.xMicroFp ||
+      current.own.movement.point.zMicroFp !== before.zMicroFp;
+    if (progressed && movingThreats(current).length) return current;
+    await page.waitForTimeout(300);
+  }
+  assert.fail('Actual travel must reveal an observed moving threat');
+}
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
-  const observed = await state();
+  let observed = await state();
+  if (!movingThreats(observed).length) observed = await approachMovingThreat(observed);
+  const targets = movingThreats(observed);
   const point = observed.own.movement.point;
-  const targets = observed.groups.filter((group) => group.pursuable && group.state === 'MOVING');
   targets.sort(
     (a, b) =>
       Math.hypot(
@@ -159,7 +273,19 @@ async function pursuitAndRetry() {
     if (reply.url().endsWith('/world-lab/movement') && reply.request().method() === 'POST')
       statuses.push(reply.status());
   };
+  const details = [];
+  const recordDetails = (reply) => {
+    if (reply.url().endsWith('/world-lab/movement') && reply.request().method() === 'POST')
+      details.push(
+        reply.json().then((body) => ({
+          status: reply.status(),
+          request: reply.request().postDataJSON(),
+          body,
+        })),
+      );
+  };
   page.on('response', record);
+  page.on('response', recordDetails);
   // Delay one actual STOP until the real worker advances its epoch; no forged reply.
   await page.route(
     '**/world-lab/movement',
@@ -176,21 +302,33 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
+  await page.locator('#map').focus();
+  const beforeStop = await page.locator('#world-sequence').textContent();
+  await waitForFreshMap(page, beforeStop);
   const stopped = page.waitForResponse(
     (reply) => reply.url().endsWith('/world-lab/movement') && reply.status() === 200,
   );
-  await page.locator('#map').focus();
   await page.keyboard.press('Space');
-  await stopped;
-  page.off('response', record);
+  try {
+    await stopped;
+  } finally {
+    page.off('response', record);
+    page.off('response', recordDetails);
+    await writeFile(
+      resolve(output, 'pursuit-stop-responses.json'),
+      JSON.stringify(await Promise.all(details), null, 2),
+    );
+  }
   assert.deepEqual(statuses, [409, 200]);
   assert.equal((await state()).pursuit, null);
   results.push('observed-threat pursuit and actual stale STOP409/retry200');
 }
 async function legacyControls() {
   const legacy = await context.newPage();
+  legacy.on('pageerror', (error) => errors.push(String(error)));
+  await legacy.coverage.startJSCoverage({ resetOnNavigation: false });
   try {
-    await legacy.goto('http://127.0.0.1:5338/scripts/world-map/navigation-lab.html?map=atlas');
+    await legacy.goto('http://127.0.0.1:5326/scripts/world-map/navigation-lab.html?map=atlas');
     await legacy.locator('#night').waitFor();
     await legacy.mouse.move(700, 420);
     await legacy.mouse.wheel(0, -500);
@@ -202,7 +340,22 @@ async function legacyControls() {
     await legacy.keyboard.up('KeyD');
     assert.notEqual(await legacy.locator('#map').getAttribute('viewBox'), before);
     results.push('legacy atlas checkbox-focused WASD');
+    // Preserve the existing documented examples as an authoring UI only.
+    await legacy.goto('http://127.0.0.1:5326/scripts/world-map/fog-design/index.html');
+    const examples = legacy.locator('#examples button');
+    await examples.first().waitFor();
+    assert.equal(await examples.count(), 10);
+    for (let index = 0; index < 10; index += 1) {
+      await examples.nth(index).click();
+      assert.equal(await examples.nth(index).getAttribute('aria-pressed'), 'true');
+      assert.ok((await legacy.locator('#map').getAttribute('aria-label'))?.length > 0);
+      await legacy.locator('#after').click();
+      assert.equal(await legacy.locator('#after').getAttribute('aria-pressed'), 'true');
+      assert.ok((await legacy.locator('#result').innerText()).length > 0);
+    }
+    results.push('retained ten authoring examples render before and after');
   } finally {
+    authoringEntries.push(...(await legacy.coverage.stopJSCoverage()));
     await legacy.close();
   }
 }
@@ -238,6 +391,21 @@ async function reconnect() {
 await page.coverage.startJSCoverage({ resetOnNavigation: false });
 try {
   await selectPlayer(page, 'company-a');
+  for (const path of [
+    '/assets/art/world/porechye-atlas-v1/atlas-v6.png',
+    '/scripts/world-map/navigation-lab.html',
+    '/scripts/world-map/navigation-maps.ts',
+    '/bad%encoding',
+  ]) {
+    const denied = await page.request.get(`http://127.0.0.1:5338${path}`);
+    assert.equal(
+      denied.status(),
+      404,
+      'private world origin must deny authored source and malformed paths',
+    );
+  }
+  results.push('private world origin denies full atlas, authoring files and malformed paths');
+
   const otherContext = await browser.newContext();
   try {
     await selectPlayer(await otherContext.newPage(), 'company-b');
@@ -258,8 +426,23 @@ try {
   } finally {
     await otherContext.close();
   }
+} catch (error) {
+  await page.screenshot({ path: resolve(output, 'failed-map.png') });
+  await writeFile(
+    resolve(output, 'failure-ui.json'),
+    JSON.stringify(
+      await page.evaluate(() => ({
+        connection: globalThis.document.body.dataset.connection,
+        message: globalThis.document.querySelector('#client-message')?.textContent,
+        viewport: globalThis.document.querySelector('#map')?.getAttribute('viewBox'),
+      })),
+      null,
+      2,
+    ),
+  );
+  throw error;
 } finally {
-  const entries = (await page.coverage.stopJSCoverage()).filter((entry) =>
+  const entries = [...(await page.coverage.stopJSCoverage()), ...authoringEntries].filter((entry) =>
     entry.url.includes('/scripts/world-map/'),
   );
   await writeFile(resolve(output, 'browser.json'), JSON.stringify({ entries }));

@@ -1,24 +1,29 @@
 # Warwrit current delivery plan
 
-## Gameplay-focused harness follow-up — 2026-11-04, PUBLISHED / REVIEW ACCEPT
+## Painted-atlas delivery — 2026-11-05, PUBLISHED / MAIN INTEGRATION
 
-The coordinator, sole writer and check owner is the parent of the harness chat.
-Branch `codex/gameplay-focused-harness`, base `b89bed3e` (PR342 merged).
-Owner asks to apply the research so agents concentrate on finishing a playable,
-artistically coherent game. This continues the harness mission authorized for
-review, improvement, merge and local main update. Required review/CI still apply.
-Scope is root/role/skill context, existing failure feedback and focused regressions,
-research/evaluation guidance. The separately owned game worktree stays with its writer.
-For gameplay, the next result remains the normal-entry player journey recorded in
-AGENTS. Acceptance belongs to the existing game contract and its actual checks.
-[Research and application](research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
-Existing shell fixtures and Node 3/3, syntax/format, TOML, links/anchors and diff PASS.
-Final independent infrastructure review ACCEPT. Gameplay/adherence/cost pilot
-NOT_RUN/NOT_MEASURED. [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343)
-provides live PR/CI and merge links. Use that receipt for delivery state.
-Continuation requires reviewed-head CI and expected-head merge, then local main.
-Deployment, purchases and restarting automation retain separate permission requirements.
+Coordinator, sole writer, integrator and validation owner is this chat's parent.
+Full-game objective remains ACTIVE. The finite target is sign-in → company →
+contract → travel → combat → reward → care/payroll → next contract → restart.
+This step delivers the ordinary company-private painted atlas.
+Branch `codex/game-painted-delivery`; [PR344](https://github.com/Vovanostm/warwrit/pull/344) published head`2a63e830`, scope PASS.
+Main`e31c5a56` / PR345 is being integrated; both histories are retained.
+[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29) owns checks and limits.
+CI41918700198 at2a63e830 PASS, including ordinary game, world lab and quality audit.
+1237unit/93SKIP,10000stress,83SQL PASS; map previews uploaded to CI artifacts.
+The later main merge changes documentation/harness only; game source stays unchanged.
+Final affected source review ACCEPT; merged-head CI is pending.
+Retained trial is http://127.0.0.1:5228 with its own preview database and quick entry.
+Original campaigns, saves and parked WIP remain preserved. At most two active writing worktrees.
+Combat stays parked in codex/game-painted-map; [selected reference](../wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30) remains authoritative.
+Temporary care difficulty is approved at5 for wound care and10 for stabilization.
+PR334–339 remain open. Reuse their source after this map delivery.
+ROADMAP/PROMPTS in ~/learn/warwrit-roadmap remain proposals awaiting approval.
+PR publication is authorized. Main merge/deploy/paid/Orca need current owner permission.
+Next action is publish main integration, monitor CI and obtain main-merge permission.
 
 ## History
 
-[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated decisions/results.
+[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated results and limits.
+Read only the entry needed for the current question. Historical permission belongs
+to its original task. Detailed execution output stays in ignored output/ or CI artifacts.

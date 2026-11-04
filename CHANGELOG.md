@@ -19,7 +19,9 @@ requests.
   drops the unrelated worktree inventory, retaining checkout/dirty visibility.
   Existing isolated Node regressions 4/4, Bash syntax, scoped lint/format and diff
   PASS. Independent frozen-head source readback found no findings at `a6890305`.
-  Candidate remains local. Native session reload, gameplay throughput
+  Integrated main `ee03f4ee`, preserving its CURRENT_PLAN and both changelog entries.
+  [Delivery issue346](https://github.com/Vovanostm/warwrit/issues/346) owns PR/CI/merge
+  status. Native session reload, gameplay throughput
   and cost effects NOT_RUN/NOT_MEASURED.
   [Owning follow-up](docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
 
@@ -34,6 +36,330 @@ requests.
   Analysis is observational. Controlled efficiency/cost and whole-game acceptance
   remain unmeasured. Source/CI readback, scoped documentation formatting, current
   plan validation and diff checks PASS. Game tests NOT_RUN for this documentation.
+
+### Preserve the green atlas while integrating current agent guidance
+
+- 2026-11-05, `codex/game-painted-delivery`, local integration of main`e31c5a56`
+  / PR345 into published [PR344](https://github.com/Vovanostm/warwrit/pull/344).
+  Prior head`2a63e830` passed CI41918700198, scope and both browser journeys;
+  screenshots and journey summaries are retained in CI. Resolve documentation
+  conflicts, keep both histories and retain main's harness checks. Game source
+  is unchanged. [Acceptance and current limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
+### Give isolated Dex storage its pinned process owner
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). CI41914938844 reached
+  the ordinary browser launcher, where root-owned tmpfs prevented Dex SQLite
+  startup. Set that private mount's UID/GID1001 and mode0700. Matched Docker
+  failure/readiness probes, shell syntax and source review PASS.
+  [Current checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
+### Keep camera types independent of authored navigation
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). CI41913320457 exposed
+  a clean-build race through the camera's Pixel type. Move that unchanged type
+  to the shared camera and retain the navigation re-export. Source review ACCEPT.
+  Web types/compiler inputs,3camera checks and scoped lint/format PASS.
+  [Checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
+### Resolve Vite URL assets in architecture checks
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). Resolve trailing `?url`
+  before normal asset lookup after CI41912100206 stopped on the paper import.
+  Positive and missing-asset probes, scoped lint/format and source review PASS.
+  [Current gate limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
+### Close the paused painted-map integration
+
+- 2026-11-04, `codex/game-painted-delivery` (local). Give the map's DOM,
+  camera and cartography references one stable lifecycle owner. Save browser
+  measurements before reload so the executed context-menu order is retained.
+  The ordinary OIDC/company/map/MOVE_TO/STOP/reload journey, web types and scoped
+  lint passed. The changed-file audit passed with zero introduced dead-code,
+  complexity or duplication findings. Existing CSS advisories remain.
+  Source committed as `d9c0f303` with normal hooks. The candidate now integrates main5c2b3cd7 and applies PR340's arrival
+  revision guard to painted maps. Web/server types,15 focused tests,8 ordinary
+  browser checkpoints and the integration audit passed. Independent source
+  review accepted the resolved source and CI artifact step. The workflow keeps
+  journey JSON and screenshots for7days. Upload execution awaits PR CI.
+  Normal integration committed as `7903a587`. Its audit passed after separately
+  measuring the existing observation suite7PASS. The old hook's editor-test
+  failure remains recorded; isolated V8 rerun has15PASS/3timeouts.
+  A second normal merge includes main`b89bed3e` / PR342 with its explicit checks
+  and concise current plan, retaining both histories. Game production source
+  is unchanged by that second merge, saved as`0d52c37b`. Final affected source
+  review accepted CI/history integration. Ordinary editor rerun18/18PASS; V8
+  failure remains recorded. Current-head hosted CI is pending.
+  A separate retained preview on5228 opens a company on the painted atlas in
+  the owner's browser, using a new database and preserving prior campaigns.
+  The original campaign databases are preserved. [Delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
+### Focus delivery on one campaign journey
+
+- 2026-10-30, `codex/game-painted-delivery`, local: apply the owner's delivery
+  reset: one finite browser journey, at most two active worktrees, finished-step
+  commits, final acceptance reviews and execution output in CI/local artifacts.
+  Pause visual expansion and reuse PR334–339 rather than rebuilding their work.
+  Live queue readback found all six conflicting with main5c2b3cd7; their successful
+  checks precede that integration. No merge permission is inferred.
+  [Current scope and next action](docs/engineering/CURRENT_PLAN.md).
+  Internal pursuit moves reuse their already locked observation, avoiding a
+  second state settlement; submitted revisions and core guards are unchanged.
+  Server types/lint, actual PostgreSQL pursuit6/6 and world/ordinary browser
+  journeys PASS. Source-checked Vite measurement uses the module runner.
+  First normal commit refused one unused export (removed); its V8 run failed
+  three files, whose same23checks then passed alone. Coverage mode now uses one
+  worker with unchanged tests/deadlines; ordinary mode retains two. The next
+  hook has no failed test files; audit retained one map-component finding.
+  Route presentation and cartography refresh now have separate owners. Static
+  paper import avoids a measured Vite dev source-map shift from multiline
+  new-URL rewriting. Position probe, web types/lint and current ordinary
+  browser PASS; normal audit/commit pending.
+
+### Keep atlas authoring separate from private game origins
+
+- 2026-10-30, `codex/game-painted-delivery`, local: restore `dev:map` and the
+  legacy-control CI journey on dedicated loopback5326, with no campaign API
+  proxy. Private5338/5228 file guards remain intact. Captured authoring process
+  joins owned cleanup/readiness and actual coverage. Full world journey now
+  PASS, including real pursuit/STOP409→200 and legacy controls, zero pageerrors;
+  347+2current runtime scripts merged with currentSQL82/migration evidence.
+  Infrastructure/driver source ACCEPT; syntax/lint PASS. [Result and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#full-world-journey-and-authoring-origin-separation--2026-10-30).
+  Current ordinary browser8checkpoints/zero pageerrors/313actual scripts also PASS.
+  Normal audit/commit/PR and new main5c2b3cd7 integration pending.
+  No main merge/deploy/paid/Orca.
+
+### Validate STOP before its own arrival settlement
+
+- 2026-10-30, `codex/game-painted-delivery`, local: remove STOP's unnecessary
+  cartography/state pre-read that could settle arrival and self-reject its valid
+  revision. Core checks, ownership/pursuit token, replay and atomic cancellation
+  remain. Independent source ACCEPT; actual exact-arrival regression PASS,
+  current measured SQL82PASS and migration smoke PASS; types/lint PASS.
+  Driver fresh-marker/STOP synchronization and actual response diagnostics
+  source ACCEPT; latest browser/audit/commit/PR pending. [Owning result](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#stop-arrival-boundary-correction--2026-10-30).
+  This source delta remains in delivery candidate; parent transfer pending.
+  No main merge, deployment, paid provisioning or Orca.
+
+### Закрепить выбранную камеру и сетку боя в геймдизайне
+
+- 2026-10-30, ветка `codex/game-painted-map`, local: владелец повторно выбрал
+  кадр высотной пробы и уточнил, что FoV означает перспективу камеры.
+  В существующем [владельце боя](docs/wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30)
+  закреплены ортографические «ровные ряды», тонкая сетка на поверхности,
+  выраженные уступы, подписи уровня/перепада и проверяемая приёмка переноса.
+  Vision ссылается на этот единственный подробный контракт; прежние решения
+  сохранены с датированной поправкой. Открытый бой пока не соответствует
+  эталону; перенос и игровая приёмка NOT_RUN. Только документация,
+  игровых/SQL проверок для неё не запускали; main merge/deploy не выполнялись.
+
+### Preserve one observation time across concurrent world updates
+
+- 2026-10-30, branch `codex/game-painted-delivery`, local: fix actual world-lab
+  visit500 caused by loading a newly committed NPC plan after sampling own time.
+  Capture NPC/other-player inputs first; retain one own timestamp, STOP ordering
+  and fixed-past rejection. Independent source ACCEPT, actual separate-pool
+  regression1PASS, complete measured SQL81PASS and migration smoke PASS; server
+  types/scoped lint PASS. Retain earlier failed wrapper and browser attempts;
+  current browser/normal audit/commit/PR pending. [Owning correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
+  Source correction mirrored into the unfinished parent combat tree; original
+  databases preserved. No main merge, deployment, paid provisioning or Orca.
+
+### Preserve legacy navigation startup warmup
+
+- 2026-10-30, branch `codex/game-painted-delivery`, local correction: deleting
+  the unused field binding also removed its original cache warmup. Serialized
+  measurement still timed out4early cases; actual probe1919.78ms cold vs0.0027ms
+  cached. Restore the same startup call without the unused binding, retaining
+  the shared field owner and all command/coordinate rules. Same6previously timed
+  out SQL cases now V8PASS with the unchanged5000ms deadline; complete80rerun
+  active, previous full wrapper remainsFAIL. [Correction/evidence](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
+  No quality baseline/timeout change, commit/main merge/deployment yet.
+
+### Validate the painted-map candidate and isolate measured SQL files
+
+- 2026-10-30, branch `codex/game-painted-delivery`, local: current verify1229/90SKIP
+  and combat stress10000 PASS. Measured SQL78PASS/2timeouts kept full bootstrap
+  FAIL; same2cases under V8 passed in isolation. Coverage mode now serializes
+  test files while preserving5000ms deadlines and each scenario's competing
+  connections; independent source ACCEPT, full80case rerun active. Browser
+  driver belongs to root tools (`scripts/world-map/painted-game.browser.mjs`),
+  with existing root dev dependency. No new dependency or audit/timeout weakening.
+  [Actual checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
+  Current runtime/quality closeout and normal commit/PR pending. No main merge,
+  deploy, paid provisioning or Orca activation.
+
+### Prepare an independent painted-map delivery
+
+- 2026-10-29, branch `codex/game-painted-delivery`, local: preserve unfinished
+  combat in its source tree and prepare the accepted ordinary painted map as
+  one cohesive candidate. Reconcile fog974a87e1 with current main48d8a2ae and
+  accepted map refinements; retain old company saves and existing stands.
+  Add an isolated ordinary-game browser/Node measurement path to PR CI, using
+  actual OIDC, commands and scoped tiles. Current1003unit/72SKIP, web/server
+  types/scoped lint and strict ordinary browser8checkpoints PASS;304actual runtime
+  scripts merged, pageerrors0. Infrastructure source ACCEPT; retained failed
+  setup/script attempts recorded. Normal audit/commit/current clean gate pending;
+  no audit suppression or threshold change.
+  [Delivery boundary and checks](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  Combat remains locally REJECT/BLOCKED, documented in its existing owner page;
+  earlier combined-branch entries below describe that separate source history.
+  No main merge, deployment, paid provisioning or Orca activation.
+
+### Accept the painted map and exercise the ordinary battle-to-payment path
+
+- 2026-10-29, branch `codex/game-painted-map`, local integration under the owner
+  map/combat/wiki request. Full repeated map visual ACCEPT (all applicable2),
+  unchangedv6 geography. Share immutable navigation field to remove duplicate
+  compilation; same5s instrumented ordinary case and all15world SQL checks PASS.
+  Restore observed female identity in ordinary combat, add matching spear art,
+  preserve XYWH bounds and correct automatic camera framing. Bridge source
+  ACCEPT;20focused combat checks/2actualPG company tests and latest18framing
+  checks/types PASS. One ordinary HUNT02 now reaches round5victory, physical
+  trophy,80crown payment and reload880 with3survivors. Fresh combat art/captures
+  await full visual acceptance; required height/largecreature cases pending.
+  [Map result](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-map-acceptance-and-ordinary-combat-handoff--2026-10-29)
+  and [battle result/limits](docs/wiki/battlefield-test-maps.md#ordinary-battle-integration-checkpoint--2026-10-29).
+  Prior failed/blocked passes and QA losses preserved. Normal audit/commit/PR,
+  final current clean gate pending; no main merge/deploy/paid/Orca activation.
+
+### Exercise and refine the ordinary painted-map journey
+
+- 2026-10-29, branch `codex/game-painted-map`, local: explicit owner-approved
+  fixture login enabled normal company/travel/STOP/arrival/reload/place checks
+  and controlled API restart with exact accepted-goal recovery. Fix tile-edge404,
+  shared known bounds and own-marker click interception;42336cell/14m pixel
+  comparison PASS. First full visual REJECT for square fog edges; inward-only
+  cached reveal and privacy invariant added, current visual acceptance pending.
+  Corrected clean bootstrap1228/stress10000/actualPG80 PASS predates the later
+  UI refinements. Extra instrumented runs have retained timeouts, quality audit
+  still FAIL, no bypass/commit/PR. [Detailed result and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#native-ordinary-journey-and-refinement--2026-10-29).
+  M1§17 and local playtest now distinguish current gaps, separate open PRs and
+  actual ordinary controls from historical claims/reset instructions. No main
+  merge/deployment/paid/Orca activation.
+
+### Integrate painted map with ordinary company authentication
+
+- 2026-10-29, branch `codex/game-painted-map`, local source implementation,
+  player acceptance pending. Reuse v6 plus existing cartography in the ordinary
+  shell and one server-selected atlas world; keep legacy saves/routes unchanged.
+  Private scoped raster/knowledge, exact retry and mill alias authority tested
+  with actual PostgreSQL1 PASS; source reviews ACCEPT after six client fixes
+  and one backend bypass fix. Types/lint and relevant9/30 checks PASS.
+  [Results, failures and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-integration-checkpoint--2026-10-29).
+  Unified existing vision/map/fog/combat/quest wiki owners. Native login awaits
+  explicit fixture permission after auto-review rejection; no visual/game
+  completion, PR/main merge/deployment.
+
+### Activate painted atlas in ordinary game
+
+- 2026-10-29, branch `codex/game-painted-map`, local integration under owner's
+  map/combat/wiki request. Reuse current main's v6/roads and existing local fog
+  implementation, preserving both branch histories.
+  [Active result boundary](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-game-painted-map-activation--2026-10-29):
+  ordinary login/company/map/move/reload, one region/cartography owner, old
+  coordinates/routes retained. Implementation and acceptance pending; no main
+  merge, publication or deployment yet.
+
+### Authoritative company cartography in the shared-world lab
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local implementation:
+  owner requested implementation with subagents. Added migration0018 for frozen
+  chart editions/grants, company exploration chunks, place observations and
+  progression cursors. Server sight uses authored terrain and a provisional
+  immutable light/weather profile. HTTP/realtime omit hidden groups; movement
+  rejects unknown routes uniformly and explicit reachable entry records visits.
+  The world client loads authenticated, byte-masked PNG tiles and lawful sites;
+  its Vite origin denies private source/raw artwork. Unknown terrain has an
+  opaque non-geographic surface; chart knowledge, exploration and live sight
+  remain distinct. [Owning result](docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+  Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS and the
+  one outdated migration-list case fixed and separately PASS. Native privacy,
+  movement/visit/input/session and real API recovery PASS. Third full visual
+  ACCEPT (eight criteria2); initial source/privacy review ACCEPT. Final quality
+  refactor: isolated SQL10/native9 + actual restart, related1007/71 skipped,
+  types/lint/format and unchanged source-matched audit PASS. Bounded source
+  readback found no concrete defect; no thresholds or suppressions changed.
+  Local source commit `a2388f57`, normal hook/audit PASS without bypass.
+  Existing persistent lab data retained. No merchant pricing/payment UI,
+  production rollout, PR/merge, Orca or automation activation; load/fun NOT_MEASURED.
+
+### Personal cartographic persistence proposal
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local documentation:
+  owner confirmed visit-based place discovery and asked how personal map/fog
+  knowledge should persist. [Owning proposal](docs/wiki/world/fog-of-war.md#предлагаемое-хранение--postgresql-и-знание-компании)
+  specifies one shared world, company-scoped immutable map grants, sparse
+  exploration bitmaps, observed/visited-place evidence and region revisions.
+  Live FOV remains server-derived; purchases preserve their actual information
+  coverage. Reviewed current PostgreSQL/world knowledge seams; no schema/runtime
+  mutation. Markdown format/local links/new anchor/scoped diff PASS;
+  SQL/game/browser/load NOT_RUN/NOT_MEASURED.
+
+### Merchant chart content correction
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local documentation:
+  corrected the author's mistaken city-street-plan interpretation. Owner means
+  merchant maps with different information coverage: a whole region, cities
+  only, one location or another stated subset, all enriching the company atlas.
+  [Owning rule](docs/wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28)
+  now requires per-map content/coverage grants rather than region IDs alone.
+  Wiki only; Markdown format/local links/scoped diff PASS. Runtime/purchasing
+  unchanged; game/browser/SQL NOT_RUN.
+
+### City/place charts and quest location clues
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local wiki update: owner
+  added city and individual-place maps, and distinguished explicit quest marks
+  from approximate verbal directions without a map point. The [owning rule](docs/wiki/world/fog-of-war.md#карты-городов-мест-и-квестовые-наводки--решение-владельца-2026-10-28)
+  and quest wiki preserve chart coverage and live-visibility boundaries; verbal
+  clues do not automatically gain a search area or hidden coordinate payload.
+  Documentation only; Markdown format/local links/new anchors/scoped diff PASS. Game/browser/SQL
+  NOT_RUN; runtime and existing quest cards unchanged.
+
+### Company home-region atlas
+
+- 2026-10-28, branch `codex/world-map-fog-design`, local: owner clarified that
+  a company starts with its home-region chart only. Further regional maps must
+  be acquired or land explored personally. Updated the [owning specification](docs/wiki/world/fog-of-war.md),
+  example09 labels and chart projection, excluding towns of unacquired regions.
+  Map ownership, personal exploration and live observation stay separate;
+  economic/server implementation and prices remain outside this design correction.
+  Seven model cases/types/lint/format,20 native states and source-checked audit
+  PASS; affected example09 visual ACCEPT (four criteria2). Independent input
+  replay and production regional-map purchasing/privacy NOT_RUN.
+
+### Fog of war design and examples
+
+- 2026-10-27, branch `codex/world-map-fog-design`, local: owner requested a
+  specification and ten visual/code examples for authoritative sight, public map
+  knowledge and gradual exploration. Added an isolated synthetic before/after
+  gallery with real optical examples, remembered terrain, last-seen pursuit,
+  approximate rumours, overview and paired-hidden-world projection. The
+  [owning specification](docs/wiki/world/fog-of-war.md) records game references,
+  current source seams, authenticated map assets, transport/route privacy and
+  server implementation acceptance. Six model cases, types/lint/architecture,20
+  native states, metadata/keyboard/1050 and source-checked audit PASS. First visual
+  REJECT fixed source/age and terrain cues; full repeat ACCEPT, four criteria2.
+  No production server/core/SQL or
+  public-map behavior changes; server fog/load/fun NOT_RUN/NOT_MEASURED.
+
+### Networked atlas merged
+
+- 2026-10-27, branch `codex/world-map-mmo-design`, merged in
+  [PR330](https://github.com/Vovanostm/warwrit/pull/330) as `5ecb4eb3` from
+  expected head `74e4a584`. Includes the networked lab, observed pursuit,
+  icons/labels, own camera and migrations0015–0017. Independent exact-head
+  integration/infrastructure ACCEPT; CI40557403570 and latest scope40560485057
+  SUCCESS, no blocking reviews/threads. Merged/checked trees match; local main
+  and origin/main read back at `5ecb4eb3`, primary WIP preserved. CI fixed missing
+  SQL/browser measurements without changing thresholds; first failed run retained
+  below. Earlier local/pending source statuses are superseded by this delivery.
+  This documentation readback is local; no deployment/automation.
+  [Owning result](docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
 
 ### Gameplay-focused agent harness
 

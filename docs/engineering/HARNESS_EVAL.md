@@ -34,7 +34,11 @@ updated-base state. It also checks
 that the default output omits the full worktree inventory. Local Node 4/4, Bash
 syntax, scoped ESLint/format and diff checks PASS. Independent frozen-head
 static readback found no findings at `a6890305`. The reviewer also confirmed
-PR344 merge/CI through GitHub. This patch remains local.
+PR344 merge/CI through GitHub. The candidate is integrated with main `ee03f4ee`
+and preserves its CURRENT_PLAN content exactly. The ordinary CHANGELOG conflict
+retained both writers' entries. Four regressions and scoped checks passed again.
+[Delivery issue346](https://github.com/Vovanostm/warwrit/issues/346) owns PR/CI and
+merge status for this continued harness mission.
 The run changes were tested with isolated local Git fixtures. Native Codex/Claude
 session reload and improved gameplay throughput remain NOT_RUN/NOT_MEASURED.
 The active game writer still owns its launch scripts and delivery. Startup-log

@@ -55,12 +55,17 @@ function reconcileFunctions(coverage) {
 function localUrl(value) {
   const url = new URL(value);
   if (url.protocol === 'file:') return url;
-  if (!['http://127.0.0.1:5338', 'http://127.0.0.1:5326'].includes(url.origin))
+  if (
+    !['http://127.0.0.1:5338', 'http://127.0.0.1:5326', 'http://127.0.0.1:5228'].includes(
+      url.origin,
+    )
+  )
     throw Error('Foreign runtime coverage origin');
   const path = decodeURIComponent(url.pathname);
   if (path.startsWith(root)) return pathToFileURL(path);
   if (path.startsWith('/@fs/')) return pathToFileURL(path.slice(4));
-  return pathToFileURL(resolve(root, `.${path}`));
+  const clientRoot = url.origin === 'http://127.0.0.1:5228' ? resolve(root, 'apps/web') : root;
+  return pathToFileURL(resolve(clientRoot, `.${path}`));
 }
 async function readMap(entry) {
   const marker = entry.text.match(/\/\/# sourceMappingURL=(\S+)/u)?.[1];
@@ -80,8 +85,11 @@ async function originalContent(content, source, frozenBeforeMs) {
 async function checkSources(map, base, frozenBeforeMs) {
   if (!map) return;
   map.sourcesContent ??= [];
+  const sourceBase = map.sourceRoot
+    ? new URL(`${map.sourceRoot.replace(/\/$/u, '')}/`, base)
+    : new URL(base);
   for (const [index, source] of map.sources.entries()) {
-    const url = localUrl(new URL(source, base).href);
+    const url = localUrl(new URL(source, sourceBase).href);
     const path = fileURLToPath(url);
     if (!path.startsWith(root)) continue;
     const original = await originalContent(map.sourcesContent[index], path, frozenBeforeMs);
