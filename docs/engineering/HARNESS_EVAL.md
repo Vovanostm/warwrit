@@ -1,5 +1,86 @@
 # Harness evaluation
 
+## Task-quality assessment — 2026-11-05
+
+Use this section for a defined harness evaluation. Record findings in the existing
+slice contract or this page. The [research record](research/AGENT_TEAM_RESEARCH.md#task-quality-evaluation-research--2026-11-05)
+contains the primary sources and their limits.
+
+### Outcome, evidence and effort
+
+Judge the assigned result against its accepted contract and affected revision.
+Keep critical criteria separate so that speed or presentation cannot compensate
+for incorrect state, an authority violation or unsupported completion claims.
+
+| Dimension                   | Evidence to inspect                                                                                                                                              |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Requested outcome           | Player action through the normal entry, visible response and saved effect where applicable. Keep passed substeps and the next failing step visible.              |
+| Correctness and regressions | Applicable invariants and the previously working affected path, using the smallest public-boundary checks.                                                       |
+| Evidence validity           | Actual scenario, environment, revision and result. Distinguish source review, SQL execution, browser journey and independent acceptance.                         |
+| Player quality              | Applicable journey and visual critic findings. Owner/player observations establish comprehension and enjoyment. Automated success alone leaves these unmeasured. |
+| Rework                      | First submitted result versus eventual acceptance, with material correction causes. Failed setup, broken check and product defect have different repair owners.  |
+| Effort                      | Elapsed start-to-acceptance, review/correction work and available parent/child usage. Separate waiting and concurrent worker effort when available.              |
+
+Use the same acceptance boundary for both variants. Separate cases used to tune
+instructions from held-out cases used to estimate benefit. Retain failed, abandoned and
+unfinished assignments in the comparison with their observed effort and status.
+Report the preselected task count, accepted count and unaccepted count alongside
+costs. A cost-per-accepted-result calculation includes observed effort across all
+assigned attempts and states the observation cutoff. Separate first-submission
+acceptance from eventual acceptance. Repaired iterations remain one task attempt.
+Repeated isolated agent trials can measure reliability. SQL request retries test
+application idempotency. Keep these observations distinct.
+
+### Validate the evaluator when its result is disputed
+
+Map each disputed assertion to an accepted requirement. Check that setup reaches
+the intended command and that the check can distinguish its required outcomes.
+For a changed grader, use a known-valid result and a relevant known-bad case when
+available. Preserve the original failed log, correction and affected rerun result.
+A fixture repair needs source review to establish that assertions retain their
+meaning. An unrelated helper name, exact tool-call sequence or unrequested feature
+cannot become a hidden requirement. Assess any genuine contract change explicitly.
+
+For subjective judgments, give the critic the same current images/journey and
+explicit rubric. Compare verdicts with owner-labeled examples when available.
+Check presentation-order effects in pairwise trials. Record disagreements and
+missing observations. An independent model opinion remains distinct from owner
+or player acceptance. Apply this calibration when judging the harness, using the
+existing critic workflow for ordinary game delivery.
+
+### Current care observation
+
+The chat `01a182d5-a42b-7f71-be34-149cf554d19a` began its care turn at
+2026-11-05 01:44:08 Moscow time. The inspected snapshot was still in progress at
+02:12:12. The author reused retained care work and moved it to
+`codex/game-care-delivery`. At readback, HEAD was `30c7c4a8` with uncommitted care
+changes. This identifies an evolving worktree, not a frozen acceptance candidate.
+
+The existing local `output/painted-delivery/close-20261104/care-sql.log` records
+2 failed checks and 11 skipped. Both failures occur in `withCareState` setup,
+through invalid tick/physical-state construction. The later `care-sql-current.log`
+records 2 passed and 11 skipped, taking 3.84 seconds. This confirms recovery of the
+targeted SQL run. The test names cover care/stabilization and retries. Assertion
+semantics and the fixture diff were not independently reviewed in this assessment.
+The author reports client/server types passed. That claim was not rerun here.
+
+The snapshot also shows two browser-control failures followed by a reset and a
+successful current API connection. This is tool-session recovery evidence. Browser
+care completion and independent playable acceptance were not demonstrated in that
+snapshot. The next observation is treatment through the ordinary company screen
+and its visible/saved result. The live task remains active. Elapsed-to-acceptance,
+first-submission acceptance rate and comparative quality/cost are NOT_MEASURED.
+
+Research/documentation delivery is LOCAL on `codex/harness-task-quality`.
+CURRENT_PLAN remains owned by the game integrator. This assessment changes the
+on-demand evaluation method. It adds no runtime gate or routine game report.
+Scoped formatting and diff checks PASS. All three added local links/anchors target
+tracked files and resolve. An initial whole-document anchor probe failed on the
+pre-existing CHANGELOG link to `M1-SUPPLIES.md#delivery-amendment--2026-10-04`.
+Its target text is a plain paragraph at line 115. That historical link is outside
+this change. Independent read-only review of the method and cited claims ACCEPT,
+including care log readback. Game tests are NOT_RUN for this assessment.
+
 ## Rollout and checkpoint ownership follow-up — 2026-11-05
 
 The owner requested continued investigation and concrete optimization. The next
@@ -162,11 +243,20 @@ set when those specifications change.
 
 ## Procedure
 
-1. Create a fresh worktree at the parent; same model, reasoning and host for the
-   baseline and the candidate harness. Copy the candidate harness files into the
-   worktree when evaluating a harness change.
-2. Run the agent with the brief and a fixed time limit. Record the transcript.
-3. Copy in the hidden oracle, build affected packages and run its relevant checks.
+1. Before a replay, validate that every hidden assertion follows from the brief
+   and its available accepted sources. Confirm that the known fix passes and that
+   the original defect fails in the selected environment. Repair or exclude an
+   invalid task before comparison. Public merged fixes may have been seen during
+   model training, so qualify replay results and include fresh tasks for a broader
+   claim.
+2. Use fresh agent sessions and isolated baseline/candidate worktrees at the same
+   parent with equivalent data/resources and model/reasoning settings. Apply only
+   the candidate harness change. Keep hidden solutions and other trials
+   inaccessible. Alternate or
+   randomize run order when comparing variants and state any environment drift.
+3. Run the agent with the validated brief and the same time limit. Record actual
+   tool calls/results, final state and available usage. Include unfinished trials.
+4. Copy in the hidden oracle, build affected packages and run its relevant checks.
    Run the full gate only when that experiment's acceptance requires it.
 
 ## Score each run

@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Evaluate task quality and the evidence behind acceptance
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
+  Per owner request, reviewed seven additional primary materials on agent
+  evaluation and developer productivity. Updated the existing research and
+  [evaluation method](docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+  with outcome/evidence/effort separation, evaluator validation, unfinished-attempt
+  accounting and qualified historical replay. Recorded an in-progress care
+  observation with SQL setup failures, targeted recovery and pending browser
+  acceptance. Preserved the game integrator's CURRENT_PLAN. Scoped formatting,
+  added local links/anchors and diff checks PASS. The owning page records a
+  pre-existing historical-link failure from a broader probe. Independent read-only
+  review ACCEPT, including care log readback. Game tests NOT_RUN for this
+  documentation. Comparative quality/cost
+  remains NOT_MEASURED.
+
 ### Upstream guidance visibility and checkpoint ownership
 
 - 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.
