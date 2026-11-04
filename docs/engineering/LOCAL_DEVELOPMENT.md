@@ -274,6 +274,19 @@ through `WARWRIT_ENCOUNTER_DATABASE_URL` and `IDENTITY_TEST_DATABASE_URL`. Befor
 pnpm test:migrations
 ```
 
+## Start and resume context
+
+`pnpm agent:preflight [base-ref]` prints this checkout's identity, tool versions,
+hook status and dirty paths. It also lists upstream instruction, role, guard,
+configuration and delegation-guide changes
+since the branch fork using the selected local ref (default `origin/main`).
+The notice establishes upstream changes, including any already ported separately.
+Compare actual source before deciding integration. All comparisons use local refs.
+Refresh live refs explicitly when integration needs them. A missing local base is
+reported. Inspect other worktrees with `git worktree list` when ownership needs it.
+Supporting harness/docs tasks retain their status in the existing owning page and
+hand current-game checkpoint changes to the game integrator.
+
 ## Focused checks
 
 Use these while editing; the full gate above runs once on the final tree.

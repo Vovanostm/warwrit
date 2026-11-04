@@ -11,8 +11,18 @@ printf 'head:       %s\n' "$(git rev-parse HEAD)"
 printf 'tree:       %s\n' "$(git rev-parse 'HEAD^{tree}')"
 if git rev-parse --verify --quiet "$base_ref" >/dev/null; then
   printf 'base:       %s %s\n' "$base_ref" "$(git rev-parse "$base_ref")"
-  printf 'merge-base: %s\n' "$(git merge-base "$base_ref" HEAD)"
+  merge_base="$(git merge-base "$base_ref" HEAD)"
+  printf 'merge-base: %s\n' "$merge_base"
   printf 'ahead/behind %s: %s\n' "$base_ref" "$(git rev-list --left-right --count "HEAD...$base_ref" | tr '\t' '/')"
+  guidance_changes="$(git diff --name-only "$merge_base" "$base_ref" -- \
+    AGENTS.md CLAUDE.md .agents/skills .codex .claude/agents .claude/hooks \
+    .claude/settings.json docs/engineering/AGENT_TEAM.md \
+    scripts/git-hooks scripts/agent-preflight.sh)"
+  if [[ -n "$guidance_changes" ]]; then
+    printf '\nUpstream agent guidance changed since this branch fork (%s, local ref).\n' "$base_ref"
+    printf '%s\n' "$guidance_changes"
+    printf 'Compare with this checkout before the next work step. Coordinate any integration with its writer.\n\n'
+  fi
 else
   printf 'base:       %s not found locally (run git fetch)\n' "$base_ref"
 fi
@@ -27,5 +37,3 @@ else
 fi
 printf 'dirty:\n'
 git status --short | sed 's/^/  /'
-printf 'worktrees:\n'
-git worktree list | sed 's/^/  /'

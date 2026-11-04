@@ -9,6 +9,34 @@ requests.
 
 ## Unreleased
 
+### Upstream guidance visibility and checkpoint ownership
+
+- 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.
+  Per continued owner investigation, record PR345 adoption and shared-status
+  conflicts during PR344 integration. Preserve the game integrator's CURRENT_PLAN
+  block. Supporting tasks keep status in their existing owning page. Preflight
+  reports locally known upstream guidance changes since the branch fork and
+  drops the unrelated worktree inventory, retaining checkout/dirty visibility.
+  Existing isolated Node regressions 4/4, Bash syntax, scoped lint/format and diff
+  PASS. Independent frozen-head source readback found no findings at `a6890305`.
+  Integrated main `ee03f4ee`, preserving its CURRENT_PLAN and both changelog entries.
+  [Delivery issue346](https://github.com/Vovanostm/warwrit/issues/346) owns PR/CI/merge
+  status. Native session reload, gameplay throughput
+  and cost effects NOT_RUN/NOT_MEASURED.
+  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
+
+### Observed harness effectiveness
+
+- 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.
+  Per owner request, compared the current publication-readiness chat with actual
+  writer source and live PR344/CI. Recorded committed/player-visible map progress,
+  verified removal of hidden commit checks, partial harness adoption, parent token
+  telemetry, three corrected integration defects and remaining startup diagnostics.
+  [Owning assessment](docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
+  Analysis is observational. Controlled efficiency/cost and whole-game acceptance
+  remain unmeasured. Source/CI readback, scoped documentation formatting, current
+  plan validation and diff checks PASS. Game tests NOT_RUN for this documentation.
+
 ### Preserve the green atlas while integrating current agent guidance
 
 - 2026-11-05, `codex/game-painted-delivery`, local integration of main`e31c5a56`
