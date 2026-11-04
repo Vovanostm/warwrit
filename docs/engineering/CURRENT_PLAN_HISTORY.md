@@ -1,8 +1,23 @@
 # Historical delivery checkpoints
 
-Moved from CURRENT_PLAN on 2026-11-04. Entries below retain their original
-dates, permission scope and evidence limits. Consult a named entry when needed.
-Current work starts at [CURRENT_PLAN](CURRENT_PLAN.md).
+## Gameplay-focused harness follow-up — 2026-11-04, PUBLISHED / REVIEW ACCEPT
+
+The coordinator, sole writer and check owner is the parent of the harness chat.
+Branch `codex/gameplay-focused-harness`, base `b89bed3e` (PR342 merged).
+Owner asks to apply the research so agents concentrate on finishing a playable,
+artistically coherent game. This continues the harness mission authorized for
+review, improvement, merge and local main update. Required review/CI still apply.
+Scope is root/role/skill context, existing failure feedback and focused regressions,
+research/evaluation guidance. The separately owned game worktree stays with its writer.
+For gameplay, the next result remains the normal-entry player journey recorded in
+AGENTS. Acceptance belongs to the existing game contract and its actual checks.
+[Research and application](research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+Existing shell fixtures and Node 3/3, syntax/format, TOML, links/anchors and diff PASS.
+Final independent infrastructure review ACCEPT. Gameplay/adherence/cost pilot
+NOT_RUN/NOT_MEASURED. [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343)
+provides live PR/CI and merge links. Use that receipt for delivery state.
+Continuation requires reviewed-head CI and expected-head merge, then local main.
+Deployment, purchases and restarting automation retain separate permission requirements.
 
 ## Agent harness cleanup — 2026-11-04, PUBLISHED / MERGE AUTHORIZED
 
@@ -27,6 +42,13 @@ Local game checks NOT_RUN. Efficiency gains NOT_MEASURED.
 [Delivery issue341](https://github.com/Vovanostm/warwrit/issues/341).
 Continuation uses the live PR receipt and local-main ref. Preserve other writers' WIP.
 Previous local-entry status is superseded by main's PR340 merge at the base above.
+
+Receipt correction — 2026-11-04. PR342 merged at `b89bed3e`, PR CI41906159640
+and latest scope41906344940 SUCCESS. Local main fast-forwarded to that merge.
+
+Moved from CURRENT_PLAN on 2026-11-04. Entries below retain their original
+dates, permission scope and evidence limits. Consult a named entry when needed.
+Current work starts at [CURRENT_PLAN](CURRENT_PLAN.md).
 
 ## Painted-atlas integration — 2026-11-04, LOCAL
 

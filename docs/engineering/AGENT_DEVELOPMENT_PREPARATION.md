@@ -21,6 +21,18 @@ owner's request the harness was hardened: the getsentry `code-review` and
 `pnpm agent:preflight` records checkout identity. Statements below about installed
 helpers and the absence of hooks describe the 2026-09-27 state.
 
+## Gameplay-focused amendment — 2026-11-04
+
+The owner's research follow-up prioritizes an accepted playable result. Use the
+existing task's concise player-action acceptance checklist and next failing item.
+Root context and specialist roles load task-relevant detail on demand. Local
+checks display failures and commands so the author can act during implementation.
+[Research scope](research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04)
+and [optional evaluation](HARNESS_EVAL.md#current-use--2026-11-04) own the rationale.
+PR342 already moved coverage/audit out of local commit hooks into required PR CI.
+This supersedes conflicting hook/replay prerequisites below. Source, ownership,
+state safety and final acceptance remain applicable.
+
 ## Current workflow — 2026-10-25
 
 The owner accepted A–D and first-correct-result guidance from the workflow review,
@@ -77,7 +89,7 @@ One named owner runs local validation per relevant revision. The updated
 [local routing](LOCAL_DEVELOPMENT.md#proportional-local-validation) treats pure docs
 separately, checks consumers of shared contracts and routes executable/config/lock/
 unknown paths conservatively. Deleted/renamed paths cannot disappear. Missing
-related tests is not proof. Coverage-dependent audit stays in existing hooks/CI;
+related tests is not proof. Coverage-dependent audit stays in required PR CI;
 bootstrap, CI and thresholds are unchanged. Record checked code, command/environment,
 outcome and limits. Rerun affected checks on changed inputs; preserve applicable
 unaffected results. Do not create a second runner/cache/telemetry framework.

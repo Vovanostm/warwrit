@@ -34,14 +34,16 @@ remembered PR, old attachment or cache as the current head.
 4. Read nested instructions and actual affected definitions and consumers.
    For command changes trace authorization through receipt and projection.
    Check the installed lockfile and type declarations before changing library APIs.
-5. Extract a short working note from the existing issue/contract: player outcome,
-   decisive criteria/regressions, source and code owner of the rule, producers and
-   consumers, base/write boundary and verification. Do not create another document
-   or agent if these are already clear. Resolve only uncertainties that could
-   change the solution with targeted reading or a safe probe before generating
-   code. Ask for undefined product rules/authority; technical choices inside the
-   accepted contract belong to the author. Reuse unchanged sources and applicable
-   check results; recheck changing heads, permission, config and environment.
+5. Use the existing task/contract for one observable outcome and its short acceptance
+   checklist. For gameplay, each item names the player action, expected visible or
+   saved result and the smallest way to verify it through the normal entry.
+   Start with the next failing item. Reuse existing tests/journeys. Mark a criterion
+   complete only after that scenario passes on the affected build. Keep missing
+   integration or runtime proof explicit. A new test framework/list file is optional
+   only when the current contract cannot represent acceptance.
+   Resolve uncertainties that could change the solution with targeted reading or a
+   safe probe. Ask for undefined product rules/authority. The author owns technical
+   choices within the accepted contract. Reuse unchanged source/check pointers.
 
 ## Working checkpoint
 

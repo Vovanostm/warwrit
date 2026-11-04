@@ -303,6 +303,8 @@ Testkit and cross-package specs import built workspace exports; `typecheck` uses
 Owner amendment — 2026-10-25: one assigned check owner runs
 `bash scripts/orca-validate.sh <worktree> [base-ref]` per relevant revision.
 `--plan` as the third argument prints routing without network or mutation.
+Failed checks print a diagnostic tail (up to 8192 bytes) and the exact rerun command,
+while retaining `.orca/validate-<step>.log` and a nonzero overall result.
 The script uses local refs (no implicit fetch), requires a valid merge base and
 checks integration/clean tree before acceptance. Refresh live refs when integration
 requires it; the script does not claim its local origin/main is live.
@@ -324,8 +326,8 @@ Database/schema changes retain their relevant real database checks and resource
 ownership; local routing never authorizes starting a shared DB.
 
 Do not repeat unchanged validation in builder and coordinator. Preserve applicable
-results until their code/dependencies/configuration/environment changes. Hooks and
-required PR CI still run the existing coverage-dependent audit and full bootstrap;
+results until their code/dependencies/configuration/environment changes. Required
+PR CI runs the existing coverage-dependent audit and full bootstrap;
 local focused success does not waive them. For a tooling-only assignment run the
 owning fixtures/syntax/format directly and report broad game checks NOT_RUN.
 

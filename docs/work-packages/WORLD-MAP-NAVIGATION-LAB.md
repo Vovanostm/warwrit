@@ -868,3 +868,24 @@ and campaign resources were preserved. Shell syntax/diff and independent source
 review PASS. Shell Prettier check was unsupported because no shell parser is
 installed. No game source, ports, credentials or fixture rules changed.
 Corrected-head ordinary browser/audit and actual preview artifact upload remain pending.
+
+Hosted delivery readback — 2026-11-05. At`2a63e830`, CI41918700198 PASS with
+1237unit/93SKIP,10000stress battles,83actual SQL cases, measured unit coverage,
+both browser journeys and unchanged quality audit. Scope41918852420 PASS.
+Artifact13365629608 contains3,143,437bytes of journey summaries/map previews.
+
+Ordinary map acceptance at that head uses the existing eight-checkpoint driver.
+
+- OIDC entry and ordinary company opening produce the persisted company — PASS.
+- The company-private painted atlas loads its authenticated masked tiles — PASS.
+- Selecting a known remote marker retains the actual settlement on Place — PASS.
+- Wheel/drag/keys, real MOVE_TO and STOP complete through ordinary commands — PASS.
+- Reload restores the same company — PASS.
+
+Current-head ordinary server restart, all-contract outcomes, care/payroll loop
+and human first-hour/fun acceptance remain separate incomplete campaign criteria.
+During CI, main advanced to`e31c5a56` through PR345. Integrate its documentation
+and harness changes without changing game production source. Preserve both dated
+histories and current authority. Final affected source review ACCEPT covers the
+CI/history resolution. Format, plan-limit and diff checks PASS; merged-head CI
+is pending. No additional local game suite was run for this documentation/harness merge.

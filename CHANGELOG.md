@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Preserve the green atlas while integrating current agent guidance
+
+- 2026-11-05, `codex/game-painted-delivery`, local integration of main`e31c5a56`
+  / PR345 into published [PR344](https://github.com/Vovanostm/warwrit/pull/344).
+  Prior head`2a63e830` passed CI41918700198, scope and both browser journeys;
+  screenshots and journey summaries are retained in CI. Resolve documentation
+  conflicts, keep both histories and retain main's harness checks. Game source
+  is unchanged. [Acceptance and current limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
 ### Give isolated Dex storage its pinned process owner
 
 - 2026-11-05, `codex/game-painted-delivery`, local correction to published
@@ -323,6 +332,24 @@ requests.
   below. Earlier local/pending source statuses are superseded by this delivery.
   This documentation readback is local; no deployment/automation.
   [Owning result](docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
+
+### Gameplay-focused agent harness
+
+- 2026-11-04, originating branch `codex/gameplay-focused-harness`, PUBLISHED. Per owner
+  research follow-up, trim always-loaded rules/role prerequisites, attach gameplay
+  completion to the existing contract's observed player actions and next failing
+  step, and keep evaluation replay optional. Existing local validation now exposes
+  failed diagnostics and an exact rerun command while retaining nonzero status/logs.
+  Correct source interpretation and stale audit-on-commit advice. Preserve the
+  prior checkpoint with PR342's actual merge/CI receipt. Affected AGENTS, roles,
+  context/domain/delivery skills, local checker/fixture and owning process docs.
+  [Research and application](docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+  Shell routing/stop/scope/failure-feedback fixtures, Node 3/3, syntax/format,
+  role TOML, links/anchors and diff PASS. Final independent source review ACCEPT.
+  [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) tracks PR/CI/merge.
+  First PR CI failed archive formatting. Corrected the file and checked every
+  changed path. Fresh full CI required. Gameplay/adherence/cost benefit
+  NOT_RUN/NOT_MEASURED.
 
 ### Agent context and commit-hook cleanup
 
