@@ -1,52 +1,6 @@
 #!/bin/sh
-# Rejects a commit whose working tree introduces fallow findings (unused code,
-# complexity, duplication) relative to main: the pull-request CI gate
-# `pnpm check:changes`, run before the commit for every agent and terminal.
-# The audit reads the working tree, so untracked or unstaged files count too.
-# `git commit --no-verify` skips it; report the audit as NOT_RUN, not passed.
+# Keep step commits independent of dependencies, coverage and unstaged work.
+# Run focused checks explicitly. Clean PR CI owns the full quality audit.
 set -eu
 
-# Markdown cannot introduce fallow findings. Any other path, including a
-# deletion, runs the audit. An empty commit has nothing to audit.
-if ! git diff --cached --name-only | grep -qv '\.md$'; then
-  exit 0
-fi
-
-root="$(git rev-parse --show-toplevel)"
-cd "$root"
-
-if [ ! -x node_modules/.bin/fallow ]; then
-  echo "pre-commit: fallow is not installed in $root; run pnpm install." >&2
-  exit 1
-fi
-
-# Pin the base to main as CI does. fallow's default prefers the branch
-# upstream, which after `git push -u` is the branch itself and hides its diff.
-if [ -z "${FALLOW_AUDIT_BASE:-}" ] && base="$(git merge-base origin/main HEAD 2>/dev/null)"; then
-  export FALLOW_AUDIT_BASE="$base"
-fi
-
-# The audit scores CRAP from coverage. Refresh focused coverage for the staged
-# code so a missing or stale coverage file never fails or skews the commit
-# (Orca builders failed on a missing file; see docs/engineering/AGENT_TEAM.md).
-code="$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|mjs|js)$' || true)"
-# This standalone DOM entry is exercised in the browser, not imported by unit
-# tests. Keep its collaborators' owning suite in the focused coverage run.
-if printf '%s\n' "$code" | grep -qx 'scripts/world-map/navigation-lab.ts'; then
-  code="$code
-scripts/world-map/navigation-lab.test.ts"
-fi
-if [ -n "$code" ] || [ ! -f coverage/coverage-final.json ]; then
-  # shellcheck disable=SC2086
-  pnpm --silent exec vitest related --run --coverage --mode coverage --passWithNoTests ${code:-package.json} >/dev/null 2>&1 ||
-    echo "pre-commit: focused tests failed; the audit uses the coverage they produced." >&2
-fi
-
-# Native lab journeys can add measured browser/server engine coverage. The
-# merger rejects stale mapped sources; this does not waive tests or thresholds.
-if [ -n "${WARWRIT_RUNTIME_COVERAGE:-}" ]; then
-  node scripts/world-map/runtime-coverage-merge.mjs \
-    "$WARWRIT_RUNTIME_COVERAGE" coverage/coverage-final.json
-fi
-
-exec pnpm --silent check:changes
+exec git diff --cached --check

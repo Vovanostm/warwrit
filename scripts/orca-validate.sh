@@ -69,6 +69,6 @@ case "$route" in
     step tests pnpm exec vitest run "${targets[@]}"
     ;;
 esac
-# Commit hooks and required CI still own the coverage-dependent audit. Do not
-# repeat it here against unchanged code or treat local routing as CI permission.
+# Required PR CI owns the coverage-dependent audit. Run local audits explicitly
+# when needed. This focused route does not establish CI acceptance.
 exit "$status"
