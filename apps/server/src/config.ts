@@ -19,6 +19,7 @@ export interface IdentityConfig {
   readonly redirectUri: string;
   readonly publicOrigin: string;
   readonly secureCookies: boolean;
+  readonly localCompanyLogin?: true;
 }
 
 export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): ServerConfig {
@@ -134,6 +135,12 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
       redirectUri,
       publicOrigin,
       secureCookies: originUrl.protocol === 'https:',
+      ...(environment['NODE_ENV'] === 'development' &&
+      hostIsLoopback &&
+      loopbackNames.has(originUrl.hostname) &&
+      originUrl.protocol === 'http:'
+        ? { localCompanyLogin: true as const }
+        : {}),
     };
   }
   return {

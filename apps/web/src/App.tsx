@@ -11,6 +11,7 @@ import {
 } from '@warwrit/protocol';
 import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
+import { SignIn } from './SignIn.js';
 import {
   getOrCreateCompanyCreateAttempt,
   refreshedCompanyCreatePayload,
@@ -1631,9 +1632,7 @@ export function App() {
                 'Войдите через службу учётной записи. При следующем визите защищённый сеанс восстановит ваш вход.'
               }
             />
-            <a className="primary-action" href={`${apiBaseUrl}/auth/login`}>
-              Войти <span aria-hidden="true">↗</span>
-            </a>
+            <SignIn apiBaseUrl={apiBaseUrl} onLogin={restoreJourney} />
           </>
         )}
         {journey.status === 'signing-out' && (

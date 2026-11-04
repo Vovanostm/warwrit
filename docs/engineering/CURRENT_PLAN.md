@@ -1,35 +1,30 @@
 # Warwrit current delivery plan
 
-## One playable campaign journey — checkpoint 2026-11-04, LOCAL
+## Painted-atlas integration — 2026-11-04, LOCAL
 
-Author/integrator/validator: parent. Current objective ACTIVE: one campaign journey.
-Done criterion: a new player completes sign-in → company → contract → travel →
-combat → reward → care/payroll → next contract → server restart in the browser.
-No repeated readiness assessment until main changes; no visual/content expansion.
-At most two active worktrees; existing historical work stays parked and preserved.
-Current delivery: codex/game-painted-delivery, HEAD48d8a2ae, fog974a87e1 merge open.
-Second retained tree: codex/game-painted-map, unfinished combat; frozen.
-Finish the current coherent step with a normal commit before starting another.
-PR publication remains authorized; main merge/deploy/paid/Orca are NOT authorized.
-Existing PR334–339 need integration; do not reimplement their features.
-Live main5c2b3cd7 includes PR340 entry/current-place; preserve it during integration.
-Queue snapshot2026-10-30 found six conflicting PRs. Refresh their heads before integration.
-Independent reviewers only at final acceptance; proportional checks during edits.
-Detailed new execution output belongs in output/ or CI artifacts, not tracked reports.
-[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29): ordinary private atlas implemented; normal commit/audit pending.
-Latest pursuit observation reuse: server types/lint and actual PostgreSQL6/6 PASS.
-World/ordinary browser journeys PASS; first commit blocked by unused export (now removed).
-Hook V8 retry has no failed files with one worker; same23isolated checks also PASS.
-Route/refresh responsibilities separated; paper uses static asset import to preserve Vite source maps.
-2026-11-04 web types/lint and ordinary OIDC/map/MOVE_TO/STOP/reload PASS.
-Changed-file audit PASS, zero introduced dead-code/complexity/duplication findings.
-Map refs have one owner. Browser measurement is saved before reload. Normal commit pending.
+Author/integrator/validator is parent. Full-game objective remains ACTIVE.
+Current playable-cycle target is sign-in → company → contract → travel → combat →
+reward → care/payroll → next contract → server restart.
+The current step delivers the ordinary company-private painted atlas.
+Branch codex/game-painted-delivery has source commit d9c0f303 with normal hooks PASS.
+Resolved main5c2b3cd7 / PR340 integration preserves quick entry and actual-place binding.
+Apply the same stationary/revision guard to both painted and continuous maps.
+Integrated web/server types,15 affected tests and8 ordinary browser checkpoints PASS.
+Independent final SOURCE ACCEPT covers the resolved source and CI artifact retention.
+Integration audit PASS against target main5c2b3cd7. Normal merge commit is pending.
+[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29) owns implementation, checks and limits.
+Current map refs/coverage correction has web types/lint,8 browser checkpoints and audit PASS.
+Old and new gameplay evidence remains separate from full M1 acceptance.
+Existing PR334–339 are still open/conflicting at2026-11-04 readback. Reuse their work.
+At most two active worktrees. Combat in codex/game-painted-map stays preserved/frozen.
+Owner2026-10-30 prioritizes the complete playable path and final acceptance reviews.
+Detailed execution output belongs in output/ or CI artifacts.
 ROADMAP/PROMPTS in ~/learn/warwrit-roadmap remain proposals awaiting owner approval.
-[Combat reference](../wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30) stays fixed; unfinished renderer/art remain outside map delivery.
-Approved temporary care profile: wound care difficulty5; stabilization10.
+[Combat reference](../wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30) owns the selected camera/grid.
+Temporary care profile is approved at difficulty5 for wound care and10 for stabilization.
 Original databases, saves, positions and unrelated WIP must be preserved.
-Next: finish map commit, integrate main, reconcile existing PRs, close only journey blockers.
-Merge permission will be requested once for concrete ready heads and applicable checks.
+PR publication is authorized. Main merge/deploy/paid/Orca need current owner permission.
+Next action is integrated native verification, normal commit and map PR publication.
 
 ## Dated integration history
 
@@ -131,6 +126,36 @@ DoD complete for specification/examples; next separate slice: authoritative serv
 ### Networked atlas PR delivery — 2026-10-27, MERGED
 
 ## Earlier main checkpoints (historical)
+
+## PR340 integration history — merged main
+
+2026-11-04 readback confirms PR340 merged as `5c2b3cd7`. The following
+pre-publication checkpoint is retained as history.
+
+### Local entry and current-place delivery — 2026-10-30
+
+Owner explicitly requested «pr, review, merge» for this chat's local-entry and
+Place corrections. This permits the scoped PR and normal expected-head merge
+after independent review and applicable green checks; no deploy/auto-merge.
+Coordinator/sole writer/check owner: parent; branch `codex/local-entry-and-current-place`,
+base `48d8a2ae`, clean-main worktree `local-entry-delivery/warwrit`.
+Scope: four development-only persisted test-company logins; Place binds to actual
+stationary location, never remote map selection; focused regressions/docs.
+No painted-map/combat WIP, art, migration, game rule or other open PR is included.
+Existing live preview5259 and original dirty worktrees remain untouched.
+[Behavior](LOCAL_DEVELOPMENT.md#quick-company-entry-and-current-place) ·
+[Identity](ID01-IDENTITY.md#four-local-company-profiles) ·
+[Travel contract](../work-packages/M1-WORLD-TRAVEL.md).
+Auth/config10 and final UI/contract8 tests PASS; web/server types/scoped lint PASS.
+Normal commit hooks PASS at0b9e71ac and correction d559e283; no introduced findings.
+Independent reviewer REJECTed arrival projection lag, then ACCEPTed the correction:
+shared revision binding, retrying refresh and guarded local observations/ambience.
+Source frozen atd559e283; final publication docs and PR/clean-checkout CI pending.
+No bypass. Normal expected-head merge is authorized only after green PR gates.
+Prior browser evidence belongs to preview, not this exact-main checkout.
+Whole-game/art acceptance and hosted operation remain outside this slice.
+
+## Prior delivery history
 
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 

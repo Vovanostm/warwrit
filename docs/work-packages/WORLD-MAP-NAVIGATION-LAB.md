@@ -804,3 +804,14 @@ PASS has zero introduced dead-code, complexity or duplication findings. The
 remaining CSS findings are advisories. Output is kept locally under
 output/painted-delivery/close-20261104/. Normal commit and current-main integration
 are pending. ROADMAP/PROMPTS outside the repository remain owner-review drafts.
+
+The source step was committed as `d9c0f303` with normal hooks. Resolved integration
+with main`5c2b3cd7` preserves PR340 quick entry and binds Place to confirmed actual
+presence for painted maps too. The shared arrival regression runs for continuous
+and painted projections. Integrated web/server types,15 focused tests and8 native
+ordinary checkpoints PASS. Independent final source review ACCEPT covers the
+resolved source and the pinned CI artifact step. The integration audit PASS uses
+target main`5c2b3cd7`, matching the prospective PR base. CI now retains sanitized
+ordinary journey JSON and map screenshots for7days. Hosted execution is NOT_RUN.
+Local outputs are under output/painted-delivery/close-20261104/. Normal integration
+commit and publication are pending.

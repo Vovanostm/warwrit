@@ -299,13 +299,19 @@ async function chooseReachableSite(page, map, observerSiteId) {
       );
     })[0];
   assert.ok(nearest, 'a visible known site away from the current marker must be available');
+  const currentName = await map
+    .locator(`[data-site-id="${observerSiteId}"]`)
+    .getAttribute('aria-label');
+  assert.ok(currentName, 'the actual settlement must be visible on the known map');
   await map.locator(`[data-site-id="${nearest.siteId}"] .site-disc`).click();
+  await page.getByText(`Выбрано на карте: ${nearest.name}`, { exact: true }).waitFor();
   await page.getByRole('button', { name: 'Место' }).click();
   await page
     .getByRole('region', { name: 'Место', exact: true })
-    .getByRole('heading', { name: nearest.name, exact: true })
+    .getByRole('heading', { name: currentName, exact: true })
     .waitFor();
-  checkpoint('known site selected', `selected site ${nearest.siteId} in the ordinary place panel`);
+  await page.getByRole('button', { name: 'Путь' }).click();
+  checkpoint('known site selected', `selected ${nearest.siteId}, retained the actual settlement`);
   return nearest;
 }
 
