@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Let the ordinary campaign continue after the battle result
+
+- 2026-11-05, `codex/game-care-delivery`, local. The native HUNT02 journey won
+  with three survivors, but its fullscreen result blocked the contract behind it.
+  Add a resolved-result return button through the existing battle presentation;
+  it refreshes the authenticated journey and saved company/world. Web types,
+  27 presentation checks and scoped lint PASS; independent source review ACCEPT.
+  The authoring refresh unmounted the first result before the click could be
+  verified. That navigation check remains pending on the next native battle.
+  [Journey and limits](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Disclose actual local wounds before company care
 
 - 2026-11-05, `codex/game-care-delivery`, local. Authenticated company reads

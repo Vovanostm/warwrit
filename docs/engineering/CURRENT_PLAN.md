@@ -16,6 +16,8 @@ The first native company lost an unattended battle. Its saved outcome is retaine
 Personal stock/OWNER-pack consumption was reproduced and fixed; both SQL care checks PASS.
 Lawful local wound observation is implemented; executor/routes16 and payroll/core41 PASS.
 Next is the native contract → wound → care → reload/retry → restart journey.
+Native HUNT02 won with3survivors, paid80crowns; no treatable severe wound resulted.
+The missing result exit is fixed; web types/27checks/source review PASS, native click pending.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

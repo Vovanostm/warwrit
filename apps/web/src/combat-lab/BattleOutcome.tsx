@@ -4,11 +4,13 @@ export function BattleOutcome({
   busy,
   onRestart,
   onEditor,
+  onContinue,
 }: {
   view: BattlePresentationView;
   busy: boolean;
   onRestart: (() => void) | undefined;
   onEditor: (() => void) | undefined;
+  onContinue: (() => void) | undefined;
 }) {
   return (
     <>
@@ -24,6 +26,11 @@ export function BattleOutcome({
             ))}
           </div>
           <footer>
+            {onContinue && (
+              <button className="battle-control" type="button" disabled={busy} onClick={onContinue}>
+                Вернуться к отряду
+              </button>
+            )}
             {onRestart && (
               <button className="battle-control" type="button" disabled={busy} onClick={onRestart}>
                 Начать заново
