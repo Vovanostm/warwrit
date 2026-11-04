@@ -18,6 +18,15 @@ Full coverage and the introduced-findings audit run in clean PR CI. Local audit
 is an explicit diagnostic when relevant, never a hidden commit prerequisite.
 Keep the current checkpoint short and consult historical entries only as needed.
 
+## Player result
+
+For a gameplay slice, read back the assigned acceptance checklist against the
+normal entry point. Record the observed player/saved result, relevant revision
+and actual check for each closed item. Carry the next failing item forward.
+Source review and unit checks retain their own scope. Player comprehension,
+visual coherence and enjoyment require their applicable journey/critic/owner
+observations. Avoid a fresh whole-game readiness audit for unchanged evidence.
+
 ## Freeze and verify
 
 1. Finish source, regression and necessary documentation edits. Read the staged

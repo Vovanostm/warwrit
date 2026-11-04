@@ -1,31 +1,24 @@
 # Warwrit current delivery plan
 
-## Agent harness cleanup — 2026-11-04, PUBLISHED / MERGE AUTHORIZED
+## Gameplay-focused harness follow-up — 2026-11-04, PUBLISHED / REVIEW ACCEPT
 
-The coordinator, sole writer and check owner is the parent of the harness-cleanup chat.
-Branch `codex/agent-harness-cleanup`, base `5c2b3cd7` (main includes PR340).
-Owner requested analysis of publication-readiness chat
-`01a182d5-a42b-7f71-be34-149cf554d19a` and systemic cleanup of agent context/tooling.
-Scope: concise instructions, history separation, explicit checks, duplicate-hook
-removal and a focused hook regression. Game source/assets/saves are outside this slice.
-Owner follow-up on 2026-11-04 explicitly authorizes «review, improve, merge, update main».
-Publish this scoped PR and merge its reviewed head after green applicable CI.
-Deployment and automation retain their separate permission requirements.
-The publication-readiness chat continues in its own retained painted-map worktree.
-Its owner's next outcome is the finite player journey; this maintenance assigns
-no writer to that game slice and makes no game-readiness claim.
-[Findings and correction](AGENT_TEAM.md#harness-cleanup--2026-11-04) ·
-[Verification boundary](LOCAL_DEVELOPMENT.md#verification-pipeline).
-Node hook/startup regressions 3/3, scoped lint/format/syntax, plan, new links,
-archive retention and diff checks PASS. Final independent infrastructure review ACCEPT.
-Local game checks NOT_RUN. Efficiency gains NOT_MEASURED.
-[PR342](https://github.com/Vovanostm/warwrit/pull/342) owns live clean-checkout CI and actual merge state.
-[Delivery issue341](https://github.com/Vovanostm/warwrit/issues/341).
-Continuation uses the live PR receipt and local-main ref. Preserve other writers' WIP.
-Previous local-entry status is superseded by main's PR340 merge at the base above.
+The coordinator, sole writer and check owner is the parent of the harness chat.
+Branch `codex/gameplay-focused-harness`, base `b89bed3e` (PR342 merged).
+Owner asks to apply the research so agents concentrate on finishing a playable,
+artistically coherent game. This continues the harness mission authorized for
+review, improvement, merge and local main update. Required review/CI still apply.
+Scope is root/role/skill context, existing failure feedback and focused regressions,
+research/evaluation guidance. The separately owned game worktree stays with its writer.
+For gameplay, the next result remains the normal-entry player journey recorded in
+AGENTS. Acceptance belongs to the existing game contract and its actual checks.
+[Research and application](research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+Existing shell fixtures and Node 3/3, syntax/format, TOML, links/anchors and diff PASS.
+Final independent infrastructure review ACCEPT. Gameplay/adherence/cost pilot
+NOT_RUN/NOT_MEASURED. [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343)
+provides live PR/CI and merge links. Use that receipt for delivery state.
+Continuation requires reviewed-head CI and expected-head merge, then local main.
+Deployment, purchases and restarting automation retain separate permission requirements.
 
 ## History
 
-[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain their dated results.
-Read only the entry needed for the current question. Historical permission belongs
-to its original task. Keep this file limited to the current operational checkpoint.
+[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated decisions/results.
