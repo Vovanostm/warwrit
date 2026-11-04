@@ -1,5 +1,4 @@
-import type { Pixel } from './porechye-navigation.js';
-import type { MapView } from './map-camera.js';
+import type { MapView, Pixel } from './map-camera.js';
 
 const panKeyCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD']);
 
@@ -12,11 +11,22 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-export function bindMapPanKeys(map: SVGSVGElement, onSpace?: () => void) {
+export function bindMapPanKeys(map: SVGSVGElement, onSpace?: () => void, onStop?: () => void) {
   const held = new Set<string>();
   const clear = () => held.clear();
-
-  window.addEventListener('keydown', (event) => {
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (
+      onStop &&
+      event.code === 'KeyS' &&
+      !isTypingTarget(event.target) &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey
+    ) {
+      event.preventDefault();
+      onStop();
+      return;
+    }
     if (
       onSpace &&
       event.code === 'Space' &&
@@ -40,15 +50,20 @@ export function bindMapPanKeys(map: SVGSVGElement, onSpace?: () => void) {
       return;
     event.preventDefault();
     held.add(event.code);
-  });
-  window.addEventListener('keyup', (event) => held.delete(event.code));
-  window.addEventListener('blur', clear);
-  document.addEventListener('visibilitychange', () => {
+  };
+  const onKeyUp = (event: KeyboardEvent) => held.delete(event.code);
+  const onVisibilityChange = () => {
     if (document.hidden) clear();
-  });
-  document.addEventListener('focusin', (event) => {
+  };
+  const onFocusIn = (event: FocusEvent) => {
     if (isTypingTarget(event.target)) clear();
-  });
+  };
+
+  window.addEventListener('keydown', onKeyDown);
+  window.addEventListener('keyup', onKeyUp);
+  window.addEventListener('blur', clear);
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  document.addEventListener('focusin', onFocusIn);
 
   return {
     held,
@@ -58,6 +73,14 @@ export function bindMapPanKeys(map: SVGSVGElement, onSpace?: () => void) {
         Number(held.has('KeyD')) - Number(held.has('KeyA')),
         Number(held.has('KeyS')) - Number(held.has('KeyW')),
       ];
+    },
+    destroy() {
+      clear();
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', clear);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      document.removeEventListener('focusin', onFocusIn);
     },
   };
 }
@@ -73,7 +96,7 @@ export function bindMapPanDrag(
 ) {
   let drag: { id: number; x: number; y: number; view: MapView; moved: boolean } | undefined;
 
-  map.addEventListener('pointerdown', (event) => {
+  const onPointerDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
     map.focus({ preventScroll: true });
     options.cancelZoom();
@@ -84,11 +107,13 @@ export function bindMapPanDrag(
       view: options.getView(),
       moved: false,
     };
-    map.setPointerCapture(event.pointerId);
-  });
-  map.addEventListener('pointermove', (event) => {
+  };
+  const onPointerMove = (event: PointerEvent) => {
     if (!drag || drag.id !== event.pointerId) return;
-    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) drag.moved = true;
+    if (!drag.moved && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 4) {
+      drag.moved = true;
+      map.setPointerCapture(event.pointerId);
+    }
     if (!drag.moved) return;
     const scale = map.getScreenCTM()!.a;
     options.setView({
@@ -96,16 +121,35 @@ export function bindMapPanDrag(
       x: drag.view.x - (event.clientX - drag.x) / scale,
       y: drag.view.y - (event.clientY - drag.y) / scale,
     });
-  });
-  map.addEventListener('pointerup', (event) => {
+  };
+  const onPointerUp = (event: PointerEvent) => {
     if (!drag || drag.id !== event.pointerId) return;
     const clicked = !drag.moved;
+    const pointerId = drag.id;
     drag = undefined;
+    if (map.hasPointerCapture(pointerId)) map.releasePointerCapture(pointerId);
     if (clicked) options.onClick?.(event);
-  });
-  map.addEventListener('pointercancel', () => {
+  };
+  const onPointerCancel = (event: PointerEvent) => {
+    if (!drag || drag.id !== event.pointerId) return;
+    const pointerId = drag.id;
     drag = undefined;
-  });
+    if (map.hasPointerCapture(pointerId)) map.releasePointerCapture(pointerId);
+  };
+  map.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
 
-  return { isDragging: () => drag !== undefined };
+  return {
+    isDragging: () => drag !== undefined,
+    destroy() {
+      if (drag && map.hasPointerCapture(drag.id)) map.releasePointerCapture(drag.id);
+      drag = undefined;
+      map.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerCancel);
+    },
+  };
 }

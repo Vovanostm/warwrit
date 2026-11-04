@@ -9,7 +9,26 @@ import {
 } from './world-lab-state.js';
 
 const snapshot: WorldLabStateDto = {
-  schemaVersion: 1,
+  schemaVersion: 2,
+  cartography: {
+    schemaVersion: 1,
+    revision: '1',
+    regionId: 'grey-porechye',
+    gridEdition: 'porechye-atlas-lab-v1',
+    weather: 'CLEAR',
+    sheet: { width: 4608, height: 3072, fpPerPixel: 3.5 },
+    grid: {
+      columns: 252,
+      rows: 168,
+      cellSizeFp: 64,
+      origin: { xFp: -8064, zFp: -5376 },
+    },
+    charted: 'A'.repeat(7056),
+    explored: 'A'.repeat(7056),
+    visible: 'A'.repeat(7056),
+    sites: [],
+    imageTileSize: 384,
+  },
   worldId: 'world.painted-atlas.lab-v1',
   mapEdition: 'porechye-atlas-lab-v1',
   sequence: '100',
@@ -54,6 +73,12 @@ test('the map accepts a valid observation but rejects an invalid group coordinat
   assert.equal(readWorldLabState(invalid), undefined);
 });
 
+test('the map rejects a cartography bitmap with the wrong region size', () => {
+  const invalid = structuredClone(snapshot);
+  (invalid.cartography as { charted: string }).charted = 'AAAA';
+  assert.equal(readWorldLabState(invalid), undefined);
+});
+
 test('own movement and visit payloads retain their protocol boundaries', () => {
   const invalidOwn = structuredClone(snapshot);
   (invalidOwn.own.movement as { movementEpoch: string }).movementEpoch = '-1';
@@ -63,15 +88,12 @@ test('own movement and visit payloads retain their protocol boundaries', () => {
     schemaVersion: 1,
     siteId: 'mill',
     name: 'Мельница',
-    image: '/assets/art/m1/places/settlements-v2/mill.webp',
+    image: '/world-lab-api/world-lab/place/mill.png',
   };
   assert.equal(readWorldLabVisit(visit, 'mill'), visit);
   assert.equal(readWorldLabVisit(visit, 'other'), undefined);
   assert.throws(() =>
-    readWorldLabVisit(
-      { ...visit, image: '/assets/art/m1/places/settlements-v2/../secret' },
-      'mill',
-    ),
+    readWorldLabVisit({ ...visit, image: '/world-lab-api/world-lab/place/other.png' }, 'mill'),
   );
 });
 

@@ -13,6 +13,7 @@ const movement = vi.hoisted(() => ({
   mode: 'STATIONARY_SITE' as string | null,
   revision: '0',
 }));
+const paintedMap = vi.hoisted(() => ({ enabled: false }));
 vi.mock('./continuous-movement.js', () => ({
   useContinuousMovement: () => ({
     current:
@@ -30,6 +31,11 @@ vi.mock('./WorldAmbience.js', () => ({
 }));
 vi.mock('./ContinuousMapCanvas.js', () => ({
   ContinuousMapCanvas: ({ onSelectSite }: { onSelectSite: (id: string) => void }) => (
+    <button onClick={() => onSelectSite('bereznyak')}>Выбрать Березняк на карте</button>
+  ),
+}));
+vi.mock('./PaintedMapCanvas.js', () => ({
+  PaintedMapCanvas: ({ onSelectSite }: { onSelectSite: (id: string) => void }) => (
     <button onClick={() => onSelectSite('bereznyak')}>Выбрать Березняк на карте</button>
   ),
 }));
@@ -55,7 +61,7 @@ vi.mock('./surroundings.js', async (original) => ({
           regionVersion: 'test',
           regionName: 'Поречье',
           edges: [],
-          continuous: {},
+          ...(paintedMap.enabled ? { cartography: { mapEdition: 'test' } } : { continuous: {} }),
           sites: [
             {
               siteId: 'severny-dvor',
@@ -104,6 +110,7 @@ afterEach(() => {
   cleanup = undefined;
   movement.mode = 'STATIONARY_SITE';
   movement.revision = '0';
+  paintedMap.enabled = false;
   vi.useRealTimers();
 });
 
@@ -158,7 +165,8 @@ it.each([
   expect(ui.element.querySelector('.place-panel')?.textContent).toContain(message!);
 });
 
-it('keeps Place closed and retries refresh until arrival projections agree', async () => {
+it.each([false, true])('keeps Place closed until arrival agrees (painted=%s)', async (painted) => {
+  paintedMap.enabled = painted;
   vi.useFakeTimers();
   movement.revision = '1';
   const onRefreshWorld = vi.fn();

@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { sql } from 'kysely';
 import { Client } from 'pg';
 import { afterAll, expect, it, vi } from 'vitest';
 import { PAINTED_ATLAS_REGION, paintedAtlasPoint } from '@warwrit/game-core';
 import type { WorldFreeMovementV2RequestDto, WorldLabPursuitRequestDto } from '@warwrit/protocol';
 import { worldLabPursuitToken } from '@warwrit/protocol';
 import { createDatabase } from '../../apps/server/src/db/database.js';
-import { runMigrations } from '../../apps/server/src/db/migrator.js';
 import { readWorldLabState } from '../../apps/server/src/world-lab/state.js';
 import { readWorldLabPursuit } from '../../apps/server/src/world-lab/pursuit-store.js';
 import {
@@ -34,6 +35,22 @@ async function scenario() {
   let time = Number(clock.epoch_ms) + 600_000;
   const context = { database, worldId, fixtures, now: () => new Date(time) };
   const own = fixtures[0]!;
+  // These pursuit fixtures are nearby, genuinely observable threats. The
+  // production forest/mill seeds intentionally need not be visible at night.
+  const origin = paintedAtlasPoint([1731, 1244]);
+  const nearby = { xFp: origin.xFp + 112, zFp: origin.zFp };
+  const farther = { xFp: origin.xFp + 144, zFp: origin.zFp };
+  for (const group of await readWorldLabNpcGroups(database, worldId)) {
+    if (!['lab-bandits', 'lab-night-creature'].includes(group.groupId)) continue;
+    const home = { ...group.home, point: nearby, routePoints: [nearby, farther] };
+    const state = { ...group.state, point: nearby, plan: null, routeIndex: 1 };
+    await sql`
+      update world_lab_npc_groups
+         set home = ${JSON.stringify(home)}::jsonb,
+             state = ${JSON.stringify(state)}::jsonb
+       where world_id = ${worldId} and group_id = ${group.groupId}
+    `.execute(database);
+  }
   const state = () =>
     readWorldLabState(database, worldId, fixtures, own.accountId, context.now).then((value) => {
       if (!value) throw Error('Missing lab state');
@@ -75,6 +92,90 @@ async function ground(
   await executeWorldLabGroundOrder(s.context, s.own, request, s.own.companyId);
   return request;
 }
+
+it.skipIf(!database)(
+  'accepts STOP at exact arrival using departure tokens and retains its receipt on later replay',
+  async () => {
+    const s = await scenario();
+    const before = await s.state();
+    const move: WorldFreeMovementV2RequestDto = {
+      schemaVersion: 2,
+      commandId: randomUUID(),
+      expectedPublicRevision: before.own.movement.publicRevision,
+      expectedMovementEpoch: before.own.movement.movementEpoch,
+      action: {
+        kind: 'MOVE_TO',
+        mapEdition: PAINTED_ATLAS_REGION.mapEdition,
+        target: { kind: 'TERRAIN', ...paintedAtlasPoint([1765, 1244]) },
+      },
+    };
+    const accepted = await executeWorldLabGroundOrder(s.context, s.own, move, s.own.companyId);
+    if (!accepted.plan) throw Error('Expected a persisted moving plan');
+    const stop: WorldFreeMovementV2RequestDto = {
+      schemaVersion: 2,
+      commandId: randomUUID(),
+      expectedPublicRevision: accepted.publicRevision,
+      expectedMovementEpoch: accepted.movementEpoch,
+      action: { kind: 'STOP' },
+    };
+    s.advance(Number(accepted.plan.arrivesAtMs) - s.context.now().getTime());
+    // Do not read state here: STOP itself must atomically validate the submitted
+    // departure tokens and settle arrival, without a prior mutating projection.
+    const stopped = await executeWorldLabGroundOrder(s.context, s.own, stop, s.own.companyId);
+    expect(stopped).toMatchObject({
+      result: 'ACCEPTED',
+      commandId: stop.commandId,
+      mode: 'STATIONARY_TERRAIN',
+      point: accepted.plan.goal,
+      plan: null,
+      serverTimeMs: accepted.plan.arrivesAtMs,
+    });
+    const current = await s.state();
+    expect({
+      point: current.own.movement.point,
+      mode: current.own.movement.mode,
+      pursuit: current.pursuit,
+    }).toEqual({ point: accepted.plan.goal, mode: 'STATIONARY_TERRAIN', pursuit: null });
+    s.advance(5_000);
+    expect(await executeWorldLabGroundOrder(s.context, s.own, stop, s.own.companyId)).toEqual(
+      stopped,
+    );
+
+    const retained = () =>
+      Promise.all([
+        database!
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', s.context.worldId)
+          .where('company_id', '=', s.own.companyId)
+          .execute(),
+        database!
+          .selectFrom('world_party_routes')
+          .selectAll()
+          .where('world_id', '=', s.context.worldId)
+          .where('company_id', '=', s.own.companyId)
+          .execute(),
+        database!
+          .selectFrom('world_route_receipts')
+          .selectAll()
+          .where('world_id', '=', s.context.worldId)
+          .where('company_id', '=', s.own.companyId)
+          .orderBy('command_id')
+          .execute(),
+        readWorldLabPursuit(database!, s.context.worldId, s.own.companyId),
+      ]);
+    const saved = await retained();
+    await expect(
+      executeWorldLabGroundOrder(
+        s.context,
+        s.own,
+        { ...stop, commandId: randomUUID() },
+        s.own.companyId,
+      ),
+    ).rejects.toThrow('STALE_REVISION');
+    expect(await retained()).toEqual(saved);
+  },
+);
 
 it.skipIf(!database)(
   'repaths toward a moving observed threat through a new database pool',
@@ -203,24 +304,8 @@ it.skipIf(!database)(
   'freezes the last observed destination when the night creature disappears',
   async () => {
     const s = await scenario();
-    await ground(s, {
-      kind: 'MOVE_TO',
-      mapEdition: PAINTED_ATLAS_REGION.mapEdition,
-      target: { kind: 'SITE', siteId: 'staraya-melnitsa' },
-    });
-    const route = (await s.state()).own.movement.plan!;
-    const arrival = Number(route.arrivesAtMs);
-    // Seeded light starts NIGHT at epoch+600000. Choose the next such boundary after arrival.
-    const clock = await database!
-      .selectFrom('world_campaign_clocks')
-      .select('epoch_ms')
-      .where('world_id', '=', s.context.worldId)
-      .executeTakeFirstOrThrow();
-    const night =
-      Number(clock.epoch_ms) +
-      Math.ceil((arrival - Number(clock.epoch_ms)) / 900_000) * 900_000 +
-      600_000;
-    s.advance(night - s.context.now().getTime());
+    // The nearby trusted creature fixture is visible at epoch+600000 NIGHT;
+    // no player order or chart is fabricated to reveal the remote mill.
     const started = await follow(s, 'lab-night-creature');
     const observedPoint = (await s.state()).pursuit!.lastPoint;
     s.advance(300_000);
@@ -247,7 +332,7 @@ it.skipIf(!database)(
 );
 
 it.skipIf(!database)(
-  'refuses migration rollback while a pursuit is persisted',
+  'refuses the pursuit migration rollback while a pursuit is persisted',
   async () => {
     // Only the integration runner may own schema operations, never the persistent lab.
     if (!url || !new URL(url).pathname.startsWith('/ww_integration_'))
@@ -257,13 +342,25 @@ it.skipIf(!database)(
     const client = new Client({ connectionString: url });
     await client.connect();
     try {
-      await expect(runMigrations(client, 'down')).rejects.toThrow(
+      // Exercise the original pursuit guard directly. The latest migration
+      // now has its own independent cartography-data rollback guard.
+      const migration = await readFile(
+        new URL(
+          '../../apps/server/migrations/0017_world_lab_pursuit_order_ids.down.sql',
+          import.meta.url,
+        ),
+        'utf8',
+      );
+      await client.query('begin');
+      await expect(client.query(migration)).rejects.toThrow(
         'refusing to delete persisted world lab pursuits',
       );
+      await client.query('rollback');
       expect(
         (await readWorldLabPursuit(database!, s.context.worldId, s.own.companyId))?.targetId,
       ).toBe('lab-bandits');
     } finally {
+      await client.query('rollback');
       await client.end();
     }
   },

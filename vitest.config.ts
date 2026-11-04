@@ -30,8 +30,9 @@ export default defineConfig(({ mode }) => ({
     globalSetup: ['./scripts/integration-global-setup.ts'],
     setupFiles: ['./scripts/integration-file-setup.ts'],
     ...integrationHooks(mode),
-    // Bound concurrent CPU-heavy geometry/combat suites on the two-core target.
-    maxWorkers: 2,
+    // V8 measurement competes with geometry/raster work; preserve test deadlines.
+    // Ordinary runs still use the two-core target's existing two workers.
+    maxWorkers: mode === 'coverage' ? 1 : 2,
     include: [
       'apps/**/*.{test,spec}.{ts,tsx}',
       'packages/**/*.{test,spec}.{ts,tsx}',
@@ -50,6 +51,7 @@ export default defineConfig(({ mode }) => ({
         'apps/*/src/**/*.{ts,tsx}',
         'packages/*/src/**/*.{ts,tsx}',
         'scripts/world-map/*.ts',
+        'scripts/world-map/fog-design/*.ts',
       ],
       exclude: ['**/*.test.{ts,tsx}', 'apps/renderer-spike/**'],
       reporter: ['json', 'text-summary'],

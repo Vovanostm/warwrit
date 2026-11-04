@@ -6,6 +6,35 @@ known to be missing. Start the stack per
 [CURRENT_PLAN](CURRENT_PLAN.md). The earlier 2026-09-29 company-opening evidence
 that lived in this file is in git history (commit `97d8480`).
 
+## Проверенный обычный путь рисованной карты — 2026-10-29
+
+Текущий локальный кандидат: `codex/game-painted-map`, база `48d8a2ae`.
+Результаты и ограничения принадлежат
+[действующему контракту карты](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-integration-checkpoint--2026-10-29).
+Это проверка карты в игре; полный M1, бой и публичная публикация ею не приняты.
+
+Для нового окружения `WORLD_MAP=painted-atlas` выбирает отдельный мир
+`world.porechye.atlas-v1`. Отсутствующее значение сохраняет legacy `main`.
+Не переключайте существующий мир, ожидая автоматического переноса: старые
+компании, координаты и принятые пути не мигрируют. Пример настройки находится
+в [`.env.example`](../../.env.example); общий запуск — в
+[LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes).
+Сохраняйте базу при остановке и повторном запуске; новый плейтест использует
+отдельно названную базу, а не сброс имеющегося мира.
+
+Проверенный автором стенд: UI `http://127.0.0.1:5228`, API3228, realtime3229,
+локальный Dex5618. Вход player-one → новая компания с одним спутником →
+ПКМ на известную землю → прибытие → reload сохраняет положение. ПКМ на
+поселение задаёт маршрут; `S` или пробел останавливает. ЛКМ по месту открывает
+просмотр: входы доступны после настоящего прибытия. Колесо приближает,
+перетаскивание двигает камеру; раздел «Отряд» сохраняет снаряжение и припасы.
+Ночной вид проверен при естественной смене света. Неизвестные части атласа
+закрыты сервером; чёрная/бумажная область не является отсутствующим артом.
+
+Ниже сохранена историческая инструкция legacy-пути. Её «Выступить», времена
+дорог и перечень пробелов не описывают новый рисованный кандидат. Текущую
+готовность всех систем смотрите в [M1 §17](../wiki/m1-spec.md#17-что-выполнить-до-полной-работоспособности-m1).
+
 ## Start
 
 ```bash
@@ -17,8 +46,9 @@ Open `http://127.0.0.1:5173` and choose **Войти**. Fixture accounts:
 `player-two@example.test` / `local-only-pass-two`. Use a second Chrome profile
 or a private window for the second player.
 
-A fresh world: `docker compose down --volumes` deletes the local world
-irreversibly; then repeat the start.
+For a fresh test world, allocate a separate named database/Compose project.
+Stop and restart the existing stack without deleting its volumes; retain company
+state and backups. The former destructive reset recipe is withdrawn on 2026-10-29.
 
 ## Time
 

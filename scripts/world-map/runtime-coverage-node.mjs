@@ -1,11 +1,15 @@
 // Optional local evidence collection; never imported by the normal game runtime.
 import { Session } from 'node:inspector/promises';
 import { writeFile, rename } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const destination = process.env.WORLD_LAB_RUNTIME_COVERAGE;
-if (!destination || process.env.WORLD_LAB !== '1' || process.env.NODE_ENV === 'production')
-  throw Error('Explicit development lab coverage required');
+if (
+  !destination ||
+  (process.env.WORLD_LAB !== '1' && process.env.WARWRIT_GAME_MEASUREMENT !== '1') ||
+  process.env.NODE_ENV === 'production'
+)
+  throw Error('Explicit development journey coverage required');
 const root = pathToFileURL(`${process.cwd()}/`).href;
 const frozenBeforeMs = Date.now();
 // An existing report must never stand in for a failed new capture.
@@ -29,9 +33,15 @@ async function sourceFor(coverage) {
 }
 async function captureOnce() {
   const { result } = await session.post('Profiler.takePreciseCoverage');
-  const owned = result.filter(
-    (entry) => entry.url.startsWith(root) && !entry.url.includes('/node_modules/'),
-  );
+  // Vite's module runner uses absolute sourceURL paths, Node uses file URLs.
+  // Both must belong to this checkout; dependencies remain excluded.
+  const directory = fileURLToPath(root);
+  const owned = result
+    .map((entry) => ({
+      ...entry,
+      url: entry.url.startsWith(directory) ? pathToFileURL(entry.url).href : entry.url,
+    }))
+    .filter((entry) => entry.url.startsWith(root) && !entry.url.includes('/node_modules/'));
   const entries = await Promise.all(owned.map(sourceFor));
   const temporary = `${destination}.${process.pid}.partial`;
   await writeFile(temporary, JSON.stringify({ entries }));
