@@ -8,6 +8,7 @@ import {
   campaignTick,
   canonicalJson,
   canonicalRevision,
+  createCompanyPhysicalState,
   initialSkillProgress,
   parseCompanyCommand,
   preparePartyTravelArrival,
@@ -532,6 +533,142 @@ describe('trusted company command executor (PostgreSQL)', () => {
 // These are real executor/transaction scenarios: no prepared draft or persistence is mocked.
 describe('ordinary company command executor (PostgreSQL)', () => {
   it.skipIf(database === undefined)(
+    'stabilizes a critical wound once across concurrent retries without an extra treatment charge',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const providerId = scenario.priorState.economy.lifecycle.company!.currentLeaderId!;
+          const patientId = scenario.priorState.economy.physical!.conditions.find(
+            (condition) => condition.conditionId === 'care-instance',
+          )!.characterId;
+          const request = ordinaryRequest(scenario, {
+            type: 'ApplyCare',
+            payload: {
+              characterId: patientId,
+              conditionId: 'care-instance',
+              providerId,
+              resourceItemId: 'care-medical-unit',
+            },
+          });
+          const results = await Promise.all([
+            executeOrdinary(scenario, request),
+            executeOrdinary(scenario, request),
+          ]);
+          expect(results[0]).toEqual(results[1]);
+          expect(results[0]?.kind).toBe('COMMITTED');
+          const stored = await readOrdinaryPersistence(scenario);
+          const physical = stored.state.economy.physical!;
+          expect(
+            physical.conditions.find((condition) => condition.conditionId === 'care-instance'),
+          ).toMatchObject({ resolvedAt: '1000', care: { providerId, channel: 'MATERIAL' } });
+          expect(
+            physical.conditions.find(
+              (condition) => condition.characterId === patientId && condition.resolvedAt === null,
+            ),
+          ).toMatchObject({
+            definitionId: 'severe-stable-wound',
+            care: { providerId, channel: 'INHERITED_STABILIZATION' },
+          });
+          expect(physical.items.find((item) => item.itemId === 'care-medical-unit')).toMatchObject({
+            quantity: 1,
+            tombstone: null,
+          });
+          expect(physical.vitals).toEqual(scenario.priorState.economy.physical!.vitals);
+          expect(
+            stored.receipts.filter((receipt) => receipt.command_id === request.commandId),
+          ).toHaveLength(1);
+          expect(await executeOrdinary(scenario, request)).toEqual(results[0]);
+          expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+        },
+        (state) => withCareState(state, 'CRITICAL'),
+      );
+    },
+  );
+
+  it.skipIf(database === undefined)(
+    'applies local material care and medicine practice once, replays exactly, and rejects inaccessible care atomically',
+    async () => {
+      await withOrdinaryScenario(async (scenario) => {
+        const patientId = scenario.priorState.economy.physical!.conditions.find(
+          (condition) => condition.conditionId === 'care-instance',
+        )!.characterId;
+        const providerId = scenario.priorState.economy.lifecycle.company!.currentLeaderId!;
+        const request = ordinaryRequest(scenario, {
+          type: 'ApplyCare',
+          payload: {
+            characterId: patientId,
+            conditionId: 'care-instance',
+            providerId,
+            resourceItemId: 'care-medical-unit',
+          },
+        });
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, providerId: 'remote-doctor' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, resourceItemId: 'remote-medical-unit' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+
+        const beforeMedicine = canonicalJson(
+          scenario.priorState.economy.lifecycle.characters.find(
+            (person) => person.identity.characterId === providerId,
+          )!.skills['medicine'],
+        );
+        const response = await executeOrdinary(scenario, request);
+        expect(response.kind).toBe('COMMITTED');
+        const stored = await readOrdinaryPersistence(scenario);
+        const cared = stored.state.economy.physical!.conditions.find(
+          (condition) => condition.conditionId === 'care-instance',
+        )!;
+        expect(cared.care).toMatchObject({ providerId, channel: 'MATERIAL' });
+        expect(
+          stored.state.economy.physical!.items.find((item) => item.itemId === 'care-medical-unit'),
+        ).toMatchObject({ quantity: 1, tombstone: null });
+        expect(
+          canonicalJson(
+            stored.state.economy.lifecycle.characters.find(
+              (person) => person.identity.characterId === providerId,
+            )!.skills['medicine'],
+          ),
+        ).not.toBe(beforeMedicine);
+        expect(await executeOrdinary(scenario, request)).toEqual(response);
+        expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+      }, withCareState);
+
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const patientId = scenario.priorState.economy.physical!.conditions.find(
+            (condition) => condition.conditionId === 'care-instance',
+          )!.characterId;
+          const request = ordinaryRequest(scenario, {
+            type: 'ApplyCare',
+            payload: {
+              characterId: patientId,
+              conditionId: 'care-instance',
+              providerId: scenario.priorState.economy.lifecycle.company!.currentLeaderId!,
+              resourceItemId: 'care-medical-unit',
+            },
+          });
+          await rejectOrdinaryUnchanged(scenario, request, 'CONTACT_OR_ACCESS_REQUIRED');
+        },
+        (state) => withCareState(state, 'EXPIRED'),
+      );
+    },
+  );
+
+  it.skipIf(database === undefined)(
     'persists rename and perk effects with their receipts and audit',
     async () => {
       await withOrdinaryScenario(async (scenario) => {
@@ -747,12 +884,16 @@ function ordinaryRequest<Intent extends OrdinaryIntent>(
   };
 }
 
-async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) {
+async function withOrdinaryScenario(
+  run: (scenario: Scenario) => Promise<void>,
+  prepareState: (state: CompanyCombatAggregateState) => CompanyCombatAggregateState = (state) =>
+    state,
+) {
   if (!database) throw new Error('company test database missing');
   const base = createDepartureScenario(randomUUID(), '1000');
   const economy = base.priorState.economy;
   const characterId = economy.lifecycle.company!.currentLeaderId!;
-  const priorState = readCompanyCombatAggregateState({
+  const ordinaryState = readCompanyCombatAggregateState({
     ...base.priorState,
     economy: {
       ...economy,
@@ -775,6 +916,7 @@ async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) 
       },
     },
   });
+  const priorState = prepareState(ordinaryState);
   const scenario = { ...base, priorState };
   await seedScenario(database, scenario);
   try {
@@ -790,6 +932,99 @@ async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) 
       .execute();
     await cleanupScenario(database, scenario);
   }
+}
+
+function withCareState(
+  state: CompanyCombatAggregateState,
+  conditionKind: 'STABLE' | 'CRITICAL' | 'EXPIRED' = 'STABLE',
+): CompanyCombatAggregateState {
+  const root = state.economy;
+  const providerId = root.lifecycle.company!.currentLeaderId!;
+  const patientId = root.lifecycle.characters.find(
+    (person) =>
+      person.identity.characterId !== providerId &&
+      person.presence.fieldPartyId === root.lifecycle.parties[0]!.partyId,
+  )!.identity.characterId;
+  const conditionAge = { STABLE: 0n, CRITICAL: 250n, EXPIRED: 251n }[conditionKind];
+  const onsetTick = campaignTick((BigInt(root.lifecycle.campaignTick) - conditionAge).toString());
+  const binding = {
+    characterId: patientId,
+    definitionId: conditionKind === 'STABLE' ? 'severe-stable-wound' : 'critical-bleed',
+    conditionId: 'care-instance',
+    sourceEventId: 'care-condition-source',
+    causeId: 'care-condition-cause',
+    onsetTick,
+    ...(conditionKind !== 'STABLE'
+      ? { deadlineTick: campaignTick((BigInt(onsetTick) + 250n).toString()) }
+      : {}),
+  };
+  const actualCharacters = root.lifecycle.characters.map((character) => ({
+    ...character,
+    ...(character.identity.characterId === patientId
+      ? { conditionIds: [...character.conditionIds, binding.definitionId] }
+      : {}),
+    ...(character.identity.characterId === providerId
+      ? {
+          skills: { ...character.skills, medicine: initialSkillProgress(5, 'care-doctor') },
+          aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+        }
+      : {}),
+  }));
+  const knownCharacters = root.lifecycle.knowledge.characters.map((character) => ({
+    ...character,
+    ...(character.identity.characterId === patientId
+      ? { conditionIds: [...character.conditionIds, binding.definitionId] }
+      : {}),
+    ...(character.identity.characterId === providerId
+      ? {
+          skills: { ...character.skills, medicine: 5 },
+          aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+        }
+      : {}),
+  }));
+  const lifecycle = {
+    ...root.lifecycle,
+    characters: actualCharacters,
+    knowledge: { ...root.lifecycle.knowledge, characters: knownCharacters },
+  };
+  const loaded = createCompanyPhysicalState(lifecycle, {
+    conditionBindings: [binding],
+    knownConditionBindings: [binding],
+  });
+  const medical = {
+    itemId: 'care-medical-unit',
+    definitionId: 'medical-unit',
+    owner: { kind: 'COMPANY' as const, id: root.lifecycle.companyId },
+    containerId: root.physical!.containers.find(
+      (container) =>
+        container.carrier?.kind === 'PARTY' &&
+        container.carrier.id === root.lifecycle.parties[0]!.partyId,
+    )!.containerId,
+    quantity: 2,
+    currentCondition: 10000,
+    maximumCondition: 10000,
+    contentRevision: '1',
+    provenance: { sourceId: 'care-test-item', parentItemId: null, ordinal: 0 },
+    equipped: null,
+    tombstone: null,
+  };
+  return readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...root,
+      lifecycle,
+      physical: {
+        ...root.physical!,
+        conditions: loaded.conditions,
+        items: [...root.physical!.items, medical],
+        knowledge: {
+          ...root.physical!.knowledge,
+          conditionSnapshots: loaded.knowledge.conditionSnapshots,
+          itemSnapshots: [...root.physical!.knowledge.itemSnapshots, medical],
+        },
+      },
+    },
+  });
 }
 
 async function executeOrdinary(

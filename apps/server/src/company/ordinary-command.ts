@@ -15,6 +15,8 @@ export function ordinaryCommandIntent(
   ids: OrdinaryIds & {
     readonly siteEligibilityId: string | undefined;
     readonly accessEvidenceId: string | undefined;
+    readonly careEvidenceId: string | undefined;
+    readonly careDefinitionId: string | undefined;
   },
 ) {
   switch (request.type) {
@@ -40,6 +42,16 @@ export function ordinaryCommandIntent(
           itemId: request.payload.itemId,
           slotId: request.payload.slotId,
           accessEvidenceId: ids.accessEvidenceId,
+        },
+      };
+    case 'ApplyCare':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          conditionId: request.payload.conditionId,
+          careDefinitionId: ids.careDefinitionId,
+          resourceOrProviderReceiptId: ids.careEvidenceId,
         },
       };
     default:
@@ -86,6 +98,16 @@ function requestedEffectPresent(
   switch (request.type) {
     case 'EquipItem':
       return itemEquipped(prepared, request.payload);
+    case 'ApplyCare':
+      return (
+        prepared.next.physical?.conditions.some(
+          (condition) =>
+            condition.conditionId === request.payload.conditionId &&
+            condition.characterId === request.payload.characterId &&
+            condition.care?.providerId === request.payload.providerId &&
+            condition.care?.channel === 'MATERIAL',
+        ) ?? false
+      );
     case 'RenameCompany':
     case 'ChoosePerk':
       return lifecycleChanged(prepared);

@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Bring company medicine into ordinary commands and roster
+
+- 2026-11-05, `codex/game-care-delivery`, local. Reuse the parked care producer,
+  V2 ApplyCare payload, owner-private treatment options and Company panel on
+  main`ee03f4ee`, with the owner-approved5/10practice challenges. Care uses actual
+  local provider/material facts and the existing atomic economy executor.
+  Types,7client/shell checks and2actual PostgreSQL care scenarios PASS. Native
+  care/retry/restart and final acceptance are pending. [Owning contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Painted campaign atlas delivered to main
 
 - 2026-11-05, originating branch `codex/game-painted-delivery`, merged in

@@ -2,6 +2,7 @@ import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 import { projectPayroll } from './payroll-view.js';
+import { companyCareOptions } from './care.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -68,7 +69,7 @@ export function projectCompanyHoldings(
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
-      conditions: (physical?.conditions ?? [])
+      conditions: (physical?.knowledge.conditionSnapshots ?? [])
         .filter(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
         )
@@ -126,6 +127,7 @@ export function projectCompanyHoldings(
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
   return {
+    care: companyCareOptions(state),
     cashQ,
     wallets,
     items,

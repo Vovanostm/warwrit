@@ -617,6 +617,8 @@ export function GameShell(props: {
           </div>
           <div hidden={tab !== 'company'}>
             <CompanyPanel
+              accountId={props.freeMovementScope.accountId}
+              onRefreshItems={props.onRefreshWorld}
               company={props.company}
               holdings={props.holdings}
               supplyVenueName={supplyVenueName}
