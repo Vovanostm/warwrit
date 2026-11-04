@@ -22,9 +22,13 @@ metadata, existing safety/authority boundaries and game behavior retain their
 own contracts. Native prompt reload, changed agent behavior and comparative
 quality/cost remain NOT_RUN/NOT_MEASURED. Three skill validators, scoped formatting,
 added local links/anchors, the current-plan guard and diff checks PASS. Root context
-is 166 lines / 10,035 bytes. An initial formatting warning in this section was
+is 166 lines / 10,039 bytes. An initial formatting warning in this section was
 corrected before the passing readback. Final independent review and applicable CI
-are recorded in issue348 and its PR. Local branch updates target main and this harness branch.
+are recorded in issue348 and its PR. The first review found ambiguous wording
+that could add intermediate critic rounds. The correction explicitly retains
+independent critique at final gameplay/visual acceptance. Ten static decision
+probes examined routing and evidence handling. These are instruction checks.
+Local branch updates target main and this harness branch.
 Active/dirty and parked game worktrees retain their current writer ownership.
 
 ## Task-quality assessment — 2026-11-05

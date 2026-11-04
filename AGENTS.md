@@ -8,8 +8,8 @@ Owner workflow amendments through 2026-11-05 are consolidated here.
 - Deliver the next playable step through the normal game entry. Use the existing
   task/contract to name the player action, observable result and smallest check.
   For gameplay, keep a short acceptance checklist there. Close a criterion after
-  its scenario passes on the affected build. Gameplay completion also requires
-  applicable invariants, authority and independent acceptance. Record missing evidence.
+  its scenario passes on the affected build. Preserve invariants and authority.
+  Apply independent critique at final gameplay/visual acceptance. Record missing evidence.
 - The publication-readiness mission follows the owner's 2026-10-29 correction.
   Complete sign-in → company → contract → travel → combat → reward → care/payroll
   → next contract → server restart. Work on the next failing step. Defer visual

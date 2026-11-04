@@ -19,7 +19,7 @@ requests.
   and [issue348](https://github.com/Vovanostm/warwrit/issues/348) own scope,
   permission and delivery. Preserve CURRENT_PLAN and active game worktrees.
   Three skill validators, scoped formatting, added local links/anchors, plan and
-  diff checks PASS. Root context is 166 lines / 10,035 bytes. The linked issue/PR
+  diff checks PASS. Root context is 166 lines / 10,039 bytes. The linked issue/PR
   owns final review, CI and merge status. Game tests NOT_RUN locally for instruction
   changes. Native reload and quality/cost effects NOT_MEASURED.
 
