@@ -889,3 +889,21 @@ and harness changes without changing game production source. Preserve both dated
 histories and current authority. Final affected source review ACCEPT covers the
 CI/history resolution. Format, plan-limit and diff checks PASS; merged-head CI
 is pending. No additional local game suite was run for this documentation/harness merge.
+
+### Painted ordinary atlas merged — 2026-11-05
+
+[PR344](https://github.com/Vovanostm/warwrit/pull/344) MERGED as `ee03f4ee227642e38a7bb9e58285664a121b46af`
+from owner-approved expected head `dcaf84a6a411a050680dc91e062ea84f113371d4`.
+Owner approval was received directly on 2026-11-05 and recorded in the PR.
+Current-head CI41922441689, applicable scope checks and post-merge main
+CI41925505728 PASS. Actual remote main and merged tree match the checked head.
+Final independent source ACCEPT covers integration and infrastructure. Prior map visual acceptance retains its stated scope. Ordinary/world browser
+journeys and quality audit passed. Artifact 13367404594 retains the current journey
+summaries and map previews, 3,143,969 bytes. Detailed logs remain in CI and ignored output/.
+
+The ordinary painted-map slice is delivered to main. A retained local trial on 5228
+has a separate new preview database. Original campaigns and positions are retained.
+This post-merge receipt/wiki correction is local. The next campaign criterion is
+post-contract care through the ordinary UI, reusing the retained care implementation
+and approved 5/10 producer profile.
+The full campaign and selected combat presentation remain active work.

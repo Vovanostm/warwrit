@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Painted campaign atlas delivered to main
+
+- 2026-11-05, originating branch `codex/game-painted-delivery`, merged in
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344) as `ee03f4ee` from the
+  owner-approved head `dcaf84a6`. Current-head CI41922441689, scope and post-merge
+  main CI41925505728 PASS. Actual main/tree match the checked head. Ordinary
+  company-private atlas, movement/STOP/reload and shared-world journeys passed.
+  [Acceptance and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
+  This post-merge wiki/checkpoint receipt is local. Further campaign care and
+  combat presentation remain active. Original saves are retained.
+
 ### Preserve the green atlas while integrating current agent guidance
 
 - 2026-11-05, `codex/game-painted-delivery`, local integration of main`e31c5a56`
