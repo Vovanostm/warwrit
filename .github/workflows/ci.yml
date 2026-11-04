@@ -31,6 +31,9 @@ jobs:
         with:
           node-version-file: .node-version
 
+      - name: Check local commit hooks
+        run: node --test scripts/git-hooks/check-hooks.mjs
+
       - name: Reject edits to released migrations
         if: github.event_name == 'pull_request'
         env:

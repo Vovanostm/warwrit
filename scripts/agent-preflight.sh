@@ -21,7 +21,7 @@ printf 'pnpm:       %s\n' "$(pnpm --version 2>/dev/null || echo missing)"
 # pnpm skips `prepare` when node_modules is already current, so an existing
 # clone may not have run scripts/install-git-hooks.sh yet.
 if [ "$(git config --get core.hooksPath || true)" = scripts/git-hooks ] && [ -x scripts/git-hooks/pre-commit ]; then
-  printf 'git gate:   active (fallow pre-commit)\n'
+  printf 'git gate:   active (staged whitespace check; quality audit in PR CI)\n'
 else
   printf 'git gate:   INACTIVE (run: pnpm run prepare)\n'
 fi

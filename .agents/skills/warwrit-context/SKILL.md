@@ -8,7 +8,8 @@ description: Restore current Warwrit task, authority, source scope and repositor
 ## Inputs
 
 The owner request and repository access. Start with [AGENTS.md](../../../AGENTS.md)
-and [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md). Do not use a
+and the status block in [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md).
+Read its linked history only for a named unresolved question. Do not use a
 remembered PR, old attachment or cache as the current head.
 
 ## Procedure
@@ -24,8 +25,9 @@ remembered PR, old attachment or cache as the current head.
    full Notes and Purpose of the active canonical Airtable contract and its
    named applicable sources; an issue whose contract already cites them is
    worked from that contract. Restore the latest Empirical checkpoint tagged
-   `Warwrit`. New Purpose amendments may supersede historical statuses, not silently
-   rewrite accepted mechanics. Use explicit record IDs before broad search.
+   `Warwrit` when it resolves a task-specific source/status gap. Tooling and
+   documentation work uses its owning local sources. New Purpose amendments may
+   supersede historical statuses, not silently rewrite accepted mechanics. Use explicit record IDs before broad search.
 3. Identify source edition, accepted rules, provisional parameters, current
    implementation and unexecuted evidence separately. Missing old ZIP bytes remain
    a source-concordance limitation, not an invitation to regenerate definitions.
@@ -41,11 +43,15 @@ remembered PR, old attachment or cache as the current head.
    accepted contract belong to the author. Reuse unchanged sources and applicable
    check results; recheck changing heads, permission, config and environment.
 
-## Expected output
+## Working checkpoint
+
+Keep this in working context. Update CURRENT_PLAN only for a changed result,
+blocker or next action. Reuse the last checkpoint after compaction and read only
+the changed sources. Do not repeat a broad readiness audit without relevant changes.
 
 ```text
 Task / active contract / source edition:
-Live repository / base / branch / head / tree:
+Live repository / base / branch / head:
 Applicable decisions and dated corrections:
 Implemented / prepared / still required:
 Allowed writes / prohibited operations:

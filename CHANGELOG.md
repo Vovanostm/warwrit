@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Agent context and commit-hook cleanup
+
+- 2026-11-04, originating branch `codex/agent-harness-cleanup`, LOCAL. Per owner
+  request, analyzed the publication-readiness chat and removed automatic test,
+  coverage and runtime-report processing from step commits. Local Git hooks check
+  staged whitespace; clean PR CI owns the existing measured quality gates.
+  Removed the duplicate Claude audit script/hook and automatic remote inventory
+  on session start. Consolidated AGENTS, scoped context/delivery guidance and
+  moved superseded CURRENT_PLAN entries into dated history with repaired links.
+  Recorded the mission's finite journey, two active writing worktrees and final
+  review correction. [Owning findings and limits](docs/engineering/AGENT_TEAM.md#harness-cleanup--2026-11-04).
+  Hook/startup regressions 3/3, scoped ESLint/format/syntax, plan, archive retention,
+  new links and diff checks PASS. Final independent source review ACCEPT.
+  Actual token/time/error savings NOT_MEASURED. Publication/merge/CI NOT_RUN.
+
 ### Local company entry and actual Place navigation
 
 - 2026-10-30, branch `codex/local-entry-and-current-place`, LOCAL: per owner
@@ -744,7 +759,7 @@ requests.
 - Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
   `payroll-view.ts` and focused projection/route tests.
   [Owning wiki result](docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
-  and [current status](docs/engineering/CURRENT_PLAN.md#local-completion-of-321--2026-10-25).
+  and [current status](docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
   Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
   skips), protocol build, protocol/server/web types and scoped lint/format/diff
   PASS. Initial invalid synthetic test fixture corrected before passing aggregate

@@ -224,20 +224,24 @@ dead code, complexity or duplication that the branch introduces in changed files
 Inherited complexity and clones are listed by `pnpm report:quality` and
 `pnpm exec ast-grep scan` warnings; fixing them belongs to an owning change.
 
-The same audit runs locally as Git `pre-commit` and `pre-merge-commit` hooks
-(`scripts/git-hooks/`) for every agent and terminal. It audits the working tree
-against the merge-base with `origin/main` (override with `FALLOW_AUDIT_BASE`), so
-an untracked unused file also blocks a commit; a Markdown-only commit skips it.
-It takes about 10–15 s. Rebase and cherry-pick run no hook, and
-`git commit --no-verify` skips it (the audit is then `NOT_RUN`); CI stays the
-final gate. Agents may skip it only for intermediate work-branch commits under
-[AGENTS.md § Work-package steps](../../AGENTS.md#work-package-steps).
+Local Git `pre-commit` and `pre-merge-commit` hooks run only
+`git diff --cached --check`. Staged whitespace errors fail visibly, including
+Markdown. Unstaged/untracked code and missing coverage do not affect this check.
+Run focused tests, types or lint explicitly before the step commit and record
+actual failures. A successful local commit establishes only that local check.
 
-A fresh `pnpm install` points the clone's `core.hooksPath` at the hooks. pnpm
-skips that `prepare` step when `node_modules` is already current, so an existing
-clone runs `pnpm run prepare` once; `pnpm agent:preflight` prints whether the
-gate is active. The setting is shared by all worktrees, but a worktree whose base
-predates the hooks runs none until it merges `main`.
+Clean PR CI owns `pnpm test:coverage`, measured world-map journeys and
+`pnpm check:changes` against the PR base. Local audit remains an explicit
+`pnpm check:changes` diagnostic when its coverage inputs are available.
+The 2026-11-04 cleanup removes automatic coverage generation/merging and the
+second Claude `PreToolUse` audit. Claude startup/resume print local preflight.
+Compaction runs no inventory hook. Run `pnpm agent:status` for live integration state.
+
+A fresh `pnpm install` points the clone's `core.hooksPath` at the tracked hooks.
+Existing clones can run `pnpm run prepare` if preflight reports an inactive hook.
+That setting is shared by worktrees, whose checked-out hook contents may differ.
+Check the actual checkout before applying these semantics to an older branch.
+Hook regressions run with `node --test scripts/git-hooks/check-hooks.mjs`.
 
 The M0 combat acceptance gate runs separately:
 
