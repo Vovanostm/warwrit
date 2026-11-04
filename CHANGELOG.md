@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Upstream guidance visibility and checkpoint ownership
+
+- 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.
+  Per continued owner investigation, record PR345 adoption and shared-status
+  conflicts during PR344 integration. Preserve the game integrator's CURRENT_PLAN
+  block. Supporting tasks keep status in their existing owning page. Preflight
+  reports locally known upstream guidance changes since the branch fork and
+  drops the unrelated worktree inventory, retaining checkout/dirty visibility.
+  Existing isolated Node regressions 4/4, Bash syntax, scoped lint/format and diff
+  PASS. Independent review is required before publication. Native session reload, gameplay throughput
+  and cost effects NOT_RUN/NOT_MEASURED.
+  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
+
 ### Observed harness effectiveness
 
 - 2026-11-05, originating branch `codex/harness-effectiveness-review`, LOCAL.

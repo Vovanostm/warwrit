@@ -1,5 +1,43 @@
 # Harness evaluation
 
+## Rollout and checkpoint ownership follow-up — 2026-11-05
+
+The owner requested continued investigation and concrete optimization. The next
+chat snapshot extends the earlier 492-item snapshot to 538 items, adding 15 commands.
+The map writer now contains PR345 (`e31c5a56`) and the 163-line/9,759-byte root.
+It integrated main at `dcaf84a6`, obtained explicit owner merge permission and
+passed CI41922441689 for that combined head. [PR344](https://github.com/Vovanostm/warwrit/pull/344)
+merged on 2026-11-05 at 01:27:56 Moscow time. This completes the tested atlas
+delivery boundary. This supersedes the earlier snapshot's partial-adoption
+finding. Actual future role behavior and cost benefit remain NOT_MEASURED.
+
+A confirmed friction came from this supporting harness lane too. PR345 changed
+CURRENT_PLAN, its history and CHANGELOG while the game delivery was active. The
+map author resolved conflicts in those shared documents, then ran combined-head
+CI. The required integrated checks retain their value. Overlapping ownership of
+the current-game status was avoidable. The earlier c5c794fc local-only auxiliary
+status addition has been removed from the candidate. The game integrator owns
+that shared block, and support work records its result here.
+
+The current bounded correction updates `scripts/agent-preflight.sh` to show
+upstream instruction/role/hook paths changed since the branch fork, using the
+selected local ref. It establishes upstream changes, including any already
+ported separately. The author compares actual content before deciding integration.
+Comparisons are read-only and use local refs. Default output keeps checkout/dirty
+state and removes the full other-worktree inventory. The root record policy now
+routes supporting status to its existing owning page and hands game-checkpoint
+changes to the active integrator.
+
+The existing Node regression runner covers equal refs, ordinary upstream code,
+changed upstream guidance/configuration/delegation, missing base and the
+updated-base state. It also checks
+that the default output omits the full worktree inventory. Local Node 4/4, Bash
+syntax, scoped ESLint/format and diff checks PASS. Independent review is required before publication.
+The run changes were tested with isolated local Git fixtures. Native Codex/Claude
+session reload and improved gameplay throughput remain NOT_RUN/NOT_MEASURED.
+The active game writer still owns its launch scripts and delivery. Startup-log
+capture remains a separate recommendation for that owner.
+
 ## Observed delivery follow-up — 2026-11-05
 
 Owner requested an effectiveness check of chat «Оценить готовность игры к публикации»,

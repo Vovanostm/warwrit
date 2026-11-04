@@ -60,3 +60,76 @@ test('Claude startup and tool hooks cannot duplicate the audit', () => {
     ),
   );
 });
+
+test('preflight reports upstream guidance without unrelated inventories', () => {
+  mkdirSync(resolve(root, 'output'), { recursive: true });
+  const fixture = mkdtempSync(resolve(root, 'output/preflight-'));
+  const git = (...args) => execFileSync('git', args, { cwd: fixture });
+  const preflight = (base = 'main') => {
+    const result = spawnSync('bash', [resolve(root, 'scripts/agent-preflight.sh'), base], {
+      cwd: fixture,
+      env: { ...process.env, PATH: `${fixture}/bin:${process.env.PATH}` },
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    return result.stdout;
+  };
+
+  try {
+    git('init', '--quiet', '--initial-branch=main');
+    git('config', 'user.name', 'Fixture');
+    git('config', 'user.email', 'fixture@example.test');
+    git('config', 'core.hooksPath', '/dev/null');
+    mkdirSync(resolve(fixture, 'bin'));
+    for (const command of ['node', 'pnpm']) {
+      writeFileSync(
+        resolve(fixture, 'bin', command),
+        '#!/bin/sh\n[ "$1" = --version ] || exit 97\nprintf "fixture-version\\n"\n',
+        { mode: 0o755 },
+      );
+    }
+    writeFileSync(resolve(fixture, '.gitignore'), 'bin/\n');
+    writeFileSync(resolve(fixture, 'AGENTS.md'), 'Original guidance\n');
+    git('add', '.');
+    git('commit', '--quiet', '-m', 'base');
+    git('branch', 'worker');
+    assert.doesNotMatch(preflight(), /Upstream agent guidance changed|worktrees:/);
+
+    writeFileSync(resolve(fixture, 'ordinary.txt'), 'game change\n');
+    git('add', '.');
+    git('commit', '--quiet', '-m', 'ordinary change');
+    git('switch', '--quiet', 'worker');
+    assert.doesNotMatch(preflight(), /Upstream agent guidance changed/);
+
+    git('switch', '--quiet', 'main');
+    mkdirSync(resolve(fixture, '.codex'), { recursive: true });
+    mkdirSync(resolve(fixture, 'docs/engineering'), { recursive: true });
+    writeFileSync(resolve(fixture, '.codex/config.toml'), '[agents]\nmax_threads = 2\n');
+    writeFileSync(resolve(fixture, 'docs/engineering/AGENT_TEAM.md'), 'Delegation guidance\n');
+    git('add', '.');
+    git('commit', '--quiet', '-m', 'agent configuration and delegation');
+    git('switch', '--quiet', 'worker');
+    const configurationOutput = preflight();
+    assert.match(configurationOutput, /\.codex\/config\.toml/);
+    assert.match(configurationOutput, /docs\/engineering\/AGENT_TEAM\.md/);
+    assert.doesNotMatch(configurationOutput, /AGENTS\.md/);
+
+    git('switch', '--quiet', 'main');
+    writeFileSync(resolve(fixture, 'AGENTS.md'), 'Updated guidance\n');
+    mkdirSync(resolve(fixture, '.agents/skills/fixture'), { recursive: true });
+    writeFileSync(resolve(fixture, '.agents/skills/fixture/SKILL.md'), 'Scoped guidance\n');
+    git('add', '.');
+    git('commit', '--quiet', '-m', 'guidance change');
+    git('switch', '--quiet', 'worker');
+    const output = preflight();
+    assert.match(output, /Upstream agent guidance changed/);
+    assert.match(output, /AGENTS\.md/);
+    assert.match(output, /\.agents\/skills\/fixture\/SKILL\.md/);
+    assert.doesNotMatch(output, /ordinary\.txt|worktrees:/);
+    assert.match(preflight('missing-base'), /not found locally/);
+    git('switch', '--quiet', 'main');
+    assert.doesNotMatch(preflight(), /Upstream agent guidance changed/);
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+});

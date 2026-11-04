@@ -1,7 +1,7 @@
 # Warwrit agent contract
 
 Applies repository-wide. Read stricter directory instructions before editing.
-Owner workflow amendments through 2026-11-04 are consolidated here.
+Owner workflow amendments through 2026-11-05 are consolidated here.
 
 ## Results first and quick wins
 
@@ -70,6 +70,8 @@ Owner workflow amendments through 2026-11-04 are consolidated here.
 - Keep CURRENT_PLAN's current status within 40 nonempty lines, with coordinator,
   scope, authority, blockers and next action. Preserve superseded dated entries in
   [history](docs/engineering/CURRENT_PLAN_HISTORY.md), repairing moved links.
+  Supporting harness/docs tasks preserve the active game integrator's current block.
+  Keep support status in its owning page and hand checkpoint edits to that integrator.
 - After resume/integration read new CHANGELOG entries and changed source/status.
   Reuse unchanged source pointers/results. Before commit/closeout update affected
   docs and dated Unreleased CHANGELOG with branch, reason, paths, checks/limits and
