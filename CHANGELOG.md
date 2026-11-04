@@ -11,7 +11,7 @@ requests.
 
 ### Agent context and commit-hook cleanup
 
-- 2026-11-04, originating branch `codex/agent-harness-cleanup`, LOCAL. Per owner
+- 2026-11-04, originating branch `codex/agent-harness-cleanup`, PUBLISHED. Per owner
   request, analyzed the publication-readiness chat and removed automatic test,
   coverage and runtime-report processing from step commits. Local Git hooks check
   staged whitespace; clean PR CI owns the existing measured quality gates.
@@ -26,7 +26,8 @@ requests.
   Re-review corrected the obsolete commit-time runtime-coverage recipe and current
   Vitest/Orca comments. Hook regressions and focused checks pass again. Final
   affected review ACCEPT. [Delivery issue341](https://github.com/Vovanostm/warwrit/issues/341).
-  Publication/CI pending. Actual token/time/error savings NOT_MEASURED.
+  Published [PR342](https://github.com/Vovanostm/warwrit/pull/342); its live checks and merge receipt
+  establish remote delivery. Actual token/time/error savings NOT_MEASURED.
 
 ### Local company entry and actual Place navigation
 

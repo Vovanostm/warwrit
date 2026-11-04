@@ -58,7 +58,9 @@ merge after green applicable CI and updating local main. Fresh base remains
 `git commit`, plus two stale comments in Vitest/Orca validation. Replaced the
 recipe with explicit merger/audit commands and corrected comments. Runtime and
 test configuration behavior are preserved. Final independent affected readback ACCEPT.
-Tracked delivery [issue341](https://github.com/Vovanostm/warwrit/issues/341).
+Tracked delivery [issue341](https://github.com/Vovanostm/warwrit/issues/341) and
+[PR342](https://github.com/Vovanostm/warwrit/pull/342). The PR owns live CI, the reviewed head and actual
+merge receipt. Local main is updated by fast-forward after confirmed merge.
 
 This amendment supersedes conflicting local gate/startup/record-loading guidance
 below. Use the latest permission policy and root contract. Retained historical

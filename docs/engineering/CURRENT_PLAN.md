@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Agent harness cleanup — 2026-11-04, LOCAL
+## Agent harness cleanup — 2026-11-04, PUBLISHED / MERGE AUTHORIZED
 
 The coordinator, sole writer and check owner is the parent of the harness-cleanup chat.
 Branch `codex/agent-harness-cleanup`, base `5c2b3cd7` (main includes PR340).
@@ -18,9 +18,10 @@ no writer to that game slice and makes no game-readiness claim.
 [Verification boundary](LOCAL_DEVELOPMENT.md#verification-pipeline).
 Node hook/startup regressions 3/3, scoped lint/format/syntax, plan, new links,
 archive retention and diff checks PASS. Final independent infrastructure review ACCEPT.
-Game/full CI checks NOT_RUN. Efficiency gains NOT_MEASURED.
+Local game checks NOT_RUN. Efficiency gains NOT_MEASURED.
+[PR342](https://github.com/Vovanostm/warwrit/pull/342) owns live clean-checkout CI and actual merge state.
 [Delivery issue341](https://github.com/Vovanostm/warwrit/issues/341).
-Next: publish the scoped PR, verify its CI, merge and fast-forward local main.
+Continuation uses the live PR receipt and local-main ref. Preserve other writers' WIP.
 Previous local-entry status is superseded by main's PR340 merge at the base above.
 
 ## History
