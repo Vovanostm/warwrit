@@ -620,6 +620,17 @@ describe('ordinary company command executor (PostgreSQL)', () => {
           },
           'CONTACT_OR_ACCESS_REQUIRED',
         );
+        for (const resourceItemId of ['private-medical-unit', 'personal-medical-unit']) {
+          await rejectOrdinaryUnchanged(
+            scenario,
+            {
+              ...request,
+              commandId: randomUUID(),
+              payload: { ...request.payload, resourceItemId },
+            },
+            'CONTACT_OR_ACCESS_REQUIRED',
+          );
+        }
 
         const beforeMedicine = canonicalJson(
           scenario.priorState.economy.lifecycle.characters.find(
@@ -1008,6 +1019,33 @@ function withCareState(
     equipped: null,
     tombstone: null,
   };
+  const thirdMember = root.lifecycle.characters.find(
+    (person) =>
+      person.identity.characterId !== providerId &&
+      person.identity.characterId !== patientId &&
+      root.lifecycle.memberships.some(
+        (member) => member.characterId === person.identity.characterId && member.endedAt === null,
+      ),
+  )!;
+  const privatePack = {
+    ...root.physical!.containers.find(
+      (container) => container.containerId === medical.containerId,
+    )!,
+    containerId: 'care-private-pack',
+    kind: 'CARRIED' as const,
+    custodian: { kind: 'CHARACTER' as const, id: thirdMember.identity.characterId },
+    carrier: { kind: 'CHARACTER' as const, id: thirdMember.identity.characterId },
+    location: thirdMember.presence.location,
+    access: 'OWNER' as const,
+  };
+  const additionalMaterials = [
+    { ...medical, itemId: 'private-medical-unit', containerId: privatePack.containerId },
+    {
+      ...medical,
+      itemId: 'personal-medical-unit',
+      owner: { kind: 'CHARACTER' as const, id: thirdMember.identity.characterId },
+    },
+  ];
   return readCompanyCombatAggregateState({
     ...state,
     economy: {
@@ -1016,11 +1054,17 @@ function withCareState(
       physical: {
         ...root.physical!,
         conditions: loaded.conditions,
-        items: [...root.physical!.items, medical],
+        containers: [...root.physical!.containers, privatePack],
+        items: [...root.physical!.items, medical, ...additionalMaterials],
         knowledge: {
           ...root.physical!.knowledge,
           conditionSnapshots: loaded.knowledge.conditionSnapshots,
-          itemSnapshots: [...root.physical!.knowledge.itemSnapshots, medical],
+          containerSnapshots: [...root.physical!.knowledge.containerSnapshots, privatePack],
+          itemSnapshots: [
+            ...root.physical!.knowledge.itemSnapshots,
+            medical,
+            ...additionalMaterials,
+          ],
         },
       },
     },

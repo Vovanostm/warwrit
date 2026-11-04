@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Respect personal property and container access during care
+
+- 2026-11-05, `codex/game-care-delivery`, local. Reproduced unauthorized material
+  consumption in PostgreSQL, then restricted the company doctor producer to
+  company-owned medical units in COMPANY-accessible local containers. A member's
+  personal stock or OWNER-only pack cannot fund this company command. Both care
+  SQL scenarios, server types and scoped lint/format PASS.
+  [Care contract and remaining acceptance](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Bring company medicine into ordinary commands and roster
 
 - 2026-11-05, `codex/game-care-delivery`, local. Reuse the parked care producer,

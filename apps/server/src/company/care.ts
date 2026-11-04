@@ -35,7 +35,7 @@ export function companyCareOptions(state: CompanyCombatAggregateState): CareOpti
       .filter((condition) => condition.resolvedAt === null)
       .map((condition) => condition.conditionId),
   );
-  const ownedByCompany = (owner: { readonly kind: string; readonly id: string }) =>
+  const companyCustody = (owner: { readonly kind: string; readonly id: string }) =>
     (owner.kind === 'COMPANY' && owner.id === root.lifecycle.companyId) ||
     (owner.kind === 'CHARACTER' && members.has(owner.id));
 
@@ -92,7 +92,8 @@ export function companyCareOptions(state: CompanyCombatAggregateState): CareOpti
         .filter(
           (container) =>
             container.closed === null &&
-            ownedByCompany(container.custodian) &&
+            companyCustody(container.custodian) &&
+            container.access === 'COMPANY' &&
             container.location.kind === 'AT' &&
             sameAtPlace(container.location, location) &&
             (container.carrier === null ||
@@ -109,7 +110,8 @@ export function companyCareOptions(state: CompanyCombatAggregateState): CareOpti
       if (
         item.tombstone !== null ||
         item.quantity < 1 ||
-        !ownedByCompany(item.owner) ||
+        item.owner.kind !== 'COMPANY' ||
+        item.owner.id !== root.lifecycle.companyId ||
         !item.containerId ||
         !localContainers.has(item.containerId) ||
         !itemDefinition?.enabled ||
