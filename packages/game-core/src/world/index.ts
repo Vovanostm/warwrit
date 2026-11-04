@@ -12,3 +12,4 @@ export * from './continuous-company.js';
 
 export { readContinuousMovementPlan } from './continuous-movement.js';
 export * from './painted-atlas/region.js';
+export * from './world-observation.js';

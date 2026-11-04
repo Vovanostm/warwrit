@@ -1,3 +1,9 @@
+import { registerCartographyMap, grantCompanyMap } from '../world-lab/cartography-store.js';
+import { knownSiteSnapshot } from '../world-lab/cartography-field.js';
+import { sql } from 'kysely';
+import { PAINTED_GAME_WORLD_ID } from './map-context.js';
+import { PAINTED_ATLAS_SHEET, PAINTED_ATLAS_REGION, PAINTED_ATLAS_SITES } from '@warwrit/game-core';
+import type { WorldSurroundingsDto, WorldFreeMovementV2ResponseDto } from '@warwrit/protocol';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { Client } from 'pg';
@@ -16,6 +22,7 @@ import {
   campaignTick,
   TRAVEL_RULES,
   canonicalRevision,
+  canonicalJson,
   createLearningTaskState,
   evaluatePerkEffects,
   parseCompanyCommand,
@@ -28,6 +35,8 @@ import type {
   CreateCompanyPayloadDto,
   CreateCompanyRequestDto,
   WorldTravelPreviewResponseDto,
+  WorldFreeMovementRequestDto,
+  WorldFreeMovementResponseDto,
   WorldTravelRequestDto,
   WorldTravelV2ResponseDto,
 } from '@warwrit/protocol';
@@ -2913,6 +2922,7 @@ async function assertClockMigrationRoundTrip(rollback: Client): Promise<void> {
       '0015_world_lab_npc_groups',
       '0016_world_lab_pursuits',
       '0017_world_lab_pursuit_order_ids',
+      '0018_company_cartography',
     ] as const;
     const beforeDown = await runMigrations(rollback, 'status');
     expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);
@@ -3021,8 +3031,9 @@ function makeSyntheticCompany(
   db: Kysely<DatabaseSchema>,
   fixtureConnectionString = connectionString,
   appRegistry = apps,
+  selectedWorldId?: string,
 ): SyntheticCompany {
-  const worldId = randomUUID();
+  const worldId = selectedWorldId ?? randomUUID();
   const companyId = randomUUID();
   const accountId = randomUUID();
   const foreignAccountId = randomUUID();
@@ -3531,3 +3542,292 @@ async function cleanupSyntheticCompany(
     openingOptions: [],
   });
 }
+
+describe('legacy free-movement receipts (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'replays a retained V1 receipt only for its exact owner request and refuses fresh retired commands',
+    async () => {
+      const db = requireDatabase();
+      const actor = makeSyntheticCompany(db);
+      await seedSyntheticCompany(db, actor);
+      try {
+        const read = await actor.app.inject({
+          method: 'GET',
+          url: '/world/free-movement?schemaVersion=1',
+          headers: actor.ownerHeaders,
+        });
+        expect(read.statusCode, read.body).toBe(200);
+        const observed = read.json<WorldFreeMovementResponseDto>();
+        if (!observed.party) throw new Error('Legacy fixture has no party');
+        const request: WorldFreeMovementRequestDto = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: observed.publicRevision,
+          expectedRouteEpoch: observed.party.routeEpoch,
+          action: { kind: 'STOP' },
+        };
+        // The retired endpoint cannot create a new historical receipt. Retain
+        // the public V1 stationary response as a fixture for exact replay only.
+        const historical: WorldFreeMovementResponseDto = {
+          ...observed,
+          commandId: request.commandId,
+        };
+        await db
+          .insertInto('world_route_receipts')
+          .values({
+            world_id: actor.worldId,
+            company_id: actor.companyId,
+            command_id: request.commandId,
+            account_id: actor.accountId,
+            request_key: canonicalJson(request),
+            response: historical,
+            resulting_public_revision: historical.publicRevision,
+          })
+          .execute();
+        const retained = await inspectCompany(db, actor);
+        const clocks = await clockRowsFor(db, actor);
+        const replay = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: request,
+        });
+        expect(replay.statusCode, replay.body).toBe(200);
+        expect(replay.json()).toEqual(historical);
+        expect(await inspectCompany(db, actor)).toEqual(retained);
+        expect(await clockRowsFor(db, actor)).toEqual(clocks);
+        for (const attempt of [
+          {
+            headers: actor.ownerHeaders,
+            payload: {
+              ...request,
+              expectedRouteEpoch: (BigInt(request.expectedRouteEpoch) + 1n).toString(),
+            },
+            status: 409,
+            code: 'INVALID_COMMAND',
+          },
+          {
+            headers: actor.ownerHeaders,
+            payload: { ...request, commandId: randomUUID() },
+            status: 409,
+            code: 'INVALID_COMMAND',
+          },
+          {
+            headers: actor.foreignHeaders,
+            payload: request,
+            status: 403,
+            code: 'NOT_AUTHORIZED',
+          },
+          {
+            headers: { ...actor.ownerHeaders, [WORLD_EXPECTED_COMPANY_ID_HEADER]: randomUUID() },
+            payload: request,
+            status: 403,
+            code: 'NOT_AUTHORIZED',
+          },
+        ]) {
+          const rejected = await actor.app.inject({
+            method: 'POST',
+            url: '/world/free-movement',
+            headers: attempt.headers,
+            payload: attempt.payload,
+          });
+          expect(rejected.statusCode, rejected.body).toBe(attempt.status);
+          expect(rejected.json()).toMatchObject({ ok: false, code: attempt.code });
+          expect(await inspectCompany(db, actor)).toEqual(retained);
+          expect(await clockRowsFor(db, actor)).toEqual(clocks);
+        }
+      } finally {
+        await cleanupSyntheticCompany(db, actor);
+      }
+    },
+  );
+});
+
+describe('ordinary painted cartography (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'uses ordinary company scope, masked tiles and exact movement replay without exposing hidden geography',
+    async () => {
+      const db = requireDatabase();
+      const actor = makeSyntheticCompany(db, connectionString, apps, PAINTED_GAME_WORLD_ID);
+      await seedSyntheticCompany(db, actor);
+      try {
+        const surroundings = await actor.app.inject({
+          method: 'GET',
+          url: '/world/surroundings',
+          headers: actor.ownerHeaders,
+        });
+        expect(surroundings.statusCode, surroundings.body).toBe(200);
+        const map = surroundings.json<WorldSurroundingsDto>().map;
+        expect(map.continuous).toBeUndefined();
+        expect(map.terrainRows).toBeUndefined();
+        expect(map.edges).toEqual([]);
+        const cartography = map.cartography;
+        if (!cartography) throw new Error('ordinary painted map missing');
+        expect(cartography.mapEdition).toBe(PAINTED_ATLAS_REGION.mapEdition);
+        expect(
+          map.sites.every((site) =>
+            cartography.sites.some((known) => known.siteId === site.siteId),
+          ),
+        ).toBe(true);
+        const movement = await actor.app.inject({
+          method: 'GET',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+        });
+        expect(movement.statusCode, movement.body).toBe(200);
+        const current = movement.json<WorldFreeMovementV2ResponseDto>();
+        const x = Number(current.point.xMicroFp) / 65536,
+          z = Number(current.point.zMicroFp) / 65536;
+        const tileX = Math.floor(
+          (x / PAINTED_ATLAS_SHEET.fpPerPixel + PAINTED_ATLAS_SHEET.width / 2) /
+            cartography.imageTileSize,
+        );
+        const tileY = Math.floor(
+          (PAINTED_ATLAS_SHEET.height / 2 - z / PAINTED_ATLAS_SHEET.fpPerPixel) /
+            cartography.imageTileSize,
+        );
+        const tilePath = `/world/cartography/tiles/${cartography.revision}/${tileX}/${tileY}.png`;
+        const tile = await actor.app.inject({
+          method: 'GET',
+          url: tilePath,
+          headers: actor.ownerHeaders,
+        });
+        expect(tile.statusCode, tile.body.slice(0, 200)).toBe(200);
+        expect(tile.rawPayload.subarray(0, 8)).toEqual(
+          Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+        );
+        expect(tile.headers['cache-control']).toBe('private, no-store');
+        expect((await actor.app.inject({ method: 'GET', url: tilePath })).statusCode).toBe(401);
+        expect(
+          (await actor.app.inject({ method: 'GET', url: tilePath, headers: actor.foreignHeaders }))
+            .statusCode,
+        ).toBe(403);
+        expect(
+          (
+            await actor.app.inject({
+              method: 'GET',
+              url: tilePath,
+              headers: { ...actor.ownerHeaders, [WORLD_EXPECTED_COMPANY_ID_HEADER]: randomUUID() },
+            })
+          ).statusCode,
+        ).toBe(403);
+        expect(
+          (
+            await actor.app.inject({
+              method: 'GET',
+              url: '/world/free-movement?schemaVersion=1',
+              headers: actor.ownerHeaders,
+            })
+          ).statusCode,
+        ).toBe(409);
+        const command = {
+          schemaVersion: 2,
+          commandId: randomUUID(),
+          expectedPublicRevision: current.publicRevision,
+          expectedMovementEpoch: current.movementEpoch,
+          action: {
+            kind: 'MOVE_TO',
+            mapEdition: cartography.mapEdition,
+            target: { kind: 'TERRAIN', xFp: x + 1, zFp: z },
+          },
+        };
+        const accepted = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: command,
+        });
+        expect(accepted.statusCode, accepted.body).toBe(200);
+        const after = await inspectCompany(db, actor);
+        const replay = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: command,
+        });
+        expect(replay.statusCode, replay.body).toBe(200);
+        expect(replay.json()).toEqual(accepted.json());
+        expect(await inspectCompany(db, actor)).toEqual(after);
+        const result = accepted.json<WorldFreeMovementV2ResponseDto>();
+        const refused = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: {
+            ...command,
+            commandId: randomUUID(),
+            expectedPublicRevision: result.publicRevision,
+            expectedMovementEpoch: result.movementEpoch,
+            action: {
+              kind: 'MOVE_TO',
+              mapEdition: cartography.mapEdition,
+              target: { kind: 'SITE', siteId: 'unguessed-private-site' },
+            },
+          },
+        });
+        expect(refused.json()).toMatchObject({ code: 'MAP_INFORMATION_REQUIRED' });
+        expect(await inspectCompany(db, actor)).toEqual(after);
+        const mill = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'staraya-melnitsa');
+        if (!mill) throw new Error('authored mill missing');
+        const mapId = `test.mill.${actor.companyId}`;
+        await db.transaction().execute(async (transaction) => {
+          await registerCartographyMap(transaction, {
+            mapId,
+            edition: '1',
+            regionId: cartography.regionId,
+            gridEdition: cartography.gridEdition,
+            columns: cartography.grid.columns,
+            rows: cartography.grid.rows,
+            originXQ: String(cartography.grid.origin.xFp * 65536),
+            originZQ: String(cartography.grid.origin.zFp * 65536),
+            cellSizeFp: String(cartography.grid.cellSizeFp),
+            coverageSnapshot: new Uint8Array(
+              Math.ceil((cartography.grid.columns * cartography.grid.rows) / 8),
+            ).fill(255),
+            siteSnapshot: [knownSiteSnapshot(mill)],
+          });
+          await grantCompanyMap(transaction, {
+            worldId: actor.worldId,
+            companyId: actor.companyId,
+            sourceRef: 'test.known-mill',
+            mapId,
+            edition: '1',
+            sourceKind: 'HOME',
+            receiptId: null,
+            grantedAt: new Date(),
+          });
+        });
+        for (const target of [
+          { kind: 'SITE', siteId: mill.siteId },
+          { kind: 'TERRAIN', ...mill.anchorFp },
+        ]) {
+          const entry = await actor.app.inject({
+            method: 'POST',
+            url: '/world/free-movement',
+            headers: actor.ownerHeaders,
+            payload: {
+              ...command,
+              commandId: randomUUID(),
+              expectedPublicRevision: result.publicRevision,
+              expectedMovementEpoch: result.movementEpoch,
+              action: { kind: 'MOVE_TO', mapEdition: cartography.mapEdition, target },
+            },
+          });
+          expect(entry.json(), entry.body).toMatchObject({ code: 'ROUTE_FORBIDDEN' });
+          expect(await inspectCompany(db, actor)).toEqual(after);
+        }
+      } finally {
+        for (const table of [
+          'company_exploration_chunks',
+          'company_place_observations',
+          'company_region_knowledge',
+          'company_map_grants',
+        ])
+          await sql`delete from ${sql.table(table)} where world_id = ${actor.worldId} and company_id = ${actor.companyId}`.execute(
+            db,
+          );
+        await cleanupSyntheticCompany(db, actor);
+      }
+    },
+  );
+});

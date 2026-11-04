@@ -13,6 +13,7 @@ import type {
   WorldLabObservedGroupDto,
   WorldLabPursuitDto,
   WorldLabPursuitRequestDto,
+  WorldLabStateDto,
 } from '@warwrit/protocol';
 import type { DatabaseSchema } from '../db/database.js';
 import {
@@ -30,6 +31,8 @@ import {
   storeWorldLabPursuit,
 } from './pursuit-store.js';
 import type { WorldLabFixture } from './model.js';
+import { cartographyKnowsTarget, cartographyKnowsSegment } from './cartography.js';
+import type { WorldLabCartographyDto } from '@warwrit/protocol';
 
 interface PursuitContext {
   readonly database: Kysely<DatabaseSchema>;
@@ -107,17 +110,74 @@ function move(
   fixture: WorldLabFixture,
   input: WorldFreeMovementV2RequestDto,
   identity: unknown = input,
+  observation?: WorldLabStateDto,
 ) {
-  return executeContinuousMovement(
-    database,
-    context.worldId,
-    fixture.accountId,
-    fixture.companyId,
-    input,
-    PAINTED_ATLAS_REGION,
-    context.now,
-    identity,
-  );
+  return guardedMove(database, context, fixture, input, identity, observation);
+}
+
+function assertKnownPlan(
+  cartography: WorldLabCartographyDto,
+  response: WorldFreeMovementV2ResponseDto,
+) {
+  for (const span of response.plan?.speedSpans ?? []) {
+    if (!cartographyKnowsSegment(cartography, span.from, span.to))
+      throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+  }
+}
+
+async function guardedMove(
+  database: Kysely<DatabaseSchema>,
+  context: PursuitContext,
+  fixture: WorldLabFixture,
+  input: WorldFreeMovementV2RequestDto,
+  identity: unknown = input,
+  observation?: WorldLabStateDto,
+) {
+  // The outer order transaction owns authorization, receipts and all rollback.
+  let cartography: WorldLabCartographyDto | undefined;
+  // STOP has no destination to authorize. Its mover must validate revisions
+  // before settling due travel, rather than invalidate its own input on a read.
+  if (input.action.kind === 'MOVE_TO') {
+    // Internal pursuit decisions already own this observation and the same
+    // transaction's account/company/route locks. Do not settle their own state twice.
+    const state =
+      observation ??
+      (await readWorldLabState(
+        database,
+        context.worldId,
+        context.fixtures,
+        fixture.accountId,
+        context.now,
+      ));
+    if (!state) throw new MovementRejection('NOT_AUTHORIZED');
+    cartography = state.cartography;
+    if (!cartographyKnowsTarget(cartography, input.action.target))
+      throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+  }
+  try {
+    const response = await executeContinuousMovement(
+      database,
+      context.worldId,
+      fixture.accountId,
+      fixture.companyId,
+      input,
+      PAINTED_ATLAS_REGION,
+      context.now,
+      identity,
+    );
+    if (cartography) assertKnownPlan(cartography, response);
+    return response;
+  } catch (error) {
+    // A private detour/barrier must not distinguish a guessed destination from an unknown route.
+    if (
+      input.action.kind === 'MOVE_TO' &&
+      ((error instanceof MovementRejection &&
+        ['NO_PATH', 'TARGET_BLOCKED', 'OUT_OF_BOUNDS', 'ROUTE_TOO_COMPLEX'].includes(error.code)) ||
+        (error instanceof RangeError && error.message !== 'TRUSTED_TIME_UNAVAILABLE'))
+    )
+      throw new MovementRejection('MAP_INFORMATION_REQUIRED');
+    throw error;
+  }
 }
 
 async function assertPursuitToken(
@@ -149,15 +209,8 @@ export async function executeWorldLabGroundOrder(
       input.commandId,
     );
     if (!replay) await assertPursuitToken(transaction, context, fixture, expectedPursuitToken);
-    const response = await executeContinuousMovement(
-      transaction,
-      context.worldId,
-      fixture.accountId,
-      expectedCompanyId,
-      input,
-      PAINTED_ATLAS_REGION,
-      context.now,
-    );
+    if (expectedCompanyId !== fixture.companyId) throw new MovementRejection('NOT_AUTHORIZED');
+    const response = await guardedMove(transaction, context, fixture, input);
     if (!replay) await clearWorldLabPursuit(transaction, context.worldId, fixture.companyId);
     return response;
   });
@@ -208,6 +261,7 @@ export async function executeWorldLabPursuit(
         action: toward(target.point),
       },
       identity,
+      state,
     );
     await storeWorldLabPursuit(transaction, context.worldId, fixture.companyId, {
       orderId: randomUUID(),
@@ -239,16 +293,19 @@ async function nextPursuitMovement(
   database: Kysely<DatabaseSchema>,
   context: PursuitContext,
   fixture: WorldLabFixture,
-  own: WorldFreeMovementV2ResponseDto,
+  observation: WorldLabStateDto,
   pursuit: WorldLabPursuitDto,
   target: WorldLabObservedGroupDto | undefined,
 ): Promise<WorldLabPursuitDto> {
+  const own = observation.own.movement;
   if (!target) {
     const response = await move(
       database,
       context,
       fixture,
       movementRequest(own, toward(pursuit.lastPoint)),
+      undefined,
+      observation,
     );
     return { ...pursuit, status: 'LAST_SEEN', movementEpoch: response.movementEpoch };
   }
@@ -268,6 +325,8 @@ async function nextPursuitMovement(
     context,
     fixture,
     movementRequest(own, toward(target.point)),
+    undefined,
+    observation,
   );
   return { ...pursuit, lastPoint: target.point, movementEpoch: response.movementEpoch };
 }
@@ -288,14 +347,7 @@ export async function stepWorldLabPursuit(context: PursuitContext, fixture: Worl
     const target = state.groups.find((group) => group.id === pursuit.targetId && group.pursuable);
     let next: WorldLabPursuitDto;
     try {
-      next = await nextPursuitMovement(
-        transaction,
-        context,
-        fixture,
-        state.own.movement,
-        pursuit,
-        target,
-      );
+      next = await nextPursuitMovement(transaction, context, fixture, state, pursuit, target);
     } catch (error) {
       if (!(error instanceof RangeError || error instanceof MovementRejection)) throw error;
       const response = await move(

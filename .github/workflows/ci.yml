@@ -57,6 +57,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: bash scripts/world-map/check-world-lab-ci.sh
 
+      - name: Measure ordinary painted-map journey
+        if: github.event_name == 'pull_request'
+        run: bash scripts/world-map/check-painted-game-ci.sh
+
       - name: Reject quality regressions in changed files
         if: github.event_name == 'pull_request'
         env:

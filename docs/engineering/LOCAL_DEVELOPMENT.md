@@ -83,9 +83,14 @@ executable can be supplied through `WORLD_LAB_CHROMIUM`.
 CI collects existing SQL execution with `WARWRIT_INTEGRATION_COVERAGE` and actual
 migration child execution with `WARWRIT_MIGRATION_RUNTIME_COVERAGE`. Defaults keep
 the normal migration command unchanged. The CI-only helper
-`scripts/world-map/check-world-lab-ci.sh` starts its owned launcher and uses a
-fresh runtime subdirectory in `output/world-lab-ci/`; it stops/waits its children
-and removes only its owned PID file. It never resets the persistent database.
+`scripts/world-map/check-world-lab-ci.sh` starts disposable PostgreSQL plus captured
+API/Vite child processes in a fresh `output/world-lab-ci/runtime-*` directory.
+It stops/waits only its own children and removes only its own Compose project.
+The persistent laboratory database is never reset. Private UI5338 keeps its
+file allowlist; legacy atlas controls run on a separate loopback authoring
+origin5326, without an API proxy. Both Vite processes and actual browser pages
+supply source-checked measurements. `pnpm dev:map` uses that authoring config;
+the private ordinary-game configuration intentionally denies the full atlas.
 Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
 previous local evidence is not uploaded as CI proof. The job budget is30 minutes

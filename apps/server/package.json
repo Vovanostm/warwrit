@@ -14,11 +14,13 @@
     "kysely": "^0.28.0",
     "openid-client": "^6.8.8",
     "pg": "^8.0.0",
-    "pino": "^9.0.0"
+    "pino": "^9.0.0",
+    "pngjs": "7.0.0"
   },
   "devDependencies": {
     "@colyseus/sdk": "0.18.4",
     "@types/pg": "^8.0.0",
+    "@types/pngjs": "6.0.5",
     "@warwrit/testkit": "workspace:*"
   },
   "scripts": {

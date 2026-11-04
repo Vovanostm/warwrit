@@ -20,9 +20,13 @@
     "scripts/world-map/navigation-lab.css",
     "scripts/world-map/world-lab.ts",
     "scripts/world-map/world-lab.css",
+    "scripts/world-map/fog-design/view.ts",
+    "scripts/world-map/fog-design/style.css",
     "scripts/world-map/world-lab-server.ts",
     "scripts/world-map/world-lab-vite.config.ts",
+    "scripts/world-map/navigation-lab-vite.config.ts",
     "scripts/world-map/world-lab.browser.mjs",
+    "scripts/world-map/painted-game.browser.mjs",
     // Spawned through the migration shell runner.
     "scripts/run-migration-smoke.ts",
     "scripts/migration-smoke.ts",

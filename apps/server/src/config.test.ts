@@ -5,10 +5,15 @@ import { loadServerConfig } from './config.js';
 describe('server configuration', () => {
   it('loads deterministic defaults', () => {
     expect(loadServerConfig({})).toEqual({
+      worldId: 'main',
       host: '0.0.0.0',
       port: 3000,
       encounterRealtimePort: 3110,
     });
+    expect(loadServerConfig({ WORLD_MAP: 'painted-atlas' }).worldId).toBe(
+      'world.porechye.atlas-v1',
+    );
+    expect(() => loadServerConfig({ WORLD_MAP: 'unknown' })).toThrow('WORLD_MAP');
   });
 
   it('validates the dedicated encounter realtime port', () => {
