@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Apply task-quality research to the existing agent workflow
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
+  Per owner request, update AGENTS.md and the context/review/delivery skills with
+  requirement-grounded acceptance, invalid-check diagnosis, repaired-fixture
+  review and explicit partial-result boundaries. Keep detailed evaluation telemetry
+  on demand. [Instruction rollout](docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
+  and [issue348](https://github.com/Vovanostm/warwrit/issues/348) own scope,
+  permission and delivery. Preserve CURRENT_PLAN and active game worktrees.
+  Three skill validators, scoped formatting, added local links/anchors, plan and
+  diff checks PASS. Root context is 166 lines / 10,035 bytes. The linked issue/PR
+  owns final review, CI and merge status. Game tests NOT_RUN locally for instruction
+  changes. Native reload and quality/cost effects NOT_MEASURED.
+
 ### Evaluate task quality and the evidence behind acceptance
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.

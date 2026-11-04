@@ -1,5 +1,32 @@
 # Harness evaluation
 
+## Instruction rollout — 2026-11-05
+
+The owner requested skill/root improvements, PR review, merge and local branch
+updates. [Issue348](https://github.com/Vovanostm/warwrit/issues/348) owns that
+scope, current permission and delivery status. Research commit `6339da35` is
+included in this branch. CURRENT_PLAN stays with the game integrator.
+
+The bounded implementation originates on `codex/harness-task-quality`. Issue348
+and its PR own live publication, review, CI and merge status.
+
+| Owning instruction | Applied change and reason                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AGENTS.md          | Keep critical gameplay acceptance and classify invalid-check failures. A repaired SQL run demonstrates its exercised boundary.                    |
+| warwrit-context    | Trace acceptance criteria to requirements available to the author before judging implementation.                                                  |
+| warwrit-review     | Review repaired fixtures/assertions and disputed graders, accepting valid alternatives. Read-only reviewers return findings to the author.        |
+| warwrit-delivery   | Keep blocking criteria open and distinguish completed substeps. Move detailed telemetry from the routine handoff to on-demand harness evaluation. |
+
+These are instruction changes based on the assessment below. Skill selection
+metadata, existing safety/authority boundaries and game behavior retain their
+own contracts. Native prompt reload, changed agent behavior and comparative
+quality/cost remain NOT_RUN/NOT_MEASURED. Three skill validators, scoped formatting,
+added local links/anchors, the current-plan guard and diff checks PASS. Root context
+is 166 lines / 10,035 bytes. An initial formatting warning in this section was
+corrected before the passing readback. Final independent review and applicable CI
+are recorded in issue348 and its PR. Local branch updates target main and this harness branch.
+Active/dirty and parked game worktrees retain their current writer ownership.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing
