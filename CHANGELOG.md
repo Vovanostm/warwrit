@@ -22,7 +22,11 @@ requests.
   review correction. [Owning findings and limits](docs/engineering/AGENT_TEAM.md#harness-cleanup--2026-11-04).
   Hook/startup regressions 3/3, scoped ESLint/format/syntax, plan, archive retention,
   new links and diff checks PASS. Final independent source review ACCEPT.
-  Actual token/time/error savings NOT_MEASURED. Publication/merge/CI NOT_RUN.
+  Owner follow-up authorizes review, publication, merge and local main update.
+  Re-review corrected the obsolete commit-time runtime-coverage recipe and current
+  Vitest/Orca comments. Hook regressions and focused checks pass again. Final
+  affected review ACCEPT. [Delivery issue341](https://github.com/Vovanostm/warwrit/issues/341).
+  Publication/CI pending. Actual token/time/error savings NOT_MEASURED.
 
 ### Local company entry and actual Place navigation
 

@@ -155,13 +155,19 @@ Istanbul reports. Each entry carries its captured script text, functions and map
 If a map omits original content, `frozenBeforeMs` must record the actual capture
 process start boundary, before any affected source edit. Prefer inline originals.
 
-`WARWRIT_RUNTIME_COVERAGE=/absolute/input.json git commit ...` adds this measured
-coverage after the hook's ordinary related tests and before the unchanged Fallow
-thresholds. The merger rejects changed mapped sources before writing the target,
-and resolves mapper end-of-line sentinels to verified line lengths without changing
-hit counts. Reusing a matching capture proves coverage of unchanged source; it does
-not prove a newly executed journey. This is optional local evidence tooling, not a
-replacement for required CI or tests.
+After explicit tests produce current `coverage/coverage-final.json`, merge an
+optional measured runtime capture and run the audit explicitly.
+
+```bash
+node scripts/world-map/runtime-coverage-merge.mjs /absolute/input.json coverage/coverage-final.json
+pnpm check:changes
+```
+
+The merger rejects changed mapped sources before writing the target and resolves
+mapper end-of-line sentinels to verified line lengths without changing hit counts.
+Reusing a matching capture establishes coverage of unchanged source. A fresh
+journey still needs its own execution evidence. Git commits perform no coverage
+processing. This optional local diagnostic supplements required CI and tests.
 
 One local start for the playable alpha (company, world, contracts, encounters):
 

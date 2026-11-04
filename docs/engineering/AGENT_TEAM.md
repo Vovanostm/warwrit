@@ -52,6 +52,14 @@ Reviewer ran source/diff checks only. Full game/SQL/browser/CI checks NOT_RUN. T
 agent error rate NOT_MEASURED. Validate those on subsequent real work before
 claiming an improvement in delivered-game quality.
 
+Owner follow-up — 2026-11-04 authorizes review, improvements, scoped publication,
+merge after green applicable CI and updating local main. Fresh base remains
+`5c2b3cd7`. Re-review caught a current recipe still passing runtime coverage into
+`git commit`, plus two stale comments in Vitest/Orca validation. Replaced the
+recipe with explicit merger/audit commands and corrected comments. Runtime and
+test configuration behavior are preserved. Final independent affected readback ACCEPT.
+Tracked delivery [issue341](https://github.com/Vovanostm/warwrit/issues/341).
+
 This amendment supersedes conflicting local gate/startup/record-loading guidance
 below. Use the latest permission policy and root contract. Retained historical
 role limits, model settings and Orca queues are source material for a named task.
