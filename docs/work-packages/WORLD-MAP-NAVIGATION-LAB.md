@@ -857,3 +857,14 @@ ACCEPT. Web types PASS; its compiler inputs contain neither game-core nor author
 navigation. Three existing camera checks PASS/17filtered SKIP; scoped lint/format
 PASS. Runtime camera
 logic is unchanged. Later hosted game/coverage/browser gates remain NOT_RUN.
+
+Third hosted correction — 2026-11-05. At`5bbf6110`, CI41914938844 passed the
+clean bootstrap, measured unit suite and complete world-lab browser journey.
+The ordinary launcher failed before app/browser startup because its bare tmpfs
+was root-owned while pinned Dex runs as1001:1001. Matched actual containers
+reproduced the SQLite startup failure and then returned OIDC discovery200 with
+uid=1001,gid=1001,mode=0700. Both probe containers were removed; the existing Dex
+and campaign resources were preserved. Shell syntax/diff and independent source
+review PASS. Shell Prettier check was unsupported because no shell parser is
+installed. No game source, ports, credentials or fixture rules changed.
+Corrected-head ordinary browser/audit and actual preview artifact upload remain pending.

@@ -64,7 +64,7 @@ if [[ "${WARWRIT_QA_USE_EXISTING_DEX:-0}" != 1 ]]; then
   sed -e 's@127.0.0.1:5556@127.0.0.1:5618@g' -e 's@127.0.0.1:5173@127.0.0.1:5228@g' \
     fixtures/identity/dex.dev.yaml >"$evidence/dex.yaml"
   dex_id="$(docker run -d --rm --name "warwrit-painted-dex-$run_id" \
-    -p 127.0.0.1:5618:5556 --tmpfs /var/dex \
+    -p 127.0.0.1:5618:5556 --tmpfs /var/dex:uid=1001,gid=1001,mode=0700 \
     -v "$evidence/dex.yaml:/etc/dex/config.yaml:ro" \
     ghcr.io/dexidp/dex@sha256:bc7cfce7c17f52864e2bb2a4dc1d2f86a41e3019f6d42e81d92a301fad0c8a1d \
     dex serve /etc/dex/config.yaml)"

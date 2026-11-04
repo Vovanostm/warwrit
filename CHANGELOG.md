@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Give isolated Dex storage its pinned process owner
+
+- 2026-11-05, `codex/game-painted-delivery`, local correction to published
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344). CI41914938844 reached
+  the ordinary browser launcher, where root-owned tmpfs prevented Dex SQLite
+  startup. Set that private mount's UID/GID1001 and mode0700. Matched Docker
+  failure/readiness probes, shell syntax and source review PASS.
+  [Current checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+
 ### Keep camera types independent of authored navigation
 
 - 2026-11-05, `codex/game-painted-delivery`, local correction to published
