@@ -44,9 +44,9 @@ were not found in this Warwrit checkout. They are external examples, not local
 implementation evidence. [Evaluation use](../HARNESS_EVAL.md) records how to assess
 subsequent real slices without adding benchmark preparation to each game task.
 Existing shell fixtures PASS, including visible short failures, bounded noisy
-output, retained full logs and nonzero status. Node hook regressions3/3 PASS.
+output, retained full logs and nonzero status. Node hook regressions 3/3 PASS.
 Bash syntax, scoped formatting, role TOML, new links/inbound root anchors and
-diff checks PASS. Root context fell from12783 to9759 bytes (199 to163 lines).
+diff checks PASS. Root context fell from 12,783 to 9,759 bytes (199 to 163 lines).
 Final independent static infrastructure review ACCEPT after bounding failure logs.
 [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) owns live PR/CI
 and merge links. Native role-loading/behavior and gameplay pilot NOT_RUN.
