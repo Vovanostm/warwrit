@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 
 import {
   COMPANY_CATALOGUE_VERSION,
@@ -27,6 +27,8 @@ import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { createDatabase } from '../db/database.js';
+import { buildApp } from '../app.js';
+import { loadServerConfig } from '../config.js';
 import type { DatabaseSchema } from '../db/database.js';
 import {
   executeOrdinaryPlayerCompanyCommand,
@@ -532,6 +534,205 @@ describe('trusted company command executor (PostgreSQL)', () => {
 
 // These are real executor/transaction scenarios: no prepared draft or persistence is mocked.
 describe('ordinary company command executor (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'observes saved local wounds through authenticated company reads once, preserves remote knowledge, and enables care',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          if (!database || !connectionString) throw new Error('company test database missing');
+          const config = loadServerConfig({
+            DATABASE_URL: connectionString,
+            OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+            OIDC_CLIENT_ID: 'warwrit-local',
+            OIDC_CLIENT_SECRET: 'local-only-secret',
+            OIDC_REDIRECT_URI: 'http://127.0.0.1:3107/auth/callback',
+            PUBLIC_ORIGIN: 'http://127.0.0.1:3107',
+            HOST: '127.0.0.1',
+            PORT: '3107',
+          });
+          const app = buildApp({
+            identity: { config: config.identity!, database },
+            company: { database, worldId: scenario.worldId },
+          });
+          const sessionToken = randomUUID();
+          await database
+            .insertInto('identity_sessions')
+            .values({
+              token_digest: createHash('sha256').update(sessionToken).digest(),
+              account_id: scenario.ownerAccountId,
+              expires_at: new Date(Date.now() + 60_000),
+            })
+            .execute();
+          await database
+            .updateTable('world_campaign_clocks')
+            .set({ epoch_ms: String(Date.now() - 21_600) })
+            .where('world_id', '=', scenario.worldId)
+            .execute();
+          try {
+            const before = await readOrdinaryPersistence(scenario);
+            const anonymous = await app.inject({ method: 'GET', url: '/company' });
+            expect(anonymous.statusCode).toBe(401);
+            expect(await readOrdinaryPersistence(scenario)).toEqual(before);
+            const responses = await Promise.all(
+              [0, 1].map(() =>
+                app.inject({
+                  method: 'GET',
+                  url: '/company',
+                  headers: { cookie: `warwrit_session=${sessionToken}` },
+                }),
+              ),
+            );
+            for (const response of responses) expect(response.statusCode).toBe(200);
+            expect(responses[1]!.json()).toEqual(responses[0]!.json());
+            const observed = await readOrdinaryPersistence(scenario);
+            const physical = observed.state.economy.physical!;
+            expect(BigInt(observed.state.economy.lifecycle.campaignTick)).toBeGreaterThan(1000n);
+            expect(
+              physical.knowledge.conditionSnapshots.map((condition) => condition.conditionId),
+            ).toEqual(['care-instance', 'recovering-wound']);
+            expect(physical.conditions).toHaveLength(3);
+            expect(
+              physical.knowledge.conditionSnapshots.find(
+                (condition) => condition.conditionId === 'recovering-wound',
+              ),
+            ).toMatchObject({ resolvedAt: '1001' });
+            expect(observed.receipts).toHaveLength(2);
+            const patientMembership = observed.state.economy.lifecycle.memberships.find(
+              (member) => member.characterId === physical.conditions[0]!.characterId,
+            )!;
+            expect(
+              observed.state.economy.finance.accounts.find(
+                (account) => account.membershipId === patientMembership.membershipId,
+              )!.schedule!.notices,
+            ).toMatchObject([{ lifetimeLevel: 25, effectiveAt: '2000' }]);
+            expect(observed.state.economy.finance.wallets).toEqual(
+              before.state.economy.finance.wallets,
+            );
+            expect(observed.audit.map((entry) => entry.event)).toEqual(
+              expect.arrayContaining([expect.objectContaining({ type: 'CompanyObserved' })]),
+            );
+            const repeated = await app.inject({
+              method: 'GET',
+              url: '/company',
+              headers: { cookie: `warwrit_session=${sessionToken}` },
+            });
+            expect(repeated.json()).toEqual(responses[0]!.json());
+            expect(await readOrdinaryPersistence(scenario)).toEqual(observed);
+            const treatment = repeated.json().holdings.care.treatments[0];
+            expect(treatment.conditionId).toBe('care-instance');
+            const request = ordinaryRequest(
+              scenario,
+              {
+                type: 'ApplyCare',
+                payload: {
+                  characterId: treatment.characterId,
+                  conditionId: treatment.conditionId,
+                  providerId: scenario.priorState.economy.lifecycle.company!.currentLeaderId!,
+                  resourceItemId: 'care-medical-unit',
+                },
+              },
+              observed.state,
+            );
+            const treated = await executeOrdinary(
+              scenario,
+              request,
+              scenario.ownerAccountId,
+              new Date(),
+            );
+            expect(treated.kind).toBe('COMMITTED');
+            const saved = await readOrdinaryPersistence(scenario);
+            expect(
+              saved.state.economy.physical!.conditions.find(
+                (condition) => condition.conditionId === 'care-instance',
+              )!.care,
+            ).toMatchObject({ channel: 'MATERIAL' });
+            expect(
+              saved.state.economy.physical!.knowledge.conditionSnapshots.some(
+                (condition) => condition.conditionId === 'remote-wound',
+              ),
+            ).toBe(false);
+            expect(
+              await executeOrdinary(scenario, request, scenario.ownerAccountId, new Date()),
+            ).toEqual(treated);
+            expect(await readOrdinaryPersistence(scenario)).toEqual(saved);
+          } finally {
+            await app.close();
+            await database
+              .deleteFrom('identity_sessions')
+              .where('account_id', '=', scenario.ownerAccountId)
+              .execute();
+          }
+        },
+        (state) => {
+          const wounded = withCareState(state);
+          const root = wounded.economy;
+          const localWound = root.physical!.conditions[0]!;
+          const providerId = root.lifecycle.company!.currentLeaderId!;
+          const recoveringWound = {
+            ...localWound,
+            conditionId: 'recovering-wound',
+            characterId: providerId,
+            definitionId: 'minor-field-wound',
+            recoveryTicks: '49',
+          };
+          const remoteId = root.lifecycle.characters.find(
+            (person) => person.presence.fieldPartyId === null,
+          )!.identity.characterId;
+          return readCompanyCombatAggregateState({
+            ...wounded,
+            economy: {
+              ...root,
+              lifecycle: {
+                ...root.lifecycle,
+                knowledge: {
+                  ...root.lifecycle.knowledge,
+                  characters: root.lifecycle.knowledge.characters.map((person) =>
+                    person.identity.characterId === localWound.characterId
+                      ? { ...person, skills: { leadership: 0, blades: 0, defense: 0 } }
+                      : person.identity.characterId === providerId
+                        ? {
+                            ...person,
+                            presence: { ...person.presence, assignment: 'RECOVERY' },
+                            conditionIds: ['minor-field-wound'],
+                          }
+                        : person,
+                  ),
+                },
+                characters: root.lifecycle.characters.map((person) =>
+                  person.identity.characterId === remoteId
+                    ? { ...person, conditionIds: ['severe-stable-wound'] }
+                    : person.identity.characterId === localWound.characterId
+                      ? {
+                          ...person,
+                          skills: {
+                            ...person.skills,
+                            blades: initialSkillProgress(25, 'unobserved-combat-practice'),
+                          },
+                        }
+                      : person.identity.characterId === providerId
+                        ? {
+                            ...person,
+                            presence: { ...person.presence, assignment: 'RECOVERY' },
+                            conditionIds: ['minor-field-wound'],
+                          }
+                        : person,
+                ),
+              },
+              physical: {
+                ...root.physical!,
+                conditions: [
+                  ...root.physical!.conditions,
+                  recoveringWound,
+                  { ...localWound, conditionId: 'remote-wound', characterId: remoteId },
+                ],
+                knowledge: { ...root.physical!.knowledge, conditionSnapshots: [recoveringWound] },
+              },
+            },
+          });
+        },
+      );
+    },
+  );
   it.skipIf(database === undefined)(
     'stabilizes a critical wound once across concurrent retries without an extra treatment charge',
     async () => {

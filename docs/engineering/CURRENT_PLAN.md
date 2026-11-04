@@ -14,7 +14,8 @@ Owner-approved medicine challenges are 5 for wound care and 10 for stabilization
 Protocol/server/web types, 7 client/shell checks and 2 real PostgreSQL care checks PASS.
 The first native company lost an unattended battle. Its saved outcome is retained.
 Personal stock/OWNER-pack consumption was reproduced and fixed; both SQL care checks PASS.
-Next is lawful local wound observation, then native care → reload/retry → restart.
+Lawful local wound observation is implemented; executor/routes16 and payroll/core41 PASS.
+Next is the native contract → wound → care → reload/retry → restart journey.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

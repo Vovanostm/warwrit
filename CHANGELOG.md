@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Disclose actual local wounds before company care
+
+- 2026-11-05, `codex/game-care-delivery`, local. Authenticated company reads
+  prepare and persist existing scoped Observe commands for changed local own-party
+  conditions. Respect movement/encounter/contact, current time, actual food and
+  existing payroll qualification rules. Repeated unchanged reads keep their
+  revision. The shared qualification query preserves the existing consumer rule.
+  PostgreSQL executor/routes16PASS, payroll/core41PASS, types/lint/format PASS.
+  A reviewer-found recovery-boundary defect was reproduced in SQL and corrected
+  by reselecting subjects after time advance. Native journey and final acceptance
+  remain pending. [Contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05),
+  [wiki](docs/wiki/mechanics/wounds.md#уход-компании--локальная-реализация-2026-11-05).
+
 ### Respect personal property and container access during care
 
 - 2026-11-05, `codex/game-care-delivery`, local. Reproduced unauthorized material
