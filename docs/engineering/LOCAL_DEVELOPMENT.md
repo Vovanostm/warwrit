@@ -130,8 +130,12 @@ supply source-checked measurements. `pnpm dev:map` uses that authoring config;
 the private ordinary-game configuration intentionally denies the full atlas.
 Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
-previous local evidence is not uploaded as CI proof. The job budget is30 minutes
-for the existing15m28s gate plus measured SQL/browser phases.
+previous local evidence is not uploaded as CI proof. The job budget is35 minutes
+since2026-11-05: run42044643870 exhausted the previous30-minute job cap during
+the ordinary-browser step after successful bootstrap, measured units and world
+journey. Browser/launcher PASS messages preceded cancellation; the CI step was
+cancelled and audit was NOT_RUN. The whole-job allowance adds headroom for measured execution variance; individual
+scenario deadlines, checks and audit thresholds retain their existing limits.
 
 This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
 `warwrit-world-lab` Compose project/PostgreSQL65438. It uses `compose.world-lab.yaml`
@@ -159,6 +163,33 @@ entries in `{ "entries": [...], "reports": [...] }`; `reports` may name real SQL
 Istanbul reports. Each entry carries its captured script text, functions and map.
 If a map omits original content, `frozenBeforeMs` must record the actual capture
 process start boundary, before any affected source edit. Prefer inline originals.
+
+For a hosted final-audit failure, first download `quality-audit-<run>-<attempt>`
+from that CI run. Read `output/quality-audit/context.txt`, the explanation step,
+and `audit.stderr`; render the retained report locally without rerunning analysis:
+
+```bash
+node scripts/print-quality-audit.mjs /absolute/artifact/output/quality-audit/audit.json
+```
+
+For a known complexity finding, inspect structural metrics without producing
+coverage again:
+
+```bash
+pnpm exec fallow health scripts/world-map/world-lab.browser.mjs --complexity --max-cyclomatic 1 --report-only --format json --output-file output/readiness-health.json
+```
+
+The temporary threshold1 displays simple functions too. This source-only,
+advisory report provides no current measured coverage/CRAP verdict and never
+replaces the native audit. Do not change measured counters or suppress a finding
+to make it pass; correct the actual code or its proven measurement defect.
+
+The artifact also retains the same-run `coverage/coverage-final.json`. It is
+historical evidence for the recorded checkout/base and inputs, not coverage of
+subsequent edits. Unknown attribution stays unknown. Inspect the complete JSON
+for categories outside the concise complexity/clone explanation. Reproduce only
+the unresolved diagnostic with relevant inputs before choosing a full local
+measured run; do not substitute this report for required current-head CI.
 
 After explicit tests produce current `coverage/coverage-final.json`, merge an
 optional measured runtime capture and run the audit explicitly.
@@ -314,6 +345,19 @@ pnpm exec fallow health --coverage coverage/coverage-final.json   # measured CRA
 
 Testkit and cross-package specs import built workspace exports; `typecheck` uses
 `--noEmit` and does not refresh `dist`.
+
+When company observation/roster-read semantics change, include the existing
+recruitment SQL consumer alongside the affected executor/routes checks:
+
+```bash
+pnpm exec vitest run --mode integration apps/server/src/company/recruitment.integration.test.ts
+```
+
+Use built public packages and `DATABASE_URL` for an exclusively owned disposable
+PostgreSQL. Existing integration setup creates/migrates its isolated test databases.
+Normal unit mode skips this scenario. After an observation, load the current
+persisted aggregate before a fixture edit; restoring an old genesis state can
+mismatch the row's newer revisions. [Observed recovery failure](HARNESS_EVAL.md#fresh-recovery-consumer-check).
 
 ## Proportional local validation
 

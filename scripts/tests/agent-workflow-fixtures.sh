@@ -86,11 +86,11 @@ git -C "$repo" config user.email fixture@example.test
 git -C "$repo" config user.name Fixture
 git -C "$repo" config core.hooksPath /dev/null
 mkdir -p "$repo/scripts" "$repo/packages/protocol/src"
-cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$root/scripts/orca-validate.sh" "$repo/scripts/"
+cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$root/scripts/orca-validate.sh" "$root/scripts/print-quality-audit.mjs" "$repo/scripts/"
 mkdir -p "$repo/docs/engineering"
 printf '## Current task\n\nCoordinator is the fixture author.\n' > "$repo/docs/engineering/CURRENT_PLAN.md"
 printf 'original\n' > "$repo/packages/protocol/src/old.ts"
-printf ".orca/\n" > "$repo/.gitignore"
+printf ".orca/\noutput/\ncoverage/\n" > "$repo/.gitignore"
 git -C "$repo" add .
 git -C "$repo" commit -qm base
 base="$(git -C "$repo" rev-parse HEAD)"
@@ -250,6 +250,68 @@ grep -qx 'pnpm install --frozen-lockfile' "$FIXTURE_COREPACK_LOG" || fail 'froze
 expect_exit 128 env PATH="$fixture/checkbin:$PATH" GITHUB_BASE_REF=missing bash -e -c "$ci_docs_script"
 [[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'missing base reached format'
 echo 'PASS CI docs: scoped format on detached checkout with advanced base; missing base fails'
+
+# One native audit owns its exit status; rendering only explains saved output.
+ci_audit_script="$(ci_step_script 'Reject quality regressions in changed files')"
+[[ -n "$ci_audit_script" ]] || fail 'CI audit command missing'
+mkdir -p "$fixture/auditbin"
+cat > "$fixture/auditbin/pnpm" <<'STUB'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FIXTURE_AUDIT_LOG"
+[[ "$*" == 'check:changes --format json --output-file output/quality-audit/audit.json' ]] || exit 97
+cp "$FIXTURE_AUDIT_REPORT" output/quality-audit/audit.json
+echo 'native audit diagnostic' >&2
+exit "$FIXTURE_AUDIT_EXIT"
+STUB
+chmod +x "$fixture/auditbin/pnpm"
+cat > "$fixture/audit-fail.json" <<'JSON'
+{
+  "kind": "audit", "schema_version": 11, "verdict": "fail",
+  "attribution": {"gate": "new-only", "complexity_introduced": 2, "complexity_inherited": 1},
+  "gate_outcomes": {"audit-verdict": {"status": "fail", "enforced": true}},
+  "complexity": {"findings": [
+    {"introduced": true, "effective_severity": "error", "severity": "moderate", "path": "new.ts", "line": 7, "name": "new-error", "exceeded": "crap", "crap": 30},
+    {"introduced": true, "effective_severity": "warn", "severity": "critical", "path": "warn.ts", "line": 8, "name": "new-warning", "exceeded": "cognitive"},
+    {"introduced": false, "effective_severity": "error", "path": "old.ts", "line": 9, "name": "inherited-name"},
+    {"path": "unknown.ts", "line": 10, "name": "unknown-attribution"}
+  ]},
+  "duplication": {"clone_groups": [
+    {"introduced": true, "fingerprint": "new-clone", "instances": [{"file": "copy.ts", "start_line": 3, "end_line": 5}]},
+    {"introduced": false, "fingerprint": "inherited-clone", "instances": []}
+  ], "clone_families": [{"fingerprint": "family-duplicate"}]}
+}
+JSON
+printf '%s\n' '{"kind":"audit","schema_version":11,"verdict":"pass","complexity":{"findings":[]}}' > "$fixture/audit-pass.json"
+printf '%s\n' '{"error":true,"message":"coverage input missing","exit_code":2}' > "$fixture/audit-error.json"
+export FIXTURE_AUDIT_LOG="$fixture/audit-commands"
+for audit_exit in 0 1 2; do
+  case "$audit_exit" in
+    0) audit_report="$fixture/audit-pass.json" ;;
+    1) audit_report="$fixture/audit-fail.json" ;;
+    2) audit_report="$fixture/audit-error.json" ;;
+  esac
+  rm -rf "$repo/output/quality-audit"
+  : > "$FIXTURE_AUDIT_LOG"
+  expect_exit "$audit_exit" env PATH="$fixture/auditbin:$PATH" FALLOW_AUDIT_BASE=origin/main \
+    QUALITY_PR_HEAD_SHA=fixture-head GITHUB_RUN_ID=123 GITHUB_RUN_ATTEMPT=2 \
+    FIXTURE_AUDIT_REPORT="$audit_report" FIXTURE_AUDIT_EXIT="$audit_exit" bash -e -c "$ci_audit_script"
+  [[ "$(wc -l < "$FIXTURE_AUDIT_LOG")" -eq 1 ]] || fail 'audit analyzed twice'
+  grep -qx "exit=$audit_exit" output/quality-audit/context.txt || fail 'audit exit context missing'
+  grep -qx 'native audit diagnostic' output/quality-audit/audit.stderr || fail 'native diagnostic lost'
+  expect_exit 0 node "$root/scripts/print-quality-audit.mjs" output/quality-audit/audit.json
+  if [[ "$audit_exit" == 1 ]]; then
+    grep -q 'Introduced complexity errors (1)' "$fixture/output" || fail 'effective severity partition missing'
+    grep -q 'Other introduced complexity (1)' "$fixture/output" || fail 'warning promoted or hidden'
+    grep -q 'unknown-attribution' "$fixture/output" || fail 'missing attribution treated as inherited'
+    grep -q 'new-clone' "$fixture/output" || fail 'new clone hidden'
+    if grep -qE 'inherited-name|inherited-clone|family-duplicate' "$fixture/output"; then fail 'inherited/family details mixed into introduced output'; fi
+    grep -q 'inherited-name' output/quality-audit/audit.json || fail 'raw inherited evidence lost'
+  fi
+done
+printf '{' > "$fixture/malformed-audit.json"
+expect_exit 1 node "$root/scripts/print-quality-audit.mjs" "$fixture/malformed-audit.json"
+expect_exit 1 node "$root/scripts/print-quality-audit.mjs" "$fixture/missing-audit.json"
+echo 'PASS quality feedback: native exit0/1/2 preserved, one audit, attributed findings, raw diagnostics and invalid report errors'
 
 # Rejected cheap checks must stop before any pnpm command on source routes.
 route_case packages/protocol/src/new.ts consumers
