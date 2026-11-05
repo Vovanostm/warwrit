@@ -1,5 +1,51 @@
 # Harness evaluation
 
+## Care-delivery bottlenecks and earlier feedback — 2026-11-05
+
+Owner requested continued observation and improvements to help the game agent
+produce product code quickly and correctly.
+[Issue351](https://github.com/Vovanostm/warwrit/issues/351) owns this bounded
+support delivery, current mission authority and final publication status. Source is the live game chat
+`01a182d5-a42b-7f71-be34-149cf554d19a`, PR350, its owning WP-02.4, current source
+and existing local diagnostics. This is a descriptive observation, not a matched
+before/after efficiency experiment.
+
+At readback, PR350 head `516c1eb2` has green CI41981802583 and scope41985379934.
+The native care checklist remains open. A preserved company has a treatable
+wound but its only capable physician died. Another ordinary company encountered
+the existing shared HUNT02 as a potential helper. Recruitment returns
+UNSUPPORTED_ACTION. The current author is implementing hiring and the owner's
+new accepted-contract target marker using existing cartography quest marks.
+Those changes are active WIP and have separate ownership.
+
+### Observed delays and applied controls
+
+| Observation                                   | Evidence and consequence                                                                                                                                                                                                                                               | Correction in this harness slice                                                                                                                                                                                                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Late checkpoint validation                    | CI41978851543 passed the full code/browser/audit gate at `433dbb0e`, while scope41978920528 rejected implicit coordinator wording. The diff to `516c1eb2` contains only CHANGELOG, CURRENT_PLAN and WP-02.4. Its full CI41981802583 ran from 06:38:50 to 07:07:57 UTC. | Move the existing plan check to the start of the same CI job, before toolchain/bootstrap. The local focused validator checks a committed plan edit or deletion before format/product commands. PR scope keeps linkage and size reporting.                               |
+| Optional retrieval stalls                     | The active turn records one Empirical query failing after 1,271,270 ms, about 21.2 min. This establishes one tool delay, not a persistent service outage.                                                                                                              | The context skill asks for a named unresolved gap before optional memory discovery and reuses known base/record IDs. A failed connector leaves required facts open while independent work proceeds. This instruction does not impose or guarantee a connector timeout.  |
+| Native scenario lacks a feasible prerequisite | Preserved care runs include AFK losses and a severe-wound survivor whose provider died. A fresh company shares existing encounter state. Current native treatment/lost-reply/restart evidence is missing.                                                              | The delivery skill checks the normal route and public prerequisites before a timed scenario, identifies an authorized missing product capability before another random-outcome trial, and keeps combat control continuous through a terminal result or supported pause. |
+| Repeated local measurement accumulation       | `output/company-care/20261105/audit-main-integration.json` records counter 5,318,911,355 rejected by the u32 reader. The merger sums captured hits into its target. The exact contribution history was not reconstructed.                                              | Clarify the existing optional local-audit procedure to start with a fresh measured unit report and merge selected runtime/SQL captures once. Existing reports remain historical. No counter clipping or coverage claim is introduced.                                   |
+
+The active writer adopted PR349 on main `92c0f534`, reused its browser fixes and
+passed both real journeys. That proves integration and those scenario results.
+It does not measure faster product development. The missing native care outcome
+continues to require a capable provider through the ordinary game path.
+
+### Verification and limits
+
+The isolated workflow fixtures PASS, including changed-invalid, corrected and
+deleted CURRENT_PLAN. Invalid metadata exits before any pnpm format/product
+command. Bash syntax, two existing skill validators, four hook/preflight regressions and scoped formatting PASS.
+Independent read-only source review ACCEPT at `09e03ed5`.
+Local routing reads committed base..HEAD, so an uncommitted edited plan still
+needs the direct plan command documented in the delivery skill.
+Published-head CI is tracked with issue351 and its PR. Gameplay execution is NOT_RUN for these harness-only
+changes. Native prompt reload, connector latency improvement, fewer failed QA
+attempts, total child effort and comparative quality/cost remain NOT_MEASURED.
+The active game checkout, CURRENT_PLAN and retained game databases preserve their
+existing ownership. Supporting changes originate on `codex/harness-early-feedback`.
+
 ## Instruction rollout — 2026-11-05
 
 The owner requested skill/root improvements, PR review, merge and local branch

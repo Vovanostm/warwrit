@@ -954,3 +954,7 @@ captures pass finite marker readability/integration, all applicable scores2.
 Full-atlas artistic acceptance remains open, with inherited fog/rendering gaps
 and missing equal-height art comparison sheets. The current slice adds no art assets. The branch's GitHub PR
 owns hosted CI and publication status. No migration or new art assets.
+
+Main e809d0ad / PR352 is integrated before publication. Its changes are confined
+to the existing harness/docs and early plan check. Marker production source and
+applicable native/SQL/type results remain unchanged. Scoped plan/diff/format PASS.

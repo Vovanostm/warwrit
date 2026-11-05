@@ -20,6 +20,14 @@ Keep the current checkpoint short and consult historical entries only as needed.
 
 ## Player result
 
+Before a native scenario, check its public prerequisites and a viable normal
+route to them. Care needs a living capable provider and a treatable patient.
+A new company can encounter an existing shared battle. If the current save lacks
+an essential capability, identify the next authorized product prerequisite before
+repeating combat for a random outcome. Preserve the result and open criterion.
+Finish setup/research before entering a timed battle, then keep native control
+continuous until a terminal result or an actual supported pause.
+
 For a gameplay slice, read back the assigned acceptance checklist against the
 normal entry point. Record the observed player/saved result, relevant revision
 and actual check for each closed item. Carry the next failing item forward.
@@ -34,6 +42,8 @@ readiness audit for unchanged evidence.
 1. Finish source, regression and necessary documentation edits. Read the staged
    diff for scope, secret leakage, leftovers and changed semantics. Run focused
    checks while editing; fix tool environment issues without weakening the gate.
+   Check an edited CURRENT_PLAN with `bash scripts/check-current-plan.sh` before
+   publication. The focused local validator checks committed changes to that path.
 2. Record `git rev-parse HEAD HEAD^{tree}` and base. Use the repository-pinned
    toolchain and frozen lockfile. The existing clean-checkout gate is owned by
    AGENTS.md / `scripts/bootstrap.sh`; do not copy it into another workflow.

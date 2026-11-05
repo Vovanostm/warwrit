@@ -172,7 +172,11 @@ The merger rejects changed mapped sources before writing the target and resolves
 mapper end-of-line sentinels to verified line lengths without changing hit counts.
 Reusing a matching capture establishes coverage of unchanged source. A fresh
 journey still needs its own execution evidence. Git commits perform no coverage
-processing. This optional local diagnostic supplements required CI and tests.
+processing. For another local audit, start with a fresh measured unit report before
+merging the selected runtime/SQL captures once. Repeatedly merging into the same
+accumulated report adds its hit counts again and can overflow downstream readers.
+Keep prior reports as historical evidence. This optional diagnostic supplements
+required CI and tests.
 
 One local start for the playable alpha (company, world, contracts, encounters):
 
@@ -319,7 +323,10 @@ Owner amendment — 2026-10-25: one assigned check owner runs
 Failed checks print a diagnostic tail (up to 8192 bytes) and the exact rerun command,
 while retaining `.orca/validate-<step>.log` and a nonzero overall result.
 The script uses local refs (no implicit fetch), requires a valid merge base and
-checks integration/clean tree before acceptance. Refresh live refs when integration
+checks integration/clean tree before acceptance. A committed CURRENT_PLAN edit or deletion
+runs the existing plan checker before format/product commands and stops on failure.
+Clean CI runs that same checker before toolchain setup/bootstrap. PR scope retains
+task linkage and size reporting. Refresh live refs when integration
 requires it; the script does not claim its local origin/main is live.
 
 | Affected paths                                                                 | Local route                                                                      |

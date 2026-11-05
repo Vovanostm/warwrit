@@ -27,6 +27,21 @@ requests.
   Inherited atlas/fog art acceptance remains open under the full-game objective.
   No migration. Care PR350 at516c1eb2 remains draft with green full CI/scope.
 
+### Detect checkpoint errors before expensive product checks
+
+- 2026-11-05, originating branch `codex/harness-early-feedback`, LOCAL.
+  Continued owner review of PR350 found a documentation-only correction followed
+  by another29min full gate, a failed21min optional memory query and native care
+  blocked by a missing physician. Move the existing plan check from PR scope to
+  the start of CI. Check committed plan edits/deletions in `orca-validate.sh` before
+  format/product commands. Update existing context/delivery skills with targeted
+  optional retrieval and feasible timed native scenarios. Clarify fresh local
+  coverage aggregation after the observed u32 overflow. The
+  [owning observation](docs/engineering/HARNESS_EVAL.md#care-delivery-bottlenecks-and-earlier-feedback--2026-11-05)
+  preserves evidence, actual checks and limits. Isolated workflow fixtures,
+  syntax, two skill validators and scoped formatting PASS. Independent review and
+  published-head CI are pending. Comparative agent speed/quality NOT_MEASURED.
+
 ### Let the finite preparation approach arrive before pursuit
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
