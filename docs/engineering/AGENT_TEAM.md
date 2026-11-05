@@ -4,6 +4,68 @@ Project setup, 2026-09-27. [AGENTS.md](../../AGENTS.md) and the active contract
 remain authoritative. Profiles reuse existing skills; they do not activate
 gameplay cards or introduce another workflow engine.
 
+## Harness cleanup — 2026-11-04
+
+Owner requested systemic correction after the chat «Оценить готовность игры к
+публикации» (`01a182d5-a42b-7f71-be34-149cf554d19a`). Reviewed its active November 4
+turn and the preceding completed turn `01a189d8-4e47-7461-8bfd-5f6bf5d58e0a`.
+The latter contains 176 command executions over about 103 minutes, including
+failed commits, repeated coverage refresh/merging and source-map investigations.
+This is a bounded transcript observation, not a project-wide efficiency rate.
+The active chat still has a separate painted-map writer. No edits were made there.
+
+Confirmed causes in main at `5c2b3cd7` and their corrections follow.
+
+- The commit hook refreshed coverage with test output suppressed and continued
+  after a failed test. It also merged optional browser coverage. Step commits now
+  check staged whitespace only. Authors run relevant tests explicitly. Required
+  coverage/journey/audit gates remain in clean PR CI. Local static-quality failures
+  can be discovered later in that pipeline. A commit alone establishes no quality verdict.
+- Claude ran a second `PreToolUse` audit before Git's hook, and fetched remote
+  status at every startup/resume/compaction. Removed the duplicate gate/script.
+  Startup/resume retain local preflight. Compaction runs no inventory hook.
+  Fetch remote state when integration needs it.
+- Root AGENTS had 409 lines and CURRENT_PLAN had 5641. Consolidated repeated rules
+  and moved the old plan to CURRENT_PLAN_HISTORY with dates/evidence retained.
+  The current entry has only the active assignment and continuation pointers.
+- The owner's October 29 finite-journey, two-active-writing-worktree and final-only
+  review correction was present in chat but absent from root instructions. Recorded
+  it with mission scope, without adopting the separate unapproved roadmap or its
+  proposed merge permissions, contracts or numeric diff/document quotas.
+- Historical HARNESS_HANDOFF briefs still prescribed removed gates. Marked them
+  historical and linked the current contract. Older detailed evidence remains dated.
+
+Rule consolidation retained permission/state/verification boundaries as essential,
+linked art/technology/delegation detail on demand, and removed duplicate gate code
+and repeated policy prose. Applicable policy decisions retain their source links.
+OpenAI's instruction-loading guidance supports a short root contract and scoped
+references. [Official documentation](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+
+Executed checks passed, including three Node hook/startup regressions, scoped
+ESLint/format, shell/JavaScript syntax, current-plan validation, scoped diff and
+new local links. Direct text comparison confirms the complete old plan body was
+retained. An initial archive-comparison helper split the heading incorrectly;
+correcting the helper passed without changing archived content. Final independent
+infrastructure review ACCEPT after removing task-local scope from permanent rules,
+dating the old startup claim and disabling inventory reload on compaction.
+Reviewer ran source/diff checks only. Full game/SQL/browser/CI checks NOT_RUN. Token savings, delivery speed and future
+agent error rate NOT_MEASURED. Validate those on subsequent real work before
+claiming an improvement in delivered-game quality.
+
+Owner follow-up — 2026-11-04 authorizes review, improvements, scoped publication,
+merge after green applicable CI and updating local main. Fresh base remains
+`5c2b3cd7`. Re-review caught a current recipe still passing runtime coverage into
+`git commit`, plus two stale comments in Vitest/Orca validation. Replaced the
+recipe with explicit merger/audit commands and corrected comments. Runtime and
+test configuration behavior are preserved. Final independent affected readback ACCEPT.
+Tracked delivery [issue341](https://github.com/Vovanostm/warwrit/issues/341) and
+[PR342](https://github.com/Vovanostm/warwrit/pull/342). The PR owns live CI, the reviewed head and actual
+merge receipt. Local main is updated by fast-forward after confirmed merge.
+
+This amendment supersedes conflicting local gate/startup/record-loading guidance
+below. Use the latest permission policy and root contract. Retained historical
+role limits, model settings and Orca queues are source material for a named task.
+
 ## Current operating model — 2026-10-25
 
 Owner accepted the workflow improvement and requested one GPT-6.1 Sol author,
@@ -70,6 +132,18 @@ the running session. Never create user-owned tasks to evade limits.
 See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact ownership.
 
 ## Assignment and scheduling
+
+Every initial task and follow-up repeats the checkout, expected head/base,
+read/write paths and completion condition. Reusing an agent does not establish
+its working directory. The [context skill](../../.agents/skills/warwrit-context/SKILL.md)
+owns the recipient's missing/mismatched-route check. Keep follow-ups self-contained:
+
+```text
+Checkout / expected HEAD / base:
+Mode / allowed paths / prohibited operations:
+Question or changed result to review:
+Acceptance / smallest check / stop condition:
+```
 
 Use the four-field brief in [the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
 Include exact focused checks/resource ownership and a finite scope/stop condition.

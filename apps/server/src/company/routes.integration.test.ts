@@ -270,6 +270,11 @@ describe('authenticated company read (PostgreSQL)', () => {
               nicknameTextKey: character.nicknameTextKey,
               perkIds: character.perkIds,
               knownStatus: character.knownStatus,
+              inFieldParty: ['a-leader', 'a-worker-0', 'a-worker-1'].includes(
+                character.characterId,
+              ),
+              canJoinFieldParty: character.characterId === 'a-provider',
+              fieldPartyFull: false,
             })),
           },
           holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),
@@ -955,7 +960,7 @@ describe('authenticated company read (PostgreSQL)', () => {
           code: 'STALE_REVISION',
           publicRevision: renamedRevision,
         });
-        const unsupported = await createdApp.inject({
+        const invalidAssignment = await createdApp.inject({
           method: 'POST',
           url: '/company/commands',
           headers: commandHeaders,
@@ -963,8 +968,22 @@ describe('authenticated company read (PostgreSQL)', () => {
             schemaVersion: 2,
             commandId: `unsupported-${accountId}`,
             expectedPublicRevision: renamedRevision,
-            type: 'Recruit',
+            type: 'SetAssignment',
             payload: {},
+          },
+        });
+        expect(invalidAssignment.statusCode).toBe(400);
+        expect(invalidAssignment.json()).toMatchObject({ code: 'INVALID_COMMAND' });
+        const unsupported = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: commandHeaders,
+          payload: {
+            schemaVersion: 2,
+            commandId: `unsupported-action-${accountId}`,
+            expectedPublicRevision: renamedRevision,
+            type: 'ReturnToService',
+            payload: { characterId: 'a-member' },
           },
         });
         expect(unsupported.statusCode).toBe(409);
@@ -1142,7 +1161,14 @@ describe('authenticated company read (PostgreSQL)', () => {
         expect(BigInt(accruedPayroll?.duePayableQ ?? '0')).toBeGreaterThanOrEqual(4n);
         const payrollRead = await createdApp.inject({ method: 'GET', url: '/company', headers });
         expect(payrollRead.statusCode).toBe(200);
-        expect(payrollRead.json().holdings.payroll).toEqual(accruedPayroll);
+        const observedAccrued = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!));
+        if (!observedAccrued) throw new Error('company snapshot missing after payroll read');
+        expect(payrollRead.json().holdings.payroll).toEqual(
+          projectPayroll(observedAccrued.economy, companyId!),
+        );
+        expect(observedAccrued.economy.finance.wallets).toEqual(accrued.economy.finance.wallets);
 
         const payrollHeaders = {
           ...headers,
@@ -1151,7 +1177,7 @@ describe('authenticated company read (PostgreSQL)', () => {
         const payrollCommand = {
           schemaVersion: 2,
           commandId: `payroll-${accountId}`,
-          expectedPublicRevision: accrued.economy.lifecycle.knowledge.revision,
+          expectedPublicRevision: observedAccrued.economy.lifecycle.knowledge.revision,
           type: 'PayClaims',
           payload: {
             poolId: 'local',

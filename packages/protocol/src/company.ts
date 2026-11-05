@@ -88,6 +88,11 @@ export interface CompanySummaryDto {
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+    /** The owner knows whether this character travels with the active field party. */
+    readonly inFieldParty?: boolean;
+    /** A local, available reserve can join through the explicit roster action. */
+    readonly canJoinFieldParty?: boolean;
+    readonly fieldPartyFull?: boolean;
   }[];
 }
 /** Safe, owner-private payroll observation; absent on historical responses means unavailable. */
@@ -133,6 +138,21 @@ export interface CompanyPayrollDto {
 }
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
+  /** Owner-known wound instances and locally available material-care choices. */
+  readonly care?: {
+    readonly treatments: readonly {
+      readonly characterId: string;
+      readonly conditionId: string;
+      readonly definitionId: string;
+      readonly careDefinitionId: string;
+      readonly providers: readonly { readonly characterId: string }[];
+      readonly materials: readonly {
+        readonly itemId: string;
+        readonly definitionId: string;
+        readonly quantity: number;
+      }[];
+    }[];
+  };
   readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
   /** Optional for old response compatibility; missing means no payroll snapshot is available. */
   readonly payroll?: CompanyPayrollDto;
@@ -167,6 +187,12 @@ export interface CompanyHoldingsDto {
     readonly maximumStamina: number | null;
     /** Unresolved physical conditions (wounds, illness) by definition id. */
     readonly conditions: readonly string[];
+    /** Lawfully observed local duty state and actions currently available to the owner. */
+    readonly recovery?: {
+      readonly assignment: 'FIELD' | 'RECOVERY' | 'OTHER';
+      readonly canRest: boolean;
+      readonly canReturnToField: boolean;
+    };
   }[];
   /** The company's party is in a field camp that covers its current food. */
   readonly fieldCamp: boolean;
@@ -248,6 +274,8 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly mode: 'DEFAULT' | 'TARGETED';
     readonly payeeId?: string;
   };
+  readonly Recruit: { readonly offerId: string; readonly offerRevision: string };
+  readonly JoinFieldParty: { readonly characterId: string };
   readonly BuySupplies: {
     readonly siteId: string;
     readonly quantity: number;
@@ -272,6 +300,37 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly itemId: string;
     readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
   };
+  /** Apply one locally performed treatment using an accessible material instance. */
+  readonly ApplyCare: {
+    readonly characterId: string;
+    readonly conditionId: string;
+    readonly providerId: string;
+    readonly resourceItemId: string;
+  };
+  /** Rest locally or return to field duty; location, funding and eligibility are server-derived. */
+  readonly SetAssignment: {
+    readonly characterId: string;
+    readonly assignment: 'FIELD' | 'RECOVERY';
+  };
+}
+
+export interface LocalRecruitOfferDto {
+  readonly offerId: string;
+  readonly offerRevision: string;
+  readonly characterId: string;
+  readonly name: string;
+  readonly skills: readonly { readonly skillId: string; readonly level: number }[];
+  readonly aptitudes: readonly { readonly skillId: string; readonly valueBps: number }[];
+  readonly health: { readonly current: number; readonly maximum: number };
+  readonly stamina: { readonly current: number; readonly maximum: number };
+  readonly conditions: readonly string[];
+  readonly signingQ: string;
+  readonly dailyWageMilli: string;
+  readonly physician: boolean;
+}
+
+export interface LocalRecruitOffersResponseDto {
+  readonly offers: readonly LocalRecruitOfferDto[];
 }
 
 export type EnabledOrdinaryPlayerCompanyCommandType = keyof OrdinaryPlayerCompanyPayloads;

@@ -12,12 +12,14 @@ web=0
 server=0
 shared=0
 broad=0
+plan_changed=0
 existing=()
 code=()
 while IFS= read -r path; do
   [[ -z "$path" ]] && continue
   [[ -f "$path" ]] && existing+=("$path")
   case "$path" in
+    docs/engineering/CURRENT_PLAN.md) plan_changed=1 ;;
     apps/web/src/* | apps/web/public/*) web=1 ;;
     apps/server/src/*) server=1 ;;
     packages/game-core/src/* | packages/protocol/src/* | packages/testkit/src/*) shared=1 ;;
@@ -39,11 +41,24 @@ status=0
 step() {
   local name="$1"; shift
   if "$@" > ".orca/validate-$name.log" 2>&1; then echo "PASS $name"
-  else echo "FAIL $name (see .orca/validate-$name.log)"; status=1; fi
+  else
+    echo "FAIL $name (see .orca/validate-$name.log)" >&2
+    echo "Diagnostic tail (up to 8192 bytes; full log above):" >&2
+    tail -c 8192 ".orca/validate-$name.log" >&2
+    printf '\n' >&2
+    printf 'Rerun after fixing the diagnostic: ' >&2
+    printf '%q ' "$@" >&2
+    printf '\n' >&2
+    status=1
+  fi
 }
 step rebased test "$(git rev-list --count HEAD.."${2:-origin/main}")" -eq 0
 step clean-tree test -z "$(git status --porcelain)"
 step scope bash scripts/check-pr-scope.sh "${2:-origin/main}"
+if ((plan_changed)); then
+  step current-plan bash scripts/check-current-plan.sh
+fi
+((status == 0)) || exit "$status"
 if ((${#existing[@]})); then step format pnpm exec prettier --check --ignore-unknown "${existing[@]}"; fi
 case "$route" in
   docs)
@@ -69,6 +84,6 @@ case "$route" in
     step tests pnpm exec vitest run "${targets[@]}"
     ;;
 esac
-# Commit hooks and required CI still own the coverage-dependent audit. Do not
-# repeat it here against unchanged code or treat local routing as CI permission.
+# Required PR CI owns the coverage-dependent audit. Run local audits explicitly
+# when needed. This focused route does not establish CI acceptance.
 exit "$status"

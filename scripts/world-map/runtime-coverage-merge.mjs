@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { convert } from 'ast-v8-to-istanbul';
 import { parseAstAsync } from 'vite';
 import istanbul from 'istanbul-lib-coverage';
+import ts from 'typescript';
 
 const [runtimePath, targetPath] = process.argv.slice(2);
 if (!runtimePath || !targetPath)
@@ -26,9 +27,62 @@ function resolveEndColumns(value, lines) {
   }
   for (const child of Object.values(value)) resolveEndColumns(child, lines);
 }
+
+function callbackStartKey(sourceFile, node) {
+  const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+  return `${line + 1}:${character}`;
+}
+
+function isUseCallbackCall(node) {
+  if (!ts.isCallExpression(node) || node.arguments.length === 0) return false;
+  const callee = node.expression;
+  return (
+    (ts.isIdentifier(callee) && callee.text === 'useCallback') ||
+    (ts.isPropertyAccessExpression(callee) && callee.name.text === 'useCallback')
+  );
+}
+
+function useCallbackBindingNames(path, source) {
+  if (!source.includes('useCallback')) return new Map();
+  const scriptKind = /\.(?:tsx|jsx)$/iu.test(path)
+    ? ts.ScriptKind.TSX
+    : /\.(?:ts|mts|cts)$/iu.test(path)
+      ? ts.ScriptKind.TS
+      : ts.ScriptKind.JS;
+  const sourceFile = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true, scriptKind);
+  const bindings = new Map();
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.initializer &&
+      isUseCallbackCall(node.initializer)
+    ) {
+      const callback = node.initializer.arguments[0];
+      if (ts.isArrowFunction(callback) || ts.isFunctionExpression(callback))
+        bindings.set(callbackStartKey(sourceFile, callback), node.name.text);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(sourceFile);
+  return bindings;
+}
+
+function normalizeBoundCallbackNames(file, path, source) {
+  if (!file.fnMap || !source.includes('useCallback')) return;
+  const bindings = useCallbackBindingNames(path, source);
+  for (const fn of Object.values(file.fnMap)) {
+    if (!/^\(anonymous_\d+\)$/u.test(fn.name)) continue;
+    const name = bindings.get(`${fn.decl.start.line}:${fn.decl.start.column}`);
+    if (name) fn.name = name;
+  }
+}
+
 async function finiteCoordinates(coverage) {
   for (const [path, file] of Object.entries(coverage)) {
-    const lines = (await readFile(path, 'utf8')).split('\n');
+    const source = await readFile(path, 'utf8');
+    const lines = source.split('\n');
+    normalizeBoundCallbackNames(file, path, source);
     resolveEndColumns(file, lines);
   }
 }
@@ -55,12 +109,17 @@ function reconcileFunctions(coverage) {
 function localUrl(value) {
   const url = new URL(value);
   if (url.protocol === 'file:') return url;
-  if (!['http://127.0.0.1:5338', 'http://127.0.0.1:5326'].includes(url.origin))
+  if (
+    !['http://127.0.0.1:5338', 'http://127.0.0.1:5326', 'http://127.0.0.1:5228'].includes(
+      url.origin,
+    )
+  )
     throw Error('Foreign runtime coverage origin');
   const path = decodeURIComponent(url.pathname);
   if (path.startsWith(root)) return pathToFileURL(path);
   if (path.startsWith('/@fs/')) return pathToFileURL(path.slice(4));
-  return pathToFileURL(resolve(root, `.${path}`));
+  const clientRoot = url.origin === 'http://127.0.0.1:5228' ? resolve(root, 'apps/web') : root;
+  return pathToFileURL(resolve(clientRoot, `.${path}`));
 }
 async function readMap(entry) {
   const marker = entry.text.match(/\/\/# sourceMappingURL=(\S+)/u)?.[1];
@@ -80,8 +139,11 @@ async function originalContent(content, source, frozenBeforeMs) {
 async function checkSources(map, base, frozenBeforeMs) {
   if (!map) return;
   map.sourcesContent ??= [];
+  const sourceBase = map.sourceRoot
+    ? new URL(`${map.sourceRoot.replace(/\/$/u, '')}/`, base)
+    : new URL(base);
   for (const [index, source] of map.sources.entries()) {
-    const url = localUrl(new URL(source, base).href);
+    const url = localUrl(new URL(source, sourceBase).href);
     const path = fileURLToPath(url);
     if (!path.startsWith(root)) continue;
     const original = await originalContent(map.sourcesContent[index], path, frozenBeforeMs);

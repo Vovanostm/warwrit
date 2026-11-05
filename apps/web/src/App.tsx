@@ -11,11 +11,22 @@ import {
 } from '@warwrit/protocol';
 import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
+import { SignIn } from './SignIn.js';
 import {
   getOrCreateCompanyCreateAttempt,
   refreshedCompanyCreatePayload,
 } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
+import {
+  clearBrowserCompanyRosterAttempt,
+  matchesCompanyRosterScope,
+  persistBrowserCompanyRosterAttempt,
+  postCompanyRosterAttempt,
+  readBrowserCompanyRosterAttempt,
+  type CompanyRosterAttempt,
+  type CompanyRosterScope,
+} from './game/company-roster-attempt.js';
+import { RecruitmentPanel } from './game/RecruitmentPanel.js';
 import { FirstHunt } from './FirstHunt.js';
 import { ContractBoard } from './game/ContractBoard.js';
 import { HuntList } from './game/HuntList.js';
@@ -234,6 +245,30 @@ function responseError(response: Response): Error {
   return new Error('Сервер вернул неожиданный ответ.');
 }
 
+function isCurrentJoinAttempt(
+  activeScope: CompanyRosterScope | undefined,
+  currentAttempt: CompanyRosterAttempt | undefined,
+  scope: CompanyRosterScope,
+  attempt: CompanyRosterAttempt,
+): boolean {
+  return (
+    matchesCompanyRosterScope(activeScope, scope) &&
+    matchesCompanyRosterScope(currentAttempt, attempt) &&
+    currentAttempt?.body === attempt.body
+  );
+}
+
+const JOIN_PERSISTENCE_MESSAGES = {
+  UNAVAILABLE: 'Локальное хранилище недоступно; приказ не отправлен.',
+  OCCUPIED: 'Есть незавершённый приказ о присоединении. Сначала проверьте его.',
+} as const;
+
+function joinAttemptOutcomeMessage(result: 'ACCEPTED' | 'REJECTED'): string {
+  return result === 'ACCEPTED'
+    ? 'Человек присоединился к полевому отряду.'
+    : 'Приказ о присоединении отклонён. Состав обновлён.';
+}
+
 function travelStorage(): WorldTravelStorage | undefined {
   try {
     return typeof window === 'undefined' ? undefined : window.sessionStorage;
@@ -269,134 +304,48 @@ export function App() {
   const [travelBusyState, setTravelBusyState] = useState(false);
   const [equipBusy, setEquipBusy] = useState(false);
   const [equipMessage, setEquipMessage] = useState<string | undefined>(undefined);
+  const [joinAttempt, setJoinAttempt] = useState<CompanyRosterAttempt | undefined>(undefined);
+  const [joinAttemptMessage, setJoinAttemptMessage] = useState<string | undefined>(undefined);
+  const joinAttemptRef = useRef<CompanyRosterAttempt | undefined>(undefined);
   const pendingCreateAttempt = useRef<CreateCompanyRequestDto | undefined>(undefined);
   const pendingCreateAccountId = useRef<string | undefined>(undefined);
   const combatLabEnabled = import.meta.env.DEV && import.meta.env['VITE_COMBAT_LAB'] === '1';
   const isCombatLab =
     combatLabEnabled && typeof window !== 'undefined' && window.location.pathname === '/combat-lab';
 
-  const restoreJourney = useCallback(async (signal?: AbortSignal, retryCompanyMismatch = true) => {
-    if (signingOut.current) return;
-    journeyController.current?.abort();
-    const controller = new AbortController();
-    journeyController.current = controller;
-    const abortFromCaller = () => controller.abort();
-    if (signal?.aborted) controller.abort();
-    else signal?.addEventListener('abort', abortFromCaller, { once: true });
-    const generation = ++requestGeneration.current;
-    const publish = (state: JourneyState) => {
-      if (requestGeneration.current === generation) setJourney(state);
-    };
-    publish({ status: 'checking-session' });
-    try {
-      const sessionResponse = await fetch(`${apiBaseUrl}/auth/session`, {
-        credentials: 'same-origin',
-        cache: 'no-store',
-        signal: controller.signal,
-      });
-      if (
-        requestGeneration.current !== generation ||
-        signingOut.current ||
-        controller.signal.aborted
-      )
-        return;
-      if (sessionResponse.status === 401) {
-        travelGeneration.current += 1;
-        travelController.current?.abort();
-        travelBusy.current = false;
-        setTravelBusyState(false);
-        if (activeTravelScope.current) clearStoredTravelReturnWindow(activeTravelScope.current);
-        activeTravelScope.current = undefined;
-        pendingTravelAttempt.current = undefined;
-        publish({ status: 'signed-out' });
-        return;
-      }
-      if (!sessionResponse.ok) throw responseError(sessionResponse);
-      const session = readSession(await sessionResponse.json());
-      if (
-        requestGeneration.current !== generation ||
-        signingOut.current ||
-        controller.signal.aborted
-      )
-        return;
-      if (session === undefined) throw new Error('Сервер вернул неполные данные учётной записи.');
-      const priorScope = activeTravelScope.current;
-      if (priorScope && priorScope.accountId !== session.accountId) {
-        travelGeneration.current += 1;
-        travelController.current?.abort();
-        travelController.current = undefined;
-        travelBusy.current = false;
-        setTravelBusyState(false);
-        clearStoredTravelReturnWindow(priorScope);
-        activeTravelScope.current = undefined;
-        pendingTravelAttempt.current = undefined;
-      }
-      if (
-        requestGeneration.current === generation &&
-        pendingCreateAttempt.current !== undefined &&
-        pendingCreateAccountId.current !== session.accountId
-      ) {
-        pendingCreateAttempt.current = undefined;
-        pendingCreateAccountId.current = undefined;
-        setHasPendingCreateAttempt(false);
-      }
+  const resetTransientTravelState = useCallback((scope?: WorldTravelScope) => {
+    travelGeneration.current += 1;
+    travelController.current?.abort();
+    travelController.current = undefined;
+    travelBusy.current = false;
+    setTravelBusyState(false);
+    setEquipBusy(false);
+    joinAttemptRef.current = undefined;
+    setJoinAttempt(undefined);
+    setJoinAttemptMessage(undefined);
+    if (scope) clearStoredTravelReturnWindow(scope);
+    pendingTravelAttempt.current = undefined;
+    pendingFreeMovementAttempt.current = undefined;
+  }, []);
 
-      publish({ status: 'loading-company', session });
-      const companyResponse = await fetch(`${apiBaseUrl}/company`, {
-        credentials: 'same-origin',
-        cache: 'no-store',
-        signal: controller.signal,
-      });
-      if (
-        requestGeneration.current !== generation ||
-        signingOut.current ||
-        controller.signal.aborted
-      )
-        return;
-      if (companyResponse.status === 401) {
-        travelGeneration.current += 1;
-        travelController.current?.abort();
-        travelBusy.current = false;
-        setTravelBusyState(false);
-        if (activeTravelScope.current) clearStoredTravelReturnWindow(activeTravelScope.current);
-        activeTravelScope.current = undefined;
-        pendingTravelAttempt.current = undefined;
-        publish({ status: 'signed-out' });
-        return;
-      }
-      if (!companyResponse.ok) throw responseError(companyResponse);
-      const companyBody: unknown = await companyResponse.json();
-      const company = readCompany(companyBody);
-      const holdings = readHoldings(companyBody);
-      if (
-        requestGeneration.current !== generation ||
-        signingOut.current ||
-        controller.signal.aborted
-      )
-        return;
-      if (company === undefined) throw new Error('Не удалось безопасно прочитать данные компании.');
-      if (company !== null) {
-        const scope = { accountId: session.accountId, companyId: company.companyId };
-        const previousScope = activeTravelScope.current;
-        if (
-          previousScope &&
-          (previousScope.accountId !== scope.accountId ||
-            previousScope.companyId !== scope.companyId)
-        ) {
-          travelGeneration.current += 1;
-          travelController.current?.abort();
-          travelController.current = undefined;
-          travelBusy.current = false;
-          setTravelBusyState(false);
-          clearStoredTravelReturnWindow(previousScope);
-          pendingTravelAttempt.current = undefined;
-          pendingFreeMovementAttempt.current = undefined;
-        }
-        activeTravelScope.current = scope;
-        const worldResponse = await fetch(`${apiBaseUrl}/world/party`, {
+  const restoreJourney = useCallback(
+    async (signal?: AbortSignal, retryCompanyMismatch = true) => {
+      if (signingOut.current) return;
+      journeyController.current?.abort();
+      const controller = new AbortController();
+      journeyController.current = controller;
+      const abortFromCaller = () => controller.abort();
+      if (signal?.aborted) controller.abort();
+      else signal?.addEventListener('abort', abortFromCaller, { once: true });
+      const generation = ++requestGeneration.current;
+      const publish = (state: JourneyState) => {
+        if (requestGeneration.current === generation) setJourney(state);
+      };
+      publish({ status: 'checking-session' });
+      try {
+        const sessionResponse = await fetch(`${apiBaseUrl}/auth/session`, {
           credentials: 'same-origin',
           cache: 'no-store',
-          headers: worldPartyReadHeaders(scope),
           signal: controller.signal,
         });
         if (
@@ -405,148 +354,247 @@ export function App() {
           controller.signal.aborted
         )
           return;
-        if (worldResponse.status === 401) {
-          travelGeneration.current += 1;
-          travelController.current?.abort();
-          travelBusy.current = false;
-          setTravelBusyState(false);
-          clearStoredTravelReturnWindow(scope);
+        if (sessionResponse.status === 401) {
+          resetTransientTravelState(activeTravelScope.current);
           activeTravelScope.current = undefined;
-          pendingTravelAttempt.current = undefined;
-          pendingFreeMovementAttempt.current = undefined;
           publish({ status: 'signed-out' });
           return;
         }
-        if (worldResponse.status === 403) {
-          if (retryCompanyMismatch) {
-            await restoreJourney(signal, false);
-            return;
-          }
-          throw new Error('Сеанс или выбранная компания изменились. Повторите загрузку записи.');
-        }
-        if (!worldResponse.ok) throw responseError(worldResponse);
-        const world = readWorldPartyResponse(await worldResponse.json());
+        if (!sessionResponse.ok) throw responseError(sessionResponse);
+        const session = readSession(await sessionResponse.json());
         if (
           requestGeneration.current !== generation ||
           signingOut.current ||
           controller.signal.aborted
         )
           return;
-        if (world === undefined) throw new Error('Не удалось безопасно прочитать состояние мира.');
-        const roadInTransit =
-          world.schemaVersion === 1
-            ? world.route !== null
-            : world.execution !== null && world.execution.phase !== 'COMPLETE';
-        let freeMovement: WorldFreeMovementResponseDto | null = null;
-        if (!roadInTransit && world.party?.movementVersion === 1) {
-          const movementResponse = await fetch(
-            `${apiBaseUrl}/world/free-movement?schemaVersion=1`,
-            {
-              credentials: 'same-origin',
-              cache: 'no-store',
-              headers: worldPartyReadHeaders(scope),
-              signal: controller.signal,
-            },
-          );
+        if (session === undefined) throw new Error('Сервер вернул неполные данные учётной записи.');
+        const priorScope = activeTravelScope.current;
+        if (priorScope && priorScope.accountId !== session.accountId) {
+          travelGeneration.current += 1;
+          travelController.current?.abort();
+          travelController.current = undefined;
+          travelBusy.current = false;
+          setTravelBusyState(false);
+          clearStoredTravelReturnWindow(priorScope);
+          activeTravelScope.current = undefined;
+          pendingTravelAttempt.current = undefined;
+        }
+        if (
+          requestGeneration.current === generation &&
+          pendingCreateAttempt.current !== undefined &&
+          pendingCreateAccountId.current !== session.accountId
+        ) {
+          pendingCreateAttempt.current = undefined;
+          pendingCreateAccountId.current = undefined;
+          setHasPendingCreateAttempt(false);
+        }
+
+        publish({ status: 'loading-company', session });
+        const companyResponse = await fetch(`${apiBaseUrl}/company`, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        if (
+          requestGeneration.current !== generation ||
+          signingOut.current ||
+          controller.signal.aborted
+        )
+          return;
+        if (companyResponse.status === 401) {
+          resetTransientTravelState(activeTravelScope.current);
+          activeTravelScope.current = undefined;
+          publish({ status: 'signed-out' });
+          return;
+        }
+        if (!companyResponse.ok) throw responseError(companyResponse);
+        const companyBody: unknown = await companyResponse.json();
+        const company = readCompany(companyBody);
+        const holdings = readHoldings(companyBody);
+        if (
+          requestGeneration.current !== generation ||
+          signingOut.current ||
+          controller.signal.aborted
+        )
+          return;
+        if (company === undefined)
+          throw new Error('Не удалось безопасно прочитать данные компании.');
+        if (company !== null) {
+          const scope = { accountId: session.accountId, companyId: company.companyId };
+          const previousScope = activeTravelScope.current;
+          if (!matchesCompanyRosterScope(previousScope, scope)) {
+            resetTransientTravelState(previousScope);
+          }
+          activeTravelScope.current = scope;
+          const worldResponse = await fetch(`${apiBaseUrl}/world/party`, {
+            credentials: 'same-origin',
+            cache: 'no-store',
+            headers: worldPartyReadHeaders(scope),
+            signal: controller.signal,
+          });
           if (
             requestGeneration.current !== generation ||
             signingOut.current ||
             controller.signal.aborted
           )
             return;
-          if (movementResponse.status === 401) {
+          if (worldResponse.status === 401) {
+            travelGeneration.current += 1;
+            travelController.current?.abort();
+            travelBusy.current = false;
+            setTravelBusyState(false);
+            clearStoredTravelReturnWindow(scope);
             activeTravelScope.current = undefined;
             pendingTravelAttempt.current = undefined;
             pendingFreeMovementAttempt.current = undefined;
             publish({ status: 'signed-out' });
             return;
           }
-          if (movementResponse.status !== 409) {
-            if (movementResponse.status === 403) {
-              if (retryCompanyMismatch) {
-                await restoreJourney(signal, false);
-                return;
-              }
-              throw new Error(
-                'Сеанс или выбранная компания изменились. Повторите загрузку записи.',
-              );
+          if (worldResponse.status === 403) {
+            if (retryCompanyMismatch) {
+              await restoreJourney(signal, false);
+              return;
             }
-            if (!movementResponse.ok) throw responseError(movementResponse);
-            freeMovement = readFreeMovementResponse(await movementResponse.json()) ?? null;
-            if (!freeMovement)
-              throw new Error('Не удалось безопасно прочитать свободное движение.');
+            throw new Error('Сеанс или выбранная компания изменились. Повторите загрузку записи.');
           }
-        }
-        const storage = travelStorage();
-        const storedAttempt = storage
-          ? readWorldTravelAttempt(storage, scope)
-          : { kind: 'UNAVAILABLE' as const };
-        pendingTravelAttempt.current =
-          storedAttempt.kind === 'FOUND' ? storedAttempt.attempt : undefined;
-        const freeMovementAttempt = storage ? readFreeMovementAttempt(storage, scope) : undefined;
-        pendingFreeMovementAttempt.current = freeMovementAttempt;
-        const returnWindowOpen = storage
-          ? isWorldTravelReturnWindowOpen(storage, scope, world)
-          : false;
-        publish({
-          status: 'company-ready',
-          session,
-          company,
-          holdings,
-          world,
-          freeMovement,
-          returnWindowOpen,
-          travelAttemptPending: storedAttempt.kind === 'FOUND',
-          freeMovementAttemptPending: freeMovementAttempt !== undefined,
-          ...(storedAttempt.kind === 'INVALID'
-            ? {
-                travelMessage:
-                  'Сохранённый запрос повреждён и был удалён. Обновите состояние перед новым действием.',
-              }
-            : storedAttempt.kind === 'UNAVAILABLE'
-              ? {
-                  travelMessage: 'Локальное хранилище недоступно; новое путешествие не отправлено.',
+          if (!worldResponse.ok) throw responseError(worldResponse);
+          const world = readWorldPartyResponse(await worldResponse.json());
+          if (
+            requestGeneration.current !== generation ||
+            signingOut.current ||
+            controller.signal.aborted
+          )
+            return;
+          if (world === undefined)
+            throw new Error('Не удалось безопасно прочитать состояние мира.');
+          const roadInTransit =
+            world.schemaVersion === 1
+              ? world.route !== null
+              : world.execution !== null && world.execution.phase !== 'COMPLETE';
+          let freeMovement: WorldFreeMovementResponseDto | null = null;
+          if (!roadInTransit && world.party?.movementVersion === 1) {
+            const movementResponse = await fetch(
+              `${apiBaseUrl}/world/free-movement?schemaVersion=1`,
+              {
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: worldPartyReadHeaders(scope),
+                signal: controller.signal,
+              },
+            );
+            if (
+              requestGeneration.current !== generation ||
+              signingOut.current ||
+              controller.signal.aborted
+            )
+              return;
+            if (movementResponse.status === 401) {
+              activeTravelScope.current = undefined;
+              pendingTravelAttempt.current = undefined;
+              pendingFreeMovementAttempt.current = undefined;
+              publish({ status: 'signed-out' });
+              return;
+            }
+            if (movementResponse.status !== 409) {
+              if (movementResponse.status === 403) {
+                if (retryCompanyMismatch) {
+                  await restoreJourney(signal, false);
+                  return;
                 }
-              : {}),
-        });
-        return;
-      }
-      if (activeTravelScope.current) {
-        travelGeneration.current += 1;
-        travelController.current?.abort();
-        travelBusy.current = false;
-        setTravelBusyState(false);
-        clearStoredTravelReturnWindow(activeTravelScope.current);
-        activeTravelScope.current = undefined;
-        pendingTravelAttempt.current = undefined;
-      }
+                throw new Error(
+                  'Сеанс или выбранная компания изменились. Повторите загрузку записи.',
+                );
+              }
+              if (!movementResponse.ok) throw responseError(movementResponse);
+              freeMovement = readFreeMovementResponse(await movementResponse.json()) ?? null;
+              if (!freeMovement)
+                throw new Error('Не удалось безопасно прочитать свободное движение.');
+            }
+          }
+          const storage = travelStorage();
+          const storedJoin = readBrowserCompanyRosterAttempt(scope, 'JoinFieldParty');
+          const storedJoinAttempt =
+            storedJoin.kind === 'AVAILABLE' ? storedJoin.attempt : undefined;
+          joinAttemptRef.current = storedJoinAttempt;
+          setJoinAttempt(storedJoinAttempt);
+          setJoinAttemptMessage(
+            storedJoinAttempt
+              ? 'Ответ о присоединении неизвестен. Повторите тот же приказ.'
+              : undefined,
+          );
+          const storedAttempt = storage
+            ? readWorldTravelAttempt(storage, scope)
+            : { kind: 'UNAVAILABLE' as const };
+          pendingTravelAttempt.current =
+            storedAttempt.kind === 'FOUND' ? storedAttempt.attempt : undefined;
+          const freeMovementAttempt = storage ? readFreeMovementAttempt(storage, scope) : undefined;
+          pendingFreeMovementAttempt.current = freeMovementAttempt;
+          const returnWindowOpen = storage
+            ? isWorldTravelReturnWindowOpen(storage, scope, world)
+            : false;
+          publish({
+            status: 'company-ready',
+            session,
+            company,
+            holdings,
+            world,
+            freeMovement,
+            returnWindowOpen,
+            travelAttemptPending: storedAttempt.kind === 'FOUND',
+            freeMovementAttemptPending: freeMovementAttempt !== undefined,
+            ...(storedAttempt.kind === 'INVALID'
+              ? {
+                  travelMessage:
+                    'Сохранённый запрос повреждён и был удалён. Обновите состояние перед новым действием.',
+                }
+              : storedAttempt.kind === 'UNAVAILABLE'
+                ? {
+                    travelMessage:
+                      'Локальное хранилище недоступно; новое путешествие не отправлено.',
+                  }
+                : {}),
+          });
+          return;
+        }
+        if (activeTravelScope.current) {
+          travelGeneration.current += 1;
+          travelController.current?.abort();
+          travelBusy.current = false;
+          setTravelBusyState(false);
+          clearStoredTravelReturnWindow(activeTravelScope.current);
+          activeTravelScope.current = undefined;
+          pendingTravelAttempt.current = undefined;
+        }
 
-      publish({ status: 'loading-opening', session });
-      const openingResponse = await fetch(`${apiBaseUrl}/company/opening-options`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        cache: 'no-store',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({}),
-        signal: controller.signal,
-      });
-      if (openingResponse.status === 401) {
-        publish({ status: 'signed-out' });
-        return;
+        publish({ status: 'loading-opening', session });
+        const openingResponse = await fetch(`${apiBaseUrl}/company/opening-options`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({}),
+          signal: controller.signal,
+        });
+        if (openingResponse.status === 401) {
+          publish({ status: 'signed-out' });
+          return;
+        }
+        if (!openingResponse.ok) throw responseError(openingResponse);
+        const opening = readOpening(await openingResponse.json());
+        if (opening === undefined) throw new Error('Сервер вернул неполные варианты начала.');
+        publish({ status: 'company-opening', session, opening });
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        const message = error instanceof Error ? error.message : 'Не удалось связаться с сервером.';
+        publish({ status: 'error', message, retry: () => void restoreJourney() });
+      } finally {
+        signal?.removeEventListener('abort', abortFromCaller);
+        if (journeyController.current === controller) journeyController.current = undefined;
       }
-      if (!openingResponse.ok) throw responseError(openingResponse);
-      const opening = readOpening(await openingResponse.json());
-      if (opening === undefined) throw new Error('Сервер вернул неполные варианты начала.');
-      publish({ status: 'company-opening', session, opening });
-    } catch (error) {
-      if (controller.signal.aborted) return;
-      const message = error instanceof Error ? error.message : 'Не удалось связаться с сервером.';
-      publish({ status: 'error', message, retry: () => void restoreJourney() });
-    } finally {
-      signal?.removeEventListener('abort', abortFromCaller);
-      if (journeyController.current === controller) journeyController.current = undefined;
-    }
-  }, []);
+    },
+    [resetTransientTravelState],
+  );
 
   const onContractUnauthorized = useCallback(() => {
     void restoreJourney();
@@ -1326,6 +1374,16 @@ export function App() {
     journey.status === 'company-ready'
       ? `${journey.session.accountId}\u0000${journey.company.companyId}`
       : undefined;
+  const [companyRefresh, setCompanyRefresh] = useState(0);
+  const [companyRead, setCompanyRead] = useState<{
+    readonly scope: string;
+    readonly busy: boolean;
+    readonly message: string;
+  }>();
+  const activeCompanyRead = companyRead?.scope === readyScope ? companyRead : undefined;
+  const refreshCompanyForShell = useCallback(() => {
+    setCompanyRefresh((revision) => revision + 1);
+  }, []);
   const refreshWorldForShell = useCallback(() => {
     if (!readyScope) return;
     const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
@@ -1342,30 +1400,46 @@ export function App() {
     journey.status === 'company-ready' ? journey.world.publicRevision : undefined;
   useEffect(() => {
     if (!readyScope || worldRevision === undefined) return;
+    const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
     const controller = new AbortController();
+    setCompanyRead({ scope: readyScope, busy: true, message: 'Обновляем сведения об отряде…' });
     void (async () => {
       try {
         const response = await fetch(`${apiBaseUrl}/company`, {
           credentials: 'same-origin',
           cache: 'no-store',
           signal: controller.signal,
+          headers: { [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId },
         });
-        if (!response.ok) return;
+        if (!response.ok) throw responseError(response);
         const body: unknown = await response.json();
         const company = readCompany(body);
-        if (!company || controller.signal.aborted) return;
+        if (controller.signal.aborted) return;
+        if (!company || company.companyId !== companyId)
+          throw new Error('Company read unavailable');
         const holdings = readHoldings(body);
+        if (!holdings) throw new Error('Company holdings unavailable');
         setJourney((state) =>
-          state.status === 'company-ready' && state.company.companyId === company.companyId
+          state.status === 'company-ready' &&
+          state.session.accountId === accountId &&
+          state.company.companyId === companyId &&
+          company.companyId === companyId
             ? { ...state, company, holdings }
             : state,
         );
+        setCompanyRead({ scope: readyScope, busy: false, message: 'Состояние отряда обновлено.' });
       } catch {
-        // Keep the last company view; the next world change retries.
+        if (!controller.signal.aborted)
+          setCompanyRead({
+            scope: readyScope,
+            busy: false,
+            message:
+              'Не удалось обновить состояние. Показаны последние сведения; проверьте связь и повторите обновление.',
+          });
       }
     })();
     return () => controller.abort();
-  }, [readyScope, worldRevision]);
+  }, [readyScope, worldRevision, companyRefresh]);
 
   useEffect(() => {
     // The OIDC callback lands on /auth/session; the game lives at the root.
@@ -1470,20 +1544,111 @@ export function App() {
     [refreshWorldParty, restoreJourney],
   );
 
+  const settleJoinAttempt = useCallback(
+    async (
+      scope: WorldTravelScope,
+      attempt: CompanyRosterAttempt,
+      result: Awaited<ReturnType<typeof postCompanyRosterAttempt>>,
+    ) => {
+      if (result === 'UNAUTHENTICATED') {
+        setJoinAttemptMessage('Сеанс истёк. После входа повторите тот же приказ о присоединении.');
+        void restoreJourney();
+        return;
+      }
+      if (result === 'UNKNOWN') {
+        setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
+        return;
+      }
+      if (!clearBrowserCompanyRosterAttempt(attempt)) {
+        setJoinAttemptMessage(
+          'Ответ получен, но локальная запись не очищена. Повторите тот же приказ.',
+        );
+        return;
+      }
+      joinAttemptRef.current = undefined;
+      setJoinAttempt(undefined);
+      setJoinAttemptMessage(undefined);
+      setEquipMessage(joinAttemptOutcomeMessage(result));
+      await refreshWorldParty(scope);
+    },
+    [refreshWorldParty, restoreJourney],
+  );
+
+  const sendJoinAttempt = useCallback(
+    async (scope: WorldTravelScope, attempt: CompanyRosterAttempt) => {
+      if (equipBusy || !matchesCompanyRosterScope(attempt, scope)) return;
+      setEquipBusy(true);
+      setEquipMessage(undefined);
+      const result = await postCompanyRosterAttempt(apiBaseUrl, attempt);
+      if (!isCurrentJoinAttempt(activeTravelScope.current, joinAttemptRef.current, scope, attempt))
+        return;
+      await settleJoinAttempt(scope, attempt, result);
+      setEquipBusy(false);
+    },
+    [equipBusy, settleJoinAttempt],
+  );
+
+  const joinFieldParty = useCallback(
+    async (scope: WorldTravelScope, expectedPublicRevision: string, characterId: string) => {
+      if (joinAttemptRef.current) {
+        setJoinAttemptMessage('Сначала повторите незавершённый приказ о присоединении.');
+        return;
+      }
+      const persisted = persistBrowserCompanyRosterAttempt(scope, {
+        schemaVersion: 2,
+        commandId: crypto.randomUUID(),
+        expectedPublicRevision,
+        type: 'JoinFieldParty',
+        payload: { characterId },
+      });
+      if (persisted.kind === 'EXISTING') {
+        joinAttemptRef.current = persisted.attempt;
+        setJoinAttempt(persisted.attempt);
+        setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
+        return;
+      }
+      if (persisted.kind !== 'SAVED') {
+        setJoinAttemptMessage(JOIN_PERSISTENCE_MESSAGES[persisted.kind]);
+        return;
+      }
+      const attempt = persisted.attempt;
+      joinAttemptRef.current = attempt;
+      setJoinAttempt(attempt);
+      setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
+      await sendJoinAttempt(scope, attempt);
+    },
+    [sendJoinAttempt],
+  );
+
+  const retryJoinFieldParty = useCallback(
+    async (scope: WorldTravelScope) => {
+      let attempt = joinAttemptRef.current;
+      if (!attempt) {
+        const restored = readBrowserCompanyRosterAttempt(scope, 'JoinFieldParty');
+        if (restored.kind === 'UNAVAILABLE') {
+          setJoinAttemptMessage(
+            'Локальное хранилище недоступно; приказ сохранён для повторной попытки.',
+          );
+          return;
+        }
+        attempt = restored.attempt;
+      }
+      if (!attempt) return;
+      joinAttemptRef.current = attempt;
+      setJoinAttempt(attempt);
+      await sendJoinAttempt(scope, attempt);
+    },
+    [sendJoinAttempt],
+  );
+
   const signOut = async () => {
     if (signingOut.current) return;
     signingOut.current = true;
     const generation = ++requestGeneration.current;
     journeyController.current?.abort();
     journeyController.current = undefined;
-    travelGeneration.current += 1;
-    travelController.current?.abort();
-    travelController.current = undefined;
-    travelBusy.current = false;
-    setTravelBusyState(false);
-    if (activeTravelScope.current) clearStoredTravelReturnWindow(activeTravelScope.current);
+    resetTransientTravelState(activeTravelScope.current);
     activeTravelScope.current = undefined;
-    pendingTravelAttempt.current = undefined;
     setJourney({ status: 'signing-out' });
     try {
       const response = await fetch(`${apiBaseUrl}/auth/logout`, {
@@ -1529,6 +1694,9 @@ export function App() {
         onTravel={(action) => startWorldTravel(action, journey.world, scope)}
         onRetryTravel={() => retryWorldTravel(journey.world, scope)}
         onRefreshWorld={refreshWorldForShell}
+        onRefreshCompany={refreshCompanyForShell}
+        companyReadBusy={activeCompanyRead?.busy ?? false}
+        {...(activeCompanyRead ? { companyReadMessage: activeCompanyRead.message } : {})}
         onRefreshFreeMovement={refreshFreeMovementForShell}
         onFreeMovement={(action) => startFreeMovement(action, journey.freeMovement, scope)}
         onRetryFreeMovement={() => retryFreeMovement(scope)}
@@ -1538,9 +1706,28 @@ export function App() {
         onEquip={(characterId, item) =>
           void equipItem(scope, journey.world.publicRevision, characterId, item)
         }
+        onJoinFieldParty={(characterId) =>
+          void joinFieldParty(scope, journey.company.revision, characterId)
+        }
+        joinAttemptPending={
+          joinAttempt?.accountId === scope.accountId && joinAttempt.companyId === scope.companyId
+        }
+        {...(joinAttemptMessage === undefined ? {} : { joinAttemptMessage })}
+        onRetryJoinFieldParty={() => void retryJoinFieldParty(scope)}
         onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
         placeSlot={(contractVisit) => (
           <>
+            {contractVisit.visit?.building === 'inn' && contractVisit.visit.siteId && (
+              <RecruitmentPanel
+                apiBaseUrl={apiBaseUrl}
+                accountId={scope.accountId}
+                companyId={journey.company.companyId}
+                expectedPublicRevision={journey.company.revision}
+                siteId={contractVisit.visit.siteId}
+                onRefresh={refreshWorldForShell}
+                onUnauthorized={onContractUnauthorized}
+              />
+            )}
             <ContractBoard
               {...contractVisit}
               siteId={journey.world.party?.location ?? null}
@@ -1582,6 +1769,7 @@ export function App() {
               scope={scope}
               onUnauthorized={() => void restoreJourney()}
               onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
+              onReturn={() => void restoreJourney()}
             />
           </Suspense>
         }
@@ -1631,9 +1819,7 @@ export function App() {
                 'Войдите через службу учётной записи. При следующем визите защищённый сеанс восстановит ваш вход.'
               }
             />
-            <a className="primary-action" href={`${apiBaseUrl}/auth/login`}>
-              Войти <span aria-hidden="true">↗</span>
-            </a>
+            <SignIn apiBaseUrl={apiBaseUrl} onLogin={restoreJourney} />
           </>
         )}
         {journey.status === 'signing-out' && (

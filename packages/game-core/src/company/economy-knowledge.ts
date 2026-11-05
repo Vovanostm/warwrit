@@ -71,6 +71,29 @@ function qualificationRaisesRate(account: ServiceAccount, lifetimeLevel: number)
   return BigInt(rate.dailyWageMilli) > BigInt(current);
 }
 
+/** Required notices for a proposed lawful observation, using the same payroll rule as its consumer. */
+export function observationQualificationRequirements(
+  finance: CompanyFinance,
+  previousLifecycle: LifecycleState,
+  observedLifecycle: LifecycleState,
+  characterId: string,
+): readonly { readonly membershipId: string; readonly lifetimeLevel: number }[] {
+  return finance.accounts.flatMap((account) => {
+    const membership = observedLifecycle.memberships.find(
+      (entry) => entry.membershipId === account.membershipId,
+    );
+    if (membership?.characterId !== characterId || membership.endedAt !== null || !account.schedule)
+      return [];
+    const lifetimeLevel = observedLifetimeQualification(observedLifecycle, account.membershipId);
+    const previousLevel = observedLifetimeQualification(previousLifecycle, account.membershipId);
+    return lifetimeLevel !== null &&
+      (previousLevel === null || lifetimeLevel > previousLevel) &&
+      qualificationRaisesRate(account, lifetimeLevel)
+      ? [{ membershipId: account.membershipId, lifetimeLevel }]
+      : [];
+  });
+}
+
 export function recordQualification(
   finance: CompanyFinance,
   lifecycle: LifecycleState,
@@ -312,11 +335,7 @@ export function observeFinance(
       finance: {
         ...finance,
         maintenance: finance.maintenance.map((m) =>
-          m.kind === 'SAFE_SERVICE' &&
-          m.endedAt !== null &&
-          (!leader ||
-            !m.beneficiaryIds.includes(leader) ||
-            m.beneficiaryEnds.some((d) => d.characterId === leader))
+          m.kind === 'SAFE_SERVICE' && m.endedAt !== null && serviceHasNoActiveLeader(m, leader)
             ? { ...m, knownEndedAt: m.endedAt }
             : m,
         ),
@@ -335,6 +354,12 @@ export function observeFinance(
     })),
   };
   const character = person(lifecycle, fact.subject.id);
+  const requiredNotices = observationQualificationRequirements(
+    finance,
+    previousLifecycle,
+    lifecycle,
+    fact.subject.id,
+  );
   const accounts = finance.accounts.filter(
     (a) =>
       lifecycle.memberships.find((m) => m.membershipId === a.membershipId)?.characterId ===
@@ -349,15 +374,16 @@ export function observeFinance(
       'INVALID_SOURCE',
     );
     const oldAccount = account;
-    for (const claim of finance.claims.filter((c) => c.membershipId === account.membershipId)) {
-      if (
-        !oldAccount.known ||
-        oldAccount.knownDeath !== (character.presence.availability === 'DEAD') ||
-        BigInt(claim.reportedQ) !== claimEarnedQ(claim) ||
-        BigInt(claim.reportedCoveredQ) !== claimCoveredQ(claim)
-      )
-        finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
-    }
+    const changedClaims = finance.claims.filter(
+      (claim) =>
+        claim.membershipId === account.membershipId &&
+        (!oldAccount.known ||
+          oldAccount.knownDeath !== (character.presence.availability === 'DEAD') ||
+          BigInt(claim.reportedQ) !== claimEarnedQ(claim) ||
+          BigInt(claim.reportedCoveredQ) !== claimCoveredQ(claim)),
+    );
+    for (const claim of changedClaims)
+      finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
     account = {
       ...account,
       known: true,
@@ -386,31 +412,23 @@ export function observeFinance(
       finance = settled.finance;
       allocations.push(...settled.allocations);
     }
-    const membership = lifecycle.memberships.find(
+    const requiredNotice = requiredNotices.find(
       (entry) => entry.membershipId === account.membershipId,
     );
-    if (membership?.endedAt === null && account.schedule) {
-      const lifetimeLevel = observedLifetimeQualification(lifecycle, account.membershipId);
-      const previousLevel = observedLifetimeQualification(previousLifecycle, account.membershipId);
-      if (
-        lifetimeLevel !== null &&
-        (previousLevel === null || lifetimeLevel > previousLevel) &&
-        qualificationRaisesRate(account, lifetimeLevel)
-      ) {
-        const matches = qualificationFacts.filter(
-          (entry) => entry.membershipId === account.membershipId,
-        );
-        requireEconomy(matches.length === 1, 'INVALID_SOURCE');
-        const qualification = matches[0]!;
-        requireEconomy(
-          qualification.sourceEventId === command.sourceEventId &&
-            qualification.lifetimeLevel === lifetimeLevel &&
-            qualification.noticeVersion === command.payload.observationId,
-          'INVALID_SOURCE',
-        );
-        finance = recordQualification(finance, lifecycle, qualification, context);
-        consumedQualificationIds.add(qualification.id);
-      }
+    if (requiredNotice) {
+      const matches = qualificationFacts.filter(
+        (entry) => entry.membershipId === account.membershipId,
+      );
+      requireEconomy(matches.length === 1, 'INVALID_SOURCE');
+      const qualification = matches[0]!;
+      requireEconomy(
+        qualification.sourceEventId === command.sourceEventId &&
+          qualification.lifetimeLevel === requiredNotice.lifetimeLevel &&
+          qualification.noticeVersion === command.payload.observationId,
+        'INVALID_SOURCE',
+      );
+      finance = recordQualification(finance, lifecycle, qualification, context);
+      consumedQualificationIds.add(qualification.id);
     }
   }
   requireEconomy(
@@ -428,4 +446,15 @@ export function observeFinance(
       ),
     };
   return { finance, requirements: [], allocations };
+}
+
+function serviceHasNoActiveLeader(
+  service: CompanyFinance['maintenance'][number],
+  leaderId: string | null,
+): boolean {
+  return (
+    !leaderId ||
+    !service.beneficiaryIds.includes(leaderId) ||
+    service.beneficiaryEnds.some((end) => end.characterId === leaderId)
+  );
 }

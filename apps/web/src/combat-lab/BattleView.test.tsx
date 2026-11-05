@@ -298,6 +298,7 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
       onSelectHex={() => {}}
       onRestart={() => {}}
       onEditor={() => {}}
+      onContinue={() => {}}
     />,
   );
   expect(html).toContain('aria-label="Результат боя"');
@@ -308,6 +309,7 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).toContain('Сдались <b>1</b>');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');
+  expect(html).toContain('Вернуться к отряду');
   expect(html).not.toContain('data-attackable="true"');
 });
 

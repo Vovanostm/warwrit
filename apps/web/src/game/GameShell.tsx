@@ -1,6 +1,7 @@
 import { WorldAmbience } from './WorldAmbience.js';
 import { MovementTerrain } from './MovementTerrain.js';
 import { ContinuousMapCanvas } from './ContinuousMapCanvas.js';
+import { PaintedMapCanvas } from './PaintedMapCanvas.js';
 import { useContinuousMovement } from './continuous-movement.js';
 import './game.css';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -52,6 +53,9 @@ export function GameShell(props: {
   readonly onTravel: (action: WorldTravelAction) => void;
   readonly onRetryTravel: () => void;
   readonly onRefreshWorld: () => void;
+  readonly onRefreshCompany: () => void;
+  readonly companyReadBusy: boolean;
+  readonly companyReadMessage?: string;
   readonly onRefreshFreeMovement: () => void;
   readonly onFreeMovement: (action: FreeMovementAction) => void;
   readonly onRetryFreeMovement: () => void;
@@ -59,22 +63,30 @@ export function GameShell(props: {
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
+  readonly onJoinFieldParty: (characterId: string) => void;
+  readonly joinAttemptPending: boolean;
+  readonly joinAttemptMessage?: string;
+  readonly onRetryJoinFieldParty: () => void;
   readonly onToggleCamp: (pitch: boolean) => void;
   readonly placeSlot: (context: ContractVisitProps) => ReactNode;
   readonly battleSlot: ReactNode;
 }) {
+  const surroundings = useSurroundings(
+    `${props.world.publicRevision}:${props.world.party?.routeEpoch ?? ''}:${props.world.party?.location ?? ''}`,
+  );
+  const cartography =
+    surroundings.status === 'ready' ? surroundings.reading.dto.map.cartography : undefined;
   const movement = useContinuousMovement(
     props.freeMovementScope,
     props.onRefreshWorld,
     props.world.party?.movementVersion !== 1 &&
       (props.world.schemaVersion === 1
         ? !props.world.route
-        : !props.world.execution || props.world.execution.phase === 'COMPLETE'),
+        : !props.world.execution || props.world.execution.phase === 'COMPLETE') &&
+      (Boolean(cartography) ||
+        (surroundings.status === 'ready' && Boolean(surroundings.reading.dto.map.continuous))),
   );
   const party = props.world.party;
-  const surroundings = useSurroundings(
-    `${props.world.publicRevision}:${party?.routeEpoch ?? ''}:${party?.location ?? ''}`,
-  );
   const now = useNow(1000);
   const soundPoint = useRef<{ xFp: number; zFp: number } | null>(null);
   const [tab, setTab] = useState<Tab>('travel');
@@ -103,6 +115,14 @@ export function GameShell(props: {
       (execution !== null && execution.phase !== 'COMPLETE') ||
       freeRoute !== null;
 
+  useEffect(() => {
+    setBuildingVisit(null);
+  }, [party?.location, travelling, movement.current?.mode]);
+
+  const placeRefreshRequired =
+    movement.current?.mode === 'STATIONARY_SITE' &&
+    movement.current.publicRevision !== props.world.publicRevision;
+
   // A selection that the server no longer offers is dropped.
   const departures = props.world.availableDepartures ?? [];
   const selectedKey = selected ? departureKey(selected) : null;
@@ -113,6 +133,16 @@ export function GameShell(props: {
 
   // While on the road, the server worker advances the route; re-read it periodically.
   const { onRefreshWorld, onRefreshFreeMovement, travelBusy } = props;
+  useEffect(() => {
+    if (!placeRefreshRequired) return;
+    const refresh = () => {
+      if (!travelBusy) onRefreshWorld();
+    };
+    refresh();
+    const id = setInterval(refresh, TRANSIT_REFRESH_MS);
+    return () => clearInterval(id);
+  }, [placeRefreshRequired, onRefreshWorld, travelBusy]);
+
   useEffect(() => {
     if (!travelling) return;
     const id = setInterval(() => {
@@ -135,6 +165,16 @@ export function GameShell(props: {
   }
   const reading = surroundings.reading;
   const map = reading.dto.map;
+  const paintedPlayable =
+    Boolean(cartography) &&
+    props.world.party?.movementVersion !== 1 &&
+    !legacyRoute &&
+    (!execution || execution.phase === 'COMPLETE');
+  const continuousPlayable =
+    Boolean(map.continuous) &&
+    props.world.party?.movementVersion !== 1 &&
+    !legacyRoute &&
+    (!execution || execution.phase === 'COMPLETE');
   const tick = estimatedTick(reading, now);
   const light = estimatedLight(reading, now);
   const msPerTick = Number(reading.dto.campaign.msPerTick);
@@ -159,22 +199,20 @@ export function GameShell(props: {
       }
     : partyMarker(props.world, map, tick, props.company);
   const hostileSiteIds = new Set((reading.dto.observedHostiles ?? []).map((entry) => entry.siteId));
-  const focusSite = map.sites.find(
-    (site) => site.siteId === (focusSiteId ?? (travelling ? null : party?.location)),
-  );
-  const visiting = tab === 'place' && focusSite;
-  const canEnter = Boolean(
-    focusSite &&
-    !travelling &&
-    party?.location === focusSite.siteId &&
-    (!movement.current || movement.current.mode === 'STATIONARY_SITE'),
-  );
-  const contractVisit =
-    canEnter && buildingVisit?.siteId === focusSite?.siteId ? buildingVisit : null;
   const canVisit =
     !travelling &&
     Boolean(party) &&
-    (!movement.current || movement.current.mode === 'STATIONARY_SITE');
+    (paintedPlayable || continuousPlayable
+      ? movement.current?.mode === 'STATIONARY_SITE' && !placeRefreshRequired
+      : !movement.current || movement.current.mode === 'STATIONARY_SITE');
+  const currentSite = canVisit
+    ? map.sites.find((site) => site.siteId === party?.location)
+    : undefined;
+  const selectedSite = map.sites.find((site) => site.siteId === focusSiteId);
+  const visiting = tab === 'place' && currentSite;
+  const canEnter = Boolean(currentSite);
+  const contractVisit =
+    canEnter && buildingVisit?.siteId === currentSite?.siteId ? buildingVisit : null;
   const supplyBuilding: BuildingType = party?.location === 'severny-dvor' ? 'granary' : 'market';
   const supplyVenueName = BUILDINGS[supplyBuilding].name;
   const visitIssuer = (siteId: string, building: BuildingType) => {
@@ -211,7 +249,8 @@ export function GameShell(props: {
       setSelected(preferred);
       setTab('travel');
     } else {
-      setTab('place');
+      setSelected(null);
+      setTab(currentSite?.siteId === siteId ? 'place' : 'travel');
     }
   };
 
@@ -249,11 +288,7 @@ export function GameShell(props: {
           region={map.continuous}
           point={soundPoint}
           night={light.phase === 'NIGHT'}
-          siteId={
-            !travelling && (!movement.current || movement.current.mode === 'STATIONARY_SITE')
-              ? (party?.location ?? null)
-              : null
-          }
+          siteId={currentSite?.siteId ?? null}
         />
         <Clocks tick={tick} ticksPerDay={ticksPerDay} light={light} stale={surroundings.stale} />
         <button className="action action-quiet" type="button" onClick={props.onSignOut}>
@@ -265,16 +300,16 @@ export function GameShell(props: {
         <div className={`map-frame${visiting ? ' map-frame-visiting' : ''}`}>
           {visiting && (
             <PlaceScene
-              key={`${focusSite.siteId}:${travelling}:${party?.location ?? ''}`}
-              siteId={focusSite.siteId}
-              name={focusSite.name}
-              facts={placeFacts.filter((fact) => fact.siteId === focusSite.siteId)}
-              kind={focusSite.kind}
+              key={`${currentSite.siteId}:${travelling}:${party?.location ?? ''}`}
+              siteId={currentSite.siteId}
+              name={currentSite.name}
+              facts={placeFacts.filter((fact) => fact.siteId === currentSite.siteId)}
+              kind={currentSite.kind}
               night={light.phase === 'NIGHT'}
               canEnter={canEnter}
               inside={contractVisit?.building ?? null}
               onInside={(building) =>
-                setBuildingVisit(building ? { siteId: focusSite.siteId, building } : null)
+                setBuildingVisit(building ? { siteId: currentSite.siteId, building } : null)
               }
               onMap={() => {
                 setBuildingVisit(null);
@@ -288,10 +323,22 @@ export function GameShell(props: {
               onEquipment={() => setTab('company')}
             />
           )}
-          {map.continuous &&
-          props.world.party?.movementVersion !== 1 &&
-          !legacyRoute &&
-          (!execution || execution.phase === 'COMPLETE') ? (
+          {paintedPlayable ? (
+            <PaintedMapCanvas
+              key={`${props.company.companyId}:${cartography!.mapEdition}`}
+              companyId={props.company.companyId}
+              cartography={cartography!}
+              sites={map.sites}
+              current={movement.current}
+              clock={movement.clock.current}
+              night={light.phase === 'NIGHT'}
+              onPosition={(point) => {
+                soundPoint.current = point;
+              }}
+              onMove={movement.send}
+              onSelectSite={selectSite}
+            />
+          ) : continuousPlayable && map.continuous ? (
             <ContinuousMapCanvas
               region={map.continuous}
               sites={map.sites}
@@ -303,9 +350,8 @@ export function GameShell(props: {
               }}
               observations={
                 !surroundings.stale &&
-                !travelling &&
-                (!movement.current || movement.current.mode === 'STATIONARY_SITE') &&
-                reading.dto.observerSiteId === party?.location
+                canVisit &&
+                reading.dto.observerSiteId === currentSite?.siteId
                   ? reading.dto
                   : null
               }
@@ -353,7 +399,7 @@ export function GameShell(props: {
             </>
           )}
           <p className="map-legend" hidden={Boolean(visiting)}>
-            {map.regionName} · ПКМ — идти · S — остановиться · зажать ЛКМ — двигать карту
+            {map.regionName} · ПКМ — идти · S или пробел — остановиться · зажать ЛКМ — двигать карту
           </p>
         </div>
 
@@ -370,12 +416,12 @@ export function GameShell(props: {
             </TabButton>
           </nav>
           <div hidden={tab !== 'travel'}>
-            {map.continuous &&
-            props.world.party?.movementVersion !== 1 &&
-            !legacyRoute &&
-            (!execution || execution.phase === 'COMPLETE') ? (
+            {paintedPlayable || (continuousPlayable && map.continuous) ? (
               <section className="panel travel-panel" aria-label="Путешествие">
                 <h2 className="panel-title">Путь</h2>
+                {selectedSite && selectedSite.siteId !== currentSite?.siteId && (
+                  <p className="state-note">Выбрано на карте: {selectedSite.name}</p>
+                )}
                 <p className="travel-status">
                   {movement.current?.mode === 'MOVING'
                     ? Number(movement.current.plan?.arrivesAtMs ?? 0) <=
@@ -390,15 +436,17 @@ export function GameShell(props: {
                         ? 'Отряд остановился в местности.'
                         : 'Сверяем положение отряда…'}
                 </p>
-                <MovementTerrain
-                  current={movement.current}
-                  region={map.continuous}
-                  serverMs={
-                    movement.clock.current.serverMs +
-                    performance.now() -
-                    movement.clock.current.receivedAt
-                  }
-                />
+                {map.continuous && (
+                  <MovementTerrain
+                    current={movement.current}
+                    region={map.continuous}
+                    serverMs={
+                      movement.clock.current.serverMs +
+                      performance.now() -
+                      movement.clock.current.receivedAt
+                    }
+                  />
+                )}
                 {movement.current?.mode === 'MOVING' && (
                   <button
                     className="action"
@@ -479,30 +527,22 @@ export function GameShell(props: {
               aria-label="Место"
               hidden={Boolean(contractVisit)}
             >
-              {focusSite ? (
+              {currentSite ? (
                 <>
-                  {placeBuildings(focusSite.siteId, focusSite.kind).painting && (
+                  {placeBuildings(currentSite.siteId, currentSite.kind).painting && (
                     <img
                       className="place-illustration"
-                      src={placeBuildings(focusSite.siteId, focusSite.kind).painting}
+                      src={placeBuildings(currentSite.siteId, currentSite.kind).painting}
                       alt=""
                     />
                   )}
-                  <h2 className="panel-title">{focusSite.name}</h2>
+                  <h2 className="panel-title">{currentSite.name}</h2>
                   <p className="place-kind">
-                    {siteKindLabel(focusSite.kind)}
-                    {focusSite.danger === 'DANGEROUS' ? ' · опасно' : ''}
+                    {siteKindLabel(currentSite.kind)}
+                    {currentSite.danger === 'DANGEROUS' ? ' · опасно' : ''}
                   </p>
-                  <p className="state-note">
-                    {!travelling && party?.location === focusSite.siteId
-                      ? 'Ваш отряд здесь.'
-                      : `Отряд не здесь. ${
-                          reachable.has(focusSite.siteId)
-                            ? 'Путь сюда открыт на вкладке «Путь».'
-                            : 'Прямого пути отсюда сейчас нет.'
-                        }`}
-                  </p>
-                  {!travelling && party?.location === focusSite.siteId && (
+                  <p className="state-note">Ваш отряд здесь.</p>
+                  {!travelling && party?.location === currentSite.siteId && (
                     <div className="camp-row">
                       {props.holdings?.fieldCamp ? (
                         <>
@@ -531,7 +571,7 @@ export function GameShell(props: {
                       )}
                     </div>
                   )}
-                  {reading.dto.observerSiteId === focusSite.siteId && (
+                  {reading.dto.observerSiteId === currentSite.siteId && (
                     <>
                       <ObservedHostiles observed={reading.dto.observedHostiles ?? []} />
                       <ObservedCompanies observed={reading.dto.observedCompanies} />
@@ -540,9 +580,14 @@ export function GameShell(props: {
                 </>
               ) : (
                 <>
-                  <h2 className="panel-title">В дороге</h2>
+                  <h2 className="panel-title">Текущее место</h2>
                   <p className="state-note">
-                    Отряд между поселениями. Выберите место на карте, чтобы узнать о нём.
+                    {travelling
+                      ? 'Отряд в пути. Поселение можно открыть после прибытия.'
+                      : (paintedPlayable || continuousPlayable) &&
+                          (!movement.current || placeRefreshRequired)
+                        ? 'Сверяем положение отряда…'
+                        : 'Отряд вне поселения. Здания и услуги доступны после прибытия.'}
                   </p>
                 </>
               )}
@@ -551,7 +596,7 @@ export function GameShell(props: {
               <p className="state-note">
                 {contractVisit
                   ? `Разговоры · ${BUILDINGS[contractVisit.building].name}`
-                  : `Наводки и журнал отряда · ${party ? siteName(party.location) : 'в дороге'}`}
+                  : `Наводки и журнал отряда · ${currentSite?.name ?? (travelling ? 'в пути' : 'на местности')}`}
               </p>
               {contractVisit && (
                 <button type="button" className="quiet-action" onClick={openJournal}>
@@ -578,8 +623,34 @@ export function GameShell(props: {
             </div>
           </div>
           <div hidden={tab !== 'company'}>
+            {props.joinAttemptPending && (
+              <div role="status" className="travel-error">
+                <p>
+                  {props.joinAttemptMessage ??
+                    'Результат присоединения неизвестен. Повторите тот же приказ.'}
+                </p>
+                <button
+                  type="button"
+                  className="action action-quiet"
+                  disabled={props.equipBusy}
+                  onClick={props.onRetryJoinFieldParty}
+                >
+                  Повторить тот же приказ
+                </button>
+              </div>
+            )}
+            {!props.joinAttemptPending && props.joinAttemptMessage && (
+              <p role="status" className="travel-error">
+                {props.joinAttemptMessage}
+              </p>
+            )}
             <CompanyPanel
               accountId={props.freeMovementScope.accountId}
+              onRefreshItems={props.onRefreshCompany}
+              refreshBusy={props.companyReadBusy}
+              {...(props.companyReadMessage === undefined
+                ? {}
+                : { refreshMessage: props.companyReadMessage })}
               company={props.company}
               holdings={props.holdings}
               ticksPerDay={ticksPerDay}
@@ -594,10 +665,10 @@ export function GameShell(props: {
               onBuySupplies={() => {
                 if (party) visitIssuer(party.location, supplyBuilding);
               }}
-              onRefreshPayroll={props.onRefreshWorld}
               equipBusy={props.equipBusy}
               {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
               onEquip={props.onEquip}
+              onJoinFieldParty={props.onJoinFieldParty}
             />
           </div>
         </aside>

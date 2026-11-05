@@ -18,8 +18,10 @@ or castle is introduced. The ruined watermill uses a wheel,
 not a windmill or a newly repaired building. Icons are presentation categories,
 not new world facts or game rules.
 
-One sprite contains24 named symbols. Party/list icons share the same mapping;
-34 existing sites map by stable ID in
-[map-icons.ts](../../../../scripts/world-map/map-icons.ts).
+One sprite contains24 named symbols. Public party/list glyph rendering lives in
+[map-symbols.ts](../../../../scripts/world-map/map-symbols.ts). The server owns
+site categories in [cartography-field.ts](../../../../apps/server/src/world-lab/cartography-field.ts)
+and sends only known-site symbols; the world client has no private site dictionary.
 Own-party framing, hostile pursuit ring and hit regions belong to the map UI.
-No raster generation, runtime download, new dependency or server change.
+The browser fetches the fixed public SVG and may cache it; icons need no runtime
+generation or external asset service.

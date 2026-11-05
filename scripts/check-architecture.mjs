@@ -66,7 +66,7 @@ async function exists(path) {
 }
 
 async function resolveRelativeImport(file, specifier) {
-  const base = resolve(dirname(file), specifier);
+  const base = resolve(dirname(file), specifier.replace(/\?url$/u, ''));
   const sourceBase = /\.(?:c|m)?jsx?$/u.test(base) ? base.replace(/\.(?:c|m)?jsx?$/u, '') : base;
   const candidates = [
     base,

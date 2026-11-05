@@ -1,6 +1,8 @@
+import { gameWorldId } from './world/map-context.js';
 import { invariant } from '@warwrit/game-core';
 
 export interface ServerConfig {
+  readonly worldId: string;
   readonly host: string;
   readonly port: number;
   readonly databaseUrl?: string;
@@ -17,6 +19,7 @@ export interface IdentityConfig {
   readonly redirectUri: string;
   readonly publicOrigin: string;
   readonly secureCookies: boolean;
+  readonly localCompanyLogin?: true;
 }
 
 export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): ServerConfig {
@@ -132,9 +135,16 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
       redirectUri,
       publicOrigin,
       secureCookies: originUrl.protocol === 'https:',
+      ...(environment['NODE_ENV'] === 'development' &&
+      hostIsLoopback &&
+      loopbackNames.has(originUrl.hostname) &&
+      originUrl.protocol === 'http:'
+        ? { localCompanyLogin: true as const }
+        : {}),
     };
   }
   return {
+    worldId: gameWorldId(environment['WORLD_MAP']?.trim()),
     host,
     port,
     ...(databaseUrl ? { databaseUrl } : {}),

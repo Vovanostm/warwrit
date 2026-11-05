@@ -24,6 +24,7 @@ import type {
   CompanyReadResponseDto,
   CreateCompanyRequestDto,
   OrdinaryPlayerCompanyCommandV2Dto,
+  LocalRecruitOffersResponseDto,
 } from '@warwrit/protocol';
 import {
   ORDINARY_PLAYER_COMPANY_COMMAND_TYPES,
@@ -31,9 +32,10 @@ import {
 } from '@warwrit/protocol';
 import { randomUUID } from 'node:crypto';
 
-import { resolveSessionAccount } from '../auth/session.js';
+import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import { findOwnedCompanyId, loadCompanyAggregate, saveCompanyAggregate } from './repository.js';
+import { findOwnedCompanyId, lockCompanyAggregate, saveCompanyAggregate } from './repository.js';
+import { observeLocalCompanyConditions } from './observation.js';
 import { createOpeningAggregate, issueOpeningOption, openingOptionView } from './opening.js';
 import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
@@ -41,6 +43,11 @@ import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { projectCompanyHoldings } from './holdings.js';
 import { isPayrollPayload } from './payroll-intent.js';
+import {
+  ensureWorldRecruitPool,
+  localCompanyContacts,
+  readSiteRecruitOffers,
+} from './recruitment.js';
 
 export interface CompanyRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -51,6 +58,37 @@ export function registerCompanyRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  app.get<{ Params: { siteId: string } }>('/company/recruits/:siteId', async (request, reply) => {
+    const accountId = await resolveSessionAccount(request, database);
+    if (!accountId) return reply.code(401).send({ error: 'authentication required' });
+    const result = await database.transaction().execute(async (transaction) => {
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId) return null;
+      const state = await lockCompanyAggregate(transaction, worldId, companyId);
+      if (!state) throw new Error('Owned company snapshot is unavailable');
+      const lifecycle = state.economy.lifecycle;
+      const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+      const partyLocation = party?.location.kind === 'AT' ? party.location : undefined;
+      const localMember = localCompanyContacts(state, companyId, partyLocation).length > 0;
+      if (
+        lifecycle.company?.runStatus !== 'ACTIVE' ||
+        !partyLocation ||
+        partyLocation.siteId !== request.params.siteId ||
+        !localMember
+      )
+        return { offers: [] } satisfies LocalRecruitOffersResponseDto;
+      return {
+        offers: await readSiteRecruitOffers(
+          transaction,
+          worldId,
+          request.params.siteId,
+          partyLocation.areaId,
+        ),
+      } satisfies LocalRecruitOffersResponseDto;
+    });
+    return result === null ? reply.code(403).send({ error: 'company required' }) : result;
+  });
+
   app.get<{ Params: { siteId: string } }>('/company/supplies/:siteId', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
@@ -75,21 +113,39 @@ export function registerCompanyRoutes(
     }
 
     const company = await database.transaction().execute(async (transaction) => {
+      if (!(await lockIdentityAccount(transaction, accountId))) return null;
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
       if (companyId === undefined) return null;
-      const state = await loadCompanyAggregate(transaction, worldId, companyId);
-      if (state === undefined) throw new Error('Owned company snapshot is unavailable');
+      const loaded = await lockCompanyAggregate(transaction, worldId, companyId);
+      if (loaded === undefined) throw new Error('Owned company snapshot is unavailable');
+      const state = await observeLocalCompanyConditions(transaction, loaded, new Date());
       const view = projectCompanyLifecycle(state.economy.lifecycle, companyId);
       if (view === null) throw new Error('Owned company projection is unavailable');
       // Lifecycle knowledge refreshes only through observations; the owner always knows its
       // own company's current leader and whether its run has ended.
       const own = state.economy.lifecycle.company;
+      const party =
+        state.economy.lifecycle.parties.length === 1
+          ? state.economy.lifecycle.parties[0]
+          : undefined;
+      const holdings = projectCompanyHoldings(
+        state,
+        companyId,
+        view.characters.map((character) => character.characterId),
+      );
+      // Holdings already exposes witnessed deaths from this company's completed encounters.
+      const fallen = new Set(
+        holdings.people.filter((person) => person.fallen).map((person) => person.characterId),
+      );
+      const knownMembers = view.characters.filter(
+        (character) =>
+          character.fieldPartyId === party?.partyId && !fallen.has(character.characterId),
+      );
+      const fieldPartyFull =
+        view.commandCapacity === null ||
+        knownMembers.length >= Math.min(view.commandCapacity, COMPANY_RULES.partyHardMax);
       return {
-        holdings: projectCompanyHoldings(
-          state,
-          companyId,
-          view.characters.map((character) => character.characterId),
-        ),
+        holdings,
         summary: {
           companyId: view.companyId,
           revision: view.revision,
@@ -102,6 +158,25 @@ export function registerCompanyRoutes(
             nicknameTextKey: character.nicknameTextKey,
             perkIds: [...character.perkIds],
             knownStatus: character.knownStatus,
+            inFieldParty:
+              !fallen.has(character.characterId) && character.fieldPartyId === party?.partyId,
+            canJoinFieldParty: (() => {
+              const known = state.economy.lifecycle.knowledge.characters.find(
+                (entry) => entry.identity.characterId === character.characterId,
+              );
+              return Boolean(
+                party?.location.kind === 'AT' &&
+                !fallen.has(character.characterId) &&
+                !fieldPartyFull &&
+                known?.presence.availability === 'AVAILABLE' &&
+                known.presence.encounterBindingId === null &&
+                character.fieldPartyId === null &&
+                character.location.kind === 'AT' &&
+                character.location.siteId === party.location.siteId &&
+                character.location.areaId === party.location.areaId,
+              );
+            })(),
+            fieldPartyFull,
           })),
         },
       };
@@ -117,13 +192,8 @@ export function registerCompanyRoutes(
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
 
     return database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return reply.code(401).send({ error: 'authentication required' });
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return reply.code(401).send({ error: 'authentication required' });
       if (await findOwnedCompanyId(transaction, worldId, accountId))
         return reply.code(409).send({ error: 'company already exists' });
 
@@ -172,13 +242,8 @@ export function registerCompanyRoutes(
       return reply.code(400).send({ commandId: null, ok: false, code: 'INVALID_COMMAND' });
 
     const result = await database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return { statusCode: 401, body: { error: 'authentication required' } };
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return { statusCode: 401, body: { error: 'authentication required' } };
 
       const optionRow = await transaction
         .selectFrom('company_opening_options')
@@ -325,6 +390,7 @@ export function registerCompanyRoutes(
           },
         ],
       });
+      await ensureWorldRecruitPool(transaction, worldId);
       await transaction
         .insertInto('company_account_owners')
         .values({ world_id: worldId, company_id: evidence.companyId, account_id: accountId })
@@ -372,7 +438,20 @@ function parseOrdinaryCompanyCommandV2(
     return undefined;
   }
 
-  if (value['type'] === 'BuySupplies') {
+  if (value['type'] === 'Recruit') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['offerId', 'offerRevision']) ||
+      !isEntityId(payload['offerId']) ||
+      !isExactInteger(payload['offerRevision'])
+    )
+      return undefined;
+  } else if (value['type'] === 'JoinFieldParty') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['characterId']) ||
+      !isEntityId(payload['characterId'])
+    )
+      return undefined;
+  } else if (value['type'] === 'BuySupplies') {
     if (
       canonicalJson(Object.keys(payload).sort()) !==
         canonicalJson(['quantity', 'shopRevision', 'siteId']) ||
@@ -410,6 +489,23 @@ function parseOrdinaryCompanyCommandV2(
       !isEntityId(payload['characterId']) ||
       !isEntityId(payload['itemId']) ||
       !['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
+    )
+      return undefined;
+  } else if (value['type'] === 'ApplyCare') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['characterId', 'conditionId', 'providerId', 'resourceItemId']) ||
+      !isEntityId(payload['characterId']) ||
+      !isEntityId(payload['conditionId']) ||
+      !isEntityId(payload['providerId']) ||
+      !isEntityId(payload['resourceItemId'])
+    )
+      return undefined;
+  } else if (value['type'] === 'SetAssignment') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['assignment', 'characterId']) ||
+      !isEntityId(payload['characterId']) ||
+      (payload['assignment'] !== 'FIELD' && payload['assignment'] !== 'RECOVERY')
     )
       return undefined;
   }

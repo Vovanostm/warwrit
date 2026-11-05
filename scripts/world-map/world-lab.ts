@@ -10,15 +10,8 @@ import {
   type WorldLabSlot,
   type WorldLabStateDto,
   type WorldLabVisitDto,
+  type WorldLabCartographyDto,
 } from '@warwrit/protocol';
-import {
-  PAINTED_ATLAS_SHEET,
-  PAINTED_ATLAS_SITES,
-  paintedAtlasPixel,
-  paintedAtlasPoint,
-  positionAt,
-  type ContinuousMovementPlan,
-} from '@warwrit/game-core';
 import {
   advanceMapView,
   boundedMapView,
@@ -28,8 +21,9 @@ import {
   type MapView,
 } from './map-camera.js';
 import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
+import { createCartographyView, knownCartographyBounds } from './cartography-view.js';
 import type { Pixel } from './porechye-navigation.js';
-import { createMapIcon, createPartyKey, partyIconName, siteIconName } from './map-icons.js';
+import { createMapIcon, createPartyKey, isMapIconName, partyIconName } from './map-symbols.js';
 import { layoutMapLabels } from './map-labels.js';
 import {
   isWorldLabStateNotOlder,
@@ -40,10 +34,20 @@ import {
 
 const API = '/world-lab-api/world-lab';
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const SHEET = PAINTED_ATLAS_SHEET;
+const DEFAULT_SHEET = { width: 4608, height: 3072, fpPerPixel: 3.5 } as const;
 const $ = <T extends Element>(id: string) => document.getElementById(id)! as unknown as T;
 const map = $<SVGSVGElement>('map');
 const groupLayer = $<SVGGElement>('observed-groups');
+const tileLayer = $<SVGGElement>('map-tiles');
+const knowledgeOverlay = $<SVGImageElement>('knowledge-overlay');
+const terrainRevealMaskImage = $<SVGImageElement>('terrain-reveal-mask-image');
+const visibleFrontier = $<SVGPathElement>('visible-frontier');
+const cartographyView = createCartographyView(
+  tileLayer,
+  knowledgeOverlay,
+  terrainRevealMaskImage,
+  visibleFrontier,
+);
 const stateText = $<HTMLElement>('connection-status');
 const message = $<HTMLElement>('client-message');
 const followOwn = $<HTMLInputElement>('follow-own');
@@ -60,11 +64,13 @@ let snapshotServerTimeMs = 0;
 let transportConnected = false;
 let connectionError: string | undefined;
 let lastStateRefreshAt = 0;
-let view: MapView = { x: 0, y: 0, width: SHEET.width, height: SHEET.height };
+let view: MapView = { x: 0, y: 0, width: DEFAULT_SHEET.width, height: DEFAULT_SHEET.height };
 let zoomTarget: MapView | undefined;
 const groupElements = new Map<string, SVGGElement>();
+const siteElements = new Map<string, SVGGElement>();
 let focusedGroupId: string | undefined;
 let focusedSiteId: string | undefined;
+let renderedSitesFingerprint: string | undefined;
 let lastLabelLayoutAt = 0;
 let lastLabelViewBox: string | null = null;
 interface GroupSamples {
@@ -77,8 +83,80 @@ interface GroupSamples {
   };
 }
 const groupSamples = new Map<string, GroupSamples>();
+let lastFreshnessApplied = true;
 const MAX_SNAPSHOT_AGE_MS = 2000;
 const INTERPOLATION_DELAY_MS = 200;
+
+function mapSheet() {
+  return snapshot?.cartography.sheet ?? DEFAULT_SHEET;
+}
+
+function mapPixel(point: { readonly xMicroFp: string; readonly zMicroFp: string }): Pixel {
+  const sheet = mapSheet();
+  return [
+    Number(point.xMicroFp) / 65536 / sheet.fpPerPixel + sheet.width / 2,
+    sheet.height / 2 - Number(point.zMicroFp) / 65536 / sheet.fpPerPixel,
+  ];
+}
+
+function fitKnownMap() {
+  if (!snapshot) return;
+  const sheet = mapSheet();
+  const bounds = knownCartographyBounds(snapshot.cartography, snapshot.own.movement.point);
+  const padding = 260;
+  const aspect = map.clientWidth && map.clientHeight ? map.clientWidth / map.clientHeight : 1.5;
+  let width = Math.max(1, bounds.right - bounds.left + padding * 2);
+  let height = Math.max(1, bounds.bottom - bounds.top + padding * 2);
+  if (width / height < aspect) width = height * aspect;
+  else height = width / aspect;
+  const scaleDown = Math.min(1, sheet.width / width, sheet.height / height);
+  width *= scaleDown;
+  height *= scaleDown;
+  const centerX = (bounds.left + bounds.right) / 2;
+  const centerY = (bounds.top + bounds.bottom) / 2;
+  setView({ x: centerX - width / 2, y: centerY - height / 2, width, height });
+}
+
+function emptyMask(cells: number) {
+  const bytes = Math.ceil(cells / 8);
+  const remainder = bytes % 3;
+  return (
+    'A'.repeat(4 * Math.floor(bytes / 3)) +
+    (remainder === 1 ? 'AA==' : remainder === 2 ? 'AAA=' : '')
+  );
+}
+
+function pointAtPixel([x, y]: Pixel) {
+  const sheet = mapSheet();
+  return {
+    xFp: Math.round((x - sheet.width / 2) * sheet.fpPerPixel),
+    zFp: Math.round((sheet.height / 2 - y) * sheet.fpPerPixel),
+  };
+}
+
+function displayPositionAt(
+  plan: NonNullable<WorldLabStateDto['own']['movement']['plan']>,
+  trustedTimeMs: string,
+) {
+  const elapsedUs = BigInt(trustedTimeMs) * 1000n - BigInt(plan.startedAtMs) * 1000n;
+  if (elapsedUs <= 0n) return plan.from;
+  if (elapsedUs >= BigInt(plan.totalDurationUs)) return plan.goal;
+  const span = plan.speedSpans.find((candidate) => BigInt(candidate.endOffsetUs) > elapsedUs);
+  if (!span) return plan.goal;
+  const start = BigInt(span.startOffsetUs);
+  const duration = BigInt(span.endOffsetUs) - start;
+  const at = elapsedUs - start;
+  const interpolate = (from: string, to: string) => {
+    const product = (BigInt(to) - BigInt(from)) * at;
+    const magnitude = product < 0n ? -product : product;
+    const rounded = (magnitude * 2n + duration) / (duration * 2n);
+    return (BigInt(from) + (product < 0n ? -rounded : rounded)).toString();
+  };
+  return {
+    xMicroFp: interpolate(span.from.xMicroFp, span.to.xMicroFp),
+    zMicroFp: interpolate(span.from.zMicroFp, span.to.zMicroFp),
+  };
+}
 
 function showConnection(status: 'connecting' | 'live' | 'stale' | 'login', text: string) {
   document.body.dataset['connection'] = status;
@@ -134,19 +212,18 @@ function maybeNewer(next: WorldLabStateDto) {
   snapshot = next;
   snapshotServerTimeMs = Number(next.serverTimeMs);
   lastSnapshotReceivedAt = performance.now();
+  lastFreshnessApplied = true;
   render(next);
   if (newSession) {
     followOwn.checked = false;
     centerOnOwn(true);
   }
+  cartographyView.sync(next.cartography, view);
   updateFreshness();
 }
 
 function pointOnMap(point: { readonly xMicroFp: string; readonly zMicroFp: string }): Pixel {
-  return paintedAtlasPixel({
-    xFp: Number(point.xMicroFp) / 65536,
-    zFp: Number(point.zMicroFp) / 65536,
-  });
+  return mapPixel(point);
 }
 
 function setMarker(
@@ -154,12 +231,17 @@ function setMarker(
   point: { readonly xMicroFp: string; readonly zMicroFp: string },
 ) {
   const [x, y] = pointOnMap(point);
-  group.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
+  group.dataset['anchorX'] = String(x);
+  group.dataset['anchorY'] = String(y);
 }
 
 function setMarkerAtMicroFp(group: SVGGElement, xMicroFp: number, zMicroFp: number) {
-  const [x, y] = paintedAtlasPixel({ xFp: xMicroFp / 65536, zFp: zMicroFp / 65536 });
-  group.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
+  const [x, y] = mapPixel({
+    xMicroFp: String(Math.round(xMicroFp)),
+    zMicroFp: String(Math.round(zMicroFp)),
+  });
+  group.dataset['anchorX'] = String(x);
+  group.dataset['anchorY'] = String(y);
 }
 
 function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
@@ -171,10 +253,10 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
   marker.dataset['groupId'] = group.id;
   marker.setAttribute('tabindex', '0');
   marker.setAttribute('role', 'img');
-  const symbol = createMapIcon(partyIconName(group.kind), 28);
+  const symbol = createMapIcon(partyIconName(group.kind), 24);
   const disc = document.createElementNS(SVG_NS, 'circle');
   disc.classList.add('group-disc');
-  disc.setAttribute('r', '19');
+  disc.setAttribute('r', '15');
   const label = document.createElementNS(SVG_NS, 'text');
   label.setAttribute('y', '37');
   const hit = document.createElementNS(SVG_NS, 'circle');
@@ -184,7 +266,9 @@ function groupGlyph(group: WorldLabObservedGroupDto): SVGGElement {
   // Keep the selected threat visible even when the own 20px marker overlaps it.
   ring.setAttribute('r', '27');
   ring.classList.add('pursuit-ring');
-  marker.append(hit, disc, ring, symbol, label);
+  const leader = document.createElementNS(SVG_NS, 'line');
+  leader.classList.add('group-leader');
+  marker.append(leader, hit, disc, ring, symbol, label);
   marker.addEventListener('keydown', (event) => {
     if (
       event.key === 'Enter' &&
@@ -212,7 +296,7 @@ function showContactIdentity(id?: string) {
   focusedGroupId = marker ? id : undefined;
   $('contact-focus').textContent =
     marker?.getAttribute('aria-label') ??
-    PAINTED_ATLAS_SITES.find((site) => site.siteId === focusedSiteId)?.name ??
+    (focusedSiteId ? siteElements.get(focusedSiteId)?.getAttribute('aria-label') : undefined) ??
     '';
   updateSiteLabels(true);
 }
@@ -282,6 +366,11 @@ function renderRoute(state: WorldLabStateDto) {
       : 'Стоит. Можно задать новый путь правой кнопкой мыши.');
 }
 
+function renderCartography(cartography: WorldLabCartographyDto) {
+  renderSites(cartography);
+  cartographyView.render(cartography);
+}
+
 function hasMovementOrder() {
   return Boolean(
     snapshot?.pursuit?.status === 'CHASING' || snapshot?.own.movement.mode === 'MOVING',
@@ -307,9 +396,10 @@ function pursuitMessage(state: WorldLabStateDto): string | undefined {
 
 function centerOnOwn(initial = false) {
   if (!snapshot) return;
-  const width = initial ? Math.min(SHEET.width, 1536) : view.width;
+  const sheet = mapSheet();
+  const width = initial ? Math.min(sheet.width, 1152) : view.width;
   const aspect = map.clientWidth && map.clientHeight ? map.clientWidth / map.clientHeight : 1.5;
-  const height = initial ? Math.min(SHEET.height, width / aspect) : view.height;
+  const height = initial ? Math.min(sheet.height, width / aspect) : view.height;
   setView(viewOnOwn(performance.now(), { ...view, width, height }));
 }
 
@@ -317,7 +407,10 @@ function viewOnOwn(now: number, current: MapView): MapView {
   const point = ownPositionNow(now);
   if (!point) return current;
   const [x, y] = pointOnMap(point);
-  return boundedMapView({ ...current, x: x - current.width / 2, y: y - current.height / 2 }, SHEET);
+  return boundedMapView(
+    { ...current, x: x - current.width / 2, y: y - current.height / 2 },
+    mapSheet(),
+  );
 }
 
 function markerScale() {
@@ -384,10 +477,7 @@ function ownPositionNow(now: number) {
         Math.min(MAX_SNAPSHOT_AGE_MS, Math.max(0, now - lastSnapshotReceivedAt)) *
           snapshot.timeScale,
     );
-    return positionAt(
-      movement.plan as ContinuousMovementPlan,
-      String(Math.max(0, Math.floor(time))),
-    );
+    return displayPositionAt(movement.plan, String(Math.max(0, Math.floor(time))));
   } catch {
     return movement.point;
   }
@@ -417,8 +507,92 @@ function updateAnimatedMarkers(now: number) {
     const point = observedPositionNow(id, now);
     if (point) setMarkerAtMicroFp(marker, point.x, point.z);
   }
+  layoutObservedMarkers();
   syncStaticMarkerScale();
   updateSiteLabels();
+}
+
+function observedMarkerOffset(
+  anchor: { x: number; y: number },
+  occupied: readonly { x: number; y: number }[],
+  scale: number,
+): readonly [number, number] {
+  const candidates = [
+    [0, -32],
+    [28, -18],
+    [32, 12],
+    [0, 34],
+    [-32, 16],
+    [-30, -18],
+    [46, -4],
+    [0, -52],
+    [-46, -4],
+    [28, 38],
+    [-30, 38],
+    [48, 28],
+    [-48, 28],
+    [48, -34],
+    [-48, -34],
+  ] as const;
+  const crowded = occupied.some(
+    (other) => Math.hypot((other.x - anchor.x) * scale, (other.y - anchor.y) * scale) < 34,
+  );
+  let offset: readonly [number, number] = [0, 0];
+  if (crowded) {
+    offset =
+      candidates.find(([dx, dy]) => {
+        const candidate = { x: anchor.x + dx / scale, y: anchor.y + dy / scale };
+        return occupied.every(
+          (other) =>
+            Math.hypot((other.x - candidate.x) * scale, (other.y - candidate.y) * scale) >= 32,
+        );
+      }) ?? candidates[0];
+  }
+  return offset;
+}
+
+function layoutObservedMarkers() {
+  const own = $<SVGGElement>('own-marker');
+  const ownX = Number(own.dataset['anchorX']);
+  const ownY = Number(own.dataset['anchorY']);
+  if (!Number.isFinite(ownX) || !Number.isFinite(ownY)) return;
+  const scale = map.getScreenCTM()?.a ?? 1;
+  const anchors = [...siteElements.values()].map((site) => ({
+    x: Number(site.dataset['x']),
+    y: Number(site.dataset['y']),
+  }));
+  const same = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    Math.hypot((a.x - b.x) * scale, (a.y - b.y) * scale) < 0.5;
+  for (const site of siteElements.values()) {
+    site.dataset['coincidentOwn'] = String(
+      same({ x: Number(site.dataset['x']), y: Number(site.dataset['y']) }, { x: ownX, y: ownY }),
+    );
+  }
+  own.setAttribute('transform', `translate(${ownX} ${ownY}) scale(${1 / scale})`);
+  const occupied = [{ x: ownX, y: ownY }, ...anchors];
+  const ordered = [...groupElements.entries()].sort(([left], [right]) =>
+    left < right ? -1 : left > right ? 1 : 0,
+  );
+  for (const [, marker] of ordered) {
+    const anchor = { x: Number(marker.dataset['anchorX']), y: Number(marker.dataset['anchorY']) };
+    if (!Number.isFinite(anchor.x) || !Number.isFinite(anchor.y)) continue;
+    const offset = observedMarkerOffset(anchor, occupied, scale);
+    const [dx, dy] = offset;
+    const offsetKey = `${dx},${dy}`;
+    if (marker.dataset['layoutOffset'] !== offsetKey) {
+      marker.dataset['layoutOffset'] = offsetKey;
+      lastLabelLayoutAt = 0;
+    }
+    marker.setAttribute(
+      'transform',
+      `translate(${anchor.x + dx / scale} ${anchor.y + dy / scale}) scale(${1 / scale})`,
+    );
+    const leader = marker.querySelector<SVGLineElement>('.group-leader')!;
+    leader.style.visibility = dx || dy ? 'visible' : 'hidden';
+    leader.setAttribute('x2', String(-dx));
+    leader.setAttribute('y2', String(-dy));
+    occupied.push({ x: anchor.x + dx / scale, y: anchor.y + dy / scale });
+  }
 }
 
 function render(state: WorldLabStateDto) {
@@ -429,7 +603,11 @@ function render(state: WorldLabStateDto) {
   $('world-sequence').textContent = state.sequence;
   $('map-note').textContent =
     `Общее пробное время ×${state.timeScale} · позиции и видимость задаёт сервер`;
+  const weather = { CLEAR: 'ясно', RAIN: 'дождь', FOG: 'туман' }[state.cartography.weather];
+  $('cartography-status').textContent =
+    `Известных мест: ${state.cartography.sites.length} · погода: ${weather}`;
   map.classList.toggle('night', state.light === 'NIGHT');
+  renderCartography(state.cartography);
   renderRoute(state);
   renderGroups(state.groups);
   $('nearby-site').toggleAttribute('hidden', !state.nearbySite);
@@ -437,22 +615,28 @@ function render(state: WorldLabStateDto) {
   renderSessionPrompt(false);
 }
 
-function drawSites() {
+function renderSites(cartography: WorldLabCartographyDto) {
+  const fingerprint = `${cartography.revision}:${JSON.stringify(cartography.sites)}`;
+  if (renderedSitesFingerprint === fingerprint) return;
   const layer = $('site-markers');
-  for (const site of PAINTED_ATLAS_SITES) {
+  layer.replaceChildren();
+  siteElements.clear();
+  for (const site of cartography.sites) {
+    if (!isMapIconName(site.icon)) continue;
     const marker = document.createElementNS(SVG_NS, 'g');
     marker.classList.add('site-marker');
-    const major = PAINTED_ATLAS_SITES.indexOf(site) < 5;
-    marker.classList.toggle('site-minor', !major);
+    marker.classList.toggle('site-visited', site.visited);
+    marker.dataset['source'] = site.source.toLowerCase();
+    marker.dataset['visited'] = String(site.visited);
     marker.dataset['siteId'] = site.siteId;
     marker.setAttribute('role', 'img');
     marker.setAttribute('aria-label', site.name);
-    const [x, y] = paintedAtlasPixel(site.anchorFp);
+    const [x, y] = mapPixel(site.point);
     marker.dataset['x'] = String(x);
     marker.dataset['y'] = String(y);
     marker.setAttribute('transform', `translate(${x} ${y}) scale(${markerScale()})`);
     const circle = document.createElementNS(SVG_NS, 'circle');
-    circle.setAttribute('r', '14');
+    circle.setAttribute('r', '12');
     circle.classList.add('site-disc');
     const hit = document.createElementNS(SVG_NS, 'circle');
     hit.setAttribute('r', '18');
@@ -461,10 +645,10 @@ function drawSites() {
     label.textContent = site.name;
     label.setAttribute('y', '-24');
     label.classList.add('site-label');
-    label.dataset['major'] = String(major);
+    label.dataset['major'] = String(['town', 'village'].includes(site.icon));
     const leader = document.createElementNS(SVG_NS, 'line');
     leader.classList.add('site-leader');
-    marker.append(hit, leader, circle, createMapIcon(siteIconName(site.siteId), 21), label);
+    marker.append(hit, leader, circle, createMapIcon(site.icon, 19), label);
     marker.addEventListener('mouseenter', () => {
       focusedSiteId = site.siteId;
       showContactIdentity();
@@ -474,7 +658,9 @@ function drawSites() {
       showContactIdentity(focusedGroupId);
     });
     layer.append(marker);
+    siteElements.set(site.siteId, marker);
   }
+  renderedSitesFingerprint = fingerprint;
 }
 
 async function loadState(generation = sessionGeneration) {
@@ -508,13 +694,20 @@ function clearSnapshotView() {
   followOwn.checked = false;
   followOwn.disabled = true;
   groupElements.clear();
+  siteElements.clear();
+  renderedSitesFingerprint = undefined;
+  cartographyView.clear();
   showContactIdentity();
   groupLayer.replaceChildren();
+  tileLayer.replaceChildren();
+  $('site-markers').replaceChildren();
+  knowledgeOverlay.removeAttribute('href');
   groupSamples.clear();
   lastSnapshotReceivedAt = 0;
   snapshotServerTimeMs = 0;
   $('nearby-groups').replaceChildren();
   $('nearby-site').setAttribute('hidden', '');
+  $('cartography-status').textContent = 'Ожидаем разрешённую сервером карту…';
   $('own-name').textContent = '—';
   $('own-state').textContent = 'Ожидаем состояние мира…';
   $('own-route').setAttribute('d', '');
@@ -714,13 +907,15 @@ function isStaleMovementResponse(response: Response, body: unknown) {
   );
 }
 
+const movementFailureMessages: Readonly<Record<string, string>> = {
+  MAP_INFORMATION_REQUIRED:
+    'Путь пока недоступен. Выберите ближайшую видимую землю или получите более подробную карту.',
+  TARGET_NOT_VISIBLE: 'Цель недоступна для преследования. Дождитесь нового наблюдения.',
+};
+
 function movementFailureMessage(body: unknown): string {
-  if (!record(body)) return 'Приказ не принят сервером.';
-  if (body['code'] === 'TARGET_NOT_VISIBLE')
-    return 'Цель недоступна для преследования. Дождитесь нового наблюдения.';
-  return typeof body['code'] === 'string'
-    ? `Приказ отклонён: ${body['code']}`
-    : 'Приказ не принят сервером.';
+  if (!record(body) || typeof body['code'] !== 'string') return 'Приказ не принят сервером.';
+  return movementFailureMessages[body['code']] ?? `Приказ отклонён: ${body['code']}`;
 }
 
 function mapPoint(event: MouseEvent): Pixel {
@@ -732,8 +927,9 @@ function mapPoint(event: MouseEvent): Pixel {
 
 function setView(next: MapView) {
   zoomTarget = undefined;
-  view = boundedMapView(next, SHEET);
+  view = boundedMapView(next, mapSheet());
   map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
+  if (snapshot) cartographyView.sync(snapshot.cartography, view);
   updateAnimatedMarkers(performance.now());
 }
 
@@ -743,7 +939,7 @@ function issueMove(target: Pixel, siteId?: string) {
     updateFreshness();
     return;
   }
-  const point = paintedAtlasPoint(target);
+  const point = pointAtPixel(target);
   void commandMovement({
     kind: 'MOVE_TO',
     mapEdition: snapshot.mapEdition,
@@ -784,7 +980,7 @@ map.addEventListener(
       zoomTarget ?? view,
       [(x - view.x) / view.width, (y - view.y) / view.height],
       delta,
-      SHEET,
+      mapSheet(),
     );
   },
   { passive: false },
@@ -810,12 +1006,32 @@ function animate(now: number) {
   if (panKeys.held.size && !drag.isDragging()) {
     followOwn.checked = false;
     zoomTarget = undefined;
-    view = panMapView(view, panKeys.direction(), delta, SHEET);
+    view = panMapView(view, panKeys.direction(), delta, mapSheet());
     map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
   }
   if (followOwn.checked) {
     view = viewOnOwn(now, view);
     map.setAttribute('viewBox', `${view.x} ${view.y} ${view.width} ${view.height}`);
+  }
+  if (snapshot) cartographyView.sync(snapshot.cartography, view);
+  const fresh = snapshotIsFresh();
+  if (fresh !== lastFreshnessApplied) {
+    lastFreshnessApplied = fresh;
+    if (!fresh && snapshot) {
+      const cellCount = snapshot.cartography.grid.columns * snapshot.cartography.grid.rows;
+      snapshot = {
+        ...snapshot,
+        groups: [],
+        nearbySite: null,
+        cartography: {
+          ...snapshot.cartography,
+          visible: emptyMask(cellCount),
+        },
+      };
+      groupSamples.clear();
+      render(snapshot);
+    }
+    updateFreshness();
   }
   updateAnimatedMarkers(now);
   lastFrame = now;
@@ -825,7 +1041,7 @@ let lastFrame = performance.now();
 
 $('fit').addEventListener('click', () => {
   followOwn.checked = false;
-  setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height });
+  fitKnownMap();
 });
 $('center-own').addEventListener('click', () => centerOnOwn());
 followOwn.addEventListener('change', () => {
@@ -918,8 +1134,7 @@ map.addEventListener('pointermove', (event) => {
 });
 
 async function initialize() {
-  $('own-marker').append(createMapIcon('company', 30));
-  drawSites();
+  $('own-marker').append(createMapIcon('company', 26));
   new ResizeObserver(() => {
     updateAnimatedMarkers(performance.now());
     updateSiteLabels(true);

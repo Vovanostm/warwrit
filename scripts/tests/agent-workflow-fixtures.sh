@@ -86,9 +86,11 @@ git -C "$repo" config user.email fixture@example.test
 git -C "$repo" config user.name Fixture
 git -C "$repo" config core.hooksPath /dev/null
 mkdir -p "$repo/scripts" "$repo/packages/protocol/src"
-cp "$root/scripts/check-pr-scope.sh" "$repo/scripts/"
+cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$root/scripts/orca-validate.sh" "$root/scripts/print-quality-audit.mjs" "$repo/scripts/"
+mkdir -p "$repo/docs/engineering"
+printf '## Current task\n\nCoordinator is the fixture author.\n' > "$repo/docs/engineering/CURRENT_PLAN.md"
 printf 'original\n' > "$repo/packages/protocol/src/old.ts"
-printf ".orca/\n" > "$repo/.gitignore"
+printf ".orca/\noutput/\ncoverage/\n" > "$repo/.gitignore"
 git -C "$repo" add .
 git -C "$repo" commit -qm base
 base="$(git -C "$repo" rev-parse HEAD)"
@@ -103,6 +105,10 @@ route_case() {
   grep -qx "ROUTE $expected" "$fixture/output" || fail "route $path: $(cat "$fixture/output")"
 }
 route_case docs/guide.md docs
+route_case AGENTS.md docs
+route_case .agents/skills/example/SKILL.md docs
+route_case assets/readme.md broad
+route_case apps/web/src/readme.md web
 route_case apps/web/src/style.css web
 route_case apps/server/src/command.ts server
 route_case packages/game-core/src/rule.ts consumers
@@ -158,7 +164,13 @@ mkdir -p "$fixture/checkbin"
 cat > "$fixture/checkbin/pnpm" <<'STUB'
 #!/usr/bin/env bash
 printf '%s\n' "$*" >> "$FIXTURE_CHECK_LOG"
-if [[ "$*" == *'vitest run'* && "${FIXTURE_NO_TESTS:-}" == 1 ]]; then exit 1; fi
+if [[ "$*" == *'vitest run'* && "${FIXTURE_NO_TESTS:-}" == 1 ]]; then
+  if [[ "${FIXTURE_NOISY:-}" == 1 ]]; then
+    printf 'diagnostic-start-marker\n%12000s\n' ''
+  fi
+  echo 'No test files found. Select an existing public-boundary test.' >&2
+  exit 1
+fi
 exit 0
 STUB
 chmod +x "$fixture/checkbin/pnpm"
@@ -177,7 +189,181 @@ for scenario in docs consumers broad; do
     broad) grep -qx 'verify' "$FIXTURE_CHECK_LOG" || fail 'broad check missing' ;;
   esac
 done
+# Execute the actual CI selector block against isolated committed changes.
+ci_step_script() {
+  awk -v name="$1" '
+    $0 == "      - name: " name { selected = 1; next }
+    selected && /^      - name:/ { exit }
+    selected && /^        run: \|$/ { body = 1; next }
+    body { sub(/^          /, ""); print }
+  ' "$root/.github/workflows/ci.yml"
+}
+ci_scope_script="$(ci_step_script 'Select verification scope')"
+[[ -n "$ci_scope_script" ]] || fail 'CI selector command missing'
+git update-ref refs/remotes/origin/main "$base"
+route_case docs/guide.md docs
+: > "$fixture/ci-output"
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+grep -qx 'docs_only=true' "$fixture/ci-output" || fail 'docs-only CI route missing'
+printf 'mixed source\n' >> packages/protocol/src/old.ts
+git add .
+git commit -qm 'mixed documentation and source'
+: > "$fixture/ci-output"
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+[[ ! -s "$fixture/ci-output" ]] || fail 'mixed source selected docs-only CI'
+expect_exit 1 env GITHUB_BASE_REF=missing GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+printf "echo 'ROUTE unexpected'\n" > scripts/orca-validate.sh
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+[[ ! -s "$fixture/ci-output" ]] || fail 'unexpected route selected docs-only CI'
+echo 'PASS CI selector: docs only; mixed/unknown stay full; invalid base fails'
+
+# The real docs step formats only changed files on its tested ancestor.
+ci_docs_script="$(ci_step_script 'Validate documentation-only changes')"
+[[ -n "$ci_docs_script" ]] || fail 'CI docs command missing'
+cat > "$fixture/checkbin/corepack" <<'STUB'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FIXTURE_COREPACK_LOG"
+case "$*" in
+  enable | 'pnpm install --frozen-lockfile') exit 0 ;;
+  *) exit 97 ;;
+esac
+STUB
+chmod +x "$fixture/checkbin/corepack"
+export FIXTURE_COREPACK_LOG="$fixture/corepack-commands"
+route_case docs/scoped.md docs
+tested_head="$(git rev-parse HEAD)"
+# Model a base ref advancing after GitHub produced the tested merge checkout.
+git switch --quiet --create newer-base "$base"
+printf 'new upstream documentation\n' > docs/upstream.md
+git add .
+git commit -qm 'base advanced'
+git update-ref refs/remotes/origin/main HEAD
+git switch --quiet --detach "$tested_head"
+: > "$FIXTURE_CHECK_LOG"
+: > "$FIXTURE_COREPACK_LOG"
+expect_exit 0 env PATH="$fixture/checkbin:$PATH" GITHUB_BASE_REF=main bash -e -c "$ci_docs_script"
+grep -qx 'exec prettier --check --ignore-unknown docs/scoped.md' "$FIXTURE_CHECK_LOG" || fail 'CI docs format scope changed'
+[[ "$(wc -l < "$FIXTURE_CHECK_LOG")" -eq 1 ]] || fail 'CI docs invoked extra pnpm checks'
+grep -qx enable "$FIXTURE_COREPACK_LOG" || fail 'pinned pnpm shim setup missing'
+grep -qx 'pnpm install --frozen-lockfile' "$FIXTURE_COREPACK_LOG" || fail 'frozen docs install missing'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 128 env PATH="$fixture/checkbin:$PATH" GITHUB_BASE_REF=missing bash -e -c "$ci_docs_script"
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'missing base reached format'
+echo 'PASS CI docs: scoped format on detached checkout with advanced base; missing base fails'
+
+# One native audit owns its exit status; rendering only explains saved output.
+ci_audit_script="$(ci_step_script 'Reject quality regressions in changed files')"
+[[ -n "$ci_audit_script" ]] || fail 'CI audit command missing'
+mkdir -p "$fixture/auditbin"
+cat > "$fixture/auditbin/pnpm" <<'STUB'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FIXTURE_AUDIT_LOG"
+[[ "$*" == 'check:changes --format json --output-file output/quality-audit/audit.json' ]] || exit 97
+cp "$FIXTURE_AUDIT_REPORT" output/quality-audit/audit.json
+echo 'native audit diagnostic' >&2
+exit "$FIXTURE_AUDIT_EXIT"
+STUB
+chmod +x "$fixture/auditbin/pnpm"
+cat > "$fixture/audit-fail.json" <<'JSON'
+{
+  "kind": "audit", "schema_version": 11, "verdict": "fail",
+  "attribution": {"gate": "new-only", "complexity_introduced": 2, "complexity_inherited": 1},
+  "gate_outcomes": {"audit-verdict": {"status": "fail", "enforced": true}},
+  "complexity": {"findings": [
+    {"introduced": true, "effective_severity": "error", "severity": "moderate", "path": "new.ts", "line": 7, "name": "new-error", "exceeded": "crap", "crap": 30},
+    {"introduced": true, "effective_severity": "warn", "severity": "critical", "path": "warn.ts", "line": 8, "name": "new-warning", "exceeded": "cognitive"},
+    {"introduced": false, "effective_severity": "error", "path": "old.ts", "line": 9, "name": "inherited-name"},
+    {"path": "unknown.ts", "line": 10, "name": "unknown-attribution"}
+  ]},
+  "duplication": {"clone_groups": [
+    {"introduced": true, "fingerprint": "new-clone", "instances": [{"file": "copy.ts", "start_line": 3, "end_line": 5}]},
+    {"introduced": false, "fingerprint": "inherited-clone", "instances": []}
+  ], "clone_families": [{"fingerprint": "family-duplicate"}]}
+}
+JSON
+printf '%s\n' '{"kind":"audit","schema_version":11,"verdict":"pass","complexity":{"findings":[]}}' > "$fixture/audit-pass.json"
+printf '%s\n' '{"error":true,"message":"coverage input missing","exit_code":2}' > "$fixture/audit-error.json"
+export FIXTURE_AUDIT_LOG="$fixture/audit-commands"
+for audit_exit in 0 1 2; do
+  case "$audit_exit" in
+    0) audit_report="$fixture/audit-pass.json" ;;
+    1) audit_report="$fixture/audit-fail.json" ;;
+    2) audit_report="$fixture/audit-error.json" ;;
+  esac
+  rm -rf "$repo/output/quality-audit"
+  : > "$FIXTURE_AUDIT_LOG"
+  expect_exit "$audit_exit" env PATH="$fixture/auditbin:$PATH" FALLOW_AUDIT_BASE=origin/main \
+    QUALITY_PR_HEAD_SHA=fixture-head GITHUB_RUN_ID=123 GITHUB_RUN_ATTEMPT=2 \
+    FIXTURE_AUDIT_REPORT="$audit_report" FIXTURE_AUDIT_EXIT="$audit_exit" bash -e -c "$ci_audit_script"
+  [[ "$(wc -l < "$FIXTURE_AUDIT_LOG")" -eq 1 ]] || fail 'audit analyzed twice'
+  grep -qx "exit=$audit_exit" output/quality-audit/context.txt || fail 'audit exit context missing'
+  grep -qx 'native audit diagnostic' output/quality-audit/audit.stderr || fail 'native diagnostic lost'
+  expect_exit 0 node "$root/scripts/print-quality-audit.mjs" output/quality-audit/audit.json
+  if [[ "$audit_exit" == 1 ]]; then
+    grep -q 'Introduced complexity errors (1)' "$fixture/output" || fail 'effective severity partition missing'
+    grep -q 'Other introduced complexity (1)' "$fixture/output" || fail 'warning promoted or hidden'
+    grep -q 'unknown-attribution' "$fixture/output" || fail 'missing attribution treated as inherited'
+    grep -q 'new-clone' "$fixture/output" || fail 'new clone hidden'
+    if grep -qE 'inherited-name|inherited-clone|family-duplicate' "$fixture/output"; then fail 'inherited/family details mixed into introduced output'; fi
+    grep -q 'inherited-name' output/quality-audit/audit.json || fail 'raw inherited evidence lost'
+  fi
+done
+printf '{' > "$fixture/malformed-audit.json"
+expect_exit 1 node "$root/scripts/print-quality-audit.mjs" "$fixture/malformed-audit.json"
+expect_exit 1 node "$root/scripts/print-quality-audit.mjs" "$fixture/missing-audit.json"
+echo 'PASS quality feedback: native exit0/1/2 preserved, one audit, attributed findings, raw diagnostics and invalid report errors'
+
+# Rejected cheap checks must stop before any pnpm command on source routes.
+route_case packages/protocol/src/new.ts consumers
+printf 'uncommitted\n' >> packages/protocol/src/new.ts
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'FAIL clean-tree' "$fixture/output" || fail 'dirty-tree diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'dirty source reached pnpm after rejection'
+git restore packages/protocol/src/new.ts
+mkdir -p "$fixture/scopebadgit"
+cat > "$fixture/scopebadgit/git" <<STUB
+#!/usr/bin/env bash
+if [[ "\$1" == diff && "\$2" == --numstat ]]; then exit 2; fi
+exec "$(command -v git)" "\$@"
+STUB
+chmod +x "$fixture/scopebadgit/git"
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/scopebadgit:$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'FAIL scope' "$fixture/output" || fail 'scope diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'rejected scope reached pnpm'
+echo 'PASS preflight: dirty source and rejected scope stop before pnpm'
+
+# Changed checkpoint metadata must fail before formatting or product checks.
+route_case docs/engineering/CURRENT_PLAN.md docs
+printf '## Current task\n\nParent is sole author and validator.\n' > docs/engineering/CURRENT_PLAN.md
+git add .
+git commit -qm 'checkpoint missing coordinator'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'does not name the coordinator' "$fixture/output" || fail 'checkpoint diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'invalid checkpoint reached product or format tools'
+printf '## Current task\n\nCoordinator is the fixture author.\nUpdated scope.\n' > docs/engineering/CURRENT_PLAN.md
+git add .
+git commit -qm 'checkpoint fixed'
+expect_exit 0 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+git rm -q docs/engineering/CURRENT_PLAN.md
+git commit -qm 'checkpoint deleted'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'CURRENT_PLAN.md not found' "$fixture/output" || fail 'deleted checkpoint passed'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'deleted checkpoint reached product or format tools'
+echo 'PASS plan: changed/fixed/deleted checkpoint checked before expensive commands'
+
 route_case packages/protocol/src/new.ts consumers
 expect_exit 1 env PATH="$fixture/checkbin:$PATH" FIXTURE_NO_TESTS=1 bash "$root/scripts/orca-validate.sh" "$repo" "$base"
-echo 'PASS commands: docs omit game checks; shared contracts check consumers; unknown uses verify; zero-tests failure retained'
+grep -q 'No test files found. Select an existing public-boundary test.' "$fixture/output" || fail 'test diagnostic hidden'
+grep -q 'Rerun after fixing the diagnostic: pnpm exec vitest run packages apps' "$fixture/output" || fail 'repair command missing'
+grep -q 'No test files found' "$repo/.orca/validate-tests.log" || fail 'failure log lost'
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" FIXTURE_NO_TESTS=1 FIXTURE_NOISY=1 bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'No test files found' "$fixture/output" || fail 'noisy failure diagnostic missing'
+if grep -q 'diagnostic-start-marker' "$fixture/output"; then fail 'full noisy log leaked into output'; fi
+[[ "$(wc -c < "$fixture/output")" -lt 10000 ]] || fail 'diagnostic output unbounded'
+grep -q 'diagnostic-start-marker' "$repo/.orca/validate-tests.log" || fail 'full noisy log lost'
+echo 'PASS commands: docs omit game checks; shared contracts check consumers; unknown uses verify; zero-tests failure/repair/log retained; long diagnostics bounded'
 echo 'PASS scope: small/large/multiple issues/deletion/rename; missing linkage/description/body/base/diff fail'

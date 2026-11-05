@@ -2,6 +2,7 @@ import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 import { projectPayroll } from './payroll-view.js';
+import { companyCareOptions } from './care.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -60,19 +61,38 @@ export function projectCompanyHoldings(
     ),
   );
   const people = [...characterIds].map((characterId) => {
-    const vitals = physical?.vitals.find((entry) => entry.characterId === characterId);
+    const vitals = physical?.knowledge.vitalSnapshots.find(
+      (entry) => entry.characterId === characterId,
+    );
+    const known = state.economy.lifecycle.knowledge.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    );
+    const knownAssignment = known?.presence.assignment;
+    const knownLocalAvailability =
+      !fallen.has(characterId) &&
+      known?.presence.availability === 'AVAILABLE' &&
+      known.presence.encounterBindingId === null &&
+      known.presence.fieldPartyId !== null &&
+      known.presence.location.kind === 'AT';
+    const recoveryAssignment: 'FIELD' | 'RECOVERY' | 'OTHER' =
+      knownAssignment === 'FIELD' || knownAssignment === 'RECOVERY' ? knownAssignment : 'OTHER';
     return {
       characterId,
       fallen: fallen.has(characterId),
-      currentHealth: vitals?.currentHealth ?? null,
+      currentHealth: fallen.has(characterId) ? 0 : (vitals?.currentHealth ?? null),
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
-      conditions: (physical?.conditions ?? [])
+      conditions: (physical?.knowledge.conditionSnapshots ?? [])
         .filter(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
         )
         .map((condition) => condition.definitionId),
+      recovery: {
+        assignment: recoveryAssignment,
+        canRest: knownLocalAvailability && knownAssignment === 'FIELD',
+        canReturnToField: knownLocalAvailability && knownAssignment === 'RECOVERY',
+      },
     };
   });
 
@@ -126,6 +146,7 @@ export function projectCompanyHoldings(
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
   return {
+    care: companyCareOptions(state),
     cashQ,
     wallets,
     items,

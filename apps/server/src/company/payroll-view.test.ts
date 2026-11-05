@@ -319,4 +319,50 @@ describe('payroll projection', () => {
     });
     expect(projectPayroll(original.economy, 'unknown-company')).toBeNull();
   });
+
+  it('keeps unobserved physical and assignment changes out of private roster readback', () => {
+    const original = stateWithClaims();
+    const memberIds = original.economy.lifecycle.memberships
+      .filter((membership) => membership.endedAt === null)
+      .map((membership) => membership.characterId);
+    const characterId = memberIds[0]!;
+    const before = projectCompanyHoldings(
+      original,
+      original.economy.lifecycle.companyId,
+      memberIds,
+    );
+    const altered = {
+      ...original,
+      economy: {
+        ...original.economy,
+        lifecycle: {
+          ...original.economy.lifecycle,
+          characters: original.economy.lifecycle.characters.map((person) =>
+            person.identity.characterId === characterId
+              ? {
+                  ...person,
+                  presence: {
+                    ...person.presence,
+                    assignment: 'RECOVERY' as const,
+                    availability: 'CAPTIVE' as const,
+                  },
+                }
+              : person,
+          ),
+        },
+        physical: {
+          ...original.economy.physical!,
+          vitals: original.economy.physical!.vitals.map((vitals) =>
+            vitals.characterId === characterId
+              ? { ...vitals, currentHealth: Math.max(0, vitals.currentHealth - 1) }
+              : vitals,
+          ),
+        },
+      },
+    };
+
+    expect(
+      projectCompanyHoldings(altered, altered.economy.lifecycle.companyId, memberIds).people,
+    ).toEqual(before.people);
+  });
 });

@@ -43,6 +43,7 @@ import {
 import { admitFirstHuntInTransaction } from '../encounters/admission.js';
 import { readWorldClock, readWorldLight } from '../world/clock.js';
 import { readFirstHuntReceipt, persistFirstHuntReceipt } from './repository.js';
+import { grantHuntObjective } from './cartography.js';
 import {
   canFirstHuntHelperOptIn,
   canFirstHuntParticipantLeave,
@@ -702,6 +703,9 @@ async function executeContractCommand(input: {
         .executeTakeFirst();
       if (Number(committed.numUpdatedRows) !== 1)
         throw new Error('FIRST HUNT contract revision CAS failed');
+
+      if (commandType === 'ACCEPT' || commandType === 'HELP')
+        await grantHuntObjective(transaction, worldId, companyId, profile, now);
 
       const receiptId = randomUUID();
       const receiptSnapshot = await transaction

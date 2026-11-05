@@ -6,6 +6,8 @@ type PreparedEconomy = Extract<EconomyResult, { kind: 'PREPARED' }>;
 type OrdinaryIds = {
   readonly partyId: string | undefined;
   readonly openAgreementId: string | undefined;
+  readonly meetingEvidenceId: string | undefined;
+  readonly characterId: string | undefined;
 };
 
 /** Select intent from already-derived server IDs; authority and evidence stay in the executor. */
@@ -15,11 +17,39 @@ export function ordinaryCommandIntent(
   ids: OrdinaryIds & {
     readonly siteEligibilityId: string | undefined;
     readonly accessEvidenceId: string | undefined;
+    readonly careEvidenceId: string | undefined;
+    readonly careDefinitionId: string | undefined;
+    readonly assignmentEvidenceId: string | undefined;
+    readonly assignmentLocationId: string | undefined;
+    readonly assignmentFundingPoolId: string | undefined;
+    readonly offerId: string | undefined;
+    readonly offerRevision: string | undefined;
   },
 ) {
   switch (request.type) {
     case 'PayClaims':
       return { type: request.type, payload: { ...request.payload } };
+    case 'Recruit':
+      return {
+        type: request.type,
+        payload: {
+          offerId: ids.offerId,
+          characterId: ids.characterId,
+          companyId,
+          basis: 'PAID',
+          offerRevision: ids.offerRevision,
+          poolId: 'local',
+        },
+      };
+    case 'JoinFieldParty':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          partyId: ids.partyId,
+          coLocationEvidenceId: ids.meetingEvidenceId,
+        },
+      };
     case 'RenameCompany':
       return {
         type: request.type,
@@ -42,6 +72,27 @@ export function ordinaryCommandIntent(
           itemId: request.payload.itemId,
           slotId: request.payload.slotId,
           accessEvidenceId: ids.accessEvidenceId,
+        },
+      };
+    case 'ApplyCare':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          conditionId: request.payload.conditionId,
+          careDefinitionId: ids.careDefinitionId,
+          resourceOrProviderReceiptId: ids.careEvidenceId,
+        },
+      };
+    case 'SetAssignment':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          assignment: request.payload.assignment,
+          locationId: ids.assignmentLocationId,
+          dutyEvidenceId: ids.assignmentEvidenceId,
+          fundingPoolId: ids.assignmentFundingPoolId,
         },
       };
     default:
@@ -88,8 +139,42 @@ function requestedEffectPresent(
   switch (request.type) {
     case 'PayClaims':
       return paymentCompleted(request, prepared);
+    case 'Recruit':
+      return prepared.next.lifecycle.memberships.some(
+        (membership) => membership.characterId === ids.characterId && membership.endedAt === null,
+      );
+    case 'JoinFieldParty':
+      return (
+        prepared.next.lifecycle.parties.some(
+          (party) => party.partyId === ids.partyId && party.location.kind === 'AT',
+        ) &&
+        prepared.next.lifecycle.characters.some(
+          (character) =>
+            character.identity.characterId === request.payload.characterId &&
+            character.presence.fieldPartyId === ids.partyId,
+        )
+      );
     case 'EquipItem':
       return itemEquipped(prepared, request.payload);
+    case 'ApplyCare':
+      return (
+        prepared.next.physical?.conditions.some(
+          (condition) =>
+            condition.conditionId === request.payload.conditionId &&
+            condition.characterId === request.payload.characterId &&
+            condition.care?.providerId === request.payload.providerId &&
+            condition.care?.channel === 'MATERIAL',
+        ) ?? false
+      );
+    case 'SetAssignment': {
+      const character = prepared.next.lifecycle.characters.find(
+        (person) => person.identity.characterId === request.payload.characterId,
+      );
+      return (
+        character?.presence.assignment === request.payload.assignment &&
+        character.presence.fieldPartyId === ids.partyId
+      );
+    }
     case 'RenameCompany':
     case 'ChoosePerk':
       return lifecycleChanged(prepared);

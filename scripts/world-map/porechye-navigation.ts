@@ -5,10 +5,11 @@ import {
   type PointFp,
   type TerrainId,
 } from '@warwrit/game-core';
+import type { Pixel } from './map-camera.js';
+export type { Pixel } from './map-camera.js';
 
 // Prototype annotations of porechye-detail-v5.png, in source-image pixels.
 // These are NOT a published world edition or a migration of company positions.
-export type Pixel = readonly [number, number];
 export const SHEET = { width: 1536, height: 1024, fpPerPixel: 4 } as const;
 export const point = ([x, y]: Pixel): PointFp => ({
   xFp: Math.round((x - SHEET.width / 2) * SHEET.fpPerPixel),

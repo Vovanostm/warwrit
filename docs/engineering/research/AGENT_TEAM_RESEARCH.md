@@ -5,6 +5,104 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Task-quality evaluation research — 2026-11-05
+
+The owner requested more primary material on evaluating and improving execution.
+The sources below were opened and read for their applicable claims. They inform
+an on-demand method in [HARNESS_EVAL](../HARNESS_EVAL.md#task-quality-assessment--2026-11-05).
+Local applications are engineering judgments. Their effects remain NOT_MEASURED.
+
+- Anthropic separates task, trial, grader and final environment outcome. It advises
+  isolated environments, outcome-oriented checks, human-calibrated model judgments
+  and balanced cases for required and unnecessary actions. This is engineering
+  guidance, with examples from its systems. Use real failures and existing journeys
+  to improve acceptance. [Demystifying evals, 2026-01-09](https://www.anthropic.com/research/demystifying-evals-for-ai-agents).
+- OpenAI recommends task-specific evaluation, expert calibration and pass/fail or
+  pairwise judgments. Judges can favor longer answers or their presentation order.
+  Compare the same evidence against explicit criteria and examine disagreements
+  with the owner. [Evaluation best practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+- OpenAI describes trace grading as structured assessment of agent decisions and
+  tool interactions to locate failure causes. Use observed calls/results to identify
+  a repair boundary alongside outcome verification. This does not validate inferred
+  intent or measure a productivity effect. [Trace grading](https://developers.openai.com/api/docs/guides/trace-grading).
+- τ-bench evaluates final database state and required answer content, while noting
+  that this can miss a policy violation during execution. Its pass^k asks whether
+  all k independent trials succeed. Pass@k asks whether any succeeds. Task retries
+  during debugging and repeated HTTP requests within one SQL test do not constitute
+  independent agent trials. Its simulated retail/airline results do not establish
+  Warwrit reliability. [τ-bench v1, sections 3 and 5](https://arxiv.org/html/2406.12045v1).
+- METR randomized AI access across 246 tasks from 16 experienced open-source
+  developers and observed 19% longer completion time with early-2025 tools. This
+  is evidence for that setting. Use measured completion effort and retain unfinished
+  attempts when comparing local changes. [Original study, 2025-07-10](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/).
+- METR's later study update describes participant/task selection and unreliable
+  time measurement with concurrent agents. It calls the new productivity estimate
+  unreliable. Preselect comparable tasks, include child usage when available, and
+  distinguish elapsed time from summed worker time. [Design update, 2026-02-24](https://metr.org/blog/2026-02-24-uplift-update/).
+- OpenAI's audit found flawed tests in 59.4% of 138 selected hard SWE-bench Verified
+  tasks and evidence of benchmark exposure. The percentage applies to that audited
+  subset. Hidden tests can impose unspecified behavior or implementation details.
+  Review an oracle against its task and qualify replay of public historical fixes.
+  [Benchmark audit, 2026-02-23](https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/).
+
+The resulting local priority is a valid acceptance boundary, diagnosed rework,
+then comparable cost. Existing contracts, logs and checks hold the evidence.
+A game outcome combines reachable player actions, saved effects and applicable
+player/visual review. Current SQL success covers its exercised boundary. The
+care snapshot and remaining observations are in the owning evaluation page.
+
+## Research correction and application — 2026-11-04
+
+The owner asked for a game-focused harness after supplying the four sources below.
+These are bounded observations and design inputs. Warwrit efficiency remains
+NOT_MEASURED. This section supersedes broader readings of the older source table.
+
+- ETH's v3 finds no significant average task-success improvement from generated
+  context, with 20–23% average extra cost. Developer-written context has a +2.4
+  percentage-point estimate with p=0.21. The study does not establish an exclusive
+  beneficial instruction category. Keep project-specific authority/invariants and
+  inspect local behavior before claiming savings. [ETH v3, sections 4.2/4.4](https://arxiv.org/html/2602.11988v3).
+- OpenAI describes custom lints whose errors explain the repair, alongside a compact
+  instruction map. This is an engineering experience report. [Primary source](https://openai.com/index/harness-engineering/).
+- SWE-agent's editor ablation reports 15% to 18% resolution on SWE-bench Lite when
+  linting rejects faulty edits. This tested syntax/selected error recovery. A useful
+  local application is an existing check exposing its diagnostic and rerun command.
+  [SWE-agent, Table 3 and section 5.1](https://arxiv.org/html/2405.15793v3).
+- Anthropic describes incremental features, explicit passing/failing acceptance and
+  browser verification. Use the existing task's player-action checklist and current
+  journey before declaring completion. [Primary source](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents).
+- The factorial study reports OR 0.944 for compliance per later generated function
+  within tested sessions, with a non-monotonic association. Its scope is a target
+  annotation in selected Claude/TypeScript tasks. This motivates inspecting long
+  attempts, without a universal feature/function quota or a causal savings claim.
+  [Study abstract and scope](https://arxiv.org/abs/2605.10039).
+
+Local changes follow confirmed harness friction. Root rules retain the mandatory
+project boundaries and route detailed work to its owning skill. Roles use the
+scoped brief and load team/history only for an unresolved question. Gameplay
+acceptance stays in its existing contract, naming player action, visible/saved
+result and normal-entry verification. Work proceeds from the next failing item.
+The existing local checker now exposes a bounded failed-command diagnostic and
+an exact rerun command, retaining the full log and failure status. No new runner, scheduler or acceptance-list file is introduced.
+
+The supplied GAMES-specific `legacy-button-class`, QA-07b and 14.5 KB context example
+were not found in this Warwrit checkout. They are external examples, not local
+implementation evidence. [Evaluation use](../HARNESS_EVAL.md) records how to assess
+subsequent real slices without adding benchmark preparation to each game task.
+Existing shell fixtures PASS, including visible short failures, bounded noisy
+output, retained full logs and nonzero status. Node hook regressions 3/3 PASS.
+Bash syntax, scoped formatting, role TOML, new links/inbound root anchors and
+diff checks PASS. Root context fell from 12,783 to 9,759 bytes (199 to 163 lines).
+Final independent static infrastructure review ACCEPT after bounding failure logs.
+First PR CI41912293483 stopped on archive formatting omitted from the local file
+selection. Corrected that file and checked formatting across every changed path.
+Fresh full CI is required for the corrected head.
+[Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) owns live PR/CI
+and merge links. Native role-loading/behavior and gameplay pilot NOT_RUN.
+Agent adherence and quality/cost benefit NOT_MEASURED.
+
+## Historical research — 2026-09-27
+
 Reviewed 2026-09-27. These sources justify a conservative design, not an “ideal”
 team or measured Warwrit speedup. Sources are versioned where possible.
 
@@ -45,7 +143,7 @@ after a repeated concrete failure establishes its input, action and verification
 
 ## Reproducible evaluation boundary
 
-Configuration evidence should include parsed files, their hashes, actual CLI version
+Configuration evidence should include parsed files, actual CLI version
 and `config/read` showing the effective role paths and concurrency limit. This is
 configuration loading, not proof that the desktop app spawned each native role or
 enforces each role's sandbox. Existing sessions may retain earlier configuration.
