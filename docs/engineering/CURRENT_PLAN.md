@@ -1,33 +1,26 @@
 # Warwrit current delivery plan
 
-## Ordinary company care — 2026-11-05, PUBLISHED DRAFT
+## Care and local recruitment — 2026-11-05, NATIVE PATH PASSED
 
-Coordinator, author, resource owner, integrator and validator is this chat's parent.
+Coordinator, author, integrator, resource owner and validator is this chat's parent.
 Full-game objective remains ACTIVE.
 Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
-[Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns acceptance and limits.
-Painted atlas PR344 is merged as `ee03f4ee`. Main92c0f534 / PR349 is integrated.
-[PR350](https://github.com/Vovanostm/warwrit/pull/350) is draft on `codex/game-care-delivery`.
-Care uses existing opening physician/two medical units and owner-approved medicine challenges5/10.
-Company-only stock, COMPANY-accessible containers and lawful local wound observations are enforced.
-Resolved battle return and named atlas-label SITE input are fixed and verified natively.
-Earlier HUNT02 won with3survivors and paid80crowns; no treatable severe wound resulted.
-Prior missed-input/AFK losses remain saved and supply no balance acceptance.
-One revised HUNT02 left two survivors and Mora's heavy wound, but the sole physician died.
-Mora succession, terminal return and untreated save restart PASS. Two medical units/800crowns retained.
-Native treatment/lost-reply/exact-retry acceptance remains open without a capable provider.
-Client regression proves exact stored request survives transport loss, remount and401. No care result is claimed.
-CI41970247645 passed clean gate/coverage/both browsers, then failed the quality audit.
-Care selection, financial observations and label visibility filtering are simplified. Source review ACCEPT.
-Fresh local measured unit1240PASS/96skipped, real SQL86/migration smoke PASS.
-Both full browser journeys and runtime aggregation PASS with fresh measurements.
-Pre-integration local quality audit PASS with0 introduced code/duplicate findings. CSS warning advisory.
-Integrated browser/aggregation and source/infra ACCEPT. Repeated local audit input overflowed, clean CI required.
-GitHub PR350 owns current-head hosted CI. The PR is unmerged and native care acceptance remains open.
-Live owned stand5238 retains warwrit_care_native_20261105b. Old5228 stand stopped, original DB retained.
-Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.
-ROADMAP/PROMPTS outside the repo remain owner-review proposals.
-PR publication is authorized. Further main merges require current permission.
+Painted atlas PR344 and objective-marker PR353 are merged; main is81e7931b.
+PR353 merged with owner permission for exact headb9f150ba after full CI42003635623 and scope42003688757 PASS.
+[Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns treatment acceptance.
+[PR350](https://github.com/Vovanostm/warwrit/pull/350) integrates main81e7931b; hosted integration CI remains required.
+Care source was green at516c1eb2; native treatment/lost-reply/exact retry/restart now PASS on the recruitment integration stand.
+[Recruitment contract](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) owns the finite local pool.
+Owner approved physician at Brod, signing50/base daily10 crowns; care challenges5/10 remain temporary.
+Recruitment is local on codex/ordinary-recruitment, integrating care6967f234/main81e7931b.
+Normal travel → inn inspection → hire → separate Join → care → lost reply/reload/exact retry → restart PASS.
+Each accepted Recruit/Join/ApplyCare has one receipt for two identical POST bodies.
+Treasury800→750, medical units2→1, physician medicine150→190 XP, patient health stays17.
+Source corrections cover consumption rollback, knowledge privacy, exact client retries, carried purse and local reserve food.
+Focused SQL/type/lint/client checks and source review PASS; finite gameplay critique ACCEPT, care-control capture PARTIAL; composed clean gate remains open.
+Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
+At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
+PR publication is authorized. No merge permission exists for care/recruitment; deployment remains unauthorized.
 
 ## History
 

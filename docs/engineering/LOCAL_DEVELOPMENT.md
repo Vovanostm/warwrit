@@ -172,7 +172,11 @@ The merger rejects changed mapped sources before writing the target and resolves
 mapper end-of-line sentinels to verified line lengths without changing hit counts.
 Reusing a matching capture establishes coverage of unchanged source. A fresh
 journey still needs its own execution evidence. Git commits perform no coverage
-processing. This optional local diagnostic supplements required CI and tests.
+processing. For another local audit, start with a fresh measured unit report before
+merging the selected runtime/SQL captures once. Repeatedly merging into the same
+accumulated report adds its hit counts again and can overflow downstream readers.
+Keep prior reports as historical evidence. This optional diagnostic supplements
+required CI and tests.
 
 One local start for the playable alpha (company, world, contracts, encounters):
 
@@ -319,7 +323,11 @@ Owner amendment — 2026-10-25: one assigned check owner runs
 Failed checks print a diagnostic tail (up to 8192 bytes) and the exact rerun command,
 while retaining `.orca/validate-<step>.log` and a nonzero overall result.
 The script uses local refs (no implicit fetch), requires a valid merge base and
-checks integration/clean tree before acceptance. Refresh live refs when integration
+checks integration/clean tree and scope before format/product commands, stopping
+on any failure. A committed CURRENT_PLAN edit or deletion also runs its existing
+plan checker before those commands.
+Clean CI runs that same checker before toolchain setup/bootstrap. PR scope retains
+task linkage and size reporting. Refresh live refs when integration
 requires it; the script does not claim its local origin/main is live.
 
 | Affected paths                                                                 | Local route                                                                      |
@@ -340,8 +348,16 @@ ownership; local routing never authorizes starting a shared DB.
 
 Do not repeat unchanged validation in builder and coordinator. Preserve applicable
 results until their code/dependencies/configuration/environment changes. Required
-PR CI runs the existing coverage-dependent audit and full bootstrap;
-local focused success does not waive them. For a tooling-only assignment run the
+PR CI uses this same committed-path classifier. Only its exact `docs` result
+selects the documentation path, with pinned frozen install, formatting,
+harness regressions, plan and migration protection. Product tests, browser
+journeys and measured quality audit are skipped for that documented scope.
+Mixed changes, scripts/workflows, config, dependencies, assets and unknown paths
+use the full bootstrap/coverage/browser/audit path. Main pushes and manual runs
+also use the full path. Failed classification fails CI. Review affected local
+links and deleted targets explicitly. Adding runtime Markdown consumption under
+`docs/` requires updating this classifier contract.
+Local focused success does not waive full-route PR CI. For a tooling-only assignment run the
 owning fixtures/syntax/format directly and report broad game checks NOT_RUN.
 
 ## Combat implementation rules
