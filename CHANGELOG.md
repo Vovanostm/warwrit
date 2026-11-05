@@ -9,6 +9,45 @@ requests.
 
 ## Unreleased
 
+### Split the remaining M1 work into bounded AI tasks
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL documentation
+  follow-up to the owner's request for small AI development tasks.
+  [AI queue](docs/engineering/PARALLEL_WAVES.md#ai-task-contract) defines one result,
+  dependencies, write boundary, exclusions and direct verification per card.
+  GitHub leaf issues #368–#400 are PUBLISHED / PLANNED; seven bounded existing
+  entries reuse recovery/payroll/transfer/service/nickname/performance/launch.
+  Keep original parent acceptance, all eight contracts/eleven scenes and source
+  gates. Separate mill clues, night hunt and worker delivery without a cycle;
+  split course/retraining and individual crash boundaries. Update ROADMAP,
+  M1_PRODUCTION_PLAN, CURRENT_PLAN and the owning M1 wiki. No game implementation,
+  agent launch, new policy, merge to main or deployment. Updated 15 parent/existing
+  issues and the canonical Airtable Roadmap/M1 pointers; readback matches all
+  48 issue bodies and both Airtable amendments. Dependency references/acyclicity,
+  scoped format/diff, 9 added local links/anchors and CURRENT_PLAN (26/40) PASS.
+  Publication continues in [PR366](https://github.com/Vovanostm/warwrit/pull/366);
+  new-head hosted checks remain pending. Game/browser/SQL/visual checks NOT_RUN.
+  Publication base refreshed to b6a04977 (already merged CI-only PR367);
+  preserve both changelog additions. The PR delta remains documentation only.
+
+### Reconcile the game roadmap and tasks with current implementation
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL planning
+  at the owner's request. Replace the September ROADMAP/PARALLEL_WAVES dispatch,
+  refresh CURRENT_PLAN and M1_PRODUCTION_PLAN, and update the owning M1 wiki,
+  navigation and playtest status. Preserve superseded baselines in CURRENT_PLAN_HISTORY.
+  Record merged atlas/markers/care/recruitment, candidate recovery/payroll,
+  conflicting transfer/retry work and the remaining full-M1 scope.
+  [Assessment and evidence boundary](docs/wiki/m1-spec.md#state-2026-11-05)
+  distinguishes current source, earlier runtime and unexecuted acceptance.
+  Task tracking PUBLISHED: 16 existing GitHub issues updated with preserved criteria/history;
+  [outcome task #364](https://github.com/Vovanostm/warwrit/issues/364) created;
+  canonical Airtable Roadmap/M1 index amended and M1 corrected from Planned to In Progress.
+  GitHub readback matches all 16 updates. Scoped format/diff, 45 added local links
+  and CURRENT_PLAN (23/40 nonempty lines) PASS. Documentation PR publication is
+  tracked separately from integration. New game/browser/SQL/load/visual/full gates NOT_RUN,
+  FPS/capacity NOT_MEASURED. No game-code change, merge or deployment.
+
 ### Capture browser failures before measured unit coverage
 
 - 2026-11-05, `codex/harness-browser-phase-order`, LOCAL, owner-requested

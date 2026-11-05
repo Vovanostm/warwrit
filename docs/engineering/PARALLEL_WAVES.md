@@ -1,69 +1,186 @@
-# M1 parallel queue — updated 2026-09-30
+# M1 task queue — AI-sized tasks, 2026-11-05
 
-**Renderer decision — 2026-10-01:** Babylon.js is selected by the owner for
-the M1 client renderer; see [ADR-0006](../architecture/0006-m1-renderer-babylon.md).
-The prior engine-selection comparison is superseded. Preserve ART visual,
-device/runtime, pipeline and production-integration acceptance as pending.
+[Roadmap](ROADMAP.md) owns scope, [production plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05)
+owns playable milestones, and [CURRENT_PLAN](CURRENT_PLAN.md) owns the active
+coordinator. The owner's follow-up asks for small AI development tasks. This
+queue contains **33 new leaf issues and 7 existing bounded work entries**; parent
+issues retain full acceptance. Task count is not a completion estimate or a
+mandatory PR count. Prior dispatches remain in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
-This is an operational handoff map, not a replacement for the full [canonical M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s). All previous waves and dated dispatches are retained [verbatim](M1_OPERATIONAL_CHECKPOINT_HISTORY_2026-09-29.md#original-parallel_wavesmd); they are historical, not current ownership. Check [CURRENT_PLAN](CURRENT_PLAN.md) for live revision/evidence and [AGENT_TEAM](AGENT_TEAM.md) for the runtime budget.
+Game assessment baseline: main `cf973d35`, 2026-11-05; publication includes
+CI-only main `b6a04977` / PR367, with no gameplay change. PR363 and PR338 are still open at readback;
+PR339/335/334 conflict with main. All new cards are PLANNED / NOT_RUN.
+Creating a card does not assign or start an agent.
 
-## Active and queued
+## Start here
 
-### Current cycle checkpoint — 2026-09-30
+1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.
+2. [A01 / #368](https://github.com/Vovanostm/warwrit/issues/368) continues the retained company to its next contract and actual restart.
+3. [A02 / #369](https://github.com/Vovanostm/warwrit/issues/369) proves normal fresh entry; [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) continues that new company through the full repeatable loop.
+4. Run A04/A05, E03 or an approved terminal fix when a real earlier blocker needs them.
+   After the loop works, take one company/content/world card at a time.
 
-- **W03 travel — completed/released.** The isolated authenticated two-edge
-  route completed across API restart. A later exact stored replay returned the
-  stored response and left measured company/route/receipt/audit state unchanged.
-  Sol verdict: `READY_WITH_EXPLICIT_UI_GAP`; visual authenticated logout and
-  re-entry remain **NOT_PROVED**. Contract SHA-256
-  `50c179e80b429bfbdb86c463cfc5ac06cc6a0494c4b1450d0b98c88989ca7e71`,
-  16-path manifest SHA-256
-  `30d8bbcba136f17a569d1804154d9260281cb6385646582ca561060e81a5c21e`;
-  reports are linked from [CURRENT_PLAN](CURRENT_PLAN.md). W03 executor/index/
-  protocol/world/web ownership is released and reassigned to the parent.
-- **Active large block — durable company/world foundation.** The company/server/
-  protocol/core writer is active; production UI ownership is pending exact
-  checkout/resource confirmation. Keep work at the foundation level until the
-  real durable producers and consumer are usable together. Do not split this
-  into helper-sized packets.
-- **Next large block — one authentic contract through JOIN, battle, proof,
-  settlement, consequences, save and re-entry.** CT02/JOIN stay gated until
-  actual H/I, ID03, W05/W06 and K02 producers exist and their required consumer
-  evidence is verified. The I02a schedule does not waive H, ID03, world/JOIN
-  producer rules, or full I02/F01/D02 acceptance.
-- **UI gap moves into the production UI cycle.** The V2 read-only display does
-  not yet give the player the full authenticated logout/re-entry experience.
-  Preserve this as an open usability requirement, not a W03 source blocker.
-- **Renderer status:** PlayCanvas 2.22.4 remains the implementation choice;
-  acceptance is open. ART04 corrected animated comparison and ART06 production
-  integration remain open; Babylon is retained as comparison context. Production
-  web currently has no PlayCanvas dependency, and the Colyseus journey remains
-  fixture-gated. Do not claim renderer or gameplay acceptance.
+A02 and T01 can start with current sources and separately reserved resources;
+A04 reuses PR335 under its current owner. None requires every M1 parent to close.
+Functional independence never authorizes simultaneous edits to shared files or
+concurrent heavy runtime checks. At most two game-writing worktrees remain active.
 
-The dated rows and dispatch text below are prior evidence. The current cycle
-checkpoint above supersedes their ownership and readiness statements where they
-conflict; preserve their historical results and limitations.
+## AI task contract
 
-| Packet                            | Owner / status / dependency                                                                                                                                                           | Next deliverable and acceptance evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| INK-01                            | Luna authored and froze prototype in `warwrit-alpha-contracts` from `307810d`; parent accepted class art direction only                                                               | Three original ink classes on 18 positions, fixed camera and minimal feedback. No eight-direction corpus/engine migration. Terrain/HUD rough; neither full ART05 nor gameplay accepted.                                                                                                                                                                                                                                                                                                                                                  |
-| INK-02 / INK04–05                 | Current-source mouse picking evidence is complete; Sol review passed.                                                                                                                 | Fresh overlap proof confirms nearest valid Knight selection, transparent-margin rejection and opaque selection. See [report](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-contracts/output/playwright/ink04-current-overlap/report.md). Keyboard/comprehension, ART04, ART05, ART06 and performance remain open; the older `v4-day.png` is still not day evidence.                                                                                                                                                            |
-| INK-03                            | Luna completed default-style isolation in `warwrit-alpha-contracts`, HEAD `307810d`; parent inspected and accepted the narrow result.                                                 | Styles are scoped to explicit PlayCanvas `?ink=1`; default renderer styles/labels restored. Screenshots at 1440×1000: `output/playwright/ink-03-default.png` is Babylon comparison default; `ink-03-playcanvas-ink.png` is PlayCanvas ink. No ART04 corrected animation acceptance, full ART05/FPS acceptance or M1 claim.                                                                                                                                                                                                               |
-| H company API                     | H's API/protocol implementation is completed author evidence in dirty c06; H is no longer an active writer. Shared app/index/API paths are released for explicit parent reassignment. | Local isolated route suite passed 2/2 against PostgreSQL; company read, opening-options 200, create 201, persisted GET/replay, and identity isolation were covered. The current lifecycle observation-key correction is separately hash-frozen and Sol-reviewed. Parent owns union integration and future shared-path assignment. No full gate or M1 acceptance.                                                                                                                                                                         |
-| Player entry and company re-entry | `player_journey_luna` completed web/API consumer check and bounded lifecycle correction; work is released for parent reassignment.                                                    | In the real isolated browser/OIDC flow, player two loaded options (200), created company (201), reloaded it (200), logged out (204/session 401), then signed in again and restored the same company and Lena/Rell roster (session/company 200). Screenshot and exact hashes are in [M1_LOCAL_PLAYTEST](M1_LOCAL_PLAYTEST.md). Mocked pending-logout/503 checks remain separately labelled. No process restart or full M1 proof.                                                                                                          |
-| Remaining M1 and launch           | Parent coordinates unassigned world/JOIN/art/full-gate dependencies; project-local script Compose compatibility is implemented and narrowly checked.                                  | Shared script dispatch supports `docker compose` and fallback `docker-compose`; stubbed fallback exercised isolated bootstrap naming/port/cleanup and identity status, while a failing `up` preserved exit 42 after cleanup. Harmless CLI version probes currently find both 5.5.0 command forms, so the prior missing-plugin report is not reproduced. Root `pnpm db:up` and `pnpm db:down` still use `docker compose`. No daemon, migration, full gate or owner journey was run. Full I02/F01/D02 and final M1 acceptance remain open. |
+- Select **one leaf issue or one E entry**, not the whole #177/#174/#170 epic.
+  One attempt owns one observable scenario and one existing responsibility.
+  Each issue gives its result, predecessors, change boundary, exclusions and
+  direct verification. There is no invented hour, line-count or test-count quota.
+- Before editing, read live AGENTS/CURRENT_PLAN, the full parent sources and
+  dated amendments, and the issue/PR state. Confirm the actual integrated base;
+  do not copy an unmerged dependency or restart a parked writer. Source-approved
+  rules outrank older provisional profiles. Preserve the source ZIP limitation.
+- Reserve exact files and one persistent worktree. App, protocol/executor,
+  exports, migrations and shared documents have one writer. Existing recovery/
+  payroll coordination retains its database, ports, saves and integration role.
+- Reuse implemented rules and candidates. If the named scenario already passes,
+  record its current evidence instead of rebuilding it. If a larger gap appears,
+  identify its smallest blocking result and create a bounded follow-up under the
+  same parent; do not expand the card into the entire subsystem.
+- A mandatory missing effect blocks activation. B01 cannot expose a partial
+  course command while waiting for B02; B02 checks/fixes the wider interruption
+  cases. T02/T03 remain BLOCKED_SOURCE until T01 establishes accepted policy for
+  that exact outcome. A decision request or missing device is not a passed check.
+- Finish the direct scenario and smallest relevant existing test/typecheck/lint.
+  Use real SQL, process failure or browser evidence where the card requires it;
+  no fake transactions, state edits to pass an ordinary journey, or green-CI-only
+  acceptance. Mark setup provenance, NOT_RUN and NOT_MEASURED explicitly.
+- Commit a finished cohesive change, update its owning wiki/work-package and
+  CHANGELOG, and hand shared CURRENT_PLAN changes to the coordinator. Report
+  the exact result/checks and one next task. A source-backed no-change result
+  does not require a filler code commit. Follow the existing final integrated
+  gate once, not a new full suite after every card.
+- Substantive gameplay/visual cycles require the existing independent critic
+  with actual images/journey evidence. No card grants merge, auto-merge,
+  deployment, paid resources or automation permission.
 
-The primary project now reads `max_threads = 12` and four role paths under installed CLI 0.144.5; the running runtime remains parent plus two child slots. Configuration is not staffed capacity or a live twelve-agent proof. Pin Luna for explorer assignments because this CLI rejects project default-subagent keys. Parent controls assignments, integration, publication and shared resources. Do not treat configured capacity as staffed or ready work. See [the studio process audit](STUDIO_PROCESS_AUDIT_2026-09-29.md) for research limits and ten candidate lanes with readiness gates. Parent audits results rather than repeating every author check. A CLI review replaces, never adds to, a native slot. Throughput gain remains `NOT_MEASURED`, and optimality `NOT_PROVEN`. Preserve old ART05 draft PR129 (remote `fe4e783` per last evidence, local `09f21b0` with unverified dirty patch and untracked assets) and the primary checkout. PR128 is merged upstream. No current old-pilot publication assignment.
+To dispatch: “Complete issue #N from the current integrated base under the AI
+task contract in PARALLEL_WAVES.md. Reserve its write set, show the stated player
+result, record actual checks and publish the bounded change. Do not implement
+the successor.” The issue contains the task-specific inputs; this is not an
+instruction to launch workers during planning.
 
-The earlier safe-travel dispatch below is superseded: server handler, PostgreSQL
-execution and process-restart evidence now exist. See the [primary handoff](/Users/vovanostm/learn/warwrit/docs/engineering/NEXT_SESSION_HANDOFF.md)
-for the frozen contract and evidence paths. Do not restart that packet. Full M1
-remains active and incomplete.
+## Reuse existing bounded work
 
-Finite art follow-ups for parent dispatch: **INK-04 picking** probes transparent sprite margins and overlapping neighbours, then fixes only confirmed mis-selection in the PlayCanvas ink path; **INK-05 terrain/HUD** is a separate owner-judged design pass on board contrast, prop coherence and readable tactical feedback. INK-03 default-style isolation is complete and is recorded above. The current authored prototype is not held open for a new art corpus. These are bounded cards, not new acceptance gates or assigned PRs.
+| ID / existing issue                                           | One result                                                                                             | Activation                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| [E01 / #169](https://github.com/Vovanostm/warwrit/issues/169) | PR363: rest with real food, resume FIELD, retain state after restart.                                  | Existing recovery delivery owner; use live scoped authority.                 |
+| [E02 / #167](https://github.com/Vovanostm/warwrit/issues/167) | PR338: lawful payroll, exact retry/restart; distinguish cash paid from backed holds.                   | E01 integrated; reuse #320/#322, retarget/check existing PR.                 |
+| [E03 / #171](https://github.com/Vovanostm/warwrit/issues/171) | PR339: one existing-item transfer/split with quantity, ownership and capacity preserved.               | Only when needed by the active journey; reconcile current main.              |
+| [E04 / #168](https://github.com/Vovanostm/warwrit/issues/168) | One real local F1 provider: explicit entry, allowed amendment and exit with causal earned obligations. | After A03, or an observed earlier blocker; source-defined provider required. |
+| [E05 / #172](https://github.com/Vovanostm/warwrit/issues/172) | One authentic deed: lawful proposal → player consent/refusal → durable nickname history.               | After A03 and a real eligible deed; no invented significance or witness.     |
+| [E06 / #175](https://github.com/Vovanostm/warwrit/issues/175) | One Mac/Chrome baseline for atlas/place/battle/re-entry, then only a measured bottleneck fix.          | After A03 on the integrated build; no unmeasured optimization project.       |
+| [E07 / #176](https://github.com/Vovanostm/warwrit/issues/176) | One clean-checkout install/config/identity/database/start/stop/re-entry run with truthful readiness.   | Separate reserved local resources; reuse applicable PR334 work.              |
 
-## Dependency and proof boundary
+E04/E05 inherit all mandatory causal/privacy requirements in their parents.
+E06 measures before optimizing; E07 includes dependency-down readiness and
+retained saves. A blocker that needs a separate fix becomes a narrow child,
+not permission to rebuild the subsystem. Recruit/Join and ordinary care are
+already merged and are not new work.
 
-G10 PR126 and F01 consumer PR127 are merged into main `307810d` (which also includes PR125 quality tooling). Full F01 authentic producer/content remains open. The [I02a amendment](M1_EXECUTION_READINESS.md), canonical readback `comfbUJMfwcjVWq2v`, changes only W04/CT02 enabling edges to their exact consumer-specific durable-command readiness after H01–H08/I01. Full F01/D02/I02 remain final. World/JOIN require real physical/durable predecessors; ART is independent of H storage. No new policy or acceptance prerequisite is created by this queue.
+## Ordinary loop and request recovery
 
-Pre-alias H evidence in `/private/tmp/warwrit-h-fresh-evidence-luna-result.md`: fresh `pnpm build` passed, `pnpm test:unit` 454 passed/5 skipped, `pnpm check:changes` failed; the earlier stale-`dist` result is not current proof. Real paired A/B coverage in `coverage/luna-producer-*` isolated mixed compiled-public/direct-source imports; a minimal Vitest test-only source alias removed duplicate mappings, with 26/26 and `coverage_source=istanbul`. Sol's `/private/tmp/warwrit-h-alias-review-sol-result.md` found no actionable alias defect, not full integration proof. `coverage/coverage-final.json`/`coverage/fallow-audit.json` are preserved pre-alias evidence; same-span numeric-column synthetic probe was diagnosis only. `no-project` syntactic attribution is expected fallback, not direct matcher failure. Full current-source suite/coverage/audit, final real PG, H03/H04, ID03 and full renderer comparison remain open. Each packet returns exact head/tree/dirty diff, changed paths, check outcomes and dependencies. Parent rechecks the union with applicable CI `check:changes` and the final exact-tree sequence owned by [AGENTS.md](../../AGENTS.md#verification-without-duplicate-work) and `scripts/bootstrap.sh`; only the owner/parent's scoped authorization permits checked mission PR merges, not auto-merge/deploy/paid provisioning/force-push. No full persistent M1 or local manual journey is accepted.
+| Card                                                          | Observable result                                                | Start after                                                                                                                  | Parent                                                  |
+| ------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [A01 / #368](https://github.com/Vovanostm/warwrit/issues/368) | Завершить следующий контракт той же восстановленной ротой        | [E01 / #169](https://github.com/Vovanostm/warwrit/issues/169), [E02 / #167](https://github.com/Vovanostm/warwrit/issues/167) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [A02 / #369](https://github.com/Vovanostm/warwrit/issues/369) | Пройти обычный вход, создание роты и подготовку к первому делу   | Current base + resource reservation                                                                                          | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | Завершить первый полный игровой круг новой ротой                 | [A01 / #368](https://github.com/Vovanostm/warwrit/issues/368), [A02 / #369](https://github.com/Vovanostm/warwrit/issues/369) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [A04 / #371](https://github.com/Vovanostm/warwrit/issues/371) | Восстановить потерянный ответ обычной команды после перезагрузки | Current base + resource reservation                                                                                          | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+| [A05 / #372](https://github.com/Vovanostm/warwrit/issues/372) | Восстановить боевой приказ при reconnect через deadline          | [A04 / #371](https://github.com/Vovanostm/warwrit/issues/371)                                                                | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+
+## Learning and retraining
+
+| Card                                                          | Observable result                                               | Start after                                                   | Parent                                                  |
+| ------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| [B01 / #373](https://github.com/Vovanostm/warwrit/issues/373) | Пройти один настоящий курс: старт, остановка и завершение       | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#170](https://github.com/Vovanostm/warwrit/issues/170) |
+| [B02 / #374](https://github.com/Vovanostm/warwrit/issues/374) | Сохранять заработанное обучение при потере доступа и прерывании | [B01 / #373](https://github.com/Vovanostm/warwrit/issues/373) | [#170](https://github.com/Vovanostm/warwrit/issues/170) |
+| [B03 / #375](https://github.com/Vovanostm/warwrit/issues/375) | Завершить одно переобучение без ранней замены навыка            | [B02 / #374](https://github.com/Vovanostm/warwrit/issues/374) | [#170](https://github.com/Vovanostm/warwrit/issues/170) |
+
+## Terminal outcomes
+
+| Card                                                          | Observable result                                          | Start after                                                                                     | Parent                                                  |
+| ------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376) | Определить конечные правила сдачи и отхода противника      | Current base + resource reservation                                                             | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T02 / #377](https://github.com/Vovanostm/warwrit/issues/377) | Завершать бой со сдавшимся участником по принятому правилу | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+
+## Eight contracts and eleven scenes
+
+| Card                                                          | Observable result                                                  | Start after                                                   | Parent                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------- | ------------------------------------------------------- |
+| [C01 / #379](https://github.com/Vovanostm/warwrit/issues/379) | Довести «Знамя налётчиков» до однократной выплаты                  | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C02 / #380](https://github.com/Vovanostm/warwrit/issues/380) | Довести «Волчью тропу» до подбора шкуры и выплаты                  | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C03 / #381](https://github.com/Vovanostm/warwrit/issues/381) | Завершить расследование «Следы на дороге» по настоящему наблюдению | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C04 / #382](https://github.com/Vovanostm/warwrit/issues/382) | Завершить «Пропавшие травы» с дневным осмотром и двумя уликами     | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C05 / #383](https://github.com/Vovanostm/warwrit/issues/383) | Освободить пленника из погреба и доставить живым                   | [C01 / #379](https://github.com/Vovanostm/warwrit/issues/379) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C06 / #384](https://github.com/Vovanostm/warwrit/issues/384) | Найти потерянного разведчика и доставить заказчику                 | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C07 / #385](https://github.com/Vovanostm/warwrit/issues/385) | Пройти начало мельничной цепочки и получить две настоящие улики    | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C08 / #386](https://github.com/Vovanostm/warwrit/issues/386) | Пройти ночную охоту на мельничную тварь                            | [C07 / #385](https://github.com/Vovanostm/warwrit/issues/385) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [C09 / #387](https://github.com/Vovanostm/warwrit/issues/387) | Освободить мельничного работника и завершить доставку              | [C08 / #386](https://github.com/Vovanostm/warwrit/issues/386) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+
+C07 covers MILL-01/02, C08 the separate HUNT-01, and C09 MILL-03/04.
+The chain is C07 → C08 → C09, with no cyclic “finish all of mill-worker first”
+dependency. C01–C06 cover the other six instances/scenes. Together these are
+all eight instances and eleven scenes. A01/A03 evidence may satisfy matching
+C-card criteria on the same build; do not replay an unchanged successful path
+just to increase a task count. Execute only missing criteria or affected changes.
+
+## Helper, world knowledge, movement and loss
+
+| Card                                                          | Observable result                                                 | Start after                                                   | Parent                                                  |
+| ------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| [W01 / #388](https://github.com/Vovanostm/warwrit/issues/388) | Провести бой владельца и одного физически прибывшего помощника    | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [W02 / #389](https://github.com/Vovanostm/warwrit/issues/389) | Различать карту, исследование, текущую видимость и слухи          | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [W03 / #390](https://github.com/Vovanostm/warwrit/issues/390) | Сохранять остановку и новый маршрут без старого прибытия          | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [W04 / #391](https://github.com/Vovanostm/warwrit/issues/391) | Продолжать мир офлайн с независимыми походными и световыми часами | [W03 / #390](https://github.com/Vovanostm/warwrit/issues/390) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+| [W05 / #392](https://github.com/Vovanostm/warwrit/issues/392) | Показать законное преемство и game-over после потери главы        | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+
+## One durability boundary per task
+
+| Card                                                          | Observable result                                                       | Start after                                                   | Parent                                                  |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| [R01 / #393](https://github.com/Vovanostm/warwrit/issues/393) | Восстановить привязку участников после сбоя входа в бой                 | [W01 / #388](https://github.com/Vovanostm/warwrit/issues/388) | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+| [R02 / #394](https://github.com/Vovanostm/warwrit/issues/394) | Восстановить последствия боя после сбоя terminal commit                 | [W01 / #388](https://github.com/Vovanostm/warwrit/issues/388) | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+| [R03 / #395](https://github.com/Vovanostm/warwrit/issues/395) | Сохранить единственную законную награду при конкурирующих предъявлениях | [W01 / #388](https://github.com/Vovanostm/warwrit/issues/388) | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+| [R04 / #396](https://github.com/Vovanostm/warwrit/issues/396) | Восстановить выплату после сбоя claim commit                            | [A01 / #368](https://github.com/Vovanostm/warwrit/issues/368) | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+| [R05 / #397](https://github.com/Vovanostm/warwrit/issues/397) | Восстановить игровой мир из резервной копии в отдельную БД              | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#174](https://github.com/Vovanostm/warwrit/issues/174) |
+
+## Tactics and integrated presentation
+
+| Card                                                          | Observable result                                           | Start after                                                   | Parent                                                  |
+| ------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| [Q01 / #398](https://github.com/Vovanostm/warwrit/issues/398) | Проверить осмысленные тактические варианты в постоянном бою | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#173](https://github.com/Vovanostm/warwrit/issues/173) |
+| [Q02 / #399](https://github.com/Vovanostm/warwrit/issues/399) | Проверить переключение ручного боя и автобоя без зависаний  | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#173](https://github.com/Vovanostm/warwrit/issues/173) |
+| [Q03 / #400](https://github.com/Vovanostm/warwrit/issues/400) | Принять цельный вид и понятность обычного игрового пути     | [A03 / #370](https://github.com/Vovanostm/warwrit/issues/370) | [#177](https://github.com/Vovanostm/warwrit/issues/177) |
+
+## Final joins and remaining responsibility
+
+- #8 remains the command/residual owner. After E01–E05/B01–B03 and applicable
+  terminal/loss work, reconcile its original required command/effect matrix with
+  actual implementation and executed evidence. Any real uncovered requirement
+  gets a named narrow child before closure; this queue does not assert that the
+  entire historical residual matrix has already been re-audited.
+- #174 closes only with A04/A05, R01–R05 and every applicable approved terminal
+  result. Unsupported policy stays explicit; a successful death/flee does not
+  accept surrender or hostile retreat.
+- #173 closes after Q01/Q02 and its preserved tactical criteria. #225 owns its
+  separately accepted rule follow-up. Q03 sends confirmed UI/text/lore fixes to
+  existing #217 children and #275–#279 instead of creating duplicates.
+- #177 owns final acceptance after the ordinary loop, E03–E07, B/C/W/Q,
+  applicable T outcomes, #8 and #174. Reconcile the same integrated build's
+  results; repeat affected acceptance after later changes. Keep full content/
+  pipeline and Q-C01/Q-C10/R-01 requirements. The actual owner Mac playtest is
+  still required: absent human evidence means READY_FOR_OWNER_TEST, not DONE.
+- Hosted preparation follows local acceptance and uses #176's separate runbook
+  boundary. PR334 may be reused; deployment/provisioning needs its own authority.
+  M2–M5 are not silently added to these tasks.
+
+PR336 remains editorial reading, not durable campaign execution. PR337 is a
+candidate for a reproduced current performance defect. Parked art/combat/novel
+work, retained saves and existing resources remain with their owners; older
+PR129/134/298 or QA/harness work is not a blanket prerequisite.

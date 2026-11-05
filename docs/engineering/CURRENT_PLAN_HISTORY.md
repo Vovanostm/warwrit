@@ -5868,3 +5868,170 @@ Live owned stand5238 retains warwrit_care_native_20261105b. Old5228 stand stoppe
 Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.
 PR publication is authorized. Further main merges require current permission.
+
+## Planning baselines superseded on 2026-11-05
+
+The owner requested a current game assessment and updated roadmap/tasks. The following snapshots are retained as history; current dispatch is owned by CURRENT_PLAN and PARALLEL_WAVES. Historical permissions do not authorize a new operation.
+
+### Prior care/recruitment checkpoint
+
+## Warwrit current delivery plan
+
+### Care and local recruitment — 2026-11-05, NATIVE PATH PASSED
+
+Coordinator, author, integrator, resource owner and validator is this chat's parent.
+Full-game objective remains ACTIVE.
+Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
+Painted atlas PR344, objective-marker PR353 and care PR350 are merged; main isf0461180.
+PR353 merged with owner permission for exact headb9f150ba after full CI42003635623 and scope42003688757 PASS.
+[Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns treatment acceptance.
+[PR350](https://github.com/Vovanostm/warwrit/pull/350) merged expected319b901e after full CI42020812490/scope42024966505 PASS.
+Care6967f234 full CI PASS; native treatment/lost-reply/exact retry/restart PASS on the recruitment stand.
+[Recruitment contract](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) owns the finite local pool.
+Owner approved physician at Brod, signing50/base daily10 crowns; care challenges5/10 remain temporary.
+[Recruitment PR360](https://github.com/Vovanostm/warwrit/pull/360) candidate targets mainf0461180/care319b901e; prior CI51299b0c failed false quality attribution.
+Normal travel → inn inspection → hire → separate Join → care → lost reply/reload/exact retry → restart PASS.
+Each accepted Recruit/Join/ApplyCare has one receipt for two identical POST bodies.
+Treasury800→750, medical units2→1, physician medicine150→190 XP, patient health stays17.
+Source corrections cover consumption rollback, knowledge privacy, exact client retries, carried purse and local reserve food.
+Product/source and finite gameplay ACCEPT; care-control capture PARTIAL.
+Fresh unit1244/98 SKIP, SQL88 and both browsers PASS; source-correct metadata resolves ordinary-runtime attribution.
+Source-bound coverage naming fix: regression/types/lint, negative control, full measured audit PASS; independent source ACCEPT. Dependencies/gates unchanged.
+Expired-pursuit setup uses finite native reacquisition and post-acceptance UI sequence; frozen browser409→200/source ACCEPT.
+Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
+At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
+Owner authorized PR350 at319b901e; actual merge/main/local readbackf0461180 matches the checked tree.
+Owner authorized PR360 ateb19dd0e; clean-root test fix supersedes it. New-head CI and final-head permission remain required.
+PR publication is authorized; deployment remains unauthorized.
+
+### History
+
+[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
+Detailed execution output stays in ignored output/ or CI artifacts.
+
+### Prior September roadmap
+
+## Warwrit development roadmap
+
+- Status: repository-side continuation map, as of 2026-09-29
+- Operational checkpoint: [CURRENT_PLAN.md](CURRENT_PLAN.md)
+- Product/task authority: canonical [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s), [current batch](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe), dated owner amendments and [issue #8](https://github.com/Vovanostm/warwrit/issues/8)
+
+This is the delivery order for the owner's **full M1 alpha on the Mac**, not a new game rulebook or a promised PR count. M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain incomplete. A source-ready task, a merged preparer and a green open PR do not establish an activated game path.
+
+### Current frontier
+
+The live checkout, worker paths, API readiness, and evidence are recorded only in
+[CURRENT_PLAN](CURRENT_PLAN.md). The task ownership queue is
+[PARALLEL_WAVES](PARALLEL_WAVES.md). This roadmap keeps the durable dependency
+map and accepted M1 scope below; prior branch snapshots and lane statuses are
+historical and do not establish current integration readiness.
+
+### Domain and durable company
+
+```text
+C05-FIN -> C05-TIME -> C05-COMPOSE -> C06 -> C07 -> C08 -> D01 -> D02
+E04-ACCEPT -> E05 -> F01
+G07 -> G08 -> G09
+G09 + C08 + E05 -> G10
+required domain + G10 -> H durable company/executor -> I01 -> I02
+```
+
+C08 activates real learning only after the full finance/time/composition and interruption/casualty path. G10 activates combat binding, receipt consumption and finalization only when all required physical, life, practice and social/learning effects join one atomic candidate and cursor. H owns the complete versioned PostgreSQL root, authenticated executor, audit/receipts and real parallel-connection/process-crash proof. I owns actual durable command journeys and complete required handler coverage; I02 also needs D02 and F01, while F02/B04 are merged. Implement H responsibilities against real predecessor APIs; the indexed H01–H08 are coverage, not a forced numeric serial chain.
+
+### Persistent world and battle joins
+
+The accepted playable loop is **company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry**. The work can proceed in disjoint source and implementation lanes, then join at real authority boundaries:
+
+1. **Finite source contracts.** [WORLD](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recTrujX2wy7V49qk)'s RC-P2 proposal is accepted as `AAAA` by [canonical approval](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/rechIKj0hsvfXIvFU) and the [lore v1.2 amendment](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recQNKqYfwoJpCXVu): initial six real hours/1,000 Campaign ticks per day, independent 600-second Light day/300-second night, prospective clock segments, continued accepted travel with defensive offline policy, and a visible supply guard for new dangerous routes without blocking a valid return or camp. PR #103 fixes authored topology/coordinates and pure clocks; SPEC-WORLD/W03 onward still fix routes and actual producers for arrival, visibility and handoff; accepted RC-P2 is not a fresh owner choice. SPEC-CONTRACTS fixes eight instances, three contract types, eleven scenes, helper terms, proof and terminal cases. ID01 fixes own-site account/recovery; RT01 fixes encounter authority/deadline; BATTLE-PROFILES fixes the minimum actor profiles; ART01 establishes the same-scene renderer comparison. Genuinely unsupported material policy needs one bounded owner decision before the affected activation.
+2. **Durable foundations.** ID02–ID03 authenticate and bind an account to the same company on reconnect. W01–W03 provide source-bound topology, persistent Campaign Day and Light clocks, real routes/arrival; W04–W06 add supplies, camp, entities and one world writer. RT02–RT07 own persistent encounters, authenticated transitions, deadlines, Colyseus projections, reconnect and restart. ART02–ART07 implement and validate scene/actor assets against the accepted PlayCanvas selection in ADR-0005; they do not reopen renderer selection. K01–K04 enforce source/time-aware map, battle and rumor knowledge.
+3. **Contracts and physical join.** CT01–CT07 own versioned instances, accessible clues/captives/hunt proof, custody, globally unique authorized claims, rewards and the complete authored content. JOIN01–JOIN03 transfer the actual world/encounter writer, bind two companies by presence and opt-in terms, and apply terminal effects plus world/proof release atomically. A second company is physical participation, not a second bounty; a prepared single-company H transaction alone does not complete this join.
+4. **Player path.** UI01 consumes PB06's controller experience but connects to persistent RT authority and the selected renderer. UI02–UI06 expose real company/services, map/travel, contracts/battle/proof, losses and re-entry without duplicating canonical state or disclosing private facts. Each advertised button needs its real command/result; do not present an ornamental quest as completion.
+
+The accepted region is one city, three NPC villages and one dangerous site. Content completion means all eight HUNT/INVESTIGATE/RESCUE contract instances, eleven scenes, four reusable backgrounds, six portraits, two trophy images and three enemy archetypes, with source/licensing evidence. The chain is «Когда молчит мельница». These counts are acceptance scope, not current file counts or a test-count target. Preserve the original source-archive concordance limitation.
+
+### Diagnostic local battle
+
+PB01–PB04 are merged, providing the protocol/scenario, loopback server/session/actions and protocol-only view. PB06 joins server and view in a browser controller; its in-app browser journey exercised create, move, rejection, defend, reload, retreat and deletion through the local API. It is useful early proof of command/UI wiring but remains disposable server-memory gameplay, not M1 persistence, fog, timers or world join. PB06 is a source dependency for UI01.
+
+PB05 AI stepping, PB07 replay import/export, PB08 launcher/reset controls and PB09 browser/Mac lab evidence are **optional** for the full-M1 alpha and unassigned here. Select them only when they improve diagnostic evidence. The final persistent alpha has its own RT/H/QA replay and browser obligations. Do not advertise a lab launcher until one exists or wait for optional PB follow-ups to start full-M1 lanes.
+
+### Final acceptance and running it
+
+QA00 prepares an actual browser runner, traces, ports and disposable database fixtures. QA01 then documents one working local launch only after the integrated server, database, identity, realtime, world, content and UI can start. QA02 exercises two-browser company/travel/contract/battle/proof/payment/re-entry and failure paths; QA03 tests real process crashes and competing actions/claims; QA04 measures privacy, input limits and renderer performance on the named Mac; QA05 records the owner's Mac playtest and actual player comprehension/turn evidence. M1-ACCEPT reads those results with the full indexed criteria. No runnable final launch instruction or owner playtest is currently proven.
+
+Use small, nonduplicative public-invariant tests for deterministic replay, money/item conservation, authorization/privacy, atomic rejection/idempotency, serialization and real transaction/migration behavior. Do not add a test for each helper or substitute structural snapshots for gameplay evidence. The existing clean combined-tree gate remains `pnpm verify`, `pnpm test:combat:stress`, `pnpm test:migrations`; run it once for the final code tree and record actual outcomes. Browser, Mac, human, frame-rate and server-capacity evidence need their own measurements. No fixed PR line cap applies; keep changes cohesive and reviewable.
+
+The original source ZIP concordance remains `NOT_RUN` / `RC-GAP-MACHINE-01`. Missing archives do not permit reconstructed canon or claims that historical catalogue checks ran. Deployment, paid resources, production load and M2 scope are separate from local alpha acceptance.
+
+### Prior September parallel queue
+
+## M1 parallel queue — updated 2026-09-30
+
+**Renderer decision — 2026-10-01:** Babylon.js is selected by the owner for
+the M1 client renderer; see [ADR-0006](../architecture/0006-m1-renderer-babylon.md).
+The prior engine-selection comparison is superseded. Preserve ART visual,
+device/runtime, pipeline and production-integration acceptance as pending.
+
+This is an operational handoff map, not a replacement for the full [canonical M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s). All previous waves and dated dispatches are retained [verbatim](M1_OPERATIONAL_CHECKPOINT_HISTORY_2026-09-29.md#original-parallel_wavesmd); they are historical, not current ownership. Check [CURRENT_PLAN](CURRENT_PLAN.md) for live revision/evidence and [AGENT_TEAM](AGENT_TEAM.md) for the runtime budget.
+
+### Active and queued
+
+#### Current cycle checkpoint — 2026-09-30
+
+- **W03 travel — completed/released.** The isolated authenticated two-edge
+  route completed across API restart. A later exact stored replay returned the
+  stored response and left measured company/route/receipt/audit state unchanged.
+  Sol verdict: `READY_WITH_EXPLICIT_UI_GAP`; visual authenticated logout and
+  re-entry remain **NOT_PROVED**. Contract SHA-256
+  `50c179e80b429bfbdb86c463cfc5ac06cc6a0494c4b1450d0b98c88989ca7e71`,
+  16-path manifest SHA-256
+  `30d8bbcba136f17a569d1804154d9260281cb6385646582ca561060e81a5c21e`;
+  reports are linked from [CURRENT_PLAN](CURRENT_PLAN.md). W03 executor/index/
+  protocol/world/web ownership is released and reassigned to the parent.
+- **Active large block — durable company/world foundation.** The company/server/
+  protocol/core writer is active; production UI ownership is pending exact
+  checkout/resource confirmation. Keep work at the foundation level until the
+  real durable producers and consumer are usable together. Do not split this
+  into helper-sized packets.
+- **Next large block — one authentic contract through JOIN, battle, proof,
+  settlement, consequences, save and re-entry.** CT02/JOIN stay gated until
+  actual H/I, ID03, W05/W06 and K02 producers exist and their required consumer
+  evidence is verified. The I02a schedule does not waive H, ID03, world/JOIN
+  producer rules, or full I02/F01/D02 acceptance.
+- **UI gap moves into the production UI cycle.** The V2 read-only display does
+  not yet give the player the full authenticated logout/re-entry experience.
+  Preserve this as an open usability requirement, not a W03 source blocker.
+- **Renderer status:** PlayCanvas 2.22.4 remains the implementation choice;
+  acceptance is open. ART04 corrected animated comparison and ART06 production
+  integration remain open; Babylon is retained as comparison context. Production
+  web currently has no PlayCanvas dependency, and the Colyseus journey remains
+  fixture-gated. Do not claim renderer or gameplay acceptance.
+
+The dated rows and dispatch text below are prior evidence. The current cycle
+checkpoint above supersedes their ownership and readiness statements where they
+conflict; preserve their historical results and limitations.
+
+| Packet                            | Owner / status / dependency                                                                                                                                                           | Next deliverable and acceptance evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| INK-01                            | Luna authored and froze prototype in `warwrit-alpha-contracts` from `307810d`; parent accepted class art direction only                                                               | Three original ink classes on 18 positions, fixed camera and minimal feedback. No eight-direction corpus/engine migration. Terrain/HUD rough; neither full ART05 nor gameplay accepted.                                                                                                                                                                                                                                                                                                                                                  |
+| INK-02 / INK04–05                 | Current-source mouse picking evidence is complete; Sol review passed.                                                                                                                 | Fresh overlap proof confirms nearest valid Knight selection, transparent-margin rejection and opaque selection. See report (historical local path: /Users/vovanostm/multica_workspaces_local/warwrit-alpha-contracts/output/playwright/ink04-current-overlap/report.md). Keyboard/comprehension, ART04, ART05, ART06 and performance remain open; the older `v4-day.png` is still not day evidence.                                                                                                                                      |
+| INK-03                            | Luna completed default-style isolation in `warwrit-alpha-contracts`, HEAD `307810d`; parent inspected and accepted the narrow result.                                                 | Styles are scoped to explicit PlayCanvas `?ink=1`; default renderer styles/labels restored. Screenshots at 1440×1000: `output/playwright/ink-03-default.png` is Babylon comparison default; `ink-03-playcanvas-ink.png` is PlayCanvas ink. No ART04 corrected animation acceptance, full ART05/FPS acceptance or M1 claim.                                                                                                                                                                                                               |
+| H company API                     | H's API/protocol implementation is completed author evidence in dirty c06; H is no longer an active writer. Shared app/index/API paths are released for explicit parent reassignment. | Local isolated route suite passed 2/2 against PostgreSQL; company read, opening-options 200, create 201, persisted GET/replay, and identity isolation were covered. The current lifecycle observation-key correction is separately hash-frozen and Sol-reviewed. Parent owns union integration and future shared-path assignment. No full gate or M1 acceptance.                                                                                                                                                                         |
+| Player entry and company re-entry | `player_journey_luna` completed web/API consumer check and bounded lifecycle correction; work is released for parent reassignment.                                                    | In the real isolated browser/OIDC flow, player two loaded options (200), created company (201), reloaded it (200), logged out (204/session 401), then signed in again and restored the same company and Lena/Rell roster (session/company 200). Screenshot and exact hashes are in [M1_LOCAL_PLAYTEST](M1_LOCAL_PLAYTEST.md). Mocked pending-logout/503 checks remain separately labelled. No process restart or full M1 proof.                                                                                                          |
+| Remaining M1 and launch           | Parent coordinates unassigned world/JOIN/art/full-gate dependencies; project-local script Compose compatibility is implemented and narrowly checked.                                  | Shared script dispatch supports `docker compose` and fallback `docker-compose`; stubbed fallback exercised isolated bootstrap naming/port/cleanup and identity status, while a failing `up` preserved exit 42 after cleanup. Harmless CLI version probes currently find both 5.5.0 command forms, so the prior missing-plugin report is not reproduced. Root `pnpm db:up` and `pnpm db:down` still use `docker compose`. No daemon, migration, full gate or owner journey was run. Full I02/F01/D02 and final M1 acceptance remain open. |
+
+The primary project now reads `max_threads = 12` and four role paths under installed CLI 0.144.5; the running runtime remains parent plus two child slots. Configuration is not staffed capacity or a live twelve-agent proof. Pin Luna for explorer assignments because this CLI rejects project default-subagent keys. Parent controls assignments, integration, publication and shared resources. Do not treat configured capacity as staffed or ready work. See [the studio process audit](STUDIO_PROCESS_AUDIT_2026-09-29.md) for research limits and ten candidate lanes with readiness gates. Parent audits results rather than repeating every author check. A CLI review replaces, never adds to, a native slot. Throughput gain remains `NOT_MEASURED`, and optimality `NOT_PROVEN`. Preserve old ART05 draft PR129 (remote `fe4e783` per last evidence, local `09f21b0` with unverified dirty patch and untracked assets) and the primary checkout. PR128 is merged upstream. No current old-pilot publication assignment.
+
+The earlier safe-travel dispatch below is superseded: server handler, PostgreSQL
+execution and process-restart evidence now exist. See the primary handoff (historical local path: /Users/vovanostm/learn/warwrit/docs/engineering/NEXT_SESSION_HANDOFF.md)
+for the frozen contract and evidence paths. Do not restart that packet. Full M1
+remains active and incomplete.
+
+Finite art follow-ups for parent dispatch: **INK-04 picking** probes transparent sprite margins and overlapping neighbours, then fixes only confirmed mis-selection in the PlayCanvas ink path; **INK-05 terrain/HUD** is a separate owner-judged design pass on board contrast, prop coherence and readable tactical feedback. INK-03 default-style isolation is complete and is recorded above. The current authored prototype is not held open for a new art corpus. These are bounded cards, not new acceptance gates or assigned PRs.
+
+### Dependency and proof boundary
+
+G10 PR126 and F01 consumer PR127 are merged into main `307810d` (which also includes PR125 quality tooling). Full F01 authentic producer/content remains open. The [I02a amendment](M1_EXECUTION_READINESS.md), canonical readback `comfbUJMfwcjVWq2v`, changes only W04/CT02 enabling edges to their exact consumer-specific durable-command readiness after H01–H08/I01. Full F01/D02/I02 remain final. World/JOIN require real physical/durable predecessors; ART is independent of H storage. No new policy or acceptance prerequisite is created by this queue.
+
+Pre-alias H evidence in `/private/tmp/warwrit-h-fresh-evidence-luna-result.md`: fresh `pnpm build` passed, `pnpm test:unit` 454 passed/5 skipped, `pnpm check:changes` failed; the earlier stale-`dist` result is not current proof. Real paired A/B coverage in `coverage/luna-producer-*` isolated mixed compiled-public/direct-source imports; a minimal Vitest test-only source alias removed duplicate mappings, with 26/26 and `coverage_source=istanbul`. Sol's `/private/tmp/warwrit-h-alias-review-sol-result.md` found no actionable alias defect, not full integration proof. `coverage/coverage-final.json`/`coverage/fallow-audit.json` are preserved pre-alias evidence; same-span numeric-column synthetic probe was diagnosis only. `no-project` syntactic attribution is expected fallback, not direct matcher failure. Full current-source suite/coverage/audit, final real PG, H03/H04, ID03 and full renderer comparison remain open. Each packet returns exact head/tree/dirty diff, changed paths, check outcomes and dependencies. Parent rechecks the union with applicable CI `check:changes` and the final exact-tree sequence owned by [AGENTS.md](../../AGENTS.md#verification-without-duplicate-work) and `scripts/bootstrap.sh`; only the owner/parent's scoped authorization permits checked mission PR merges, not auto-merge/deploy/paid provisioning/force-push. No full persistent M1 or local manual journey is accepted.

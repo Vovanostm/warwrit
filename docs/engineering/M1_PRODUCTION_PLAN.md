@@ -1,5 +1,118 @@
 # Full persistent M1 alpha production plan
 
+## Current execution plan — 2026-11-05
+
+The owner requested a current assessment and an updated path to the intended
+playable game. This section supersedes the September/October dispatch order
+below. [Roadmap](ROADMAP.md) owns milestone scope, [task queue](PARALLEL_WAVES.md)
+owns issue mapping and [assessment](../wiki/m1-spec.md#state-2026-11-05) owns
+the current source/evidence boundary. Historical entries remain historical.
+
+Owner follow-up on 2026-11-05: dispatch one small task from the
+[AI queue](PARALLEL_WAVES.md#ai-task-contract), not a whole parent epic.
+Issues #368–#400 have an observable result, predecessor, write boundary,
+exclusions and direct check; seven existing entries reuse already bounded work.
+The queue separates each contract, learning/retraining and each crash boundary.
+Mill clues → night beast → worker delivery form an acyclic chain.
+Existing #8/#174/#177 retain their complete final joins and human acceptance;
+task creation is not implementation or a new gameplay-policy approval.
+
+### 1. Finish the current company, then prove ordinary entry
+
+First integrate the existing recovery/payroll candidates through their delivery
+owner: PR363 → PR338 after retargeting and current checks. Continue the retained
+company; do not manufacture a fresh healthy company to bypass its open obligations.
+The already merged treatment enables recovery, not instant healing.
+Remote-wallet backed holds are not cash received by the member.
+
+The smallest way to try the result is the ordinary Company screen, then its next
+contract on the painted atlas. Do not require another standalone laboratory.
+
+Acceptance checklist owned by #177:
+
+- [ ] The retained company can rest with actual food, return to field duty and pay
+      lawful obligations; the result remains after refresh and an actual owned-server restart.
+- [ ] It can take and finish the next existing contract, carry/present its real
+      proof and receive the lawful reward once; no lingering encounter binding.
+- [ ] A new account then repeats the ordinary loop from sign-in and company
+      creation, through equipment/supplies/travel/battle and post-battle continuation.
+      No database edits, synthetic position, money, health or unearned skill grants.
+- [ ] Unknown command outcome restores the same request after reload; refusal
+      explains a real prerequisite and leaves state unchanged.
+- [ ] A second account participates physically where required; each company
+      retains its own people, items, knowledge and lawful share/claim.
+
+PR339 and PR335 are reusable candidates when their capability blocks this path.
+Resolve current integration, not historical whole-branch acceptance. Fix one
+observed failing step and rerun that step plus its affected continuation.
+
+### 2. Complete the accepted M1 matrix
+
+After the representative loop works, #177 owns all eight instances and eleven
+scenes, including the mill chain. Record an actual result for each of:
+
+| Area          | Required player proof                                                                                                                                         | Existing owner                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Hunt          | Actual eligible target/participation, terminal result, pickup/capacity, current lawful bearer, one reward and post-battle continuation                        | #177, #174                                   |
+| Investigation | Genuine available clues/witnesses, observer knowledge and truthful completion/failure; no text-generated facts                                                | #177                                         |
+| Rescue        | Actual living captive, release/custody, physical delivery, unavailable/dead-target branch and single claim                                                    | #177                                         |
+| Company       | Remaining item transfer, service, learning/retraining, authentic nickname and required commands/residuals                                                     | #171, #168, #170, #172, #8                   |
+| World         | Company chart/exploration/current sight/rumor distinction, lawful NPC contact, STOP/reroute/offline continuation, independent campaign/light clocks, re-entry | #177; reuse merged atlas and world authority |
+| Loss          | Supported death, incapacity, succession/game-over and retreat; no company stuck after an exposed terminal outcome                                             | #174, #177                                   |
+| UI/content    | Every advertised action has its real result; loading/refusal/retry/loss are readable; selected art/lore and all required assets are coherent                  | #217, #275–#279, #177                        |
+
+[#364](https://github.com/Vovanostm/warwrit/issues/364) owns the V4/V5 terminal
+evidence gap for surrender and hostile retreat.
+Resolve the finite disposition/source contract before enabling those outcomes;
+do not invent capture, rescue, transport, proof or reward policy. Distinguish this
+confirmed source gap from cases that already work, including company flee.
+Similarly, initial companion-wallet custody is an observed broader-loop limit,
+not permission to teleport wallets inside payroll.
+
+A dev novel reader is editorial evidence. Required story choices must consume
+and change durable campaign facts before counting toward contract acceptance.
+Reuse approved text; do not make PR336 a prerequisite for an unrelated gameplay step.
+
+### 3. Accept the integrated game
+
+- #173: observe meaningful tactical decisions, AI and autoplay in current
+  persistent battles. Carry accepted pending rule work such as #225 through its
+  compatible version and own checks; preserve old replays.
+- #174: loss of replies, reconnect across deadlines, real crash at reservation,
+  terminal and claim boundaries, competing claims, and backup→restore to a new
+  database. Do not overwrite the retained original.
+- #175: measure actual MacBook/Chrome frame time, memory and stability on the
+  representative scene/journey. Profile first; no generic optimization project.
+- #176: a clean checkout follows the documented supported install/config/identity/
+  database/migrate/start/stop path without files borrowed from another worktree.
+  Confirm saves survive; distinguish local quick login from hosted authentication.
+- #177: current independent playable/visual critique and the owner's actual
+  journey. Missing human evidence means READY_FOR_OWNER_TEST, never automatic
+  full-M1 acceptance. Preserve content/pipeline and Q-C01/Q-C10/R-01 evidence
+  requirements from the canonical milestone.
+
+Use one current build for final integrated checks and the existing bootstrap
+gate. Focused checks during fixes remain proportional. Existing tests, CI and
+earlier bounded journeys are reused within their demonstrated scope.
+
+### 4. Prepare hosted testing after local acceptance
+
+Keep hosted operation separate: ordinary identity, HTTPS/WebSocket origin,
+dependency readiness, restart, backup/restore, compatible rollback and measured
+load on the target 2-core/4-GB server. PR334 is prior startup work to reconcile,
+not a completed deployment. A small invited pilot does not waive full M1.
+Deployment and paid provisioning require separate current permission.
+
+### Planning evidence
+
+This update reads live GitHub state, current-main owning source, canonical M1
+Notes/Purpose and milestone scope, plus retained work-package/PR results.
+Main CI SUCCESS is metadata readback; old runtime results are attributed to their
+versions. New browser, SQL, load, visual review and gameplay tests: NOT_RUN.
+No new mechanic, duration estimate, capacity or enjoyment claim.
+
+## Historical planning through 2026-10-19
+
 ## Current amendment — 2026-10-19
 
 Remote main verified at `b568ee25b7529fa5abeeae85e45a41bc587124bb`.
