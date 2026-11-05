@@ -8,6 +8,16 @@ import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
 import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
 import { prepareCompanyCareFulfillment } from './care.js';
+import { observeLocalRecruit } from './observation.js';
+import {
+  RECRUIT_DAILY_WAGE_MILLI,
+  RECRUIT_SIGNING_Q,
+  attachRecruitGenesis,
+  localCompanyContacts,
+  locateRecruitCarriedPurse,
+  lockRecruitOffer,
+  recruitWageRates,
+} from './recruitment.js';
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
@@ -234,6 +244,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
 
   if (
     input.request.type !== 'BuySupplies' &&
+    input.request.type !== 'Recruit' &&
+    input.request.type !== 'JoinFieldParty' &&
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
@@ -468,6 +480,37 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     return { kind: 'COMMITTED', response };
   }
 
+  let recruitOffer: Awaited<ReturnType<typeof lockRecruitOffer>> | undefined;
+  if (input.request.type === 'Recruit') {
+    recruitOffer = await lockRecruitOffer(
+      input.transaction,
+      input.worldId,
+      input.request.payload.offerId,
+    );
+    if (
+      !recruitOffer ||
+      recruitOffer.consumed_at !== null ||
+      recruitOffer.offer_revision !== input.request.payload.offerRevision ||
+      party?.location.kind !== 'AT' ||
+      recruitOffer.site_id !== party.location.siteId ||
+      recruitOffer.area_id !== party.location.areaId ||
+      localCompanyContacts(state, companyId, party.location).length === 0
+    )
+      return rejectRequest('OUT_OF_STOCK', lifecycle.knowledge.revision);
+    const carriedPurse = await readCarriedSupplyPurse(
+      input.transaction,
+      input.worldId,
+      companyId,
+      input.accountId,
+    );
+    state = locateRecruitCarriedPurse(state, carriedPurse);
+    const withGenesis = attachRecruitGenesis(state, recruitOffer);
+    if (!withGenesis) return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
+    state = withGenesis;
+    lifecycle = state.economy.lifecycle;
+  }
+
+  const meetingEvidenceId = input.request.type === 'JoinFieldParty' ? randomUUID() : undefined;
   const commandValue = {
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
     commandId: input.request.commandId,
@@ -480,6 +523,15 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     ...ordinaryCommandIntent(input.request, companyId, {
       partyId: party?.partyId,
       openAgreementId: openCamp?.agreementId,
+      meetingEvidenceId,
+      characterId:
+        input.request.type === 'Recruit'
+          ? recruitOffer?.character_id
+          : input.request.type === 'JoinFieldParty'
+            ? input.request.payload.characterId
+            : undefined,
+      offerId: recruitOffer?.offer_id,
+      offerRevision: recruitOffer?.offer_revision,
       siteEligibilityId: campSite?.id,
       accessEvidenceId: equipAccess?.id,
       careEvidenceId: careFulfillment?.id,
@@ -490,6 +542,75 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   const parsed = parseCompanyCommand(commandValue);
   if (!parsed.ok) return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
 
+  const recruitEvidence =
+    input.request.type === 'Recruit' && recruitOffer
+      ? {
+          id: recruitOffer.offer_id,
+          sourceEventId: recruitOffer.offer_id,
+          worldId: input.worldId,
+          companyId,
+          revision: lifecycle.revision,
+          atTick: campaignTick(clock.tick),
+          kind: 'RECRUIT' as const,
+          characterId: recruitOffer.character_id,
+          basis: 'PAID' as const,
+          offerRevision: recruitOffer.offer_revision,
+          expiresAt: campaignTick((BigInt(clock.tick) + 1n).toString()),
+          signingQ: RECRUIT_SIGNING_Q,
+          dailyWageMilli: RECRUIT_DAILY_WAGE_MILLI,
+          itemIds: [],
+        }
+      : undefined;
+  const meetingEvidence =
+    input.request.type === 'JoinFieldParty' && party?.location.kind === 'AT'
+      ? {
+          id: meetingEvidenceId!,
+          sourceEventId: input.request.commandId,
+          worldId: input.worldId,
+          companyId,
+          revision: lifecycle.revision,
+          atTick: campaignTick(clock.tick),
+          kind: 'MEETING' as const,
+          characterId: input.request.payload.characterId,
+          partyId: party.partyId,
+          location: { ...party.location },
+        }
+      : undefined;
+  const recruitWallet = recruitOffer?.wallet as { readonly walletId: string } | undefined;
+  const serviceTerms =
+    recruitOffer && recruitWallet
+      ? {
+          id: randomUUID(),
+          sourceEventId: recruitOffer.offer_id,
+          worldId: input.worldId,
+          companyId,
+          revision: lifecycle.revision,
+          atTick: campaignTick(clock.tick),
+          kind: 'SERVICE_TERMS' as const,
+          characterId: recruitOffer.character_id,
+          poolId: 'local',
+          recipient: { kind: 'CHARACTER' as const, id: recruitOffer.character_id },
+          signingWalletId: recruitWallet.walletId,
+          rates: recruitWageRates(),
+        }
+      : undefined;
+  const localMoneyAccess =
+    input.request.type === 'Recruit' &&
+    recruitOffer &&
+    recruitWallet &&
+    party?.location.kind === 'AT'
+      ? createRecruitMoneyAccess(
+          state,
+          input.worldId,
+          companyId,
+          party.location,
+          clock.tick,
+          recruitWallet.walletId,
+        )
+      : undefined;
+  if (input.request.type === 'Recruit' && (!serviceTerms || !localMoneyAccess))
+    return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+
   const context = {
     worldId: input.worldId,
     companyId,
@@ -499,18 +620,29 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     atTick: campaignTick(clock.tick),
     completeGraph: true,
     // The player commands a camp through the people standing with the party.
-    contactIds: equipAccess
-      ? [equipAccess.operatorId]
-      : careFulfillment
-        ? [careFulfillment.providerId]
-        : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') &&
-            party
-          ? lifecycle.characters
-              .filter((character) => character.presence.fieldPartyId === party.partyId)
-              .map((character) => character.identity.characterId)
-          : [],
-    facts: [],
-    financeFacts: campSite ? [campSite] : [],
+    contactIds: recruitOffer
+      ? [recruitOffer.character_id, ...localCompanyContacts(state, companyId, party?.location)]
+      : input.request.type === 'JoinFieldParty'
+        ? [input.request.payload.characterId]
+        : equipAccess
+          ? [equipAccess.operatorId]
+          : careFulfillment
+            ? [careFulfillment.providerId]
+            : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') &&
+                party
+              ? lifecycle.characters
+                  .filter((character) => character.presence.fieldPartyId === party.partyId)
+                  .map((character) => character.identity.characterId)
+              : [],
+    facts: [
+      ...(recruitEvidence ? [recruitEvidence] : []),
+      ...(meetingEvidence ? [meetingEvidence] : []),
+    ],
+    financeFacts: [
+      ...(campSite ? [campSite] : []),
+      ...(serviceTerms ? [serviceTerms] : []),
+      ...(localMoneyAccess ? [localMoneyAccess] : []),
+    ],
     physicalFacts: [
       ...foodFacts,
       ...(equipAccess ? [equipAccess] : []),
@@ -525,6 +657,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     !ordinaryCommandSucceeded(input.request, prepared, {
       partyId: party?.partyId,
       openAgreementId: openCamp?.agreementId,
+      meetingEvidenceId,
+      characterId:
+        input.request.type === 'Recruit'
+          ? recruitOffer?.character_id
+          : input.request.type === 'JoinFieldParty'
+            ? input.request.payload.characterId
+            : undefined,
     })
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
@@ -597,8 +736,74 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       ],
     },
   );
+  if (input.request.type === 'Recruit' && recruitOffer) {
+    const consumed = await input.transaction
+      .updateTable('world_recruit_offers')
+      .set({
+        consumed_company_id: companyId,
+        consumed_command_id: input.request.commandId,
+        consumed_at: input.now,
+      })
+      .where('world_id', '=', input.worldId)
+      .where('offer_id', '=', recruitOffer.offer_id)
+      .where('consumed_at', 'is', null)
+      .executeTakeFirst();
+    if (Number(consumed.numUpdatedRows) !== 1)
+      throw new Error('Recruit offer consumption lost its transaction lock');
+    const observed = await observeLocalRecruit(
+      input.transaction,
+      nextState,
+      recruitOffer.character_id,
+      clock.tick,
+    );
+    if (!observed) throw new Error('New recruit could not be observed at the inn');
+  } else if (input.request.type === 'JoinFieldParty') {
+    const observed = await observeLocalRecruit(
+      input.transaction,
+      nextState,
+      input.request.payload.characterId,
+      clock.tick,
+    );
+    if (!observed) throw new Error('Joined member could not be observed locally');
+  }
   await persistDueContinuousMovementRoute(input.transaction, due);
   return { kind: 'COMMITTED', response };
+}
+
+function createRecruitMoneyAccess(
+  state: CompanyCombatAggregateState,
+  worldId: string,
+  companyId: string,
+  location: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string },
+  tick: string,
+  recipientWalletId: string,
+) {
+  const lifecycle = state.economy.lifecycle;
+  const operatorId = localCompanyContacts(state, companyId, location)[0];
+  const localPool = state.economy.finance.pools.find((pool) => pool.poolId === 'local');
+  const localWallet = localPool
+    ? state.economy.finance.wallets.find((wallet) => wallet.walletId === localPool.walletId)
+    : undefined;
+  if (
+    !operatorId ||
+    !localWallet ||
+    localWallet.location.siteId !== location.siteId ||
+    localWallet.location.areaId !== location.areaId
+  )
+    return undefined;
+  return {
+    id: randomUUID(),
+    sourceEventId: randomUUID(),
+    worldId,
+    companyId,
+    revision: lifecycle.revision,
+    atTick: campaignTick(tick),
+    kind: 'LOCAL_MONEY_ACCESS' as const,
+    operatorId,
+    location: { ...location },
+    poolIds: ['local'],
+    recipientWalletIds: [recipientWalletId],
+  };
 }
 
 function equipAccessFact(

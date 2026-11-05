@@ -179,6 +179,11 @@ describe('authenticated company read (PostgreSQL)', () => {
               nicknameTextKey: character.nicknameTextKey,
               perkIds: character.perkIds,
               knownStatus: character.knownStatus,
+              inFieldParty: ['a-leader', 'a-worker-0', 'a-worker-1'].includes(
+                character.characterId,
+              ),
+              canJoinFieldParty: character.characterId === 'a-provider',
+              fieldPartyFull: false,
             })),
           },
           holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),
@@ -840,7 +845,7 @@ describe('authenticated company read (PostgreSQL)', () => {
             schemaVersion: 2,
             commandId: `unsupported-${accountId}`,
             expectedPublicRevision: renamedRevision,
-            type: 'Recruit',
+            type: 'SetAssignment',
             payload: {},
           },
         });

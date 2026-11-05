@@ -348,7 +348,9 @@ export function prepareTravelFoodFacts(
         location.kind === 'AT' &&
         ((executionFoodAccess?.partyId === character.presence.fieldPartyId &&
           executionFoodAccess.sites.has(location.siteId)) ||
-          (departureFoodAccess?.partyId === character.presence.fieldPartyId &&
+          (departureFoodAccess !== undefined &&
+            (departureFoodAccess.partyId === character.presence.fieldPartyId ||
+              character.presence.availability === 'AVAILABLE') &&
             samePhysicalLocation(location, departureFoodAccess.location)));
       const safeV1SiteAllowed =
         location.kind === 'AT' &&
@@ -385,7 +387,9 @@ export function prepareTravelFoodFacts(
           (container.kind === 'STATIC' ||
             (container.kind === 'PARTY_SUPPLY' &&
               container.carrier?.kind === 'PARTY' &&
-              container.carrier.id === character.presence.fieldPartyId) ||
+              (container.carrier.id === character.presence.fieldPartyId ||
+                (partyRouteSiteAllowed &&
+                  container.carrier.id === departureFoodAccess?.partyId))) ||
             (container.kind === 'CARRIED' &&
               container.carrier?.kind === 'CHARACTER' &&
               (container.carrier.id === character.identity.characterId ||

@@ -45,6 +45,18 @@ changed test/startup boundary on fresh inputs before publication, as already
 required below. Adding another general full local preflight would repeat costly
 CI. Whether existing guidance is adopted remains an observational question.
 
+### Product main advanced during the audit-diagnostics trial
+
+Recruitment PR360 merged as `1121665c` while support CI42030162311 was executing
+on care main `f0461180`. Integrate the live product base, preserve both changelog
+histories and leave all product source, CURRENT_PLAN and coverage-merger changes
+identical to main. Initial review ACCEPT at `93ef169e` and its hosted run retain
+their older-baseline scope. The integrated candidate needs applicable fresh CI
+and independent affected review; issue361/PR362 own those exact results.
+This is another observed cause of duplicate full CI during parallel support and
+product delivery. Compatibility-based evidence reuse remains a separate,
+unimplemented hypothesis, not a skipped gate in this slice.
+
 ## Changed-document formatting and historical CI evidence — 2026-11-05
 
 The owner requested more harness improvements and new ideas. Source is the

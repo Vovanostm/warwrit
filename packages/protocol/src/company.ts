@@ -88,6 +88,11 @@ export interface CompanySummaryDto {
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+    /** The owner knows whether this character travels with the active field party. */
+    readonly inFieldParty?: boolean;
+    /** A local, available reserve can join through the explicit roster action. */
+    readonly canJoinFieldParty?: boolean;
+    readonly fieldPartyFull?: boolean;
   }[];
 }
 /** Safe, owner-private payroll observation; absent on historical responses means unavailable. */
@@ -255,6 +260,8 @@ export type OrdinaryPlayerCompanyCommandType =
 
 /** Payloads whose complete ordinary-command effects and public readback are enabled in V2. */
 export interface OrdinaryPlayerCompanyPayloads {
+  readonly Recruit: { readonly offerId: string; readonly offerRevision: string };
+  readonly JoinFieldParty: { readonly characterId: string };
   readonly BuySupplies: {
     readonly siteId: string;
     readonly quantity: number;
@@ -286,6 +293,25 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly providerId: string;
     readonly resourceItemId: string;
   };
+}
+
+export interface LocalRecruitOfferDto {
+  readonly offerId: string;
+  readonly offerRevision: string;
+  readonly characterId: string;
+  readonly name: string;
+  readonly skills: readonly { readonly skillId: string; readonly level: number }[];
+  readonly aptitudes: readonly { readonly skillId: string; readonly valueBps: number }[];
+  readonly health: { readonly current: number; readonly maximum: number };
+  readonly stamina: { readonly current: number; readonly maximum: number };
+  readonly conditions: readonly string[];
+  readonly signingQ: string;
+  readonly dailyWageMilli: string;
+  readonly physician: boolean;
+}
+
+export interface LocalRecruitOffersResponseDto {
+  readonly offers: readonly LocalRecruitOfferDto[];
 }
 
 export type EnabledOrdinaryPlayerCompanyCommandType = keyof OrdinaryPlayerCompanyPayloads;

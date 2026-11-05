@@ -1,3 +1,5 @@
+import { isRecord, isTransportId as isId } from './value-guards.js';
+
 export const ENCOUNTER_PROTOCOL_VERSION = 1 as const;
 
 export interface EncounterFixtureCreateDto {
@@ -112,12 +114,6 @@ export interface EncounterTacticalPreviewDto {
     };
   }[];
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  value !== null && typeof value === 'object' && !Array.isArray(value);
-
-const isId = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && value.length <= 128;
 
 export const isEncounterId = (value: unknown): value is string =>
   typeof value === 'string' &&
