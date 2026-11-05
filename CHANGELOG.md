@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Play integrated payroll through reload and server restart
+
+- 2026-11-05, `codex/game-payroll-integration`, LOCAL follow-up for
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Source integration and
+  finite day/night payroll UI ACCEPT. On a new retained-save copy, normal
+  TARGETED19.04 and DEFAULT6.33 lost-reply/reload/exact retries each retain
+  2identicalPOSTs/1receipt/1event and an unchanged complete root on retry.
+  Restart preserves saved root/receipts/events. Actual6.06kr reaches the hired
+  physician with balanced wallets;19.31 for remote personal wallets is reserved,
+  not paid. [Owning result](docs/work-packages/WP-02.3.md#current-build-native-continuation-and-acceptance)
+  records the personal-wallet travel gap, prior battle assistance and exact limits.
+  No new clock/save edits, financial rules, migration, dependency or art. Existing
+  PR338 will temporarily target reviewed recovery PR363; both remain unmerged
+  and need separate permission. Recovery final CI/scope PASS, payroll hosted
+  integrated gate still required. Detailed new evidence stays ignored or in CI.
+
 ### Reconcile ordinary payroll with the current company loop
 
 - 2026-11-05, `codex/game-payroll-integration`, LOCAL integration preparation for
