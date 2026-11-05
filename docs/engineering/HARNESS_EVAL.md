@@ -59,8 +59,18 @@ The changed ordinary browser journey PASS. A deliberate failure after an actual
 STOP200 retained native map input, real request/response, UI state and screenshot.
 The ignored probe is diagnostic verification, not a gameplay acceptance pass.
 Scoped ESLint, JavaScript syntax, workflow artifact-path checks, formatting and
-diff checks PASS. Final source readback and new-head CI are recorded in issue348
-and PR349. The original two failures remain part of delivery history.
+diff checks PASS. Source readback accepted diagnostic head `19bda5ea`.
+
+During this investigation, the game author independently published a finished
+moving-STOP probe correction in commit `e57d6e8b` on draft PR350. This branch
+reuses only its eight-line browser-test delta. It lengthens the bounded probe
+path and requires actual movement before the keyboard STOP. The game contract,
+care implementation and integrator checkpoint remain owned by PR350. This reuse
+preserves the author's stricter precondition alongside the diagnostic addition.
+The combined ordinary real browser journey PASS, including exact pursuit
+STOP409/retry200 and zero page errors. The two original CI causes remain
+unresolved. Final combined-head source readback and new-head CI are recorded in
+issue348 and PR349. The original failures remain part of delivery history.
 
 ## Task-quality assessment — 2026-11-05
 

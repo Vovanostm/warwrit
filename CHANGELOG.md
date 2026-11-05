@@ -20,7 +20,10 @@ requests.
   failure-capture probe PASS, scoped lint/syntax/format/artifact paths and diff PASS.
   The owning [CI follow-up](docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
   records both failures, local observations and the initial aggregation failure
-  due to missing prior migration evidence. Fresh changed-head CI is required.
+  due to missing prior migration evidence. Reuse only the finished moving-STOP
+  probe delta from the game author's `e57d6e8b` / draft PR350. The combined real
+  browser journey PASS, with a stricter moving precondition. Fresh combined-head
+  review and CI are required.
 
 ### Apply task-quality research to the existing agent workflow
 
