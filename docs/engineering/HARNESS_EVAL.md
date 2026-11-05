@@ -1,5 +1,50 @@
 # Harness evaluation
 
+## Actionable quality-audit diagnostics — 2026-11-05
+
+The owner authorized continued harness implementation, review, merge and local
+main update. Branch `codex/harness-quality-feedback` and
+[issue361](https://github.com/Vovanostm/warwrit/issues/361) own this support slice.
+Product PR360, its source/checkpoint and saves remain separately owned.
+
+PR360 run42016253535/job127207976299 reached the final audit after roughly30
+minutes. Human output mixed34 complexity findings and6 clone groups without
+individual attribution;35 inherited findings were excluded by the native gate.
+The existing artifact had map/journey diagnostics, without structured audit or
+final coverage. WP-02.2 records full local measured reproduction and three
+unchanged App callbacks; two additional CI findings remained unexplained at
+that observation. The exact five introduced findings cannot be reconstructed
+from the old human log alone. This change does not claim to identify that subset.
+
+Run the existing Fallow3.30 audit once with JSON output. Preserve its native exit
+and gate policy, then separately explain introduced complexity errors, other
+introduced complexity and clone groups. Missing attribution remains explicit;
+inherited details and other categories remain in the complete report. Effective
+severity controls the display partition, not complexity rank. Native verdict,
+gate outcomes and attribution remain authoritative; the renderer derives no gate
+from counts. A saved real report had11 in summary attribution but12 flagged
+introduced effective-error records, reinforcing this distinction.
+
+Retain JSON, native stderr, checkout/base/PR-head/run/attempt/command/exit context
+and same-run final coverage in a seven-day allowlisted CI artifact. Upload and
+explanation run after native success or failure. A missing/malformed report fails
+visibly while the native audit result stays intact. No environment dump, saves,
+credentials, gate thresholds, suppression or automatic evidence reuse is added.
+
+Nine isolated workflow-fixture groups PASS, including actual audit shell exits0,
+1 and2, one invocation, attribution, effective severity, clone-family exclusion,
+raw evidence and missing/malformed report rejection. Node/Bash syntax, scoped
+format/lint/diff and a readback of an existing real native report PASS. Native
+analysis, coverage and product services/tests were NOT_RUN locally for this slice.
+Independent final-head review and hosted artifact acceptance remain pending and
+are recorded in issue361/its PR. General agent throughput remains NOT_MEASURED.
+
+The latest game-agent correction also reproduced an ignored output/ parent
+missing in a fresh-root test. The smallest useful prevention is to exercise the
+changed test/startup boundary on fresh inputs before publication, as already
+required below. Adding another general full local preflight would repeat costly
+CI. Whether existing guidance is adopted remains an observational question.
+
 ## Changed-document formatting and historical CI evidence — 2026-11-05
 
 The owner requested more harness improvements and new ideas. Source is the

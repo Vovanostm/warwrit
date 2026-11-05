@@ -89,10 +89,44 @@ jobs:
         run: bash scripts/world-map/check-painted-game-ci.sh
 
       - name: Reject quality regressions in changed files
+        id: quality_audit
         if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         env:
           FALLOW_AUDIT_BASE: origin/${{ github.base_ref }}
-        run: pnpm check:changes
+          QUALITY_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mkdir -p output/quality-audit
+          {
+            printf 'checkout=%s\n' "$(git rev-parse HEAD)"
+            printf 'audit_base_ref=%s\n' "$FALLOW_AUDIT_BASE"
+            printf 'audit_base_commit=%s\n' "$(git rev-parse "$FALLOW_AUDIT_BASE")"
+            printf 'pr_head=%s\n' "$QUALITY_PR_HEAD_SHA"
+            printf 'run=%s attempt=%s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
+            printf '%s\n' 'command=pnpm check:changes --format json --output-file output/quality-audit/audit.json'
+          } > output/quality-audit/context.txt
+          audit_status=0
+          pnpm check:changes --format json --output-file output/quality-audit/audit.json \
+            2> output/quality-audit/audit.stderr || audit_status=$?
+          cat output/quality-audit/audit.stderr >&2
+          printf 'exit=%s\n' "$audit_status" >> output/quality-audit/context.txt
+          exit "$audit_status"
+
+      - name: Explain introduced quality findings
+        if: always() && (steps.quality_audit.outcome == 'success' || steps.quality_audit.outcome == 'failure')
+        run: node scripts/print-quality-audit.mjs output/quality-audit/audit.json
+
+      - name: Keep quality audit diagnostics
+        if: always() && (steps.quality_audit.outcome == 'success' || steps.quality_audit.outcome == 'failure')
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/quality-audit/audit.json
+            output/quality-audit/audit.stderr
+            output/quality-audit/context.txt
+            coverage/coverage-final.json
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Keep playable-map previews
         if: always() && github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'

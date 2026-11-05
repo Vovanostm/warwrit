@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Explain introduced quality findings and retain native audit inputs
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL. Owner-requested harness
+  improvement after PR360's late mixed-attribution audit required expensive
+  local reproduction. CI runs one native JSON audit with unchanged exit/gates,
+  prints introduced complexity/clones separately and retains allowlisted native
+  JSON/stderr/revision context/final coverage for seven days. Workflow fixtures
+  exercise exits0/1/2, one run, attribution and invalid reports. Nine groups and
+  scoped syntax/lint/format/diff PASS; saved native-report readback PASS. Hosted
+  acceptance/final review remain pending. No product change or measured general
+  throughput gain. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
+  [issue361](https://github.com/Vovanostm/warwrit/issues/361).
+
 ### Reacquire expired pursuit preparation before the STOP browser probe
 
 - 2026-11-05, `codex/game-care-delivery`, LOCAL correction after

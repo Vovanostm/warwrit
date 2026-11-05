@@ -160,6 +160,21 @@ Istanbul reports. Each entry carries its captured script text, functions and map
 If a map omits original content, `frozenBeforeMs` must record the actual capture
 process start boundary, before any affected source edit. Prefer inline originals.
 
+For a hosted final-audit failure, first download `quality-audit-<run>-<attempt>`
+from that CI run. Read `output/quality-audit/context.txt`, the explanation step,
+and `audit.stderr`; render the retained report locally without rerunning analysis:
+
+```bash
+node scripts/print-quality-audit.mjs /absolute/artifact/output/quality-audit/audit.json
+```
+
+The artifact also retains the same-run `coverage/coverage-final.json`. It is
+historical evidence for the recorded checkout/base and inputs, not coverage of
+subsequent edits. Unknown attribution stays unknown. Inspect the complete JSON
+for categories outside the concise complexity/clone explanation. Reproduce only
+the unresolved diagnostic with relevant inputs before choosing a full local
+measured run; do not substitute this report for required current-head CI.
+
 After explicit tests produce current `coverage/coverage-final.json`, merge an
 optional measured runtime capture and run the audit explicitly.
 
