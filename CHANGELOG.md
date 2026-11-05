@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Share browser observations after the changed-file quality failure
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41966525264 passed both
+  real browser journeys and the runtime gates, then rejected duplicated STOP
+  collectors and five complexity findings. Share browser UI observations, live
+  freshness checks and actual STOP status collection. Preserve readiness, native
+  input and outcome requirements. Scoped lint/syntax/format/diff PASS; Fallow's
+  duplicate diagnostic has no groups and the five findings are absent. Current
+  real browser journey PASS with native409→200 cancellation. Regenerated
+  intentional-failure diagnostics retain shared UI/native STOP200 evidence.
+  Independent review and measured CI are pending.
+  The [owning record](docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
+  keeps the failed gate, coverage-attribution limit and successful runtime evidence.
+
 ### Wait for the required moving observation within the original budget
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to

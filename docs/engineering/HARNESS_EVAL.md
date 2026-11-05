@@ -182,6 +182,38 @@ retry, time allowance, enemy, clock control or successful-response substitute.
 The current local real journey PASS with native409→200 cancellation. Final source
 readback and applicable current-head CI remain in PR349.
 
+### Shared browser observations and quality-audit follow-up
+
+CI41966525264 at `d035be51` passed bootstrap, unit/stress/real SQL checks,
+coverage, the world-lab browser journey and the ordinary painted-map journey.
+The changed-file quality audit failed on duplicate STOP status collectors and
+five complexity findings. Four findings involve callbacks serialized into the
+browser, whose execution is not established by Node-side coverage attribution.
+The fifth is an approach branch not needed when a moving threat is already visible.
+This is a failed quality gate, with successful runtime evidence retained separately.
+
+The correction shares actual STOP response collection, UI observations and the
+existing live-connection/fresh-sequence predicate. Both browser contexts install
+the same initializer before navigation. Marker/terrain hit testing still samples
+current coordinates and intended semantic targets with that freshness condition.
+The UI snapshot waits for the map widget, which follows all required diagnostic
+controls in the current HTML. Movement progress compares the complete plain JSON
+point through Node's existing deep equality. Native input, result assertions,
+retry policy and deadlines retain their original requirements.
+
+Focused JavaScript syntax, ESLint, formatting and diff checks PASS. Fallow reports
+no duplicate groups for the browser script and no remaining findings for those
+five functions. Its unmeasured static estimate still flags `pursuitAndRetry`.
+The hosted measured audit did not flag that exercised function. The static
+report is diagnostic, not a replacement for current-head measured CI.
+The current-source real browser journey PASS with native pursuit STOP409/retry200
+and no page errors (`output/world-lab-ci/runtime-81183/`). A regenerated diagnostic
+copy deliberately failed after a real STOP200. Its retained failure snapshot has
+the shared UI fields, native map input and actual STOP request/response
+(`output/harness-task-quality/shared-ui-capture-probe/runtime-81922/`). The probe's
+intentional exit1 is not gameplay acceptance. Its artifact assertions PASS.
+Final independent review and applicable CI remain tracked in PR349.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing

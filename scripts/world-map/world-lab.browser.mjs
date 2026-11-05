@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { chromium } from 'playwright';
 import { CloseCode } from '@colyseus/sdk';
 
@@ -12,22 +13,33 @@ const browser = await chromium.launch({
   ...(process.env.WORLD_LAB_CHROMIUM ? { executablePath: process.env.WORLD_LAB_CHROMIUM } : {}),
 });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-await context.addInitScript(() => {
+function instrumentWorldLab() {
   const NativeSocket = globalThis.WebSocket;
   globalThis.worldLabSockets = [];
   globalThis.worldLabStopInputs = [];
+  globalThis.readWorldLabUi = () => {
+    const map = globalThis.document.getElementById('map');
+    if (!map) return undefined;
+    return {
+      connection: globalThis.document.body.dataset.connection,
+      message: globalThis.document.getElementById('client-message').textContent,
+      viewport: map.getAttribute('viewBox'),
+      activeElement: globalThis.document.activeElement.id,
+      stopDisabled: globalThis.document.getElementById('stop').disabled,
+      sequence: globalThis.document.getElementById('world-sequence').textContent,
+      ownState: globalThis.document.getElementById('own-state').textContent,
+    };
+  };
+  globalThis.worldLabMapIsFresh = (previous) =>
+    globalThis.document.body.dataset.connection === 'live' &&
+    (previous === undefined ||
+      globalThis.document.getElementById('world-sequence').textContent !== previous);
   globalThis.addEventListener(
     'keydown',
     (event) => {
       if (event.code !== 'Space') return;
-      globalThis.worldLabStopInputs.push({
-        target: event.target?.id,
-        activeElement: globalThis.document.activeElement?.id,
-        connection: globalThis.document.body.dataset.connection,
-        stopDisabled: globalThis.document.querySelector('#stop')?.disabled,
-        sequence: globalThis.document.querySelector('#world-sequence')?.textContent,
-        ownState: globalThis.document.querySelector('#own-state')?.textContent,
-      });
+      const ui = globalThis.readWorldLabUi();
+      if (ui) globalThis.worldLabStopInputs.push({ target: event.target.id, ...ui });
     },
     true,
   );
@@ -37,7 +49,8 @@ await context.addInitScript(() => {
       globalThis.worldLabSockets.push(this);
     }
   };
-});
+}
+await context.addInitScript(instrumentWorldLab);
 const page = await context.newPage();
 const stopTraffic = [];
 page.on('request', (request) => {
@@ -59,6 +72,11 @@ function isStopRequest(request) {
     request.postDataJSON()?.action?.kind === 'STOP'
   );
 }
+function recordStopStatuses(statuses) {
+  return (reply) => {
+    if (isStopRequest(reply.request())) statuses.push(reply.status());
+  };
+}
 function response(path) {
   return page.waitForResponse(
     (reply) => reply.url().endsWith(`/world-lab/${path}`) && reply.request().method() === 'POST',
@@ -69,10 +87,7 @@ async function state() {
 }
 async function waitForFreshMap(target = page, afterSequence) {
   await target.waitForFunction(
-    (previous) =>
-      globalThis.document.body.dataset.connection === 'live' &&
-      (previous === undefined ||
-        globalThis.document.querySelector('#world-sequence').textContent !== previous),
+    (previous) => globalThis.worldLabMapIsFresh(previous),
     afterSequence,
   );
 }
@@ -80,11 +95,7 @@ async function rightClickMarker(selector) {
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
     ({ selector, previous }) => {
-      if (
-        globalThis.document.body.dataset.connection !== 'live' ||
-        globalThis.document.querySelector('#world-sequence').textContent === previous
-      )
-        return false;
+      if (!globalThis.worldLabMapIsFresh(previous)) return false;
       const marker = globalThis.document.querySelector(selector);
       if (!marker) return false;
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
@@ -101,11 +112,7 @@ async function rightClickMapPoint(x, y) {
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
     ({ x, y, previous }) => {
-      if (
-        globalThis.document.body.dataset.connection !== 'live' ||
-        globalThis.document.querySelector('#world-sequence').textContent === previous
-      )
-        return false;
+      if (!globalThis.worldLabMapIsFresh(previous)) return false;
       const map = globalThis.document.querySelector('#map');
       const at = new globalThis.DOMPoint(x, y).matrixTransform(map.getScreenCTM());
       const target = globalThis.document.elementFromPoint(at.x, at.y);
@@ -133,13 +140,12 @@ async function stop(requireMoving = false) {
     return;
   }
   const statuses = [];
-  const isStop = (reply) => isStopRequest(reply.request());
-  const record = (reply) => {
-    if (isStop(reply)) statuses.push(reply.status());
-  };
+  const record = recordStopStatuses(statuses);
   page.on('response', record);
   try {
-    const accepted = page.waitForResponse((reply) => isStop(reply) && reply.status() === 200);
+    const accepted = page.waitForResponse(
+      (reply) => isStopRequest(reply.request()) && reply.status() === 200,
+    );
     await page.keyboard.press('Space');
     await accepted;
     assert.ok(
@@ -299,9 +305,7 @@ async function approachMovingThreat(observed, deadline) {
   assert.equal(accepted.status(), 200);
   while (Date.now() < deadline) {
     const current = await state();
-    const progressed =
-      current.own.movement.point.xMicroFp !== before.xMicroFp ||
-      current.own.movement.point.zMicroFp !== before.zMicroFp;
+    const progressed = !isDeepStrictEqual(current.own.movement.point, before);
     if (progressed && movingThreats(current).length) return current;
     await page.waitForTimeout(300);
   }
@@ -346,13 +350,10 @@ async function pursuitAndRetry() {
   );
   const id = targets[0].id;
   const statuses = [];
-  const isStop = (reply) => isStopRequest(reply.request());
-  const record = (reply) => {
-    if (isStop(reply)) statuses.push(reply.status());
-  };
+  const record = recordStopStatuses(statuses);
   const details = [];
   const recordDetails = (reply) => {
-    if (isStop(reply))
+    if (isStopRequest(reply.request()))
       details.push(
         reply.json().then((body) => ({
           status: reply.status(),
@@ -406,7 +407,7 @@ async function pursuitAndRetry() {
       !globalThis.document.querySelector('#stop').disabled,
   );
   const settled = page.waitForResponse(
-    (reply) => isStop(reply) && (reply.status() === 200 || statuses.length === 2),
+    (reply) => isStopRequest(reply.request()) && (reply.status() === 200 || statuses.length === 2),
   );
   await page.locator('#map').press('Space');
   let replies;
@@ -533,6 +534,7 @@ try {
   results.push('private world origin denies full atlas, authoring files and malformed paths');
 
   const otherContext = await browser.newContext();
+  await otherContext.addInitScript(instrumentWorldLab);
   try {
     await selectPlayer(await otherContext.newPage(), 'company-b');
     const observed = await state();
@@ -558,12 +560,7 @@ try {
     resolve(output, 'failure-ui.json'),
     JSON.stringify(
       await page.evaluate(() => ({
-        connection: globalThis.document.body.dataset.connection,
-        message: globalThis.document.querySelector('#client-message')?.textContent,
-        viewport: globalThis.document.querySelector('#map')?.getAttribute('viewBox'),
-        activeElement: globalThis.document.activeElement?.id,
-        stopDisabled: globalThis.document.querySelector('#stop')?.disabled,
-        sequence: globalThis.document.querySelector('#world-sequence')?.textContent,
+        ...globalThis.readWorldLabUi?.(),
         stopInputs: globalThis.worldLabStopInputs,
       })),
       null,
