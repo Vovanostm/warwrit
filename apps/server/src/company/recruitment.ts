@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import type { LocalRecruitOfferDto } from '@warwrit/protocol';
 import { sql, type Transaction } from 'kysely';
 import {
   COMPANY_CATALOGUE,
@@ -280,7 +281,7 @@ export async function readSiteRecruitOffers(
   worldId: string,
   siteId: string,
   areaId: string,
-): Promise<readonly RecruitOfferView[]> {
+): Promise<readonly LocalRecruitOfferDto[]> {
   await ensureWorldRecruitPool(transaction, worldId);
   const rows = await transaction
     .selectFrom('world_recruit_offers')
@@ -294,22 +295,7 @@ export async function readSiteRecruitOffers(
   return rows.map(projectRecruitOffer);
 }
 
-export interface RecruitOfferView {
-  readonly offerId: string;
-  readonly offerRevision: string;
-  readonly characterId: string;
-  readonly name: string;
-  readonly skills: readonly { readonly skillId: string; readonly level: number }[];
-  readonly aptitudes: readonly { readonly skillId: string; readonly valueBps: number }[];
-  readonly health: { readonly current: number; readonly maximum: number };
-  readonly stamina: { readonly current: number; readonly maximum: number };
-  readonly conditions: readonly string[];
-  readonly signingQ: string;
-  readonly dailyWageMilli: string;
-  readonly physician: boolean;
-}
-
-function projectRecruitOffer(row: StoredRecruitOffer): RecruitOfferView {
+function projectRecruitOffer(row: StoredRecruitOffer): LocalRecruitOfferDto {
   const candidate = row.candidate as LifecycleCharacter;
   const vitals = row.vitals as PhysicalVitals;
   if (

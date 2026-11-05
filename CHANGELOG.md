@@ -21,7 +21,10 @@ requests.
   retain initial failures and saved-trial limits. Delayed-Join SQL3, types/lint,
   client2 and corrected migration smoke PASS. Earlier full unit1242/stress10000
   PASS; final composed clean gate and hosted CI remain pending. Care/recruitment
-  are not merged; original wounded saves remain retained.
+  are not merged; original wounded saves remain retained. Composed unit1242
+  and stress10000 PASS; SQL87 passed and one stale migration suffix failed. Its
+  focused corrected retry PASS. Reuse the protocol offer DTO and isolate roster
+  controls; introduced client complexity cleanup is pending before publication.
 
 ### Preserve recruitment ownership and observed roster state
 

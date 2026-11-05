@@ -76,30 +76,14 @@ export function CompanyPanel(props: {
                     <span className="leader-mark"> · глава</span>
                   )}
                 </span>
-                <span className="person-status">
-                  {status === 'AVAILABLE' && character.inFieldParty === false
-                    ? 'В компании'
-                    : statusLabel(status)}
-                </span>
+                <span className="person-status">{rosterStatusLabel(character, status)}</span>
               </div>
-              {character.fieldPartyFull && !character.inFieldParty && status === 'AVAILABLE' && (
-                <>
-                  <button type="button" className="action action-quiet" disabled>
-                    Присоединить к отряду
-                  </button>
-                  <p className="state-note">Отряд заполнен; сначала освободите место.</p>
-                </>
-              )}
-              {character.canJoinFieldParty && !character.fieldPartyFull && (
-                <button
-                  type="button"
-                  className="action action-quiet"
-                  disabled={props.equipBusy}
-                  onClick={() => props.onJoinFieldParty(character.characterId)}
-                >
-                  Присоединить к отряду
-                </button>
-              )}
+              <FullPartyNotice character={character} status={status} />
+              <JoinPartyButton
+                character={character}
+                busy={props.equipBusy}
+                onJoin={props.onJoinFieldParty}
+              />
               {body && body.maximumHealth !== null && (
                 <Meter
                   label="Здоровье"
@@ -214,6 +198,54 @@ export function CompanyPanel(props: {
         </>
       )}
     </section>
+  );
+}
+
+type RosterCharacter = CompanySummaryDto['characters'][number];
+
+function rosterStatusLabel(character: RosterCharacter, status: RosterCharacter['knownStatus']) {
+  return status === 'AVAILABLE' && character.inFieldParty === false
+    ? 'В компании'
+    : statusLabel(status);
+}
+
+function FullPartyNotice({
+  character,
+  status,
+}: {
+  readonly character: RosterCharacter;
+  readonly status: RosterCharacter['knownStatus'];
+}) {
+  if (!character.fieldPartyFull || character.inFieldParty || status !== 'AVAILABLE') return null;
+  return (
+    <>
+      <button type="button" className="action action-quiet" disabled>
+        Присоединить к отряду
+      </button>
+      <p className="state-note">Отряд заполнен; сначала освободите место.</p>
+    </>
+  );
+}
+
+function JoinPartyButton({
+  character,
+  busy,
+  onJoin,
+}: {
+  readonly character: RosterCharacter;
+  readonly busy: boolean;
+  readonly onJoin: (characterId: string) => void;
+}) {
+  if (!character.canJoinFieldParty || character.fieldPartyFull) return null;
+  return (
+    <button
+      type="button"
+      className="action action-quiet"
+      disabled={busy}
+      onClick={() => onJoin(character.characterId)}
+    >
+      Присоединить к отряду
+    </button>
   );
 }
 
