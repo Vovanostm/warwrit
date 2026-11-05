@@ -12,7 +12,7 @@ requests.
 ### Add ordinary local recruitment to the company loop
 
 - 2026-11-05, originating branch `codex/ordinary-recruitment`, local change on
-  `516c1eb`. Add the owner-approved finite world pool, physician at Stone Ford,
+  `516c1eb`. Add the owner-approved finite world pool, physician at Каменный Брод,
   offer inspection with skills, aptitudes, condition and explicit no-equipment
   disclosure, 50-crown hiring and 10-crown base wage with existing qualification
   multipliers. Hiring does not add the person to the field party; Join remains a
@@ -23,6 +23,11 @@ requests.
   afterward but not rerun. Startup/runtime, native player journey, full integrated
   quality and hosted CI are NOT_RUN. The slice is local and uncommitted at entry.
   [Owning acceptance](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
+  Parent continuation makes additive roster flags optional for existing callers;
+  fresh protocol build and server/web types PASS. Existing unsupported-action
+  coverage now uses SetAssignment because Recruit has a strict enabled payload.
+  The exact roster oracle includes the new scoped flags. Both existing SQL route
+  scenarios and recruitment SQL PASS after that fixture correction; scoped lint PASS.
 
 ### Integrate the merged browser harness into the care candidate
 
