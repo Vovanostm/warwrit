@@ -127,18 +127,24 @@ export function registerCompanyRoutes(
         state.economy.lifecycle.parties.length === 1
           ? state.economy.lifecycle.parties[0]
           : undefined;
+      const holdings = projectCompanyHoldings(
+        state,
+        companyId,
+        view.characters.map((character) => character.characterId),
+      );
+      // Holdings already exposes witnessed deaths from this company's completed encounters.
+      const fallen = new Set(
+        holdings.people.filter((person) => person.fallen).map((person) => person.characterId),
+      );
       const knownMembers = view.characters.filter(
-        (character) => character.fieldPartyId === party?.partyId,
+        (character) =>
+          character.fieldPartyId === party?.partyId && !fallen.has(character.characterId),
       );
       const fieldPartyFull =
         view.commandCapacity === null ||
         knownMembers.length >= Math.min(view.commandCapacity, COMPANY_RULES.partyHardMax);
       return {
-        holdings: projectCompanyHoldings(
-          state,
-          companyId,
-          view.characters.map((character) => character.characterId),
-        ),
+        holdings,
         summary: {
           companyId: view.companyId,
           revision: view.revision,
@@ -151,13 +157,15 @@ export function registerCompanyRoutes(
             nicknameTextKey: character.nicknameTextKey,
             perkIds: [...character.perkIds],
             knownStatus: character.knownStatus,
-            inFieldParty: character.fieldPartyId === party?.partyId,
+            inFieldParty:
+              !fallen.has(character.characterId) && character.fieldPartyId === party?.partyId,
             canJoinFieldParty: (() => {
               const known = state.economy.lifecycle.knowledge.characters.find(
                 (entry) => entry.identity.characterId === character.characterId,
               );
               return Boolean(
                 party?.location.kind === 'AT' &&
+                !fallen.has(character.characterId) &&
                 !fieldPartyFull &&
                 known?.presence.availability === 'AVAILABLE' &&
                 known.presence.encounterBindingId === null &&

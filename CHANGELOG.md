@@ -28,7 +28,9 @@ requests.
   exports, now removed or made private; the second found two locale-dependent
   sorts, changed to compareCodeUnits. Native hire exposed missing carried-purse
   attestation; reuse the existing opening proof and keep remote wallets inaccessible.
-  Native/final gate remain open; nothing is merged.
+  Native lost-hire/reload/exact retry PASS with one50-crown transfer. Reuse
+  existing witnessed-death holdings facts so a dead captain cannot fill a known
+  party slot. Native Join/care and final gate remain open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 
