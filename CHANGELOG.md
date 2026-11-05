@@ -11,7 +11,8 @@ requests.
 
 ### Reveal accepted battle-contract destinations without charting the road
 
-- 2026-11-05, `codex/contract-objective-markers`, local implementation of the
+- 2026-11-05, `codex/contract-objective-markers`, published in
+  [PR353](https://github.com/Vovanostm/warwrit/pull/353). Implementation of the
   owner's «Показывать метку цели, путь разведывать» decision. HUNT01–HUNT03
   ACCEPT/HELP persist the existing company QUEST_MARKER grant atomically with
   participation. Ordinary atlas reads reconcile accepted old saves. Marker-only

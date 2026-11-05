@@ -924,7 +924,8 @@ both were corrected. The first SQL run found an invalid test request using the
 nested revision instead of the response revision. Correcting that fixture made
 the actual acceptance scenario pass. The branch transfer initially retained built
 protocol types from care; rebuilding protocol/core restored a passing main-based
-typecheck. Hosted CI and publication remain pending.
+typecheck. [PR353](https://github.com/Vovanostm/warwrit/pull/353) is published as a
+draft and owns current-head hosted CI. Source/native acceptance above remains applicable.
 Full-game and care acceptance remain open under their existing owners.
 
 Native check uses a separate ordinary world, warwrit_objective_native_20261105.

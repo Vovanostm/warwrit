@@ -1,13 +1,13 @@
 # Warwrit current delivery plan
 
-## Accepted hunt destinations — 2026-11-05, LOCAL
+## Accepted hunt destinations — 2026-11-05, PUBLISHED DRAFT
 
 Coordinator, author, integrator, resource owner and validator is this chat's parent.
 Full-game objective remains ACTIVE.
 Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
 Owner chose «Показывать метку цели, путь разведывать» for accepted battle contracts.
 [Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#accepted-hunt-objective-markers--2026-11-05) owns current acceptance.
-Branch codex/contract-objective-markers independently integrates main e809d0ad / PR352.
+[PR353](https://github.com/Vovanostm/warwrit/pull/353) on codex/contract-objective-markers independently integrates main e809d0ad / PR352.
 HUNT01–HUNT03 ACCEPT/HELP atomically persist a marker-only company grant.
 Ordinary atlas reads repair participating accepted saves. Quest-granted names remain visible at overview; terrain still needs exploration.
 Two real PostgreSQL cartography scenarios, server types and scoped lint PASS.
