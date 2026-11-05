@@ -1,5 +1,54 @@
 # Harness evaluation
 
+## Changed-document formatting and historical CI evidence — 2026-11-05
+
+The owner requested more harness improvements and new ideas. Source is the
+completed documentation CI41999841171, the current workflow/validator, independent
+source inspection and live PR353 observations. Branch `codex/harness-docs-format`
+owns this support slice. The game writer's source, checkpoint and saves remain
+separately owned. [Issue357](https://github.com/Vovanostm/warwrit/issues/357)
+tracks its authority, acceptance and final hosted observations.
+
+The first hosted documentation job passed in95s. Its whole-repository Prettier
+step ran from09:08:49.7499238 to09:09:26.2169023 UTC, about36.5s. That checks many
+unchanged files although the accepted documentation route already identifies
+existing changed Markdown. Reuse `orca-validate.sh` after the pinned frozen
+install, enabling the existing Corepack pnpm shim. It supplies scoped format,
+clean-tree/scope/plan checks and existing bounded failure diagnostics.
+
+Independent assessment found a baseline race in a direct origin/main call.
+The fetched base can advance after GitHub constructs the tested synthetic merge.
+Pin the validator to `git merge-base origin/$GITHUB_BASE_REF HEAD`, preserving
+the committed diff used by classification without imposing a new current-base
+policy. An isolated test executes the actual workflow's docs shell block on a
+detached checkout with an advanced base, checks the sole changed-file formatter
+invocation, pinned install/shim setup and rejection of a missing base. Its first
+version incorrectly expected exit1 from Git's missing-object error. Git returns
+128 here. The corrected fixture retains the nonzero rejection requirement.
+Eight isolated fixture groups, Bash syntax, scoped formatting and diff PASS.
+Full-route hosted CI and a real documentation follow-up are required for delivery.
+Revised hosted timing is not yet measured.
+
+### Larger opportunity from PR353
+
+The game author integrated PR356 on main `6c525840`. PR353 had a successful full
+run42000045363 at head `3374894b`, actually checking out synthetic merge
+`e2e03bb90bc51535ef26cb8b7c86d32eaf0d10f0` with base `fc130c1b`.
+The observed later head `b9f150ba` and base `6c525840` produce merge
+`e0e976d635a724625e955db9043e0fec180725c7`. The head delta has only four Markdown
+files, but the whole product PR correctly still selects the full route.
+
+A future optimization could reuse successful product evidence after an approved
+documentation-only delta between actual tested snapshots. Existing metadata is
+insufficient for automatic skipping. At readback the OLD run's nested
+`.pull_requests` relation reported the CURRENT head/base, while the checkout log
+retained the original tested composition. Those live relationship fields do not
+prove a historical checkout. Workflow/config/lock/runtime inputs and the actual
+full-step conclusions also need a justified compatibility boundary. The safe
+next investigation is a shadow decision compared with actual full runs, using
+ordinary diffs and revision-grounded evidence. This slice changes no reuse policy
+and adds no receipt framework. Comparative product throughput remains NOT_MEASURED.
+
 ## Scoped CI and rejected local preflight — 2026-11-05
 
 The owner authorized independent agents to verify prior controls and continued
