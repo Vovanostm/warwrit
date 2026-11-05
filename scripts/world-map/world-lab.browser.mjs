@@ -335,9 +335,39 @@ async function approachMovingThreat(observed, deadline) {
 function pursuitSetupReady(observed) {
   return observed.own.movement.mode !== 'MOVING' && movingThreats(observed).length > 0;
 }
+async function waitForPursuitStopReady(targetId, deadline) {
+  let orderId;
+  let acceptedSequence;
+  while (Date.now() < deadline) {
+    const observed = await state();
+    const pursuit = observed.pursuit;
+    acceptedSequence ??= observed.sequence;
+    assert.ok(pursuit?.orderId, 'accepted pursuit must have an order ID');
+    assert.equal(pursuit.targetId, targetId);
+    orderId ??= pursuit.orderId;
+    assert.equal(pursuit.orderId, orderId, 'preparation must observe the same accepted order');
+    if (pursuit.status !== 'CHASING') return pursuit;
+    const ready = await page.evaluate(
+      ({ targetId, acceptedSequence }) => {
+        const marker = globalThis.document.querySelector('[data-pursuit-target]');
+        const renderedSequence = globalThis.document.querySelector('#world-sequence').textContent;
+        return (
+          globalThis.worldLabMapIsFresh() &&
+          BigInt(renderedSequence) >= BigInt(acceptedSequence) &&
+          marker?.getAttribute('data-group-id') === targetId &&
+          !globalThis.document.querySelector('#stop').disabled
+        );
+      },
+      { targetId, acceptedSequence },
+    );
+    if (ready) return pursuit;
+    await page.waitForTimeout(100);
+  }
+  assert.fail(`Accepted pursuit ${orderId} did not become ready within the preparation deadline`);
+}
 async function beginObservedPursuit(deadline) {
-  const rejections = [];
-  while (Date.now() < deadline && rejections.length < 3) {
+  const attempts = [];
+  while (Date.now() < deadline && attempts.length < 3) {
     const observed = await state();
     const point = observed.own.movement.point;
     const targets = movingThreats(observed);
@@ -361,8 +391,22 @@ async function beginObservedPursuit(deadline) {
     const reply = await rightClickMarker(`[data-group-id="${targets[0].id}"]`, 'pursuit', true);
     if (!reply) continue;
     const body = await reply.json();
-    if (reply.status() === 200) return;
-    rejections.push({ status: reply.status(), code: body.code });
+    const attempt = { status: reply.status(), code: body.code };
+    attempts.push(attempt);
+    if (reply.status() === 200) {
+      const pursuit = await waitForPursuitStopReady(targets[0].id, deadline);
+      if (pursuit.status === 'CHASING') return pursuit.orderId;
+      // Acceptance does not promise a chase window: an observed target may
+      // leave sight or be reached before STOP is available. Reacquire natively.
+      attempt.expiredOrder = { orderId: pursuit.orderId, status: pursuit.status };
+    } else {
+      assert.ok(
+        (reply.status() === 422 && body.code === 'TARGET_NOT_VISIBLE') ||
+          (reply.status() === 409 &&
+            ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code)),
+        `Unexpected initial pursuit rejection ${JSON.stringify(attempts)}`,
+      );
+    }
     await writeFile(
       resolve(output, 'pursuit-start-response.json'),
       JSON.stringify(
@@ -370,21 +414,14 @@ async function beginObservedPursuit(deadline) {
           status: reply.status(),
           request: reply.request().postDataJSON(),
           responseBody: JSON.stringify(body),
-          attempts: rejections,
+          attempts,
         },
         null,
         2,
       ),
     );
-    assert.ok(
-      (reply.status() === 422 && body.code === 'TARGET_NOT_VISIBLE') ||
-        (reply.status() === 409 && ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code)),
-      `Unexpected initial pursuit rejection ${JSON.stringify(rejections)}`,
-    );
   }
-  assert.fail(
-    `No actual pursuit accepted within three attempts/45s: ${JSON.stringify(rejections)}`,
-  );
+  assert.fail(`No STOP-ready pursuit within three attempts/45s: ${JSON.stringify(attempts)}`);
 }
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
@@ -442,15 +479,7 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
-  await beginObservedPursuit(preparationDeadline);
-  const pursuitOrderId = (await state()).pursuit?.orderId;
-  assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
-  await page.waitForFunction(
-    () =>
-      globalThis.document.body.dataset.connection === 'live' &&
-      globalThis.document.querySelector('[data-pursuit-target]') &&
-      !globalThis.document.querySelector('#stop').disabled,
-  );
+  const pursuitOrderId = await beginObservedPursuit(preparationDeadline);
   const settled = page.waitForResponse(
     (reply) => isStopRequest(reply.request()) && (reply.status() === 200 || statuses.length === 2),
   );

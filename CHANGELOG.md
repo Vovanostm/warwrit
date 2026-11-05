@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Reacquire expired pursuit preparation before the STOP browser probe
+
+- 2026-11-05, `codex/game-care-delivery`, LOCAL correction after
+  CI42015936183 repeated the accepted-but-expired pursuit setup failure. A live
+  LAST_SEEN order had no enabled Stop and no pursuit STOP was sent. Read the
+  same accepted order until its matching target/Stop is ready, or reacquire a
+  lawful observed target through ordinary input if it expires. Count accepted
+  expired orders inside the existing three-attempt/45s preparation budget.
+  Preserve actual delayed STOP, stale-response identities, epochs and retained/
+  cancelled-order assertions. Gameplay source is unchanged. Scoped syntax/lint/
+  format/diff and frozen real-browser journey PASS, including actual409→200.
+  Independent affected source review ACCEPT after tying UI readiness to a
+  post-acceptance sequence. Current-head hosted verification remains required.
+  [Owning result](docs/work-packages/WP-02.4.md#expired-pursuit-preparation-correction--2026-11-05).
+
 ### Integrate care with changed-document validation
 
 - 2026-11-05, `codex/game-care-delivery`, LOCAL integration of main `9bb2d703`
