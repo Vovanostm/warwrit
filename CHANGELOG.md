@@ -27,7 +27,7 @@ requests.
   fresh protocol build and server/web types PASS. Existing unsupported-action
   coverage now uses SetAssignment because Recruit has a strict enabled payload.
   The exact roster oracle includes the new scoped flags. Both existing SQL route
-  scenarios and recruitment SQL PASS after that fixture correction; scoped lint PASS.
+  scenarios and recruitment SQL PASS after that fixture correction; scoped lint PASS after removing the unused wage-rule import.
 
 ### Integrate the merged browser harness into the care candidate
 
@@ -492,7 +492,7 @@ requests.
   Capture NPC/other-player inputs first; retain one own timestamp, STOP ordering
   and fixed-past rejection. Independent source ACCEPT, actual separate-pool
   regression1PASS, complete measured SQL81PASS and migration smoke PASS; server
-  types/scoped lint PASS. Retain earlier failed wrapper and browser attempts;
+  types/scoped lint PASS after removing the unused wage-rule import. Retain earlier failed wrapper and browser attempts;
   current browser/normal audit/commit/PR pending. [Owning correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
   Source correction mirrored into the unfinished parent combat tree; original
   databases preserved. No main merge, deployment, paid provisioning or Orca.
@@ -3952,7 +3952,7 @@ requests.
   execution/assertion to bridge-v3 and reject bridge rulesets in the old setup
   entrypoint. Existing privacy/setup tests now cover these boundaries, including
   legacy false capabilities that must not alter actions. No approved rule changed.
-  Focused 34 tests, core typecheck and scoped lint PASS. Four prior timeout cases
+  Focused 34 tests, core typecheck and scoped lint PASS after removing the unused wage-rule import. Four prior timeout cases
   rerun sequentially: three PASS, unchanged world navigation still times out at
   5 seconds. After browser cleanup, broader checks: 183 PASS, two timeouts
   (world navigation and legacy fixture run); leader-death now PASS. Independent

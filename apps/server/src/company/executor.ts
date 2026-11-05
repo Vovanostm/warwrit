@@ -24,7 +24,6 @@ import {
   canonicalRevision,
   canonicalStateJson,
   COMPANY_COMMAND_SCHEMA_VERSION,
-  COMPANY_RULES,
   COMPANY_RULESET_ID,
   checkFreshCompanyRevision,
   companySourceKey,
