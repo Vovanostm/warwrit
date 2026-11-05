@@ -4,6 +4,8 @@ import {
   companyRosterAttemptKey,
   createCompanyRosterAttempt,
   postCompanyRosterAttempt,
+  persistCompanyRosterAttempt,
+  matchesCompanyRosterScope,
   readCompanyRosterAttempt,
   saveCompanyRosterAttempt,
   type CompanyRosterStorage,
@@ -85,4 +87,26 @@ describe('company roster command attempts', () => {
     expect(await postCompanyRosterAttempt('/api', attempt, malformed)).toBe('UNKNOWN');
     expect(readCompanyRosterAttempt(storage, scope, 'JoinFieldParty')?.body).toBe(attempt.body);
   });
+});
+
+it('never replaces or clears another pending command and isolates company scope', () => {
+  const storage = new MemoryStorage();
+  const original = createCompanyRosterAttempt(scope, request);
+  expect(saveCompanyRosterAttempt(storage, original)).toBe(true);
+  const different = createCompanyRosterAttempt(scope, {
+    ...request,
+    commandId: 'different-command',
+  });
+  expect(clearCompanyRosterAttempt(storage, different)).toBe(false);
+  const retained = persistCompanyRosterAttempt(storage, scope, different.request);
+  expect(retained.kind).toBe('EXISTING');
+  expect(readCompanyRosterAttempt(storage, scope, 'Recruit')?.body).toBe(original.body);
+  const otherCompany = { ...scope, companyId: 'company-two' };
+  expect(readCompanyRosterAttempt(storage, otherCompany, 'Recruit')).toBeUndefined();
+  expect(matchesCompanyRosterScope(undefined, scope)).toBe(false);
+  expect(matchesCompanyRosterScope(otherCompany, scope)).toBe(false);
+  expect(matchesCompanyRosterScope(scope, scope)).toBe(true);
+  storage.setItem(companyRosterAttemptKey(scope, 'Recruit'), 'damaged-request');
+  expect(persistCompanyRosterAttempt(storage, scope, different.request).kind).toBe('OCCUPIED');
+  expect(storage.getItem(companyRosterAttemptKey(scope, 'Recruit'))).toBe('damaged-request');
 });

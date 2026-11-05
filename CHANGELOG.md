@@ -24,7 +24,10 @@ requests.
   are not merged; original wounded saves remain retained. Composed unit1242
   and stress10000 PASS; SQL87 passed and one stale migration suffix failed. Its
   focused corrected retry PASS. Reuse the protocol offer DTO and isolate roster
-  controls; introduced client complexity cleanup is pending before publication.
+  controls. Final cohesive handler extraction, exact-scope busy recovery and
+  shared scalar protocol guards pass affected source review, client4/protocol20/
+  SQL3 checks, web types and scoped lint. Static diagnostics have zero introduced
+  clones/hard complexity breaches; full hosted measured quality remains required.
 
 ### Preserve recruitment ownership and observed roster state
 

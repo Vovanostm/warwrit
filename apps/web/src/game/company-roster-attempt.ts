@@ -1,4 +1,8 @@
-import type { OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
+import {
+  isRecord,
+  isTransportId as isId,
+  type OrdinaryPlayerCompanyCommandV2Dto,
+} from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { classifyCompanyCarePost, type CarePostResult } from './company-care-attempt.js';
 
@@ -16,16 +20,19 @@ export interface CompanyRosterAttempt extends CompanyRosterScope {
   readonly body: string;
   readonly request: CompanyRosterCommand;
 }
-export interface CompanyRosterStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
+export type CompanyRosterStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+export function matchesCompanyRosterScope(
+  candidate: CompanyRosterScope | undefined,
+  expected: CompanyRosterScope,
+): boolean {
+  return (
+    candidate !== undefined &&
+    candidate.accountId === expected.accountId &&
+    candidate.companyId === expected.companyId
+  );
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  value !== null && typeof value === 'object' && !Array.isArray(value);
-const isId = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && value.length <= 128;
 const isRevision = (value: unknown): value is string =>
   typeof value === 'string' && /^(0|[1-9][0-9]{0,127})$/u.test(value);
 
@@ -126,6 +133,39 @@ export function saveCompanyRosterAttempt(
   return true;
 }
 
+export type PersistCompanyRosterAttemptResult =
+  | { readonly kind: 'SAVED'; readonly attempt: CompanyRosterAttempt }
+  | { readonly kind: 'EXISTING'; readonly attempt: CompanyRosterAttempt }
+  | { readonly kind: 'OCCUPIED' | 'UNAVAILABLE' };
+
+export type ReadBrowserCompanyRosterAttemptResult =
+  | { readonly kind: 'AVAILABLE'; readonly attempt: CompanyRosterAttempt | undefined }
+  | { readonly kind: 'UNAVAILABLE' };
+
+/** Save once, or return the intact request already occupying this action slot. */
+export function persistCompanyRosterAttempt(
+  storage: CompanyRosterStorage,
+  scope: CompanyRosterScope,
+  request: CompanyRosterCommand,
+): PersistCompanyRosterAttemptResult {
+  try {
+    const attempt = createCompanyRosterAttempt(scope, request);
+    if (saveCompanyRosterAttempt(storage, attempt)) return { kind: 'SAVED', attempt };
+    const existing = readCompanyRosterAttempt(storage, scope, request.type);
+    return existing ? { kind: 'EXISTING', attempt: existing } : { kind: 'OCCUPIED' };
+  } catch {
+    return { kind: 'UNAVAILABLE' };
+  }
+}
+
+export function persistBrowserCompanyRosterAttempt(
+  scope: CompanyRosterScope,
+  request: CompanyRosterCommand,
+): PersistCompanyRosterAttemptResult {
+  const storage = browserCompanyRosterStorage();
+  return storage ? persistCompanyRosterAttempt(storage, scope, request) : { kind: 'UNAVAILABLE' };
+}
+
 /** Clear only the exact attempt that received a complete matching terminal reply. */
 export function clearCompanyRosterAttempt(
   storage: CompanyRosterStorage,
@@ -167,5 +207,27 @@ export function browserCompanyRosterStorage(): CompanyRosterStorage | undefined 
     return typeof window === 'undefined' ? undefined : window.sessionStorage;
   } catch {
     return undefined;
+  }
+}
+
+export function readBrowserCompanyRosterAttempt(
+  scope: CompanyRosterScope,
+  type: CompanyRosterCommandType,
+): ReadBrowserCompanyRosterAttemptResult {
+  const storage = browserCompanyRosterStorage();
+  if (!storage) return { kind: 'UNAVAILABLE' };
+  try {
+    return { kind: 'AVAILABLE', attempt: readCompanyRosterAttempt(storage, scope, type) };
+  } catch {
+    return { kind: 'UNAVAILABLE' };
+  }
+}
+
+export function clearBrowserCompanyRosterAttempt(attempt: CompanyRosterAttempt): boolean {
+  try {
+    const storage = browserCompanyRosterStorage();
+    return storage !== undefined && clearCompanyRosterAttempt(storage, attempt);
+  } catch {
+    return false;
   }
 }

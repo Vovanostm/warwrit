@@ -4,12 +4,11 @@ import { type LocalRecruitOfferDto, type LocalRecruitOffersResponseDto } from '@
 import { conditionLabel, formatCrowns } from './format.js';
 import {
   browserCompanyRosterStorage,
-  clearCompanyRosterAttempt,
+  clearBrowserCompanyRosterAttempt,
   companyRosterAttemptKey,
-  createCompanyRosterAttempt,
+  persistCompanyRosterAttempt,
   postCompanyRosterAttempt,
   readCompanyRosterAttempt,
-  saveCompanyRosterAttempt,
   type CompanyRosterAttempt,
 } from './company-roster-attempt.js';
 
@@ -95,44 +94,87 @@ export function RecruitmentPanel(props: {
     return () => controller.abort();
   }, [props.apiBaseUrl, props.onUnauthorized, props.siteId]);
 
-  async function runHire(offer: LocalRecruitOfferDto | undefined, retry = false) {
-    if (busyRef.current) return;
-    let attempt = pending;
-    if (attempt && !retry) return;
-    if (!attempt && retry) return;
-    if (!attempt && offer) {
-      attempt = createCompanyRosterAttempt(
-        { accountId: props.accountId, companyId: props.companyId },
-        {
-          schemaVersion: 2,
-          commandId: crypto.randomUUID(),
-          expectedPublicRevision: props.expectedPublicRevision,
-          type: 'Recruit',
-          payload: { offerId: offer.offerId, offerRevision: offer.offerRevision },
-        },
-      );
-      if (!storage) {
-        setMessage('Локальное хранилище недоступно; найм не отправлен.');
-        return;
-      }
-      try {
-        if (!saveCompanyRosterAttempt(storage, attempt)) {
-          const saved = readCompanyRosterAttempt(
-            storage,
-            { accountId: props.accountId, companyId: props.companyId },
-            'Recruit',
-          );
-          setStored(saved ? { key: storageKey, attempt: saved } : undefined);
-          setMessage('Есть незавершённый запрос найма. Сначала проверьте и повторите его.');
-          return;
-        }
-        setStored({ key: storageKey, attempt });
-      } catch {
-        setMessage('Локальное хранилище недоступно; найм не отправлен.');
-        return;
-      }
+  type HirePreparation =
+    | { readonly kind: 'ready'; readonly attempt: CompanyRosterAttempt }
+    | { readonly kind: 'blocked'; readonly message?: string };
+
+  function prepareHire(
+    offer: LocalRecruitOfferDto | undefined,
+    retry: boolean,
+  ): HirePreparation {
+    if (pending) return retry ? { kind: 'ready', attempt: pending } : { kind: 'blocked' };
+    if (retry || !offer) return { kind: 'blocked' };
+    return persistNewHire(offer);
+  }
+
+  function persistNewHire(offer: LocalRecruitOfferDto): HirePreparation {
+    if (!storage)
+      return { kind: 'blocked', message: 'Локальное хранилище недоступно; найм не отправлен.' };
+    const persisted = persistCompanyRosterAttempt(
+      storage,
+      { accountId: props.accountId, companyId: props.companyId },
+      {
+        schemaVersion: 2,
+        commandId: crypto.randomUUID(),
+        expectedPublicRevision: props.expectedPublicRevision,
+        type: 'Recruit',
+        payload: { offerId: offer.offerId, offerRevision: offer.offerRevision },
+      },
+    );
+    if (persisted.kind === 'SAVED') {
+      setStored({ key: storageKey, attempt: persisted.attempt });
+      return { kind: 'ready', attempt: persisted.attempt };
     }
-    if (!attempt) return;
+    if (persisted.kind === 'EXISTING') setStored({ key: storageKey, attempt: persisted.attempt });
+    return {
+      kind: 'blocked',
+      message:
+        persisted.kind === 'UNAVAILABLE'
+          ? 'Локальное хранилище недоступно; найм не отправлен.'
+          : 'Есть незавершённый запрос найма. Сначала проверьте и повторите его.',
+    };
+  }
+
+  async function settleHire(
+    attempt: CompanyRosterAttempt,
+    result: Awaited<ReturnType<typeof postCompanyRosterAttempt>>,
+    offerName?: string,
+  ) {
+    if (result === 'UNAUTHENTICATED') {
+      setMessage('Сеанс истёк. После входа повторите тот же запрос о найме.');
+      props.onUnauthorized();
+      return;
+    }
+    if (result === 'UNKNOWN') {
+      setMessage('Ответ о найме неизвестен. Повторите тот же запрос.');
+      return;
+    }
+    if (!clearBrowserCompanyRosterAttempt(attempt)) {
+      setMessage('Ответ получен, но локальная запись не очищена. Повторите тот же запрос.');
+      return;
+    }
+    setStored(undefined);
+    setMessage(
+      result === 'ACCEPTED'
+        ? `${offerName ?? 'Наёмник'} нанят. Чтобы отправить его в бой, отдельно присоедините к отряду.`
+        : 'Найм отклонён. Сведения об отряде обновлены.',
+    );
+    if (result === 'ACCEPTED') await refreshRecruitOffers();
+    props.onRefresh();
+  }
+
+  async function refreshRecruitOffers() {
+    const refreshed = await fetch(
+      `${props.apiBaseUrl.replace(/\/$/u, '')}/company/recruits/${encodeURIComponent(props.siteId)}`,
+      { credentials: 'same-origin', cache: 'no-store' },
+    ).catch(() => undefined);
+    if (refreshed?.status === 401) props.onUnauthorized();
+    if (!refreshed?.ok) return;
+    const body: unknown = await refreshed.json().catch(() => undefined);
+    if (isRecruitResponse(body)) setOffers(body.offers);
+  }
+
+  async function dispatchHire(attempt: CompanyRosterAttempt, offerName?: string) {
     busyRef.current = true;
     setBusy(true);
     setMessage(undefined);
@@ -142,44 +184,19 @@ export function RecruitmentPanel(props: {
       setBusy(false);
       return;
     }
-
-    if (result === 'UNAUTHENTICATED') {
-      setMessage('Сеанс истёк. После входа повторите тот же запрос о найме.');
-      props.onUnauthorized();
-    } else if (result === 'UNKNOWN') {
-      setMessage('Ответ о найме неизвестен. Повторите тот же запрос.');
-    } else {
-      let cleared: boolean;
-      try {
-        cleared = storage !== undefined && clearCompanyRosterAttempt(storage, attempt);
-      } catch {
-        cleared = false;
-      }
-      if (cleared) {
-        setStored(undefined);
-        setMessage(
-          result === 'ACCEPTED'
-            ? `${offer?.name ?? 'Наёмник'} нанят. Чтобы отправить его в бой, отдельно присоедините к отряду.`
-            : 'Найм отклонён. Сведения об отряде обновлены.',
-        );
-        if (result === 'ACCEPTED') {
-          const refreshed = await fetch(
-            `${props.apiBaseUrl.replace(/\/$/u, '')}/company/recruits/${encodeURIComponent(props.siteId)}`,
-            { credentials: 'same-origin', cache: 'no-store' },
-          ).catch(() => undefined);
-          if (refreshed?.status === 401) props.onUnauthorized();
-          if (refreshed?.ok) {
-            const body: unknown = await refreshed.json().catch(() => undefined);
-            if (isRecruitResponse(body)) setOffers(body.offers);
-          }
-        }
-        props.onRefresh();
-      } else {
-        setMessage('Ответ получен, но локальная запись не очищена. Повторите тот же запрос.');
-      }
-    }
+    await settleHire(attempt, result, offerName);
     busyRef.current = false;
     setBusy(false);
+  }
+
+  async function runHire(offer: LocalRecruitOfferDto | undefined, retry = false) {
+    if (busyRef.current) return;
+    const prepared = prepareHire(offer, retry);
+    if (prepared.kind === 'blocked') {
+      if (prepared.message) setMessage(prepared.message);
+      return;
+    }
+    await dispatchHire(prepared.attempt, offer?.name);
   }
 
   return (
@@ -260,31 +277,64 @@ function isRecruitResponse(value: unknown): value is LocalRecruitOffersResponseD
 }
 
 function isRecruitOffer(value: unknown): value is LocalRecruitOfferDto {
-  if (!isRecord(value) || !Array.isArray(value['skills']) || !Array.isArray(value['conditions']))
-    return false;
   return (
-    typeof value['offerId'] === 'string' &&
-    typeof value['offerRevision'] === 'string' &&
-    typeof value['characterId'] === 'string' &&
-    typeof value['name'] === 'string' &&
-    typeof value['signingQ'] === 'string' &&
-    typeof value['dailyWageMilli'] === 'string' &&
-    typeof value['physician'] === 'boolean' &&
-    isVitals(value['health']) &&
-    isVitals(value['stamina']) &&
-    Array.isArray(value['aptitudes']) &&
-    value['skills'].every(
-      (entry) =>
-        isRecord(entry) && typeof entry['skillId'] === 'string' && Number.isInteger(entry['level']),
-    ) &&
-    value['aptitudes'].every(
-      (entry) =>
-        isRecord(entry) &&
-        typeof entry['skillId'] === 'string' &&
-        Number.isInteger(entry['valueBps']),
-    ) &&
-    value['conditions'].every((entry) => typeof entry === 'string')
+    isRecord(value) &&
+    hasRecruitOfferIdentity(value) &&
+    hasRecruitOfferVitals(value) &&
+    hasRecruitOfferDetails(value)
   );
+}
+
+function hasRecruitOfferIdentity(value: Record<string, unknown>): boolean {
+  return hasRecruitOfferStrings(value) && typeof value['physician'] === 'boolean';
+}
+
+function hasRecruitOfferStrings(value: Record<string, unknown>): boolean {
+  const stringKeys = [
+    'offerId',
+    'offerRevision',
+    'characterId',
+    'name',
+    'signingQ',
+    'dailyWageMilli',
+  ];
+  return stringKeys.every((key) => typeof value[key] === 'string');
+}
+
+function hasRecruitOfferVitals(value: Record<string, unknown>): boolean {
+  return isVitals(value['health']) && isVitals(value['stamina']);
+}
+
+function hasRecruitOfferDetails(value: Record<string, unknown>): boolean {
+  return (
+    isRecruitSkillList(value['skills']) &&
+    isRecruitAptitudeList(value['aptitudes']) &&
+    isStringList(value['conditions'])
+  );
+}
+
+function isRecruitSkillList(value: unknown): value is LocalRecruitOfferDto['skills'] {
+  return Array.isArray(value) && value.every(isRecruitSkill);
+}
+
+function isRecruitSkill(value: unknown): boolean {
+  return (
+    isRecord(value) && typeof value['skillId'] === 'string' && Number.isInteger(value['level'])
+  );
+}
+
+function isRecruitAptitudeList(value: unknown): value is LocalRecruitOfferDto['aptitudes'] {
+  return Array.isArray(value) && value.every(isRecruitAptitude);
+}
+
+function isRecruitAptitude(value: unknown): boolean {
+  return (
+    isRecord(value) && typeof value['skillId'] === 'string' && Number.isInteger(value['valueBps'])
+  );
+}
+
+function isStringList(value: unknown): value is readonly string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === 'string');
 }
 
 function isVitals(value: unknown): value is { readonly current: number; readonly maximum: number } {
