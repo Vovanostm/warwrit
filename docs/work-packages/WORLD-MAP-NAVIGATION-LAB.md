@@ -909,14 +909,18 @@ Acceptance uses the ordinary entry and the existing PostgreSQL world-route tests
 
 - Accepted destination is present, unvisited, with unchanged charted/explored bits.
 - Exact command retry creates one grant; rejected acceptance grants nothing.
+- Another company remains unaware until HELP; its granted marker survives LEAVE.
 - Known destination through unknown terrain still rejects without a new order.
 - An accepted old save without a grant repairs it on the next ordinary map read.
 - Native acceptance, reload and independent final critique remain pending.
 
 Local real PostgreSQL checks for both ordinary painted-cartography scenarios PASS.
+The accepted/helper/leave and isolation assertions also PASS on independent main92c0f534.
 Server types and scoped ESLint PASS. Initial type errors selected an unnamed
 navigation site and used untyped cartography tables through the typed query API;
 both were corrected. The first SQL run found an invalid test request using the
 nested revision instead of the response revision. Correcting that fixture made
-the actual acceptance scenario pass. Hosted CI and publication remain pending.
+the actual acceptance scenario pass. The branch transfer initially retained built
+protocol types from care; rebuilding protocol/core restored a passing main-based
+typecheck. Hosted CI and publication remain pending.
 Full-game and care acceptance remain open under their existing owners.

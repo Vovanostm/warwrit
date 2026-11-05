@@ -3255,6 +3255,7 @@ async function seedSyntheticCompany(
       epoch_ms: String(Date.now() - 5_000),
       starting_tick: lifecycle.campaignTick,
     })
+    .onConflict((conflict) => conflict.column('world_id').doNothing())
     .execute();
 }
 
@@ -3664,23 +3665,31 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         PAINTED_GAME_WORLD_ID,
         FIRST_HUNT_ISSUER_LOCATION,
       );
+      const helper = makeSyntheticCompany(
+        db,
+        connectionString,
+        apps,
+        PAINTED_GAME_WORLD_ID,
+        FIRST_HUNT_ISSUER_LOCATION,
+      );
       await seedSyntheticCompany(db, actor);
-      const readMap = async () => {
-        const response = await actor.app.inject({
+      await seedSyntheticCompany(db, helper);
+      const readMap = async (viewer = actor) => {
+        const response = await viewer.app.inject({
           method: 'GET',
           url: '/world/surroundings',
-          headers: actor.ownerHeaders,
+          headers: viewer.ownerHeaders,
         });
         expect(response.statusCode, response.body).toBe(200);
         const cartography = response.json<WorldSurroundingsDto>().map.cartography;
         if (!cartography) throw new Error('ordinary painted map missing');
         return cartography;
       };
-      const grants = async () =>
+      const grants = async (companyId = actor.companyId) =>
         (
           await sql`
             select source_ref from company_map_grants
-             where world_id = ${actor.worldId} and company_id = ${actor.companyId}
+             where world_id = ${actor.worldId} and company_id = ${companyId}
                and source_kind = 'QUEST_MARKER'
           `.execute(db)
         ).rows;
@@ -3761,6 +3770,41 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         expect(route.json(), route.body).toMatchObject({ code: 'MAP_INFORMATION_REQUIRED' });
         expect((await readMap()).revision).toBe(after.revision);
         expect(await grants()).toHaveLength(1);
+        const helperBefore = await readMap(helper);
+        expect(helperBefore.sites.some((site) => site.siteId === 'staraya-melnitsa')).toBe(false);
+        expect(await grants(helper.companyId)).toEqual([]);
+        const helped = await helper.app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.ownerHeaders,
+          payload: {
+            ...command,
+            commandId: randomUUID(),
+            type: 'HELP',
+            expectedPublicRevision: accepted.json().publicRevision,
+          },
+        });
+        expect(helped.statusCode, helped.body).toBe(200);
+        const left = await helper.app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.ownerHeaders,
+          payload: {
+            ...command,
+            commandId: randomUUID(),
+            type: 'LEAVE',
+            expectedPublicRevision: helped.json().publicRevision,
+            payload: { instanceId: FIRST_HUNT_INSTANCE_ID },
+          },
+        });
+        expect(left.statusCode, left.body).toBe(200);
+        const helperAfter = await readMap(helper);
+        expect(helperAfter.sites.find((site) => site.siteId === 'staraya-melnitsa')).toMatchObject({
+          visited: false,
+        });
+        expect(helperAfter.charted).toBe(helperBefore.charted);
+        expect(helperAfter.explored).toBe(helperBefore.explored);
+        expect(await grants(helper.companyId)).toHaveLength(1);
         // A pre-change save has accepted terms but no grant. Its next ordinary read repairs it.
         await sql`
           delete from company_map_grants
@@ -3775,16 +3819,18 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         expect(restored.explored).toBe(before.explored);
         expect(await grants()).toHaveLength(1);
       } finally {
-        for (const table of [
-          'company_exploration_chunks',
-          'company_place_observations',
-          'company_region_knowledge',
-          'company_map_grants',
-        ])
-          await sql`delete from ${sql.table(table)} where world_id = ${actor.worldId} and company_id = ${actor.companyId}`.execute(
-            db,
-          );
-        await cleanupSyntheticCompany(db, actor);
+        for (const company of [helper, actor]) {
+          for (const table of [
+            'company_exploration_chunks',
+            'company_place_observations',
+            'company_region_knowledge',
+            'company_map_grants',
+          ])
+            await sql`delete from ${sql.table(table)} where world_id = ${company.worldId} and company_id = ${company.companyId}`.execute(
+              db,
+            );
+          await cleanupSyntheticCompany(db, company);
+        }
       }
     },
   );
