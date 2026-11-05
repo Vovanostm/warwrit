@@ -97,6 +97,45 @@ or game-state substitute. Initial instrumentation/setup edits triggered ESLint
 `no-undef` and `no-useless-assignment`; both were corrected before passing checks.
 Final source review and applicable new-head CI remain recorded in PR349.
 
+### Current-tile recovery and finite stale outcomes
+
+CI41950810244 at `943ab947` stopped before movement in the second player's
+interrupted-tile recovery probe. The old oracle aborted an arbitrary first tile
+and required an identical full-URL200. Cartography legitimately cancels obsolete
+revision/viewport work and requests current tiles. That supplies a concrete
+counterexample to the oracle. The exact cancellation in that run is unobserved.
+
+The probe now first loads the map, selects its authorized own-position tile,
+and aborts only that coordinate on same-slot reentry through the existing UI.
+It requires real200 from the same origin and tile path, allowing current revision,
+then verifies that specific tile and all current images are loaded. The normal
+local journey PASS. Both local slot records show a real abort and recovery at
+revision2. Changed-revision recovery is a source-grounded valid case, not a claim
+about those local records. Per-slot recovery details now join the CI artifacts.
+
+The game author's finished `32eb91a5` provides a second oracle correction under
+the existing single-retry policy. The real worker may invalidate that retry too.
+This branch adapts its finite assertions while retaining the fresh approach setup
+and diagnostics. Exact409→200 proves cleared pursuit. Exact409→409 must prove
+exactly two distinct commands, refreshed epoch, final stale UI and the original
+pursuit retained. That rejection branch explicitly leaves cancellation unproven.
+
+Both branches were executed separately on this source. The normal real browser
+journey demonstrated native pursuit STOP409/retry200. An ignored negative probe
+delayed both real STOP requests until actual worker epoch changes and demonstrated
+exact409→409 with the required IDs/epoch/UI/retained-order checks. No responses,
+world state or clocks were forged. The production driver delays only its original
+single request. The existing SQL pursuit specification also requires accepted
+STOP to cancel atomically; all six SQL pursuit cases passed in the earlier
+CI41950810244. New-head applicable CI must repeat that positive boundary. A green
+finite-rejection branch alone cannot close the player cancellation criterion.
+
+One read-only reviewer used the host's primary checkout and incorrectly reported
+a checkout switch. Explicit reads in the assigned harness checkout corrected the
+warning. Root discovery guidance now sets each command's workdir explicitly.
+Root context is now 167 lines / 10,077 bytes. The earlier 166-line value records the
+first instruction head. Native loading/behavior improvements remain unmeasured.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing

@@ -126,10 +126,11 @@ Owner workflow amendments through 2026-11-05 are consolidated here.
 
 ## Code discovery
 
-- Confirm cwd/branch/HEAD/dirty state. Prefer the graph when its root/revision match.
-  Use `rg`/`git grep` for stale/missing results, docs, configs and strings. Read owning
-  source. Use `pnpm agent:status` when live integration/PR/writer state is needed.
-  Check lockfile/typings and official docs before changing version-sensitive APIs.
+- Set each command's workdir to the assigned checkout. Confirm its branch/HEAD/dirty.
+  Prefer the graph when its root/revision match. Use `rg`/`git grep` for stale/missing
+  results, docs, configs and strings. Read owning source. Use `pnpm agent:status` for
+  live integration/PR/writer state. Check lockfile/typings and official docs before
+  changing version-sensitive APIs.
 
 <a id="verification-without-duplicate-work"></a>
 <a id="proportional-verification"></a>

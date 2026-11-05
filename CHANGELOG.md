@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Verify current visible tile recovery and both finite stale outcomes
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41950810244 exposed an
+  invalid same-full-URL tile recovery oracle. Abort the currently loaded own tile
+  on same-slot reentry and require its same-origin/coordinate200 plus loaded
+  images, allowing current revision. Retain per-slot evidence. Adapt the game
+  author's `32eb91a5` finite pursuit assertions. Separate actual409→200 cancellation
+  from actual409→409 bounded rejection; the latter cannot close cancellation.
+  Both real browser branches PASS in separate positive/negative runs. Preserve
+  the positive SQL gate. Set command workdirs explicitly after a reviewer used
+  the host's unrelated checkout. Root 167 lines / 10,077 bytes. Scoped checks and
+  [owning evidence](docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
+  record limitations. Fresh final source review and CI are required.
+
 ### Stabilize initial pursuit setup after the observed CI rejection
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to

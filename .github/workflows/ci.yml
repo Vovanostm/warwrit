@@ -82,6 +82,7 @@ jobs:
             output/painted-game-ci/*/painted-map*.png
             output/world-lab-ci/runtime-*/*map.png
             output/world-lab-ci/runtime-*/failure-ui.json
+            output/world-lab-ci/runtime-*/map-recovery-*.json
             output/world-lab-ci/runtime-*/stop-traffic.json
             output/world-lab-ci/runtime-*/pursuit-stop-responses.json
             output/world-lab-ci/runtime-*/pursuit-start-response.json
