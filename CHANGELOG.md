@@ -25,7 +25,10 @@ requests.
   two unused initial assignments. Re-review adds stale-account completion guards
   so an old reply cannot hide another company's pending retry.
   The first full gate stopped before game tests on four unused recruitment
-  exports, now removed or made private. Native/final gate remain open; nothing is merged.
+  exports, now removed or made private; the second found two locale-dependent
+  sorts, changed to compareCodeUnits. Native hire exposed missing carried-purse
+  attestation; reuse the existing opening proof and keep remote wallets inaccessible.
+  Native/final gate remain open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 

@@ -65,7 +65,8 @@ describe('local recruitment (PostgreSQL)', () => {
         const source = JSON.parse(
           JSON.stringify(fixture)
             .replaceAll('"world"', JSON.stringify(worldId))
-            .replaceAll('"a-company"', JSON.stringify(companyId)),
+            .replaceAll('"a-company"', JSON.stringify(companyId))
+            .replaceAll('"purse"', JSON.stringify(`${companyId}:company-purse`)),
         ) as typeof fixture;
         const party = source.economy.lifecycle.parties[0];
         if (!party) throw new Error('fixture has no field party');
@@ -113,7 +114,7 @@ describe('local recruitment (PostgreSQL)', () => {
               ...source.economy.finance,
               wallets: source.economy.finance.wallets.map((wallet) => ({
                 ...wallet,
-                location,
+                location: wallet.owner.kind === 'COMPANY' ? wallet.location : location,
                 cashQ:
                   wallet.walletId ===
                   source.economy.finance.pools.find((pool) => pool.poolId === 'local')?.walletId
@@ -355,6 +356,35 @@ describe('local recruitment (PostgreSQL)', () => {
             payload: { offerId: physician!.offerId, offerRevision: physician!.offerRevision },
           },
         }));
+        const unattestedHire = await app.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: headers[0]!,
+          payload: { ...hireRequests[0]!.payload, commandId: `unattested-${worldId}` },
+        });
+        expect(unattestedHire.statusCode).toBe(409);
+        expect(unattestedHire.json().code).toBe('CONTACT_OR_ACCESS_REQUIRED');
+        for (const [index, companyId] of companies.entries()) {
+          await database
+            .insertInto('company_opening_options')
+            .values({
+              id: companyId,
+              world_id: worldId,
+              account_id: accounts[index]!,
+              company_id: companyId,
+              evidence: {
+                id: companyId,
+                worldId,
+                companyId,
+                partyId: storedStates[index]!.economy.lifecycle.parties[0]!.partyId,
+              },
+              expires_at: new Date(Date.now() + 60_000),
+              consumed_at: new Date(),
+              consumed_command_id: `opening-${companyId}`,
+              consumed_request_key: '{}',
+            })
+            .execute();
+        }
         const hires = await Promise.all(
           hireRequests.map(({ header, payload }) =>
             app.inject({ method: 'POST', url: '/company/commands', headers: header, payload }),
@@ -541,6 +571,10 @@ describe('local recruitment (PostgreSQL)', () => {
         await database.transaction().execute(async (transaction) => {
           await transaction
             .deleteFrom('world_recruit_offers')
+            .where('world_id', '=', worldId)
+            .execute();
+          await transaction
+            .deleteFrom('company_opening_options')
             .where('world_id', '=', worldId)
             .execute();
           await transaction

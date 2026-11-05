@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { sql, type Transaction } from 'kysely';
 import {
   COMPANY_CATALOGUE,
+  compareCodeUnits,
   COMPANY_RULES,
   PHYSICAL_RULES,
   birthTick,
@@ -141,6 +142,36 @@ function offerGenesis(worldId: string, profile: (typeof profiles)[number]) {
     cashQ: moneyQ('0'),
   };
   return { offerId, characterId, genesisId, candidate, vitals, wallet, location };
+}
+
+/** The opening attests this exact field purse, as for ordinary supply purchases. */
+export function locateRecruitCarriedPurse(
+  state: CompanyCombatAggregateState,
+  carriedPurse: { readonly walletId: string; readonly partyId: string } | undefined,
+): CompanyCombatAggregateState {
+  const { lifecycle, finance } = state.economy;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  if (!carriedPurse || party?.location.kind !== 'AT' || carriedPurse.partyId !== party.partyId)
+    return state;
+  const location = party.location;
+  const pool = finance.pools.find((entry) => entry.poolId === 'local');
+  return {
+    ...state,
+    economy: {
+      ...state.economy,
+      finance: {
+        ...finance,
+        wallets: finance.wallets.map((wallet) =>
+          wallet.walletId === carriedPurse.walletId &&
+          wallet.walletId === pool?.walletId &&
+          wallet.owner.kind === 'COMPANY' &&
+          wallet.owner.id === lifecycle.companyId
+            ? { ...wallet, location: { ...location } }
+            : wallet,
+        ),
+      },
+    },
+  };
 }
 
 export function localCompanyContacts(
@@ -290,10 +321,10 @@ function projectRecruitOffer(row: StoredRecruitOffer): RecruitOfferView {
     throw new TypeError('Stored recruit genesis does not match its offer');
   const skills = Object.entries(candidate.skills)
     .map(([skillId, progress]) => ({ skillId, level: skillLevel(progress) }))
-    .sort((a, b) => a.skillId.localeCompare(b.skillId));
+    .sort((a, b) => compareCodeUnits(a.skillId, b.skillId));
   const aptitudes = Object.entries(candidate.aptitudeBySkill)
     .map(([skillId, valueBps]) => ({ skillId, valueBps }))
-    .sort((a, b) => a.skillId.localeCompare(b.skillId));
+    .sort((a, b) => compareCodeUnits(a.skillId, b.skillId));
   return {
     offerId: row.offer_id,
     offerRevision: row.offer_revision,

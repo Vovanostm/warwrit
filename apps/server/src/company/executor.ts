@@ -14,6 +14,7 @@ import {
   RECRUIT_SIGNING_Q,
   attachRecruitGenesis,
   localCompanyContacts,
+  locateRecruitCarriedPurse,
   lockRecruitOffer,
   recruitWageRates,
 } from './recruitment.js';
@@ -496,6 +497,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       localCompanyContacts(state, companyId, party.location).length === 0
     )
       return rejectRequest('OUT_OF_STOCK', lifecycle.knowledge.revision);
+    const carriedPurse = await readCarriedSupplyPurse(
+      input.transaction,
+      input.worldId,
+      companyId,
+      input.accountId,
+    );
+    state = locateRecruitCarriedPurse(state, carriedPurse);
     const withGenesis = attachRecruitGenesis(state, recruitOffer);
     if (!withGenesis) return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
     state = withGenesis;
