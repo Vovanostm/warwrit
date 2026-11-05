@@ -349,8 +349,11 @@ ownership; local routing never authorizes starting a shared DB.
 Do not repeat unchanged validation in builder and coordinator. Preserve applicable
 results until their code/dependencies/configuration/environment changes. Required
 PR CI uses this same committed-path classifier. Only its exact `docs` result
-selects the documentation path, with pinned frozen install, formatting,
-harness regressions, plan and migration protection. Product tests, browser
+selects the documentation path, with pinned frozen install, changed-file
+formatting, harness regressions, plan and migration protection. CI invokes the
+existing focused validator against the tested checkout's merge base. A fetched
+base ref advancing after the synthetic merge does not create an unrelated
+up-to-date-base failure. Frozen install enables the pinned pnpm shim first. Product tests, browser
 journeys and measured quality audit are skipped for that documented scope.
 Mixed changes, scripts/workflows, config, dependencies, assets and unknown paths
 use the full bootstrap/coverage/browser/audit path. Main pushes and manual runs
