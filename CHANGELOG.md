@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Preserve current fixture revisions after company observation
+
+- 2026-11-05, `codex/company-recovery`, LOCAL test-setup correction for
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). Full CI42040569966 passed
+  verify1247/99 SKIP and combat stress10000, then SQL88 passed/1 failed. The old
+  recruitment privacy fixture rewrote a genesis root after a lawful body
+  observation advanced its persisted revision. Retain the current aggregate and
+  known revision when preparing hidden variants and later hire requests; preserve
+  repository scope guards and all privacy/payment/replay assertions. Gameplay
+  source is unchanged. [Owning recovery result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records the exact result. Original failure reproduced; corrected recruitment SQL1,
+  server types and scoped lint/format PASS. Independent affected readback ACCEPT; new-head CI remains pending.
+
 ### Connect treatment to explicit recovery
 
 - 2026-11-05, `codex/company-recovery`, LOCAL work on main1121665c. Expose the
