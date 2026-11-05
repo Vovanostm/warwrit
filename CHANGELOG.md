@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Expand diagnostic skill research to 62 rated sources
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested at least
+  50 sources and ratings after the initial comparison was too narrow. Compare
+  23 skill/agent/command candidates using 38 pinned GitHub documents from 13
+  repositories, 12 primary studies/reports and 12 opened Reddit discussions.
+  Separate suitability scores, popularity, anecdotes and measured effects;
+  downgrade the earlier generic-debugging recommendation to an optional trial.
+  Property-testing adoption stays conditional: fast-check already exists, but
+  the unchanged upstream manifest fails the local validator on `effort`.
+  [Expanded survey, method, ratings and all sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
+  No new installation, product change, paid evaluation or game tests. Actual
+  effectiveness remains NOT_MEASURED. Independent source/sample review ACCEPT;
+  source-count/deduplication, score arithmetic, local links, formatting and scoped
+  diff PASS. These checks establish only their stated boundaries.
+
 ### Select standalone diagnostic skills after GitHub source review
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a deep
