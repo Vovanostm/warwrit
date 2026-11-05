@@ -26,8 +26,8 @@ invocation, pinned install/shim setup and rejection of a missing base. Its first
 version incorrectly expected exit1 from Git's missing-object error. Git returns
 128 here. The corrected fixture retains the nonzero rejection requirement.
 Eight isolated fixture groups, Bash syntax, scoped formatting and diff PASS.
-Full-route hosted CI and a real documentation follow-up are required for delivery.
-Revised hosted timing is not yet measured.
+The full-route acceptance receipt appears below. Issue357 and its documentation
+closeout PR own the real revised docs-path trial and its exact timing.
 
 ### Product baseline advance during verification
 
@@ -44,6 +44,22 @@ product files and game integrator's CURRENT_PLAN remain identical to main.
 The first green run proves the earlier frozen source, not the new integrated
 product base. Integrated source readback and applicable CI must pass before
 merge. This case does not qualify for the documentation-only reuse proposal.
+
+### Changed-format implementation receipt and documentation trial
+
+[PR358](https://github.com/Vovanostm/warwrit/pull/358) merged as `7bb8185e`,
+reviewed integrated head `0e88e0c5` on product main `81e7931b`.
+Independent integrated source review ACCEPT. CI42010314464 PASS in23m21s,
+with both unit-resolution phases1237 PASS/94 SKIP, stress10000, real SQL84,
+both browser journeys and the five-file audit. The existing semantic-identity
+warning retained syntactic attribution for the new-only comparison. Actual
+merge and reviewed/tested source trees match.
+
+This two-document receipt on `codex/harness-docs-format-closeout` supplies the
+real changed-file-formatting trial. Its PR and issue357 own exact job duration,
+formatter arguments/timing and the explicit skipped product checks. Close the
+issue after that hosted trial passes. One documentation trial does not measure
+native instruction adoption or comparative product-development throughput.
 
 ### Larger opportunity from PR353
 

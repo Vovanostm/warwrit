@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Record changed-document CI acceptance on the current product baseline
+
+- 2026-11-05, `codex/harness-docs-format-closeout`, LOCAL documentation receipt
+  for MERGED [PR358](https://github.com/Vovanostm/warwrit/pull/358), merge `7bb8185e`.
+  Independent integrated review ACCEPT and CI42010314464 PASS in23m21s on product
+  main `81e7931b`, including both unit phases, SQL/stress, browsers and audit.
+  The earlier17m19s run keeps its older baseline scope. The
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
+  retains attribution limits and the separate real changed-file-formatting trial.
+  [Issue357](https://github.com/Vovanostm/warwrit/issues/357) and the closeout PR own
+  its final timing and executed/skipped checks. Scoped document format/link/diff
+  readback PASS. No product implementation change. Comparative throughput NOT_MEASURED.
+
 ### Integrate the newly merged product baseline during harness validation
 
 - 2026-11-05, `codex/harness-docs-format`, LOCAL integration of main `81e7931b`
