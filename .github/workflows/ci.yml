@@ -26,6 +26,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check current plan before expensive verification
+        run: bash scripts/check-current-plan.sh
+
+      - name: Select verification scope
+        id: scope
+        if: github.event_name == 'pull_request'
+        run: |
+          route="$(bash scripts/orca-validate.sh . "origin/$GITHUB_BASE_REF" --plan)"
+          printf '%s\n' "$route"
+          if [[ "$route" == 'ROUTE docs' ]]; then
+            echo 'docs_only=true' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
@@ -42,7 +55,14 @@ jobs:
           MIGRATIONS_BASE_REF: origin/${{ github.base_ref }}
         run: node scripts/check-migrations.mjs
 
+      - name: Validate documentation-only changes
+        if: steps.scope.outputs.docs_only == 'true'
+        run: |
+          corepack pnpm install --frozen-lockfile
+          corepack pnpm format
+
       - name: Bootstrap and verify
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           WARWRIT_INTEGRATION_COVERAGE: ${{ github.event_name == 'pull_request' && 'output/world-lab-ci/sql' || '' }}
           WARWRIT_MIGRATION_RUNTIME_COVERAGE: ${{ github.event_name == 'pull_request' && 'output/world-lab-ci/migration.json' || '' }}
@@ -51,29 +71,29 @@ jobs:
           ./scripts/bootstrap.sh
 
       - name: Measure unit-test coverage for the audit
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         run: pnpm test:coverage --maxWorkers=1
 
       - name: Install pinned browser
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Measure real world-map journeys
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         run: bash scripts/world-map/check-world-lab-ci.sh
 
       - name: Measure ordinary painted-map journey
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         run: bash scripts/world-map/check-painted-game-ci.sh
 
       - name: Reject quality regressions in changed files
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         env:
           FALLOW_AUDIT_BASE: origin/${{ github.base_ref }}
         run: pnpm check:changes
 
       - name: Keep playable-map previews
-        if: always() && github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playable-map-${{ github.run_id }}-${{ github.run_attempt }}

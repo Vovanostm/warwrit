@@ -8,6 +8,8 @@ export interface WorldLabKnownSiteDto {
   readonly icon: string;
   readonly source: 'CHART' | 'OBSERVED';
   readonly visited: boolean;
+  /** The location was supplied by a quest marker grant; retain its name at overview scale. */
+  readonly questMarker?: boolean;
 }
 export interface WorldLabCartographyDto {
   readonly schemaVersion: 1;
