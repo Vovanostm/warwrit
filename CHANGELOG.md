@@ -22,7 +22,9 @@ requests.
   rollback regression also covers such a key containing the same offer ID.
   Hire/Join persist the exact scoped request and expose retry after remount;
   focused client regression2/2 and web types PASS. Parent lint found and corrected
-  two unused initial assignments. Native acceptance remains open; nothing is merged.
+  two unused initial assignments. Re-review adds stale-account completion guards
+  so an old reply cannot hide another company's pending retry.
+  Native acceptance remains open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 

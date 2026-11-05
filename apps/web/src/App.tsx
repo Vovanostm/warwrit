@@ -402,6 +402,10 @@ export function App() {
           travelController.current = undefined;
           travelBusy.current = false;
           setTravelBusyState(false);
+          setEquipBusy(false);
+          joinAttemptRef.current = undefined;
+          setJoinAttempt(undefined);
+          setJoinAttemptMessage(undefined);
           clearStoredTravelReturnWindow(previousScope);
           pendingTravelAttempt.current = undefined;
           pendingFreeMovementAttempt.current = undefined;
@@ -1511,6 +1515,15 @@ export function App() {
       setEquipBusy(true);
       setEquipMessage(undefined);
       const result = await postCompanyRosterAttempt(apiBaseUrl, attempt);
+      if (
+        activeTravelScope.current?.accountId !== scope.accountId ||
+        activeTravelScope.current.companyId !== scope.companyId ||
+        joinAttemptRef.current?.body !== attempt.body ||
+        joinAttemptRef.current.accountId !== attempt.accountId ||
+        joinAttemptRef.current.companyId !== attempt.companyId
+      )
+        return;
+
       if (result === 'UNAUTHENTICATED') {
         setJoinAttemptMessage('Сеанс истёк. После входа повторите тот же приказ о присоединении.');
         void restoreJourney();
@@ -1626,6 +1639,10 @@ export function App() {
     travelController.current = undefined;
     travelBusy.current = false;
     setTravelBusyState(false);
+    setEquipBusy(false);
+    joinAttemptRef.current = undefined;
+    setJoinAttempt(undefined);
+    setJoinAttemptMessage(undefined);
     if (activeTravelScope.current) clearStoredTravelReturnWindow(activeTravelScope.current);
     activeTravelScope.current = undefined;
     pendingTravelAttempt.current = undefined;

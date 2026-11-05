@@ -28,6 +28,8 @@ export function RecruitmentPanel(props: {
     'Recruit',
   );
   const storage = browserCompanyRosterStorage();
+  const currentScopeKey = useRef(storageKey);
+  currentScopeKey.current = storageKey;
   const [stored, setStored] = useState<{ key: string; attempt: CompanyRosterAttempt } | undefined>(
     () => {
       try {
@@ -135,6 +137,12 @@ export function RecruitmentPanel(props: {
     setBusy(true);
     setMessage(undefined);
     const result = await postCompanyRosterAttempt(props.apiBaseUrl, attempt);
+    if (currentScopeKey.current !== storageKey) {
+      busyRef.current = false;
+      setBusy(false);
+      return;
+    }
+
     if (result === 'UNAUTHENTICATED') {
       setMessage('Сеанс истёк. После входа повторите тот же запрос о найме.');
       props.onUnauthorized();
