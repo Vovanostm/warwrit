@@ -7,7 +7,8 @@ queue contains **33 new leaf issues and 7 existing bounded work entries**; paren
 issues retain full acceptance. Task count is not a completion estimate or a
 mandatory PR count. Prior dispatches remain in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
-Baseline: main `cf973d35`, 2026-11-05. PR363 and PR338 are still open at readback;
+Game assessment baseline: main `cf973d35`, 2026-11-05; publication includes
+CI-only main `b6a04977` / PR367, with no gameplay change. PR363 and PR338 are still open at readback;
 PR339/335/334 conflict with main. All new cards are PLANNED / NOT_RUN.
 Creating a card does not assign or start an agent.
 

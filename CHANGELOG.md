@@ -21,12 +21,14 @@ requests.
   gates. Separate mill clues, night hunt and worker delivery without a cycle;
   split course/retraining and individual crash boundaries. Update ROADMAP,
   M1_PRODUCTION_PLAN, CURRENT_PLAN and the owning M1 wiki. No game implementation,
-  agent launch, new policy, merge or deployment. Updated 15 parent/existing
+  agent launch, new policy, merge to main or deployment. Updated 15 parent/existing
   issues and the canonical Airtable Roadmap/M1 pointers; readback matches all
   48 issue bodies and both Airtable amendments. Dependency references/acyclicity,
   scoped format/diff, 9 added local links/anchors and CURRENT_PLAN (26/40) PASS.
   Publication continues in [PR366](https://github.com/Vovanostm/warwrit/pull/366);
   new-head hosted checks remain pending. Game/browser/SQL/visual checks NOT_RUN.
+  Publication base refreshed to b6a04977 (already merged CI-only PR367);
+  preserve both changelog additions. The PR delta remains documentation only.
 
 ### Reconcile the game roadmap and tasks with current implementation
 
@@ -45,6 +47,19 @@ requests.
   and CURRENT_PLAN (23/40 nonempty lines) PASS. Documentation PR publication is
   tracked separately from integration. New game/browser/SQL/load/visual/full gates NOT_RUN,
   FPS/capacity NOT_MEASURED. No game-code change, merge or deployment.
+
+### Capture browser failures before measured unit coverage
+
+- 2026-11-05, `codex/harness-browser-phase-order`, LOCAL, owner-requested
+  explore/spec/fix/review/check after repeated late delivery failures. Keep
+  bootstrap first; expose capture/merge phases in the existing CI launchers,
+  run browsers before measured units, then preserve world/self/painted conversion
+  order and native gates. World aggregation publishes only after both passes.
+  Actual-probe CLI regression, ten workflow groups, scoped types/lint/syntax/diff
+  PASS after fixing local fixture setup errors. Product source, scenario deadlines,
+  cleanup and default launcher behavior are retained. Local native capture and
+  full suites NOT_RUN; independent final review/hosted order and savings remain
+  pending. [Owning specification/result](docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
 
 ### Clarify cancelled-step evidence and focus the recovery SQL consumer
 

@@ -72,21 +72,29 @@ jobs:
           mkdir -p output/world-lab-ci
           ./scripts/bootstrap.sh
 
-      - name: Measure unit-test coverage for the audit
-        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
-        run: pnpm test:coverage --maxWorkers=1
-
       - name: Install pinned browser
         if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Measure real world-map journeys
+      - name: Capture real world-map journeys
         if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
-        run: bash scripts/world-map/check-world-lab-ci.sh
+        run: |
+          bash scripts/world-map/check-world-lab-ci.sh --capture output/world-lab-ci/browser-capture.json
 
-      - name: Measure ordinary painted-map journey
+      - name: Capture ordinary painted-map journey
         if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
-        run: bash scripts/world-map/check-painted-game-ci.sh
+        run: |
+          bash scripts/world-map/check-painted-game-ci.sh --capture output/painted-game-ci/browser-capture.json
+
+      - name: Measure unit-test coverage for the audit
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
+        run: pnpm test:coverage --maxWorkers=1
+
+      - name: Merge captured browser measurements
+        if: github.event_name == 'pull_request' && steps.scope.outputs.docs_only != 'true'
+        run: |
+          bash scripts/world-map/check-world-lab-ci.sh --merge output/world-lab-ci/browser-capture.json
+          bash scripts/world-map/check-painted-game-ci.sh --merge output/painted-game-ci/browser-capture.json
 
       - name: Reject quality regressions in changed files
         id: quality_audit

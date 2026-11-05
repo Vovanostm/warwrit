@@ -8,7 +8,7 @@ Owner request: assess the current game and update Roadmap, tasks and the plan to
 Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
 New tasks #368–#400 are PLANNED, not assigned or executed; their parents retain full acceptance.
 Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
-Snapshot: live main cf973d35; CI42055270039 SUCCESS metadata, no fresh game run in this assessment.
+Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
 Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
 Open PR363 at2d6bf3cc: explicit rest/FIELD, real recovery/retry/restart and finite UI accepted.
 Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
