@@ -15,6 +15,10 @@ remembered PR, old attachment or cache as the current head.
 ## Procedure
 
 1. Confirm checkout/base/branch/dirty state and current owner scope/stop status.
+   A delegated task needs an explicit checkout in its current brief, including
+   follow-ups to a reused agent. Verify the requested revision there first.
+   If that route is missing or mismatched, return `NEEDS_CONTEXT` before source
+   discovery; do not substitute the host's primary checkout.
    Use `pnpm agent:status` when live integration/PR state matters; a small local
    documentation task does not need a broad inventory. Read the active issue and
    applicable comments. An old branch's instructions or old merge permission

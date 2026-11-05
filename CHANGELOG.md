@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Retain failed pursuit preparation and verify reused-agent routes
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after integrated
+  CI42032918779 failed readiness before the pursuit STOP probe. Persist the real
+  accepted request before awaiting readiness and report its last API/UI predicates
+  and remaining budget on timeout. Deadlines, game code and STOP oracles remain
+  unchanged; the timeout cause is still unproven. Isolated native browser journey
+  PASS with actual409→200; scoped syntax/lint/format/diff PASS. A reused reviewer
+  also exposed an omitted checkout in its follow-up: add the route to the existing
+  delegation template and verify it through warwrit-context before discovery.
+  [Owning evaluation](docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
+  retains the failure, read-only routing correction, attempt-counting limitation
+  and pending final-head review/CI. No general speedup or flaky-test fix claimed.
+
 ### Integrate recruitment main into quality-feedback verification
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL integration of main

@@ -57,6 +57,45 @@ This is another observed cause of duplicate full CI during parallel support and
 product delivery. Compatibility-based evidence reuse remains a separate,
 unimplemented hypothesis, not a skipped gate in this slice.
 
+### Integrated browser failure and retained preparation evidence
+
+Integrated review ACCEPT at `f30ac452`. CI42032918779 passed bootstrap and
+measured units, then failed in `waitForPursuitStopReady` before the actual pursuit
+STOP probe. The retained UI was live with STOP enabled, accepted pursuit text
+and a selected target ring; traffic had only the earlier camera STOP200.
+Those later observations cannot identify the false readiness predicate at the
+last poll. The artifact omitted expected target, accepted/observed sequences,
+selected marker and remaining shared45s budget. The accepted request/response
+was written only after awaiting readiness, so a timeout lost it entirely.
+
+Save the actual pursuit attempt before awaiting readiness. Include the last API
+pursuit/sequence, expected target/accepted sequence, individual UI predicates and
+remaining budget in timeout output. Keep the same readiness condition,45s/three
+attempt limits and actual stale STOP assertions. This is a diagnostic repair;
+the original timeout cause and its elimination remain unproven. A local isolated
+copy of the existing CI launcher stopped after its real browser journey, without
+coverage aggregation. It PASS, including actual409→200; its owned disposable
+PostgreSQL/processes were removed. No product save or service was used. Scoped
+syntax/lint/format/diff PASS. Fresh final-head CI/review remain required.
+
+### Reused-agent checkout route
+
+The parent omitted checkout/head/base in a repeated review request. The recipient
+started inspecting the primary dirty checkout. The parent stopped that read and
+supplied the exact route; corrected six-file integration review ACCEPT at
+`f30ac452`. No writes or product tests occurred in the wrong checkout.
+The delegation template now carries the route on every follow-up; the existing
+context skill checks it before source discovery and returns NEEDS_CONTEXT for a
+missing/mismatched route. A direct owner task retains its normal context flow.
+No wrapper, scheduler or extra agent is introduced. Static review/skill metadata
+checks do not establish future agent adherence or a throughput improvement.
+
+CI sampling correction: the13-job observation in issue361 covers latest attempts
+only. Run42008831586's final PASS at attempt2 obscures attempt1's failed world
+journey after26m51s. First-pass/effort evaluation must inspect `run_attempt` and
+historical attempt jobs, retaining failures/cancellations. Final run conclusions
+alone cannot establish first-pass task quality or total effort.
+
 ## Changed-document formatting and historical CI evidence — 2026-11-05
 
 The owner requested more harness improvements and new ideas. Source is the

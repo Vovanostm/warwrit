@@ -133,6 +133,18 @@ See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact own
 
 ## Assignment and scheduling
 
+Every initial task and follow-up repeats the checkout, expected head/base,
+read/write paths and completion condition. Reusing an agent does not establish
+its working directory. The [context skill](../../.agents/skills/warwrit-context/SKILL.md)
+owns the recipient's missing/mismatched-route check. Keep follow-ups self-contained:
+
+```text
+Checkout / expected HEAD / base:
+Mode / allowed paths / prohibited operations:
+Question or changed result to review:
+Acceptance / smallest check / stop condition:
+```
+
 Use the four-field brief in [the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
 Include exact focused checks/resource ownership and a finite scope/stop condition.
 For unattended operation set an explicit budget before dispatch. Reaching a limit
