@@ -1,33 +1,31 @@
 # Warwrit current delivery plan
 
-## Care and local recruitment — 2026-11-05, NATIVE PATH PASSED
+## Ordinary loop and full M1 — planning reconciliation 2026-11-05
 
-Coordinator, author, integrator, resource owner and validator is this chat's parent.
-Full-game objective remains ACTIVE.
-Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
-Painted atlas PR344, objective-marker PR353 and care PR350 are merged; main isf0461180.
-PR353 merged with owner permission for exact headb9f150ba after full CI42003635623 and scope42003688757 PASS.
-[Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns treatment acceptance.
-[PR350](https://github.com/Vovanostm/warwrit/pull/350) merged expected319b901e after full CI42020812490/scope42024966505 PASS.
-Care6967f234 full CI PASS; native treatment/lost-reply/exact retry/restart PASS on the recruitment stand.
-[Recruitment contract](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) owns the finite local pool.
-Owner approved physician at Brod, signing50/base daily10 crowns; care challenges5/10 remain temporary.
-[Recruitment PR360](https://github.com/Vovanostm/warwrit/pull/360) candidate targets mainf0461180/care319b901e; prior CI51299b0c failed false quality attribution.
-Normal travel → inn inspection → hire → separate Join → care → lost reply/reload/exact retry → restart PASS.
-Each accepted Recruit/Join/ApplyCare has one receipt for two identical POST bodies.
-Treasury800→750, medical units2→1, physician medicine150→190 XP, patient health stays17.
-Source corrections cover consumption rollback, knowledge privacy, exact client retries, carried purse and local reserve food.
-Product/source and finite gameplay ACCEPT; care-control capture PARTIAL.
-Fresh unit1244/98 SKIP, SQL88 and both browsers PASS; source-correct metadata resolves ordinary-runtime attribution.
-Source-bound coverage naming fix: regression/types/lint, negative control, full measured audit PASS; independent source ACCEPT. Dependencies/gates unchanged.
-Expired-pursuit setup uses finite native reacquisition and post-acceptance UI sequence; frozen browser409→200/source ACCEPT.
-Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
-At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
-Owner authorized PR350 at319b901e; actual merge/main/local readbackf0461180 matches the checked tree.
-Owner authorized PR360 ateb19dd0e; clean-root test fix supersedes it. New-head CI and final-head permission remain required.
-PR publication is authorized; deployment remains unauthorized.
+Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
+This planning branch owns roadmap/task documentation; it does not take over that delivery.
+Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
+Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
+Snapshot: live main cf973d35; CI42055270039 SUCCESS metadata, no fresh game run in this assessment.
+Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
+Open PR363 at2d6bf3cc: explicit rest/FIELD, real recovery/retry/restart and finite UI accepted.
+Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
+These are candidate results, not integrated-main or full-game acceptance.
+Delivery owner completes PR363 → retarget/check PR338 → current-main continuation using recorded scoped authority.
+Next player result: same recovered/paid company completes the next contract and survives server restart.
+Then repeat sign-in → create → equip/supplies → contract → travel → battle → proof/reward → care/payroll → next contract → restart.
+Preserve the retained wounded saves; developer-assisted earlier combat is not unaided first-hour acceptance.
+PR339 transfer and PR335 lost-command recovery remain open/conflicting; reuse only current-compatible required changes.
+V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#364](https://github.com/Vovanostm/warwrit/issues/364) open.
+F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
+World knowledge/offline behavior and two-company participation require the full #177 scenarios.
+Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
+Current request authorizes planning/task updates and their publication, not gameplay implementation or new merges/deployment.
+Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
+Documentation checks are recorded in CHANGELOG; game/browser/SQL/visual/full gates NOT_RUN for this planning task.
 
 ## History
 
-[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
-Detailed execution output stays in ignored output/ or CI artifacts.
+[Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.

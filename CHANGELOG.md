@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Reconcile the game roadmap and tasks with current implementation
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL planning
+  at the owner's request. Replace the September ROADMAP/PARALLEL_WAVES dispatch,
+  refresh CURRENT_PLAN and M1_PRODUCTION_PLAN, and update the owning M1 wiki,
+  navigation and playtest status. Preserve superseded baselines in CURRENT_PLAN_HISTORY.
+  Record merged atlas/markers/care/recruitment, candidate recovery/payroll,
+  conflicting transfer/retry work and the remaining full-M1 scope.
+  [Assessment and evidence boundary](docs/wiki/m1-spec.md#state-2026-11-05)
+  distinguishes current source, earlier runtime and unexecuted acceptance.
+  Task tracking PUBLISHED: 16 existing GitHub issues updated with preserved criteria/history;
+  [outcome task #364](https://github.com/Vovanostm/warwrit/issues/364) created;
+  canonical Airtable Roadmap/M1 index amended and M1 corrected from Planned to In Progress.
+  GitHub readback matches all 16 updates. Scoped format/diff, 45 added local links
+  and CURRENT_PLAN (23/40 nonempty lines) PASS. Documentation PR publication is
+  tracked separately from integration. New game/browser/SQL/load/visual/full gates NOT_RUN,
+  FPS/capacity NOT_MEASURED. No game-code change, merge or deployment.
+
 ### Clarify cancelled-step evidence and focus the recovery SQL consumer
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.
