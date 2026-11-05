@@ -297,9 +297,20 @@ async function pursuitAndRetry() {
   await page.locator('#fit').click();
   let observed = await state();
   if (!movingThreats(observed).length) observed = await approachMovingThreat(observed);
-  // Scouting may still be moving. Settle that real order before choosing a
-  // pursuit target so its epoch cannot invalidate the initial pursuit request.
-  if (observed.own.movement.mode === 'MOVING') await stop();
+  // Finish the short scouting leg before choosing a pursuit target. A STOP
+  // racing that leg's arrival is unrelated to the pursuit cancellation probe.
+  if (observed.own.movement.mode === 'MOVING') {
+    await page.waitForFunction(
+      (sequence) =>
+        globalThis.document.body.dataset.connection === 'live' &&
+        BigInt(globalThis.document.querySelector('#world-sequence').textContent) >
+          BigInt(sequence) &&
+        globalThis.document.querySelector('#stop').disabled,
+      observed.sequence,
+      { timeout: 45000 },
+    );
+    assert.notEqual((await state()).own.movement.mode, 'MOVING');
+  }
   const statuses = [];
   const record = (reply) => {
     if (isStopResponse(reply)) statuses.push(reply.status());

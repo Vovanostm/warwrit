@@ -27,6 +27,12 @@ requests.
   STOP409→200; later SQL-coverage aggregation remains stale. Source ACCEPT and
   lint/format/diff PASS; new hosted verification pending.
 
+- 2026-11-05 correction, same branch, local. CI41964009252 passed code/coverage
+  but the auxiliary scouting STOP timed out. Wait for actual scout arrival before
+  acquisition; retain the separate keyboard/pursuit STOP checks. Frozen browser,
+  lint/format/diff PASS, source ACCEPT; later SQL aggregation remains stale.
+  New-head hosted verification pending.
+
 ### Keep care observation preparation and persistence explicit
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft
