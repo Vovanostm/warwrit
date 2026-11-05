@@ -86,7 +86,7 @@ git -C "$repo" config user.email fixture@example.test
 git -C "$repo" config user.name Fixture
 git -C "$repo" config core.hooksPath /dev/null
 mkdir -p "$repo/scripts" "$repo/packages/protocol/src"
-cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$repo/scripts/"
+cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$root/scripts/orca-validate.sh" "$repo/scripts/"
 mkdir -p "$repo/docs/engineering"
 printf '## Current task\n\nCoordinator is the fixture author.\n' > "$repo/docs/engineering/CURRENT_PLAN.md"
 printf 'original\n' > "$repo/packages/protocol/src/old.ts"
@@ -105,6 +105,10 @@ route_case() {
   grep -qx "ROUTE $expected" "$fixture/output" || fail "route $path: $(cat "$fixture/output")"
 }
 route_case docs/guide.md docs
+route_case AGENTS.md docs
+route_case .agents/skills/example/SKILL.md docs
+route_case assets/readme.md broad
+route_case apps/web/src/readme.md web
 route_case apps/web/src/style.css web
 route_case apps/server/src/command.ts server
 route_case packages/game-core/src/rule.ts consumers
@@ -185,6 +189,52 @@ for scenario in docs consumers broad; do
     broad) grep -qx 'verify' "$FIXTURE_CHECK_LOG" || fail 'broad check missing' ;;
   esac
 done
+# Execute the actual CI selector block against isolated committed changes.
+ci_scope_script="$(awk '
+  /^      - name: Select verification scope$/ { selected = 1; next }
+  selected && /^      - name:/ { exit }
+  selected && /^        run: \|$/ { body = 1; next }
+  body { sub(/^          /, ""); print }
+' "$root/.github/workflows/ci.yml")"
+[[ -n "$ci_scope_script" ]] || fail 'CI selector command missing'
+git update-ref refs/remotes/origin/main "$base"
+route_case docs/guide.md docs
+: > "$fixture/ci-output"
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+grep -qx 'docs_only=true' "$fixture/ci-output" || fail 'docs-only CI route missing'
+printf 'mixed source\n' >> packages/protocol/src/old.ts
+git add .
+git commit -qm 'mixed documentation and source'
+: > "$fixture/ci-output"
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+[[ ! -s "$fixture/ci-output" ]] || fail 'mixed source selected docs-only CI'
+expect_exit 1 env GITHUB_BASE_REF=missing GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+printf "echo 'ROUTE unexpected'\n" > scripts/orca-validate.sh
+expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
+[[ ! -s "$fixture/ci-output" ]] || fail 'unexpected route selected docs-only CI'
+echo 'PASS CI selector: docs only; mixed/unknown stay full; invalid base fails'
+
+# Rejected cheap checks must stop before any pnpm command on source routes.
+route_case packages/protocol/src/new.ts consumers
+printf 'uncommitted\n' >> packages/protocol/src/new.ts
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'FAIL clean-tree' "$fixture/output" || fail 'dirty-tree diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'dirty source reached pnpm after rejection'
+git restore packages/protocol/src/new.ts
+mkdir -p "$fixture/scopebadgit"
+cat > "$fixture/scopebadgit/git" <<STUB
+#!/usr/bin/env bash
+if [[ "\$1" == diff && "\$2" == --numstat ]]; then exit 2; fi
+exec "$(command -v git)" "\$@"
+STUB
+chmod +x "$fixture/scopebadgit/git"
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/scopebadgit:$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'FAIL scope' "$fixture/output" || fail 'scope diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'rejected scope reached pnpm'
+echo 'PASS preflight: dirty source and rejected scope stop before pnpm'
+
 # Changed checkpoint metadata must fail before formatting or product checks.
 route_case docs/engineering/CURRENT_PLAN.md docs
 printf '## Current task\n\nParent is sole author and validator.\n' > docs/engineering/CURRENT_PLAN.md

@@ -57,8 +57,8 @@ step clean-tree test -z "$(git status --porcelain)"
 step scope bash scripts/check-pr-scope.sh "${2:-origin/main}"
 if ((plan_changed)); then
   step current-plan bash scripts/check-current-plan.sh
-  ((status == 0)) || exit "$status"
 fi
+((status == 0)) || exit "$status"
 if ((${#existing[@]})); then step format pnpm exec prettier --check --ignore-unknown "${existing[@]}"; fi
 case "$route" in
   docs)
