@@ -12,10 +12,11 @@ import type { DatabaseSchema } from '../db/database.js';
 import type { CompanyRoutesOptions } from '../company/routes.js';
 import {
   findOwnedCompanyId,
-  loadCompanyAggregate,
+  lockCompanyAggregate,
   readCompanyCommandReceipt,
 } from '../company/repository.js';
 import { readDangerousRouteMembership } from '../contracts/repository.js';
+import { grantAcceptedHuntObjectives } from '../contracts/cartography.js';
 import {
   cartographyKnowsTarget,
   cartographyKnowsSegment,
@@ -48,7 +49,7 @@ export async function readPaintedCartography(
   const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
   if (!companyId || (expectedCompanyId !== undefined && companyId !== expectedCompanyId))
     throw new MovementRejection('NOT_AUTHORIZED');
-  const state = await loadCompanyAggregate(transaction, worldId, companyId);
+  const state = await lockCompanyAggregate(transaction, worldId, companyId);
   const partyId = state?.economy.lifecycle.parties[0]?.partyId;
   if (!partyId) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
   const { movement } = await readContinuousMovementProjection(
@@ -58,6 +59,12 @@ export async function readPaintedCartography(
     PAINTED_ATLAS_REGION,
   );
   const clock = await readWorldClock(transaction, worldId, new Date(Number(movement.serverTimeMs)));
+  await grantAcceptedHuntObjectives(
+    transaction,
+    worldId,
+    companyId,
+    new Date(Number(movement.serverTimeMs)),
+  );
   const cartography = await readWorldLabCartography(
     transaction,
     worldId,

@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Reveal accepted battle-contract destinations without charting the road
+
+- 2026-11-05, `codex/contract-objective-markers`, published in
+  [PR353](https://github.com/Vovanostm/warwrit/pull/353). Implementation of the
+  owner's «Показывать метку цели, путь разведывать» decision. HUNT01–HUNT03
+  ACCEPT/HELP persist the existing company QUEST_MARKER grant atomically with
+  participation. Ordinary atlas reads reconcile accepted old saves. Marker-only
+  editions preserve unexplored terrain and existing movement access checks.
+  Affected owners are contract routes, ordinary cartography and the
+  [map contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#accepted-hunt-objective-markers--2026-11-05).
+  Two real PostgreSQL cartography checks, server types and scoped lint PASS after
+  correcting the type/test-fixture errors recorded there. Native acceptance,
+  label SITE input and restart PASS on a separate ordinary world. Reuse care's
+  existing actionable-label CSS and explain MAP_INFORMATION_REQUIRED as exploration.
+  Derived optional questMarker metadata keeps names readable at overview, including
+  observed sites. Source and finite marker readability ACCEPT. Full CI42000045363 and scope
+  PASS at3374894b; subsequent PR356 integration changes documentation only.
+  Inherited atlas/fog art acceptance remains open under the full-game objective.
+  No migration. Care PR350 at516c1eb2 remains draft with green full CI/scope.
+
 ### Record scoped-CI implementation acceptance
 
 - 2026-11-05, originating branch `codex/harness-docs-ci-closeout`, LOCAL

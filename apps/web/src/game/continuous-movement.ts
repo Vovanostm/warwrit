@@ -128,6 +128,8 @@ const messageFor = (code: string) =>
     STALE_REVISION: 'Состояние изменилось. Обновляем карту.',
     STALE_MOVEMENT_EPOCH: 'Путь уже изменился. Обновляем карту.',
     MAP_EDITION_MISMATCH: 'Карта обновилась. Перезагрузите страницу.',
+    MAP_INFORMATION_REQUIRED:
+      'Недостаточно сведений о пути. Разведайте местность перед дальнейшим движением.',
   })[code] ?? 'Не удалось принять приказ.';
 
 export function useContinuousMovement(
