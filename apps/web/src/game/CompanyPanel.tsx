@@ -16,6 +16,7 @@ export function CompanyPanel(props: {
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
+  readonly onJoinFieldParty: (characterId: string) => void;
 }) {
   const { company, holdings } = props;
   const supplies = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
@@ -75,8 +76,30 @@ export function CompanyPanel(props: {
                     <span className="leader-mark"> · глава</span>
                   )}
                 </span>
-                <span className="person-status">{statusLabel(status)}</span>
+                <span className="person-status">
+                  {status === 'AVAILABLE' && character.inFieldParty === false
+                    ? 'В компании'
+                    : statusLabel(status)}
+                </span>
               </div>
+              {character.fieldPartyFull && !character.inFieldParty && status === 'AVAILABLE' && (
+                <>
+                  <button type="button" className="action action-quiet" disabled>
+                    Присоединить к отряду
+                  </button>
+                  <p className="state-note">Отряд заполнен; сначала освободите место.</p>
+                </>
+              )}
+              {character.canJoinFieldParty && !character.fieldPartyFull && (
+                <button
+                  type="button"
+                  className="action action-quiet"
+                  disabled={props.equipBusy}
+                  onClick={() => props.onJoinFieldParty(character.characterId)}
+                >
+                  Присоединить к отряду
+                </button>
+              )}
               {body && body.maximumHealth !== null && (
                 <Meter
                   label="Здоровье"

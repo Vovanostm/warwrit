@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import type { Kysely } from 'kysely';
 import {
   COMPANY_CATALOGUE,
+  fieldPartyStatus,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   COMPANY_RULES,
@@ -24,6 +25,7 @@ import type {
   CompanyReadResponseDto,
   CreateCompanyRequestDto,
   OrdinaryPlayerCompanyCommandV2Dto,
+  LocalRecruitOffersResponseDto,
 } from '@warwrit/protocol';
 import {
   ORDINARY_PLAYER_COMPANY_COMMAND_TYPES,
@@ -41,6 +43,7 @@ import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { projectCompanyHoldings } from './holdings.js';
+import { ensureWorldRecruitPool, readSiteRecruitOffers } from './recruitment.js';
 
 export interface CompanyRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -51,6 +54,50 @@ export function registerCompanyRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  app.get<{ Params: { siteId: string } }>('/company/recruits/:siteId', async (request, reply) => {
+    const accountId = await resolveSessionAccount(request, database);
+    if (!accountId) return reply.code(401).send({ error: 'authentication required' });
+    const result = await database.transaction().execute(async (transaction) => {
+      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (!companyId) return null;
+      const state = await lockCompanyAggregate(transaction, worldId, companyId);
+      if (!state) throw new Error('Owned company snapshot is unavailable');
+      const lifecycle = state.economy.lifecycle;
+      const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+      const partyLocation = party?.location.kind === 'AT' ? party.location : undefined;
+      const localMember = lifecycle.characters.some(
+        (character) =>
+          lifecycle.memberships.some(
+            (membership) =>
+              membership.characterId === character.identity.characterId &&
+              membership.companyId === companyId &&
+              membership.endedAt === null,
+          ) &&
+          character.presence.fieldPartyId === party?.partyId &&
+          character.presence.availability === 'AVAILABLE' &&
+          character.presence.location.kind === 'AT' &&
+          character.presence.location.siteId === request.params.siteId &&
+          character.presence.location.areaId === partyLocation?.areaId,
+      );
+      if (
+        lifecycle.company?.runStatus !== 'ACTIVE' ||
+        !partyLocation ||
+        partyLocation.siteId !== request.params.siteId ||
+        !localMember
+      )
+        return { offers: [] } satisfies LocalRecruitOffersResponseDto;
+      return {
+        offers: await readSiteRecruitOffers(
+          transaction,
+          worldId,
+          request.params.siteId,
+          partyLocation.areaId,
+        ),
+      } satisfies LocalRecruitOffersResponseDto;
+    });
+    return result === null ? reply.code(403).send({ error: 'company required' }) : result;
+  });
+
   app.get<{ Params: { siteId: string } }>('/company/supplies/:siteId', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
@@ -86,6 +133,18 @@ export function registerCompanyRoutes(
       // Lifecycle knowledge refreshes only through observations; the owner always knows its
       // own company's current leader and whether its run has ended.
       const own = state.economy.lifecycle.company;
+      const party =
+        state.economy.lifecycle.parties.length === 1
+          ? state.economy.lifecycle.parties[0]
+          : undefined;
+      const fieldPartyState = party
+        ? fieldPartyStatus(state.economy.lifecycle, party.partyId)
+        : undefined;
+      const fieldPartyFull = Boolean(
+        fieldPartyState &&
+        fieldPartyState.memberIds.length >=
+          Math.min(fieldPartyState.capacity, COMPANY_RULES.partyHardMax),
+      );
       return {
         holdings: projectCompanyHoldings(
           state,
@@ -104,6 +163,27 @@ export function registerCompanyRoutes(
             nicknameTextKey: character.nicknameTextKey,
             perkIds: [...character.perkIds],
             knownStatus: character.knownStatus,
+            inFieldParty:
+              state.economy.lifecycle.characters.find(
+                (actual) => actual.identity.characterId === character.characterId,
+              )?.presence.fieldPartyId === party?.partyId,
+            canJoinFieldParty: (() => {
+              const actual = state.economy.lifecycle.characters.find(
+                (entry) => entry.identity.characterId === character.characterId,
+              );
+              const location = actual?.presence.location;
+              return Boolean(
+                party?.location.kind === 'AT' &&
+                !fieldPartyFull &&
+                actual?.presence.availability === 'AVAILABLE' &&
+                actual.presence.encounterBindingId === null &&
+                actual.presence.fieldPartyId === null &&
+                location?.kind === 'AT' &&
+                location.siteId === party.location.siteId &&
+                location.areaId === party.location.areaId,
+              );
+            })(),
+            fieldPartyFull,
           })),
         },
       };
@@ -317,6 +397,7 @@ export function registerCompanyRoutes(
           },
         ],
       });
+      await ensureWorldRecruitPool(transaction, worldId);
       await transaction
         .insertInto('company_account_owners')
         .values({ world_id: worldId, company_id: evidence.companyId, account_id: accountId })
@@ -364,7 +445,20 @@ function parseOrdinaryCompanyCommandV2(
     return undefined;
   }
 
-  if (value['type'] === 'BuySupplies') {
+  if (value['type'] === 'Recruit') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['offerId', 'offerRevision']) ||
+      !isEntityId(payload['offerId']) ||
+      !isExactInteger(payload['offerRevision'])
+    )
+      return undefined;
+  } else if (value['type'] === 'JoinFieldParty') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['characterId']) ||
+      !isEntityId(payload['characterId'])
+    )
+      return undefined;
+  } else if (value['type'] === 'BuySupplies') {
     if (
       canonicalJson(Object.keys(payload).sort()) !==
         canonicalJson(['quantity', 'shopRevision', 'siteId']) ||

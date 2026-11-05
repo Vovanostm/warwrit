@@ -21,6 +21,8 @@ export function envelope<Data>(data: Data): ApiEnvelope<Data> {
 
 export type {
   CompanyOpeningOptionsResponseDto,
+  LocalRecruitOfferDto,
+  LocalRecruitOffersResponseDto,
   CompanyCommandAcceptedDto,
   CompanyCommandRejectionDto,
   CompanyHoldingsDto,
@@ -32,6 +34,7 @@ export type {
   CreateCompanyRequestDto,
   OrdinaryPlayerCompanyCommandType,
   OrdinaryPlayerCompanyCommandV2Dto,
+  OrdinaryPlayerCompanyPayloads,
   PlayerCompanyCommandDto,
 } from './company.js';
 export { ORDINARY_PLAYER_COMPANY_COMMAND_TYPES } from './company.js';

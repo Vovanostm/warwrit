@@ -17,6 +17,7 @@ import {
   refreshedCompanyCreatePayload,
 } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
+import { RecruitmentPanel } from './game/RecruitmentPanel.js';
 import { FirstHunt } from './FirstHunt.js';
 import { ContractBoard } from './game/ContractBoard.js';
 import { HuntList } from './game/HuntList.js';
@@ -1471,6 +1472,45 @@ export function App() {
     [refreshWorldParty, restoreJourney],
   );
 
+  const joinFieldParty = useCallback(
+    async (scope: WorldTravelScope, expectedPublicRevision: string, characterId: string) => {
+      setEquipBusy(true);
+      setEquipMessage(undefined);
+      try {
+        const response = await fetch(`${apiBaseUrl}/company/commands`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: {
+            'content-type': 'application/json',
+            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
+          },
+          body: JSON.stringify({
+            schemaVersion: 2,
+            commandId: crypto.randomUUID(),
+            expectedPublicRevision,
+            type: 'JoinFieldParty',
+            payload: { characterId },
+          }),
+        });
+        if (response.status === 401) {
+          void restoreJourney();
+          return;
+        }
+        if (!response.ok) {
+          setEquipMessage('Сейчас нельзя присоединить этого человека. Данные состава обновлены.');
+        }
+        await refreshWorldParty(scope);
+      } catch {
+        setEquipMessage('Нет связи с сервером. Проверьте состав перед повтором.');
+        await refreshWorldParty(scope);
+      } finally {
+        setEquipBusy(false);
+      }
+    },
+    [refreshWorldParty, restoreJourney],
+  );
+
   const signOut = async () => {
     if (signingOut.current) return;
     signingOut.current = true;
@@ -1539,9 +1579,22 @@ export function App() {
         onEquip={(characterId, item) =>
           void equipItem(scope, journey.world.publicRevision, characterId, item)
         }
+        onJoinFieldParty={(characterId) =>
+          void joinFieldParty(scope, journey.company.revision, characterId)
+        }
         onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
         placeSlot={(contractVisit) => (
           <>
+            {contractVisit.visit?.building === 'inn' && contractVisit.visit.siteId && (
+              <RecruitmentPanel
+                apiBaseUrl={apiBaseUrl}
+                companyId={journey.company.companyId}
+                expectedPublicRevision={journey.company.revision}
+                siteId={contractVisit.visit.siteId}
+                onRefresh={refreshWorldForShell}
+                onUnauthorized={onContractUnauthorized}
+              />
+            )}
             <ContractBoard
               {...contractVisit}
               siteId={journey.world.party?.location ?? null}

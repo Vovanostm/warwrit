@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Add ordinary local recruitment to the company loop
+
+- 2026-11-05, originating branch `codex/ordinary-recruitment`, local change on
+  `516c1eb`. Add the owner-approved finite world pool, physician at Stone Ford,
+  offer inspection with skills, aptitudes, condition and explicit no-equipment
+  disclosure, 50-crown hiring and 10-crown base wage with existing qualification
+  multipliers. Hiring does not add the person to the field party; Join remains a
+  separate, capacity-checked action. The pool initializes on server startup and
+  backfills missing offers. Focused PostgreSQL integration PASS on an isolated
+  temporary database; migration structure and scoped formatting PASS. Typechecks
+  last run reported protocol, area-narrowing and DTO diagnostics; those were fixed
+  afterward but not rerun. Startup/runtime, native player journey, full integrated
+  quality and hosted CI are NOT_RUN. The slice is local and uncommitted at entry.
+  [Owning acceptance](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
+
 ### Integrate the merged browser harness into the care candidate
 
 - 2026-11-05, `codex/game-care-delivery`, local integration of main`92c0f534`
