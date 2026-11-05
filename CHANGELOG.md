@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Install the selected property-testing skill with bounded activation
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested installation
+  following the expanded survey. Add pinned Trail of Bits property-based-testing
+  to the user Codex directory with its license and modification provenance.
+  Remove unsupported effort metadata, narrow its trigger and bound refactoring,
+  integration claims and severity heuristics. Retain the two existing diagnostic
+  skills. Manifest/source/license/reference readback PASS; no new product test
+  dependency or game-code change. Behavioral tests NOT_RUN; effectiveness
+  NOT_MEASURED. [Installation result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
+
 ### Expand diagnostic skill research to 62 rated sources
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested at least

@@ -5,6 +5,34 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Diagnostic skill installation after survey — 2026-11-06
+
+The owner explicitly requested installation of the most useful surveyed skills.
+Added user-scoped `/Users/vovanostm/.codex/skills/property-based-testing` from
+Trail of Bits commit `470419e16f97e112d01fc32f4898aea1755015d9`, path
+`plugins/property-based-testing/skills/property-based-testing`. The built-in
+installer fetched it into an owned staging directory before local adaptation
+and publication to the absent user-skill destination. No existing skill was
+overwritten. Existing variant-analysis and debugging-strategies were retained.
+
+The local adaptation removes the validator-rejected `effort` field, narrows
+activation to assigned property testing or a concrete invariant risk, and adds
+a short scope/evidence paragraph. It bounds production refactoring, mock-based
+integration claims and the references' fixed severity labels. Remaining upstream
+content is retained. Complete CC-BY-SA-4.0 terms, attribution, exact source and
+the modification list are in the installed LICENSE and UPSTREAM.md. The survey's
+unchanged-upstream compatibility rejection below is historical; this adapted
+installation now passes the local manifest validator.
+
+Installation checks PASS: all three skill manifests; the new package's local
+references, license and provenance; no executable files/symlinks; installed
+bytes match the validated staged package. The skill uses the project's existing
+test library when applicable; no new library, plugin, hook or analyzer was added.
+The two existing installations passed source readback. These are structural
+checks. Behavioral/product tests NOT_RUN and effectiveness NOT_MEASURED.
+Skills are available on the next turn. The game checkpoint and product source
+are outside this installation task.
+
 ## Expanded diagnostic-skill survey — 2026-11-06
 
 Owner correction: the first five-repository comparison was too narrow. This survey
