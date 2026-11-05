@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Correct the published recruitment formatting preflight
+
+- 2026-11-05, `codex/ordinary-recruitment`, published correction to
+  [PR360](https://github.com/Vovanostm/warwrit/pull/360). CI42014352340 stopped
+  before product tests on RecruitmentPanel.prepareHire formatting. Apply the
+  pinned formatter to its signature; command semantics and markup are unchanged.
+  [Owning results](docs/work-packages/WP-02.2.md#quality-closeout-correction--2026-11-05)
+  retain the failed run and current verification. No migration change.
+
 ### Complete the native recruitment and care continuation
 
 - 2026-11-05, `codex/ordinary-recruitment`, local integration of care6967f234

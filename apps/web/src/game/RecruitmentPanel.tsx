@@ -98,10 +98,7 @@ export function RecruitmentPanel(props: {
     | { readonly kind: 'ready'; readonly attempt: CompanyRosterAttempt }
     | { readonly kind: 'blocked'; readonly message?: string };
 
-  function prepareHire(
-    offer: LocalRecruitOfferDto | undefined,
-    retry: boolean,
-  ): HirePreparation {
+  function prepareHire(offer: LocalRecruitOfferDto | undefined, retry: boolean): HirePreparation {
     if (pending) return retry ? { kind: 'ready', attempt: pending } : { kind: 'blocked' };
     if (retry || !offer) return { kind: 'blocked' };
     return persistNewHire(offer);
