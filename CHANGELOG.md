@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Retain evidence for the browser CI STOP failures
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). Two same-head required CI
+  attempts timed out at different STOP waits. Their root cause remains unresolved.
+  Preserve native input/UI and real STOP request/status diagnostics, and upload
+  the existing failure/pursuit JSON with map artifacts. The original journey
+  assertions and deadlines remain intact. Focused actual browser PASS, deliberate
+  failure-capture probe PASS, scoped lint/syntax/format/artifact paths and diff PASS.
+  The owning [CI follow-up](docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
+  records both failures, local observations and the initial aggregation failure
+  due to missing prior migration evidence. Fresh changed-head CI is required.
+
 ### Apply task-quality research to the existing agent workflow
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.

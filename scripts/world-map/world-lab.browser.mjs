@@ -15,6 +15,22 @@ const context = await browser.newContext({ viewport: { width: 1440, height: 1000
 await context.addInitScript(() => {
   const NativeSocket = globalThis.WebSocket;
   globalThis.worldLabSockets = [];
+  globalThis.worldLabStopInputs = [];
+  globalThis.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.code !== 'Space') return;
+      globalThis.worldLabStopInputs.push({
+        target: event.target?.id,
+        activeElement: globalThis.document.activeElement?.id,
+        connection: globalThis.document.body.dataset.connection,
+        stopDisabled: globalThis.document.querySelector('#stop')?.disabled,
+        sequence: globalThis.document.querySelector('#world-sequence')?.textContent,
+        ownState: globalThis.document.querySelector('#own-state')?.textContent,
+      });
+    },
+    true,
+  );
   globalThis.WebSocket = class extends NativeSocket {
     constructor(...args) {
       super(...args);
@@ -23,11 +39,26 @@ await context.addInitScript(() => {
   };
 });
 const page = await context.newPage();
+const stopTraffic = [];
+page.on('request', (request) => {
+  if (isStopRequest(request)) stopTraffic.push({ event: 'request', body: request.postDataJSON() });
+});
+page.on('response', (reply) => {
+  if (isStopRequest(reply.request()))
+    stopTraffic.push({ event: 'response', status: reply.status() });
+});
 const errors = [];
 page.on('pageerror', (error) => errors.push(String(error)));
 const results = [];
 const authoringEntries = [];
 
+function isStopRequest(request) {
+  return (
+    request.url().endsWith('/world-lab/movement') &&
+    request.method() === 'POST' &&
+    request.postDataJSON()?.action?.kind === 'STOP'
+  );
+}
 function response(path) {
   return page.waitForResponse(
     (reply) => reply.url().endsWith(`/world-lab/${path}`) && reply.request().method() === 'POST',
@@ -100,10 +131,7 @@ async function stop() {
     return;
   }
   const statuses = [];
-  const isStop = (reply) =>
-    reply.url().endsWith('/world-lab/movement') &&
-    reply.request().method() === 'POST' &&
-    reply.request().postDataJSON()?.action?.kind === 'STOP';
+  const isStop = (reply) => isStopRequest(reply.request());
   const record = (reply) => {
     if (isStop(reply)) statuses.push(reply.status());
   };
@@ -435,11 +463,16 @@ try {
         connection: globalThis.document.body.dataset.connection,
         message: globalThis.document.querySelector('#client-message')?.textContent,
         viewport: globalThis.document.querySelector('#map')?.getAttribute('viewBox'),
+        activeElement: globalThis.document.activeElement?.id,
+        stopDisabled: globalThis.document.querySelector('#stop')?.disabled,
+        sequence: globalThis.document.querySelector('#world-sequence')?.textContent,
+        stopInputs: globalThis.worldLabStopInputs,
       })),
       null,
       2,
     ),
   );
+  await writeFile(resolve(output, 'stop-traffic.json'), JSON.stringify(stopTraffic, null, 2));
   throw error;
 } finally {
   const entries = [...(await page.coverage.stopJSCoverage()), ...authoringEntries].filter((entry) =>

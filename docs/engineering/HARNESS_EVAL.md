@@ -31,6 +31,37 @@ probes examined routing and evidence handling. These are instruction checks.
 Local branch updates target main and this harness branch.
 Active/dirty and parked game worktrees retain their current writer ownership.
 
+### Browser CI diagnostic follow-up
+
+The frozen instruction head `12529661` failed CI41936797452 twice. Attempt 1
+waited 30 seconds for movement HTTP200 during pursuit STOP at browser line 308.
+Attempt 2 timed out in ordinary `stop()` at line 112 during camera/movement.
+Bootstrap and coverage passed both times. Product/browser sources matched the
+previously green main. The logs establish timeouts, with their cause unresolved.
+The second artifact shows stale UI and a stationary company after the timeout.
+It cannot establish the state when the key was pressed.
+
+Independent read-only diagnosis identified possible arrival/freshness/focus races.
+These remain hypotheses. The ordinary local browser journey passed, as did a
+4x CPU-throttled diagnostic copy. The initial local CI-wrapper invocation then
+failed coverage aggregation because prior migration evidence was absent. The
+focused launcher ends after browser verification and owns disposable resources.
+Full local SQL/coverage aggregation is NOT_RUN for this supporting change.
+
+A concrete diagnostic defect was confirmed. The runner wrote structured failure
+files, while CI uploaded only images. The bounded correction retains failure UI,
+STOP traffic and pursuit-response JSON. Native Space observations record target,
+focus, connection, disabled state, sequence and visible movement text. STOP traffic
+records request bodies and response statuses, excluding headers/cookies. Collection
+adds no readiness wait and preserves all journey assertions and timeouts.
+
+The changed ordinary browser journey PASS. A deliberate failure after an actual
+STOP200 retained native map input, real request/response, UI state and screenshot.
+The ignored probe is diagnostic verification, not a gameplay acceptance pass.
+Scoped ESLint, JavaScript syntax, workflow artifact-path checks, formatting and
+diff checks PASS. Final source readback and new-head CI are recorded in issue348
+and PR349. The original two failures remain part of delivery history.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing
