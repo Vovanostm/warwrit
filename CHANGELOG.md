@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Merge ordinary wound care into main
+
+- 2026-11-05, originating branch `codex/game-care-delivery`, MERGED
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350) as `f0461180` after
+  explicit owner approval for `319b901e`, full CI42020812490 and scope42024966505
+  PASS. Live PR/main and clean detached local-main readback agree; its tree
+  matches the checked candidate. [Care closeout](docs/work-packages/WP-02.4.md#merged-care-delivery--2026-11-05)
+  retains native treatment/retry/restart evidence and partial visual limits.
+  Recruitment remains a separate unmerged prerequisite for the retained save.
+
+### Preserve declared callback identity in runtime coverage
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL measurement correction after
+  reproducing PR360's quality failure. Adding ordinary browser coverage changed
+  inherited attribution for unchanged useCallback functions, without changing
+  their metrics or hit counts. Derive anonymous callback names from their exact
+  source binding, retaining counters and locations; no game/dependency/threshold
+  change. [Owning diagnosis](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05)
+  retains full unit1244/SQL88/browser results, independent equality proof and the
+  rejected partial Fallow upgrade. Focused CLI regression, lint/format/syntax,
+  genuine-new-complexity rejection control and independent source review PASS;
+  full measured re-audit PASS with zero introduced findings. All472 App function
+  hits and the three zero-hit callbacks are retained. Final hosted CI is pending.
+
 ### Integrate the accepted pursuit setup fix into recruitment
 
 - 2026-11-05, `codex/ordinary-recruitment`, LOCAL integration of care `319b901e`.
