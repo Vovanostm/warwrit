@@ -1,5 +1,155 @@
 # Harness evaluation
 
+## Actionable quality-audit diagnostics — 2026-11-05
+
+The owner authorized continued harness implementation, review, merge and local
+main update. Branch `codex/harness-quality-feedback` and
+[issue361](https://github.com/Vovanostm/warwrit/issues/361) own this support slice.
+Product PR360, its source/checkpoint and saves remain separately owned.
+
+PR360 run42016253535/job127207976299 reached the final audit after roughly30
+minutes. Human output mixed34 complexity findings and6 clone groups without
+individual attribution;35 inherited findings were excluded by the native gate.
+The existing artifact had map/journey diagnostics, without structured audit or
+final coverage. WP-02.2 records full local measured reproduction and three
+unchanged App callbacks; two additional CI findings remained unexplained at
+that observation. The exact five introduced findings cannot be reconstructed
+from the old human log alone. This change does not claim to identify that subset.
+
+Run the existing Fallow3.30 audit once with JSON output. Preserve its native exit
+and gate policy, then separately explain introduced complexity errors, other
+introduced complexity and clone groups. Missing attribution remains explicit;
+inherited details and other categories remain in the complete report. Effective
+severity controls the display partition, not complexity rank. Native verdict,
+gate outcomes and attribution remain authoritative; the renderer derives no gate
+from counts. A saved real report had11 in summary attribution but12 flagged
+introduced effective-error records, reinforcing this distinction.
+
+Retain JSON, native stderr, checkout/base/PR-head/run/attempt/command/exit context
+and same-run final coverage in a seven-day allowlisted CI artifact. Upload and
+explanation run after native success or failure. A missing/malformed report fails
+visibly while the native audit result stays intact. No environment dump, saves,
+credentials, gate thresholds, suppression or automatic evidence reuse is added.
+
+Nine isolated workflow-fixture groups PASS, including actual audit shell exits0,
+1 and2, one invocation, attribution, effective severity, clone-family exclusion,
+raw evidence and missing/malformed report rejection. Node/Bash syntax, scoped
+format/lint/diff and a readback of an existing real native report PASS. Native
+analysis, coverage and product services/tests were NOT_RUN locally for this slice.
+Independent final-head review and hosted artifact acceptance remain pending and
+are recorded in issue361/its PR. General agent throughput remains NOT_MEASURED.
+
+The latest game-agent correction also reproduced an ignored output/ parent
+missing in a fresh-root test. The smallest useful prevention is to exercise the
+changed test/startup boundary on fresh inputs before publication, as already
+required below. Adding another general full local preflight would repeat costly
+CI. Whether existing guidance is adopted remains an observational question.
+
+### Product main advanced during the audit-diagnostics trial
+
+Recruitment PR360 merged as `1121665c` while support CI42030162311 was executing
+on care main `f0461180`. Integrate the live product base, preserve both changelog
+histories and leave all product source, CURRENT_PLAN and coverage-merger changes
+identical to main. Initial review ACCEPT at `93ef169e` and its hosted run retain
+their older-baseline scope. The integrated candidate needs applicable fresh CI
+and independent affected review; issue361/PR362 own those exact results.
+This is another observed cause of duplicate full CI during parallel support and
+product delivery. Compatibility-based evidence reuse remains a separate,
+unimplemented hypothesis, not a skipped gate in this slice.
+
+### Integrated browser failure and retained preparation evidence
+
+Integrated review ACCEPT at `f30ac452`. CI42032918779 passed bootstrap and
+measured units, then failed in `waitForPursuitStopReady` before the actual pursuit
+STOP probe. The retained UI was live with STOP enabled, accepted pursuit text
+and a selected target ring; traffic had only the earlier camera STOP200.
+Those later observations cannot identify the false readiness predicate at the
+last poll. The artifact omitted expected target, accepted/observed sequences,
+selected marker and remaining shared45s budget. The accepted request/response
+was written only after awaiting readiness, so a timeout lost it entirely.
+
+Save the actual pursuit attempt before awaiting readiness. Include the last API
+pursuit/sequence, expected target/accepted sequence, individual UI predicates and
+remaining budget in timeout output. Keep the same readiness condition,45s/three
+attempt limits and actual stale STOP assertions. This is a diagnostic repair;
+the original timeout cause and its elimination remain unproven. A local isolated
+copy of the existing CI launcher stopped after its real browser journey, without
+coverage aggregation. It PASS, including actual409→200; its owned disposable
+PostgreSQL/processes were removed. No product save or service was used. Scoped
+syntax/lint/format/diff PASS. Fresh final-head CI/review remain required.
+
+### Hosted failure artifact and source-only complexity correction
+
+CI42039004046 at `73689b15` passed both real browser journeys, then the unchanged
+native audit rejected one introduced finding: browser `ready` callback at line352,
+cyclomatic5/cognitive2, measured Node coverage0%, CRAP30. The failure artifact
+retained JSON/stderr/context/final coverage, and the same renderer isolated that
+exact finding. Diagnosis needed no local full coverage reproduction. This is
+observed actionable failure feedback, not a general productivity comparison.
+
+The author had added an unnecessary `?? null` while exposing diagnostics. Remove
+that extra branch and explicitly report `markerPresent: Boolean(marker)`; target
+identity and the original readiness conjunction retain their meaning. Keep actual
+coverage untouched. A source-only Fallow health inspection reports cyclomatic4/
+cognitive1. Its temporary display threshold1/report-only options expose all
+functions; they do not change repository gates. Coverage/CRAP for the corrected
+source remain unmeasured until current-head CI. Scoped syntax/lint/format/diff
+PASS. This correction is not a claim that the intermittent readiness timeout is
+fixed. Final review/CI/merge evidence stays in issue361/PR362.
+
+### Whole-job budget cancellation
+
+Run42044643870 at `29cd0b86` passed bootstrap, measured units and world browser,
+then GitHub cancelled its ordinary-browser step at the30-minute job cap. Check-run
+127304177158 explicitly reports “The job has exceeded the maximum execution time
+of30m0s”. Dated correction —2026-11-05: the initial account understated completed
+subchecks. The log shows browser and launcher PASS before cancellation; GitHub's
+step remained cancelled, and the native audit/artifact were NOT_RUN. This is a
+job-budget cancellation, not a full CI pass or a product assertion failure. Previous successful timing ranged from18m23s to29m22s, and this
+candidate had reached only the last browser by29 minutes.
+
+Raise the whole-job cap to35 minutes to give the existing measured phases bounded
+headroom. Preserve every required phase, the45s/three-attempt pursuit preparation,
+actual STOP assertions and native audit policy. No test deadline, counter or
+threshold is relaxed. This prevents the observed30-minute cutoff from aborting
+otherwise-progressing checks, but does not establish a successful CI step or the
+remaining audit. Independent final-head review and a complete hosted run remain
+required.
+
+### Fresh recovery consumer check
+
+PR363 at `87a17034` changed company observation to include vitals changes. Its
+first GET lawfully advanced the persisted root; the recruitment fixture then
+rewrote its genesis state while retaining newer row revisions. CI42040569966/
+job127289994811 showed the second GET500, “Company snapshot scope does not match
+its root”, then a characters read from that error response. Normal units explicitly
+skipped this SQL test. The owner corrected only setup in `0ca2a47c`, reloading
+current aggregates and deriving hire revisions from them.
+
+The existing focused integration-mode recruitment scenario can catch that consumer
+before publication when observation/roster-read semantics change. The command and
+owned disposable-DB prerequisites are in [focused checks](LOCAL_DEVELOPMENT.md#focused-checks).
+No new framework or global suite is needed. This source/CI investigation ran no
+product test or service; it does not claim a fresh runtime pass for PR363.
+
+### Reused-agent checkout route
+
+The parent omitted checkout/head/base in a repeated review request. The recipient
+started inspecting the primary dirty checkout. The parent stopped that read and
+supplied the exact route; corrected six-file integration review ACCEPT at
+`f30ac452`. No writes or product tests occurred in the wrong checkout.
+The delegation template now carries the route on every follow-up; the existing
+context skill checks it before source discovery and returns NEEDS_CONTEXT for a
+missing/mismatched route. A direct owner task retains its normal context flow.
+No wrapper, scheduler or extra agent is introduced. Static review/skill metadata
+checks do not establish future agent adherence or a throughput improvement.
+
+CI sampling correction: the13-job observation in issue361 covers latest attempts
+only. Run42008831586's final PASS at attempt2 obscures attempt1's failed world
+journey after26m51s. First-pass/effort evaluation must inspect `run_attempt` and
+historical attempt jobs, retaining failures/cancellations. Final run conclusions
+alone cannot establish first-pass task quality or total effort.
+
 ## Changed-document formatting and historical CI evidence — 2026-11-05
 
 The owner requested more harness improvements and new ideas. Source is the

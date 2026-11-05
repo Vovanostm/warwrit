@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Integrate merged quality feedback into recovery verification
+
+- 2026-11-05, `codex/company-recovery`, LOCAL integration of maincf973d35 /
+  merged [PR362](https://github.com/Vovanostm/warwrit/pull/362). Preserve both
+  changelog histories, the native audit reporter/artifacts, inherited35-minute
+  whole-job allowance and unchanged individual scenario/quality gates. Recovery
+  product source is unchanged from7b90194f; source/SQL18 and finite UI acceptance
+  retain their stated scope. [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records integration review ACCEPT; new-head CI remains pending.
+
 ### Separate local observation preparation from persistence
 
 - 2026-11-05, `codex/company-recovery`, LOCAL correction for
@@ -62,6 +72,76 @@ requests.
 - PR360 recruitment is MERGED as1121665c with explicit owner permission for final
   23aa287b, full CI42028536324/scope42032224662 PASS and clean-main readback.
   [Recruitment closeout](docs/work-packages/WP-02.2.md#merged-ordinary-recruitment--2026-11-05).
+
+### Clarify cancelled-step evidence and focus the recovery SQL consumer
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.
+  CI42044643870's browser and launcher printed PASS before GitHub cancelled
+  their step; native audit remained NOT_RUN. Preserve that boundary in the
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
+  Add one existing recruitment integration scenario to focused checks for changed
+  company observation/roster semantics, after PR363's genesis-root fixture mismatch.
+  Product source and checks are unchanged; scoped docs format/link/diff PASS.
+  The research did not run a new product scenario. Final review/CI remain pending.
+
+### Give measured CI phases bounded whole-job headroom
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL. GitHub cancelled
+  CI42044643870 at the30-minute job cap during ordinary-browser execution,
+  after successful bootstrap/coverage/world checks. Raise only the whole-job
+  allowance to35 minutes; keep individual scenario deadlines, assertions,
+  phases and native quality gates unchanged. No remaining check is claimed
+  passed from the cancelled job. [Owning evidence](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
+  records the exact timeout annotation and pending final-head verification.
+
+### Remove a redundant diagnostic callback branch found by hosted audit
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after
+  CI42039004046 passed browsers but rejected the new ready callback at CRAP30.
+  The new native failure artifact identified that single finding without another
+  local coverage run. Remove the author's unnecessary null fallback, preserving
+  an explicit marker-presence diagnostic and all readiness/STOP conditions.
+  Source-only structural inspection reports cyclomatic4/cognitive1; current-head
+  measured coverage/CRAP remain pending. No counters, gates or suppressions change.
+  Scoped syntax/lint/format/diff PASS. [Owning result](docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
+  retains the failed head, actual failure-artifact acceptance and final CI limits.
+
+### Retain failed pursuit preparation and verify reused-agent routes
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after integrated
+  CI42032918779 failed readiness before the pursuit STOP probe. Persist the real
+  accepted request before awaiting readiness and report its last API/UI predicates
+  and remaining budget on timeout. Deadlines, game code and STOP oracles remain
+  unchanged; the timeout cause is still unproven. Isolated native browser journey
+  PASS with actual409→200; scoped syntax/lint/format/diff PASS. A reused reviewer
+  also exposed an omitted checkout in its follow-up: add the route to the existing
+  delegation template and verify it through warwrit-context before discovery.
+  [Owning evaluation](docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
+  retains the failure, read-only routing correction, attempt-counting limitation
+  and pending final-head review/CI. No general speedup or flaky-test fix claimed.
+
+### Integrate recruitment main into quality-feedback verification
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL integration of main
+  `1121665c` / merged [PR360](https://github.com/Vovanostm/warwrit/pull/360)
+  during support CI42030162311. Preserve both changelog histories and every
+  product/checkpoint/coverage-merger byte from main. Independent initial review
+  ACCEPT at `93ef169e`; its CI applies to the earlier care baseline. Current
+  integrated-head review and CI remain required. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05)
+  and issue361 retain final evidence and the repeated-CI observation.
+
+### Explain introduced quality findings and retain native audit inputs
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL. Owner-requested harness
+  improvement after PR360's late mixed-attribution audit required expensive
+  local reproduction. CI runs one native JSON audit with unchanged exit/gates,
+  prints introduced complexity/clones separately and retains allowlisted native
+  JSON/stderr/revision context/final coverage for seven days. Workflow fixtures
+  exercise exits0/1/2, one run, attribution and invalid reports. Nine groups and
+  scoped syntax/lint/format/diff PASS; saved native-report readback PASS. Hosted
+  acceptance/final review remain pending. No product change or measured general
+  throughput gain. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
+  [issue361](https://github.com/Vovanostm/warwrit/issues/361).
 
 ### Run the coverage CLI regression from a clean checkout
 
