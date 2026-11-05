@@ -133,6 +133,21 @@ export interface CompanyPayrollDto {
 }
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
+  /** Owner-known wound instances and locally available material-care choices. */
+  readonly care?: {
+    readonly treatments: readonly {
+      readonly characterId: string;
+      readonly conditionId: string;
+      readonly definitionId: string;
+      readonly careDefinitionId: string;
+      readonly providers: readonly { readonly characterId: string }[];
+      readonly materials: readonly {
+        readonly itemId: string;
+        readonly definitionId: string;
+        readonly quantity: number;
+      }[];
+    }[];
+  };
   readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
   /** Optional for old response compatibility; missing means no payroll snapshot is available. */
   readonly payroll?: CompanyPayrollDto;
@@ -263,6 +278,13 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly itemId: string;
     readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
+  };
+  /** Apply one locally performed treatment using an accessible material instance. */
+  readonly ApplyCare: {
+    readonly characterId: string;
+    readonly conditionId: string;
+    readonly providerId: string;
+    readonly resourceItemId: string;
   };
 }
 

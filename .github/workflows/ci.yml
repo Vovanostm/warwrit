@@ -103,6 +103,7 @@ jobs:
             output/painted-game-ci/*/journey.json
             output/painted-game-ci/*/painted-map*.png
             output/world-lab-ci/runtime-*/*map.png
+            output/world-lab-ci/runtime-*/journey.json
             output/world-lab-ci/runtime-*/failure-ui.json
             output/world-lab-ci/runtime-*/map-recovery-*.json
             output/world-lab-ci/runtime-*/stop-traffic.json

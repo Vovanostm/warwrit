@@ -7,6 +7,7 @@ import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
 import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
+import { prepareCompanyCareFulfillment } from './care.js';
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
@@ -236,6 +237,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
+    input.request.type !== 'ApplyCare' &&
     input.request.type !== 'BeginFieldCamp' &&
     input.request.type !== 'EndFieldCamp'
   )
@@ -271,6 +273,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       ? equipAccessFact(state, input.worldId, companyId, input.request.payload, clock.tick)
       : undefined;
   if (input.request.type === 'EquipItem' && equipAccess === undefined)
+    return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+
+  const careFulfillment =
+    input.request.type === 'ApplyCare'
+      ? prepareCompanyCareFulfillment(state, input.request.payload, input.worldId, clock.tick)
+      : undefined;
+  if (input.request.type === 'ApplyCare' && careFulfillment === undefined)
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
   // A field camp needs a server-attested site: the party stands still where no living
@@ -473,6 +482,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       openAgreementId: openCamp?.agreementId,
       siteEligibilityId: campSite?.id,
       accessEvidenceId: equipAccess?.id,
+      careEvidenceId: careFulfillment?.id,
+      careDefinitionId: careFulfillment?.careDefinitionId,
     }),
   };
 
@@ -490,14 +501,21 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     // The player commands a camp through the people standing with the party.
     contactIds: equipAccess
       ? [equipAccess.operatorId]
-      : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') && party
-        ? lifecycle.characters
-            .filter((character) => character.presence.fieldPartyId === party.partyId)
-            .map((character) => character.identity.characterId)
-        : [],
+      : careFulfillment
+        ? [careFulfillment.providerId]
+        : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') &&
+            party
+          ? lifecycle.characters
+              .filter((character) => character.presence.fieldPartyId === party.partyId)
+              .map((character) => character.identity.characterId)
+          : [],
     facts: [],
     financeFacts: campSite ? [campSite] : [],
-    physicalFacts: [...foodFacts, ...(equipAccess ? [equipAccess] : [])],
+    physicalFacts: [
+      ...foodFacts,
+      ...(equipAccess ? [equipAccess] : []),
+      ...(careFulfillment ? [careFulfillment] : []),
+    ],
     practiceFacts: [],
   };
   const prepared = prepareCompanyEconomy(state.economy, parsed.command, context);

@@ -29,6 +29,7 @@ export function BattleView(props: BattleViewProps) {
     menu,
     onRestart,
     onEditor,
+    onContinue,
     busy = false,
     selectedSkillId = null,
     onSelectSkill,
@@ -155,7 +156,13 @@ export function BattleView(props: BattleViewProps) {
         />
         <BattleThreats view={view} />
       </div>
-      <BattleOutcome view={view} busy={busy} onRestart={onRestart} onEditor={onEditor} />
+      <BattleOutcome
+        view={view}
+        busy={busy}
+        onRestart={onRestart}
+        onEditor={onEditor}
+        onContinue={onContinue}
+      />
       <BattleForecast
         view={view}
         blockedCell={blockedCell}

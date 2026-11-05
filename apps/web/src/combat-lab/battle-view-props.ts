@@ -15,6 +15,7 @@ export interface BattleViewProps {
   readonly onAct?: (action: CombatLabAction['intent']) => void;
   readonly onRestart?: () => void;
   readonly onEditor?: () => void;
+  readonly onContinue?: () => void;
   readonly busy?: boolean;
   readonly selectedSkillId?: CombatLabSkillId | null;
   readonly onSelectSkill?: (id: CombatLabSkillId) => void;

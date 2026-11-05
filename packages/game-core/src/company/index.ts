@@ -31,6 +31,7 @@ export type {
   CompanyEconomyWithLearningResult,
 } from './economy.js';
 export { projectCompanyEconomy, projectEconomyRejection } from './economy-view.js';
+export { observationQualificationRequirements } from './economy-knowledge.js';
 export { quoteCompanyFarewell } from './economy-departure.js';
 export type * from './physical-types.js';
 export type * from './physical-root-types.js';

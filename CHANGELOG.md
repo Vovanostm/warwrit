@@ -9,6 +9,58 @@ requests.
 
 ## Unreleased
 
+### Reacquire expired pursuit preparation before the STOP browser probe
+
+- 2026-11-05, `codex/game-care-delivery`, LOCAL correction after
+  CI42015936183 repeated the accepted-but-expired pursuit setup failure. A live
+  LAST_SEEN order had no enabled Stop and no pursuit STOP was sent. Read the
+  same accepted order until its matching target/Stop is ready, or reacquire a
+  lawful observed target through ordinary input if it expires. Count accepted
+  expired orders inside the existing three-attempt/45s preparation budget.
+  Preserve actual delayed STOP, stale-response identities, epochs and retained/
+  cancelled-order assertions. Gameplay source is unchanged. Scoped syntax/lint/
+  format/diff and frozen real-browser journey PASS, including actual409→200.
+  Independent affected source review ACCEPT after tying UI readiness to a
+  post-acceptance sequence. Current-head hosted verification remains required.
+  [Owning result](docs/work-packages/WP-02.4.md#expired-pursuit-preparation-correction--2026-11-05).
+
+### Integrate care with changed-document validation
+
+- 2026-11-05, `codex/game-care-delivery`, LOCAL integration of main `9bb2d703`
+  / merged PR358–359. Preserve both changelog histories and main's focused
+  documentation validator; care gameplay source is unchanged. Existing native
+  treatment/retry/restart and independent source acceptance retain their scope.
+  [Care contract](docs/work-packages/WP-02.4.md#main-validation-integration--2026-11-05)
+  records the current checks. CI and merge permission for the integrated head
+  remain pending; the owner's earlier permission names only `6967f234`.
+
+### Verify native care and integrate merged objective markers
+
+- 2026-11-05, `codex/game-care-delivery`, local update to
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350), integrating main81e7931b.
+  PR353 is MERGED as81e7931b after explicit owner permission for headb9f150ba,
+  full CI42003635623 and scope42003688757 PASS; readback matches the tested tree.
+  Preserve both branches' history and the accepted CI harness. Native copied-save
+  travel/hire/Join/care, deliberately lost replies, exact retries and server restart
+  PASS on recruitment3583d002, with one50-crown payment, one medical unit and40 XP.
+  [Care result](docs/work-packages/WP-02.4.md#native-treatment-completion--2026-11-05)
+  records unchanged care source, evidence and trial limits. Current integration
+  CI remains pending; independent finite playable critique ACCEPT after actual
+  captures/receipt readback. Care/recruitment are unmerged.
+
+### Integrate the merged browser harness into the care candidate
+
+- 2026-11-05, `codex/game-care-delivery`, local integration of main`92c0f534`
+  / merged [PR349](https://github.com/Vovanostm/warwrit/pull/349). Resolve the
+  workflow, changelog and browser conflicts, retaining both histories, shared
+  readiness/STOP observations, semantic hit guards, own-tile recovery and diagnostics.
+  Keep the coordinator explicit in the care checkpoint, verified by the plan check.
+  Preserve care's finite native retry/acquisition and real movement assertions.
+  Integrated world browser/aggregation, syntax/lint/format and independent
+  source/infra ACCEPT. Unchanged care unit1240/SQL86/ordinary browser results remain
+  applicable. Repeated local aggregation overflowed the audit reader's counter;
+  integrated quality requires clean hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Record changed-document CI acceptance on the current product baseline
 
 - 2026-11-05, `codex/harness-docs-format-closeout`, LOCAL documentation receipt
@@ -242,6 +294,172 @@ requests.
   review ACCEPT, including care log readback. Game tests NOT_RUN for this
   documentation. Comparative quality/cost
   remains NOT_MEASURED.
+
+### Close introduced care quality findings with measured client retry
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350), after CI41970247645 passed
+  both browser paths but failed quality. Separate care selection/controls and
+  financial observation predicates; keep label DOM facts separate from selection
+  policy. Add one client transport regression for exact pending-request reuse
+  after network loss, remount and401, without a successful-treatment response.
+  Fresh local measured unit1240/SQL86/migration smoke, both browser journeys,
+  runtime aggregation, scoped lint/types/format and quality audit PASS. Introduced
+  code/duplicate findings0, CSS advisory retained. Independent source ACCEPT.
+  PR350 owns live hosted CI. Native care remains open. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Settle actual scouting before the pursuit probe
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41958320560 passed code
+  and coverage, then initial pursuit returned409 without a recorded reason.
+  Stop an active scouting move before target selection and refresh its real state;
+  retain required pursuit200 and report any future initial rejection code.
+  Local browser checkpoints PASS before the conditional refinement; later coverage
+  aggregation still rejects stale prior SQL. Source ACCEPT, final lint/format/diff PASS; new-head
+  hosted verification pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+- 2026-11-05 correction, same branch, local. CI41961030529 captured the actual
+  initial422 TARGET_NOT_VISIBLE. Reacquire lawful moving targets after missing
+  markers, visibility loss or stale requests, bounded to three POSTs/45s observation
+  window and still requiring actual200. Frozen local browser PASS including
+  STOP409→200; later SQL-coverage aggregation remains stale. Source ACCEPT and
+  lint/format/diff PASS; new hosted verification pending.
+
+- 2026-11-05 correction, same branch, local. CI41964009252 passed code/coverage
+  but the auxiliary scouting STOP timed out. Wait for actual scout arrival before
+  acquisition; retain the separate keyboard/pursuit STOP checks. Frozen browser,
+  lint/format/diff PASS, source ACCEPT; later SQL aggregation remains stale.
+  New-head hosted verification pending.
+
+- 2026-11-05 correction, same branch, local. CI41966782146 reached the camera
+  STOP with the documented manual-retry prompt. After a real stale rejection,
+  retry by a fresh native keypress, at most three times, still requiring200 and
+  actual stopped state; arrival after rejection cannot pass. Wait for actual
+  movement progress instead of a fixed1s delay. Frozen browser/lint/format/diff
+  PASS, source ACCEPT; stale local SQL aggregation and new hosted CI remain open.
+
+### Keep care observation preparation and persistence explicit
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41954434203 passed the
+  clean gate, coverage and both browser journeys, then rejected introduced code
+  complexity and duplication. Prepare one local observation draft separately
+  while retaining recovery-aware selection and all-drafts-before-writes. Share
+  the identical account-row lock across three company routes and the STOP reply
+  predicate across two browser probes. Actual PostgreSQL16checks, server types,
+  scoped lint/format and observation health PASS; independent source ACCEPT.
+  New-head hosted verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Verify the finite outcome when a refreshed pursuit STOP is stale again
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41949560552 passed the
+  clean gate/coverage but its real worker invalidated both STOP attempts. Check
+  exact409→200 cancellation or exact409→409 rejection with retained pursuit and
+  visible error, retaining one automatic retry. Independent source ACCEPT and
+  scoped lint/format and frozen-source browser PASS; later aggregation rejects
+  stale prior SQL coverage, hosted CI pending. The single
+  revised native HUNT02 trial retained a heavy wound but lost its sole physician,
+  so care/retry remain unexecuted. Succession/return and untreated save restart
+  PASS. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Select a named atlas place when its label is clicked
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). Native HUNT03 navigation
+  reproduced a label passing RMB to the ground, ending115m away. Let actionable
+  labels receive the click. Native SITE/arrival/JOIN and the resolved-battle return
+  passed. The existing browser probe now chooses a visible label and retains
+  SITE/movement/STOP checks. Scoped lint/format/diff PASS; source review has no
+  remaining finding. Native care and current-head hosted verification remain open.
+  [Owning map correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#actionable-site-label-input-correction--2026-11-05).
+
+### Send the stale-pursuit STOP while the target is still being chased
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41942555733 passed the
+  clean gate, coverage and camera STOP, then timed out in the separate pursuit
+  scenario. Install interception before starting pursuit, wait for live CHASING
+  UI with enabled STOP and press Space promptly on the map. Preserve the actual
+  worker epoch delay and exact409→200 assertions. The local browser phase PASS;
+  its measurement merger still rejects the recorded stale prior SQL report.
+  Retain existing sanitized browser diagnostics in CI artifacts. Scoped lint,
+  format/diff PASS; independent source review found no defect, with runtime
+  acceptance reserved for hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Keep the browser STOP probe moving until its keyboard action
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41938162496 passed the
+  full clean gate and coverage, then its short world-map movement probe timed out
+  awaiting STOP after the captured company had arrived. Increase that test leg
+  from26to52source pixels and require its moving/POST200 path, preserving actual
+  keyboard STOP and stale-retry assertions. The local browser journey PASS after
+  both corrections. Its later measurement aggregation
+  FAIL on stale prior SQL coverage, preserved as a separate limit. New hosted
+  verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Integrate current main into the care candidate
+
+- 2026-11-05, `codex/game-care-delivery`, local. Integrate main `456c6c1d` /
+  PR347 before care publication, retaining both changelog histories and the game
+  coordinator's care checkpoint. Upstream changes affect guidance/harness only.
+  Previously executed game checks retain their source scope; hosted care CI is
+  pending. [Current slice](docs/engineering/CURRENT_PLAN.md).
+
+### Let the ordinary campaign continue after the battle result
+
+- 2026-11-05, `codex/game-care-delivery`, local. The native HUNT02 journey won
+  with three survivors, but its fullscreen result blocked the contract behind it.
+  Add a resolved-result return button through the existing battle presentation;
+  it refreshes the authenticated journey and saved company/world. Web types,
+  27 presentation checks and scoped lint PASS; independent source review ACCEPT.
+  The authoring refresh unmounted the first result before the click could be
+  verified. That navigation check remains pending on the next native battle.
+  [Journey and limits](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Disclose actual local wounds before company care
+
+- 2026-11-05, `codex/game-care-delivery`, local. Authenticated company reads
+  prepare and persist existing scoped Observe commands for changed local own-party
+  conditions. Respect movement/encounter/contact, current time, actual food and
+  existing payroll qualification rules. Repeated unchanged reads keep their
+  revision. The shared qualification query preserves the existing consumer rule.
+  PostgreSQL executor/routes16PASS, payroll/core41PASS, types/lint/format PASS.
+  A reviewer-found recovery-boundary defect was reproduced in SQL and corrected
+  by reselecting subjects after time advance. Native journey and final acceptance
+  remain pending. [Contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05),
+  [wiki](docs/wiki/mechanics/wounds.md#уход-компании--локальная-реализация-2026-11-05).
+
+### Respect personal property and container access during care
+
+- 2026-11-05, `codex/game-care-delivery`, local. Reproduced unauthorized material
+  consumption in PostgreSQL, then restricted the company doctor producer to
+  company-owned medical units in COMPANY-accessible local containers. A member's
+  personal stock or OWNER-only pack cannot fund this company command. Both care
+  SQL scenarios, server types and scoped lint/format PASS.
+  [Care contract and remaining acceptance](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Bring company medicine into ordinary commands and roster
+
+- 2026-11-05, `codex/game-care-delivery`, local. Reuse the parked care producer,
+  V2 ApplyCare payload, owner-private treatment options and Company panel on
+  main`ee03f4ee`, with the owner-approved5/10practice challenges. Care uses actual
+  local provider/material facts and the existing atomic economy executor.
+  Types,7client/shell checks and2actual PostgreSQL care scenarios PASS. Native
+  care/retry/restart and final acceptance are pending. [Owning contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Painted campaign atlas delivered to main
+
+- 2026-11-05, originating branch `codex/game-painted-delivery`, merged in
+  [PR344](https://github.com/Vovanostm/warwrit/pull/344) as `ee03f4ee` from the
+  owner-approved head `dcaf84a6`. Current-head CI41922441689, scope and post-merge
+  main CI41925505728 PASS. Actual main/tree match the checked head. Ordinary
+  company-private atlas, movement/STOP/reload and shared-world journeys passed.
+  [Acceptance and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
+  This post-merge wiki/checkpoint receipt is local. Further campaign care and
+  combat presentation remain active. Original saves are retained.
 
 ### Upstream guidance visibility and checkpoint ownership
 

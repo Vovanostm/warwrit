@@ -74,6 +74,7 @@ export function EncounterPanel(props: {
   readonly scope: EncounterScope;
   readonly onUnauthorized: () => void;
   readonly onTerminal?: () => void;
+  readonly onReturn?: () => void;
 }) {
   const [state, setState] = useState<EncounterPanelState>(initialState);
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
@@ -351,6 +352,7 @@ export function EncounterPanel(props: {
           {presentation && (
             <BattleView
               view={presentation}
+              {...(props.onReturn ? { onContinue: props.onReturn } : {})}
               selectedUnitId={
                 presentation.units.some((unit) => unit.id === inspectedUnitId)
                   ? inspectedUnitId

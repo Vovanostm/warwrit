@@ -890,6 +890,39 @@ histories and current authority. Final affected source review ACCEPT covers the
 CI/history resolution. Format, plan-limit and diff checks PASS; merged-head CI
 is pending. No additional local game suite was run for this documentation/harness merge.
 
+### Painted ordinary atlas merged — 2026-11-05
+
+[PR344](https://github.com/Vovanostm/warwrit/pull/344) MERGED as `ee03f4ee227642e38a7bb9e58285664a121b46af`
+from owner-approved expected head `dcaf84a6a411a050680dc91e062ea84f113371d4`.
+Owner approval was received directly on 2026-11-05 and recorded in the PR.
+Current-head CI41922441689, applicable scope checks and post-merge main
+CI41925505728 PASS. Actual remote main and merged tree match the checked head.
+Final independent source ACCEPT covers integration and infrastructure. Prior map visual acceptance retains its stated scope. Ordinary/world browser
+journeys and quality audit passed. Artifact 13367404594 retains the current journey
+summaries and map previews, 3,143,969 bytes. Detailed logs remain in CI and ignored output/.
+
+The ordinary painted-map slice is delivered to main. A retained local trial on 5228
+has a separate new preview database. Original campaigns and positions are retained.
+This post-merge receipt/wiki correction is local. The next campaign criterion is
+post-contract care through the ordinary UI, reusing the retained care implementation
+and approved 5/10 producer profile.
+The full campaign and selected combat presentation remain active work.
+
+### Actionable site-label input correction — 2026-11-05
+
+The native care journey exposed an ordinary atlas input defect. RMB on the
+displaced mill label passed through its pointer-events:none text, issuing a
+TERRAIN target about115m from the actual site. Scope label hit-testing to
+actionable role=button sites using bounding-box. The same native named-label
+order then persisted SITE/staraya-melnitsa, arrived AT its courtyard and opened
+HUNT03. Nonactionable labels retain their former input behavior.
+
+The existing ordinary browser probe now selects a rendered, in-viewport label,
+clicks it and retains SITE/ACCEPTED/MOVING/STOP assertions. Scoped lint/format/diff
+PASS. Independent source readback found no remaining finding. Hosted browser
+confirmation awaits the current care PR. This changes input only, without art,
+geometry, chart/visibility rules or simulation parameters.
+
 ## Accepted hunt objective markers — 2026-11-05
 
 Owner decision in this chat is «Показывать метку цели, путь разведывать».
@@ -969,3 +1002,9 @@ Current integration readback — 2026-11-05. Full CI42000045363 and scope4200004
 PASS at3374894b. Main then advanced through documentation-only PR356 to6c525840.
 Retain both changelog entries; no gameplay source changed. PR353 owns the latest
 integration CI. Merge permission remains required.
+
+Merged objective-marker readback — 2026-11-05. Owner explicitly approved normal
+PR353 merge atb9f150ba after green applicable CI. Full CI42003635623 and
+scope42003688757 PASS, no review threads/blockers. Merge81e7931b is on main and
+its tree matches the approved candidate. This closes the finite marker slice;
+the inherited whole-atlas art limitations above remain open.

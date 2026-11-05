@@ -1583,6 +1583,7 @@ export function App() {
               scope={scope}
               onUnauthorized={() => void restoreJourney()}
               onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
+              onReturn={() => void restoreJourney()}
             />
           </Suspense>
         }

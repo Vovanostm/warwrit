@@ -91,13 +91,14 @@ async function waitForFreshMap(target = page, afterSequence) {
     afterSequence,
   );
 }
-async function rightClickMarker(selector) {
+async function rightClickMarker(selector, requestPath, allowMissing = false) {
+  if (!allowMissing) await page.locator(selector).waitFor({ state: 'attached' });
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
     ({ selector, previous }) => {
       if (!globalThis.worldLabMapIsFresh(previous)) return false;
       const marker = globalThis.document.querySelector(selector);
-      if (!marker) return false;
+      if (!marker) return { missing: true };
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
       if (!globalThis.document.elementFromPoint(at.x, at.y)?.closest(selector)) return false;
       return { x: at.x, y: at.y };
@@ -105,8 +106,14 @@ async function rightClickMarker(selector) {
     { selector, previous },
   );
   const at = await point.jsonValue();
-  await page.mouse.click(at.x, at.y, { button: 'right' });
   await point.dispose();
+  if (at.missing) {
+    assert.ok(allowMissing, `Required marker disappeared after a fresh observation: ${selector}`);
+    return undefined;
+  }
+  const accepted = response(requestPath);
+  await page.mouse.click(at.x, at.y, { button: 'right' });
+  return accepted;
 }
 async function rightClickMapPoint(x, y) {
   const previous = await page.locator('#world-sequence').textContent();
@@ -130,32 +137,40 @@ async function rightClickMapPoint(x, y) {
 }
 async function stop(requireMoving = false) {
   await page.locator('#map').focus();
-  const previous = await page.locator('#world-sequence').textContent();
-  await waitForFreshMap(page, previous);
-  if (await page.locator('#stop').isDisabled()) {
-    assert.equal(requireMoving, false, 'movement probe must still be moving before keyboard STOP');
-    const stopped = await state();
-    assert.notEqual(stopped.own.movement.mode, 'MOVING');
-    assert.equal(stopped.pursuit, null);
-    return;
-  }
   const statuses = [];
   const record = recordStopStatuses(statuses);
   page.on('response', record);
   try {
-    const accepted = page.waitForResponse(
-      (reply) => isStopRequest(reply.request()) && reply.status() === 200,
-    );
-    await page.keyboard.press('Space');
-    await accepted;
-    assert.ok(
-      JSON.stringify(statuses) === '[200]' || JSON.stringify(statuses) === '[409,200]',
-      `STOP must settle directly or through the existing one stale retry: ${statuses}`,
-    );
-    await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
-    const stopped = await state();
-    assert.notEqual(stopped.own.movement.mode, 'MOVING');
-    assert.equal(stopped.pursuit, null);
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const previous = await page.locator('#world-sequence').textContent();
+      await waitForFreshMap(page, previous);
+      if (await page.locator('#stop').isDisabled()) {
+        assert.equal(requireMoving, false, 'probe must still be moving before keyboard STOP');
+        assert.equal(attempt, 0, 'arrival after rejected STOP does not demonstrate cancellation');
+        const stopped = await state();
+        assert.notEqual(stopped.own.movement.mode, 'MOVING');
+        assert.equal(stopped.pursuit, null);
+        return;
+      }
+      const settled = page.waitForResponse((reply) => isStopRequest(reply.request()));
+      await page.keyboard.press('Space');
+      const reply = await settled;
+      const body = await reply.json();
+      if (reply.status() === 409) {
+        assert.ok(['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code));
+        // Ordinary movement has no pursuit order to retry automatically. Follow
+        // its visible prompt with a new native keypress after a fresh snapshot.
+        continue;
+      }
+      assert.equal(reply.status(), 200, `Unexpected STOP result ${body.code}`);
+      assert.ok(statuses.slice(0, -1).every((status) => status === 409));
+      await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
+      const stopped = await state();
+      assert.notEqual(stopped.own.movement.mode, 'MOVING');
+      assert.equal(stopped.pursuit, null);
+      return;
+    }
+    assert.fail(`No actual keyboard STOP200 after three native attempts: ${statuses}`);
   } finally {
     page.off('response', record);
   }
@@ -218,9 +233,7 @@ async function selectPlayer(target, slot) {
 }
 async function visit() {
   await page.locator('#fit').click();
-  const accepted = response('movement');
-  await rightClickMarker('[data-site-id="bereznyak"]');
-  const reply = await accepted;
+  const reply = await rightClickMarker('[data-site-id="bereznyak"]', 'movement');
   assert.equal(reply.status(), 200);
   const acceptedAt = (await reply.json()).serverTimeMs;
   await page.waitForFunction(
@@ -282,7 +295,15 @@ async function cameraAndMovement() {
   const before = (await state()).own.movement.point;
   const accepted = await rightClickMapPoint(target.x, target.y);
   assert.equal(accepted.status(), 200);
-  await page.waitForTimeout(1000);
+  await page.waitForFunction(
+    async (previous) => {
+      const reply = await fetch('/world-lab-api/world-lab/state');
+      const current = (await reply.json()).own.movement.point;
+      return current.xMicroFp !== previous.xMicroFp || current.zMicroFp !== previous.zMicroFp;
+    },
+    before,
+    { timeout: 5000 },
+  );
   assert.notDeepEqual((await state()).own.movement.point, before);
   await stop(true);
   await page.mouse.move(850, 450);
@@ -314,6 +335,94 @@ async function approachMovingThreat(observed, deadline) {
 function pursuitSetupReady(observed) {
   return observed.own.movement.mode !== 'MOVING' && movingThreats(observed).length > 0;
 }
+async function waitForPursuitStopReady(targetId, deadline) {
+  let orderId;
+  let acceptedSequence;
+  while (Date.now() < deadline) {
+    const observed = await state();
+    const pursuit = observed.pursuit;
+    acceptedSequence ??= observed.sequence;
+    assert.ok(pursuit?.orderId, 'accepted pursuit must have an order ID');
+    assert.equal(pursuit.targetId, targetId);
+    orderId ??= pursuit.orderId;
+    assert.equal(pursuit.orderId, orderId, 'preparation must observe the same accepted order');
+    if (pursuit.status !== 'CHASING') return pursuit;
+    const ready = await page.evaluate(
+      ({ targetId, acceptedSequence }) => {
+        const marker = globalThis.document.querySelector('[data-pursuit-target]');
+        const renderedSequence = globalThis.document.querySelector('#world-sequence').textContent;
+        return (
+          globalThis.worldLabMapIsFresh() &&
+          BigInt(renderedSequence) >= BigInt(acceptedSequence) &&
+          marker?.getAttribute('data-group-id') === targetId &&
+          !globalThis.document.querySelector('#stop').disabled
+        );
+      },
+      { targetId, acceptedSequence },
+    );
+    if (ready) return pursuit;
+    await page.waitForTimeout(100);
+  }
+  assert.fail(`Accepted pursuit ${orderId} did not become ready within the preparation deadline`);
+}
+async function beginObservedPursuit(deadline) {
+  const attempts = [];
+  while (Date.now() < deadline && attempts.length < 3) {
+    const observed = await state();
+    const point = observed.own.movement.point;
+    const targets = movingThreats(observed);
+    // Leave a chase window for the STOP probe. Reacquire a fresh target if this
+    // observed group leaves sight before the server handles the native order.
+    targets.sort(
+      (a, b) =>
+        Math.hypot(
+          Number(b.point.xMicroFp) - Number(point.xMicroFp),
+          Number(b.point.zMicroFp) - Number(point.zMicroFp),
+        ) -
+        Math.hypot(
+          Number(a.point.xMicroFp) - Number(point.xMicroFp),
+          Number(a.point.zMicroFp) - Number(point.zMicroFp),
+        ),
+    );
+    if (!targets[0]) {
+      await page.waitForTimeout(300);
+      continue;
+    }
+    const reply = await rightClickMarker(`[data-group-id="${targets[0].id}"]`, 'pursuit', true);
+    if (!reply) continue;
+    const body = await reply.json();
+    const attempt = { status: reply.status(), code: body.code };
+    attempts.push(attempt);
+    if (reply.status() === 200) {
+      const pursuit = await waitForPursuitStopReady(targets[0].id, deadline);
+      if (pursuit.status === 'CHASING') return pursuit.orderId;
+      // Acceptance does not promise a chase window: an observed target may
+      // leave sight or be reached before STOP is available. Reacquire natively.
+      attempt.expiredOrder = { orderId: pursuit.orderId, status: pursuit.status };
+    } else {
+      assert.ok(
+        (reply.status() === 422 && body.code === 'TARGET_NOT_VISIBLE') ||
+          (reply.status() === 409 &&
+            ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code)),
+        `Unexpected initial pursuit rejection ${JSON.stringify(attempts)}`,
+      );
+    }
+    await writeFile(
+      resolve(output, 'pursuit-start-response.json'),
+      JSON.stringify(
+        {
+          status: reply.status(),
+          request: reply.request().postDataJSON(),
+          responseBody: JSON.stringify(body),
+          attempts,
+        },
+        null,
+        2,
+      ),
+    );
+  }
+  assert.fail(`No STOP-ready pursuit within three attempts/45s: ${JSON.stringify(attempts)}`);
+}
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
   const preparationDeadline = Date.now() + 45000;
@@ -326,19 +435,6 @@ async function pursuitAndRetry() {
     await page.waitForTimeout(300);
     observed = await state();
   }
-  const targets = movingThreats(observed);
-  const point = observed.own.movement.point;
-  targets.sort(
-    (a, b) =>
-      Math.hypot(
-        Number(b.point.xMicroFp) - Number(point.xMicroFp),
-        Number(b.point.zMicroFp) - Number(point.zMicroFp),
-      ) -
-      Math.hypot(
-        Number(a.point.xMicroFp) - Number(point.xMicroFp),
-        Number(a.point.zMicroFp) - Number(point.zMicroFp),
-      ),
-  );
   assert.ok(
     pursuitSetupReady(observed),
     JSON.stringify({
@@ -352,7 +448,6 @@ async function pursuitAndRetry() {
     }),
   );
   assert.equal(observed.pursuit, null, 'approach must finish without a pursuit order');
-  const id = targets[0].id;
   const statuses = [];
   const record = recordStopStatuses(statuses);
   const details = [];
@@ -384,32 +479,7 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
-  const accepted = response('pursuit');
-  await rightClickMarker(`[data-group-id="${id}"]`);
-  const pursuitReply = await accepted;
-  if (pursuitReply.status() !== 200) {
-    await writeFile(
-      resolve(output, 'pursuit-start-response.json'),
-      JSON.stringify(
-        {
-          status: pursuitReply.status(),
-          request: pursuitReply.request().postDataJSON(),
-          responseBody: await pursuitReply.text(),
-        },
-        null,
-        2,
-      ),
-    );
-  }
-  assert.equal(pursuitReply.status(), 200);
-  const pursuitOrderId = (await state()).pursuit?.orderId;
-  assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
-  await page.waitForFunction(
-    () =>
-      globalThis.document.body.dataset.connection === 'live' &&
-      globalThis.document.querySelector('[data-pursuit-target]') &&
-      !globalThis.document.querySelector('#stop').disabled,
-  );
+  const pursuitOrderId = await beginObservedPursuit(preparationDeadline);
   const settled = page.waitForResponse(
     (reply) => isStopRequest(reply.request()) && (reply.status() === 200 || statuses.length === 2),
   );

@@ -1,10 +1,13 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { CompanyCarePanel } from './CompanyCarePanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
 export function CompanyPanel(props: {
+  readonly accountId: string;
+  readonly onRefreshItems: () => void;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
   readonly supplyVenueName: string;
@@ -135,6 +138,12 @@ export function CompanyPanel(props: {
       </ul>
       {holdings && (
         <>
+          <CompanyCarePanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            onRefresh={props.onRefreshItems}
+          />
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (
             <p className="state-note">Общих припасов нет.</p>

@@ -1,0 +1,209 @@
+import { randomUUID } from 'node:crypto';
+import {
+  COMPANY_COMMAND_SCHEMA_VERSION,
+  COMPANY_RULESET_ID,
+  PHYSICAL_POLICY_VERSION,
+  campaignTick,
+  canonicalJson,
+  companySourceKey,
+  observationQualificationRequirements,
+  parseCompanyCommand,
+  prepareCompanyEconomy,
+  prepareCompanyLifecycle,
+} from '@warwrit/game-core';
+import type {
+  CompanyCombatAggregateState,
+  CompanyPhysicalState,
+  EconomyContext,
+} from '@warwrit/game-core';
+import type { Transaction } from 'kysely';
+import type { DatabaseSchema } from '../db/database.js';
+import { readWorldClock } from '../world/clock.js';
+import { updateCompanyAggregateWithReceipt } from './repository.js';
+import { prepareStationaryFoodFacts } from './travel-food.js';
+
+function conditionsChanged(physical: CompanyPhysicalState, characterId: string): boolean {
+  return (
+    canonicalJson(physical.conditions.filter((entry) => entry.characterId === characterId)) !==
+    canonicalJson(
+      physical.knowledge.conditionSnapshots.filter((entry) => entry.characterId === characterId),
+    )
+  );
+}
+
+function prepareObservationDraft(
+  state: CompanyCombatAggregateState,
+  characterId: string,
+  contactIds: readonly string[],
+  tick: string,
+) {
+  const root = state.economy;
+  const { lifecycle } = root;
+  const id = randomUUID();
+  const food = prepareStationaryFoodFacts(state, tick, id);
+  if (food.kind !== 'PREPARED') return undefined;
+  const principal = { kind: 'DOMAIN_RECEIPT' as const, id: 'local-company-observation' };
+  const subjectRef = { kind: 'CHARACTER' as const, id: characterId };
+  const parsed = parseCompanyCommand({
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    rulesetId: COMPANY_RULESET_ID,
+    commandId: id,
+    sourceEventId: id,
+    type: 'Observe',
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    campaignTick: tick,
+    expectedRevision: root.lifecycle.revision,
+    actorRef: principal,
+    payload: {
+      observationId: id,
+      factId: id,
+      sourceId: id,
+      subjectRef,
+      observerRef: { kind: 'COMPANY', id: lifecycle.companyId },
+    },
+  });
+  if (!parsed.ok || parsed.command.type !== 'Observe') throw new Error('Invalid local observation');
+  const scope = {
+    id,
+    sourceEventId: id,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    revision: root.lifecycle.revision,
+    atTick: campaignTick(tick),
+  };
+  const context: EconomyContext = {
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    principal,
+    atTick: scope.atTick,
+    canonicalRevision: root.lifecycle.revision,
+    publicRevision: root.lifecycle.knowledge.revision,
+    completeGraph: true,
+    contactIds,
+    facts: [{ ...scope, kind: 'COMPANY_OBSERVATION', subject: subjectRef }],
+    financeFacts: [],
+    physicalFacts: [
+      ...food.facts,
+      {
+        ...scope,
+        kind: 'PHYSICAL_OBSERVATION',
+        version: PHYSICAL_POLICY_VERSION,
+        ordinal: 0,
+        observerCompanyId: lifecycle.companyId,
+        subject: subjectRef,
+        itemIds: [],
+        containerIds: [],
+      },
+    ],
+    internalGrant: {
+      commandId: id,
+      sourceEventId: id,
+      canonicalRequest: canonicalJson(parsed.command),
+    },
+  };
+  const observed = prepareCompanyLifecycle(root.lifecycle, parsed.command, context);
+  if (observed.kind !== 'PREPARED') return undefined;
+  const qualification = observationQualificationRequirements(
+    root.finance,
+    root.lifecycle,
+    observed.next,
+    characterId,
+  );
+  const prepared = prepareCompanyEconomy(root, parsed.command, {
+    ...context,
+    financeFacts: qualification.map((notice) => ({
+      ...scope,
+      ...notice,
+      id: randomUUID(),
+      kind: 'QUALIFICATION_NOTICE' as const,
+      noticeVersion: id,
+    })),
+  });
+  if (prepared.kind !== 'PREPARED' || prepared.replayed || prepared.receipt.requirements.length > 0)
+    return undefined;
+  const previousRevision = root.lifecycle.revision;
+  const next = { ...state, economy: prepared.next };
+  return { previousRevision, next, command: parsed.command, receipt: prepared.receipt };
+}
+
+/** Called only after ownership validation and the account/company locks, before private projection. */
+export async function observeLocalCompanyConditions(
+  transaction: Transaction<DatabaseSchema>,
+  state: CompanyCombatAggregateState,
+  now: Date,
+): Promise<CompanyCombatAggregateState> {
+  const { lifecycle, physical } = state.economy;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  if (!physical || state.encounter.active || party?.location.kind !== 'AT') return state;
+  const place = party.location;
+  const members = new Set<string>(
+    lifecycle.memberships
+      .filter((member) => member.companyId === lifecycle.companyId && member.endedAt === null)
+      .map((member) => member.characterId),
+  );
+  const local = lifecycle.characters.filter(
+    ({ identity, presence }) =>
+      members.has(identity.characterId) &&
+      presence.fieldPartyId === party.partyId &&
+      presence.availability === 'AVAILABLE' &&
+      presence.encounterBindingId === null &&
+      presence.location.kind === 'AT' &&
+      presence.location.siteId === place.siteId &&
+      presence.location.areaId === place.areaId,
+  );
+  if (!local.some(({ identity }) => conditionsChanged(physical, identity.characterId)))
+    return state;
+  const clock = await readWorldClock(transaction, lifecycle.worldId, now, true);
+  if (
+    BigInt(clock.tick) < BigInt(lifecycle.campaignTick) ||
+    (BigInt(clock.tick) > BigInt(lifecycle.campaignTick) &&
+      state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
+  )
+    return state;
+
+  // Prepare every observation before writing any, so an unavailable prerequisite
+  // preserves all prior knowledge. Food and recovery use the actual current tick.
+  let next = state;
+  const writes = [];
+  const contactIds = local.map((person) => person.identity.characterId);
+  for (let observedCount = 0; observedCount < local.length; observedCount += 1) {
+    // The first command advances recovery for everyone. Recheck all local subjects
+    // so a wound resolved by that interval is disclosed in this same read.
+    const subject = local.find(({ identity }) =>
+      conditionsChanged(next.economy.physical!, identity.characterId),
+    );
+    if (!subject) break;
+    const draft = prepareObservationDraft(
+      next,
+      subject.identity.characterId,
+      contactIds,
+      clock.tick,
+    );
+    if (!draft) return state;
+    next = draft.next;
+    writes.push(draft);
+  }
+  for (const write of writes) {
+    const revision = write.next.economy.lifecycle.revision;
+    await updateCompanyAggregateWithReceipt(
+      transaction,
+      write.previousRevision,
+      revision,
+      write.next,
+      {
+        command: write.command,
+        receipt: {
+          receiptId: randomUUID(),
+          commandId: write.command.commandId,
+          sourceKey: companySourceKey(write.command),
+          requestKey: canonicalJson(write.command),
+          response: { ok: true, publicRevision: write.next.economy.lifecycle.knowledge.revision },
+          resultingRevision: revision,
+        },
+        auditEvents: write.receipt.events.map((event) => ({ eventId: event.id, revision, event })),
+      },
+    );
+  }
+  return next;
+}

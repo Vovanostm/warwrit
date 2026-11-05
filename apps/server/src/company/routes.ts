@@ -31,9 +31,10 @@ import {
 } from '@warwrit/protocol';
 import { randomUUID } from 'node:crypto';
 
-import { resolveSessionAccount } from '../auth/session.js';
+import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import { findOwnedCompanyId, loadCompanyAggregate, saveCompanyAggregate } from './repository.js';
+import { findOwnedCompanyId, lockCompanyAggregate, saveCompanyAggregate } from './repository.js';
+import { observeLocalCompanyConditions } from './observation.js';
 import { createOpeningAggregate, issueOpeningOption, openingOptionView } from './opening.js';
 import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
@@ -74,10 +75,12 @@ export function registerCompanyRoutes(
     }
 
     const company = await database.transaction().execute(async (transaction) => {
+      if (!(await lockIdentityAccount(transaction, accountId))) return null;
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
       if (companyId === undefined) return null;
-      const state = await loadCompanyAggregate(transaction, worldId, companyId);
-      if (state === undefined) throw new Error('Owned company snapshot is unavailable');
+      const loaded = await lockCompanyAggregate(transaction, worldId, companyId);
+      if (loaded === undefined) throw new Error('Owned company snapshot is unavailable');
+      const state = await observeLocalCompanyConditions(transaction, loaded, new Date());
       const view = projectCompanyLifecycle(state.economy.lifecycle, companyId);
       if (view === null) throw new Error('Owned company projection is unavailable');
       // Lifecycle knowledge refreshes only through observations; the owner always knows its
@@ -116,13 +119,8 @@ export function registerCompanyRoutes(
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
 
     return database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return reply.code(401).send({ error: 'authentication required' });
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return reply.code(401).send({ error: 'authentication required' });
       if (await findOwnedCompanyId(transaction, worldId, accountId))
         return reply.code(409).send({ error: 'company already exists' });
 
@@ -171,13 +169,8 @@ export function registerCompanyRoutes(
       return reply.code(400).send({ commandId: null, ok: false, code: 'INVALID_COMMAND' });
 
     const result = await database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return { statusCode: 401, body: { error: 'authentication required' } };
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return { statusCode: 401, body: { error: 'authentication required' } };
 
       const optionRow = await transaction
         .selectFrom('company_opening_options')
@@ -407,6 +400,16 @@ function parseOrdinaryCompanyCommandV2(
       !isEntityId(payload['characterId']) ||
       !isEntityId(payload['itemId']) ||
       !['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
+    )
+      return undefined;
+  } else if (value['type'] === 'ApplyCare') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['characterId', 'conditionId', 'providerId', 'resourceItemId']) ||
+      !isEntityId(payload['characterId']) ||
+      !isEntityId(payload['conditionId']) ||
+      !isEntityId(payload['providerId']) ||
+      !isEntityId(payload['resourceItemId'])
     )
       return undefined;
   }
