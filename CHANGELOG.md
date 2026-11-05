@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Select a named atlas place when its label is clicked
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). Native HUNT03 navigation
+  reproduced a label passing RMB to the ground, ending115m away. Let actionable
+  labels receive the click. Native SITE/arrival/JOIN and the resolved-battle return
+  passed. The existing browser probe now chooses a visible label and retains
+  SITE/movement/STOP checks. Scoped lint/format/diff PASS; source review has no
+  remaining finding. Native care and current-head hosted verification remain open.
+  [Owning map correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#actionable-site-label-input-correction--2026-11-05).
+
 ### Send the stale-pursuit STOP while the target is still being chased
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft

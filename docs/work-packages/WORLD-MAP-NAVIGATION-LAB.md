@@ -907,3 +907,18 @@ This post-merge receipt/wiki correction is local. The next campaign criterion is
 post-contract care through the ordinary UI, reusing the retained care implementation
 and approved 5/10 producer profile.
 The full campaign and selected combat presentation remain active work.
+
+### Actionable site-label input correction — 2026-11-05
+
+The native care journey exposed an ordinary atlas input defect. RMB on the
+displaced mill label passed through its pointer-events:none text, issuing a
+TERRAIN target about115m from the actual site. Scope label hit-testing to
+actionable role=button sites using bounding-box. The same native named-label
+order then persisted SITE/staraya-melnitsa, arrived AT its courtyard and opened
+HUNT03. Nonactionable labels retain their former input behavior.
+
+The existing ordinary browser probe now selects a rendered, in-viewport label,
+clicks it and retains SITE/ACCEPTED/MOVING/STOP assertions. Scoped lint/format/diff
+PASS. Independent source readback found no remaining finding. Hosted browser
+confirmation awaits the current care PR. This changes input only, without art,
+geometry, chart/visibility rules or simulation parameters.

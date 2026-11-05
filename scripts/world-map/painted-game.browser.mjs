@@ -263,13 +263,20 @@ async function chooseReachableSite(page, map, observerSiteId) {
     .evaluateAll((nodes) =>
       nodes.map((node) => {
         const matrix = node.getScreenCTM();
-        if (!matrix) return null;
+        const label = node.querySelector('.site-label');
+        if (!matrix || !label) return null;
+        const style = globalThis.getComputedStyle(label);
+        const labelRect = label.getBoundingClientRect();
+        if (style.display === 'none' || style.visibility === 'hidden' || labelRect.width === 0)
+          return null;
         const point = new globalThis.DOMPoint(0, 0).matrixTransform(matrix);
         return {
           siteId: node.getAttribute('data-site-id'),
           name: node.getAttribute('aria-label'),
           x: point.x,
           y: point.y,
+          labelX: labelRect.x + labelRect.width / 2,
+          labelY: labelRect.y + labelRect.height / 2,
         };
       }),
     );
@@ -279,7 +286,11 @@ async function chooseReachableSite(page, map, observerSiteId) {
       marker.x >= mapRect.left &&
       marker.x <= mapRect.right &&
       marker.y >= mapRect.top &&
-      marker.y <= mapRect.bottom,
+      marker.y <= mapRect.bottom &&
+      marker.labelX >= mapRect.left &&
+      marker.labelX <= mapRect.right &&
+      marker.labelY >= mapRect.top &&
+      marker.labelY <= mapRect.bottom,
   );
   assert.ok(markers.length > 0, 'a known site marker must be visible');
 
@@ -325,7 +336,7 @@ async function moveAndStop(page, map, marker) {
     },
     { timeout: 20000 },
   );
-  await map.locator(`[data-site-id="${marker.siteId}"] .site-disc`).click({ button: 'right' });
+  await map.locator(`[data-site-id="${marker.siteId}"] .site-label`).click({ button: 'right' });
   const response = await acceptedMove;
   const body = await response.json();
   const moving = response.status() === 200 && body.result === 'ACCEPTED' && body.mode === 'MOVING';
