@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Separate local observation preparation from persistence
+
+- 2026-11-05, `codex/company-recovery`, LOCAL correction for
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). CI42049872539 passed full
+  bootstrap, SQL89, unit coverage and both browser journeys, then the final
+  audit flagged observer cognitive complexity21 above15. Extract the complete
+  bounded observation-preparation loop; retain local admission and persistence
+  in the caller and prepare every draft before any write. No rule/UI change.
+  Server types and real executor/routes/recruitment SQL18/18 PASS. Local
+  structural diagnostic no longer flags either function; stale local coverage
+  is not used as CRAP acceptance. Independent affected review ACCEPT; new-head CI pending.
+  [Owning result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+
 ### Select the company tab by its exact name in the painted journey
 
 - 2026-11-05, `codex/company-recovery`, LOCAL correction to

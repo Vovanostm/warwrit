@@ -241,30 +241,14 @@ export async function observeLocalCompanyConditions(
   const recoveryDue = recovering && BigInt(clock.tick) > BigInt(physical.processedTick);
   if (!changed && !recoveryDue) return state;
 
-  // Prepare every observation before writing any, so an unavailable prerequisite
-  // preserves all prior knowledge. Food and recovery use the actual current tick.
-  let next = state;
-  const writes = [];
-  const contactIds = local.map((person) => person.identity.characterId);
-  for (let observedCount = 0; observedCount < local.length; observedCount += 1) {
-    // The first command advances recovery for everyone. Recheck all local subjects
-    // so changed health and wounds are disclosed in this same read. A recovering
-    // member initiates future settlement even when the old snapshots still match.
-    const subject =
-      local.find(({ identity }) => bodyChanged(next.economy.physical!, identity.characterId)) ??
-      (observedCount === 0 && recoveryDue ? recovering : undefined);
-    if (!subject) break;
-    const draft = prepareObservationDraft(
-      next,
-      subject.identity.characterId,
-      contactIds,
-      clock.tick,
-    );
-    if (!draft) return state;
-    next = draft.next;
-    writes.push(draft);
-  }
-  for (const write of writes) {
+  const prepared = prepareLocalBodyObservations(
+    state,
+    local.map((person) => person.identity.characterId),
+    clock.tick,
+    recoveryDue ? recovering.identity.characterId : undefined,
+  );
+  if (!prepared) return state;
+  for (const write of prepared.writes) {
     const revision = write.next.economy.lifecycle.revision;
     await updateCompanyAggregateWithReceipt(
       transaction,
@@ -285,5 +269,31 @@ export async function observeLocalCompanyConditions(
       },
     );
   }
-  return next;
+  return prepared.next;
+}
+
+function prepareLocalBodyObservations(
+  state: CompanyCombatAggregateState,
+  contactIds: readonly string[],
+  tick: string,
+  recoverySubjectId: string | undefined,
+) {
+  // Prepare every observation before writing any, so an unavailable prerequisite
+  // preserves all prior knowledge. Food and recovery use the actual current tick.
+  let next = state;
+  const writes = [];
+  for (let observedCount = 0; observedCount < contactIds.length; observedCount += 1) {
+    // The first command advances recovery for everyone. Recheck all local subjects
+    // so changed health and wounds are disclosed in this same read. A recovering
+    // member initiates future settlement even when the old snapshots still match.
+    const subject =
+      contactIds.find((characterId) => bodyChanged(next.economy.physical!, characterId)) ??
+      (observedCount === 0 ? recoverySubjectId : undefined);
+    if (!subject) break;
+    const draft = prepareObservationDraft(next, subject, contactIds, tick);
+    if (!draft) return undefined;
+    next = draft.next;
+    writes.push(draft);
+  }
+  return { next, writes };
 }

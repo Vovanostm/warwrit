@@ -12,7 +12,7 @@ Live PR/remote main/clean local main agree; the tested candidate and merge trees
 [Recovery owner](../work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05) defines the next finite result.
 Branch codex/company-recovery starts at1121665c; outer checkout is the only active writing worktree.
 Expose existing FIELD↔RECOVERY, future fed refresh and return to the same party slot; no new healing rules.
-Retained Company2 is at Brod with a treated severe wound,17HP and food; assignments are FIELD.
+Native trial began at Brod with a treated severe wound,17HP and food; assignments were FIELD.
 No historical healing: settle the previous assignment before the current-tick transition.
 Native FIELD→RECOVERY at1992 kept17HP; fed future1995→20HP,2006→31HP; same-slot FIELD return PASS.
 Lost reply/reload/exact retry2POSTs/1receipt and unchanged server restart PASS; food carry advances once.
@@ -20,10 +20,12 @@ Web9/types/lint, SQL17/projection5 PASS; source review has no blocker.
 First UI critique REWORK fixed: clearer saved-request copy, wound names and refresh success/error feedback.
 Native corrected UI outage/retry/return PASS; source and finite day/night UI ACCEPT.
 [PR363](https://github.com/Vovanostm/warwrit/pull/363) published87a17034; source and finite day/night UI ACCEPT.
-CI42044125361: bootstrap1247/99SKIP, stress10000, SQL89, coverage and world browser PASS.
-Painted probe FAIL: substring Отряд selector also matched the new refresh button; final quality audit NOT_RUN.
-Three exact tab selectors corrected; native2substring/1exact/selected=true, syntax/lint/format and affected review PASS.
-Gameplay/UI/native acceptance stays applicable. New-head CI/scope and explicit PR363 merge permission remain required.
+CI42049872539 on a834cb8d: bootstrap1247/99SKIP, stress10000, SQL89, coverage and both browsers PASS.
+Final quality audit FAIL: observer cognitive21>15. Complete preparation loop extracted before persistence.
+Server types and real SQL18/18 PASS; observer/helper have no structural threshold finding in local diagnostic.
+Local auto-picked stale coverage is not accepted as measured CRAP evidence; no gate/config/dependency changes.
+Source/UI/native acceptance stays scoped to unchanged behavior; affected source review ACCEPT and new-head CI remains pending.
+Explicit PR363 merge permission remains required after green full CI/scope.
 Native stand5238/API3538 uses warwrit_care_recruit_native_20261105; original wounded saves retained.
 Payroll PR338 remains parked for subsequent current-main integration.
 At most two active writing worktrees; no Orca, automation or deployment activation.
