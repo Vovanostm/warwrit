@@ -323,7 +323,7 @@ Owner amendment — 2026-10-25: one assigned check owner runs
 Failed checks print a diagnostic tail (up to 8192 bytes) and the exact rerun command,
 while retaining `.orca/validate-<step>.log` and a nonzero overall result.
 The script uses local refs (no implicit fetch), requires a valid merge base and
-checks integration/clean tree before acceptance. An edited or deleted CURRENT_PLAN
+checks integration/clean tree before acceptance. A committed CURRENT_PLAN edit or deletion
 runs the existing plan checker before format/product commands and stops on failure.
 Clean CI runs that same checker before toolchain setup/bootstrap. PR scope retains
 task linkage and size reporting. Refresh live refs when integration

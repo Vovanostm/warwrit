@@ -43,7 +43,7 @@ readiness audit for unchanged evidence.
    diff for scope, secret leakage, leftovers and changed semantics. Run focused
    checks while editing; fix tool environment issues without weakening the gate.
    Check an edited CURRENT_PLAN with `bash scripts/check-current-plan.sh` before
-   publication. The focused local validator runs it when that path changes.
+   publication. The focused local validator checks committed changes to that path.
 2. Record `git rev-parse HEAD HEAD^{tree}` and base. Use the repository-pinned
    toolchain and frozen lockfile. The existing clean-checkout gate is owned by
    AGENTS.md / `scripts/bootstrap.sh`; do not copy it into another workflow.

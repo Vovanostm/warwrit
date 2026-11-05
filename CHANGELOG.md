@@ -15,7 +15,7 @@ requests.
   Continued owner review of PR350 found a documentation-only correction followed
   by another29min full gate, a failed21min optional memory query and native care
   blocked by a missing physician. Move the existing plan check from PR scope to
-  the start of CI. Check changed/deleted plans in `orca-validate.sh` before
+  the start of CI. Check committed plan edits/deletions in `orca-validate.sh` before
   format/product commands. Update existing context/delivery skills with targeted
   optional retrieval and feasible timed native scenarios. Clarify fresh local
   coverage aggregation after the observed u32 overflow. The
