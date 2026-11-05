@@ -32,6 +32,16 @@ A small enumeration is suitable for a tiny C04 oracle, never production monetary
 allocation. Assert observable allocations, balances, custody, deadlines and
 rejections rather than helper call order or catalogue snapshots.
 
+## Acceptance evidence
+
+For disputed or repaired checks, trace assertions to the accepted requirement.
+Locate whether failure occurs in setup, product behavior or the grader. Review
+changed fixtures and assertions together so a passing rerun still exercises the
+intended command and invariant. Accept valid implementation alternatives. Require
+specific call order or helper names only when the contract makes them observable.
+For changed grading logic, use a known-valid and relevant known-bad result when
+available. Missing scenario evidence remains open even when another check passes.
+
 ## Structure pass
 
 Map each mutable fact and each policy to its owner and consumers. Distinguish
@@ -68,7 +78,7 @@ optional advice, separate from defects.
 Tool pointers, not verdicts: `pnpm exec fallow review --base <ref> --brief` for
 changed-file dead code, complexity and clones; `pnpm exec ast-grep scan <paths>`
 for code-shape warnings. A clone or warning is a lead; confirm the shared rule
-and all consumers before consolidating (see AGENTS.md "Code Review Rules").
+and all consumers before consolidating (see [Simple design](../../../AGENTS.md#simple-design)).
 
 ## Worked example
 
@@ -91,8 +101,8 @@ Limit: proves this preparer only; other helpers need their own check
 
 ## Exit
 
-Run the smallest regressions that disprove the old implementation, apply the
-fix, then check affected existing specifications and types. Preserve the sole
-regression of each old defect. One final exact-tree gate belongs to delivery;
-repeated unchanged full runs add no evidence. Report test scope honestly: pure
-roundtrip is not SQL crash recovery; headless combat is not player enjoyment.
+For a read-only assignment, return findings and missing evidence to the author.
+When implementation is assigned, run the smallest regression for the old defect,
+apply the fix and check affected specifications/types. Preserve the sole regression
+of each old defect. Delivery owns the final integrated gate. Report the actual
+boundary demonstrated by each check and the remaining player/SQL observations.

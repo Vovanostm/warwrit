@@ -1,5 +1,328 @@
 # Harness evaluation
 
+## Instruction rollout — 2026-11-05
+
+The owner requested skill/root improvements, PR review, merge and local branch
+updates. [Issue348](https://github.com/Vovanostm/warwrit/issues/348) owns that
+scope, current permission and delivery status. Research commit `6339da35` is
+included in this branch. CURRENT_PLAN stays with the game integrator.
+
+The bounded implementation originates on `codex/harness-task-quality`. Issue348
+and its PR own live publication, review, CI and merge status.
+
+| Owning instruction | Applied change and reason                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AGENTS.md          | Keep critical gameplay acceptance and classify invalid-check failures. A repaired SQL run demonstrates its exercised boundary.                    |
+| warwrit-context    | Trace acceptance criteria to requirements available to the author before judging implementation.                                                  |
+| warwrit-review     | Review repaired fixtures/assertions and disputed graders, accepting valid alternatives. Read-only reviewers return findings to the author.        |
+| warwrit-delivery   | Keep blocking criteria open and distinguish completed substeps. Move detailed telemetry from the routine handoff to on-demand harness evaluation. |
+
+These are instruction changes based on the assessment below. Skill selection
+metadata, existing safety/authority boundaries and game behavior retain their
+own contracts. Native prompt reload, changed agent behavior and comparative
+quality/cost remain NOT_RUN/NOT_MEASURED. Three skill validators, scoped formatting,
+added local links/anchors, the current-plan guard and diff checks PASS. Root context
+is 166 lines / 10,039 bytes. An initial formatting warning in this section was
+corrected before the passing readback. Final independent review and applicable CI
+are recorded in issue348 and its PR. The first review found ambiguous wording
+that could add intermediate critic rounds. The correction explicitly retains
+independent critique at final gameplay/visual acceptance. Ten static decision
+probes examined routing and evidence handling. These are instruction checks.
+Local branch updates target main and this harness branch.
+Active/dirty and parked game worktrees retain their current writer ownership.
+
+### Browser CI diagnostic follow-up
+
+The frozen instruction head `12529661` failed CI41936797452 twice. Attempt 1
+waited 30 seconds for movement HTTP200 during pursuit STOP at browser line 308.
+Attempt 2 timed out in ordinary `stop()` at line 112 during camera/movement.
+Bootstrap and coverage passed both times. Product/browser sources matched the
+previously green main. The logs establish timeouts, with their cause unresolved.
+The second artifact shows stale UI and a stationary company after the timeout.
+It cannot establish the state when the key was pressed.
+
+Independent read-only diagnosis identified possible arrival/freshness/focus races.
+These remain hypotheses. The ordinary local browser journey passed, as did a
+4x CPU-throttled diagnostic copy. The initial local CI-wrapper invocation then
+failed coverage aggregation because prior migration evidence was absent. The
+focused launcher ends after browser verification and owns disposable resources.
+Full local SQL/coverage aggregation is NOT_RUN for this supporting change.
+
+A concrete diagnostic defect was confirmed. The runner wrote structured failure
+files, while CI uploaded only images. The bounded correction retains failure UI,
+STOP traffic and pursuit-response JSON. Native Space observations record target,
+focus, connection, disabled state, sequence and visible movement text. STOP traffic
+records request bodies and response statuses, excluding headers/cookies. Collection
+adds no readiness wait and preserves all journey assertions and timeouts.
+
+The changed ordinary browser journey PASS. A deliberate failure after an actual
+STOP200 retained native map input, real request/response, UI state and screenshot.
+The ignored probe is diagnostic verification, not a gameplay acceptance pass.
+Scoped ESLint, JavaScript syntax, workflow artifact-path checks, formatting and
+diff checks PASS. Source readback accepted diagnostic head `19bda5ea`.
+
+During this investigation, the game author independently published a finished
+moving-STOP probe correction in commit `e57d6e8b` on draft PR350. This branch
+reuses only its eight-line browser-test delta. It lengthens the bounded probe
+path and requires actual movement before the keyboard STOP. The game contract,
+care implementation and integrator checkpoint remain owned by PR350. This reuse
+preserves the author's stricter precondition alongside the diagnostic addition.
+The combined ordinary real browser journey PASS, including exact pursuit
+STOP409/retry200 and zero page errors. The two original CI causes remain
+unresolved. Final combined-head source readback and new-head CI are recorded in
+issue348 and PR349. The original failures remain part of delivery history.
+
+### Initial pursuit preparation follow-up
+
+CI41946278698 at `2c112d26` passed the ordinary native STOP. The retained input
+record shows map focus, live connection and enabled movement at Space, followed
+by an actual STOP request and HTTP200. It then failed the initial PURSUE200
+assertion with HTTP409. The STOP diagnostics do not contain that rejection code.
+This is a different observed boundary from the earlier STOP timeouts.
+
+Source review found a temporal counterexample. `approachMovingThreat` returns
+while the own company can still be moving. Its arrival can change the expected
+revision/epoch between visible observation and initial pursuit validation. That
+explains a possible legitimate409, without proving the exact code in this run.
+The test now ends its approach through the existing native STOP, reads a fresh
+state and selects the current visible moving target set. Initial pursuit200 and
+later exact STOP409/retry200, all deadlines and product policies are preserved.
+A rejected initial pursuit now retains the request and response status/body in
+its own bounded artifact, excluding headers/cookies.
+
+The combined real browser journey PASS. A separate ignored probe sent an actually
+stale pursuit epoch to the real server and confirmed409, retained rejection code
+and request, plus the matching artifact path. It supplied no successful response
+or game-state substitute. Initial instrumentation/setup edits triggered ESLint
+`no-undef` and `no-useless-assignment`; both were corrected before passing checks.
+Final source review and applicable new-head CI remain recorded in PR349.
+
+### Current-tile recovery and finite stale outcomes
+
+CI41950810244 at `943ab947` stopped before movement in the second player's
+interrupted-tile recovery probe. The old oracle aborted an arbitrary first tile
+and required an identical full-URL200. Cartography legitimately cancels obsolete
+revision/viewport work and requests current tiles. That supplies a concrete
+counterexample to the oracle. The exact cancellation in that run is unobserved.
+
+The probe now first loads the map, selects its authorized own-position tile,
+and aborts only that coordinate on same-slot reentry through the existing UI.
+It requires real200 from the same origin and tile path, allowing current revision,
+then verifies that specific tile and all current images are loaded. The normal
+local journey PASS. Both local slot records show a real abort and recovery at
+revision2. Changed-revision recovery is a source-grounded valid case, not a claim
+about those local records. Per-slot recovery details now join the CI artifacts.
+
+The game author's finished `32eb91a5` provides a second oracle correction under
+the existing single-retry policy. The real worker may invalidate that retry too.
+This branch adapts its finite assertions while retaining the fresh approach setup
+and diagnostics. Exact409→200 proves cleared pursuit. Exact409→409 must prove
+exactly two distinct commands, refreshed epoch, final stale UI and the original
+pursuit retained. That rejection branch explicitly leaves cancellation unproven.
+
+Both branches were executed separately on this source. The normal real browser
+journey demonstrated native pursuit STOP409/retry200. An ignored negative probe
+delayed both real STOP requests until actual worker epoch changes and demonstrated
+exact409→409 with the required IDs/epoch/UI/retained-order checks. No responses,
+world state or clocks were forged. The production driver delays only its original
+single request. The existing SQL pursuit specification also requires accepted
+STOP to cancel atomically; all six SQL pursuit cases passed in the earlier
+CI41950810244. New-head applicable CI must repeat that positive boundary. A green
+finite-rejection branch alone cannot close the player cancellation criterion.
+
+One read-only reviewer used the host's primary checkout and incorrectly reported
+a checkout switch. Explicit reads in the assigned harness checkout corrected the
+warning. Root discovery guidance now sets each command's workdir explicitly.
+Root context is now 167 lines / 10,077 bytes. The earlier 166-line value records the
+first instruction head. Native loading/behavior improvements remain unmeasured.
+
+### Native click target readiness
+
+CI41957100334 at `919a8555` timed out waiting for movement in
+`approachMovingThreat`. The retained UI message was “Преследование принято.
+Пробел — остановиться.” That success message is written only for PURSUE, while
+this step awaited a ground movement POST. The old ground helper allowed any map
+descendant at the point, including a group, and calculated screen coordinates
+before waiting for a fresh observation. The exact pixel transition is unrecorded.
+
+Ground input now calculates the current transform and checks live sequence plus
+hit target in one browser predicate. Group/site markers are excluded. Marker
+input checks that the actual hit belongs to the requested selector. Native mouse
+input and original server assertions remain. Handle disposal follows the click,
+keeping an extra browser round trip out of the freshness-to-input interval.
+
+The current-source full real browser journey PASS with successful native pursuit
+STOP409/retry200. One follow-up local launch failed when ports 5338 and 5326 became occupied
+between preflight and startup. Its own resources were cleaned up, other processes
+were preserved, and a run after the ports were free passed.
+
+An extra overlap probe initially required travel HTTP200 at a real moving group's old
+position and failed with HTTP422/MAP_INFORMATION_REQUIRED. Visibility does not prove a
+lawful traversable route. That failure remains recorded. A separate input-intent
+probe verified real MOVE_TO/TERRAIN and no PURSUE after waiting for that group to
+clear the point. Its actual route result was HTTP422/MAP_INFORMATION_REQUIRED. This
+proves input classification, not successful travel. Normal accepted travel and
+successful pursuit cancellation are demonstrated by the full journey above.
+
+### Moving-target readiness within the existing preparation budget
+
+CI41962444693 at `dd734704` passed both current-tile recovery probes and actual
+ordinary/approach STOP200. It then found no observed moving threat in the single
+post-STOP state. No pursuit command was sent. The exact NPC transition or loss
+of sight is unobserved. An instantaneous read did not establish the next step's
+required precondition.
+
+Preparation now shares the existing 45-second budget across approach, STOP and
+current observation readiness. The approach receives that deadline and the
+stationary observer polls public state until a moving pursuable group is present.
+The original target requirement still fails at budget exhaustion, with observed
+group state and own movement in its diagnostic. Initial pursuit200, finite
+single-retry assertions and production behavior remain. There is no new command
+retry, time allowance, enemy, clock control or successful-response substitute.
+The current local real journey PASS with native409→200 cancellation. Final source
+readback and applicable current-head CI remain in PR349.
+
+### Shared browser observations and quality-audit follow-up
+
+CI41966525264 at `d035be51` passed bootstrap, unit/stress/real SQL checks,
+coverage, the world-lab browser journey and the ordinary painted-map journey.
+The changed-file quality audit failed on duplicate STOP status collectors and
+five complexity findings. Four findings involve callbacks serialized into the
+browser, whose execution is not established by Node-side coverage attribution.
+The fifth is an approach branch not needed when a moving threat is already visible.
+This is a failed quality gate, with successful runtime evidence retained separately.
+
+The correction shares actual STOP response collection, UI observations and the
+existing live-connection/fresh-sequence predicate. Both browser contexts install
+the same initializer before navigation. Marker/terrain hit testing still samples
+current coordinates and intended semantic targets with that freshness condition.
+The UI snapshot waits for the map widget, which follows all required diagnostic
+controls in the current HTML. Movement progress compares the complete plain JSON
+point through Node's existing deep equality. Native input, result assertions,
+retry policy and deadlines retain their original requirements.
+
+Focused JavaScript syntax, ESLint, formatting and diff checks PASS. Fallow reports
+no duplicate groups for the browser script and no remaining findings for those
+five functions. Its unmeasured static estimate still flags `pursuitAndRetry`.
+The hosted measured audit did not flag that exercised function. The static
+report is diagnostic, not a replacement for current-head measured CI.
+The current-source real browser journey PASS with native pursuit STOP409/retry200
+and no page errors (`output/world-lab-ci/runtime-81183/`). A regenerated diagnostic
+copy deliberately failed after a real STOP200. Its retained failure snapshot has
+the shared UI fields, native map input and actual STOP request/response
+(`output/harness-task-quality/shared-ui-capture-probe/runtime-81922/`). The probe's
+intentional exit1 is not gameplay acceptance. Its artifact assertions PASS.
+Final independent review and applicable CI remain tracked in PR349.
+
+### Finite approach arrival before pursuit
+
+CI41971533246 at `75d00e69` passed harness/migration protection, bootstrap and
+coverage, then timed out awaiting STOP200 during pursuit preparation. The
+retained native observations show live/enabled movement at Space. Actual traffic
+contains the earlier positive camera STOP200, then one preparation STOP409. The
+final UI is stationary with the position-changed message. Its rejection body and
+the exact arrival transition were not captured.
+
+Client source explains the preparation mismatch. A stale ordinary movement
+response refreshes state, but automatic retry requires the same existing pursuit
+order. The approach has no pursuit. The generic STOP success waiter therefore
+cannot establish its intended outcome from that rejection. Independent read-only
+diagnosis confirmed this boundary and recommended a setup-only correction.
+
+Pursuit preparation now lets the accepted finite approach arrive. The existing
+45-second preparation budget polls public state for a stationary observer and a
+moving pursuable target, then requires no current pursuit before the initial
+PURSUE200. Exhaustion fails with own movement and observed groups. The separate
+required moving keyboard STOP, pursuit STOP retry outcomes and real SQL positive
+cancellation retain their acceptance requirements. The current-source real browser
+journey PASS with actual STOP409/retry200 and no page errors
+(`output/world-lab-ci/runtime-90605/`). Its real driver coverage records one
+`approachMovingThreat` call and 19 readiness evaluations, confirming the changed
+approach/arrival path executed. Scoped syntax, ESLint, formatting and diff checks
+PASS. Static quality diagnostics introduce no additional finding. Final review
+and applicable measured CI remain in PR349.
+
+## Task-quality assessment — 2026-11-05
+
+Use this section for a defined harness evaluation. Record findings in the existing
+slice contract or this page. The [research record](research/AGENT_TEAM_RESEARCH.md#task-quality-evaluation-research--2026-11-05)
+contains the primary sources and their limits.
+
+### Outcome, evidence and effort
+
+Judge the assigned result against its accepted contract and affected revision.
+Keep critical criteria separate so that speed or presentation cannot compensate
+for incorrect state, an authority violation or unsupported completion claims.
+
+| Dimension                   | Evidence to inspect                                                                                                                                              |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Requested outcome           | Player action through the normal entry, visible response and saved effect where applicable. Keep passed substeps and the next failing step visible.              |
+| Correctness and regressions | Applicable invariants and the previously working affected path, using the smallest public-boundary checks.                                                       |
+| Evidence validity           | Actual scenario, environment, revision and result. Distinguish source review, SQL execution, browser journey and independent acceptance.                         |
+| Player quality              | Applicable journey and visual critic findings. Owner/player observations establish comprehension and enjoyment. Automated success alone leaves these unmeasured. |
+| Rework                      | First submitted result versus eventual acceptance, with material correction causes. Failed setup, broken check and product defect have different repair owners.  |
+| Effort                      | Elapsed start-to-acceptance, review/correction work and available parent/child usage. Separate waiting and concurrent worker effort when available.              |
+
+Use the same acceptance boundary for both variants. Separate cases used to tune
+instructions from held-out cases used to estimate benefit. Retain failed, abandoned and
+unfinished assignments in the comparison with their observed effort and status.
+Report the preselected task count, accepted count and unaccepted count alongside
+costs. A cost-per-accepted-result calculation includes observed effort across all
+assigned attempts and states the observation cutoff. Separate first-submission
+acceptance from eventual acceptance. Repaired iterations remain one task attempt.
+Repeated isolated agent trials can measure reliability. SQL request retries test
+application idempotency. Keep these observations distinct.
+
+### Validate the evaluator when its result is disputed
+
+Map each disputed assertion to an accepted requirement. Check that setup reaches
+the intended command and that the check can distinguish its required outcomes.
+For a changed grader, use a known-valid result and a relevant known-bad case when
+available. Preserve the original failed log, correction and affected rerun result.
+A fixture repair needs source review to establish that assertions retain their
+meaning. An unrelated helper name, exact tool-call sequence or unrequested feature
+cannot become a hidden requirement. Assess any genuine contract change explicitly.
+
+For subjective judgments, give the critic the same current images/journey and
+explicit rubric. Compare verdicts with owner-labeled examples when available.
+Check presentation-order effects in pairwise trials. Record disagreements and
+missing observations. An independent model opinion remains distinct from owner
+or player acceptance. Apply this calibration when judging the harness, using the
+existing critic workflow for ordinary game delivery.
+
+### Current care observation
+
+The chat `01a182d5-a42b-7f71-be34-149cf554d19a` began its care turn at
+2026-11-05 01:44:08 Moscow time. The inspected snapshot was still in progress at
+02:12:12. The author reused retained care work and moved it to
+`codex/game-care-delivery`. At readback, HEAD was `30c7c4a8` with uncommitted care
+changes. This identifies an evolving worktree, not a frozen acceptance candidate.
+
+The existing local `output/painted-delivery/close-20261104/care-sql.log` records
+2 failed checks and 11 skipped. Both failures occur in `withCareState` setup,
+through invalid tick/physical-state construction. The later `care-sql-current.log`
+records 2 passed and 11 skipped, taking 3.84 seconds. This confirms recovery of the
+targeted SQL run. The test names cover care/stabilization and retries. Assertion
+semantics and the fixture diff were not independently reviewed in this assessment.
+The author reports client/server types passed. That claim was not rerun here.
+
+The snapshot also shows two browser-control failures followed by a reset and a
+successful current API connection. This is tool-session recovery evidence. Browser
+care completion and independent playable acceptance were not demonstrated in that
+snapshot. The next observation is treatment through the ordinary company screen
+and its visible/saved result. The live task remains active. Elapsed-to-acceptance,
+first-submission acceptance rate and comparative quality/cost are NOT_MEASURED.
+
+Research/documentation delivery is LOCAL on `codex/harness-task-quality`.
+CURRENT_PLAN remains owned by the game integrator. This assessment changes the
+on-demand evaluation method. It adds no runtime gate or routine game report.
+Scoped formatting and diff checks PASS. All three added local links/anchors target
+tracked files and resolve. An initial whole-document anchor probe failed on the
+pre-existing CHANGELOG link to `M1-SUPPLIES.md#delivery-amendment--2026-10-04`.
+Its target text is a plain paragraph at line 115. That historical link is outside
+this change. Independent read-only review of the method and cited claims ACCEPT,
+including care log readback. Game tests are NOT_RUN for this assessment.
+
 ## Rollout and checkpoint ownership follow-up — 2026-11-05
 
 The owner requested continued investigation and concrete optimization. The next
@@ -162,11 +485,20 @@ set when those specifications change.
 
 ## Procedure
 
-1. Create a fresh worktree at the parent; same model, reasoning and host for the
-   baseline and the candidate harness. Copy the candidate harness files into the
-   worktree when evaluating a harness change.
-2. Run the agent with the brief and a fixed time limit. Record the transcript.
-3. Copy in the hidden oracle, build affected packages and run its relevant checks.
+1. Before a replay, validate that every hidden assertion follows from the brief
+   and its available accepted sources. Confirm that the known fix passes and that
+   the original defect fails in the selected environment. Repair or exclude an
+   invalid task before comparison. Public merged fixes may have been seen during
+   model training, so qualify replay results and include fresh tasks for a broader
+   claim.
+2. Use fresh agent sessions and isolated baseline/candidate worktrees at the same
+   parent with equivalent data/resources and model/reasoning settings. Apply only
+   the candidate harness change. Keep hidden solutions and other trials
+   inaccessible. Alternate or
+   randomize run order when comparing variants and state any environment drift.
+3. Run the agent with the validated brief and the same time limit. Record actual
+   tool calls/results, final state and available usage. Include unfinished trials.
+4. Copy in the hidden oracle, build affected packages and run its relevant checks.
    Run the full gate only when that experiment's acceptance requires it.
 
 ## Score each run

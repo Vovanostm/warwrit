@@ -37,6 +37,8 @@ remembered PR, old attachment or cache as the current head.
 5. Use the existing task/contract for one observable outcome and its short acceptance
    checklist. For gameplay, each item names the player action, expected visible or
    saved result and the smallest way to verify it through the normal entry.
+   Trace each criterion to an accepted requirement available to the author. Resolve
+   a disputed criterion before using it to judge the result.
    Start with the next failing item. Reuse existing tests/journeys. Mark a criterion
    complete only after that scenario passes on the affected build. Keep missing
    integration or runtime proof explicit. A new test framework/list file is optional
@@ -47,8 +49,9 @@ remembered PR, old attachment or cache as the current head.
 
 ## Working checkpoint
 
-Keep this in working context. Update CURRENT_PLAN only for a changed result,
-blocker or next action. Reuse the last checkpoint after compaction and read only
+Keep this in working context. The game integrator updates CURRENT_PLAN for a
+changed result, blocker or next action. Supporting tasks update their owning page.
+Reuse the last checkpoint after compaction and read only
 the changed sources. Do not repeat a broad readiness audit without relevant changes.
 
 ```text

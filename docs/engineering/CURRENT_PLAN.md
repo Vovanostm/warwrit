@@ -5,7 +5,7 @@
 Parent owns source, resources, integration and validation. Full-game objective remains ACTIVE.
 Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
 [Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns acceptance and limits.
-Painted atlas PR344 is merged as `ee03f4ee`. Main456c6c1d is integrated.
+Painted atlas PR344 is merged as `ee03f4ee`. Main92c0f534 / PR349 is integrated.
 [PR350](https://github.com/Vovanostm/warwrit/pull/350) is draft on `codex/game-care-delivery`.
 Care uses existing opening physician/two medical units and owner-approved medicine challenges5/10.
 Company-only stock, COMPANY-accessible containers and lawful local wound observations are enforced.
@@ -20,7 +20,8 @@ CI41970247645 passed clean gate/coverage/both browsers, then failed the quality 
 Care selection, financial observations and label visibility filtering are simplified. Source review ACCEPT.
 Fresh local measured unit1240PASS/96skipped, real SQL86/migration smoke PASS.
 Both full browser journeys and runtime aggregation PASS with fresh measurements.
-Current local quality audit PASS with0 introduced code/duplicate findings. CSS warning remains advisory.
+Pre-integration local quality audit PASS with0 introduced code/duplicate findings. CSS warning advisory.
+Integrated browser/aggregation and source/infra ACCEPT. Repeated local audit input overflowed, clean CI required.
 GitHub PR350 owns current-head hosted CI. The PR is unmerged and native care acceptance remains open.
 Live owned stand5238 retains warwrit_care_native_20261105b. Old5228 stand stopped, original DB retained.
 Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.

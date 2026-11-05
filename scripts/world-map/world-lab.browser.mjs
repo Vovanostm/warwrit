@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { chromium } from 'playwright';
 import { CloseCode } from '@colyseus/sdk';
 
@@ -12,30 +13,70 @@ const browser = await chromium.launch({
   ...(process.env.WORLD_LAB_CHROMIUM ? { executablePath: process.env.WORLD_LAB_CHROMIUM } : {}),
 });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-await context.addInitScript(() => {
+function instrumentWorldLab() {
   const NativeSocket = globalThis.WebSocket;
   globalThis.worldLabSockets = [];
+  globalThis.worldLabStopInputs = [];
+  globalThis.readWorldLabUi = () => {
+    const map = globalThis.document.getElementById('map');
+    if (!map) return undefined;
+    return {
+      connection: globalThis.document.body.dataset.connection,
+      message: globalThis.document.getElementById('client-message').textContent,
+      viewport: map.getAttribute('viewBox'),
+      activeElement: globalThis.document.activeElement.id,
+      stopDisabled: globalThis.document.getElementById('stop').disabled,
+      sequence: globalThis.document.getElementById('world-sequence').textContent,
+      ownState: globalThis.document.getElementById('own-state').textContent,
+    };
+  };
+  globalThis.worldLabMapIsFresh = (previous) =>
+    globalThis.document.body.dataset.connection === 'live' &&
+    (previous === undefined ||
+      globalThis.document.getElementById('world-sequence').textContent !== previous);
+  globalThis.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.code !== 'Space') return;
+      const ui = globalThis.readWorldLabUi();
+      if (ui) globalThis.worldLabStopInputs.push({ target: event.target.id, ...ui });
+    },
+    true,
+  );
   globalThis.WebSocket = class extends NativeSocket {
     constructor(...args) {
       super(...args);
       globalThis.worldLabSockets.push(this);
     }
   };
-});
+}
+await context.addInitScript(instrumentWorldLab);
 const page = await context.newPage();
+const stopTraffic = [];
+page.on('request', (request) => {
+  if (isStopRequest(request)) stopTraffic.push({ event: 'request', body: request.postDataJSON() });
+});
+page.on('response', (reply) => {
+  if (isStopRequest(reply.request()))
+    stopTraffic.push({ event: 'response', status: reply.status() });
+});
 const errors = [];
 page.on('pageerror', (error) => errors.push(String(error)));
 const results = [];
 const authoringEntries = [];
 
-function isStopResponse(reply) {
+function isStopRequest(request) {
   return (
-    reply.url().endsWith('/world-lab/movement') &&
-    reply.request().method() === 'POST' &&
-    reply.request().postDataJSON()?.action?.kind === 'STOP'
+    request.url().endsWith('/world-lab/movement') &&
+    request.method() === 'POST' &&
+    request.postDataJSON()?.action?.kind === 'STOP'
   );
 }
-
+function recordStopStatuses(statuses) {
+  return (reply) => {
+    if (isStopRequest(reply.request())) statuses.push(reply.status());
+  };
+}
 function response(path) {
   return page.waitForResponse(
     (reply) => reply.url().endsWith(`/world-lab/${path}`) && reply.request().method() === 'POST',
@@ -46,10 +87,7 @@ async function state() {
 }
 async function waitForFreshMap(target = page, afterSequence) {
   await target.waitForFunction(
-    (previous) =>
-      globalThis.document.body.dataset.connection === 'live' &&
-      (previous === undefined ||
-        globalThis.document.querySelector('#world-sequence').textContent !== previous),
+    (previous) => globalThis.worldLabMapIsFresh(previous),
     afterSequence,
   );
 }
@@ -58,14 +96,11 @@ async function rightClickMarker(selector, requestPath, allowMissing = false) {
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
     ({ selector, previous }) => {
-      if (
-        globalThis.document.body.dataset.connection !== 'live' ||
-        globalThis.document.querySelector('#world-sequence').textContent === previous
-      )
-        return false;
+      if (!globalThis.worldLabMapIsFresh(previous)) return false;
       const marker = globalThis.document.querySelector(selector);
       if (!marker) return { missing: true };
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
+      if (!globalThis.document.elementFromPoint(at.x, at.y)?.closest(selector)) return false;
       return { x: at.x, y: at.y };
     },
     { selector, previous },
@@ -81,35 +116,29 @@ async function rightClickMarker(selector, requestPath, allowMissing = false) {
   return accepted;
 }
 async function rightClickMapPoint(x, y) {
-  const at = await page.evaluate(
-    ([mapX, mapY]) => {
+  const previous = await page.locator('#world-sequence').textContent();
+  const point = await page.waitForFunction(
+    ({ x, y, previous }) => {
+      if (!globalThis.worldLabMapIsFresh(previous)) return false;
       const map = globalThis.document.querySelector('#map');
-      const point = new globalThis.DOMPoint(mapX, mapY).matrixTransform(map.getScreenCTM());
-      return { x: point.x, y: point.y };
+      const at = new globalThis.DOMPoint(x, y).matrixTransform(map.getScreenCTM());
+      const target = globalThis.document.elementFromPoint(at.x, at.y);
+      if (!target?.closest('#map') || target.closest('[data-group-id], [data-site-id]'))
+        return false;
+      return { x: at.x, y: at.y };
     },
-    [x, y],
+    { x, y, previous },
   );
-  const ready = await page.evaluate(
-    ({ x, y }) => ({
-      unobstructed: Boolean(globalThis.document.elementFromPoint(x, y)?.closest('#map')),
-      sequence: globalThis.document.querySelector('#world-sequence').textContent,
-    }),
-    at,
-  );
-  assert.ok(ready.unobstructed, 'movement point must be visible and unobstructed');
-  // A level can be almost expired. Start the native order at a newly received
-  // UI observation, after the coordinate IPCs, keeping the real freshness guard.
-  await waitForFreshMap(page, ready.sequence);
+  const at = await point.jsonValue();
   const accepted = response('movement');
   await page.mouse.click(at.x, at.y, { button: 'right' });
+  await point.dispose();
   return accepted;
 }
 async function stop(requireMoving = false) {
   await page.locator('#map').focus();
   const statuses = [];
-  const record = (reply) => {
-    if (isStopResponse(reply)) statuses.push(reply.status());
-  };
+  const record = recordStopStatuses(statuses);
   page.on('response', record);
   try {
     for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -123,7 +152,7 @@ async function stop(requireMoving = false) {
         assert.equal(stopped.pursuit, null);
         return;
       }
-      const settled = page.waitForResponse(isStopResponse);
+      const settled = page.waitForResponse((reply) => isStopRequest(reply.request()));
       await page.keyboard.press('Space');
       const reply = await settled;
       const body = await reply.json();
@@ -146,29 +175,61 @@ async function stop(requireMoving = false) {
     page.off('response', record);
   }
 }
+async function waitForLoadedMap(target) {
+  await target.waitForFunction(() => {
+    const images = [...globalThis.document.querySelectorAll('#map-tiles image')];
+    return images.length > 0 && images.every((image) => image.getAttribute('opacity') === '1');
+  });
+}
 async function selectPlayer(target, slot) {
   await target.goto(url);
   await target.locator('[data-slot="company-a"]').waitFor();
+  await target.locator(`[data-slot="${slot}"]`).click();
+  await waitForFreshMap(target);
+  await waitForLoadedMap(target);
+  const ownTile = await target.evaluate(() => {
+    const own = globalThis.document.querySelector('#own-marker');
+    const size = Number(
+      globalThis.document.querySelector('#map-tiles image')?.getAttribute('width'),
+    );
+    const column = Math.floor(Number(own?.dataset.anchorX) / size);
+    const row = Math.floor(Number(own?.dataset.anchorY) / size);
+    const key = `${column},${row}`;
+    const image = globalThis.document.querySelector(`#map-tiles image[data-tile="${key}"]`);
+    return { key, href: image?.getAttribute('href') };
+  });
+  assert.ok(ownTile.href, 'the loaded own-position tile is required for the recovery probe');
+  const tileUrl = new URL(ownTile.href, target.url());
+  const isTargetTile = (candidate) =>
+    candidate.origin === tileUrl.origin && candidate.pathname === tileUrl.pathname;
   let interruptedTile;
+  let recoveredUrl;
   const recoveredTile = target.waitForResponse(
-    (reply) => reply.url() === interruptedTile && reply.status() === 200,
+    (reply) =>
+      Boolean(interruptedTile) && reply.status() === 200 && isTargetTile(new URL(reply.url())),
   );
   await target.route(
-    '**/world-lab-api/world-lab/map/**',
+    isTargetTile,
     (route) => {
       interruptedTile = route.request().url();
       return route.abort('connectionfailed');
     },
     { times: 1 },
   );
-  await target.locator(`[data-slot="${slot}"]`).click();
-  await recoveredTile;
-  assert.ok(interruptedTile, 'a real scoped tile request must have been interrupted and retried');
-  await waitForFreshMap(target);
-  await target.waitForFunction(() => {
-    const images = [...globalThis.document.querySelectorAll('#map-tiles image')];
-    return images.length > 0 && images.every((image) => image.getAttribute('opacity') === '1');
-  });
+  try {
+    await target.locator('#switch-slot').click();
+    await target.locator(`[data-slot="${slot}"]`).click();
+    recoveredUrl = (await recoveredTile).url();
+    assert.ok(interruptedTile, 'a real current-view tile request must be interrupted');
+    await waitForFreshMap(target);
+    await waitForLoadedMap(target);
+    await target.locator(`#map-tiles image[data-tile="${ownTile.key}"][opacity="1"]`).waitFor();
+  } finally {
+    await writeFile(
+      resolve(output, `map-recovery-${slot}.json`),
+      JSON.stringify({ tile: ownTile.key, interruptedTile, recoveredUrl }, null, 2),
+    );
+  }
 }
 async function visit() {
   await page.locator('#fit').click();
@@ -258,25 +319,24 @@ async function cameraAndMovement() {
 function movingThreats(observed) {
   return observed.groups.filter((group) => group.pursuable && group.state === 'MOVING');
 }
-async function approachMovingThreat(observed) {
+async function approachMovingThreat(observed, deadline) {
   // This midpoint belongs to a public home-charted road, not an NPC position.
   const before = observed.own.movement.point;
   const accepted = await rightClickMapPoint(1654, 1229);
   assert.equal(accepted.status(), 200);
-  const deadline = Date.now() + 45000;
   while (Date.now() < deadline) {
     const current = await state();
-    const progressed =
-      current.own.movement.point.xMicroFp !== before.xMicroFp ||
-      current.own.movement.point.zMicroFp !== before.zMicroFp;
+    const progressed = !isDeepStrictEqual(current.own.movement.point, before);
     if (progressed && movingThreats(current).length) return current;
     await page.waitForTimeout(300);
   }
   assert.fail('Actual travel must reveal an observed moving threat');
 }
-async function beginObservedPursuit() {
+function pursuitSetupReady(observed) {
+  return observed.own.movement.mode !== 'MOVING' && movingThreats(observed).length > 0;
+}
+async function beginObservedPursuit(deadline) {
   const rejections = [];
-  const deadline = Date.now() + 45000;
   while (Date.now() < deadline && rejections.length < 3) {
     const observed = await state();
     const point = observed.own.movement.point;
@@ -303,6 +363,19 @@ async function beginObservedPursuit() {
     const body = await reply.json();
     if (reply.status() === 200) return;
     rejections.push({ status: reply.status(), code: body.code });
+    await writeFile(
+      resolve(output, 'pursuit-start-response.json'),
+      JSON.stringify(
+        {
+          status: reply.status(),
+          request: reply.request().postDataJSON(),
+          responseBody: JSON.stringify(body),
+          attempts: rejections,
+        },
+        null,
+        2,
+      ),
+    );
     assert.ok(
       (reply.status() === 422 && body.code === 'TARGET_NOT_VISIBLE') ||
         (reply.status() === 409 && ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code)),
@@ -315,29 +388,34 @@ async function beginObservedPursuit() {
 }
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
+  const preparationDeadline = Date.now() + 45000;
+  const beforeApproach = await state();
+  if (!movingThreats(beforeApproach).length)
+    await approachMovingThreat(beforeApproach, preparationDeadline);
+  // Let the finite approach arrive before starting the next order.
   let observed = await state();
-  if (!movingThreats(observed).length) observed = await approachMovingThreat(observed);
-  // Finish the short scouting leg before choosing a pursuit target. A STOP
-  // racing that leg's arrival is unrelated to the pursuit cancellation probe.
-  if (observed.own.movement.mode === 'MOVING') {
-    await page.waitForFunction(
-      (sequence) =>
-        globalThis.document.body.dataset.connection === 'live' &&
-        BigInt(globalThis.document.querySelector('#world-sequence').textContent) >
-          BigInt(sequence) &&
-        globalThis.document.querySelector('#stop').disabled,
-      observed.sequence,
-      { timeout: 45000 },
-    );
-    assert.notEqual((await state()).own.movement.mode, 'MOVING');
+  while (!pursuitSetupReady(observed) && Date.now() < preparationDeadline) {
+    await page.waitForTimeout(300);
+    observed = await state();
   }
+  assert.ok(
+    pursuitSetupReady(observed),
+    JSON.stringify({
+      required: 'a stationary observer and an observed moving threat',
+      ownMovement: observed.own.movement.mode,
+      observedGroups: observed.groups.map((group) => ({
+        id: group.id,
+        state: group.state,
+        pursuable: group.pursuable,
+      })),
+    }),
+  );
+  assert.equal(observed.pursuit, null, 'approach must finish without a pursuit order');
   const statuses = [];
-  const record = (reply) => {
-    if (isStopResponse(reply)) statuses.push(reply.status());
-  };
+  const record = recordStopStatuses(statuses);
   const details = [];
   const recordDetails = (reply) => {
-    if (isStopResponse(reply))
+    if (isStopRequest(reply.request()))
       details.push(
         reply.json().then((body) => ({
           status: reply.status(),
@@ -364,7 +442,7 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
-  await beginObservedPursuit();
+  await beginObservedPursuit(preparationDeadline);
   const pursuitOrderId = (await state()).pursuit?.orderId;
   assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
   await page.waitForFunction(
@@ -374,7 +452,7 @@ async function pursuitAndRetry() {
       !globalThis.document.querySelector('#stop').disabled,
   );
   const settled = page.waitForResponse(
-    (reply) => isStopResponse(reply) && (reply.status() === 200 || statuses.length === 2),
+    (reply) => isStopRequest(reply.request()) && (reply.status() === 200 || statuses.length === 2),
   );
   await page.locator('#map').press('Space');
   let replies;
@@ -501,6 +579,7 @@ try {
   results.push('private world origin denies full atlas, authoring files and malformed paths');
 
   const otherContext = await browser.newContext();
+  await otherContext.addInitScript(instrumentWorldLab);
   try {
     await selectPlayer(await otherContext.newPage(), 'company-b');
     const observed = await state();
@@ -526,14 +605,14 @@ try {
     resolve(output, 'failure-ui.json'),
     JSON.stringify(
       await page.evaluate(() => ({
-        connection: globalThis.document.body.dataset.connection,
-        message: globalThis.document.querySelector('#client-message')?.textContent,
-        viewport: globalThis.document.querySelector('#map')?.getAttribute('viewBox'),
+        ...globalThis.readWorldLabUi?.(),
+        stopInputs: globalThis.worldLabStopInputs,
       })),
       null,
       2,
     ),
   );
+  await writeFile(resolve(output, 'stop-traffic.json'), JSON.stringify(stopTraffic, null, 2));
   throw error;
 } finally {
   const entries = [...(await page.coverage.stopJSCoverage()), ...authoringEntries].filter((entry) =>

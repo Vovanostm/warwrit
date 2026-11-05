@@ -25,7 +25,9 @@ normal entry point. Record the observed player/saved result, relevant revision
 and actual check for each closed item. Carry the next failing item forward.
 Source review and unit checks retain their own scope. Player comprehension,
 visual coherence and enjoyment require their applicable journey/critic/owner
-observations. Avoid a fresh whole-game readiness audit for unchanged evidence.
+observations. Keep blocking criteria open until their evidence passes. Report
+passed substeps separately from complete slice acceptance. Avoid a fresh whole-game
+readiness audit for unchanged evidence.
 
 ## Freeze and verify
 
@@ -63,10 +65,13 @@ Implemented effects / finite residual requirements:
 Postulate -> public specification -> actual result:
 Commands / environment / exit result / run+job / logs / checked revision:
 Author vs external review / limitations:
-Rework cause / first submitted result accepted / later regressions:
-Tokens (input/output/cache), elapsed to acceptance: actual values or NOT_MEASURED
 One next step:
 ```
+
+For a material correction, record its cause with the affected evidence. For a
+harness evaluation, use [HARNESS_EVAL](../../../docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+to include first-submission/eventual acceptance, failed/unfinished attempts and
+available parent/child effort. Keep missing measurements explicit and reuse logs.
 
 When external writes are authorized, write/read back the issue or PR. Close
 only issues whose individual criteria passed; related issue links do not prove

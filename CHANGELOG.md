@@ -9,6 +9,148 @@ requests.
 
 ## Unreleased
 
+### Integrate the merged browser harness into the care candidate
+
+- 2026-11-05, `codex/game-care-delivery`, local integration of main`92c0f534`
+  / merged [PR349](https://github.com/Vovanostm/warwrit/pull/349). Resolve the
+  workflow, changelog and browser conflicts, retaining both histories, shared
+  readiness/STOP observations, semantic hit guards, own-tile recovery and diagnostics.
+  Preserve care's finite native retry/acquisition and real movement assertions.
+  Integrated world browser/aggregation, syntax/lint/format and independent
+  source/infra ACCEPT. Unchanged care unit1240/SQL86/ordinary browser results remain
+  applicable. Repeated local aggregation overflowed the audit reader's counter;
+  integrated quality requires clean hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Let the finite preparation approach arrive before pursuit
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41971533246 recorded
+  positive camera STOP200, then preparation STOP409 and a stationary final UI.
+  Client source requires an existing pursuit order for automatic stale retry.
+  Preparation now waits for natural approach arrival and a public moving target
+  within its existing 45-second budget, then requires no pursuit. Keep the
+  separate positive moving STOP, later pursuit cancellation and SQL assertions.
+  Scoped syntax/lint/format/diff PASS. Current real browser journey PASS with
+  native409→200 cancellation and measured approach execution. Final review
+  and CI are pending. The
+  [owning record](docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
+  preserves the failed run and unobserved exact transition/rejection body.
+
+### Share browser observations after the changed-file quality failure
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41966525264 passed both
+  real browser journeys and the runtime gates, then rejected duplicated STOP
+  collectors and five complexity findings. Share browser UI observations, live
+  freshness checks and actual STOP status collection. Preserve readiness, native
+  input and outcome requirements. Scoped lint/syntax/format/diff PASS; Fallow's
+  duplicate diagnostic has no groups and the five findings are absent. Current
+  real browser journey PASS with native409→200 cancellation. Regenerated
+  intentional-failure diagnostics retain shared UI/native STOP200 evidence.
+  Independent review and measured CI are pending.
+  The [owning record](docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
+  keeps the failed gate, coverage-attribution limit and successful runtime evidence.
+
+### Wait for the required moving observation within the original budget
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41962444693 passed real
+  map recovery and STOP, then a single post-STOP read contained no moving threat.
+  Share the existing 45-second preparation budget across approach, STOP and public
+  observation readiness, retaining failure at exhaustion and all pursuit/result
+  requirements. Include actual observed group states in that failure diagnostic.
+  Current local real journey PASS with successful native cancellation; scoped
+  lint/syntax/format/diff PASS. The
+  [owning record](docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
+  preserves the failed CI and unobserved NPC transition. Fresh final-head CI is required.
+
+### Match native map input to the intended current target
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41957100334 awaited
+  ground movement while UI reported accepted pursuit. Calculate the fresh screen
+  point and semantic hit target together. Ground input excludes group/site targets;
+  marker input requires the intended selector. Preserve native input, server
+  oracles and deadlines. Full current browser journey PASS with actual409→200
+  cancellation. A real overlap probe verified terrain input/no pursuit separately
+  from its lawful422 route rejection. The earlier overstrict probe failure and a
+  transient local port conflict remain in the
+  [owning record](docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
+  Scoped lint/syntax/format/diff PASS. Fresh final-head CI is required.
+
+### Verify current visible tile recovery and both finite stale outcomes
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41950810244 exposed an
+  invalid same-full-URL tile recovery oracle. Abort the currently loaded own tile
+  on same-slot reentry and require its same-origin/coordinate200 plus loaded
+  images, allowing current revision. Retain per-slot evidence. Adapt the game
+  author's `32eb91a5` finite pursuit assertions. Separate actual409→200 cancellation
+  from actual409→409 bounded rejection; the latter cannot close cancellation.
+  Both real browser branches PASS in separate positive/negative runs. Preserve
+  the positive SQL gate. Set command workdirs explicitly after a reviewer used
+  the host's unrelated checkout. Root 167 lines / 10,077 bytes. Scoped checks and
+  [owning evidence](docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
+  record limitations. Fresh final source review and CI are required.
+
+### Stabilize initial pursuit setup after the observed CI rejection
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41946278698 retained
+  real native STOP200, then initial pursuit returned409. End the approach through
+  the existing STOP and read current visible moving targets before pursuit.
+  Preserve initial200, later exact409→200, timeouts and product rules. Capture
+  the initial rejection request/status/body for diagnosis. Combined real browser
+  PASS, actual stale-request diagnostic probe PASS, scoped lint/syntax/format and
+  artifact path checks PASS. The exact original409 code remains unknown.
+  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
+
+### Retain evidence for the browser CI STOP failures
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). Two same-head required CI
+  attempts timed out at different STOP waits. Their root cause remains unresolved.
+  Preserve native input/UI and real STOP request/status diagnostics, and upload
+  the existing failure/pursuit JSON with map artifacts. The original journey
+  assertions and deadlines remain intact. Focused actual browser PASS, deliberate
+  failure-capture probe PASS, scoped lint/syntax/format/artifact paths and diff PASS.
+  The owning [CI follow-up](docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
+  records both failures, local observations and the initial aggregation failure
+  due to missing prior migration evidence. Reuse only the finished moving-STOP
+  probe delta from the game author's `e57d6e8b` / draft PR350. The combined real
+  browser journey PASS, with a stricter moving precondition. Fresh combined-head
+  review and CI are required.
+
+### Apply task-quality research to the existing agent workflow
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
+  Per owner request, update AGENTS.md and the context/review/delivery skills with
+  requirement-grounded acceptance, invalid-check diagnosis, repaired-fixture
+  review and explicit partial-result boundaries. Keep detailed evaluation telemetry
+  on demand. [Instruction rollout](docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
+  and [issue348](https://github.com/Vovanostm/warwrit/issues/348) own scope,
+  permission and delivery. Preserve CURRENT_PLAN and active game worktrees.
+  Three skill validators, scoped formatting, added local links/anchors, plan and
+  diff checks PASS. Root context is 166 lines / 10,039 bytes. The linked issue/PR
+  owns final review, CI and merge status. Game tests NOT_RUN locally for instruction
+  changes. Native reload and quality/cost effects NOT_MEASURED.
+
+### Evaluate task quality and the evidence behind acceptance
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
+  Per owner request, reviewed seven additional primary materials on agent
+  evaluation and developer productivity. Updated the existing research and
+  [evaluation method](docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+  with outcome/evidence/effort separation, evaluator validation, unfinished-attempt
+  accounting and qualified historical replay. Recorded an in-progress care
+  observation with SQL setup failures, targeted recovery and pending browser
+  acceptance. Preserved the game integrator's CURRENT_PLAN. Scoped formatting,
+  added local links/anchors and diff checks PASS. The owning page records a
+  pre-existing historical-link failure from a broader probe. Independent read-only
+  review ACCEPT, including care log readback. Game tests NOT_RUN for this
+  documentation. Comparative quality/cost
+  remains NOT_MEASURED.
+
 ### Close introduced care quality findings with measured client retry
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft
