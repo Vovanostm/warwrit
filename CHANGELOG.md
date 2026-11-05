@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Settle actual scouting before the pursuit probe
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41958320560 passed code
+  and coverage, then initial pursuit returned409 without a recorded reason.
+  Stop an active scouting move before target selection and refresh its real state;
+  retain required pursuit200 and report any future initial rejection code.
+  Local browser checkpoints PASS before the conditional refinement; later coverage
+  aggregation still rejects stale prior SQL. Source ACCEPT, final lint/format/diff PASS; new-head
+  hosted verification pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Keep care observation preparation and persistence explicit
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft

@@ -257,6 +257,10 @@ async function pursuitAndRetry() {
   await page.locator('#fit').click();
   let observed = await state();
   if (!movingThreats(observed).length) observed = await approachMovingThreat(observed);
+  // Scouting may still be moving. Settle that real order before choosing a
+  // pursuit target so its epoch cannot invalidate the initial pursuit request.
+  if (observed.own.movement.mode === 'MOVING') await stop();
+  observed = await state();
   const targets = movingThreats(observed);
   const point = observed.own.movement.point;
   targets.sort(
@@ -307,7 +311,9 @@ async function pursuitAndRetry() {
   );
   const accepted = response('pursuit');
   await rightClickMarker(`[data-group-id="${id}"]`);
-  assert.equal((await accepted).status(), 200);
+  const pursuitReply = await accepted;
+  const pursuitResult = await pursuitReply.json();
+  assert.equal(pursuitReply.status(), 200, `Initial pursuit rejection ${pursuitResult.code}`);
   const pursuitOrderId = (await state()).pursuit?.orderId;
   assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
   await page.waitForFunction(

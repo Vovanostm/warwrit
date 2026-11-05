@@ -33,7 +33,8 @@ CI41949560552 passed full gate/coverage, then recorded two legitimate stale STOP
 Browser probe now checks either exact409→200 cancellation or exact409→409 rejection/retained pursuit.
 CI41954434203 passed clean gate/coverage/both browsers, then failed introduced complexity/duplicates.
 Draft preparation/account-lock/STOP-predicate simplifications accepted; SQL16/types/lint/health PASS.
-New-head hosted verification remains pending; native care/retry still require a capable provider.
+CI41958320560 passed code/coverage; initial pursuit returned409, reason not captured.
+Probe now settles actual moving scout first and retains rejection code; new-head CI pending.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.
