@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Prove ordinary entry and preparation for the first real offer
+
+- 2026-11-06, `codex/m1-entry-369`, LOCAL result for owner-requested stepwise
+  implementation. Existing main b89f4128 passes #369 without product changes:
+  local Dex OIDC→one company/two companions→nine equips→ten rations for40crowns→
+  authentic mill-worker ACCEPT→logout/re-entry with unchanged ownership/items/costs.
+  Real SQL readback: one account/company,11company receipts,one ordinary ACCEPT.
+  [Playtest result](docs/engineering/M1_LOCAL_PLAYTEST.md#ordinary-entry-checked--2026-11-06)
+  records invalid-selection/quantity checks, isolated resources, startup/tooling
+  limitations and unexecuted full-game acceptance. Update CURRENT_PLAN and owning
+  M1 wiki; keep recovery/payroll with their current owner. Next #371/PR335.
+  No new tests, gameplay rule, migration, merge or deployment; documentation
+  checks pending, new combat/reward/recovery/full gate NOT_RUN.
+
 ### Split the remaining M1 work into bounded AI tasks
 
 - 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL documentation
