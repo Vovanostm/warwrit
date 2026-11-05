@@ -25,9 +25,12 @@ remembered PR, old attachment or cache as the current head.
    full Notes and Purpose of the active canonical Airtable contract and its
    named applicable sources; an issue whose contract already cites them is
    worked from that contract. Restore the latest Empirical checkpoint tagged
-   `Warwrit` when it resolves a task-specific source/status gap. Tooling and
+   `Warwrit` for a named gap left by the assignment and its owning sources.
+   Reuse known base/record IDs. Skip optional memory discovery when those sources
+   already resolve the task. After a connector failure use available owning sources
+   and continue independent work, keeping any required missing fact open. Tooling and
    documentation work uses its owning local sources. New Purpose amendments may
-   supersede historical statuses, not silently rewrite accepted mechanics. Use explicit record IDs before broad search.
+   supersede historical statuses, not silently rewrite accepted mechanics.
 3. Identify source edition, accepted rules, provisional parameters, current
    implementation and unexecuted evidence separately. Missing old ZIP bytes remain
    a source-concordance limitation, not an invitation to regenerate definitions.

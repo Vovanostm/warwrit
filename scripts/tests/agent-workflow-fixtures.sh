@@ -86,7 +86,9 @@ git -C "$repo" config user.email fixture@example.test
 git -C "$repo" config user.name Fixture
 git -C "$repo" config core.hooksPath /dev/null
 mkdir -p "$repo/scripts" "$repo/packages/protocol/src"
-cp "$root/scripts/check-pr-scope.sh" "$repo/scripts/"
+cp "$root/scripts/check-pr-scope.sh" "$root/scripts/check-current-plan.sh" "$repo/scripts/"
+mkdir -p "$repo/docs/engineering"
+printf '## Current task\n\nCoordinator is the fixture author.\n' > "$repo/docs/engineering/CURRENT_PLAN.md"
 printf 'original\n' > "$repo/packages/protocol/src/old.ts"
 printf ".orca/\n" > "$repo/.gitignore"
 git -C "$repo" add .
@@ -183,6 +185,27 @@ for scenario in docs consumers broad; do
     broad) grep -qx 'verify' "$FIXTURE_CHECK_LOG" || fail 'broad check missing' ;;
   esac
 done
+# Changed checkpoint metadata must fail before formatting or product checks.
+route_case docs/engineering/CURRENT_PLAN.md docs
+printf '## Current task\n\nParent is sole author and validator.\n' > docs/engineering/CURRENT_PLAN.md
+git add .
+git commit -qm 'checkpoint missing coordinator'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'does not name the coordinator' "$fixture/output" || fail 'checkpoint diagnostic missing'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'invalid checkpoint reached product or format tools'
+printf '## Current task\n\nCoordinator is the fixture author.\nUpdated scope.\n' > docs/engineering/CURRENT_PLAN.md
+git add .
+git commit -qm 'checkpoint fixed'
+expect_exit 0 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+git rm -q docs/engineering/CURRENT_PLAN.md
+git commit -qm 'checkpoint deleted'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 1 env PATH="$fixture/checkbin:$PATH" bash "$root/scripts/orca-validate.sh" "$repo" "$base"
+grep -q 'CURRENT_PLAN.md not found' "$fixture/output" || fail 'deleted checkpoint passed'
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'deleted checkpoint reached product or format tools'
+echo 'PASS plan: changed/fixed/deleted checkpoint checked before expensive commands'
+
 route_case packages/protocol/src/new.ts consumers
 expect_exit 1 env PATH="$fixture/checkbin:$PATH" FIXTURE_NO_TESTS=1 bash "$root/scripts/orca-validate.sh" "$repo" "$base"
 grep -q 'No test files found. Select an existing public-boundary test.' "$fixture/output" || fail 'test diagnostic hidden'
