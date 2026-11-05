@@ -453,6 +453,12 @@ describe('local recruitment (PostgreSQL)', () => {
         ).toHaveLength(1);
         expect(loserState).toEqual(storedStates[loser]);
 
+        // Let the recruit spend real campaign time in local reserve before Join.
+        await database
+          .updateTable('world_campaign_clocks')
+          .set({ epoch_ms: String(Date.now() - 60_000) })
+          .where('world_id', '=', worldId)
+          .execute();
         const companyRead = await app.inject({
           method: 'GET',
           url: '/company',

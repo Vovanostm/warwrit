@@ -30,7 +30,10 @@ requests.
   attestation; reuse the existing opening proof and keep remote wallets inaccessible.
   Native lost-hire/reload/exact retry PASS with one50-crown transfer. Reuse
   existing witnessed-death holdings facts so a dead captain cannot fill a known
-  party slot. Native Join/care and final gate remain open; nothing is merged.
+  party slot. Delayed native Join exposed missing food access for a local reserve;
+  include its exact co-location with company stock in stationary food evidence.
+  Unit1242/stress10000 PASS; update migration smoke expectations for0019 after
+  its stale-list failure. Native care and affected checks remain open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 
