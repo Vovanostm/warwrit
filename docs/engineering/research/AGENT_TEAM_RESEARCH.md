@@ -5,6 +5,94 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## GitHub diagnostic skills — 2026-11-06
+
+Owner request: deeply compare existing GitHub skills for finding errors and
+improving this project, then install the most suitable. Decision: **supported
+choice for a local trial**, not demonstrated productivity uplift. Installation
+uses the built-in skill installer at pinned commits; no retrieved program runs.
+This support task preserves product source, saves and CURRENT_PLAN.
+
+### Selection contract
+
+Target two failure modes: changing code before identifying the failing boundary,
+and fixing one instance without checking equivalent consumers. Require
+explicit activation, evidence-based diagnosis, readable supporting files, usable
+licenses and a direct standalone route. Avoid new services, automatic agents,
+mandatory repeated full checks, duplicate domain-review rules and bulk skill packs.
+
+| Candidate / inspected mechanism                                                                                                                                                                 | Decision and integration limit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [wshobson/agents, debugging-strategies](https://github.com/wshobson/agents/tree/4bde3168b43c0655c4d00ea2726e631719908a6d/plugins/developer-essentials/skills/debugging-strategies)              | **Installed**. Reproduce, gather evidence, form a hypothesis, test it, compare working/broken conditions. Two files, MIT. Tool examples are optional references, not permission to install tools, log private state, mock real SQL acceptance or bisect a shared worktree. No external skill dependency.                                                                                                                                                                                                                               |
+| [trailofbits/skills, variant-analysis](https://github.com/trailofbits/skills/tree/470419e16f97e112d01fc32f4898aea1755015d9/plugins/variant-analysis/skills/variant-analysis)                    | **Installed**. Start from a known root cause, calibrate an exact match, generalize one element at a time, inspect protections and retain false-positive reasons. Eighteen files, CC-BY-SA-4.0. The direct five-step route works without the optional plugin workflow. CodeQL/Semgrep templates are examples; neither analyzer is installed.                                                                                                                                                                                            |
+| [obra/superpowers, systematic-debugging](https://github.com/obra/superpowers/blob/22f0b463e7a5e579904dd6211a520321035526f7/skills/systematic-debugging/SKILL.md)                                | Useful tracing and condition-waiting guidance, but the selected version requires namespaced TDD/verification skills and prescribes a human discussion after three failed fixes. Reject unchanged installation for this harness. The associated [verification skill](https://github.com/obra/superpowers/blob/22f0b463e7a5e579904dd6211a520321035526f7/skills/verification-before-completion/SKILL.md) requires a fresh full command in the current message before a success claim, conflicting with reuse of valid unchanged evidence. |
+| [trailofbits/skills, differential-review](https://github.com/trailofbits/skills/blob/470419e16f97e112d01fc32f4898aea1755015d9/plugins/differential-review/skills/differential-review/SKILL.md)  | Security-focused baseline/history/blast-radius audit with mandatory report and optional namespaced helpers. Useful for an assigned security audit; overlaps warwrit-review and adds preparation for routine product work. Not installed.                                                                                                                                                                                                                                                                                               |
+| [wshobson/agents, code-review-excellence](https://github.com/wshobson/agents/blob/4bde3168b43c0655c4d00ea2726e631719908a6d/plugins/developer-essentials/skills/code-review-excellence/SKILL.md) | Generic review guidance, including a 200–400-line limit and asking to split changes over 400 lines. This conflicts with the owner's cohesive-outcome sizing policy. Not installed.                                                                                                                                                                                                                                                                                                                                                     |
+| [anthropics/skills, webapp-testing](https://github.com/anthropics/skills/blob/ca45fc496a3436251f191354091d557da31c15b5/skills/webapp-testing/SKILL.md)                                          | Python Playwright toolkit duplicates existing browser skills and native journeys. Requires network-idle readiness; its helper accepts an open port as readiness and uses unread child stdout/stderr pipes. These are concrete mismatch/risk leads for a persistent MMO stand, not reproduced failures. Not installed.                                                                                                                                                                                                                  |
+
+Also inspected Superpowers receiving-code-review: it requires stopping all work
+for any unclear item and repeats existing review-reception guidance. Not installed.
+The OpenAI skills tree at `49f948faa9258a0c61caceaf225e179651397431` contained no
+develop-web-game skill; no installation recommendation was based on its old name.
+
+### Evidence, challenge and limits
+
+- **INSPECTED:** pinned manifests, both selected bundles, applicable root licenses,
+  supporting references, optional workflow boundaries and recent commits/open items.
+  All three deeply inspected repositories were unarchived and recently updated.
+  Five latest open items per finalist are only a maintenance sample, not a clean bill.
+- **TESTS_FOUND:** Trail of Bits has positive, all-safe and negative-trigger cases,
+  plus a seeded Gradio search with a safe decoy. Its [evaluation notes](https://github.com/trailofbits/skills/blob/470419e16f97e112d01fc32f4898aea1755015d9/plugins/variant-analysis/evals/README.md)
+  explicitly disclose saturated inline scores and no skill invocation on those
+  panels. The larger [search test](https://github.com/trailofbits/skills/blob/470419e16f97e112d01fc32f4898aea1755015d9/plugins/variant-analysis/tests/README.md)
+  compares plugin orchestration with a skill-equipped baseline, not skill vs no
+  skill. Neither result establishes uplift for this standalone installation.
+- Superpowers has a polluter-script regression and pressure scenarios. The script
+  test does not establish the quality of model diagnosis. No dedicated behavioral
+  eval for the selected debugging-strategies skill was found in the inspected tree.
+- **NOT_RUN:** upstream LLM/Gradio evaluations, profilers, analyzers and game/SQL/browser
+  suites. These installations change no game behavior. No remote skill script,
+  plugin hook, background worker or automatic updater was installed or executed.
+- The leading choice would be rejected if it causes repeated unchanged checks,
+  speculative whole-project audits, unnecessary tooling or unsupported findings.
+  Variant analysis is for a known bug; a generic readiness request must not become
+  a blind variant hunt. Unreachable suspicious code remains a risk, not a reproduced
+  player defect. Domain authority and acceptance stay with existing Warwrit skills.
+
+### Installed boundary and next check
+
+User-scoped destinations are `/Users/vovanostm/.codex/skills/debugging-strategies`
+and `/Users/vovanostm/.codex/skills/variant-analysis`. Each contains its unchanged
+upstream files, the complete upstream root LICENSE and added UPSTREAM.md with
+commit/path/date. No existing skill was overwritten. This is a local installation,
+not a repository-vendored dependency or a claim that another host has it installed.
+The skills become available on the next turn. Only their metadata is needed for
+discovery; load their bodies/references for a matching task. No AGENTS expansion.
+
+Installation acceptance PASS: both manifests pass the built-in validator; all 20
+upstream files match the inspected sources; local references, complete licenses
+and provenance pass readback. Neither selected bundle contains executable files
+or symlinks. Report formatting initially failed and was corrected before the
+scoped recheck. These are structural checks; diagnostic effectiveness and effort
+remain NOT_MEASURED. No game tests were required or run for this installation.
+
+Next product trial: on the next assigned reproducible defect, explicitly invoke
+debugging-strategies for its diagnosis, then variant-analysis only if there are
+equivalent consumers to inspect. Use the existing issue to record the failing
+boundary, minimal reproduction, hypothesis, confirmed/refuted variants, actual
+regression and available effort. Compare with a similar completed task; include
+failed attempts and report the small sample. Do not restart the paused game mission.
+
+Search coverage: 2026-11-06 Moscow date; GitHub connector repository search for
+`agent skills systematic debugging`, `skills code review`, `skills webapp testing`
+(17 result rows, mostly irrelevant hits/forks), then five direct upstream trees.
+Three families were inspected deeply: Superpowers, Trail of Bits and wshobson.
+Anthropic's browser skill was a focused alternative; OpenAI's tree was catalog
+discovery. No stars/language/recency prefilter. GitHub tree/API reads used gh where
+directory/test/maintenance enumeration was needed. Search was bounded, not exhaustive;
+stopped after two compatible standalone choices and explicit rejection of alternatives.
+Raw retrieved sources remain in ignored output/github-skill-research-20261106/.
+
 ## Task-quality evaluation research — 2026-11-05
 
 The owner requested more primary material on evaluating and improving execution.

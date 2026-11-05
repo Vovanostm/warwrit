@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Select standalone diagnostic skills after GitHub source review
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a deep
+  GitHub skill comparison and installation for project error finding. Install
+  pinned debugging-strategies and variant-analysis in the user's Codex skill
+  directory, retaining upstream licenses/provenance. Reject conflicting repeat-check,
+  size-gate and plugin-heavy alternatives; keep Warwrit's domain/browser workflows.
+  [Research and acceptance](docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
+  records source evidence, limitations and the next trial. Manifest validation,
+  source/license/provenance/local-reference readback PASS; report formatting was
+  corrected. Product source, CURRENT_PLAN and existing skills are unchanged;
+  effectiveness NOT_MEASURED. No game tests required or run.
+
 ### Capture browser failures before measured unit coverage
 
 - 2026-11-05, `codex/harness-browser-phase-order`, LOCAL, owner-requested
