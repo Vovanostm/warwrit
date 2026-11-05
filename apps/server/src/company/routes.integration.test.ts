@@ -182,8 +182,8 @@ describe('authenticated company read (PostgreSQL)', () => {
               inFieldParty: ['a-leader', 'a-worker-0', 'a-worker-1'].includes(
                 character.characterId,
               ),
-              canJoinFieldParty: false,
-              fieldPartyFull: true,
+              canJoinFieldParty: character.characterId === 'a-provider',
+              fieldPartyFull: false,
             })),
           },
           holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),

@@ -1,4 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { sql } from 'kysely';
+import { readFile } from 'node:fs/promises';
 
 import {
   COMPANY_CATALOGUE_VERSION,
@@ -75,26 +77,36 @@ describe('local recruitment (PostgreSQL)', () => {
         );
         const physical = source.economy.physical;
         if (!physical) throw new Error('fixture has no physical state');
+        const localCharacters = lifecycle.characters.map((character) =>
+          active.has(character.identity.characterId)
+            ? {
+                ...character,
+                presence: {
+                  ...character.presence,
+                  location,
+                  ...(character.identity.characterId === 'a-worker-1'
+                    ? { fieldPartyId: null, assignment: 'NONE' as const }
+                    : {}),
+                },
+              }
+            : character,
+        );
         return readCompanyCombatAggregateState({
           ...source,
           economy: {
             ...source.economy,
             lifecycle: {
               ...lifecycle,
-              characters: lifecycle.characters.map((character) =>
-                active.has(character.identity.characterId)
-                  ? {
-                      ...character,
-                      presence: {
-                        ...character.presence,
-                        location,
-                        ...(character.identity.characterId === 'a-worker-1'
-                          ? { fieldPartyId: null, assignment: 'NONE' as const }
-                          : {}),
-                      },
-                    }
-                  : character,
-              ),
+              characters: localCharacters,
+              knowledge: {
+                ...lifecycle.knowledge,
+                characters: lifecycle.knowledge.characters.map(
+                  (known) =>
+                    localCharacters.find(
+                      (person) => person.identity.characterId === known.identity.characterId,
+                    ) ?? known,
+                ),
+              },
               parties: lifecycle.parties.map((entry) => ({ ...entry, location })),
             },
             finance: {
@@ -221,6 +233,92 @@ describe('local recruitment (PostgreSQL)', () => {
             })
             .execute();
         });
+
+        // Hidden availability must not change roster affordances before observation.
+        const beforeHiddenChange = await app.inject({
+          method: 'GET',
+          url: '/company',
+          headers: headers[0]!,
+        });
+        const original = storedStates[0]!;
+        const hidden = {
+          ...original,
+          economy: {
+            ...original.economy,
+            lifecycle: {
+              ...original.economy.lifecycle,
+              characters: original.economy.lifecycle.characters.map((person) =>
+                person.identity.characterId === 'a-worker-1'
+                  ? {
+                      ...person,
+                      presence: {
+                        ...person.presence,
+                        availability: 'OUT_OF_CONTACT' as const,
+                        fieldPartyId: null,
+                        assignment: 'NONE' as const,
+                      },
+                    }
+                  : person,
+              ),
+            },
+          },
+        };
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: hidden })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companies[0])
+          .execute();
+        const afterHiddenChange = await app.inject({
+          method: 'GET',
+          url: '/company',
+          headers: headers[0]!,
+        });
+        expect(afterHiddenChange.json().company.characters).toEqual(
+          beforeHiddenChange.json().company.characters,
+        );
+        // A local reserve is sufficient contact even if every field member is unavailable.
+        const reserveContact = {
+          ...original,
+          economy: {
+            ...original.economy,
+            lifecycle: {
+              ...original.economy.lifecycle,
+              characters: original.economy.lifecycle.characters.map((person) =>
+                person.presence.fieldPartyId !== null
+                  ? {
+                      ...person,
+                      presence: {
+                        ...person.presence,
+                        availability: 'OUT_OF_CONTACT' as const,
+                        fieldPartyId: null,
+                        assignment: 'NONE' as const,
+                      },
+                    }
+                  : person,
+              ),
+            },
+          },
+        };
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: reserveContact })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companies[0])
+          .execute();
+        const reserveOffers = await app.inject({
+          method: 'GET',
+          url: '/company/recruits/kamenny-brod',
+          headers: headers[0]!,
+        });
+        expect(reserveOffers.statusCode, reserveOffers.body).toBe(200);
+        expect(reserveOffers.json().offers).toHaveLength(1);
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: original })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companies[0])
+          .execute();
 
         const previews = await Promise.all(
           headers.map((header) =>
@@ -383,6 +481,48 @@ describe('local recruitment (PostgreSQL)', () => {
           canJoinFieldParty: false,
           fieldPartyFull: true,
         });
+        // Roll back/reapply the new table; accepted hire receipts remain authoritative.
+        await database.transaction().execute(async (transaction) => {
+          await sql
+            .raw(
+              await readFile(
+                new URL('../../migrations/0019_world_recruit_pool.down.sql', import.meta.url),
+                'utf8',
+              ),
+            )
+            .execute(transaction);
+          await sql
+            .raw(
+              await readFile(
+                new URL('../../migrations/0019_world_recruit_pool.up.sql', import.meta.url),
+                'utf8',
+              ),
+            )
+            .execute(transaction);
+          await ensureWorldRecruitPool(transaction, worldId);
+          const recovered = await transaction
+            .selectFrom('world_recruit_offers')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .where('offer_id', '=', physician!.offerId)
+            .executeTakeFirstOrThrow();
+          expect(recovered.consumed_company_id).toBe(companies[winner]);
+          expect(recovered.consumed_command_id).toBe(hireRequests[winner]!.payload.commandId);
+        });
+        const afterRollback = await app.inject({
+          method: 'GET',
+          url: '/company/recruits/kamenny-brod',
+          headers: headers[loser]!,
+        });
+        expect(afterRollback.json().offers).toEqual([]);
+        const duplicatedHire = await app.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: headers[loser]!,
+          payload: { ...hireRequests[loser]!.payload, commandId: `after-rollback-${worldId}` },
+        });
+        expect(duplicatedHire.statusCode).toBe(409);
+        expect(duplicatedHire.json().code).toBe('OUT_OF_STOCK');
       } finally {
         await database.transaction().execute(async (transaction) => {
           await transaction

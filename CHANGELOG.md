@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Preserve recruitment ownership and observed roster state
+
+- 2026-11-05, `codex/ordinary-recruitment`, local correction after independent
+  review. Recover missing offer consumption from accepted hire receipts across
+  migration rollback; share local contact admission; derive roster actions from
+  observations and observe successful Join. Real SQL rollback/replay/race,
+  hidden-state invariance, reserve contact and capacity PASS, as do server types
+  and scoped lint. Initial fixture errors and the missing Join observation are
+  recorded in the [owning result](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
+  Client retry and native acceptance remain open; nothing is merged.
+
 ### Add ordinary local recruitment to the company loop
 
 - 2026-11-05, originating branch `codex/ordinary-recruitment`, local change on

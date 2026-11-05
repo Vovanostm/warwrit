@@ -2,7 +2,6 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import type { Kysely } from 'kysely';
 import {
   COMPANY_CATALOGUE,
-  fieldPartyStatus,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   COMPANY_RULES,
@@ -43,7 +42,11 @@ import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { projectCompanyHoldings } from './holdings.js';
-import { ensureWorldRecruitPool, readSiteRecruitOffers } from './recruitment.js';
+import {
+  ensureWorldRecruitPool,
+  localCompanyContacts,
+  readSiteRecruitOffers,
+} from './recruitment.js';
 
 export interface CompanyRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -65,20 +68,7 @@ export function registerCompanyRoutes(
       const lifecycle = state.economy.lifecycle;
       const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
       const partyLocation = party?.location.kind === 'AT' ? party.location : undefined;
-      const localMember = lifecycle.characters.some(
-        (character) =>
-          lifecycle.memberships.some(
-            (membership) =>
-              membership.characterId === character.identity.characterId &&
-              membership.companyId === companyId &&
-              membership.endedAt === null,
-          ) &&
-          character.presence.fieldPartyId === party?.partyId &&
-          character.presence.availability === 'AVAILABLE' &&
-          character.presence.location.kind === 'AT' &&
-          character.presence.location.siteId === request.params.siteId &&
-          character.presence.location.areaId === partyLocation?.areaId,
-      );
+      const localMember = localCompanyContacts(state, companyId, partyLocation).length > 0;
       if (
         lifecycle.company?.runStatus !== 'ACTIVE' ||
         !partyLocation ||
@@ -137,14 +127,12 @@ export function registerCompanyRoutes(
         state.economy.lifecycle.parties.length === 1
           ? state.economy.lifecycle.parties[0]
           : undefined;
-      const fieldPartyState = party
-        ? fieldPartyStatus(state.economy.lifecycle, party.partyId)
-        : undefined;
-      const fieldPartyFull = Boolean(
-        fieldPartyState &&
-        fieldPartyState.memberIds.length >=
-          Math.min(fieldPartyState.capacity, COMPANY_RULES.partyHardMax),
+      const knownMembers = view.characters.filter(
+        (character) => character.fieldPartyId === party?.partyId,
       );
+      const fieldPartyFull =
+        view.commandCapacity === null ||
+        knownMembers.length >= Math.min(view.commandCapacity, COMPANY_RULES.partyHardMax);
       return {
         holdings: projectCompanyHoldings(
           state,
@@ -163,24 +151,20 @@ export function registerCompanyRoutes(
             nicknameTextKey: character.nicknameTextKey,
             perkIds: [...character.perkIds],
             knownStatus: character.knownStatus,
-            inFieldParty:
-              state.economy.lifecycle.characters.find(
-                (actual) => actual.identity.characterId === character.characterId,
-              )?.presence.fieldPartyId === party?.partyId,
+            inFieldParty: character.fieldPartyId === party?.partyId,
             canJoinFieldParty: (() => {
-              const actual = state.economy.lifecycle.characters.find(
+              const known = state.economy.lifecycle.knowledge.characters.find(
                 (entry) => entry.identity.characterId === character.characterId,
               );
-              const location = actual?.presence.location;
               return Boolean(
                 party?.location.kind === 'AT' &&
                 !fieldPartyFull &&
-                actual?.presence.availability === 'AVAILABLE' &&
-                actual.presence.encounterBindingId === null &&
-                actual.presence.fieldPartyId === null &&
-                location?.kind === 'AT' &&
-                location.siteId === party.location.siteId &&
-                location.areaId === party.location.areaId,
+                known?.presence.availability === 'AVAILABLE' &&
+                known.presence.encounterBindingId === null &&
+                character.fieldPartyId === null &&
+                character.location.kind === 'AT' &&
+                character.location.siteId === party.location.siteId &&
+                character.location.areaId === party.location.areaId,
               );
             })(),
             fieldPartyFull,

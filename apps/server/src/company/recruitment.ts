@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { Transaction } from 'kysely';
+import { sql, type Transaction } from 'kysely';
 import {
   COMPANY_CATALOGUE,
   COMPANY_RULES,
@@ -145,6 +145,32 @@ function offerGenesis(worldId: string, profile: (typeof profiles)[number]) {
   return { offerId, characterId, genesisId, candidate, vitals, wallet, location };
 }
 
+export function localCompanyContacts(
+  state: CompanyCombatAggregateState,
+  companyId: string,
+  location:
+    { readonly kind: string; readonly siteId?: string; readonly areaId?: string } | undefined,
+): string[] {
+  if (location?.kind !== 'AT') return [];
+  const lifecycle = state.economy.lifecycle;
+  return lifecycle.characters
+    .filter(
+      (character) =>
+        lifecycle.memberships.some(
+          (membership) =>
+            membership.companyId === companyId &&
+            membership.characterId === character.identity.characterId &&
+            membership.endedAt === null,
+        ) &&
+        character.presence.availability === 'AVAILABLE' &&
+        character.presence.encounterBindingId === null &&
+        character.presence.location.kind === 'AT' &&
+        character.presence.location.siteId === location.siteId &&
+        character.presence.location.areaId === location.areaId,
+    )
+    .map((character) => character.identity.characterId);
+}
+
 /** Idempotently materialize the finite world-owned pool, without touching a company root. */
 export async function ensureWorldRecruitPool(
   transaction: Transaction<DatabaseSchema>,
@@ -152,6 +178,25 @@ export async function ensureWorldRecruitPool(
 ): Promise<void> {
   for (const profile of profiles) {
     const genesis = offerGenesis(worldId, profile);
+    const existing = await transaction
+      .selectFrom('world_recruit_offers')
+      .select('offer_id')
+      .where('world_id', '=', worldId)
+      .where('offer_id', '=', genesis.offerId)
+      .executeTakeFirst();
+    if (existing) continue;
+    // Offer rows may be lost by migration rollback. Immutable accepted receipts
+    // survive that rollback, including after a recruit leaves or dies.
+    const priorHires = await transaction
+      .selectFrom('company_receipts')
+      .select(['company_id', 'command_id', 'created_at'])
+      .where('world_id', '=', worldId)
+      .where(sql<string>`request_key::jsonb ->> 'type'`, '=', 'Recruit')
+      .where(sql<string>`request_key::jsonb -> 'payload' ->> 'offerId'`, '=', genesis.offerId)
+      .where(sql<string>`response ->> 'ok'`, '=', 'true')
+      .execute();
+    if (priorHires.length > 1) throw new Error('Recruit offer has multiple accepted hires');
+    const priorHire = priorHires[0];
     await transaction
       .insertInto('world_recruit_offers')
       .values({
@@ -164,6 +209,9 @@ export async function ensureWorldRecruitPool(
         candidate: genesis.candidate,
         vitals: genesis.vitals,
         wallet: genesis.wallet,
+        consumed_company_id: priorHire?.company_id ?? null,
+        consumed_command_id: priorHire?.command_id ?? null,
+        consumed_at: priorHire?.created_at ?? null,
       })
       .onConflict((conflict) => conflict.columns(['world_id', 'offer_id']).doNothing())
       .execute();

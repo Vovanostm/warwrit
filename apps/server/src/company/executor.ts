@@ -13,6 +13,7 @@ import {
   RECRUIT_DAILY_WAGE_MILLI,
   RECRUIT_SIGNING_Q,
   attachRecruitGenesis,
+  localCompanyContacts,
   lockRecruitOffer,
   recruitWageRates,
 } from './recruitment.js';
@@ -748,35 +749,17 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       clock.tick,
     );
     if (!observed) throw new Error('New recruit could not be observed at the inn');
+  } else if (input.request.type === 'JoinFieldParty') {
+    const observed = await observeLocalRecruit(
+      input.transaction,
+      nextState,
+      input.request.payload.characterId,
+      clock.tick,
+    );
+    if (!observed) throw new Error('Joined member could not be observed locally');
   }
   await persistDueContinuousMovementRoute(input.transaction, due);
   return { kind: 'COMMITTED', response };
-}
-
-function localCompanyContacts(
-  state: CompanyCombatAggregateState,
-  companyId: string,
-  location:
-    { readonly kind: string; readonly siteId?: string; readonly areaId?: string } | undefined,
-): string[] {
-  if (location?.kind !== 'AT') return [];
-  const lifecycle = state.economy.lifecycle;
-  return lifecycle.characters
-    .filter(
-      (character) =>
-        lifecycle.memberships.some(
-          (membership) =>
-            membership.companyId === companyId &&
-            membership.characterId === character.identity.characterId &&
-            membership.endedAt === null,
-        ) &&
-        character.presence.availability === 'AVAILABLE' &&
-        character.presence.encounterBindingId === null &&
-        character.presence.location.kind === 'AT' &&
-        character.presence.location.siteId === location.siteId &&
-        character.presence.location.areaId === location.areaId,
-    )
-    .map((character) => character.identity.characterId);
 }
 
 function createRecruitMoneyAccess(
