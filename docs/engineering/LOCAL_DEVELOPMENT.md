@@ -137,6 +137,18 @@ journey. Browser/launcher PASS messages preceded cancellation; the CI step was
 cancelled and audit was NOT_RUN. The whole-job allowance adds headroom for measured execution variance; individual
 scenario deadlines, checks and audit thresholds retain their existing limits.
 
+Full PR CI keeps bootstrap first, captures both browser journeys, measures units,
+then merges world/merger-self/painted measurements before the native audit.
+Both CI launchers accept `--capture <runtime.json>` to collect into a new path
+without touching unit coverage, and `--merge <runtime.json>` to aggregate without
+starting services/builds/browsers. World capture still needs bootstrap's current
+SQL/migration outputs. No-argument invocation retains capture-and-merge behavior.
+World aggregation publishes an owned candidate only after both conversions pass.
+Run aggregation once after a fresh unit report; an earlier successful phase may
+remain after a later phase fails, but that partial result is not CI acceptance.
+Captures stay under `output/` while measured units replace `coverage/`; no package
+rebuild occurs between capture and source-validated aggregation.
+
 This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
 `warwrit-world-lab` Compose project/PostgreSQL65438. It uses `compose.world-lab.yaml`
 and its own database and cookie; it never uses the campaign `DATABASE_URL`.

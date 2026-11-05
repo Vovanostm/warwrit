@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Capture browser failures before measured unit coverage
+
+- 2026-11-05, `codex/harness-browser-phase-order`, LOCAL, owner-requested
+  explore/spec/fix/review/check after repeated late delivery failures. Keep
+  bootstrap first; expose capture/merge phases in the existing CI launchers,
+  run browsers before measured units, then preserve world/self/painted conversion
+  order and native gates. World aggregation publishes only after both passes.
+  Actual-probe CLI regression, ten workflow groups, scoped types/lint/syntax/diff
+  PASS after fixing local fixture setup errors. Product source, scenario deadlines,
+  cleanup and default launcher behavior are retained. Local native capture and
+  full suites NOT_RUN; independent final review/hosted order and savings remain
+  pending. [Owning specification/result](docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
+
 ### Clarify cancelled-step evidence and focus the recovery SQL consumer
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.

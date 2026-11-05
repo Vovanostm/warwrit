@@ -367,3 +367,61 @@ if grep -q 'diagnostic-start-marker' "$fixture/output"; then fail 'full noisy lo
 grep -q 'diagnostic-start-marker' "$repo/.orca/validate-tests.log" || fail 'full noisy log lost'
 echo 'PASS commands: docs omit game checks; shared contracts check consumers; unknown uses verify; zero-tests failure/repair/log retained; long diagnostics bounded'
 echo 'PASS scope: small/large/multiple issues/deletion/rename; missing linkage/description/body/base/diff fail'
+
+# The actual workflow must reject a capture before spending measured-unit time.
+phase_order="$(awk '/^      - name: (Bootstrap and verify|Install pinned browser|Capture real world-map journeys|Capture ordinary painted-map journey|Measure unit-test coverage for the audit|Merge captured browser measurements|Reject quality regressions in changed files)$/ { sub(/^      - name: /, ""); print }' "$root/.github/workflows/ci.yml")"
+expected_order="$(cat <<'ORDER'
+Bootstrap and verify
+Install pinned browser
+Capture real world-map journeys
+Capture ordinary painted-map journey
+Measure unit-test coverage for the audit
+Merge captured browser measurements
+Reject quality regressions in changed files
+ORDER
+)"
+[[ "$phase_order" == "$expected_order" ]] || fail 'browser capture/measurement/aggregation order changed'
+capture_world="$(ci_step_script 'Capture real world-map journeys')"
+capture_painted="$(ci_step_script 'Capture ordinary painted-map journey')"
+merge_browsers="$(ci_step_script 'Merge captured browser measurements')"
+[[ -n "$capture_world" && -n "$capture_painted" && -n "$merge_browsers" ]] || fail 'browser phase command missing'
+mkdir -p "$fixture/phasebin"
+cat > "$fixture/phasebin/bash" <<'STUB'
+#!/bin/bash
+printf '%s\n' "$*" >> "$FIXTURE_PHASE_LOG"
+case "$*" in
+  'scripts/world-map/check-world-lab-ci.sh --capture output/world-lab-ci/browser-capture.json')
+    [[ "$FIXTURE_CAPTURE_FAIL" != world ]] || exit 47 ;;
+  'scripts/world-map/check-painted-game-ci.sh --capture output/painted-game-ci/browser-capture.json')
+    [[ "$FIXTURE_CAPTURE_FAIL" != painted ]] || exit 47 ;;
+  'scripts/world-map/check-world-lab-ci.sh --merge output/world-lab-ci/browser-capture.json') ;;
+  'scripts/world-map/check-painted-game-ci.sh --merge output/painted-game-ci/browser-capture.json') ;;
+  *) exit 97 ;;
+esac
+STUB
+cat > "$fixture/phasebin/pnpm" <<'STUB'
+#!/bin/bash
+[[ "$*" == 'test:coverage --maxWorkers=1' ]] || exit 97
+echo measured-units >> "$FIXTURE_PHASE_LOG"
+exit "$FIXTURE_UNIT_EXIT"
+STUB
+chmod +x "$fixture/phasebin/"*
+phase_script="$capture_world"$'\n'"$capture_painted"$'\n''pnpm test:coverage --maxWorkers=1'$'\n'"$merge_browsers"
+real_bash="$(command -v bash)"
+export FIXTURE_PHASE_LOG="$fixture/phase-commands"
+for failed in none world painted; do
+  : > "$FIXTURE_PHASE_LOG"
+  expected=0
+  [[ "$failed" == none ]] || expected=47
+  expect_exit "$expected" env PATH="$fixture/phasebin:$PATH" FIXTURE_CAPTURE_FAIL="$failed" FIXTURE_UNIT_EXIT=0 "$real_bash" -e -c "$phase_script"
+  if [[ "$failed" == none ]]; then
+    [[ "$(wc -l < "$FIXTURE_PHASE_LOG")" -eq 5 ]] || fail 'success repeated or omitted a phase'
+    [[ "$(sed -n '3p' "$FIXTURE_PHASE_LOG")" == measured-units ]] || fail 'units did not follow both captures'
+  else
+    if grep -qE 'measured-units|--merge' "$FIXTURE_PHASE_LOG"; then fail 'failed capture reached expensive units or merge'; fi
+  fi
+done
+: > "$FIXTURE_PHASE_LOG"
+expect_exit 48 env PATH="$fixture/phasebin:$PATH" FIXTURE_CAPTURE_FAIL=none FIXTURE_UNIT_EXIT=48 "$real_bash" -e -c "$phase_script"
+if grep -q -- --merge "$FIXTURE_PHASE_LOG"; then fail 'failed units reached merge'; fi
+echo 'PASS browser phases: actual workflow order, one capture/merge each; capture failure skips measured units; failed units skip merge'
