@@ -127,6 +127,78 @@ function prepareObservationDraft(
   return { previousRevision, next, command: parsed.command, receipt: prepared.receipt };
 }
 
+/** Persist the company's lawful in-person readback of one newly hired local person. */
+export async function observeLocalRecruit(
+  transaction: Transaction<DatabaseSchema>,
+  state: CompanyCombatAggregateState,
+  characterId: string,
+  tick: string,
+): Promise<CompanyCombatAggregateState | undefined> {
+  const { lifecycle } = state.economy;
+  const candidate = lifecycle.characters.find(
+    (entry) => entry.identity.characterId === characterId,
+  );
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  const candidateId = candidate?.identity.characterId;
+  const candidateLocation = candidate?.presence.location;
+  const partyLocation = party?.location;
+  const membership = lifecycle.memberships.find(
+    (entry) =>
+      entry.characterId === candidateId &&
+      entry.companyId === lifecycle.companyId &&
+      entry.endedAt === null,
+  );
+  if (
+    !candidate ||
+    !membership ||
+    !party ||
+    party.location.kind !== 'AT' ||
+    candidateLocation?.kind !== 'AT' ||
+    partyLocation?.kind !== 'AT' ||
+    candidateLocation.siteId !== partyLocation.siteId ||
+    candidateLocation.areaId !== partyLocation.areaId
+  )
+    return undefined;
+  const contactIds = lifecycle.characters
+    .filter(
+      (person) =>
+        lifecycle.memberships.some(
+          (entry) =>
+            entry.characterId === person.identity.characterId &&
+            entry.companyId === lifecycle.companyId &&
+            entry.endedAt === null,
+        ) &&
+        person.presence.availability === 'AVAILABLE' &&
+        person.presence.location.kind === 'AT' &&
+        person.presence.location.siteId === partyLocation.siteId &&
+        person.presence.location.areaId === partyLocation.areaId,
+    )
+    .map((person) => person.identity.characterId);
+  if (!candidateId || !contactIds.includes(candidateId)) return undefined;
+  const draft = prepareObservationDraft(state, candidateId, contactIds, tick);
+  if (!draft) return undefined;
+  const revision = draft.next.economy.lifecycle.revision;
+  await updateCompanyAggregateWithReceipt(
+    transaction,
+    draft.previousRevision,
+    revision,
+    draft.next,
+    {
+      command: draft.command,
+      receipt: {
+        receiptId: randomUUID(),
+        commandId: draft.command.commandId,
+        sourceKey: companySourceKey(draft.command),
+        requestKey: canonicalJson(draft.command),
+        response: { ok: true, publicRevision: draft.next.economy.lifecycle.knowledge.revision },
+        resultingRevision: revision,
+      },
+      auditEvents: draft.receipt.events.map((event) => ({ eventId: event.id, revision, event })),
+    },
+  );
+  return draft.next;
+}
+
 /** Called only after ownership validation and the account/company locks, before private projection. */
 export async function observeLocalCompanyConditions(
   transaction: Transaction<DatabaseSchema>,

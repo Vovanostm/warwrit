@@ -60,6 +60,10 @@ export function GameShell(props: {
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
+  readonly onJoinFieldParty: (characterId: string) => void;
+  readonly joinAttemptPending: boolean;
+  readonly joinAttemptMessage?: string;
+  readonly onRetryJoinFieldParty: () => void;
   readonly onToggleCamp: (pitch: boolean) => void;
   readonly placeSlot: (context: ContractVisitProps) => ReactNode;
   readonly battleSlot: ReactNode;
@@ -616,6 +620,27 @@ export function GameShell(props: {
             </div>
           </div>
           <div hidden={tab !== 'company'}>
+            {props.joinAttemptPending && (
+              <div role="status" className="travel-error">
+                <p>
+                  {props.joinAttemptMessage ??
+                    'Результат присоединения неизвестен. Повторите тот же приказ.'}
+                </p>
+                <button
+                  type="button"
+                  className="action action-quiet"
+                  disabled={props.equipBusy}
+                  onClick={props.onRetryJoinFieldParty}
+                >
+                  Повторить тот же приказ
+                </button>
+              </div>
+            )}
+            {!props.joinAttemptPending && props.joinAttemptMessage && (
+              <p role="status" className="travel-error">
+                {props.joinAttemptMessage}
+              </p>
+            )}
             <CompanyPanel
               accountId={props.freeMovementScope.accountId}
               onRefreshItems={props.onRefreshWorld}
@@ -635,6 +660,7 @@ export function GameShell(props: {
               equipBusy={props.equipBusy}
               {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
               onEquip={props.onEquip}
+              onJoinFieldParty={props.onJoinFieldParty}
             />
           </div>
         </aside>

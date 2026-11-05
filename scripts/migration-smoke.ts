@@ -20,6 +20,7 @@ const client = new Client({ connectionString });
 /** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
 async function downToFirstHunt(): Promise<void> {
   for (const name of [
+    '0019_world_recruit_pool',
     '0018_company_cartography',
     '0017_world_lab_pursuit_order_ids',
     '0016_world_lab_pursuits',
@@ -57,6 +58,7 @@ try {
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
     '0018_company_cartography',
+    '0019_world_recruit_pool',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -79,7 +81,10 @@ try {
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
     '0018_company_cartography',
+    '0019_world_recruit_pool',
   ]);
+
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0019_world_recruit_pool']);
 
   const smokeMapId = 'migration-smoke-cartography';
   await client.query(
@@ -134,6 +139,7 @@ try {
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
     '0018_company_cartography',
+    '0019_world_recruit_pool',
   ]);
   assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
@@ -234,6 +240,7 @@ try {
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
     '0018_company_cartography',
+    '0019_world_recruit_pool',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -555,6 +562,7 @@ try {
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
     '0018_company_cartography',
+    '0019_world_recruit_pool',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

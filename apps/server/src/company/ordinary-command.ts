@@ -6,6 +6,8 @@ type PreparedEconomy = Extract<EconomyResult, { kind: 'PREPARED' }>;
 type OrdinaryIds = {
   readonly partyId: string | undefined;
   readonly openAgreementId: string | undefined;
+  readonly meetingEvidenceId: string | undefined;
+  readonly characterId: string | undefined;
 };
 
 /** Select intent from already-derived server IDs; authority and evidence stay in the executor. */
@@ -17,9 +19,32 @@ export function ordinaryCommandIntent(
     readonly accessEvidenceId: string | undefined;
     readonly careEvidenceId: string | undefined;
     readonly careDefinitionId: string | undefined;
+    readonly offerId: string | undefined;
+    readonly offerRevision: string | undefined;
   },
 ) {
   switch (request.type) {
+    case 'Recruit':
+      return {
+        type: request.type,
+        payload: {
+          offerId: ids.offerId,
+          characterId: ids.characterId,
+          companyId,
+          basis: 'PAID',
+          offerRevision: ids.offerRevision,
+          poolId: 'local',
+        },
+      };
+    case 'JoinFieldParty':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          partyId: ids.partyId,
+          coLocationEvidenceId: ids.meetingEvidenceId,
+        },
+      };
     case 'RenameCompany':
       return {
         type: request.type,
@@ -96,6 +121,21 @@ function requestedEffectPresent(
   ids: OrdinaryIds,
 ): boolean {
   switch (request.type) {
+    case 'Recruit':
+      return prepared.next.lifecycle.memberships.some(
+        (membership) => membership.characterId === ids.characterId && membership.endedAt === null,
+      );
+    case 'JoinFieldParty':
+      return (
+        prepared.next.lifecycle.parties.some(
+          (party) => party.partyId === ids.partyId && party.location.kind === 'AT',
+        ) &&
+        prepared.next.lifecycle.characters.some(
+          (character) =>
+            character.identity.characterId === request.payload.characterId &&
+            character.presence.fieldPartyId === ids.partyId,
+        )
+      );
     case 'EquipItem':
       return itemEquipped(prepared, request.payload);
     case 'ApplyCare':

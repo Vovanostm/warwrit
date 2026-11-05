@@ -155,6 +155,21 @@ interface WorldCampaignClockTable {
   readonly updated_at: Generated<Date>;
 }
 
+interface WorldRecruitOfferTable {
+  readonly world_id: string;
+  readonly offer_id: string;
+  readonly offer_revision: string;
+  readonly site_id: string;
+  readonly area_id: string;
+  readonly character_id: string;
+  readonly candidate: unknown;
+  readonly vitals: unknown;
+  readonly wallet: unknown;
+  readonly consumed_company_id: string | null;
+  readonly consumed_command_id: string | null;
+  readonly consumed_at: Generated<Date | null>;
+}
+
 interface WorldPartyRouteTable {
   readonly world_id: string;
   readonly company_id: string;
@@ -274,6 +289,7 @@ export interface DatabaseSchema {
   readonly company_account_owners: CompanyAccountOwnerTable;
   readonly company_opening_options: CompanyOpeningOptionTable;
   readonly world_campaign_clocks: WorldCampaignClockTable;
+  readonly world_recruit_offers: WorldRecruitOfferTable;
   readonly world_party_routes: WorldPartyRouteTable;
   readonly world_route_receipts: WorldRouteReceiptTable;
   readonly world_first_hunt_state: WorldFirstHuntStateTable;

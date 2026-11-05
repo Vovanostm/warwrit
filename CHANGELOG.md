@@ -9,6 +9,132 @@ requests.
 
 ## Unreleased
 
+### Run the coverage CLI regression from a clean checkout
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL test-setup correction to
+  [PR360](https://github.com/Vovanostm/warwrit/pull/360). A fresh-root replay
+  reproduced ENOENT because ignored output/ was absent. Create the parent before
+  the owned temporary child; clean-root regression, focused types/lint/format
+  and independent readback PASS. [Owning diagnosis](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05).
+  Production merger/gameplay/counters are unchanged; new-head CI is required.
+
+### Merge ordinary wound care into main
+
+- 2026-11-05, originating branch `codex/game-care-delivery`, MERGED
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350) as `f0461180` after
+  explicit owner approval for `319b901e`, full CI42020812490 and scope42024966505
+  PASS. Live PR/main and clean detached local-main readback agree; its tree
+  matches the checked candidate. [Care closeout](docs/work-packages/WP-02.4.md#merged-care-delivery--2026-11-05)
+  retains native treatment/retry/restart evidence and partial visual limits.
+  Recruitment remains a separate unmerged prerequisite for the retained save.
+
+### Preserve declared callback identity in runtime coverage
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL measurement correction after
+  reproducing PR360's quality failure. Adding ordinary browser coverage changed
+  inherited attribution for unchanged useCallback functions, without changing
+  their metrics or hit counts. Derive anonymous callback names from their exact
+  source binding, retaining counters and locations; no game/dependency/threshold
+  change. [Owning diagnosis](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05)
+  retains full unit1244/SQL88/browser results, independent equality proof and the
+  rejected partial Fallow upgrade. Focused CLI regression, lint/format/syntax,
+  genuine-new-complexity rejection control and independent source review PASS;
+  full measured re-audit PASS with zero introduced findings. All472 App function
+  hits and the three zero-hit callbacks are retained. Final hosted CI is pending.
+
+### Integrate the accepted pursuit setup fix into recruitment
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL integration of care `319b901e`.
+  Preserve both histories and unchanged gameplay source. CI42016253535 passed
+  bootstrap, SQL/stress and both browsers, then failed the final audit. Fresh
+  unit1244/98 SKIP and SQL88 PASS; their combined coverage audit has zero new
+  findings. Browser measurement composition is the next diagnostic boundary,
+  not a reason to change gameplay on static estimates. [Owning result](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05).
+
+### Integrate recruitment with the current care candidate
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL integration of care `76147b2f`
+  and main `9bb2d703`. Preserve both histories and the accepted focused document
+  validator. Recruitment/care gameplay source is unchanged. Care's prior head
+  `6967f234` passed full CI42008831586 attempt2; current integrated-head checks
+  and separate exact-head merge permissions remain pending. Native hire/Join/care
+  evidence retains its scope and visual limitations. [Owning continuation](docs/work-packages/WP-02.2.md#current-care-integration--2026-11-05).
+
+### Correct the published recruitment formatting preflight
+
+- 2026-11-05, `codex/ordinary-recruitment`, published correction to
+  [PR360](https://github.com/Vovanostm/warwrit/pull/360). CI42014352340 stopped
+  before product tests on RecruitmentPanel.prepareHire formatting. Apply the
+  pinned formatter to its signature; command semantics and markup are unchanged.
+  [Owning results](docs/work-packages/WP-02.2.md#quality-closeout-correction--2026-11-05)
+  retain the failed run and current verification. No migration change.
+
+### Complete the native recruitment and care continuation
+
+- 2026-11-05, `codex/ordinary-recruitment`, local integration of care6967f234
+  and merged main81e7931b. Native travel/inn inspection/hire/separate Join/care,
+  dropped successful replies, reload/exact retries and restart PASS at3583d002.
+  Each accepted command has one receipt for two identical requests. Treasury
+  800→750, medical units2→1, medicine XP150→190; health17 remains unchanged.
+  Independent source review and finite gameplay critique ACCEPT; care-control
+  visual capture remains PARTIAL. [Owning results](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile)
+  retain initial failures and saved-trial limits. Delayed-Join SQL3, types/lint,
+  client2 and corrected migration smoke PASS. Earlier full unit1242/stress10000
+  PASS; final composed clean gate and hosted CI remain pending. Care/recruitment
+  are not merged; original wounded saves remain retained. Composed unit1242
+  and stress10000 PASS; SQL87 passed and one stale migration suffix failed. Its
+  focused corrected retry PASS. Reuse the protocol offer DTO and isolate roster
+  controls. Final cohesive handler extraction, exact-scope busy recovery and
+  shared scalar protocol guards pass affected source review, client4/protocol20/
+  SQL3 checks, web types and scoped lint. Static diagnostics have zero introduced
+  clones/hard complexity breaches; full hosted measured quality remains required.
+
+### Preserve recruitment ownership and observed roster state
+
+- 2026-11-05, `codex/ordinary-recruitment`, local correction after independent
+  review. Recover missing offer consumption from accepted hire receipts across
+  migration rollback; share local contact admission; derive roster actions from
+  observations and observe successful Join. Real SQL rollback/replay/race,
+  hidden-state invariance, reserve contact and capacity PASS, as do server types
+  and scoped lint. Initial fixture errors and the missing Join observation are
+  recorded in the [owning result](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
+  Re-review removed an unsafe JSON cast of opaque legacy receipt keys; the
+  rollback regression also covers such a key containing the same offer ID.
+  Hire/Join persist the exact scoped request and expose retry after remount;
+  focused client regression2/2 and web types PASS. Parent lint found and corrected
+  two unused initial assignments. Re-review adds stale-account completion guards
+  so an old reply cannot hide another company's pending retry.
+  The first full gate stopped before game tests on four unused recruitment
+  exports, now removed or made private; the second found two locale-dependent
+  sorts, changed to compareCodeUnits. Native hire exposed missing carried-purse
+  attestation; reuse the existing opening proof and keep remote wallets inaccessible.
+  Native lost-hire/reload/exact retry PASS with one50-crown transfer. Reuse
+  existing witnessed-death holdings facts so a dead captain cannot fill a known
+  party slot. Delayed native Join exposed missing food access for a local reserve;
+  include its exact co-location with company stock in stationary food evidence.
+  Unit1242/stress10000 PASS; update migration smoke expectations for0019 after
+  its stale-list failure. Native care and affected checks remain open; nothing is merged.
+
+### Add ordinary local recruitment to the company loop
+
+- 2026-11-05, originating branch `codex/ordinary-recruitment`, local change on
+  `516c1eb`. Add the owner-approved finite world pool, physician at Каменный Брод,
+  offer inspection with skills, aptitudes, condition and explicit no-equipment
+  disclosure, 50-crown hiring and 10-crown base wage with existing qualification
+  multipliers. Hiring does not add the person to the field party; Join remains a
+  separate, capacity-checked action. The pool initializes on server startup and
+  backfills missing offers. Focused PostgreSQL integration PASS on an isolated
+  temporary database; migration structure and scoped formatting PASS. Typechecks
+  last run reported protocol, area-narrowing and DTO diagnostics; those were fixed
+  afterward but not rerun. Startup/runtime, native player journey, full integrated
+  quality and hosted CI are NOT_RUN. The slice is local and uncommitted at entry.
+  [Owning acceptance](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
+  Parent continuation makes additive roster flags optional for existing callers;
+  fresh protocol build and server/web types PASS. Existing unsupported-action
+  coverage now uses SetAssignment because Recruit has a strict enabled payload.
+  The exact roster oracle includes the new scoped flags. Both existing SQL route
+  scenarios and recruitment SQL PASS after that fixture correction; scoped lint PASS after removing the unused wage-rule import.
+
 ### Reacquire expired pursuit preparation before the STOP browser probe
 
 - 2026-11-05, `codex/game-care-delivery`, LOCAL correction after
@@ -615,7 +741,7 @@ requests.
   Capture NPC/other-player inputs first; retain one own timestamp, STOP ordering
   and fixed-past rejection. Independent source ACCEPT, actual separate-pool
   regression1PASS, complete measured SQL81PASS and migration smoke PASS; server
-  types/scoped lint PASS. Retain earlier failed wrapper and browser attempts;
+  types/scoped lint PASS after removing the unused wage-rule import. Retain earlier failed wrapper and browser attempts;
   current browser/normal audit/commit/PR pending. [Owning correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
   Source correction mirrored into the unfinished parent combat tree; original
   databases preserved. No main merge, deployment, paid provisioning or Orca.
@@ -4075,7 +4201,7 @@ requests.
   execution/assertion to bridge-v3 and reject bridge rulesets in the old setup
   entrypoint. Existing privacy/setup tests now cover these boundaries, including
   legacy false capabilities that must not alter actions. No approved rule changed.
-  Focused 34 tests, core typecheck and scoped lint PASS. Four prior timeout cases
+  Focused 34 tests, core typecheck and scoped lint PASS after removing the unused wage-rule import. Four prior timeout cases
   rerun sequentially: three PASS, unchanged world navigation still times out at
   5 seconds. After browser cleanup, broader checks: 183 PASS, two timeouts
   (world navigation and legacy fixture run); leader-death now PASS. Independent

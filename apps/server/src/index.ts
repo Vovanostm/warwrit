@@ -5,6 +5,7 @@ import { loadServerConfig } from './config.js';
 import { createDatabase, createDatabaseReadinessProbe } from './db/database.js';
 import { startWorldRouteWorker } from './world/route-worker.js';
 import { ensureFirstHuntGenesis } from './contracts/first-hunt-runtime.js';
+import { ensureWorldRecruitPool } from './company/recruitment.js';
 
 const config = loadServerConfig();
 const database = config.databaseUrl === undefined ? undefined : createDatabase(config.databaseUrl);
@@ -56,6 +57,9 @@ const app = buildApp({
 if (database !== undefined && config.identity !== undefined) {
   try {
     await ensureFirstHuntGenesis(database, config.worldId);
+    await database
+      .transaction()
+      .execute((transaction) => ensureWorldRecruitPool(transaction, config.worldId));
   } catch (error) {
     await closeDatabase?.();
     throw error;
