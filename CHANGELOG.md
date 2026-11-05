@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Select the company tab by its exact name in the painted journey
+
+- 2026-11-05, `codex/company-recovery`, LOCAL correction to
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). CI42044125361 passed
+  bootstrap1247/99 SKIP, stress10000, SQL89, measured unit coverage and the world
+  browser. The painted probe then matched both the Отряд tab and the new refresh
+  button. Use exact tab names at all three existing Отряд selectors; preserve
+  clicks, selected-tab assertions and journey steps. Native UI confirms two
+  substring matches, one exact match and selected tab=true. Syntax/lint/format
+  and independent affected readback PASS; new-head CI remains required.
+  [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+
 ### Preserve current fixture revisions after company observation
 
 - 2026-11-05, `codex/company-recovery`, LOCAL test-setup correction for

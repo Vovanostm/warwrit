@@ -434,9 +434,9 @@ async function ordinaryJourney() {
     const companyId = initialCompanyBody.company.companyId;
     await page.screenshot({ path: resolve(output, 'painted-map.png') });
 
-    await page.getByRole('button', { name: 'Отряд' }).click();
+    await page.getByRole('button', { name: 'Отряд', exact: true }).click();
     assert.equal(
-      await page.getByRole('button', { name: 'Отряд' }).getAttribute('aria-pressed'),
+      await page.getByRole('button', { name: 'Отряд', exact: true }).getAttribute('aria-pressed'),
       'true',
     );
     await page.getByRole('button', { name: 'Место' }).click();
@@ -451,7 +451,7 @@ async function ordinaryJourney() {
     const observerSiteId = (await (await initialMapRead).json()).observerSiteId;
     const marker = await chooseReachableSite(page, map, observerSiteId);
     await moveAndStop(page, map, marker);
-    await page.getByRole('button', { name: 'Отряд' }).click();
+    await page.getByRole('button', { name: 'Отряд', exact: true }).click();
     await page.getByRole('button', { name: 'Место' }).click();
     await page.getByRole('button', { name: 'Путь' }).click();
     coverage.push(...coverageFor(await page.coverage.stopJSCoverage(), webOrigin));

@@ -20,10 +20,10 @@ Web9/types/lint, SQL17/projection5 PASS; source review has no blocker.
 First UI critique REWORK fixed: clearer saved-request copy, wound names and refresh success/error feedback.
 Native corrected UI outage/retry/return PASS; source and finite day/night UI ACCEPT.
 [PR363](https://github.com/Vovanostm/warwrit/pull/363) published87a17034; source and finite day/night UI ACCEPT.
-CI42040569966: verify1247/99SKIP and stress10000 PASS; SQL88 PASS/1 stale recruitment fixture FAIL.
-Test-only fixture correction reproduced and focused recruitment SQL1/types/lint PASS; production guards unchanged.
-Post-bootstrap coverage/browser/audit NOT_RUN after that failure; affected readback ACCEPT.
-Scope42041276503 PASS. New-head CI and explicit PR363 merge permission remain required.
+CI42044125361: bootstrap1247/99SKIP, stress10000, SQL89, coverage and world browser PASS.
+Painted probe FAIL: substring Отряд selector also matched the new refresh button; final quality audit NOT_RUN.
+Three exact tab selectors corrected; native2substring/1exact/selected=true, syntax/lint/format and affected review PASS.
+Gameplay/UI/native acceptance stays applicable. New-head CI/scope and explicit PR363 merge permission remain required.
 Native stand5238/API3538 uses warwrit_care_recruit_native_20261105; original wounded saves retained.
 Payroll PR338 remains parked for subsequent current-main integration.
 At most two active writing worktrees; no Orca, automation or deployment activation.
