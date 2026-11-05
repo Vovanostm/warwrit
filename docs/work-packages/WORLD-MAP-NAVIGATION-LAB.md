@@ -902,7 +902,9 @@ zero terrain coverage. HUNT01–HUNT03 ACCEPT/HELP grant the objective in the sa
 transaction as participation and its receipt. Normal cartography reads reconcile
 still-participating accepted saves from server-owned matching profile/terms. Grants retain
 learned locations after departure. Map source remains the existing CHART view;
-stored grant provenance distinguishes the quest source. Other quest modes retain
+stored grant provenance distinguishes the quest source. Optional DTO questMarker
+is derived from that grant and keeps the existing name label visible at overview,
+including after an observed-site merge. Older readers ignore the additive field. Other quest modes retain
 their source rules. No schema, replay or combat-rule change.
 
 Acceptance uses the ordinary entry and the existing PostgreSQL world-route tests.
@@ -912,7 +914,7 @@ Acceptance uses the ordinary entry and the existing PostgreSQL world-route tests
 - Another company remains unaware until HELP; its granted marker survives LEAVE.
 - Known destination through unknown terrain still rejects without a new order.
 - An accepted old save without a grant repairs it on the next ordinary map read.
-- Native acceptance, reload and independent final critique remain pending.
+- Native acceptance, named-label input and server-restart readback PASS.
 
 Local real PostgreSQL checks for both ordinary painted-cartography scenarios PASS.
 The accepted/helper/leave and isolation assertions also PASS on independent main92c0f534.
@@ -924,3 +926,31 @@ the actual acceptance scenario pass. The branch transfer initially retained buil
 protocol types from care; rebuilding protocol/core restored a passing main-based
 typecheck. Hosted CI and publication remain pending.
 Full-game and care acceptance remain open under their existing owners.
+
+Native check uses a separate ordinary world, warwrit_objective_native_20261105.
+Quick-entry Company1 travelled to Brod, accepted «Знамя Харитона Обуха» and
+returned to the map. The mill marker appeared over unknown terrain. Actual saved
+QUEST_MARKER contains one site and zero coverage. Day/night, close/overview,
+page reload and an owned server restart retain that unvisited destination.
+RMB on the named label sent SITE/staraya-melnitsa and returned the actual422
+MAP_INFORMATION_REQUIRED. The route and company position remained unchanged.
+The earlier retained-world HELP attempt returned NOT_AVAILABLE; its prior shared
+contract and all original care saves were retained. No new battle was started.
+This supplies functional acceptance, with first-hour/balance acceptance NOT_MEASURED.
+Captures, actual relay response and journey record remain in ignored
+output/company-care/20261105/objective/.
+
+Main lacked the already-reviewed care branch's actionable-label pointer fix.
+Reuse that four-line CSS rule here so the visible objective name accepts input.
+Render MAP_INFORMATION_REQUIRED with an explicit exploration instruction.
+The first hot-reload capture retained the old hook message; the fresh ordinary
+reload displayed the new message after the actual rejection. Web types,
+scoped lint/format and the affected native input PASS. Source review ACCEPT
+at8ba246ee covers marker production/SQL evidence. Final affected source review
+ACCEPT includes provenance metadata, label priority, pointer input and messaging.
+The visual critic first found the overview icon unnamed. Keeping its existing
+label visible resolved that finding. Revised real day/night overview and close
+captures pass finite marker readability/integration, all applicable scores2.
+Full-atlas artistic acceptance remains open, with inherited fog/rendering gaps
+and missing equal-height art comparison sheets. The current slice adds no art assets. The branch's GitHub PR
+owns hosted CI and publication status. No migration or new art assets.

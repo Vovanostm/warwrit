@@ -341,7 +341,7 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
       )}
       <text
         className="site-label"
-        data-major={String(['town', 'village'].includes(site.icon))}
+        data-major={String(site.questMarker === true || ['town', 'village'].includes(site.icon))}
         textAnchor="middle"
         y="-20"
       >

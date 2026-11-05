@@ -3739,6 +3739,7 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         expect(after.sites.find((site) => site.siteId === 'staraya-melnitsa')).toMatchObject({
           visited: false,
           source: 'CHART',
+          questMarker: true,
         });
         expect({ charted: after.charted, explored: after.explored }).toEqual({
           charted: before.charted,
@@ -3801,6 +3802,7 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         const helperAfter = await readMap(helper);
         expect(helperAfter.sites.find((site) => site.siteId === 'staraya-melnitsa')).toMatchObject({
           visited: false,
+          questMarker: true,
         });
         expect(helperAfter.charted).toBe(helperBefore.charted);
         expect(helperAfter.explored).toBe(helperBefore.explored);
