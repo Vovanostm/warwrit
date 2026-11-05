@@ -905,7 +905,7 @@ learned locations after departure. Map source remains the existing CHART view;
 stored grant provenance distinguishes the quest source. Optional DTO questMarker
 is derived from that grant and keeps the existing name label visible at overview,
 including after an observed-site merge. Older readers ignore the additive field. Other quest modes retain
-their source rules. No schema, replay or combat-rule change.
+their source rules. No database schema, replay or combat-rule change.
 
 Acceptance uses the ordinary entry and the existing PostgreSQL world-route tests.
 
