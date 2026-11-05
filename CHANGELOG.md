@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Match native map input to the intended current target
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41957100334 awaited
+  ground movement while UI reported accepted pursuit. Calculate the fresh screen
+  point and semantic hit target together. Ground input excludes group/site targets;
+  marker input requires the intended selector. Preserve native input, server
+  oracles and deadlines. Full current browser journey PASS with actual409→200
+  cancellation. A real overlap probe verified terrain input/no pursuit separately
+  from its lawful422 route rejection. The earlier overstrict probe failure and a
+  transient local port conflict remain in the
+  [owning record](docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
+  Scoped lint/syntax/format/diff PASS. Fresh final-head CI is required.
+
 ### Verify current visible tile recovery and both finite stale outcomes
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to

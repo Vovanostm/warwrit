@@ -136,6 +136,34 @@ warning. Root discovery guidance now sets each command's workdir explicitly.
 Root context is now 167 lines / 10,077 bytes. The earlier 166-line value records the
 first instruction head. Native loading/behavior improvements remain unmeasured.
 
+### Native click target readiness
+
+CI41957100334 at `919a8555` timed out waiting for movement in
+`approachMovingThreat`. The retained UI message was “Преследование принято.
+Пробел — остановиться.” That success message is written only for PURSUE, while
+this step awaited a ground movement POST. The old ground helper allowed any map
+descendant at the point, including a group, and calculated screen coordinates
+before waiting for a fresh observation. The exact pixel transition is unrecorded.
+
+Ground input now calculates the current transform and checks live sequence plus
+hit target in one browser predicate. Group/site markers are excluded. Marker
+input checks that the actual hit belongs to the requested selector. Native mouse
+input and original server assertions remain. Handle disposal follows the click,
+keeping an extra browser round trip out of the freshness-to-input interval.
+
+The current-source full real browser journey PASS with successful native pursuit
+STOP409/retry200. One follow-up local launch failed when ports 5338 and 5326 became occupied
+between preflight and startup. Its own resources were cleaned up, other processes
+were preserved, and a run after the ports were free passed.
+
+An extra overlap probe initially required travel HTTP200 at a real moving group's old
+position and failed with HTTP422/MAP_INFORMATION_REQUIRED. Visibility does not prove a
+lawful traversable route. That failure remains recorded. A separate input-intent
+probe verified real MOVE_TO/TERRAIN and no PURSUE after waiting for that group to
+clear the point. Its actual route result was HTTP422/MAP_INFORMATION_REQUIRED. This
+proves input classification, not successful travel. Normal accepted travel and
+successful pursuit cancellation are demonstrated by the full journey above.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing

@@ -88,6 +88,7 @@ async function rightClickMarker(selector) {
       const marker = globalThis.document.querySelector(selector);
       if (!marker) return false;
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
+      if (!globalThis.document.elementFromPoint(at.x, at.y)?.closest(selector)) return false;
       return { x: at.x, y: at.y };
     },
     { selector, previous },
@@ -97,27 +98,27 @@ async function rightClickMarker(selector) {
   await point.dispose();
 }
 async function rightClickMapPoint(x, y) {
-  const at = await page.evaluate(
-    ([mapX, mapY]) => {
+  const previous = await page.locator('#world-sequence').textContent();
+  const point = await page.waitForFunction(
+    ({ x, y, previous }) => {
+      if (
+        globalThis.document.body.dataset.connection !== 'live' ||
+        globalThis.document.querySelector('#world-sequence').textContent === previous
+      )
+        return false;
       const map = globalThis.document.querySelector('#map');
-      const point = new globalThis.DOMPoint(mapX, mapY).matrixTransform(map.getScreenCTM());
-      return { x: point.x, y: point.y };
+      const at = new globalThis.DOMPoint(x, y).matrixTransform(map.getScreenCTM());
+      const target = globalThis.document.elementFromPoint(at.x, at.y);
+      if (!target?.closest('#map') || target.closest('[data-group-id], [data-site-id]'))
+        return false;
+      return { x: at.x, y: at.y };
     },
-    [x, y],
+    { x, y, previous },
   );
-  const ready = await page.evaluate(
-    ({ x, y }) => ({
-      unobstructed: Boolean(globalThis.document.elementFromPoint(x, y)?.closest('#map')),
-      sequence: globalThis.document.querySelector('#world-sequence').textContent,
-    }),
-    at,
-  );
-  assert.ok(ready.unobstructed, 'movement point must be visible and unobstructed');
-  // A level can be almost expired. Start the native order at a newly received
-  // UI observation, after the coordinate IPCs, keeping the real freshness guard.
-  await waitForFreshMap(page, ready.sequence);
+  const at = await point.jsonValue();
   const accepted = response('movement');
   await page.mouse.click(at.x, at.y, { button: 'right' });
+  await point.dispose();
   return accepted;
 }
 async function stop(requireMoving = false) {
