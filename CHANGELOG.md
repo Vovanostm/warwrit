@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Wait for the required moving observation within the original budget
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41962444693 passed real
+  map recovery and STOP, then a single post-STOP read contained no moving threat.
+  Share the existing 45-second preparation budget across approach, STOP and public
+  observation readiness, retaining failure at exhaustion and all pursuit/result
+  requirements. Include actual observed group states in that failure diagnostic.
+  Current local real journey PASS with successful native cancellation; scoped
+  lint/syntax/format/diff PASS. The
+  [owning record](docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
+  preserves the failed CI and unobserved NPC transition. Fresh final-head CI is required.
+
 ### Match native map input to the intended current target
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to

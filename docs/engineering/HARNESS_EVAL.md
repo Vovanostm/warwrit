@@ -164,6 +164,24 @@ clear the point. Its actual route result was HTTP422/MAP_INFORMATION_REQUIRED. T
 proves input classification, not successful travel. Normal accepted travel and
 successful pursuit cancellation are demonstrated by the full journey above.
 
+### Moving-target readiness within the existing preparation budget
+
+CI41962444693 at `dd734704` passed both current-tile recovery probes and actual
+ordinary/approach STOP200. It then found no observed moving threat in the single
+post-STOP state. No pursuit command was sent. The exact NPC transition or loss
+of sight is unobserved. An instantaneous read did not establish the next step's
+required precondition.
+
+Preparation now shares the existing 45-second budget across approach, STOP and
+current observation readiness. The approach receives that deadline and the
+stationary observer polls public state until a moving pursuable group is present.
+The original target requirement still fails at budget exhaustion, with observed
+group state and own movement in its diagnostic. Initial pursuit200, finite
+single-retry assertions and production behavior remain. There is no new command
+retry, time allowance, enemy, clock control or successful-response substitute.
+The current local real journey PASS with native409→200 cancellation. Final source
+readback and applicable current-head CI remain in PR349.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing

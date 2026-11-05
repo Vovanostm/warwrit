@@ -292,12 +292,11 @@ async function cameraAndMovement() {
 function movingThreats(observed) {
   return observed.groups.filter((group) => group.pursuable && group.state === 'MOVING');
 }
-async function approachMovingThreat(observed) {
+async function approachMovingThreat(observed, deadline) {
   // This midpoint belongs to a public home-charted road, not an NPC position.
   const before = observed.own.movement.point;
   const accepted = await rightClickMapPoint(1654, 1229);
   assert.equal(accepted.status(), 200);
-  const deadline = Date.now() + 45000;
   while (Date.now() < deadline) {
     const current = await state();
     const progressed =
@@ -310,10 +309,16 @@ async function approachMovingThreat(observed) {
 }
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
+  const preparationDeadline = Date.now() + 45000;
   const beforeApproach = await state();
-  if (!movingThreats(beforeApproach).length) await approachMovingThreat(beforeApproach);
+  if (!movingThreats(beforeApproach).length)
+    await approachMovingThreat(beforeApproach, preparationDeadline);
   await stop();
-  const observed = await state();
+  let observed = await state();
+  while (!movingThreats(observed).length && Date.now() < preparationDeadline) {
+    await page.waitForTimeout(300);
+    observed = await state();
+  }
   const targets = movingThreats(observed);
   const point = observed.own.movement.point;
   targets.sort(
@@ -327,7 +332,18 @@ async function pursuitAndRetry() {
         Number(a.point.zMicroFp) - Number(point.zMicroFp),
       ),
   );
-  assert.ok(targets[0], 'an observed moving threat is required');
+  assert.ok(
+    targets[0],
+    JSON.stringify({
+      required: 'an observed moving threat',
+      ownMovement: observed.own.movement.mode,
+      observedGroups: observed.groups.map((group) => ({
+        id: group.id,
+        state: group.state,
+        pursuable: group.pursuable,
+      })),
+    }),
+  );
   const id = targets[0].id;
   const statuses = [];
   const isStop = (reply) => isStopRequest(reply.request());
