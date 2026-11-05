@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Let the finite preparation approach arrive before pursuit
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41971533246 recorded
+  positive camera STOP200, then preparation STOP409 and a stationary final UI.
+  Client source requires an existing pursuit order for automatic stale retry.
+  Preparation now waits for natural approach arrival and a public moving target
+  within its existing 45-second budget, then requires no pursuit. Keep the
+  separate positive moving STOP, later pursuit cancellation and SQL assertions.
+  Scoped syntax/lint/format/diff PASS. Current real browser journey PASS with
+  native409→200 cancellation and measured approach execution. Final review
+  and CI are pending. The
+  [owning record](docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
+  preserves the failed run and unobserved exact transition/rejection body.
+
 ### Share browser observations after the changed-file quality failure
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to

@@ -311,15 +311,18 @@ async function approachMovingThreat(observed, deadline) {
   }
   assert.fail('Actual travel must reveal an observed moving threat');
 }
+function pursuitSetupReady(observed) {
+  return observed.own.movement.mode !== 'MOVING' && movingThreats(observed).length > 0;
+}
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
   const preparationDeadline = Date.now() + 45000;
   const beforeApproach = await state();
   if (!movingThreats(beforeApproach).length)
     await approachMovingThreat(beforeApproach, preparationDeadline);
-  await stop();
+  // Let the finite approach arrive before starting the next order.
   let observed = await state();
-  while (!movingThreats(observed).length && Date.now() < preparationDeadline) {
+  while (!pursuitSetupReady(observed) && Date.now() < preparationDeadline) {
     await page.waitForTimeout(300);
     observed = await state();
   }
@@ -337,9 +340,9 @@ async function pursuitAndRetry() {
       ),
   );
   assert.ok(
-    targets[0],
+    pursuitSetupReady(observed),
     JSON.stringify({
-      required: 'an observed moving threat',
+      required: 'a stationary observer and an observed moving threat',
       ownMovement: observed.own.movement.mode,
       observedGroups: observed.groups.map((group) => ({
         id: group.id,
@@ -348,6 +351,7 @@ async function pursuitAndRetry() {
       })),
     }),
   );
+  assert.equal(observed.pursuit, null, 'approach must finish without a pursuit order');
   const id = targets[0].id;
   const statuses = [];
   const record = recordStopStatuses(statuses);

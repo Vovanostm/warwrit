@@ -214,6 +214,34 @@ the shared UI fields, native map input and actual STOP request/response
 intentional exit1 is not gameplay acceptance. Its artifact assertions PASS.
 Final independent review and applicable CI remain tracked in PR349.
 
+### Finite approach arrival before pursuit
+
+CI41971533246 at `75d00e69` passed harness/migration protection, bootstrap and
+coverage, then timed out awaiting STOP200 during pursuit preparation. The
+retained native observations show live/enabled movement at Space. Actual traffic
+contains the earlier positive camera STOP200, then one preparation STOP409. The
+final UI is stationary with the position-changed message. Its rejection body and
+the exact arrival transition were not captured.
+
+Client source explains the preparation mismatch. A stale ordinary movement
+response refreshes state, but automatic retry requires the same existing pursuit
+order. The approach has no pursuit. The generic STOP success waiter therefore
+cannot establish its intended outcome from that rejection. Independent read-only
+diagnosis confirmed this boundary and recommended a setup-only correction.
+
+Pursuit preparation now lets the accepted finite approach arrive. The existing
+45-second preparation budget polls public state for a stationary observer and a
+moving pursuable target, then requires no current pursuit before the initial
+PURSUE200. Exhaustion fails with own movement and observed groups. The separate
+required moving keyboard STOP, pursuit STOP retry outcomes and real SQL positive
+cancellation retain their acceptance requirements. The current-source real browser
+journey PASS with actual STOP409/retry200 and no page errors
+(`output/world-lab-ci/runtime-90605/`). Its real driver coverage records one
+`approachMovingThreat` call and 19 readiness evaluations, confirming the changed
+approach/arrival path executed. Scoped syntax, ESLint, formatting and diff checks
+PASS. Static quality diagnostics introduce no additional finding. Final review
+and applicable measured CI remain in PR349.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing
