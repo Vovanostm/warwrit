@@ -2,10 +2,50 @@
 # This CI stand owns disposable data; the normal persistent laboratory is never touched.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
+# Publish only after both original conversions succeed.
+merge_capture() (
+  local runtime="$1"
+  local directory candidate
+  directory="$(dirname "$runtime")"
+  [[ -s "$runtime" ]] || { echo 'Runtime capture missing' >&2; exit 1; }
+  candidate="$(mktemp "$PWD/coverage/world-merge.XXXXXX")"
+  trap 'rm -f "$candidate"' EXIT
+  cp coverage/coverage-final.json "$candidate"
+  WORLD_LAB=1 NODE_ENV=development WORLD_LAB_RUNTIME_COVERAGE="$directory/merger.json" \
+    node --import ./scripts/world-map/runtime-coverage-node.mjs \
+    scripts/world-map/runtime-coverage-merge.mjs "$runtime" "$candidate"
+  node scripts/world-map/runtime-coverage-merge.mjs "$directory/merger.json" "$candidate"
+  mv "$candidate" coverage/coverage-final.json
+)
+
+usage() {
+  printf 'Usage: %s [--capture runtime.json | --merge runtime.json]\n' "$0" >&2
+}
+mode=full
+capture_path=''
+if [[ "$#" -ne 0 ]]; then
+  [[ "$#" -eq 2 ]] || { usage; exit 2; }
+  [[ -n "$2" ]] || { usage; exit 2; }
+  case "$1" in
+    --capture)
+      mode=capture
+      capture_path="$2"
+      [[ ! -e "$capture_path" ]] || { echo 'Capture output already exists' >&2; exit 1; }
+      mkdir -p "$(dirname "$capture_path")"
+      ;;
+    --merge)
+      merge_capture "$2"
+      exit 0
+      ;;
+    *) usage; exit 2 ;;
+  esac
+fi
+
 evidence_root="$PWD/output/world-lab-ci"
 evidence_dir="$evidence_root/runtime-$$"
 mkdir -p "$evidence_root"
 mkdir "$evidence_dir"
+[[ -n "$capture_path" ]] || capture_path="$evidence_dir/runtime.json"
 [[ ! -e "$evidence_dir/server.pid" ]] || { echo 'Refusing stale CI stand ownership'; exit 1; }
 source scripts/compose-cli.sh
 select_compose_cli
@@ -92,19 +132,16 @@ for ((attempt=0; attempt<30; attempt++)); do
   sleep 1
 done
 [[ -s "$evidence_dir/server.json" ]] || { echo 'API measurement missing'; exit 1; }
-node --input-type=module - "$evidence_dir" "$evidence_root" <<'JS'
+node --input-type=module - "$evidence_dir" "$evidence_root" "$capture_path" <<'JS'
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const directory = process.argv[2];
 const reports = await Promise.all(['browser', 'server', 'vite', 'authoring-vite', 'driver'].map(async name =>
   JSON.parse(await readFile(resolve(directory, `${name}.json`), 'utf8'))));
 const migration = JSON.parse(await readFile(resolve(process.argv[3], 'migration.json'), 'utf8'));
-await writeFile(resolve(directory, 'runtime.json'), JSON.stringify({
+await writeFile(process.argv[4], JSON.stringify({
   entries: [...reports.flatMap(report => report.entries), ...migration.entries],
   reports: [resolve(process.argv[3], 'sql/coverage-final.json')],
-}));
+}), { flag: 'wx' });
 JS
-WORLD_LAB_RUNTIME_COVERAGE="$evidence_dir/merger.json" \
-  node --import ./scripts/world-map/runtime-coverage-node.mjs \
-  scripts/world-map/runtime-coverage-merge.mjs "$evidence_dir/runtime.json" coverage/coverage-final.json
-node scripts/world-map/runtime-coverage-merge.mjs "$evidence_dir/merger.json" coverage/coverage-final.json
+if [[ "$mode" == full ]]; then merge_capture "$capture_path"; fi

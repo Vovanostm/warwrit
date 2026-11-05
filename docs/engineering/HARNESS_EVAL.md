@@ -1,5 +1,65 @@
 # Harness evaluation
 
+## Earlier browser failure feedback — 2026-11-05
+
+Owner request: explore/spec/fix/review/check the repeated delivery errors.
+Branch: `codex/harness-browser-phase-order`, baseline `cf973d35`.
+This support slice preserves the active game writer, product source and checkpoint.
+
+Observed cause: full PR CI runs measured units before browser journeys.
+Those units took4m54s to9m05s in the inspected runs. A subsequent browser setup
+failure discards that wait. The existing browser launchers also merge into the
+unit report, so simply reordering their current calls would consume missing inputs.
+
+**Finite contract.** Keep bootstrap first, then capture each existing browser
+journey once, measure units, and merge the same captures with the same SQL,
+migration and unit reports in the original world/self/painted order. Existing
+launchers gain strict `--capture <runtime.json>` and `--merge <runtime.json>`
+phases; no-argument invocation retains capture+merge behavior.
+
+Acceptance before publication:
+
+- The actual workflow orders both captures before measured units and all merges
+  afterwards. Failed capture stops before measured units; no gate is skipped.
+- Merge-only mode starts no service, package build or browser. Invalid modes
+  fail before external actions. Capture does not merge into a previous unit report.
+- Public phase CLIs preserve actual collected function counts, including zeros.
+  A failing launcher merge retains its pre-call target. Later launcher failure
+  does not undo earlier successful phases; a partial report is not a passed gate.
+- Raw captures remain in output/ while coverage/ is freshly generated. Bootstrap
+  remains before capture; measured-unit mode does not rebuild dist/maps. Existing
+  source validation and individual test deadlines remain unchanged.
+- Default standalone invocation, disposable-resource cleanup, docs-only/main
+  routing, native audit result and diagnostic artifacts retain their contracts.
+- Focused regressions, independent spec/diff review and final hosted full-route
+  CI establish their own boundaries. General throughput remains NOT_MEASURED.
+
+Write scope: CI workflow, the two CI launchers, focused phase regressions and
+their owning documentation/changelog. No collector/merger semantic change,
+new framework, historical-result reuse, product/game-rule change or deployment.
+Local full coverage and full product suites are not preparation checks.
+
+Local implementation: strict capture/merge phases, original conversion order and
+an owned candidate for the world's two conversions. Rename the target only after
+both succeed. The standalone default still captures and merges. Capture paths
+refuse existing output rather than reusing a prior run.
+
+The new public-CLI regression failed against the old launchers (unknown mode
+reached dependency discovery). After the fix, four real Node probe executions
+retain15 total calls and zero for the uncalled function across initial/world/
+migration/painted data. A forced second-converter exit74 and changed-source
+rejection leave the target unchanged, remove the owned candidate and start no
+service. Missing/invalid/occupied inputs fail. Both focused Vitest regressions,
+ten workflow-fixture groups, scoped TypeScript/ESLint, Bash syntax and diff PASS.
+Fixture setup initially had interpreter/continuation syntax and strict PATH-type
+errors; those were fixed locally without changing the acceptance assertions.
+
+Real local launcher capture is NOT_RUN: the ordinary stand's5618 port belongs to
+an existing SSH listener, which is preserved. No full local suite/coverage ran.
+Independent final diff review and hosted native phase-order acceptance remain
+required. GitHub/PR owns final hosted/merge receipts. Elapsed savings are not yet
+measured;4m54s–9m05s is historical work moved behind a potential browser failure.
+
 ## Actionable quality-audit diagnostics — 2026-11-05
 
 The owner authorized continued harness implementation, review, merge and local
