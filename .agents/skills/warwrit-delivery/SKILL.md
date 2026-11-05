@@ -14,7 +14,8 @@ writers or regenerate already approved source catalogues.
 Run the smallest relevant checks explicitly and keep failures visible. The Git
 hook checks staged whitespace only. It does not run tests, regenerate coverage
 or merge runtime reports. Commit finished steps and verify exit status/new HEAD.
-Full coverage and the introduced-findings audit run in clean PR CI. Local audit
+Full-route PR CI owns coverage and the introduced-findings audit. Documentation-only
+PRs use the existing scoped CI route. Local audit
 is an explicit diagnostic when relevant, never a hidden commit prerequisite.
 Keep the current checkpoint short and consult historical entries only as needed.
 
