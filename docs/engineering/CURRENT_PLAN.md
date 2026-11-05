@@ -1,12 +1,13 @@
 # Warwrit current delivery plan
 
-## Ordinary company care — 2026-11-05, LOCAL
+## Ordinary company care — 2026-11-05, PUBLISHED DRAFT
 
 Coordinator, sole author, integrator and validator is this chat's parent.
 Full-game objective remains ACTIVE. The finite target is sign-in → company →
 contract → travel → combat → reward → care/payroll → next contract → restart.
 Painted atlas PR344 is merged as `ee03f4ee`, with PR and main CI PASS.
 Branch `codex/game-care-delivery` uses that main and the local delivery receipt.
+[PR350](https://github.com/Vovanostm/warwrit/pull/350) is a draft; current main456c6c1d is integrated.
 [Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns acceptance and limits.
 Care-only source is transplanted from parked game-company-care WIP.
 The existing ordinary opening produces a medicine-capable leader and two medical units.
@@ -18,6 +19,10 @@ Lawful local wound observation is implemented; executor/routes16 and payroll/cor
 Next is the native contract → wound → care → reload/retry → restart journey.
 Native HUNT02 won with3survivors, paid80crowns; no treatable severe wound resulted.
 The missing result exit is fixed; web types/27checks/source review PASS, native click pending.
+Company2 accepted HUNT03 after travelling to KamennyBrod. Native care remains pending.
+CI41938162496 passed the full gate and coverage, then timed out awaiting browser STOP.
+The longer local browser probe passed; its later measurement merge rejected stale SQL coverage.
+The test correction awaits new hosted CI. No check is waived; original saves remain intact.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Keep the browser STOP probe moving until its keyboard action
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41938162496 passed the
+  full clean gate and coverage, then its short world-map movement probe timed out
+  awaiting STOP after the captured company had arrived. Increase that test leg
+  from26to52source pixels and require its moving/POST200 path, preserving actual
+  keyboard STOP and stale-retry assertions. The local browser journey PASS after
+  both corrections. Its later measurement aggregation
+  FAIL on stale prior SQL coverage, preserved as a separate limit. New hosted
+  verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Integrate current main into the care candidate
 
 - 2026-11-05, `codex/game-care-delivery`, local. Integrate main `456c6c1d` /

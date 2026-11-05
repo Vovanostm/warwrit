@@ -89,11 +89,12 @@ async function rightClickMapPoint(x, y) {
   await page.mouse.click(at.x, at.y, { button: 'right' });
   return accepted;
 }
-async function stop() {
+async function stop(requireMoving = false) {
   await page.locator('#map').focus();
   const previous = await page.locator('#world-sequence').textContent();
   await waitForFreshMap(page, previous);
   if (await page.locator('#stop').isDisabled()) {
+    assert.equal(requireMoving, false, 'movement probe must still be moving before keyboard STOP');
     const stopped = await state();
     assert.notEqual(stopped.own.movement.mode, 'MOVING');
     assert.equal(stopped.pursuit, null);
@@ -208,14 +209,15 @@ async function cameraAndMovement() {
       .matrixTransform(own.getScreenCTM())
       .matrixTransform(map.getScreenCTM().inverse());
     const width = map.viewBox.baseVal.width;
-    return { x: point.x + Math.min(26, width * 0.18), y: point.y };
+    // Leave time for the movement observation and keyboard STOP before arrival.
+    return { x: point.x + Math.min(52, width * 0.18), y: point.y };
   });
   const before = (await state()).own.movement.point;
   const accepted = await rightClickMapPoint(target.x, target.y);
   assert.equal(accepted.status(), 200);
   await page.waitForTimeout(1000);
   assert.notDeepEqual((await state()).own.movement.point, before);
-  await stop();
+  await stop(true);
   await page.mouse.move(850, 450);
   await page.mouse.down();
   await page.mouse.move(930, 470, { steps: 6 });
