@@ -17,6 +17,15 @@ import {
   refreshedCompanyCreatePayload,
 } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
+import {
+  browserCompanyRosterStorage,
+  clearCompanyRosterAttempt,
+  createCompanyRosterAttempt,
+  postCompanyRosterAttempt,
+  readCompanyRosterAttempt,
+  saveCompanyRosterAttempt,
+  type CompanyRosterAttempt,
+} from './game/company-roster-attempt.js';
 import { RecruitmentPanel } from './game/RecruitmentPanel.js';
 import { FirstHunt } from './FirstHunt.js';
 import { ContractBoard } from './game/ContractBoard.js';
@@ -271,6 +280,9 @@ export function App() {
   const [travelBusyState, setTravelBusyState] = useState(false);
   const [equipBusy, setEquipBusy] = useState(false);
   const [equipMessage, setEquipMessage] = useState<string | undefined>(undefined);
+  const [joinAttempt, setJoinAttempt] = useState<CompanyRosterAttempt | undefined>(undefined);
+  const [joinAttemptMessage, setJoinAttemptMessage] = useState<string | undefined>(undefined);
+  const joinAttemptRef = useRef<CompanyRosterAttempt | undefined>(undefined);
   const pendingCreateAttempt = useRef<CreateCompanyRequestDto | undefined>(undefined);
   const pendingCreateAccountId = useRef<string | undefined>(undefined);
   const combatLabEnabled = import.meta.env.DEV && import.meta.env['VITE_COMBAT_LAB'] === '1';
@@ -480,6 +492,22 @@ export function App() {
           }
         }
         const storage = travelStorage();
+        const rosterStorage = browserCompanyRosterStorage();
+        let storedJoinAttempt: CompanyRosterAttempt | undefined;
+        try {
+          storedJoinAttempt = rosterStorage
+            ? readCompanyRosterAttempt(rosterStorage, scope, 'JoinFieldParty')
+            : undefined;
+        } catch {
+          storedJoinAttempt = undefined;
+        }
+        joinAttemptRef.current = storedJoinAttempt;
+        setJoinAttempt(storedJoinAttempt);
+        setJoinAttemptMessage(
+          storedJoinAttempt
+            ? 'Ответ о присоединении неизвестен. Повторите тот же приказ.'
+            : undefined,
+        );
         const storedAttempt = storage
           ? readWorldTravelAttempt(storage, scope)
           : { kind: 'UNAVAILABLE' as const };
@@ -1472,43 +1500,119 @@ export function App() {
     [refreshWorldParty, restoreJourney],
   );
 
-  const joinFieldParty = useCallback(
-    async (scope: WorldTravelScope, expectedPublicRevision: string, characterId: string) => {
+  const sendJoinAttempt = useCallback(
+    async (scope: WorldTravelScope, attempt: CompanyRosterAttempt) => {
+      if (
+        equipBusy ||
+        attempt.accountId !== scope.accountId ||
+        attempt.companyId !== scope.companyId
+      )
+        return;
       setEquipBusy(true);
       setEquipMessage(undefined);
+      const result = await postCompanyRosterAttempt(apiBaseUrl, attempt);
+      if (result === 'UNAUTHENTICATED') {
+        setJoinAttemptMessage('Сеанс истёк. После входа повторите тот же приказ о присоединении.');
+        void restoreJourney();
+      } else if (result === 'UNKNOWN') {
+        setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
+      } else {
+        let cleared: boolean;
+        try {
+          const storage = browserCompanyRosterStorage();
+          cleared = storage !== undefined && clearCompanyRosterAttempt(storage, attempt);
+        } catch {
+          cleared = false;
+        }
+        if (cleared) {
+          joinAttemptRef.current = undefined;
+          setJoinAttempt(undefined);
+          setJoinAttemptMessage(undefined);
+          setEquipMessage(
+            result === 'ACCEPTED'
+              ? 'Человек присоединился к полевому отряду.'
+              : 'Приказ о присоединении отклонён. Состав обновлён.',
+          );
+          await refreshWorldParty(scope);
+        } else {
+          setJoinAttemptMessage(
+            'Ответ получен, но локальная запись не очищена. Повторите тот же приказ.',
+          );
+        }
+      }
+      setEquipBusy(false);
+    },
+    [equipBusy, refreshWorldParty, restoreJourney],
+  );
+
+  const joinFieldParty = useCallback(
+    async (scope: WorldTravelScope, expectedPublicRevision: string, characterId: string) => {
+      if (joinAttemptRef.current) {
+        setJoinAttemptMessage('Сначала повторите незавершённый приказ о присоединении.');
+        return;
+      }
+      const storage = browserCompanyRosterStorage();
+      if (!storage) {
+        setJoinAttemptMessage('Локальное хранилище недоступно; приказ не отправлен.');
+        return;
+      }
+      let attempt: CompanyRosterAttempt;
       try {
-        const response = await fetch(`${apiBaseUrl}/company/commands`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: {
-            'content-type': 'application/json',
-            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
-          },
-          body: JSON.stringify({
-            schemaVersion: 2,
-            commandId: crypto.randomUUID(),
-            expectedPublicRevision,
-            type: 'JoinFieldParty',
-            payload: { characterId },
-          }),
-        });
-        if (response.status === 401) {
-          void restoreJourney();
+        const stored = readCompanyRosterAttempt(storage, scope, 'JoinFieldParty');
+        if (stored) {
+          joinAttemptRef.current = stored;
+          setJoinAttempt(stored);
+          setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
           return;
         }
-        if (!response.ok) {
-          setEquipMessage('Сейчас нельзя присоединить этого человека. Данные состава обновлены.');
+        attempt = createCompanyRosterAttempt(scope, {
+          schemaVersion: 2,
+          commandId: crypto.randomUUID(),
+          expectedPublicRevision,
+          type: 'JoinFieldParty',
+          payload: { characterId },
+        });
+        if (!saveCompanyRosterAttempt(storage, attempt)) {
+          setJoinAttemptMessage(
+            'Есть незавершённый приказ о присоединении. Сначала проверьте его.',
+          );
+          return;
         }
-        await refreshWorldParty(scope);
       } catch {
-        setEquipMessage('Нет связи с сервером. Проверьте состав перед повтором.');
-        await refreshWorldParty(scope);
-      } finally {
-        setEquipBusy(false);
+        setJoinAttemptMessage('Локальное хранилище недоступно; приказ не отправлен.');
+        return;
       }
+      joinAttemptRef.current = attempt;
+      setJoinAttempt(attempt);
+      setJoinAttemptMessage('Ответ о присоединении неизвестен. Повторите тот же приказ.');
+      await sendJoinAttempt(scope, attempt);
     },
-    [refreshWorldParty, restoreJourney],
+    [sendJoinAttempt],
+  );
+
+  const retryJoinFieldParty = useCallback(
+    async (scope: WorldTravelScope) => {
+      let attempt = joinAttemptRef.current;
+      if (!attempt) {
+        const storage = browserCompanyRosterStorage();
+        if (!storage) {
+          setJoinAttemptMessage(
+            'Локальное хранилище недоступно; приказ сохранён для повторной попытки.',
+          );
+          return;
+        }
+        try {
+          attempt = readCompanyRosterAttempt(storage, scope, 'JoinFieldParty');
+        } catch {
+          attempt = undefined;
+        }
+      }
+      if (!attempt) return;
+      joinAttemptRef.current = attempt;
+      setJoinAttempt(attempt);
+      await sendJoinAttempt(scope, attempt);
+    },
+    [sendJoinAttempt],
   );
 
   const signOut = async () => {
@@ -1582,12 +1686,18 @@ export function App() {
         onJoinFieldParty={(characterId) =>
           void joinFieldParty(scope, journey.company.revision, characterId)
         }
+        joinAttemptPending={
+          joinAttempt?.accountId === scope.accountId && joinAttempt.companyId === scope.companyId
+        }
+        {...(joinAttemptMessage === undefined ? {} : { joinAttemptMessage })}
+        onRetryJoinFieldParty={() => void retryJoinFieldParty(scope)}
         onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
         placeSlot={(contractVisit) => (
           <>
             {contractVisit.visit?.building === 'inn' && contractVisit.visit.siteId && (
               <RecruitmentPanel
                 apiBaseUrl={apiBaseUrl}
+                accountId={scope.accountId}
                 companyId={journey.company.companyId}
                 expectedPublicRevision={journey.company.revision}
                 siteId={contractVisit.visit.siteId}

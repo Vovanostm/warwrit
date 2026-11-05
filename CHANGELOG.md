@@ -18,7 +18,11 @@ requests.
   hidden-state invariance, reserve contact and capacity PASS, as do server types
   and scoped lint. Initial fixture errors and the missing Join observation are
   recorded in the [owning result](docs/work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile).
-  Client retry and native acceptance remain open; nothing is merged.
+  Re-review removed an unsafe JSON cast of opaque legacy receipt keys; the
+  rollback regression also covers such a key containing the same offer ID.
+  Hire/Join persist the exact scoped request and expose retry after remount;
+  focused client regression2/2 and web types PASS. Parent lint found and corrected
+  two unused initial assignments. Native acceptance remains open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 

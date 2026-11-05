@@ -481,6 +481,20 @@ describe('local recruitment (PostgreSQL)', () => {
           canJoinFieldParty: false,
           fieldPartyFull: true,
         });
+        // Legacy receipts may use opaque keys, even containing this offer ID.
+        await database
+          .insertInto('company_receipts')
+          .values({
+            world_id: worldId,
+            company_id: companies[winner]!,
+            receipt_id: randomUUID(),
+            command_id: `opaque-${worldId}`,
+            source_key: null,
+            request_key: `legacy-opaque:${physician!.offerId}`,
+            response: { ok: true },
+            resulting_revision: '1',
+          })
+          .execute();
         // Roll back/reapply the new table; accepted hire receipts remain authoritative.
         await database.transaction().execute(async (transaction) => {
           await sql

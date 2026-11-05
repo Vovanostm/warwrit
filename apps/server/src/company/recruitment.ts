@@ -171,6 +171,18 @@ export function localCompanyContacts(
     .map((character) => character.identity.characterId);
 }
 
+function isOfferHireRequest(requestKey: string, offerId: string): boolean {
+  try {
+    const request = JSON.parse(requestKey) as {
+      readonly type?: unknown;
+      readonly payload?: { readonly offerId?: unknown };
+    } | null;
+    return request?.type === 'Recruit' && request.payload?.offerId === offerId;
+  } catch {
+    return false;
+  }
+}
+
 /** Idempotently materialize the finite world-owned pool, without touching a company root. */
 export async function ensureWorldRecruitPool(
   transaction: Transaction<DatabaseSchema>,
@@ -187,14 +199,16 @@ export async function ensureWorldRecruitPool(
     if (existing) continue;
     // Offer rows may be lost by migration rollback. Immutable accepted receipts
     // survive that rollback, including after a recruit leaves or dies.
-    const priorHires = await transaction
+    const possibleHires = await transaction
       .selectFrom('company_receipts')
-      .select(['company_id', 'command_id', 'created_at'])
+      .select(['company_id', 'command_id', 'created_at', 'request_key'])
       .where('world_id', '=', worldId)
-      .where(sql<string>`request_key::jsonb ->> 'type'`, '=', 'Recruit')
-      .where(sql<string>`request_key::jsonb -> 'payload' ->> 'offerId'`, '=', genesis.offerId)
+      .where('request_key', 'like', `%${genesis.offerId}%`)
       .where(sql<string>`response ->> 'ok'`, '=', 'true')
       .execute();
+    const priorHires = possibleHires.filter((receipt) =>
+      isOfferHireRequest(receipt.request_key, genesis.offerId),
+    );
     if (priorHires.length > 1) throw new Error('Recruit offer has multiple accepted hires');
     const priorHire = priorHires[0];
     await transaction

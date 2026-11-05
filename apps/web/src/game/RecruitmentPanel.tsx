@@ -1,14 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import {
-  WORLD_EXPECTED_COMPANY_ID_HEADER,
-  type LocalRecruitOfferDto,
-  type LocalRecruitOffersResponseDto,
-} from '@warwrit/protocol';
+import { type LocalRecruitOfferDto, type LocalRecruitOffersResponseDto } from '@warwrit/protocol';
 import { conditionLabel, formatCrowns } from './format.js';
+import {
+  browserCompanyRosterStorage,
+  clearCompanyRosterAttempt,
+  companyRosterAttemptKey,
+  createCompanyRosterAttempt,
+  postCompanyRosterAttempt,
+  readCompanyRosterAttempt,
+  saveCompanyRosterAttempt,
+  type CompanyRosterAttempt,
+} from './company-roster-attempt.js';
 
 export function RecruitmentPanel(props: {
   readonly apiBaseUrl: string;
+  readonly accountId: string;
   readonly companyId: string;
   readonly expectedPublicRevision: string;
   readonly siteId: string;
@@ -16,9 +23,48 @@ export function RecruitmentPanel(props: {
   readonly onUnauthorized: () => void;
 }) {
   const [offers, setOffers] = useState<readonly LocalRecruitOfferDto[]>([]);
+  const storageKey = companyRosterAttemptKey(
+    { accountId: props.accountId, companyId: props.companyId },
+    'Recruit',
+  );
+  const storage = browserCompanyRosterStorage();
+  const [stored, setStored] = useState<{ key: string; attempt: CompanyRosterAttempt } | undefined>(
+    () => {
+      try {
+        const attempt = storage
+          ? readCompanyRosterAttempt(
+              storage,
+              { accountId: props.accountId, companyId: props.companyId },
+              'Recruit',
+            )
+          : undefined;
+        return attempt ? { key: storageKey, attempt } : undefined;
+      } catch {
+        return undefined;
+      }
+    },
+  );
+  const pending = stored?.key === storageKey ? stored.attempt : undefined;
+  const busyRef = useRef(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string>();
   const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const attempt = storage
+        ? readCompanyRosterAttempt(
+            storage,
+            { accountId: props.accountId, companyId: props.companyId },
+            'Recruit',
+          )
+        : undefined;
+      setStored(attempt ? { key: storageKey, attempt } : undefined);
+      setMessage(attempt ? 'Результат найма неизвестен. Повторите тот же запрос.' : undefined);
+    } catch {
+      setStored(undefined);
+    }
+  }, [storageKey, props.accountId, props.companyId]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,7 +84,8 @@ export function RecruitmentPanel(props: {
         if (!isRecruitResponse(body)) throw new Error('invalid offers');
         if (!controller.signal.aborted) setOffers(body.offers);
       } catch {
-        if (!controller.signal.aborted) setMessage('Не удалось узнать о местных наёмниках.');
+        if (!controller.signal.aborted && !pending)
+          setMessage('Не удалось узнать о местных наёмниках.');
       } finally {
         if (!controller.signal.aborted) setLoaded(true);
       }
@@ -46,59 +93,85 @@ export function RecruitmentPanel(props: {
     return () => controller.abort();
   }, [props.apiBaseUrl, props.onUnauthorized, props.siteId]);
 
-  async function hire(offer: LocalRecruitOfferDto) {
-    setBusy(true);
-    setMessage(undefined);
-    try {
-      const response = await fetch(`${props.apiBaseUrl}/company/commands`, {
-        method: 'POST',
-        credentials: 'same-origin',
-        cache: 'no-store',
-        headers: {
-          'content-type': 'application/json',
-          [WORLD_EXPECTED_COMPANY_ID_HEADER]: props.companyId,
-        },
-        body: JSON.stringify({
+  async function runHire(offer: LocalRecruitOfferDto | undefined, retry = false) {
+    if (busyRef.current) return;
+    let attempt = pending;
+    if (attempt && !retry) return;
+    if (!attempt && retry) return;
+    if (!attempt && offer) {
+      attempt = createCompanyRosterAttempt(
+        { accountId: props.accountId, companyId: props.companyId },
+        {
           schemaVersion: 2,
           commandId: crypto.randomUUID(),
           expectedPublicRevision: props.expectedPublicRevision,
           type: 'Recruit',
           payload: { offerId: offer.offerId, offerRevision: offer.offerRevision },
-        }),
-      });
-      if (response.status === 401) {
-        props.onUnauthorized();
-        return;
-      }
-      if (!response.ok) {
-        const body: unknown = await response.json().catch(() => null);
-        const code = isRecord(body) && typeof body['code'] === 'string' ? body['code'] : '';
-        setMessage(
-          code === 'INSUFFICIENT_FUNDS'
-            ? 'В местной казне не хватает денег на найм.'
-            : code === 'STALE_REVISION'
-              ? 'Состав изменился. Обновите страницу и повторите.'
-              : 'Найм сейчас невозможен: проверьте, что отряд стоит в поселении и может действовать.',
-        );
-        props.onRefresh();
-        return;
-      }
-      setMessage(`${offer.name} нанят. Чтобы отправить его в бой, отдельно присоедините к отряду.`);
-      const refreshed = await fetch(
-        `${props.apiBaseUrl}/company/recruits/${encodeURIComponent(props.siteId)}`,
-        { credentials: 'same-origin', cache: 'no-store' },
+        },
       );
-      if (refreshed.ok) {
-        const body: unknown = await refreshed.json();
-        if (isRecruitResponse(body)) setOffers(body.offers);
+      if (!storage) {
+        setMessage('Локальное хранилище недоступно; найм не отправлен.');
+        return;
       }
-      props.onRefresh();
-    } catch {
-      setMessage('Нет связи с сервером. Проверьте состав, прежде чем повторять найм.');
-      props.onRefresh();
-    } finally {
-      setBusy(false);
+      try {
+        if (!saveCompanyRosterAttempt(storage, attempt)) {
+          const saved = readCompanyRosterAttempt(
+            storage,
+            { accountId: props.accountId, companyId: props.companyId },
+            'Recruit',
+          );
+          setStored(saved ? { key: storageKey, attempt: saved } : undefined);
+          setMessage('Есть незавершённый запрос найма. Сначала проверьте и повторите его.');
+          return;
+        }
+        setStored({ key: storageKey, attempt });
+      } catch {
+        setMessage('Локальное хранилище недоступно; найм не отправлен.');
+        return;
+      }
     }
+    if (!attempt) return;
+    busyRef.current = true;
+    setBusy(true);
+    setMessage(undefined);
+    const result = await postCompanyRosterAttempt(props.apiBaseUrl, attempt);
+    if (result === 'UNAUTHENTICATED') {
+      setMessage('Сеанс истёк. После входа повторите тот же запрос о найме.');
+      props.onUnauthorized();
+    } else if (result === 'UNKNOWN') {
+      setMessage('Ответ о найме неизвестен. Повторите тот же запрос.');
+    } else {
+      let cleared: boolean;
+      try {
+        cleared = storage !== undefined && clearCompanyRosterAttempt(storage, attempt);
+      } catch {
+        cleared = false;
+      }
+      if (cleared) {
+        setStored(undefined);
+        setMessage(
+          result === 'ACCEPTED'
+            ? `${offer?.name ?? 'Наёмник'} нанят. Чтобы отправить его в бой, отдельно присоедините к отряду.`
+            : 'Найм отклонён. Сведения об отряде обновлены.',
+        );
+        if (result === 'ACCEPTED') {
+          const refreshed = await fetch(
+            `${props.apiBaseUrl.replace(/\/$/u, '')}/company/recruits/${encodeURIComponent(props.siteId)}`,
+            { credentials: 'same-origin', cache: 'no-store' },
+          ).catch(() => undefined);
+          if (refreshed?.status === 401) props.onUnauthorized();
+          if (refreshed?.ok) {
+            const body: unknown = await refreshed.json().catch(() => undefined);
+            if (isRecruitResponse(body)) setOffers(body.offers);
+          }
+        }
+        props.onRefresh();
+      } else {
+        setMessage('Ответ получен, но локальная запись не очищена. Повторите тот же запрос.');
+      }
+    }
+    busyRef.current = false;
+    setBusy(false);
   }
 
   return (
@@ -107,7 +180,22 @@ export function RecruitmentPanel(props: {
       <p className="state-note">
         50 кр. при найме · 10 кр. жалованья в день. Навыки и состояние показаны до оплаты.
       </p>
-      {message && (
+      {pending && (
+        <div role="status">
+          <p className="travel-error">
+            {message ?? 'Результат найма неизвестен. Повторите тот же запрос.'}
+          </p>
+          <button
+            type="button"
+            className="action action-quiet"
+            disabled={busy}
+            onClick={() => void runHire(undefined, true)}
+          >
+            Повторить тот же найм
+          </button>
+        </div>
+      )}
+      {!pending && message && (
         <p className="travel-error" role="status">
           {message}
         </p>
@@ -145,7 +233,12 @@ export function RecruitmentPanel(props: {
             Найм {formatCrowns(offer.signingQ)} кр. · жалованье{' '}
             {Number(offer.dailyWageMilli) / 1000} кр./день
           </p>
-          <button type="button" className="action" disabled={busy} onClick={() => void hire(offer)}>
+          <button
+            type="button"
+            className="action"
+            disabled={busy || pending !== undefined}
+            onClick={() => void runHire(offer)}
+          >
             Нанять →
           </button>
         </article>
