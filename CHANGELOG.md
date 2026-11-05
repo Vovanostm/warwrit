@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Reconcile pending-command recovery with the current ordinary game
+
+- 2026-11-06, `codex/m1-recovery-371`, LOCAL continuation of existing PR335 for
+  owner-requested stepwise implementation (#371). Merge candidate ab7c59c7 with
+  main b89f4128 and the local #369 result. Retain current care/recruitment,
+  painted actual-place guards, contract facts and resolved-battle return wiring;
+  preserve both changelog/wiki histories and archive the old candidate checkpoint.
+  Reuse the original scoped storage/ordinary hook and paired encounter adapter,
+  without changing server, rules, protocol or schema. Web types, scoped lint,
+  eight focused client files/31 tests PASS. Current native response-loss check,
+  independent final review and hosted CI pending; real battle/deadline acceptance
+  #372 remains NOT_RUN. Old worktree's publication-status WIP remains untouched.
+  [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md).
+
 ### Prove ordinary entry and preparation for the first real offer
 
 - 2026-11-06, `codex/m1-entry-369`, LOCAL result for owner-requested stepwise
@@ -21,7 +35,7 @@ requests.
   limitations and unexecuted full-game acceptance. Update CURRENT_PLAN and owning
   M1 wiki; keep recovery/payroll with their current owner. Next #371/PR335.
   No new tests, gameplay rule, migration, merge or deployment; documentation
-  checks pending, new combat/reward/recovery/full gate NOT_RUN.
+  scoped format/diff and CURRENT_PLAN checks PASS; new combat/reward/recovery/full gate NOT_RUN.
 
 ### Split the remaining M1 work into bounded AI tasks
 
@@ -1131,6 +1145,25 @@ requests.
   UI/contract8 PASS; independent final source ACCEPT and normal correction
   hook PASS atd559e283, no introduced findings. PR/clean-checkout CI/merge pending;
   no bypass/deploy.
+
+### Restore exact ordinary and encounter requests after reload
+
+- 2026-10-28, branch `codex/game-command-recovery`, local: the owner's
+  autonomous game-completion mission includes keeping uncertain commands
+  recoverable across page reload. Account/company-scoped ordinary attempts and
+  additional encounter-scoped attempts persist before send, retain unknown/auth
+  outcomes and clear only the matching terminal response. Storage failures block
+  unsafe sends; scope/unmount generations fence late responses. An independent
+  source finding corrected an unreachable encounter disposer and gained a mounted
+  regression. Focused8 files/31 tests, web types/lint/format PASS; source ACCEPT
+  before quality rework. Normal commit audit FAILED new callback complexity and
+  storage clones; corrected with one scoped lifecycle hook/shared storage owner.
+  Final focused6 files/17 tests with fresh V8, lint/types/format/diff and normal
+  pnpm check:changes PASS; independent post-extraction source ACCEPT, no bypass.
+  Actual local OIDC/two-company HELP response-loss/reload/retry and PostgreSQL
+  unchanged receipt/revision/count PASS. New real battle/WebSocket loss, full
+  day/night visual acceptance and full M1 NOT_RUN. No protocol/server/migration
+  or finance change. [Journey, screenshots and limits](docs/engineering/evidence/command-recovery-20261028/README.md).
 
 ### Road diagnostics publication activation
 

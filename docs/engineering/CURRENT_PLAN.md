@@ -4,9 +4,9 @@
 
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
 This planning branch owns roadmap/task documentation; it does not take over that delivery.
-2026-11-06 owner mission: implement full playability step by step; codex/m1-entry-369 owns independent A02/#369 on main b89f4128.
+2026-11-06 owner mission: implement full playability step by step; active writer codex/m1-recovery-371 in .claude/worktrees/m1-entry-369, main b89f4128.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
-Next #371 reuses PR335's exact ordinary-request recovery; current main retains the request only in component memory. Full game acceptance remains open.
+Active #371 reuses PR335's scoped ordinary recovery with current painted/care/recruitment and battle return; web types/lint and31focused tests PASS, native loss/reload/retry pending.
 Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
 Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
 New tasks #368–#400 are PLANNED, not assigned or executed; their parents retain full acceptance.
