@@ -352,7 +352,7 @@ async function waitForPursuitStopReady(targetId, deadline) {
       ({ targetId, acceptedSequence }) => {
         const marker = globalThis.document.querySelector('[data-pursuit-target]');
         const renderedSequence = globalThis.document.querySelector('#world-sequence').textContent;
-        const selectedTargetId = marker?.getAttribute('data-group-id') ?? null;
+        const selectedTargetId = marker?.getAttribute('data-group-id');
         const stopDisabled = globalThis.document.querySelector('#stop').disabled;
         const fresh = globalThis.worldLabMapIsFresh();
         return {
@@ -363,6 +363,7 @@ async function waitForPursuitStopReady(targetId, deadline) {
             !stopDisabled,
           fresh,
           renderedSequence,
+          markerPresent: Boolean(marker),
           selectedTargetId,
           stopDisabled,
         };

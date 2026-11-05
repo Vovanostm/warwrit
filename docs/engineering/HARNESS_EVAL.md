@@ -78,6 +78,25 @@ coverage aggregation. It PASS, including actual409→200; its owned disposable
 PostgreSQL/processes were removed. No product save or service was used. Scoped
 syntax/lint/format/diff PASS. Fresh final-head CI/review remain required.
 
+### Hosted failure artifact and source-only complexity correction
+
+CI42039004046 at `73689b15` passed both real browser journeys, then the unchanged
+native audit rejected one introduced finding: browser `ready` callback at line352,
+cyclomatic5/cognitive2, measured Node coverage0%, CRAP30. The failure artifact
+retained JSON/stderr/context/final coverage, and the same renderer isolated that
+exact finding. Diagnosis needed no local full coverage reproduction. This is
+observed actionable failure feedback, not a general productivity comparison.
+
+The author had added an unnecessary `?? null` while exposing diagnostics. Remove
+that extra branch and explicitly report `markerPresent: Boolean(marker)`; target
+identity and the original readiness conjunction retain their meaning. Keep actual
+coverage untouched. A source-only Fallow health inspection reports cyclomatic4/
+cognitive1. Its temporary display threshold1/report-only options expose all
+functions; they do not change repository gates. Coverage/CRAP for the corrected
+source remain unmeasured until current-head CI. Scoped syntax/lint/format/diff
+PASS. This correction is not a claim that the intermittent readiness timeout is
+fixed. Final review/CI/merge evidence stays in issue361/PR362.
+
 ### Reused-agent checkout route
 
 The parent omitted checkout/head/base in a repeated review request. The recipient

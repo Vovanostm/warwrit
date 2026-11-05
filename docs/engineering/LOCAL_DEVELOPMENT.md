@@ -168,6 +168,18 @@ and `audit.stderr`; render the retained report locally without rerunning analysi
 node scripts/print-quality-audit.mjs /absolute/artifact/output/quality-audit/audit.json
 ```
 
+For a known complexity finding, inspect structural metrics without producing
+coverage again:
+
+```bash
+pnpm exec fallow health scripts/world-map/world-lab.browser.mjs --complexity --max-cyclomatic 1 --report-only --format json --output-file output/readiness-health.json
+```
+
+The temporary threshold1 displays simple functions too. This source-only,
+advisory report provides no current measured coverage/CRAP verdict and never
+replaces the native audit. Do not change measured counters or suppress a finding
+to make it pass; correct the actual code or its proven measurement defect.
+
 The artifact also retains the same-run `coverage/coverage-final.json`. It is
 historical evidence for the recorded checkout/base and inputs, not coverage of
 subsequent edits. Unknown attribution stays unknown. Inspect the complete JSON

@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Remove a redundant diagnostic callback branch found by hosted audit
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after
+  CI42039004046 passed browsers but rejected the new ready callback at CRAP30.
+  The new native failure artifact identified that single finding without another
+  local coverage run. Remove the author's unnecessary null fallback, preserving
+  an explicit marker-presence diagnostic and all readiness/STOP conditions.
+  Source-only structural inspection reports cyclomatic4/cognitive1; current-head
+  measured coverage/CRAP remain pending. No counters, gates or suppressions change.
+  Scoped syntax/lint/format/diff PASS. [Owning result](docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
+  retains the failed head, actual failure-artifact acceptance and final CI limits.
+
 ### Retain failed pursuit preparation and verify reused-agent routes
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after integrated
