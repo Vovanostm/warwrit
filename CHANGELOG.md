@@ -18,9 +18,14 @@ requests.
   preserve both changelog/wiki histories and archive the old candidate checkpoint.
   Reuse the original scoped storage/ordinary hook and paired encounter adapter,
   without changing server, rules, protocol or schema. Web types, scoped lint,
-  eight focused client files/31 tests PASS. Current native response-loss check,
-  independent final review and hosted CI pending; real battle/deadline acceptance
-  #372 remains NOT_RUN. Old worktree's publication-status WIP remains untouched.
+  eight focused client files/31 tests PASS. Independent source and finite playable
+  critique ACCEPT at5e3dcd5c. Real committed HELP reply loss→reload→identical-body
+  retry PASS: two posts/one HELP effect, total receipts2/revision2,850crowns retained.
+  Conflicting-body same-ID probe rejects409 with unchanged receipt/revision counts.
+  Current public native JSON and screenshot accompany the owning result; an initial
+  raw-response ordering oracle was corrected without changing product code.
+  Hosted CI/publication pending; real battle/deadline #372 remains NOT_RUN.
+  Old worktree's publication-status WIP remains untouched.
   [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md).
 
 ### Prove ordinary entry and preparation for the first real offer

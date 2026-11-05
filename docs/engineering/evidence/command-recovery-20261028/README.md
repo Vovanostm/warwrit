@@ -12,10 +12,54 @@ confirmed this compatibility boundary; that is source inspection, not runtime.
 
 Web typecheck, scoped ESLint and eight existing focused client files/31 tests
 PASS, including ordinary lost-reply/remount/storage and the paired encounter
-late-response/storage cases. This current native ordinary response-loss check
-is pending; real WebSocket/deadline acceptance #372 and full M1 remain open.
+late-response/storage cases. Independent current-source review ACCEPT at
+`5e3dcd5c`; no blocking defect. Current native ordinary response-loss acceptance
+also PASS on that source, as detailed below. Real WebSocket/deadline acceptance
+#372 and full M1 remain open.
 The old worktree's uncommitted publication-status documents are preserved.
 No server, game rule, protocol, finance or migration change.
+
+### Current native result and finite critique
+
+Use the isolated #369 world, Compose `warwrit-entry369-20261106`, API3528,
+realtime3529/UI5228 and owned loopback fault proxy3530. Existing retained
+player worlds/resources remain untouched. Both accounts use the ordinary local
+Dex OIDC and company-opening form; no canonical state, seed, clock, money, health
+or position edits. First company remains the prepared #369 owner; the second
+company is a distinct850-crown helper at the same real North Yard issuer.
+
+- The API committed actual HELP `636e75ca-00d4-477e-bfcc-2af0c5a36f35` and returned
+  HTTP200 before the proxy dropped that reply. UI showed unknown result and Retry.
+- A normal page reload and Place reopening restored the pending warning while
+  the server-derived helper role remained visible. Native Retry sent the exact
+  same raw request body, including original expectedRevision1 and command ID.
+- Both successful response DTOs contain the same stored receipt values. SQL
+  retains exactly two ordinary receipts (owner ACCEPT + helper HELP), contract
+  revision2 and the same owner/helper IDs. Helper treasury remains850crowns.
+- A real API probe using the same helper identity and command ID but changed
+  expectedRevision was rejected409/INVALID_COMMAND. Subsequent SQL still had
+  those same two receipts and revision2. Fixture authorization stayed in the
+  proxy's memory; evidence includes no headers, cookies or identity tokens.
+
+[Current command/receipt readback](20261106-native-readback.json) contains the two
+native POST records, rejected conflicting body and actual SQL result.
+[Current confirmed UI](20261106-after-retry.png) shows the normal contract list
+after the pending warning cleared. The current unknown-result frame and AX
+transitions were inspected in the parent conversation; additional local files
+remain under output/playwright/entry369/ (untracked).
+
+Independent finite playable critic ACCEPT at5e3dcd5c: unknown-result feedback2,
+Retry access2, reload continuity3 and confirmed-result continuity2. It opened
+the current after-retry image and inspected supplied native records/AX evidence;
+browser/SQL execution by that critic NOT_RUN. Formal whole-scene/style/motion,
+full co-op, device/performance, real combat/deadline and full-M1 acceptance remain
+separate and NOT_RUN in this slice.
+
+The first native comparison incorrectly required raw response JSON text equality;
+PostgreSQL JSONB reordered object keys. The request strings are byte-identical,
+and parsed receipt values match; the corrected check preserves the actual
+request-identity/once-only assertions. No product code changed for that invalid oracle.
+Current hosted CI and PR335 publication readback remain pending.
 
 The historical result below retains its original revision and evidence scope.
 
