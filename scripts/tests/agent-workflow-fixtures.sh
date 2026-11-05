@@ -190,12 +190,15 @@ for scenario in docs consumers broad; do
   esac
 done
 # Execute the actual CI selector block against isolated committed changes.
-ci_scope_script="$(awk '
-  /^      - name: Select verification scope$/ { selected = 1; next }
-  selected && /^      - name:/ { exit }
-  selected && /^        run: \|$/ { body = 1; next }
-  body { sub(/^          /, ""); print }
-' "$root/.github/workflows/ci.yml")"
+ci_step_script() {
+  awk -v name="$1" '
+    $0 == "      - name: " name { selected = 1; next }
+    selected && /^      - name:/ { exit }
+    selected && /^        run: \|$/ { body = 1; next }
+    body { sub(/^          /, ""); print }
+  ' "$root/.github/workflows/ci.yml"
+}
+ci_scope_script="$(ci_step_script 'Select verification scope')"
 [[ -n "$ci_scope_script" ]] || fail 'CI selector command missing'
 git update-ref refs/remotes/origin/main "$base"
 route_case docs/guide.md docs
@@ -213,6 +216,40 @@ printf "echo 'ROUTE unexpected'\n" > scripts/orca-validate.sh
 expect_exit 0 env GITHUB_BASE_REF=main GITHUB_OUTPUT="$fixture/ci-output" bash -e -c "$ci_scope_script"
 [[ ! -s "$fixture/ci-output" ]] || fail 'unexpected route selected docs-only CI'
 echo 'PASS CI selector: docs only; mixed/unknown stay full; invalid base fails'
+
+# The real docs step formats only changed files on its tested ancestor.
+ci_docs_script="$(ci_step_script 'Validate documentation-only changes')"
+[[ -n "$ci_docs_script" ]] || fail 'CI docs command missing'
+cat > "$fixture/checkbin/corepack" <<'STUB'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FIXTURE_COREPACK_LOG"
+case "$*" in
+  enable | 'pnpm install --frozen-lockfile') exit 0 ;;
+  *) exit 97 ;;
+esac
+STUB
+chmod +x "$fixture/checkbin/corepack"
+export FIXTURE_COREPACK_LOG="$fixture/corepack-commands"
+route_case docs/scoped.md docs
+tested_head="$(git rev-parse HEAD)"
+# Model a base ref advancing after GitHub produced the tested merge checkout.
+git switch --quiet --create newer-base "$base"
+printf 'new upstream documentation\n' > docs/upstream.md
+git add .
+git commit -qm 'base advanced'
+git update-ref refs/remotes/origin/main HEAD
+git switch --quiet --detach "$tested_head"
+: > "$FIXTURE_CHECK_LOG"
+: > "$FIXTURE_COREPACK_LOG"
+expect_exit 0 env PATH="$fixture/checkbin:$PATH" GITHUB_BASE_REF=main bash -e -c "$ci_docs_script"
+grep -qx 'exec prettier --check --ignore-unknown docs/scoped.md' "$FIXTURE_CHECK_LOG" || fail 'CI docs format scope changed'
+[[ "$(wc -l < "$FIXTURE_CHECK_LOG")" -eq 1 ]] || fail 'CI docs invoked extra pnpm checks'
+grep -qx enable "$FIXTURE_COREPACK_LOG" || fail 'pinned pnpm shim setup missing'
+grep -qx 'pnpm install --frozen-lockfile' "$FIXTURE_COREPACK_LOG" || fail 'frozen docs install missing'
+: > "$FIXTURE_CHECK_LOG"
+expect_exit 128 env PATH="$fixture/checkbin:$PATH" GITHUB_BASE_REF=missing bash -e -c "$ci_docs_script"
+[[ ! -s "$FIXTURE_CHECK_LOG" ]] || fail 'missing base reached format'
+echo 'PASS CI docs: scoped format on detached checkout with advanced base; missing base fails'
 
 # Rejected cheap checks must stop before any pnpm command on source routes.
 route_case packages/protocol/src/new.ts consumers

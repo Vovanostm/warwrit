@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Integrate care with changed-document validation
+
+- 2026-11-05, `codex/game-care-delivery`, LOCAL integration of main `9bb2d703`
+  / merged PR358–359. Preserve both changelog histories and main's focused
+  documentation validator; care gameplay source is unchanged. Existing native
+  treatment/retry/restart and independent source acceptance retain their scope.
+  [Care contract](docs/work-packages/WP-02.4.md#main-validation-integration--2026-11-05)
+  records the current checks. CI and merge permission for the integrated head
+  remain pending; the owner's earlier permission names only `6967f234`.
+
 ### Verify native care and integrate merged objective markers
 
 - 2026-11-05, `codex/game-care-delivery`, local update to
@@ -35,6 +45,44 @@ requests.
   source/infra ACCEPT. Unchanged care unit1240/SQL86/ordinary browser results remain
   applicable. Repeated local aggregation overflowed the audit reader's counter;
   integrated quality requires clean hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
+### Record changed-document CI acceptance on the current product baseline
+
+- 2026-11-05, `codex/harness-docs-format-closeout`, LOCAL documentation receipt
+  for MERGED [PR358](https://github.com/Vovanostm/warwrit/pull/358), merge `7bb8185e`.
+  Independent integrated review ACCEPT and CI42010314464 PASS in23m21s on product
+  main `81e7931b`, including both unit phases, SQL/stress, browsers and audit.
+  The earlier17m19s run keeps its older baseline scope. The
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
+  retains attribution limits and the separate real changed-file-formatting trial.
+  [Issue357](https://github.com/Vovanostm/warwrit/issues/357) and the closeout PR own
+  its final timing and executed/skipped checks. Scoped document format/link/diff
+  readback PASS. No product implementation change. Comparative throughput NOT_MEASURED.
+
+### Integrate the newly merged product baseline during harness validation
+
+- 2026-11-05, `codex/harness-docs-format`, LOCAL integration of main `81e7931b`
+  / merged [PR353](https://github.com/Vovanostm/warwrit/pull/353). The first
+  harness head `34777036` passed full CI42006925023 in17m19s, but main advanced
+  during that run with product changes and a changelog conflict. Preserve both
+  changelog histories, all main product source and the game integrator's plan.
+  The earlier CI retains its frozen-head scope; integrated CI and source review
+  are required. [Owning record](docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
+
+### Format changed documents through the existing validator in CI
+
+- 2026-11-05, originating branch `codex/harness-docs-format`, LOCAL.
+  Continued owner harness work measured about36.5s spent formatting the whole
+  repository in the first95s documentation job. Reuse the existing focused
+  validator for committed changed-file formatting after pinned install/shim setup.
+  Pin its baseline to the tested checkout's merge base so an advanced fetched
+  base does not create a new stale-base failure. Eight fixture groups verify the
+  actual workflow command, detached/advanced-base handling, scoped formatter and
+  missing-base rejection. Syntax/format/diff PASS. The
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
+  records the corrected exit-code fixture and a separate PR353 evidence-reuse
+  idea with the historical API-field limitation. Final review, full-route CI and
+  hosted documentation timing remain pending. Comparative throughput NOT_MEASURED.
 
 ### Reveal accepted battle-contract destinations without charting the road
 
