@@ -12,7 +12,7 @@ import {
 import { delimiter, dirname, resolve } from 'node:path';
 import { expect, it } from 'vitest';
 
-it('merges actual captures without services and preserves the final target on failure', async () => {
+it('preserves measured counters and rejects invalid phase inputs without services', async () => {
   const root = process.cwd();
   await mkdir(resolve(root, 'output'), { recursive: true });
   const fixture = await mkdtemp(resolve(root, 'output/coverage-phases-'));

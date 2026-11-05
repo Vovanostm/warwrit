@@ -4,6 +4,7 @@
 
 Owner request: explore/spec/fix/review/check the repeated delivery errors.
 Branch: `codex/harness-browser-phase-order`, baseline `cf973d35`.
+[Issue365](https://github.com/Vovanostm/warwrit/issues/365) owns acceptance and final receipts.
 This support slice preserves the active game writer, product source and checkpoint.
 
 Observed cause: full PR CI runs measured units before browser journeys.
@@ -24,8 +25,10 @@ Acceptance before publication:
 - Merge-only mode starts no service, package build or browser. Invalid modes
   fail before external actions. Capture does not merge into a previous unit report.
 - Public phase CLIs preserve actual collected function counts, including zeros.
-  A failing launcher merge retains its pre-call target. Later launcher failure
-  does not undo earlier successful phases; a partial report is not a passed gate.
+  Missing/stale/invalid input rejection retains each launcher's pre-call target.
+  World also retains it if the second converter exits unsuccessfully. Painted's
+  existing in-place final-write I/O semantics are unchanged. Later launcher
+  failure does not undo earlier successful phases; a partial report is not a pass.
 - Raw captures remain in output/ while coverage/ is freshly generated. Bootstrap
   remains before capture; measured-unit mode does not rebuild dist/maps. Existing
   source validation and individual test deadlines remain unchanged.
