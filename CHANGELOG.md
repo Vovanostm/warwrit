@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Split the remaining M1 work into bounded AI tasks
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL documentation
+  follow-up to the owner's request for small AI development tasks.
+  [AI queue](docs/engineering/PARALLEL_WAVES.md#ai-task-contract) defines one result,
+  dependencies, write boundary, exclusions and direct verification per card.
+  GitHub leaf issues #368–#400 are PUBLISHED / PLANNED; seven bounded existing
+  entries reuse recovery/payroll/transfer/service/nickname/performance/launch.
+  Keep original parent acceptance, all eight contracts/eleven scenes and source
+  gates. Separate mill clues, night hunt and worker delivery without a cycle;
+  split course/retraining and individual crash boundaries. Update ROADMAP,
+  M1_PRODUCTION_PLAN, CURRENT_PLAN and the owning M1 wiki. No game implementation,
+  agent launch, new policy, merge or deployment. Updated 15 parent/existing
+  issues and the canonical Airtable Roadmap/M1 pointers; readback matches all
+  48 issue bodies and both Airtable amendments. Dependency references/acyclicity,
+  scoped format/diff, 9 added local links/anchors and CURRENT_PLAN (26/40) PASS.
+  Publication continues in [PR366](https://github.com/Vovanostm/warwrit/pull/366);
+  new-head hosted checks remain pending. Game/browser/SQL/visual checks NOT_RUN.
+
 ### Reconcile the game roadmap and tasks with current implementation
 
 - 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL planning

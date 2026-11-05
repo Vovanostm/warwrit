@@ -4,6 +4,8 @@ Updated 2026-11-05 at the owner's request. M1 is **in progress**, not accepted.
 [CURRENT_PLAN](CURRENT_PLAN.md) owns the live checkpoint;
 [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05)
 owns the next playable steps; [task queue](PARALLEL_WAVES.md) maps them to GitHub.
+The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_WAVES.md#ai-task-contract):
+33 new leaf issues plus 7 reused bounded entries, with explicit dependencies and acceptance.
 [Current assessment](../wiki/m1-spec.md#state-2026-11-05) records implementation
 and evidence separately. The superseded September roadmap and queue are retained
 in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).

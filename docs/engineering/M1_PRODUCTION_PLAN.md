@@ -8,6 +8,15 @@ below. [Roadmap](ROADMAP.md) owns milestone scope, [task queue](PARALLEL_WAVES.m
 owns issue mapping and [assessment](../wiki/m1-spec.md#state-2026-11-05) owns
 the current source/evidence boundary. Historical entries remain historical.
 
+Owner follow-up on 2026-11-05: dispatch one small task from the
+[AI queue](PARALLEL_WAVES.md#ai-task-contract), not a whole parent epic.
+Issues #368–#400 have an observable result, predecessor, write boundary,
+exclusions and direct check; seven existing entries reuse already bounded work.
+The queue separates each contract, learning/retraining and each crash boundary.
+Mill clues → night beast → worker delivery form an acyclic chain.
+Existing #8/#174/#177 retain their complete final joins and human acceptance;
+task creation is not implementation or a new gameplay-policy approval.
+
 ### 1. Finish the current company, then prove ordinary entry
 
 First integrate the existing recovery/payroll candidates through their delivery
