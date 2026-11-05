@@ -21,7 +21,7 @@ Care selection, financial observations and label visibility filtering are simpli
 Fresh local measured unit1240PASS/96skipped, real SQL86/migration smoke PASS.
 Both full browser journeys and runtime aggregation PASS with fresh measurements.
 Current local quality audit PASS with0 introduced code/duplicate findings. CSS warning remains advisory.
-New-head hosted CI is pending. PR350 remains unmerged and native care acceptance remains open.
+GitHub PR350 owns current-head hosted CI. The PR is unmerged and native care acceptance remains open.
 Live owned stand5238 retains warwrit_care_native_20261105b. Old5228 stand stopped, original DB retained.
 Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

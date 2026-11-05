@@ -20,7 +20,7 @@ requests.
   Fresh local measured unit1240/SQL86/migration smoke, both browser journeys,
   runtime aggregation, scoped lint/types/format and quality audit PASS. Introduced
   code/duplicate findings0, CSS advisory retained. Independent source ACCEPT.
-  New-head hosted CI and native care remain open. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  PR350 owns live hosted CI. Native care remains open. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Settle actual scouting before the pursuit probe
 
