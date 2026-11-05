@@ -20,6 +20,13 @@ requests.
   aggregation still rejects stale prior SQL. Source ACCEPT, final lint/format/diff PASS; new-head
   hosted verification pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
+- 2026-11-05 correction, same branch, local. CI41961030529 captured the actual
+  initial422 TARGET_NOT_VISIBLE. Reacquire lawful moving targets after missing
+  markers, visibility loss or stale requests, bounded to three POSTs/45s observation
+  window and still requiring actual200. Frozen local browser PASS including
+  STOP409→200; later SQL-coverage aggregation remains stale. Source ACCEPT and
+  lint/format/diff PASS; new hosted verification pending.
+
 ### Keep care observation preparation and persistence explicit
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft

@@ -53,25 +53,28 @@ async function waitForFreshMap(target = page, afterSequence) {
     afterSequence,
   );
 }
-async function rightClickMarker(selector) {
+async function rightClickMarker(selector, requestPath, allowMissing = false) {
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
-    ({ selector, previous }) => {
+    ({ selector, previous, allowMissing }) => {
       if (
         globalThis.document.body.dataset.connection !== 'live' ||
         globalThis.document.querySelector('#world-sequence').textContent === previous
       )
         return false;
       const marker = globalThis.document.querySelector(selector);
-      if (!marker) return false;
+      if (!marker) return allowMissing ? { missing: true } : false;
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
       return { x: at.x, y: at.y };
     },
-    { selector, previous },
+    { selector, previous, allowMissing },
   );
   const at = await point.jsonValue();
-  await page.mouse.click(at.x, at.y, { button: 'right' });
   await point.dispose();
+  if (at.missing) return undefined;
+  const accepted = response(requestPath);
+  await page.mouse.click(at.x, at.y, { button: 'right' });
+  return accepted;
 }
 async function rightClickMapPoint(x, y) {
   const at = await page.evaluate(
@@ -157,9 +160,7 @@ async function selectPlayer(target, slot) {
 }
 async function visit() {
   await page.locator('#fit').click();
-  const accepted = response('movement');
-  await rightClickMarker('[data-site-id="bereznyak"]');
-  const reply = await accepted;
+  const reply = await rightClickMarker('[data-site-id="bereznyak"]', 'movement');
   assert.equal(reply.status(), 200);
   const acceptedAt = (await reply.json()).serverTimeMs;
   await page.waitForFunction(
@@ -253,6 +254,45 @@ async function approachMovingThreat(observed) {
   }
   assert.fail('Actual travel must reveal an observed moving threat');
 }
+async function beginObservedPursuit() {
+  const rejections = [];
+  const deadline = Date.now() + 45000;
+  while (Date.now() < deadline && rejections.length < 3) {
+    const observed = await state();
+    const point = observed.own.movement.point;
+    const targets = movingThreats(observed);
+    // Leave a chase window for the STOP probe. Reacquire a fresh target if this
+    // observed group leaves sight before the server handles the native order.
+    targets.sort(
+      (a, b) =>
+        Math.hypot(
+          Number(b.point.xMicroFp) - Number(point.xMicroFp),
+          Number(b.point.zMicroFp) - Number(point.zMicroFp),
+        ) -
+        Math.hypot(
+          Number(a.point.xMicroFp) - Number(point.xMicroFp),
+          Number(a.point.zMicroFp) - Number(point.zMicroFp),
+        ),
+    );
+    if (!targets[0]) {
+      await page.waitForTimeout(300);
+      continue;
+    }
+    const reply = await rightClickMarker(`[data-group-id="${targets[0].id}"]`, 'pursuit', true);
+    if (!reply) continue;
+    const body = await reply.json();
+    if (reply.status() === 200) return;
+    rejections.push({ status: reply.status(), code: body.code });
+    assert.ok(
+      (reply.status() === 422 && body.code === 'TARGET_NOT_VISIBLE') ||
+        (reply.status() === 409 && ['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code)),
+      `Unexpected initial pursuit rejection ${JSON.stringify(rejections)}`,
+    );
+  }
+  assert.fail(
+    `No actual pursuit accepted within three attempts/45s: ${JSON.stringify(rejections)}`,
+  );
+}
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
   let observed = await state();
@@ -260,22 +300,6 @@ async function pursuitAndRetry() {
   // Scouting may still be moving. Settle that real order before choosing a
   // pursuit target so its epoch cannot invalidate the initial pursuit request.
   if (observed.own.movement.mode === 'MOVING') await stop();
-  observed = await state();
-  const targets = movingThreats(observed);
-  const point = observed.own.movement.point;
-  targets.sort(
-    (a, b) =>
-      Math.hypot(
-        Number(b.point.xMicroFp) - Number(point.xMicroFp),
-        Number(b.point.zMicroFp) - Number(point.zMicroFp),
-      ) -
-      Math.hypot(
-        Number(a.point.xMicroFp) - Number(point.xMicroFp),
-        Number(a.point.zMicroFp) - Number(point.zMicroFp),
-      ),
-  );
-  assert.ok(targets[0], 'an observed moving threat is required');
-  const id = targets[0].id;
   const statuses = [];
   const record = (reply) => {
     if (isStopResponse(reply)) statuses.push(reply.status());
@@ -309,11 +333,7 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
-  const accepted = response('pursuit');
-  await rightClickMarker(`[data-group-id="${id}"]`);
-  const pursuitReply = await accepted;
-  const pursuitResult = await pursuitReply.json();
-  assert.equal(pursuitReply.status(), 200, `Initial pursuit rejection ${pursuitResult.code}`);
+  await beginObservedPursuit();
   const pursuitOrderId = (await state()).pursuit?.orderId;
   assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
   await page.waitForFunction(
