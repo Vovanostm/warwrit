@@ -132,8 +132,9 @@ Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
 previous local evidence is not uploaded as CI proof. The job budget is35 minutes
 since2026-11-05: run42044643870 exhausted the previous30-minute job cap during
-the ordinary browser after successful bootstrap, measured units and world journey.
-The whole-job allowance adds headroom for measured execution variance; individual
+the ordinary-browser step after successful bootstrap, measured units and world
+journey. Browser/launcher PASS messages preceded cancellation; the CI step was
+cancelled and audit was NOT_RUN. The whole-job allowance adds headroom for measured execution variance; individual
 scenario deadlines, checks and audit thresholds retain their existing limits.
 
 This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
@@ -344,6 +345,19 @@ pnpm exec fallow health --coverage coverage/coverage-final.json   # measured CRA
 
 Testkit and cross-package specs import built workspace exports; `typecheck` uses
 `--noEmit` and does not refresh `dist`.
+
+When company observation/roster-read semantics change, include the existing
+recruitment SQL consumer alongside the affected executor/routes checks:
+
+```bash
+pnpm exec vitest run --mode integration apps/server/src/company/recruitment.integration.test.ts
+```
+
+Use built public packages and `DATABASE_URL` for an exclusively owned disposable
+PostgreSQL. Existing integration setup creates/migrates its isolated test databases.
+Normal unit mode skips this scenario. After an observation, load the current
+persisted aggregate before a fixture edit; restoring an old genesis state can
+mismatch the row's newer revisions. [Observed recovery failure](HARNESS_EVAL.md#fresh-recovery-consumer-check).
 
 ## Proportional local validation
 

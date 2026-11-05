@@ -100,19 +100,37 @@ fixed. Final review/CI/merge evidence stays in issue361/PR362.
 ### Whole-job budget cancellation
 
 Run42044643870 at `29cd0b86` passed bootstrap, measured units and world browser,
-then GitHub cancelled the ordinary browser at the30-minute job cap. Check-run
+then GitHub cancelled its ordinary-browser step at the30-minute job cap. Check-run
 127304177158 explicitly reports “The job has exceeded the maximum execution time
-of30m0s”. The ordinary journey did not finish; audit and its artifact were NOT_RUN.
-This is a job-budget cancellation, not a passing journey or a demonstrated product
-assertion failure. Previous successful timing ranged from18m23s to29m22s, and this
+of30m0s”. Dated correction —2026-11-05: the initial account understated completed
+subchecks. The log shows browser and launcher PASS before cancellation; GitHub's
+step remained cancelled, and the native audit/artifact were NOT_RUN. This is a
+job-budget cancellation, not a full CI pass or a product assertion failure. Previous successful timing ranged from18m23s to29m22s, and this
 candidate had reached only the last browser by29 minutes.
 
 Raise the whole-job cap to35 minutes to give the existing measured phases bounded
 headroom. Preserve every required phase, the45s/three-attempt pursuit preparation,
 actual STOP assertions and native audit policy. No test deadline, counter or
 threshold is relaxed. This prevents the observed30-minute cutoff from aborting
-otherwise-progressing checks, but does not guarantee that the remaining journey
-passes. Independent final-head review and a complete hosted run remain required.
+otherwise-progressing checks, but does not establish a successful CI step or the
+remaining audit. Independent final-head review and a complete hosted run remain
+required.
+
+### Fresh recovery consumer check
+
+PR363 at `87a17034` changed company observation to include vitals changes. Its
+first GET lawfully advanced the persisted root; the recruitment fixture then
+rewrote its genesis state while retaining newer row revisions. CI42040569966/
+job127289994811 showed the second GET500, “Company snapshot scope does not match
+its root”, then a characters read from that error response. Normal units explicitly
+skipped this SQL test. The owner corrected only setup in `0ca2a47c`, reloading
+current aggregates and deriving hire revisions from them.
+
+The existing focused integration-mode recruitment scenario can catch that consumer
+before publication when observation/roster-read semantics change. The command and
+owned disposable-DB prerequisites are in [focused checks](LOCAL_DEVELOPMENT.md#focused-checks).
+No new framework or global suite is needed. This source/CI investigation ran no
+product test or service; it does not claim a fresh runtime pass for PR363.
 
 ### Reused-agent checkout route
 

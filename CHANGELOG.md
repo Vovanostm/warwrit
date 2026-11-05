@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Clarify cancelled-step evidence and focus the recovery SQL consumer
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.
+  CI42044643870's browser and launcher printed PASS before GitHub cancelled
+  their step; native audit remained NOT_RUN. Preserve that boundary in the
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
+  Add one existing recruitment integration scenario to focused checks for changed
+  company observation/roster semantics, after PR363's genesis-root fixture mismatch.
+  Product source and checks are unchanged; scoped docs format/link/diff PASS.
+  The research did not run a new product scenario. Final review/CI remain pending.
+
 ### Give measured CI phases bounded whole-job headroom
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL. GitHub cancelled
