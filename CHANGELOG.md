@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Give measured CI phases bounded whole-job headroom
+
+- 2026-11-05, `codex/harness-quality-feedback`, LOCAL. GitHub cancelled
+  CI42044643870 at the30-minute job cap during ordinary-browser execution,
+  after successful bootstrap/coverage/world checks. Raise only the whole-job
+  allowance to35 minutes; keep individual scenario deadlines, assertions,
+  phases and native quality gates unchanged. No remaining check is claimed
+  passed from the cancelled job. [Owning evidence](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
+  records the exact timeout annotation and pending final-head verification.
+
 ### Remove a redundant diagnostic callback branch found by hosted audit
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL correction after

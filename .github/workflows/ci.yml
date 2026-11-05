@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Verify clean checkout
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       FORCE_COLOR: '1'
     steps:

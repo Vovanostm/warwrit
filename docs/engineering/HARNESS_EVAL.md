@@ -97,6 +97,23 @@ source remain unmeasured until current-head CI. Scoped syntax/lint/format/diff
 PASS. This correction is not a claim that the intermittent readiness timeout is
 fixed. Final review/CI/merge evidence stays in issue361/PR362.
 
+### Whole-job budget cancellation
+
+Run42044643870 at `29cd0b86` passed bootstrap, measured units and world browser,
+then GitHub cancelled the ordinary browser at the30-minute job cap. Check-run
+127304177158 explicitly reports “The job has exceeded the maximum execution time
+of30m0s”. The ordinary journey did not finish; audit and its artifact were NOT_RUN.
+This is a job-budget cancellation, not a passing journey or a demonstrated product
+assertion failure. Previous successful timing ranged from18m23s to29m22s, and this
+candidate had reached only the last browser by29 minutes.
+
+Raise the whole-job cap to35 minutes to give the existing measured phases bounded
+headroom. Preserve every required phase, the45s/three-attempt pursuit preparation,
+actual STOP assertions and native audit policy. No test deadline, counter or
+threshold is relaxed. This prevents the observed30-minute cutoff from aborting
+otherwise-progressing checks, but does not guarantee that the remaining journey
+passes. Independent final-head review and a complete hosted run remain required.
+
 ### Reused-agent checkout route
 
 The parent omitted checkout/head/base in a repeated review request. The recipient

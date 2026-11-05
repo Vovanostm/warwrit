@@ -130,8 +130,11 @@ supply source-checked measurements. `pnpm dev:map` uses that authoring config;
 the private ordinary-game configuration intentionally denies the full atlas.
 Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
-previous local evidence is not uploaded as CI proof. The job budget is30 minutes
-for the existing15m28s gate plus measured SQL/browser phases.
+previous local evidence is not uploaded as CI proof. The job budget is35 minutes
+since2026-11-05: run42044643870 exhausted the previous30-minute job cap during
+the ordinary browser after successful bootstrap, measured units and world journey.
+The whole-job allowance adds headroom for measured execution variance; individual
+scenario deadlines, checks and audit thresholds retain their existing limits.
 
 This launcher owns loopback API3038, realtime3039 and UI5338, plus the persistent
 `warwrit-world-lab` Compose project/PostgreSQL65438. It uses `compose.world-lab.yaml`
