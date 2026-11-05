@@ -58,8 +58,10 @@ jobs:
       - name: Validate documentation-only changes
         if: steps.scope.outputs.docs_only == 'true'
         run: |
+          corepack enable
           corepack pnpm install --frozen-lockfile
-          corepack pnpm format
+          base="$(git merge-base "origin/$GITHUB_BASE_REF" HEAD)"
+          bash scripts/orca-validate.sh . "$base"
 
       - name: Bootstrap and verify
         if: steps.scope.outputs.docs_only != 'true'

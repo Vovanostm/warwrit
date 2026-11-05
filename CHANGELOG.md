@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Integrate the newly merged product baseline during harness validation
+
+- 2026-11-05, `codex/harness-docs-format`, LOCAL integration of main `81e7931b`
+  / merged [PR353](https://github.com/Vovanostm/warwrit/pull/353). The first
+  harness head `34777036` passed full CI42006925023 in17m19s, but main advanced
+  during that run with product changes and a changelog conflict. Preserve both
+  changelog histories, all main product source and the game integrator's plan.
+  The earlier CI retains its frozen-head scope; integrated CI and source review
+  are required. [Owning record](docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
+
+### Format changed documents through the existing validator in CI
+
+- 2026-11-05, originating branch `codex/harness-docs-format`, LOCAL.
+  Continued owner harness work measured about36.5s spent formatting the whole
+  repository in the first95s documentation job. Reuse the existing focused
+  validator for committed changed-file formatting after pinned install/shim setup.
+  Pin its baseline to the tested checkout's merge base so an advanced fetched
+  base does not create a new stale-base failure. Eight fixture groups verify the
+  actual workflow command, detached/advanced-base handling, scoped formatter and
+  missing-base rejection. Syntax/format/diff PASS. The
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
+  records the corrected exit-code fixture and a separate PR353 evidence-reuse
+  idea with the historical API-field limitation. Final review, full-route CI and
+  hosted documentation timing remain pending. Comparative throughput NOT_MEASURED.
+
 ### Reveal accepted battle-contract destinations without charting the road
 
 - 2026-11-05, `codex/contract-objective-markers`, published in
