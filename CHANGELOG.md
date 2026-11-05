@@ -15,6 +15,7 @@ requests.
   / merged [PR349](https://github.com/Vovanostm/warwrit/pull/349). Resolve the
   workflow, changelog and browser conflicts, retaining both histories, shared
   readiness/STOP observations, semantic hit guards, own-tile recovery and diagnostics.
+  Keep the coordinator explicit in the care checkpoint, verified by the plan check.
   Preserve care's finite native retry/acquisition and real movement assertions.
   Integrated world browser/aggregation, syntax/lint/format and independent
   source/infra ACCEPT. Unchanged care unit1240/SQL86/ordinary browser results remain

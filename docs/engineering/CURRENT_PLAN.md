@@ -2,7 +2,8 @@
 
 ## Ordinary company care — 2026-11-05, PUBLISHED DRAFT
 
-Parent owns source, resources, integration and validation. Full-game objective remains ACTIVE.
+Coordinator, author, resource owner, integrator and validator is this chat's parent.
+Full-game objective remains ACTIVE.
 Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
 [Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns acceptance and limits.
 Painted atlas PR344 is merged as `ee03f4ee`. Main92c0f534 / PR349 is integrated.
