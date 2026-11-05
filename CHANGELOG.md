@@ -28,6 +28,22 @@ requests.
   Inherited atlas/fog art acceptance remains open under the full-game objective.
   No migration. Care PR350 at516c1eb2 remains draft with green full CI/scope.
 
+### Scope documentation CI and stop rejected local validation early
+
+- 2026-11-05, originating branch `codex/harness-scoped-ci`, LOCAL.
+  Continued owner efficiency work with independent verification found builds/tests
+  continuing after a failed cheap preflight when the plan was unchanged. Move the
+  existing failure exit outside that conditional, backed by a failing-then-passing
+  isolated regression. Reuse the existing changed-path classifier for pure
+  documentation PR CI, with pinned install/format and harness/plan/migration checks.
+  Every code/mixed/unknown change and main push keeps full verification. Preserve
+  both unit-resolution boundaries. The
+  [owning evaluation](docs/engineering/HARNESS_EVAL.md#scoped-ci-and-rejected-local-preflight--2026-11-05)
+  records independent findings, actual timings, the repaired CI-selector fixture,
+  checks and remaining limits. Seven focused fixture groups and four hook tests,
+  syntax/format/diff PASS. Full-route CI, a hosted documentation-only trial and
+  final review remain pending. Comparative product throughput NOT_MEASURED.
+
 ### Detect checkpoint errors before expensive product checks
 
 - 2026-11-05, originating branch `codex/harness-early-feedback`, LOCAL.

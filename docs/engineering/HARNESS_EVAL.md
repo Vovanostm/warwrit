@@ -1,5 +1,58 @@
 # Harness evaluation
 
+## Scoped CI and rejected local preflight — 2026-11-05
+
+The owner authorized independent agents to verify prior controls and continued
+harness improvement, prioritizing correct product development over errors and
+CI/PR overhead. This support slice originates on `codex/harness-scoped-ci`.
+The active game writer's files, checkpoint and databases retain their ownership.
+[Issue354](https://github.com/Vovanostm/warwrit/issues/354) owns acceptance and
+current mission authority for the implementation and documentation closeout trial.
+
+Independent verification at `e809d0ad` reran the existing isolated workflow
+fixtures and four Node hook/preflight tests successfully. Eight static decision
+probes retained source, permission, acceptance and proportional-check boundaries.
+These are configuration/fixture observations, not evidence of actual agent
+adherence. Logs remain under ignored `output/harness-next-verification/`.
+
+The verifier found a local cost defect. When CURRENT_PLAN was unchanged, a dirty
+tree or rejected scope set a failed result but validation continued into pnpm
+format/build/tests. A new real-Git/stub-pnpm regression failed on the old script
+with `dirty source reached pnpm after rejection`. Move the existing final cheap
+status check outside the plan-only conditional. Dirty/source and rejected-scope
+fixtures now exit before pnpm. Existing plan and source-routing checks still pass.
+
+A separate read-only CI audit measured the two unit phases of CI41989755498.
+Ordinary units took 118.92s and measured units 320.21s, with1237 PASS/93 SKIP each.
+They resolve public packages differently, through built exports and source aliases.
+SQL under coverage also uses source aliases, and stress imports source directly.
+Equal counts do not establish equivalent boundaries. Both phases remain required
+for code/full-route CI. The potential ordinary-pass saving in that run was about
+two minutes. This slice does not consolidate those distinct checks.
+
+CI now reuses `orca-validate.sh --plan` to select documentation-only PRs. Only the
+exact `ROUTE docs` result selects pinned frozen install and formatting alongside
+existing plan, harness-regression and migration guards. Product tests, browsers
+and measured quality audit are explicitly skipped for this documentation scope.
+Mixed/code/config/CI/scripts/dependencies/assets/unknown changes use the full path.
+Main pushes and manual dispatch use full verification. A failed classification
+fails the job. Code-to-doc renames retain the old path under `--no-renames`.
+Affected links/deletions still need review. Current production/content validation
+does not consume docs Markdown. Introducing such consumption changes this contract.
+
+The isolated fixtures execute the actual selector shell block from the workflow
+against documentation, mixed, missing-base and unexpected-output cases. They also
+cover root/skill Markdown and Markdown under assets/app code. One initial fixture
+omitted CI's Bash `-e`, so missing-base classification appeared successful in that
+invalid local runner. Its failure was retained and the fixture now uses the real
+runner semantics. No production assertion was relaxed. Current seven fixture
+groups and four hook/preflight tests PASS. The exact pinned frozen-install and
+format commands of the documentation step also PASS locally. Bash syntax,
+scoped format, skill metadata and diff PASS.
+Final source review, full-route hosted validation and a subsequent hosted
+pure-documentation run are required before closing this bounded experiment.
+Native instruction adoption and comparative product throughput remain NOT_MEASURED.
+
 ## Care-delivery bottlenecks and earlier feedback — 2026-11-05
 
 Owner requested continued observation and improvements to help the game agent

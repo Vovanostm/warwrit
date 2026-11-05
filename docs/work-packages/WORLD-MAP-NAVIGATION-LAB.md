@@ -959,3 +959,8 @@ owns hosted CI and publication status. No migration or new art assets.
 Main e809d0ad / PR352 is integrated before publication. Its changes are confined
 to the existing harness/docs and early plan check. Marker production source and
 applicable native/SQL/type results remain unchanged. Scoped plan/diff/format PASS.
+
+Full CI41995393942 and scope41995393909 PASS at63271add, including both browsers
+and the quality audit. Main then advanced through PR355 tofc130c1b, introducing
+a changelog-only conflict. Preserve both entries and its accepted scoped-CI
+harness. Game source remains unchanged. PR353 owns the new integrated-head CI.
