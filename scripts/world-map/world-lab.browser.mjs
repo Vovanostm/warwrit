@@ -267,13 +267,16 @@ async function pursuitAndRetry() {
   assert.ok(targets[0], 'an observed moving threat is required');
   const id = targets[0].id;
   const statuses = [];
+  const isStop = (reply) =>
+    reply.url().endsWith('/world-lab/movement') &&
+    reply.request().method() === 'POST' &&
+    reply.request().postDataJSON()?.action?.kind === 'STOP';
   const record = (reply) => {
-    if (reply.url().endsWith('/world-lab/movement') && reply.request().method() === 'POST')
-      statuses.push(reply.status());
+    if (isStop(reply)) statuses.push(reply.status());
   };
   const details = [];
   const recordDetails = (reply) => {
-    if (reply.url().endsWith('/world-lab/movement') && reply.request().method() === 'POST')
+    if (isStop(reply))
       details.push(
         reply.json().then((body) => ({
           status: reply.status(),
@@ -303,18 +306,22 @@ async function pursuitAndRetry() {
   const accepted = response('pursuit');
   await rightClickMarker(`[data-group-id="${id}"]`);
   assert.equal((await accepted).status(), 200);
+  const pursuitOrderId = (await state()).pursuit?.orderId;
+  assert.ok(pursuitOrderId, 'accepted pursuit must have an order ID');
   await page.waitForFunction(
     () =>
       globalThis.document.body.dataset.connection === 'live' &&
       globalThis.document.querySelector('[data-pursuit-target]') &&
       !globalThis.document.querySelector('#stop').disabled,
   );
-  const stopped = page.waitForResponse(
-    (reply) => reply.url().endsWith('/world-lab/movement') && reply.status() === 200,
+  const settled = page.waitForResponse(
+    (reply) => isStop(reply) && (reply.status() === 200 || statuses.length === 2),
   );
   await page.locator('#map').press('Space');
+  let replies;
   try {
-    await stopped;
+    await settled;
+    replies = await Promise.all(details);
   } finally {
     page.off('response', record);
     page.off('response', recordDetails);
@@ -323,9 +330,33 @@ async function pursuitAndRetry() {
       JSON.stringify(await Promise.all(details), null, 2),
     );
   }
-  assert.deepEqual(statuses, [409, 200]);
-  assert.equal((await state()).pursuit, null);
-  results.push('observed-threat pursuit and actual stale STOP409/retry200');
+  assert.equal(replies.length, 2, 'one stale STOP permits exactly one automatic retry');
+  assert.notEqual(replies[0].request.commandId, replies[1].request.commandId);
+  assert.notEqual(
+    replies[0].request.expectedMovementEpoch,
+    replies[1].request.expectedMovementEpoch,
+    'retry must use the refreshed movement epoch',
+  );
+  assert.equal(replies[0].body.code, 'STALE_REVISION');
+  if (replies[1].status === 200) {
+    assert.deepEqual(statuses, [409, 200]);
+    assert.equal((await state()).pursuit, null);
+    results.push('observed-threat pursuit and actual stale STOP409/retry200');
+  } else {
+    // The real worker can invalidate the single retry too. Verify that finite
+    // rejection path separately; it does not demonstrate successful cancellation.
+    assert.deepEqual(statuses, [409, 409]);
+    assert.equal(replies[1].body.code, 'STALE_REVISION');
+    await page.waitForFunction(
+      () =>
+        globalThis.document.querySelector('#client-message').textContent ===
+        'Приказ отклонён: STALE_REVISION',
+    );
+    assert.equal((await state()).pursuit?.orderId, pursuitOrderId);
+    results.push(
+      'observed-threat pursuit and two stale STOP409 responses; pursuit retained, cancellation not demonstrated',
+    );
+  }
 }
 async function legacyControls() {
   const legacy = await context.newPage();

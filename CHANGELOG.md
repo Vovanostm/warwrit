@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Verify the finite outcome when a refreshed pursuit STOP is stale again
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41949560552 passed the
+  clean gate/coverage but its real worker invalidated both STOP attempts. Check
+  exact409→200 cancellation or exact409→409 rejection with retained pursuit and
+  visible error, retaining one automatic retry. Independent source ACCEPT and
+  scoped lint/format and frozen-source browser PASS; later aggregation rejects
+  stale prior SQL coverage, hosted CI pending. The single
+  revised native HUNT02 trial retained a heavy wound but lost its sole physician,
+  so care/retry remain unexecuted. Succession/return and untreated save restart
+  PASS. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Select a named atlas place when its label is clicked
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft

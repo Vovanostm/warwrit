@@ -26,7 +26,12 @@ Latest script/workflow source review has no finding; new hosted CI remains requi
 Company2 reached HUNT03 but lost after missed author input; its saved defeat is retained.
 RMB on a displaced site label sent ground coordinates. Actionable labels now select SITE correctly.
 Native SITE/arrival/JOIN passed; the existing browser probe now requires a visible label.
-Independent native QA owns a separate fresh trial on5238; parent retains all resource/validation ownership.
+Independent HUNT03 trial lost to AFK; care/retry/restart NOT_RUN, saved result retained.
+Parent's one revised HUNT02 trial retained two survivors and a heavy wound; sole physician died.
+Mora succession/return/restart PASS; saved wounds/stock retained, care/retry unavailable without a provider.
+CI41949560552 passed full gate/coverage, then recorded two legitimate stale STOP409s.
+Browser probe now checks either exact409→200 cancellation or exact409→409 rejection/retained pursuit.
+Affected source ACCEPT; frozen browser PASS, later merge rejects stale SQL coverage; hosted CI pending.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.
