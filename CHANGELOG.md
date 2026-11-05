@@ -24,9 +24,25 @@ requests.
   label SITE input and restart PASS on a separate ordinary world. Reuse care's
   existing actionable-label CSS and explain MAP_INFORMATION_REQUIRED as exploration.
   Derived optional questMarker metadata keeps names readable at overview, including
-  observed sites. Source and finite marker readability ACCEPT; hosted CI pending.
+  observed sites. Source and finite marker readability ACCEPT. Full CI42000045363 and scope
+  PASS at3374894b; subsequent PR356 integration changes documentation only.
   Inherited atlas/fog art acceptance remains open under the full-game objective.
   No migration. Care PR350 at516c1eb2 remains draft with green full CI/scope.
+
+### Record scoped-CI implementation acceptance
+
+- 2026-11-05, originating branch `codex/harness-docs-ci-closeout`, LOCAL
+  documentation receipt for MERGED [PR355](https://github.com/Vovanostm/warwrit/pull/355),
+  merge `fc130c1b`. Independent review ACCEPT and full-route CI41996228132 PASS
+  in21m24s, including both unit-resolution phases, SQL/stress, both browsers and
+  quality audit. This dated receipt supersedes pending implementation status
+  below. The existing
+  [evaluation](docs/engineering/HARNESS_EVAL.md#implementation-receipt-and-documentation-trial)
+  retains audit limits and the separate documentation-only hosted trial.
+  [Issue354](https://github.com/Vovanostm/warwrit/issues/354) and the closeout PR
+  own its execution timing, explicit skipped product checks and final acceptance.
+  Scoped documentation format/link/diff readback PASS. No product implementation
+  change. Comparative product throughput NOT_MEASURED.
 
 ### Scope documentation CI and stop rejected local validation early
 

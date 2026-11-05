@@ -49,9 +49,24 @@ runner semantics. No production assertion was relaxed. Current seven fixture
 groups and four hook/preflight tests PASS. The exact pinned frozen-install and
 format commands of the documentation step also PASS locally. Bash syntax,
 scoped format, skill metadata and diff PASS.
-Final source review, full-route hosted validation and a subsequent hosted
-pure-documentation run are required before closing this bounded experiment.
-Native instruction adoption and comparative product throughput remain NOT_MEASURED.
+
+### Implementation receipt and documentation trial
+
+Independent infrastructure review ACCEPT at `dda289d5`.
+[PR355](https://github.com/Vovanostm/warwrit/pull/355) merged as `fc130c1b`.
+Full-route CI41996228132 PASS in21m24s. The selector chose the full route for
+this workflow/script change. Both unit phases1237 PASS/93 SKIP, stress10000,
+real SQL83, both actual browser journeys and the changed-file audit PASS.
+The audit retained its semantic-identity warning and syntactic base/head
+attribution, with semantic-only findings outside the new-only comparison.
+The actual merge tree equals the reviewed and tested source tree.
+
+This documentation closeout on `codex/harness-docs-ci-closeout` records that
+receipt and supplies a real hosted documentation-only trial. Its PR and issue354
+own the exact job duration, executed/skipped steps and final acceptance. Close
+issue354 only after that trial passes. Product checks skipped for documentation
+scope are not new gameplay evidence. Native instruction adoption and comparative
+product throughput remain NOT_MEASURED.
 
 ## Care-delivery bottlenecks and earlier feedback — 2026-11-05
 

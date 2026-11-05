@@ -964,3 +964,8 @@ Full CI41995393942 and scope41995393909 PASS at63271add, including both browsers
 and the quality audit. Main then advanced through PR355 tofc130c1b, introducing
 a changelog-only conflict. Preserve both entries and its accepted scoped-CI
 harness. Game source remains unchanged. PR353 owns the new integrated-head CI.
+
+Current integration readback — 2026-11-05. Full CI42000045363 and scope42000045335
+PASS at3374894b. Main then advanced through documentation-only PR356 to6c525840.
+Retain both changelog entries; no gameplay source changed. PR353 owns the latest
+integration CI. Merge permission remains required.
