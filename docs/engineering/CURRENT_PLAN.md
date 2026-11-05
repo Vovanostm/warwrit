@@ -8,20 +8,21 @@ Finite path is sign-in → company → contract → travel → combat → reward
 Painted atlas PR344 and objective-marker PR353 are merged; main is9bb2d703.
 PR353 merged with owner permission for exact headb9f150ba after full CI42003635623 and scope42003688757 PASS.
 [Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns treatment acceptance.
-[PR350](https://github.com/Vovanostm/warwrit/pull/350) integrates main9bb2d703; hosted integration CI remains required.
-Care6967f234 passed full CI42008831586 attempt2; native care/retry/restart PASS on the recruitment stand.
+[PR350](https://github.com/Vovanostm/warwrit/pull/350) is at319b901e on main9bb2d703; CI42020812490 is running.
+Care6967f234 full CI PASS; native treatment/lost-reply/exact retry/restart PASS on the recruitment stand.
 [Recruitment contract](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) owns the finite local pool.
 Owner approved physician at Brod, signing50/base daily10 crowns; care challenges5/10 remain temporary.
-[Recruitment PR360](https://github.com/Vovanostm/warwrit/pull/360) candidate integrates care76147b2f/main9bb2d703.
+[Recruitment PR360](https://github.com/Vovanostm/warwrit/pull/360) candidate integrates care319b901e; CI51299b0c failed final quality.
 Normal travel → inn inspection → hire → separate Join → care → lost reply/reload/exact retry → restart PASS.
 Each accepted Recruit/Join/ApplyCare has one receipt for two identical POST bodies.
 Treasury800→750, medical units2→1, physician medicine150→190 XP, patient health stays17.
 Source corrections cover consumption rollback, knowledge privacy, exact client retries, carried purse and local reserve food.
-Source/finite gameplay ACCEPT; care-control capture PARTIAL. Client4/protocol20/SQL3/types/lint PASS.
-PR360 formatting correction passed full local formatting; current integrated-head hosted CI remains required.
+Product/source and finite gameplay ACCEPT; care-control capture PARTIAL.
+Fresh unit1244/98 SKIP, SQL88 and composed audit PASS before browser measurements; composition diagnosis pending.
+Expired-pursuit setup uses finite native reacquisition and post-acceptance UI sequence; frozen browser409→200/source ACCEPT.
 Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
 At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
-Owner authorized PR350 at6967f234 after green CI; integration changes its head and needs renewed permission.
+Owner authorized PR350 at6967f234; new source candidate will need exact-head permission after review.
 PR360 merge permission remains pending. PR publication is authorized; deployment remains unauthorized.
 
 ## History

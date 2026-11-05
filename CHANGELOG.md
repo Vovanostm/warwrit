@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Integrate the accepted pursuit setup fix into recruitment
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL integration of care `319b901e`.
+  Preserve both histories and unchanged gameplay source. CI42016253535 passed
+  bootstrap, SQL/stress and both browsers, then failed the final audit. Fresh
+  unit1244/98 SKIP and SQL88 PASS; their combined coverage audit has zero new
+  findings. Browser measurement composition is the next diagnostic boundary,
+  not a reason to change gameplay on static estimates. [Owning result](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05).
+
 ### Integrate recruitment with the current care candidate
 
 - 2026-11-05, `codex/ordinary-recruitment`, LOCAL integration of care `76147b2f`
@@ -92,6 +101,21 @@ requests.
   coverage now uses SetAssignment because Recruit has a strict enabled payload.
   The exact roster oracle includes the new scoped flags. Both existing SQL route
   scenarios and recruitment SQL PASS after that fixture correction; scoped lint PASS after removing the unused wage-rule import.
+
+### Reacquire expired pursuit preparation before the STOP browser probe
+
+- 2026-11-05, `codex/game-care-delivery`, LOCAL correction after
+  CI42015936183 repeated the accepted-but-expired pursuit setup failure. A live
+  LAST_SEEN order had no enabled Stop and no pursuit STOP was sent. Read the
+  same accepted order until its matching target/Stop is ready, or reacquire a
+  lawful observed target through ordinary input if it expires. Count accepted
+  expired orders inside the existing three-attempt/45s preparation budget.
+  Preserve actual delayed STOP, stale-response identities, epochs and retained/
+  cancelled-order assertions. Gameplay source is unchanged. Scoped syntax/lint/
+  format/diff and frozen real-browser journey PASS, including actual409→200.
+  Independent affected source review ACCEPT after tying UI readiness to a
+  post-acceptance sequence. Current-head hosted verification remains required.
+  [Owning result](docs/work-packages/WP-02.4.md#expired-pursuit-preparation-correction--2026-11-05).
 
 ### Integrate care with changed-document validation
 
