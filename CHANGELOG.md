@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Stabilize initial pursuit setup after the observed CI rejection
+
+- 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to
+  [PR349](https://github.com/Vovanostm/warwrit/pull/349). CI41946278698 retained
+  real native STOP200, then initial pursuit returned409. End the approach through
+  the existing STOP and read current visible moving targets before pursuit.
+  Preserve initial200, later exact409→200, timeouts and product rules. Capture
+  the initial rejection request/status/body for diagnosis. Combined real browser
+  PASS, actual stale-request diagnostic probe PASS, scoped lint/syntax/format and
+  artifact path checks PASS. The exact original409 code remains unknown.
+  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
+
 ### Retain evidence for the browser CI STOP failures
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL follow-up to

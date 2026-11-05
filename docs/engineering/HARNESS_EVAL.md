@@ -72,6 +72,31 @@ STOP409/retry200 and zero page errors. The two original CI causes remain
 unresolved. Final combined-head source readback and new-head CI are recorded in
 issue348 and PR349. The original failures remain part of delivery history.
 
+### Initial pursuit preparation follow-up
+
+CI41946278698 at `2c112d26` passed the ordinary native STOP. The retained input
+record shows map focus, live connection and enabled movement at Space, followed
+by an actual STOP request and HTTP200. It then failed the initial PURSUE200
+assertion with HTTP409. The STOP diagnostics do not contain that rejection code.
+This is a different observed boundary from the earlier STOP timeouts.
+
+Source review found a temporal counterexample. `approachMovingThreat` returns
+while the own company can still be moving. Its arrival can change the expected
+revision/epoch between visible observation and initial pursuit validation. That
+explains a possible legitimate409, without proving the exact code in this run.
+The test now ends its approach through the existing native STOP, reads a fresh
+state and selects the current visible moving target set. Initial pursuit200 and
+later exact STOP409/retry200, all deadlines and product policies are preserved.
+A rejected initial pursuit now retains the request and response status/body in
+its own bounded artifact, excluding headers/cookies.
+
+The combined real browser journey PASS. A separate ignored probe sent an actually
+stale pursuit epoch to the real server and confirmed409, retained rejection code
+and request, plus the matching artifact path. It supplied no successful response
+or game-state substitute. Initial instrumentation/setup edits triggered ESLint
+`no-undef` and `no-useless-assignment`; both were corrected before passing checks.
+Final source review and applicable new-head CI remain recorded in PR349.
+
 ## Task-quality assessment — 2026-11-05
 
 Use this section for a defined harness evaluation. Record findings in the existing

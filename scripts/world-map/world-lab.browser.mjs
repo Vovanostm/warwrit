@@ -277,8 +277,10 @@ async function approachMovingThreat(observed) {
 }
 async function pursuitAndRetry() {
   await page.locator('#fit').click();
-  let observed = await state();
-  if (!movingThreats(observed).length) observed = await approachMovingThreat(observed);
+  const beforeApproach = await state();
+  if (!movingThreats(beforeApproach).length) await approachMovingThreat(beforeApproach);
+  await stop();
+  const observed = await state();
   const targets = movingThreats(observed);
   const point = observed.own.movement.point;
   targets.sort(
@@ -296,7 +298,22 @@ async function pursuitAndRetry() {
   const id = targets[0].id;
   const accepted = response('pursuit');
   await rightClickMarker(`[data-group-id="${id}"]`);
-  assert.equal((await accepted).status(), 200);
+  const pursuitReply = await accepted;
+  if (pursuitReply.status() !== 200) {
+    await writeFile(
+      resolve(output, 'pursuit-start-response.json'),
+      JSON.stringify(
+        {
+          status: pursuitReply.status(),
+          request: pursuitReply.request().postDataJSON(),
+          responseBody: await pursuitReply.text(),
+        },
+        null,
+        2,
+      ),
+    );
+  }
+  assert.equal(pursuitReply.status(), 200);
   await page.waitForFunction(() => globalThis.document.querySelector('[data-pursuit-target]'));
   const statuses = [];
   const record = (reply) => {
