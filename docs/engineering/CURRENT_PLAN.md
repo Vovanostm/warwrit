@@ -20,9 +20,10 @@ Next is the native contract → wound → care → reload/retry → restart jour
 Native HUNT02 won with3survivors, paid80crowns; no treatable severe wound resulted.
 The missing result exit is fixed; web types/27checks/source review PASS, native click pending.
 Company2 accepted HUNT03 after travelling to KamennyBrod. Native care remains pending.
-CI41938162496 passed the full gate and coverage, then timed out awaiting browser STOP.
-The longer local browser probe passed; its later measurement merge rejected stale SQL coverage.
-The test correction awaits new hosted CI. No check is waived; original saves remain intact.
+CI41938162496/41942555733 passed full gate and coverage; two separate browser STOP probes failed.
+Both probe corrections pass locally; later measurement merge rejects stale prior SQL coverage.
+Latest script/workflow source review has no finding; new hosted CI remains required.
+Company2 revealed the mill and is on an accepted route after developer-assisted bridge exploration.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

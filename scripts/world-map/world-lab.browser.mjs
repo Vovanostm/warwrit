@@ -266,10 +266,6 @@ async function pursuitAndRetry() {
   );
   assert.ok(targets[0], 'an observed moving threat is required');
   const id = targets[0].id;
-  const accepted = response('pursuit');
-  await rightClickMarker(`[data-group-id="${id}"]`);
-  assert.equal((await accepted).status(), 200);
-  await page.waitForFunction(() => globalThis.document.querySelector('[data-pursuit-target]'));
   const statuses = [];
   const record = (reply) => {
     if (reply.url().endsWith('/world-lab/movement') && reply.request().method() === 'POST')
@@ -304,13 +300,19 @@ async function pursuitAndRetry() {
     },
     { times: 1 },
   );
-  await page.locator('#map').focus();
-  const beforeStop = await page.locator('#world-sequence').textContent();
-  await waitForFreshMap(page, beforeStop);
+  const accepted = response('pursuit');
+  await rightClickMarker(`[data-group-id="${id}"]`);
+  assert.equal((await accepted).status(), 200);
+  await page.waitForFunction(
+    () =>
+      globalThis.document.body.dataset.connection === 'live' &&
+      globalThis.document.querySelector('[data-pursuit-target]') &&
+      !globalThis.document.querySelector('#stop').disabled,
+  );
   const stopped = page.waitForResponse(
     (reply) => reply.url().endsWith('/world-lab/movement') && reply.status() === 200,
   );
-  await page.keyboard.press('Space');
+  await page.locator('#map').press('Space');
   try {
     await stopped;
   } finally {

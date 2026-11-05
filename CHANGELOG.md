@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Send the stale-pursuit STOP while the target is still being chased
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41942555733 passed the
+  clean gate, coverage and camera STOP, then timed out in the separate pursuit
+  scenario. Install interception before starting pursuit, wait for live CHASING
+  UI with enabled STOP and press Space promptly on the map. Preserve the actual
+  worker epoch delay and exact409→200 assertions. The local browser phase PASS;
+  its measurement merger still rejects the recorded stale prior SQL report.
+  Retain existing sanitized browser diagnostics in CI artifacts. Scoped lint,
+  format/diff PASS; independent source review found no defect, with runtime
+  acceptance reserved for hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Keep the browser STOP probe moving until its keyboard action
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft
