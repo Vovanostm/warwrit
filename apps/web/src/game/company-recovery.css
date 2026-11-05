@@ -1,0 +1,13 @@
+.company-recovery .supplies li {
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.company-recovery-person .state-note {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+}
+
+.company-recovery .gear-action {
+  flex-shrink: 0;
+}

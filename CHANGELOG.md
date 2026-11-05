@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Connect treatment to explicit recovery
+
+- 2026-11-05, `codex/company-recovery`, LOCAL work on main1121665c. Expose the
+  existing FIELD↔RECOVERY assignment and lawful future fed refresh in the Company
+  screen; retain exact saved retries and party membership. No implicit settlement
+  healing or retroactive recovery. [Owning acceptance](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records native saved-game PASS: no historical healing,17→20→31HP on future fed
+  ticks, lost-reply/reload/exact retry, unchanged restart and same-slot FIELD return.
+  Focused web9/SQL17/projection5 and types/lint PASS. First UI critique REWORK
+  corrections add wound labels, exact-repeat explanation and visible refresh
+  success/error; native corrected UI PASS. Source/finite day UI ACCEPT; final night readability
+  and integrated CI remain pending.
+- PR360 recruitment is MERGED as1121665c with explicit owner permission for final
+  23aa287b, full CI42028536324/scope42032224662 PASS and clean-main readback.
+  [Recruitment closeout](docs/work-packages/WP-02.2.md#merged-ordinary-recruitment--2026-11-05).
+
 ### Run the coverage CLI regression from a clean checkout
 
 - 2026-11-05, `codex/ordinary-recruitment`, LOCAL test-setup correction to

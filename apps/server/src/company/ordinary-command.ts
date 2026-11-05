@@ -19,6 +19,9 @@ export function ordinaryCommandIntent(
     readonly accessEvidenceId: string | undefined;
     readonly careEvidenceId: string | undefined;
     readonly careDefinitionId: string | undefined;
+    readonly assignmentEvidenceId: string | undefined;
+    readonly assignmentLocationId: string | undefined;
+    readonly assignmentFundingPoolId: string | undefined;
     readonly offerId: string | undefined;
     readonly offerRevision: string | undefined;
   },
@@ -77,6 +80,17 @@ export function ordinaryCommandIntent(
           conditionId: request.payload.conditionId,
           careDefinitionId: ids.careDefinitionId,
           resourceOrProviderReceiptId: ids.careEvidenceId,
+        },
+      };
+    case 'SetAssignment':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          assignment: request.payload.assignment,
+          locationId: ids.assignmentLocationId,
+          dutyEvidenceId: ids.assignmentEvidenceId,
+          fundingPoolId: ids.assignmentFundingPoolId,
         },
       };
     default:
@@ -148,6 +162,15 @@ function requestedEffectPresent(
             condition.care?.channel === 'MATERIAL',
         ) ?? false
       );
+    case 'SetAssignment': {
+      const character = prepared.next.lifecycle.characters.find(
+        (person) => person.identity.characterId === request.payload.characterId,
+      );
+      return (
+        character?.presence.assignment === request.payload.assignment &&
+        character.presence.fieldPartyId === ids.partyId
+      );
+    }
     case 'RenameCompany':
     case 'ChoosePerk':
       return lifecycleChanged(prepared);

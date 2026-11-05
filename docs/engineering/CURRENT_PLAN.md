@@ -1,31 +1,29 @@
 # Warwrit current delivery plan
 
-## Care and local recruitment — 2026-11-05, NATIVE PATH PASSED
+## Explicit recovery assignment — 2026-11-05, NATIVE PATH PASSED
 
-Coordinator, author, integrator, resource owner and validator is this chat's parent.
+Coordinator is this chat’s parent, owning integration, web, docs and native validation; one delegated editor owns backend/protocol.
 Full-game objective remains ACTIVE.
-Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
-Painted atlas PR344, objective-marker PR353 and care PR350 are merged; main isf0461180.
-PR353 merged with owner permission for exact headb9f150ba after full CI42003635623 and scope42003688757 PASS.
-[Care contract](../work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns treatment acceptance.
-[PR350](https://github.com/Vovanostm/warwrit/pull/350) merged expected319b901e after full CI42020812490/scope42024966505 PASS.
-Care6967f234 full CI PASS; native treatment/lost-reply/exact retry/restart PASS on the recruitment stand.
-[Recruitment contract](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) owns the finite local pool.
-Owner approved physician at Brod, signing50/base daily10 crowns; care challenges5/10 remain temporary.
-[Recruitment PR360](https://github.com/Vovanostm/warwrit/pull/360) candidate targets mainf0461180/care319b901e; prior CI51299b0c failed false quality attribution.
-Normal travel → inn inspection → hire → separate Join → care → lost reply/reload/exact retry → restart PASS.
-Each accepted Recruit/Join/ApplyCare has one receipt for two identical POST bodies.
-Treasury800→750, medical units2→1, physician medicine150→190 XP, patient health stays17.
-Source corrections cover consumption rollback, knowledge privacy, exact client retries, carried purse and local reserve food.
-Product/source and finite gameplay ACCEPT; care-control capture PARTIAL.
-Fresh unit1244/98 SKIP, SQL88 and both browsers PASS; source-correct metadata resolves ordinary-runtime attribution.
-Source-bound coverage naming fix: regression/types/lint, negative control, full measured audit PASS; independent source ACCEPT. Dependencies/gates unchanged.
-Expired-pursuit setup uses finite native reacquisition and post-acceptance UI sequence; frozen browser409→200/source ACCEPT.
-Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
-At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
-Owner authorized PR350 at319b901e; actual merge/main/local readbackf0461180 matches the checked tree.
-Owner authorized PR360 ateb19dd0e; clean-root test fix supersedes it. New-head CI and final-head permission remain required.
-PR publication is authorized; deployment remains unauthorized.
+Finite path: sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
+Painted atlas PR344, objective markers PR353, care PR350 and recruitment PR360 are MERGED.
+PR360 merged as1121665c after owner approval for final23aa287b, full CI42028536324 and scope42032224662 PASS.
+Live PR/remote main/clean local main agree; the tested candidate and merge trees match.
+[Recruitment owner](../work-packages/WP-02.2.md#ordinary-local-recruitment--2026-11-05-owner-approved-temporary-profile) retains native hire/Join/care/retry/restart PASS and visual limits.
+[Recovery owner](../work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05) defines the next finite result.
+Branch codex/company-recovery starts at1121665c; outer checkout is the only active writing worktree.
+Expose existing FIELD↔RECOVERY, future fed refresh and return to the same party slot; no new healing rules.
+Retained Company2 is at Brod with a treated severe wound,17HP and food; assignments are FIELD.
+No historical healing: settle the previous assignment before the current-tick transition.
+Native FIELD→RECOVERY at1992 kept17HP; fed future1995→20HP,2006→31HP; same-slot FIELD return PASS.
+Lost reply/reload/exact retry2POSTs/1receipt and unchanged server restart PASS; food carry advances once.
+Web9/types/lint, SQL17/projection5 PASS; source review has no blocker.
+First UI critique REWORK fixed: clearer saved-request copy, wound names and refresh success/error feedback.
+Native corrected UI outage/retry/return PASS; source and finite day UI ACCEPT; final night view and integrated CI remain open.
+Source is LOCAL and reviewed; PR publication/CI follow. No merge permission exists for this recovery slice.
+Native stand5238/API3538 uses warwrit_care_recruit_native_20261105; original wounded saves retained.
+Payroll PR338 remains parked for subsequent current-main integration.
+At most two active writing worktrees; no Orca, automation or deployment activation.
+PR publication is authorized. No merge permission exists for the new recovery slice.
 
 ## History
 

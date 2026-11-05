@@ -22,12 +22,16 @@ import { readWorldClock } from '../world/clock.js';
 import { updateCompanyAggregateWithReceipt } from './repository.js';
 import { prepareStationaryFoodFacts } from './travel-food.js';
 
-function conditionsChanged(physical: CompanyPhysicalState, characterId: string): boolean {
+function bodyChanged(physical: CompanyPhysicalState, characterId: string): boolean {
   return (
     canonicalJson(physical.conditions.filter((entry) => entry.characterId === characterId)) !==
-    canonicalJson(
-      physical.knowledge.conditionSnapshots.filter((entry) => entry.characterId === characterId),
-    )
+      canonicalJson(
+        physical.knowledge.conditionSnapshots.filter((entry) => entry.characterId === characterId),
+      ) ||
+    canonicalJson(physical.vitals.filter((entry) => entry.characterId === characterId)) !==
+      canonicalJson(
+        physical.knowledge.vitalSnapshots.filter((entry) => entry.characterId === characterId),
+      )
   );
 }
 
@@ -224,8 +228,9 @@ export async function observeLocalCompanyConditions(
       presence.location.siteId === place.siteId &&
       presence.location.areaId === place.areaId,
   );
-  if (!local.some(({ identity }) => conditionsChanged(physical, identity.characterId)))
-    return state;
+  const changed = local.some(({ identity }) => bodyChanged(physical, identity.characterId));
+  const recovering = local.find(({ presence }) => presence.assignment === 'RECOVERY');
+  if (!changed && !recovering) return state;
   const clock = await readWorldClock(transaction, lifecycle.worldId, now, true);
   if (
     BigInt(clock.tick) < BigInt(lifecycle.campaignTick) ||
@@ -233,6 +238,8 @@ export async function observeLocalCompanyConditions(
       state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
   )
     return state;
+  const recoveryDue = recovering && BigInt(clock.tick) > BigInt(physical.processedTick);
+  if (!changed && !recoveryDue) return state;
 
   // Prepare every observation before writing any, so an unavailable prerequisite
   // preserves all prior knowledge. Food and recovery use the actual current tick.
@@ -241,10 +248,11 @@ export async function observeLocalCompanyConditions(
   const contactIds = local.map((person) => person.identity.characterId);
   for (let observedCount = 0; observedCount < local.length; observedCount += 1) {
     // The first command advances recovery for everyone. Recheck all local subjects
-    // so a wound resolved by that interval is disclosed in this same read.
-    const subject = local.find(({ identity }) =>
-      conditionsChanged(next.economy.physical!, identity.characterId),
-    );
+    // so changed health and wounds are disclosed in this same read. A recovering
+    // member initiates future settlement even when the old snapshots still match.
+    const subject =
+      local.find(({ identity }) => bodyChanged(next.economy.physical!, identity.characterId)) ??
+      (observedCount === 0 && recoveryDue ? recovering : undefined);
     if (!subject) break;
     const draft = prepareObservationDraft(
       next,
