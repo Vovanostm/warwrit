@@ -29,6 +29,22 @@ Eight isolated fixture groups, Bash syntax, scoped formatting and diff PASS.
 Full-route hosted CI and a real documentation follow-up are required for delivery.
 Revised hosted timing is not yet measured.
 
+### Product baseline advance during verification
+
+Full CI42006925023 at `34777036` PASS in17m19s, with both unit phases1237 PASS/
+93 SKIP, stress10000, SQL83, both browsers and the five-file audit. The existing
+semantic-identity warning retained syntactic attribution for new-only findings.
+During that run PR353 merged to main as `81e7931b`, adding product source.
+Live PR358 was CONFLICTING/DIRTY even while its baseRefOid still showed6c525840.
+Direct branch readback found the new main. This is a concrete reason to inspect
+live refs and mergeability together before merging.
+
+Integrate current main and retain both sides of the changelog conflict. The
+product files and game integrator's CURRENT_PLAN remain identical to main.
+The first green run proves the earlier frozen source, not the new integrated
+product base. Integrated source readback and applicable CI must pass before
+merge. This case does not qualify for the documentation-only reuse proposal.
+
 ### Larger opportunity from PR353
 
 The game author integrated PR356 on main `6c525840`. PR353 had a successful full

@@ -163,7 +163,11 @@ export async function readWorldLabCartography(
     charted = mergeExploredBits(charted, grant.coverageSnapshot);
     for (const snapshot of grant.siteSnapshot) {
       const site = knownSite(snapshot, 'CHART', false);
-      sites.set(site.siteId, site);
+      sites.set(site.siteId, {
+        ...site,
+        questMarker:
+          grant.sourceKind === 'QUEST_MARKER' || sites.get(site.siteId)?.questMarker === true,
+      });
     }
   }
   for (const observation of stored.places) {
@@ -172,7 +176,7 @@ export async function readWorldLabCartography(
       'OBSERVED',
       observation.firstVisitedAt !== null,
     );
-    sites.set(site.siteId, site);
+    sites.set(site.siteId, { ...site, questMarker: sites.get(site.siteId)?.questMarker === true });
   }
   const conditions = worldSightConditionsAt(clock.epochMs, movement.serverTimeMs);
   const visible = worldSightCells(

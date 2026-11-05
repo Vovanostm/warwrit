@@ -5816,3 +5816,34 @@ Next: final CI for #283; validate #282 and dispatch its independent reviewer.
 Wrapper releases its own lease when this single tick returns.
 
 **Previous #271 publication / #282 builder handoff:**
+
+## Care checkpoint before objective-marker slice — 2026-11-05
+
+## Ordinary company care — 2026-11-05, PUBLISHED DRAFT
+
+Coordinator, author, resource owner, integrator and validator is this chat's parent.
+Full-game objective remains ACTIVE.
+Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
+[Care contract](https://github.com/Vovanostm/warwrit/blob/516c1eb288c82ded08acd301f8b93a939834c421/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) owns acceptance and limits.
+Painted atlas PR344 is merged as `ee03f4ee`. Main92c0f534 / PR349 is integrated.
+[PR350](https://github.com/Vovanostm/warwrit/pull/350) is draft on `codex/game-care-delivery`.
+Care uses existing opening physician/two medical units and owner-approved medicine challenges5/10.
+Company-only stock, COMPANY-accessible containers and lawful local wound observations are enforced.
+Resolved battle return and named atlas-label SITE input are fixed and verified natively.
+Earlier HUNT02 won with3survivors and paid80crowns; no treatable severe wound resulted.
+Prior missed-input/AFK losses remain saved and supply no balance acceptance.
+One revised HUNT02 left two survivors and Mora's heavy wound, but the sole physician died.
+Mora succession, terminal return and untreated save restart PASS. Two medical units/800crowns retained.
+Native treatment/lost-reply/exact-retry acceptance remains open without a capable provider.
+Client regression proves exact stored request survives transport loss, remount and401. No care result is claimed.
+CI41970247645 passed clean gate/coverage/both browsers, then failed the quality audit.
+Care selection, financial observations and label visibility filtering are simplified. Source review ACCEPT.
+Fresh local measured unit1240PASS/96skipped, real SQL86/migration smoke PASS.
+Both full browser journeys and runtime aggregation PASS with fresh measurements.
+Pre-integration local quality audit PASS with0 introduced code/duplicate findings. CSS warning advisory.
+Integrated browser/aggregation and source/infra ACCEPT. Repeated local audit input overflowed, clean CI required.
+GitHub PR350 owns current-head hosted CI. The PR is unmerged and native care acceptance remains open.
+Live owned stand5238 retains warwrit_care_native_20261105b. Old5228 stand stopped, original DB retained.
+Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.
+ROADMAP/PROMPTS outside the repo remain owner-review proposals.
+PR publication is authorized. Further main merges require current permission.
