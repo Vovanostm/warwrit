@@ -18,7 +18,7 @@ import type {
 } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 
-export const RECRUIT_POOL_VERSION = 'local-recruit-pool-1';
+const RECRUIT_POOL_VERSION = 'local-recruit-pool-1';
 export const RECRUIT_SIGNING_Q = moneyQ((50n * BigInt(COMPANY_RULES.moneyQPerCrown)).toString());
 export const RECRUIT_DAILY_WAGE_MILLI = '10000';
 
@@ -31,8 +31,6 @@ export function recruitWageRates() {
     ).toString(),
   }));
 }
-
-export const RECRUIT_SITES = Object.freeze(['kamenny-brod', 'bereznyak', 'tikhaya-gat'] as const);
 
 const profiles = [
   {
@@ -280,7 +278,7 @@ export interface RecruitOfferView {
   readonly physician: boolean;
 }
 
-export function projectRecruitOffer(row: StoredRecruitOffer): RecruitOfferView {
+function projectRecruitOffer(row: StoredRecruitOffer): RecruitOfferView {
   const candidate = row.candidate as LifecycleCharacter;
   const vitals = row.vitals as PhysicalVitals;
   if (
@@ -348,8 +346,4 @@ export function attachRecruitGenesis(
       physical: { ...physical, vitals: [...physical.vitals, vitals] },
     },
   };
-}
-
-export function recruitLocation(row: StoredRecruitOffer) {
-  return { kind: 'AT' as const, siteId: row.site_id, areaId: row.area_id };
 }

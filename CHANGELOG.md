@@ -24,7 +24,8 @@ requests.
   focused client regression2/2 and web types PASS. Parent lint found and corrected
   two unused initial assignments. Re-review adds stale-account completion guards
   so an old reply cannot hide another company's pending retry.
-  Native acceptance remains open; nothing is merged.
+  The first full gate stopped before game tests on four unused recruitment
+  exports, now removed or made private. Native/final gate remain open; nothing is merged.
 
 ### Add ordinary local recruitment to the company loop
 
