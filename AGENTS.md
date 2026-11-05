@@ -7,8 +7,9 @@ Owner workflow amendments through 2026-11-05 are consolidated here.
 
 - Deliver the next playable step through the normal game entry. Use the existing
   task/contract to name the player action, observable result and smallest check.
-  For gameplay, keep a short acceptance checklist there. Close a criterion only
-  after its scenario passes on the affected build. Record missing evidence explicitly.
+  For gameplay, keep a short acceptance checklist there. Close a criterion after
+  its scenario passes on the affected build. Preserve invariants and authority.
+  Apply independent critique at final gameplay/visual acceptance. Record missing evidence.
 - The publication-readiness mission follows the owner's 2026-10-29 correction.
   Complete sign-in → company → contract → travel → combat → reward → care/payroll
   → next contract → server restart. Work on the next failing step. Defer visual
@@ -48,9 +49,9 @@ Owner workflow amendments through 2026-11-05 are consolidated here.
 - The publication-readiness mission permits at most two active writing worktrees.
   Retain parked work. A delegated editor returns a diff. A branch owner commits
   finished steps. Scope/size are advisory except explicit owner boundaries.
-- After failure, distinguish defect, environment and missing evidence. Read the
-  diagnostic and fix its owner before rerunning affected checks. Repeat a failure
-  only with a changed hypothesis. Stop at acceptance or a concrete blocker.
+- After failure, distinguish product defect, environment, invalid check and missing
+  evidence. Read the diagnostic and fix its owner before rerunning affected checks.
+  Repeat a failure only with a changed hypothesis. Stop at acceptance or a concrete blocker.
 
 ## Work-package steps
 
@@ -125,10 +126,11 @@ Owner workflow amendments through 2026-11-05 are consolidated here.
 
 ## Code discovery
 
-- Confirm cwd/branch/HEAD/dirty state. Prefer the graph when its root/revision match.
-  Use `rg`/`git grep` for stale/missing results, docs, configs and strings. Read owning
-  source. Use `pnpm agent:status` when live integration/PR/writer state is needed.
-  Check lockfile/typings and official docs before changing version-sensitive APIs.
+- Set each command's workdir to the assigned checkout. Confirm its branch/HEAD/dirty.
+  Prefer the graph when its root/revision match. Use `rg`/`git grep` for stale/missing
+  results, docs, configs and strings. Read owning source. Use `pnpm agent:status` for
+  live integration/PR/writer state. Check lockfile/typings and official docs before
+  changing version-sensitive APIs.
 
 <a id="verification-without-duplicate-work"></a>
 <a id="proportional-verification"></a>

@@ -5,6 +5,52 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Task-quality evaluation research — 2026-11-05
+
+The owner requested more primary material on evaluating and improving execution.
+The sources below were opened and read for their applicable claims. They inform
+an on-demand method in [HARNESS_EVAL](../HARNESS_EVAL.md#task-quality-assessment--2026-11-05).
+Local applications are engineering judgments. Their effects remain NOT_MEASURED.
+
+- Anthropic separates task, trial, grader and final environment outcome. It advises
+  isolated environments, outcome-oriented checks, human-calibrated model judgments
+  and balanced cases for required and unnecessary actions. This is engineering
+  guidance, with examples from its systems. Use real failures and existing journeys
+  to improve acceptance. [Demystifying evals, 2026-01-09](https://www.anthropic.com/research/demystifying-evals-for-ai-agents).
+- OpenAI recommends task-specific evaluation, expert calibration and pass/fail or
+  pairwise judgments. Judges can favor longer answers or their presentation order.
+  Compare the same evidence against explicit criteria and examine disagreements
+  with the owner. [Evaluation best practices](https://developers.openai.com/api/docs/guides/evaluation-best-practices).
+- OpenAI describes trace grading as structured assessment of agent decisions and
+  tool interactions to locate failure causes. Use observed calls/results to identify
+  a repair boundary alongside outcome verification. This does not validate inferred
+  intent or measure a productivity effect. [Trace grading](https://developers.openai.com/api/docs/guides/trace-grading).
+- τ-bench evaluates final database state and required answer content, while noting
+  that this can miss a policy violation during execution. Its pass^k asks whether
+  all k independent trials succeed. Pass@k asks whether any succeeds. Task retries
+  during debugging and repeated HTTP requests within one SQL test do not constitute
+  independent agent trials. Its simulated retail/airline results do not establish
+  Warwrit reliability. [τ-bench v1, sections 3 and 5](https://arxiv.org/html/2406.12045v1).
+- METR randomized AI access across 246 tasks from 16 experienced open-source
+  developers and observed 19% longer completion time with early-2025 tools. This
+  is evidence for that setting. Use measured completion effort and retain unfinished
+  attempts when comparing local changes. [Original study, 2025-07-10](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/).
+- METR's later study update describes participant/task selection and unreliable
+  time measurement with concurrent agents. It calls the new productivity estimate
+  unreliable. Preselect comparable tasks, include child usage when available, and
+  distinguish elapsed time from summed worker time. [Design update, 2026-02-24](https://metr.org/blog/2026-02-24-uplift-update/).
+- OpenAI's audit found flawed tests in 59.4% of 138 selected hard SWE-bench Verified
+  tasks and evidence of benchmark exposure. The percentage applies to that audited
+  subset. Hidden tests can impose unspecified behavior or implementation details.
+  Review an oracle against its task and qualify replay of public historical fixes.
+  [Benchmark audit, 2026-02-23](https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/).
+
+The resulting local priority is a valid acceptance boundary, diagnosed rework,
+then comparable cost. Existing contracts, logs and checks hold the evidence.
+A game outcome combines reachable player actions, saved effects and applicable
+player/visual review. Current SQL success covers its exercised boundary. The
+care snapshot and remaining observations are in the owning evaluation page.
+
 ## Research correction and application — 2026-11-04
 
 The owner asked for a game-focused harness after supplying the four sources below.
