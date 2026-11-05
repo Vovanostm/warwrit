@@ -889,3 +889,34 @@ and harness changes without changing game production source. Preserve both dated
 histories and current authority. Final affected source review ACCEPT covers the
 CI/history resolution. Format, plan-limit and diff checks PASS; merged-head CI
 is pending. No additional local game suite was run for this documentation/harness merge.
+
+## Accepted hunt objective markers — 2026-11-05
+
+Owner decision in this chat is «Показывать метку цели, путь разведывать».
+Branch `codex/contract-objective-markers` is independently based on main92c0f534.
+Observable outcome is accepting an ordinary battle contract and seeing its named
+destination on the painted atlas while the road still needs exploration.
+
+Use the existing immutable map edition and company `QUEST_MARKER` grant with
+zero terrain coverage. HUNT01–HUNT03 ACCEPT/HELP grant the objective in the same
+transaction as participation and its receipt. Normal cartography reads reconcile
+still-participating accepted saves from server-owned matching profile/terms. Grants retain
+learned locations after departure. Map source remains the existing CHART view;
+stored grant provenance distinguishes the quest source. Other quest modes retain
+their source rules. No schema, replay or combat-rule change.
+
+Acceptance uses the ordinary entry and the existing PostgreSQL world-route tests.
+
+- Accepted destination is present, unvisited, with unchanged charted/explored bits.
+- Exact command retry creates one grant; rejected acceptance grants nothing.
+- Known destination through unknown terrain still rejects without a new order.
+- An accepted old save without a grant repairs it on the next ordinary map read.
+- Native acceptance, reload and independent final critique remain pending.
+
+Local real PostgreSQL checks for both ordinary painted-cartography scenarios PASS.
+Server types and scoped ESLint PASS. Initial type errors selected an unnamed
+navigation site and used untyped cartography tables through the typed query API;
+both were corrected. The first SQL run found an invalid test request using the
+nested revision instead of the response revision. Correcting that fixture made
+the actual acceptance scenario pass. Hosted CI and publication remain pending.
+Full-game and care acceptance remain open under their existing owners.

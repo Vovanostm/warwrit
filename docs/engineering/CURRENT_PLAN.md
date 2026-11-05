@@ -1,29 +1,29 @@
 # Warwrit current delivery plan
 
-## Painted-atlas delivery — 2026-11-05, PUBLISHED / MAIN INTEGRATION
+## Accepted hunt destinations — 2026-11-05, LOCAL
 
-Coordinator, sole writer, integrator and validation owner is this chat's parent.
-Full-game objective remains ACTIVE. The finite target is sign-in → company →
-contract → travel → combat → reward → care/payroll → next contract → restart.
-This step delivers the ordinary company-private painted atlas.
-Branch `codex/game-painted-delivery`; [PR344](https://github.com/Vovanostm/warwrit/pull/344) published head`2a63e830`, scope PASS.
-Main`e31c5a56` / PR345 is being integrated; both histories are retained.
-[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29) owns checks and limits.
-CI41918700198 at2a63e830 PASS, including ordinary game, world lab and quality audit.
-1237unit/93SKIP,10000stress,83SQL PASS; map previews uploaded to CI artifacts.
-The later main merge changes documentation/harness only; game source stays unchanged.
-Final affected source review ACCEPT; merged-head CI is pending.
-Retained trial is http://127.0.0.1:5228 with its own preview database and quick entry.
-Original campaigns, saves and parked WIP remain preserved. At most two active writing worktrees.
-Combat stays parked in codex/game-painted-map; [selected reference](../wiki/battlefield-test-maps.md#камера-сетка-и-высоты--решение-владельца-2026-10-30) remains authoritative.
-Temporary care difficulty is approved at5 for wound care and10 for stabilization.
-PR334–339 remain open. Reuse their source after this map delivery.
-ROADMAP/PROMPTS in ~/learn/warwrit-roadmap remain proposals awaiting approval.
-PR publication is authorized. Main merge/deploy/paid/Orca need current owner permission.
-Next action is publish main integration, monitor CI and obtain main-merge permission.
+Coordinator, author, integrator, resource owner and validator is this chat's parent.
+Full-game objective remains ACTIVE.
+Finite path is sign-in → company → contract → travel → combat → reward → care/payroll → next contract → restart.
+Owner chose «Показывать метку цели, путь разведывать» for accepted battle contracts.
+[Map contract](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#accepted-hunt-objective-markers--2026-11-05) owns current acceptance.
+Branch codex/contract-objective-markers is independently based on main92c0f534 in this worktree.
+HUNT01–HUNT03 ACCEPT/HELP atomically persist a marker-only company grant.
+Ordinary atlas reads repair accepted old saves. The route/terrain still needs exploration.
+Two real PostgreSQL cartography scenarios, server types and scoped lint PASS.
+Native acceptance/reload, independent final critique and hosted CI remain pending.
+[Care PR350](https://github.com/Vovanostm/warwrit/pull/350) remains draft and unmerged at516c1eb2.
+Its full CI41981802583 and scope41981802569 PASS. Main remains92c0f534.
+Care's [published contract](https://github.com/Vovanostm/warwrit/blob/516c1eb288c82ded08acd301f8b93a939834c421/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05) keeps native treatment/lost-reply/retry open.
+Retained wounded Company2 has no capable physician. Ordinary Recruit is unsupported.
+Owner approved a finite persistent local hire pool, physician at Brod, signing50/daily10 crowns.
+Canonical lifecycle, definitions and commands plus four amendments/economy/social records were consulted.
+Live owned stand5238 retains warwrit_care_native_20261105b and all prior saves.
+Keep at most two active writing worktrees. Parked combat and PR334–339 retain separate acceptance.
+ROADMAP/PROMPTS outside the repo remain owner-review proposals.
+PR publication is authorized. Further main merges require current permission.
 
 ## History
 
-[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated results and limits.
-Read only the entry needed for the current question. Historical permission belongs
-to its original task. Detailed execution output stays in ignored output/ or CI artifacts.
+[Prior delivery checkpoints](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
+Detailed execution output stays in ignored output/ or CI artifacts.

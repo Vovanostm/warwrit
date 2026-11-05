@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Reveal accepted battle-contract destinations without charting the road
+
+- 2026-11-05, `codex/contract-objective-markers`, local implementation of the
+  owner's «Показывать метку цели, путь разведывать» decision. HUNT01–HUNT03
+  ACCEPT/HELP persist the existing company QUEST_MARKER grant atomically with
+  participation. Ordinary atlas reads reconcile accepted old saves. Marker-only
+  editions preserve unexplored terrain and existing movement access checks.
+  Affected owners are contract routes, ordinary cartography and the
+  [map contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#accepted-hunt-objective-markers--2026-11-05).
+  Two real PostgreSQL cartography checks, server types and scoped lint PASS after
+  correcting the type/test-fixture errors recorded there. Native/critic/CI pending.
+  No migration. Care PR350 at516c1eb2 remains draft with green full CI/scope.
+
 ### Let the finite preparation approach arrive before pursuit
 
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL correction to

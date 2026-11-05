@@ -3,7 +3,11 @@ import { knownSiteSnapshot } from '../world-lab/cartography-field.js';
 import { sql } from 'kysely';
 import { PAINTED_GAME_WORLD_ID } from './map-context.js';
 import { PAINTED_ATLAS_SHEET, PAINTED_ATLAS_REGION, PAINTED_ATLAS_SITES } from '@warwrit/game-core';
-import type { WorldSurroundingsDto, WorldFreeMovementV2ResponseDto } from '@warwrit/protocol';
+import type {
+  FirstHuntReadResponseDto,
+  WorldSurroundingsDto,
+  WorldFreeMovementV2ResponseDto,
+} from '@warwrit/protocol';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { Client } from 'pg';
@@ -15,6 +19,7 @@ import {
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
   COMPANY_RULES,
+  FIRST_HUNT_ISSUER_LOCATION,
   FIRST_HUNT_INSTANCE_ID,
   FIRST_HUNT_PROFILE_ID,
   WORLD_REGION_VERSION,
@@ -3032,6 +3037,7 @@ function makeSyntheticCompany(
   fixtureConnectionString = connectionString,
   appRegistry = apps,
   selectedWorldId?: string,
+  initialLocation?: { readonly siteId: string; readonly areaId: string },
 ): SyntheticCompany {
   const worldId = selectedWorldId ?? randomUUID();
   const companyId = randomUUID();
@@ -3060,7 +3066,10 @@ function makeSyntheticCompany(
       typeof value === 'string' ? (replacements.get(value) ?? value) : value,
     ),
   ) as CompanyCombatAggregateState;
-  const origin = { kind: 'AT' as const, siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+  const origin = {
+    kind: 'AT' as const,
+    ...(initialLocation ?? { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' }),
+  };
   const economy = remapped.economy;
   const physical = economy.physical;
   if (!physical) throw new Error('Travel fixture physical state missing');
@@ -3644,6 +3653,142 @@ describe('legacy free-movement receipts (PostgreSQL)', () => {
 });
 
 describe('ordinary painted cartography (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'grants an accepted hunt destination once without revealing its road, including retained saves',
+    async () => {
+      const db = requireDatabase();
+      const actor = makeSyntheticCompany(
+        db,
+        connectionString,
+        apps,
+        PAINTED_GAME_WORLD_ID,
+        FIRST_HUNT_ISSUER_LOCATION,
+      );
+      await seedSyntheticCompany(db, actor);
+      const readMap = async () => {
+        const response = await actor.app.inject({
+          method: 'GET',
+          url: '/world/surroundings',
+          headers: actor.ownerHeaders,
+        });
+        expect(response.statusCode, response.body).toBe(200);
+        const cartography = response.json<WorldSurroundingsDto>().map.cartography;
+        if (!cartography) throw new Error('ordinary painted map missing');
+        return cartography;
+      };
+      const grants = async () =>
+        (
+          await sql`
+            select source_ref from company_map_grants
+             where world_id = ${actor.worldId} and company_id = ${actor.companyId}
+               and source_kind = 'QUEST_MARKER'
+          `.execute(db)
+        ).rows;
+      try {
+        const before = await readMap();
+        expect(before.sites.some((site) => site.siteId === 'staraya-melnitsa')).toBe(false);
+        const offered = await actor.app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: actor.ownerHeaders,
+        });
+        expect(offered.statusCode, offered.body).toBe(200);
+        const view = offered.json<FirstHuntReadResponseDto>();
+        const contract = view.contract;
+        if (!contract) throw new Error('hunt offer missing');
+        const command = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          type: 'ACCEPT',
+          expectedPublicRevision: view.publicRevision,
+          payload: { instanceId: FIRST_HUNT_INSTANCE_ID, termsDigest: contract.termsDigest },
+        };
+        const rejected = await actor.app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.ownerHeaders,
+          payload: { ...command, expectedPublicRevision: '999999' },
+        });
+        expect(rejected.statusCode, rejected.body).toBe(409);
+        expect(await grants()).toEqual([]);
+        const accepted = await actor.app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.ownerHeaders,
+          payload: command,
+        });
+        expect(accepted.statusCode, accepted.body).toBe(200);
+        expect(await grants()).toHaveLength(1);
+        const replay = await actor.app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.ownerHeaders,
+          payload: command,
+        });
+        expect(replay.json()).toEqual(accepted.json());
+        const after = await readMap();
+        expect(after.sites.find((site) => site.siteId === 'staraya-melnitsa')).toMatchObject({
+          visited: false,
+          source: 'CHART',
+        });
+        expect({ charted: after.charted, explored: after.explored }).toEqual({
+          charted: before.charted,
+          explored: before.explored,
+        });
+        const mill = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'staraya-melnitsa')!;
+        const movement = await actor.app.inject({
+          method: 'GET',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+        });
+        const current = movement.json<WorldFreeMovementV2ResponseDto>();
+        const route = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: {
+            schemaVersion: 2,
+            commandId: randomUUID(),
+            expectedPublicRevision: current.publicRevision,
+            expectedMovementEpoch: current.movementEpoch,
+            action: {
+              kind: 'MOVE_TO',
+              mapEdition: after.mapEdition,
+              target: { kind: 'SITE', siteId: mill.siteId },
+            },
+          },
+        });
+        expect(route.json(), route.body).toMatchObject({ code: 'MAP_INFORMATION_REQUIRED' });
+        expect((await readMap()).revision).toBe(after.revision);
+        expect(await grants()).toHaveLength(1);
+        // A pre-change save has accepted terms but no grant. Its next ordinary read repairs it.
+        await sql`
+          delete from company_map_grants
+           where world_id = ${actor.worldId} and company_id = ${actor.companyId}
+             and source_kind = 'QUEST_MARKER'
+        `.execute(db);
+        const restored = await readMap();
+        expect(restored.sites.find((site) => site.siteId === mill.siteId)).toEqual(
+          after.sites.find((site) => site.siteId === mill.siteId),
+        );
+        expect(restored.charted).toBe(before.charted);
+        expect(restored.explored).toBe(before.explored);
+        expect(await grants()).toHaveLength(1);
+      } finally {
+        for (const table of [
+          'company_exploration_chunks',
+          'company_place_observations',
+          'company_region_knowledge',
+          'company_map_grants',
+        ])
+          await sql`delete from ${sql.table(table)} where world_id = ${actor.worldId} and company_id = ${actor.companyId}`.execute(
+            db,
+          );
+        await cleanupSyntheticCompany(db, actor);
+      }
+    },
+  );
+
   it.skipIf(database === undefined)(
     'uses ordinary company scope, masked tiles and exact movement replay without exposing hidden geography',
     async () => {
