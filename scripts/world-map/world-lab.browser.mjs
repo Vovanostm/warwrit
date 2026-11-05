@@ -54,24 +54,28 @@ async function waitForFreshMap(target = page, afterSequence) {
   );
 }
 async function rightClickMarker(selector, requestPath, allowMissing = false) {
+  if (!allowMissing) await page.locator(selector).waitFor({ state: 'attached' });
   const previous = await page.locator('#world-sequence').textContent();
   const point = await page.waitForFunction(
-    ({ selector, previous, allowMissing }) => {
+    ({ selector, previous }) => {
       if (
         globalThis.document.body.dataset.connection !== 'live' ||
         globalThis.document.querySelector('#world-sequence').textContent === previous
       )
         return false;
       const marker = globalThis.document.querySelector(selector);
-      if (!marker) return allowMissing ? { missing: true } : false;
+      if (!marker) return { missing: true };
       const at = new globalThis.DOMPoint(0, 0).matrixTransform(marker.getScreenCTM());
       return { x: at.x, y: at.y };
     },
-    { selector, previous, allowMissing },
+    { selector, previous },
   );
   const at = await point.jsonValue();
   await point.dispose();
-  if (at.missing) return undefined;
+  if (at.missing) {
+    assert.ok(allowMissing, `Required marker disappeared after a fresh observation: ${selector}`);
+    return undefined;
+  }
   const accepted = response(requestPath);
   await page.mouse.click(at.x, at.y, { button: 'right' });
   return accepted;

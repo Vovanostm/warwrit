@@ -335,11 +335,7 @@ export function observeFinance(
       finance: {
         ...finance,
         maintenance: finance.maintenance.map((m) =>
-          m.kind === 'SAFE_SERVICE' &&
-          m.endedAt !== null &&
-          (!leader ||
-            !m.beneficiaryIds.includes(leader) ||
-            m.beneficiaryEnds.some((d) => d.characterId === leader))
+          m.kind === 'SAFE_SERVICE' && m.endedAt !== null && serviceHasNoActiveLeader(m, leader)
             ? { ...m, knownEndedAt: m.endedAt }
             : m,
         ),
@@ -378,15 +374,16 @@ export function observeFinance(
       'INVALID_SOURCE',
     );
     const oldAccount = account;
-    for (const claim of finance.claims.filter((c) => c.membershipId === account.membershipId)) {
-      if (
-        !oldAccount.known ||
-        oldAccount.knownDeath !== (character.presence.availability === 'DEAD') ||
-        BigInt(claim.reportedQ) !== claimEarnedQ(claim) ||
-        BigInt(claim.reportedCoveredQ) !== claimCoveredQ(claim)
-      )
-        finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
-    }
+    const changedClaims = finance.claims.filter(
+      (claim) =>
+        claim.membershipId === account.membershipId &&
+        (!oldAccount.known ||
+          oldAccount.knownDeath !== (character.presence.availability === 'DEAD') ||
+          BigInt(claim.reportedQ) !== claimEarnedQ(claim) ||
+          BigInt(claim.reportedCoveredQ) !== claimCoveredQ(claim)),
+    );
+    for (const claim of changedClaims)
+      finance = closeEpochs(finance, context.atTick, claim.poolId, claim.dueAt);
     account = {
       ...account,
       known: true,
@@ -449,4 +446,15 @@ export function observeFinance(
       ),
     };
   return { finance, requirements: [], allocations };
+}
+
+function serviceHasNoActiveLeader(
+  service: CompanyFinance['maintenance'][number],
+  leaderId: string | null,
+): boolean {
+  return (
+    !leaderId ||
+    !service.beneficiaryIds.includes(leaderId) ||
+    service.beneficiaryEnds.some((end) => end.characterId === leaderId)
+  );
 }

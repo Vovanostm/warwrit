@@ -14,6 +14,22 @@ import './company-care.css';
 
 const api = (import.meta.env['VITE_API_BASE_URL'] ?? '/api').replace(/\/$/u, '');
 
+function selectedCareOptions(
+  treatments: NonNullable<CompanyHoldingsDto['care']>['treatments'],
+  treatmentId: string,
+  providerId: string,
+  resourceItemId: string,
+) {
+  const treatment = treatments.find((entry) => entry.conditionId === treatmentId) ?? treatments[0];
+  const provider =
+    treatment?.providers.find((entry) => entry.characterId === providerId) ??
+    treatment?.providers[0];
+  const material =
+    treatment?.materials.find((entry) => entry.itemId === resourceItemId) ??
+    treatment?.materials[0];
+  return { treatment, provider, material };
+}
+
 export function CompanyCarePanel(props: {
   readonly accountId: string;
   readonly company: CompanySummaryDto;
@@ -33,13 +49,12 @@ export function CompanyCarePanel(props: {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string>();
   const treatments = props.holdings.care?.treatments ?? [];
-  const treatment = treatments.find((entry) => entry.conditionId === treatmentId) ?? treatments[0];
-  const provider =
-    treatment?.providers.find((entry) => entry.characterId === providerId) ??
-    treatment?.providers[0];
-  const material =
-    treatment?.materials.find((entry) => entry.itemId === resourceItemId) ??
-    treatment?.materials[0];
+  const { treatment, provider, material } = selectedCareOptions(
+    treatments,
+    treatmentId,
+    providerId,
+    resourceItemId,
+  );
 
   useEffect(() => {
     try {
@@ -132,6 +147,81 @@ export function CompanyCarePanel(props: {
     );
   }
 
+  let controls = (
+    <p className="state-note">
+      Нет известной раны, которую можно лечить здесь, или рядом нет способного врача и доступного
+      набора.
+    </p>
+  );
+  if (pending) {
+    controls = (
+      <div role="status">
+        <p>Приказ о лечении ещё не подтверждён. Повторите его без изменений.</p>
+        <button className="action" disabled={busy} onClick={() => void applyCare(true)}>
+          Повторить тот же приказ
+        </button>
+      </div>
+    );
+  } else if (treatment && provider && material) {
+    controls = (
+      <div className="company-care-fields">
+        <label>
+          <span>Раненый</span>
+          <select
+            aria-label="Раненый"
+            value={treatment.conditionId}
+            onChange={(event) => {
+              setTreatmentId(event.target.value);
+              setProviderId('');
+              setResourceItemId('');
+            }}
+          >
+            {treatments.map((entry) => (
+              <option key={entry.conditionId} value={entry.conditionId}>
+                {characterName(entry.characterId)} · {conditionLabel(entry.definitionId)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Врач отряда</span>
+          <select
+            aria-label="Врач отряда"
+            value={provider.characterId}
+            onChange={(event) => setProviderId(event.target.value)}
+          >
+            {treatment.providers.map((entry) => (
+              <option key={entry.characterId} value={entry.characterId}>
+                {characterName(entry.characterId)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Материал</span>
+          <select
+            aria-label="Медицинский набор"
+            value={material.itemId}
+            onChange={(event) => setResourceItemId(event.target.value)}
+          >
+            {treatment.materials.map((entry) => (
+              <option key={entry.itemId} value={entry.itemId}>
+                {itemLabel(entry.definitionId)} · {entry.quantity} шт.
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          className="action"
+          disabled={busy || props.company.runStatus !== 'ACTIVE'}
+          onClick={() => void applyCare()}
+        >
+          Провести уход
+        </button>
+      </div>
+    );
+  }
+
   return (
     <section className="company-care" aria-label="Уход за ранами">
       <h3 className="panel-subtitle">Уход за ранами</h3>
@@ -139,75 +229,7 @@ export function CompanyCarePanel(props: {
         Перевязка расходует один медицинский набор и позволяет ране восстанавливаться со временем.
         Здоровье сразу не восстанавливается.
       </p>
-      {pending ? (
-        <div role="status">
-          <p>Приказ о лечении ещё не подтверждён. Повторите его без изменений.</p>
-          <button className="action" disabled={busy} onClick={() => void applyCare(true)}>
-            Повторить тот же приказ
-          </button>
-        </div>
-      ) : treatment && provider && material ? (
-        <div className="company-care-fields">
-          <label>
-            <span>Раненый</span>
-            <select
-              aria-label="Раненый"
-              value={treatment.conditionId}
-              onChange={(event) => {
-                setTreatmentId(event.target.value);
-                setProviderId('');
-                setResourceItemId('');
-              }}
-            >
-              {treatments.map((entry) => (
-                <option key={entry.conditionId} value={entry.conditionId}>
-                  {characterName(entry.characterId)} · {conditionLabel(entry.definitionId)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <span>Врач отряда</span>
-            <select
-              aria-label="Врач отряда"
-              value={provider.characterId}
-              onChange={(event) => setProviderId(event.target.value)}
-            >
-              {treatment.providers.map((entry) => (
-                <option key={entry.characterId} value={entry.characterId}>
-                  {characterName(entry.characterId)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <span>Материал</span>
-            <select
-              aria-label="Медицинский набор"
-              value={material.itemId}
-              onChange={(event) => setResourceItemId(event.target.value)}
-            >
-              {treatment.materials.map((entry) => (
-                <option key={entry.itemId} value={entry.itemId}>
-                  {itemLabel(entry.definitionId)} · {entry.quantity} шт.
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            className="action"
-            disabled={busy || props.company.runStatus !== 'ACTIVE'}
-            onClick={() => void applyCare()}
-          >
-            Провести уход
-          </button>
-        </div>
-      ) : (
-        <p className="state-note">
-          Нет известной раны, которую можно лечить здесь, или рядом нет способного врача и
-          доступного набора.
-        </p>
-      )}
+      {controls}
       {message && (
         <p role="status" className="state-note">
           {message}

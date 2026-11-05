@@ -267,8 +267,6 @@ async function chooseReachableSite(page, map, observerSiteId) {
         if (!matrix || !label) return null;
         const style = globalThis.getComputedStyle(label);
         const labelRect = label.getBoundingClientRect();
-        if (style.display === 'none' || style.visibility === 'hidden' || labelRect.width === 0)
-          return null;
         const point = new globalThis.DOMPoint(0, 0).matrixTransform(matrix);
         return {
           siteId: node.getAttribute('data-site-id'),
@@ -277,12 +275,18 @@ async function chooseReachableSite(page, map, observerSiteId) {
           y: point.y,
           labelX: labelRect.x + labelRect.width / 2,
           labelY: labelRect.y + labelRect.height / 2,
+          labelDisplay: style.display,
+          labelVisibility: style.visibility,
+          labelWidth: labelRect.width,
         };
       }),
     );
   const markers = positions.filter(
     (marker) =>
       marker?.siteId &&
+      marker.labelDisplay !== 'none' &&
+      marker.labelVisibility !== 'hidden' &&
+      marker.labelWidth !== 0 &&
       marker.x >= mapRect.left &&
       marker.x <= mapRect.right &&
       marker.y >= mapRect.top &&

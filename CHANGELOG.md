@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Close introduced care quality findings with measured client retry
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350), after CI41970247645 passed
+  both browser paths but failed quality. Separate care selection/controls and
+  financial observation predicates; keep label DOM facts separate from selection
+  policy. Add one client transport regression for exact pending-request reuse
+  after network loss, remount and401, without a successful-treatment response.
+  Fresh local measured unit1240/SQL86/migration smoke, both browser journeys,
+  runtime aggregation, scoped lint/types/format and quality audit PASS. Introduced
+  code/duplicate findings0, CSS advisory retained. Independent source ACCEPT.
+  New-head hosted CI and native care remain open. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Settle actual scouting before the pursuit probe
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft
