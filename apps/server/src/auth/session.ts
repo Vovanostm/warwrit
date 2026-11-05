@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { fastifyCookie } from '@fastify/cookie';
 import type { FastifyRequest } from 'fastify';
-import { sql, type Kysely } from 'kysely';
+import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 
@@ -20,6 +20,20 @@ export interface ActiveSessionPrincipal {
 
 function digest(value: string): Buffer {
   return createHash('sha256').update(value).digest();
+}
+
+/** Serialize company opening and reads before acquiring the company aggregate lock. */
+export async function lockIdentityAccount(
+  transaction: Transaction<DatabaseSchema>,
+  accountId: string,
+): Promise<boolean> {
+  const account = await transaction
+    .selectFrom('identity_accounts')
+    .select('id')
+    .where('id', '=', accountId)
+    .forUpdate()
+    .executeTakeFirst();
+  return account !== undefined;
 }
 
 export async function resolveSessionAccount(

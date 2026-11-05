@@ -31,7 +31,9 @@ Parent's one revised HUNT02 trial retained two survivors and a heavy wound; sole
 Mora succession/return/restart PASS; saved wounds/stock retained, care/retry unavailable without a provider.
 CI41949560552 passed full gate/coverage, then recorded two legitimate stale STOP409s.
 Browser probe now checks either exact409→200 cancellation or exact409→409 rejection/retained pursuit.
-Affected source ACCEPT; frozen browser PASS, later merge rejects stale SQL coverage; hosted CI pending.
+CI41954434203 passed clean gate/coverage/both browsers, then failed introduced complexity/duplicates.
+Draft preparation/account-lock/STOP-predicate simplifications accepted; SQL16/types/lint/health PASS.
+New-head hosted verification remains pending; native care/retry still require a capable provider.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.
 ROADMAP/PROMPTS outside the repo remain owner-review proposals.

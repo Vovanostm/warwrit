@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Keep care observation preparation and persistence explicit
+
+- 2026-11-05, `codex/game-care-delivery`, local correction to published draft
+  [PR350](https://github.com/Vovanostm/warwrit/pull/350). CI41954434203 passed the
+  clean gate, coverage and both browser journeys, then rejected introduced code
+  complexity and duplication. Prepare one local observation draft separately
+  while retaining recovery-aware selection and all-drafts-before-writes. Share
+  the identical account-row lock across three company routes and the STOP reply
+  predicate across two browser probes. Actual PostgreSQL16checks, server types,
+  scoped lint/format and observation health PASS; independent source ACCEPT.
+  New-head hosted verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+
 ### Verify the finite outcome when a refreshed pursuit STOP is stale again
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft

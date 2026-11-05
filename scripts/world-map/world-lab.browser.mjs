@@ -28,6 +28,14 @@ page.on('pageerror', (error) => errors.push(String(error)));
 const results = [];
 const authoringEntries = [];
 
+function isStopResponse(reply) {
+  return (
+    reply.url().endsWith('/world-lab/movement') &&
+    reply.request().method() === 'POST' &&
+    reply.request().postDataJSON()?.action?.kind === 'STOP'
+  );
+}
+
 function response(path) {
   return page.waitForResponse(
     (reply) => reply.url().endsWith(`/world-lab/${path}`) && reply.request().method() === 'POST',
@@ -101,16 +109,14 @@ async function stop(requireMoving = false) {
     return;
   }
   const statuses = [];
-  const isStop = (reply) =>
-    reply.url().endsWith('/world-lab/movement') &&
-    reply.request().method() === 'POST' &&
-    reply.request().postDataJSON()?.action?.kind === 'STOP';
   const record = (reply) => {
-    if (isStop(reply)) statuses.push(reply.status());
+    if (isStopResponse(reply)) statuses.push(reply.status());
   };
   page.on('response', record);
   try {
-    const accepted = page.waitForResponse((reply) => isStop(reply) && reply.status() === 200);
+    const accepted = page.waitForResponse(
+      (reply) => isStopResponse(reply) && reply.status() === 200,
+    );
     await page.keyboard.press('Space');
     await accepted;
     assert.ok(
@@ -267,16 +273,12 @@ async function pursuitAndRetry() {
   assert.ok(targets[0], 'an observed moving threat is required');
   const id = targets[0].id;
   const statuses = [];
-  const isStop = (reply) =>
-    reply.url().endsWith('/world-lab/movement') &&
-    reply.request().method() === 'POST' &&
-    reply.request().postDataJSON()?.action?.kind === 'STOP';
   const record = (reply) => {
-    if (isStop(reply)) statuses.push(reply.status());
+    if (isStopResponse(reply)) statuses.push(reply.status());
   };
   const details = [];
   const recordDetails = (reply) => {
-    if (isStop(reply))
+    if (isStopResponse(reply))
       details.push(
         reply.json().then((body) => ({
           status: reply.status(),
@@ -315,7 +317,7 @@ async function pursuitAndRetry() {
       !globalThis.document.querySelector('#stop').disabled,
   );
   const settled = page.waitForResponse(
-    (reply) => isStop(reply) && (reply.status() === 200 || statuses.length === 2),
+    (reply) => isStopResponse(reply) && (reply.status() === 200 || statuses.length === 2),
   );
   await page.locator('#map').press('Space');
   let replies;

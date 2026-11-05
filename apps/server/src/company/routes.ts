@@ -31,7 +31,7 @@ import {
 } from '@warwrit/protocol';
 import { randomUUID } from 'node:crypto';
 
-import { resolveSessionAccount } from '../auth/session.js';
+import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { findOwnedCompanyId, lockCompanyAggregate, saveCompanyAggregate } from './repository.js';
 import { observeLocalCompanyConditions } from './observation.js';
@@ -75,13 +75,7 @@ export function registerCompanyRoutes(
     }
 
     const company = await database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return null;
+      if (!(await lockIdentityAccount(transaction, accountId))) return null;
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
       if (companyId === undefined) return null;
       const loaded = await lockCompanyAggregate(transaction, worldId, companyId);
@@ -125,13 +119,8 @@ export function registerCompanyRoutes(
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
 
     return database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return reply.code(401).send({ error: 'authentication required' });
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return reply.code(401).send({ error: 'authentication required' });
       if (await findOwnedCompanyId(transaction, worldId, accountId))
         return reply.code(409).send({ error: 'company already exists' });
 
@@ -180,13 +169,8 @@ export function registerCompanyRoutes(
       return reply.code(400).send({ commandId: null, ok: false, code: 'INVALID_COMMAND' });
 
     const result = await database.transaction().execute(async (transaction) => {
-      const account = await transaction
-        .selectFrom('identity_accounts')
-        .select('id')
-        .where('id', '=', accountId)
-        .forUpdate()
-        .executeTakeFirst();
-      if (!account) return { statusCode: 401, body: { error: 'authentication required' } };
+      if (!(await lockIdentityAccount(transaction, accountId)))
+        return { statusCode: 401, body: { error: 'authentication required' } };
 
       const optionRow = await transaction
         .selectFrom('company_opening_options')
