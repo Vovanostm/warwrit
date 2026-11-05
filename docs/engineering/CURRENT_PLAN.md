@@ -24,7 +24,8 @@ Expired-pursuit setup uses finite native reacquisition and post-acceptance UI se
 Stand5238 uses warwrit_care_recruit_native_20261105; original wounded saves remain retained.
 At most two active writing worktrees. Parked combat/older PRs retain separate acceptance; no Orca activation.
 Owner authorized PR350 at319b901e; actual merge/main/local readbackf0461180 matches the checked tree.
-PR360 merge permission remains pending. PR publication is authorized; deployment remains unauthorized.
+Owner authorized PR360 ateb19dd0e; clean-root test fix supersedes it. New-head CI and final-head permission remain required.
+PR publication is authorized; deployment remains unauthorized.
 
 ## History
 

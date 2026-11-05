@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -33,6 +33,7 @@ function functionCoverage(
 }
 
 it('normalizes only source-bound useCallback names through the public merger CLI', async () => {
+  await mkdir(resolve(process.cwd(), 'output'), { recursive: true });
   const directory = await mkdtemp(resolve(process.cwd(), 'output/warwrit-runtime-coverage-'));
   try {
     const sourcePath = resolve(directory, 'callbacks.tsx');

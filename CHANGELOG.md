@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Run the coverage CLI regression from a clean checkout
+
+- 2026-11-05, `codex/ordinary-recruitment`, LOCAL test-setup correction to
+  [PR360](https://github.com/Vovanostm/warwrit/pull/360). A fresh-root replay
+  reproduced ENOENT because ignored output/ was absent. Create the parent before
+  the owned temporary child; clean-root regression, focused types/lint/format
+  and independent readback PASS. [Owning diagnosis](docs/work-packages/WP-02.2.md#browser-measurement-audit-diagnosis--2026-11-05).
+  Production merger/gameplay/counters are unchanged; new-head CI is required.
+
 ### Merge ordinary wound care into main
 
 - 2026-11-05, originating branch `codex/game-care-delivery`, MERGED
