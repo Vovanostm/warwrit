@@ -102,34 +102,42 @@ async function rightClickMapPoint(x, y) {
 }
 async function stop(requireMoving = false) {
   await page.locator('#map').focus();
-  const previous = await page.locator('#world-sequence').textContent();
-  await waitForFreshMap(page, previous);
-  if (await page.locator('#stop').isDisabled()) {
-    assert.equal(requireMoving, false, 'movement probe must still be moving before keyboard STOP');
-    const stopped = await state();
-    assert.notEqual(stopped.own.movement.mode, 'MOVING');
-    assert.equal(stopped.pursuit, null);
-    return;
-  }
   const statuses = [];
   const record = (reply) => {
     if (isStopResponse(reply)) statuses.push(reply.status());
   };
   page.on('response', record);
   try {
-    const accepted = page.waitForResponse(
-      (reply) => isStopResponse(reply) && reply.status() === 200,
-    );
-    await page.keyboard.press('Space');
-    await accepted;
-    assert.ok(
-      JSON.stringify(statuses) === '[200]' || JSON.stringify(statuses) === '[409,200]',
-      `STOP must settle directly or through the existing one stale retry: ${statuses}`,
-    );
-    await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
-    const stopped = await state();
-    assert.notEqual(stopped.own.movement.mode, 'MOVING');
-    assert.equal(stopped.pursuit, null);
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const previous = await page.locator('#world-sequence').textContent();
+      await waitForFreshMap(page, previous);
+      if (await page.locator('#stop').isDisabled()) {
+        assert.equal(requireMoving, false, 'probe must still be moving before keyboard STOP');
+        assert.equal(attempt, 0, 'arrival after rejected STOP does not demonstrate cancellation');
+        const stopped = await state();
+        assert.notEqual(stopped.own.movement.mode, 'MOVING');
+        assert.equal(stopped.pursuit, null);
+        return;
+      }
+      const settled = page.waitForResponse(isStopResponse);
+      await page.keyboard.press('Space');
+      const reply = await settled;
+      const body = await reply.json();
+      if (reply.status() === 409) {
+        assert.ok(['STALE_REVISION', 'STALE_MOVEMENT_EPOCH'].includes(body.code));
+        // Ordinary movement has no pursuit order to retry automatically. Follow
+        // its visible prompt with a new native keypress after a fresh snapshot.
+        continue;
+      }
+      assert.equal(reply.status(), 200, `Unexpected STOP result ${body.code}`);
+      assert.ok(statuses.slice(0, -1).every((status) => status === 409));
+      await page.waitForFunction(() => globalThis.document.querySelector('#stop').disabled);
+      const stopped = await state();
+      assert.notEqual(stopped.own.movement.mode, 'MOVING');
+      assert.equal(stopped.pursuit, null);
+      return;
+    }
+    assert.fail(`No actual keyboard STOP200 after three native attempts: ${statuses}`);
   } finally {
     page.off('response', record);
   }
@@ -222,7 +230,15 @@ async function cameraAndMovement() {
   const before = (await state()).own.movement.point;
   const accepted = await rightClickMapPoint(target.x, target.y);
   assert.equal(accepted.status(), 200);
-  await page.waitForTimeout(1000);
+  await page.waitForFunction(
+    async (previous) => {
+      const reply = await fetch('/world-lab-api/world-lab/state');
+      const current = (await reply.json()).own.movement.point;
+      return current.xMicroFp !== previous.xMicroFp || current.zMicroFp !== previous.zMicroFp;
+    },
+    before,
+    { timeout: 5000 },
+  );
   assert.notDeepEqual((await state()).own.movement.point, before);
   await stop(true);
   await page.mouse.move(850, 450);

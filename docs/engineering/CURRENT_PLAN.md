@@ -34,7 +34,7 @@ Browser probe now checks either exact409→200 cancellation or exact409→409 re
 CI41954434203 passed clean gate/coverage/both browsers, then failed introduced complexity/duplicates.
 Draft preparation/account-lock/STOP-predicate simplifications accepted; SQL16/types/lint/health PASS.
 CI41958320560 passed code/coverage; initial pursuit returned409, reason not captured.
-CI41964009252 passed code/coverage but scout STOP timed out; now wait for actual arrival instead.
+CI41966782146 passed code/coverage; camera STOP needed manual stale retry, now exercised explicitly.
 Frozen browser PASS/source ACCEPT; new hosted verification pending, native care/retry still open.
 Parent owns local services/databases. Keep at most two active writing worktrees.
 PR334–339 and parked combat retain their separate acceptance and source.

@@ -33,6 +33,13 @@ requests.
   lint/format/diff PASS, source ACCEPT; later SQL aggregation remains stale.
   New-head hosted verification pending.
 
+- 2026-11-05 correction, same branch, local. CI41966782146 reached the camera
+  STOP with the documented manual-retry prompt. After a real stale rejection,
+  retry by a fresh native keypress, at most three times, still requiring200 and
+  actual stopped state; arrival after rejection cannot pass. Wait for actual
+  movement progress instead of a fixed1s delay. Frozen browser/lint/format/diff
+  PASS, source ACCEPT; stale local SQL aggregation and new hosted CI remain open.
+
 ### Keep care observation preparation and persistence explicit
 
 - 2026-11-05, `codex/game-care-delivery`, local correction to published draft
