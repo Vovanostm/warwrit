@@ -5,6 +5,262 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Game-development skills for Warwrit — 2026-11-06
+
+Owner request: find useful skills for this game and its theme. **Supported shortlist,
+with bounded adaptation/experiments still needed.** Reviewed 50 source documents:
+44 pinned GitHub artifacts from 16 upstream repositories and 6 official engine/network
+documents. They contain 31 distinct skill entrypoints. Related files are dependent
+sources, not 50 independent studies. Long references were read in relevant sections;
+two read-only agents inspected 26 design/narrative documents and local scope rules.
+No game work, skill installation, paid service or upstream program was activated.
+
+### What the project actually needs
+
+The inspected checkout uses Babylon 9.28.0, Colyseus core 0.18.17, SDK 0.18.4 and
+schema 5.0.34, React/Vite, PostgreSQL canonical state and a pure deterministic core.
+The finite normal journey remains the delivery target. Skill research does not
+activate product implementation or amend mechanics, balances or content authority.
+New 2D artwork uses the approved graphic-novel profile; the fog/wet-stone environment
+profile is an explicit override. These do not replace the separate 3D workflow.
+
+Local-gap review identified two potential additions: real-session Babylon lifecycle/
+profiling diagnosis and game-shaped browser input/readiness diagnosis. Existing
+Colyseus, character/GLB/location, art, domain, delivery and visual-critic workflows
+already cover much of the rest. A new skill must add a concrete procedure, not
+another GDD, renderer, world bible, test framework or studio organization.
+
+### Recommended use, in order of practical need
+
+1. **Babylon 9 engine reference:** TerminalSkills/babylonjs is the closest new
+   technical candidate (GD05). Its module-level asset loading signatures match
+   installed 9.28 typings. ESM/deep-import guidance, AssetContainer, debug-only
+   inspector and disposal are relevant. Adapt before installation: preserve the
+   approved camera/material pipeline, pnpm and existing packages; omit unsolicited
+   Havok/XR/WebGPU/GUI/MCP setup. This is a broad reference, not a complete measured
+   CPU/GPU/memory-session diagnosis workflow.
+2. **Actual game QA:** pair visual output with public state and input observations,
+   through normal entry and real time (GD40–43). No inspected external package is
+   ready to install unchanged: Summer needs another engine/MCP; the Playwright
+   examples assume a different Three.js shooter; actor-kit QA requires R3F/Leva and
+   new mutation hooks. Existing Warwrit browser journeys remain the implementation
+   owner. Do not skip setup through test APIs and call that normal-path acceptance.
+3. **Explicit balance questions:** edhahn/eval-driven-game-development is the best
+   conditional candidate (GD16,30–32). It first asks whether the simulator implements
+   the suspected mechanic, chooses a small question, retains seed/n/policy and keeps
+   unapproved targets nonblocking. Use after a concrete authorized balance question;
+   it does not settle enjoyment, player comprehension or SQL correctness. No new
+   scenario catalog, simulator or CI gate is needed for this research.
+4. **Theme and prose:** the strongest mechanisms are impossible-knowledge,
+   narrative-state, environmental-storytelling and dialogue-subtext audits
+   (GD11–14,33–34). They fit observer knowledge, state-dependent contract text,
+   credible visible detail and distinct human voices. Stanestane's inspected complete
+   tree/README supplies no license grant, so this is a mechanism shortlist, not an
+   upstream installation recommendation. Do not invent an acquisition event,
+   witness, faction or secret motive to make an audit pass. Existing writing rules
+   and canonical core remain authoritative.
+5. **Networking:** keep the existing official Colyseus skill. Its local entry is
+   byte-identical to GD01 at `9e3ce1326a05`. Avoid another generic multiplayer skill
+   that selects distributed servers just because the genre is MMO. Prediction,
+   synchronized Room state and local input never become canonical money/inventory.
+
+### Ratings: suitability, not measured improvement
+
+Use the earlier rubric: `6F + 5E + 4C + 3I + 2S`, maximum 100. F=task fit,
+E=validation evidence, C=proportional cost, I=integration/version/license readiness,
+S=scope/finding discipline, each 1–5. These are source-based judgments; small score
+gaps are not measurements. Missing license, unavailable engine tools or authority
+conflicts block unchanged adoption regardless of score. Stars add no points.
+Scores describe mechanism fit; the action column distinguishes already-covered,
+conditional, adaptation-needed and rejected candidates. No candidate's productivity
+uplift on Warwrit is established.
+
+| Candidate / pinned source                                                                                                                                                                                    | F/E/C/I/S | Score /100 | Recommendation                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| [colyseus/skill](https://github.com/colyseus/skill/blob/9e3ce1326a057f7f1edb71330e1cbb731b9e9536/SKILL.md) (GD01)                                                                                            | 5/3/4/5/4 | 84         | Already present, exact entry match. Reuse for adapter/API work; no second install.                             |
+| [TerminalSkills / babylonjs](https://github.com/TerminalSkills/skills/blob/0abb852010feb21984fa40f0bf52352a440ae6d4/skills/babylonjs/SKILL.md) (GD05)                                                        | 5/2/4/4/3 | 74         | Best new engine-reference candidate; adapt to approved renderer/style and local validator before installation. |
+| [edhahn / eval-driven-game-development](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/eval-driven-game-development/SKILL.md) (GD16)                                   | 3/3/4/5/5 | 74         | Best conditional balance candidate, only for an explicit existing-rule measurement question.                   |
+| [Stanestane / audit-impossible-knowledge](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-impossible-knowledge/SKILL.md) (GD11)             | 5/2/5/1/5 | 73         | Strong thematic audit fit; no license grant established, so no upstream installation recommended.              |
+| [Stanestane / audit-narrative-state](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-narrative-state/SKILL.md) (GD33)                       | 5/2/5/1/4 | 71         | Relevant canonical-state-to-prose audit; same license blocker.                                                 |
+| [Stanestane / audit-environmental-storytelling](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-environmental-storytelling/SKILL.md) (GD12) | 4/2/5/1/5 | 67         | Good future place audit; established evidence only, license unresolved.                                        |
+| [Stanestane / audit-dialogue-subtext](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-dialogue-subtext/SKILL.md) (GD13)                     | 4/2/5/1/5 | 67         | Good narrow text audit against existing voices; license unresolved.                                            |
+| [Stanestane / audit-narrative-consistency](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-narrative-consistency/SKILL.md) (GD34)           | 4/2/4/1/4 | 61         | Useful later; overlaps existing lore review and license unresolved.                                            |
+| [sickn33 / web-games](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/web-games/SKILL.md) (GD22)                                     | 3/1/4/3/3 | 54         | Reference only; broad framework/PWA/performance defaults are unnecessary.                                      |
+| [morbeo / game-design](https://github.com/morbeo/ai-skills/blob/548d3d22eb58eb3ec1f4ab526f317e48b753298a/game-design/SKILL.md) (GD15)                                                                        | 2/2/3/4/3 | 52         | Generic design reference; no current authority to redesign the loop.                                           |
+| [Curiosity / BabylonJS](https://github.com/Curiosity-Ai-BV/Babylonjs-Skill/blob/892b375a85199656f02c4aba98f9cf6c8ed3e174/BabylonJS/SKILL.md) (GD03)                                                          | 4/1/3/2/2 | 51         | Do not install unchanged: Babylon 8, reference/API issue and incomplete license packaging.                     |
+| [fcsouza / quest-narrative-coherence](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/quest-narrative-coherence/SKILL.md) (GD09)                                | 3/2/2/3/3 | 51         | Useful consistency idea; do not create another quest/world canon or prerequisite chain.                        |
+| [edhahn / game-designer](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/game-designer/SKILL.md) (GD17)                                                                 | 3/2/2/3/3 | 51         | Only for separately requested design proposals; avoid studio/engine assumptions.                               |
+| [sickn33 / game-design](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/game-design/SKILL.md) (GD23)                                 | 2/1/4/3/3 | 48         | Core-loop heuristics only; approved Warwrit contract already owns the design.                                  |
+| [Yuki / game-design-review](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/skills/game-design-review/SKILL.md) (GD07)                                              | 3/2/2/1/4 | 47         | Evidence method good; 6-domain formal-review minimum and unresolved license block unchanged adoption.          |
+| [baxatron / playtest-protocol-designer](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/playtest-protocol-designer/SKILL.md) (GD18)                   | 3/2/2/1/4 | 47         | Future human-playtest planning only; artifact overhead and license unresolved.                                 |
+| [baxatron / world-logic-checker](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/world-logic-checker/SKILL.md) (GD36)                                 | 3/2/2/1/4 | 47         | Source-based consistency idea, not another world bible; license unresolved.                                    |
+| [baxatron / scope-feature-prioritizer](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/scope-feature-prioritizer/SKILL.md) (GD37)                     | 3/2/2/1/4 | 47         | Existing slice/authority rules already cover near-term scope; license unresolved.                              |
+| [sickn33 / multiplayer](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/multiplayer/SKILL.md) (GD21)                                 | 2/1/4/3/2 | 46         | Reject distributed-MMO default; existing Colyseus/core/SQL contract is more precise.                           |
+| [shipshitgames / playwright-game-testing](https://github.com/shipshitgames/skills/blob/e4d7d2cf6907041df95f6b66964b94ea2ce6e61c/skills/playwright-game-testing/SKILL.md) (GD42)                              | 3/2/2/2/2 | 46         | Useful QA mechanism; worked game/Three.js hooks and bypassed menus require redesign, not direct installation.  |
+| [Summer / playtesting-a-feature](https://github.com/SummerEngine/summer/blob/705da9341fc666a5654400c287ed134636077d15/library/skills/playtesting-a-feature/SKILL.md) (GD40)                                  | 3/2/2/1/3 | 45         | Reject unchanged Summer/Godot tool dependency; existing delivery already requires a real journey.              |
+| [Summer / agent-playtesting](https://github.com/SummerEngine/summer/blob/705da9341fc666a5654400c287ed134636077d15/library/skills/agent-playtesting/SKILL.md) (GD41)                                          | 3/2/2/1/3 | 45         | Frame-evidence idea useful; actual Summer runtime controls are unavailable.                                    |
+| [GameForge / game-playtest](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/workflows/game-playtest/SKILL.md) (GD19)                                 | 3/2/1/2/2 | 42         | Only a future human-research reference; broad studio/session gates unsuitable now.                             |
+| [freshtechbro / babylonjs-engine](https://github.com/freshtechbro/claudedesignskills/blob/1da73febff0c3e1dfefc07f8a5ef8f7d1dfdb6cd/.claude/skills/babylonjs-engine/SKILL.md) (GD06)                          | 3/1/1/2/2 | 37         | Reject unchanged Babylon 7 reference and blanket visual-degrading optimizations.                               |
+| [GameForge / game-design-review](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/workflows/game-design-review/SKILL.md) (GD38)                       | 2/2/1/2/2 | 36         | Reject fixed dimensions/finding/test quotas and studio prerequisites.                                          |
+| [Edgegap / edgegap-colyseus](https://github.com/edgegap/llm-agent-skills/blob/b153756eeba7174f6d1bf97f6b9b8234fc42988e/skills/edgegap-colyseus/SKILL.md) (GD24)                                              | 1/3/1/1/3 | 34         | Different hosting/runtime lifecycle; no need or authority for platform/deployment change.                      |
+| [jonmumm / game-qa](https://github.com/jonmumm/skills/blob/841be8f44106ac9a7dc365cfbbba5ab51276c1db/game-qa/SKILL.md) (GD43)                                                                                 | 2/2/1/1/1 | 31         | R3F/actor-kit/Leva/mutable bridge and license unresolved; poor current fit.                                    |
+| [fcsouza / game-economy-design](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/game-economy-design/SKILL.md) (GD10)                                            | 1/1/2/3/1 | 30         | Reject dual-currency/Stripe/idle-economy defaults and unapproved target values.                                |
+| [fcsouza / worldbuilding](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/worldbuilding/SKILL.md) (GD35)                                                        | 1/1/2/3/1 | 30         | Reject new factions/religion/history quotas; canon already exists.                                             |
+| [GameForge / game-narrative-director](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/agents/game-narrative-director/SKILL.md) (GD39)                | 2/1/1/2/1 | 29         | Reject competing studio canon, new pipelines and blanket narration rules.                                      |
+| [GameForge / game-economy-designer](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/agents/game-economy-designer/SKILL.md) (GD20)                    | 1/1/1/2/1 | 23         | Reject monetization/MonteCarlo quotas and transfer-as-creation framing.                                        |
+
+### Why keyword matches and marketplace ratings were insufficient
+
+- GD05's author advertises 87/100 and 2.33x across 3 scenarios, but the landing page
+  explicitly marks the score stale. GD25 identifies an Ollama gpt-oss20b model
+  judgment and a prior scored artifact, not current runtime/Warwrit measurements.
+  The website was opened to challenge the claim; its duplicate claim is not another
+  counted source. No benchmark gain is incorporated into our score.
+- Curiosity's guide explicitly targets Babylon 8 and its performance reference
+  misdescribes `material.dispose(true)` (GD26). Installed9.28's
+  `Materials/material.pure.d.ts` says the first `_forceDisposeEffect` argument is
+  retained for compatibility; texture disposal is the second argument. This is a
+  source/API mismatch, not a reproduced game leak. Its README claims MIT but the
+  referenced LICENSE is absent from the inspected complete tree.
+- The freshtechbro guide says Babylon 7.x (GD06). Generic PBR/scene optimization can
+  replace accepted ink materials or disable shadows, pointer picking and dynamic
+  updates. Official DOC01/05 spell out the preconditions and quality degradation;
+  optimization advice is not automatic permission to change appearance or input.
+- GD10/35 prescribe premium/dual currencies, Stripe, idle formulas, factions,
+  religion and history. These conflict with established scope/canon. GD20's flow
+  model must not treat transfers as global currency creation. None is an accepted
+  Warwrit economy rule or proof of conservation.
+- Yuki's formal-document review defaults to at least 6 domains (GD07). GameForge's
+  review prescribes a psychology finding and fixed checks/counts (GD38). Finding
+  quotas, studio packets and whole-world prerequisites are a poor fit for the next
+  playable step, even when the underlying observation→hypothesis→test idea is useful.
+- Source precision remains necessary even in official docs: DOC03 uses the options
+  generic, while DOC04 retains a `Room<MyState>` example. Installed Colyseus 0.18.17
+  `build/Room.d.ts` declares `Room<T extends RoomOptions>`. A copied example is not
+  stronger evidence than the installed version's typings and the owning contract.
+
+### Existing instruction issues, separate from game defects
+
+The read-only local comparison also found stale routing worth a later bounded fix:
+warwrit-art's initial inputs still foreground historical style-C without explicit
+new 2D graphic-novel selection; inspect-glb's description remains PlayCanvas-centric
+although the inspector is reused for Babylon; the character skill retains old
+step-audit/no-verify guidance despite the current whitespace-only hook. These are
+instruction observations. They do not establish a product/art defect and do not
+justify replacing the approved3D references or changing assets now.
+
+### Evidence and next discriminating check
+
+Before using a new engine-reference skill, try one existing owned Babylon issue:
+read pinned APIs, observe the normal route, capture the actual failure and choose
+one targeted check. Preserve scene/camera/style; distinguish lifecycle/resource,
+input, network and canonical-state causes. No fresh engine scaffold or inspector
+package is implied. For a balance task, verify the real rule exists in the runner
+before measuring it. For prose, cite actor/state/chronology for each material claim.
+A small native result with one confirmed defect is more useful than a larger pack.
+
+Structural probes actually ran: edhahn and impossible-knowledge manifests PASS;
+Terminal's manifest is rejected by the installed quick validator on `compatibility`.
+That field is in the Agent Skills standard, so this is a local-validator integration
+issue, not proof the skill cannot load in Codex. Installed loading/disposal/Room
+signatures were read statically. No downloaded programs, game tests, browser/SQL
+journey, performance benchmark or human playtest ran. Runtime benefit is NOT_MEASURED.
+
+Root licenses were retrieved for the most concrete technical candidates: Terminal
+Apache-2.0, edhahn MIT and Colyseus MIT. No per-file exception was found in their
+inspected skill paths; this is not a legal review of all catalog content. Unknown
+license candidates remain unresolved. No author was contacted and no source copied
+into the installed skill catalog.
+
+### All 50 source documents
+
+Usefulness ratings concern the source's role in this decision: 4=precise method/API
+or discriminating constraint; 3=inspected procedure with applicability limits;
+2=catalog/author score claim;1=unsupported opinion. No score is a measured task-success
+rate. GitHub artifacts are pinned. Official docs were read on 2026-11-06 in relevant
+sections and may change. Mirrored packs, license files, catalog API responses and
+failed/unreadable fetches do not inflate the count.
+
+| ID    | Source                                                                                                                                                                                                                                                                                  | Usefulness /5 | What it contributed / limit                                                                                                                                   |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GD01  | [colyseus/skill · SKILL.md](https://github.com/colyseus/skill/blob/9e3ce1326a057f7f1edb71330e1cbb731b9e9536/SKILL.md)                                                                                                                                                                   | 4             | Official version-detection/API-drift procedure; existing local entry is byte-identical to this pinned upstream. Retain project SQL/core ownership.            |
+| GD02  | [colyseus/skill · README.md](https://github.com/colyseus/skill/blob/9e3ce1326a057f7f1edb71330e1cbb731b9e9536/README.md)                                                                                                                                                                 | 3             | Explains standalone skill, generated reference routing and maintenance checks. Installation count is not outcome evidence.                                    |
+| GD03  | [Curiosity-Ai-BV/Babylonjs-Skill · BabylonJS/SKILL.md](https://github.com/Curiosity-Ai-BV/Babylonjs-Skill/blob/892b375a85199656f02c4aba98f9cf6c8ed3e174/BabylonJS/SKILL.md)                                                                                                             | 3             | Modular Babylon 8 reference with disposals/observables; project is9.28. Namespace example, broad modeling scope and malformed reference need review.          |
+| GD04  | [Curiosity-Ai-BV/Babylonjs-Skill · README.md](https://github.com/Curiosity-Ai-BV/Babylonjs-Skill/blob/892b375a85199656f02c4aba98f9cf6c8ed3e174/README.md)                                                                                                                               | 2             | README claims MIT but links an absent LICENSE; this is incomplete packaging evidence, not an established full license review.                                 |
+| GD05  | [TerminalSkills/skills · skills/babylonjs/SKILL.md](https://github.com/TerminalSkills/skills/blob/0abb852010feb21984fa40f0bf52352a440ae6d4/skills/babylonjs/SKILL.md)                                                                                                                   | 3             | Babylon 9 ESM loaders, AssetContainer, deep imports, debug-only inspector and disposal; broad PBR/Havok/XR defaults need scope adaptation.                    |
+| GD06  | [freshtechbro/claudedesignskills · .claude/skills/babylonjs-engine/SKILL.md](https://github.com/freshtechbro/claudedesignskills/blob/1da73febff0c3e1dfefc07f8a5ef8f7d1dfdb6cd/.claude/skills/babylonjs-engine/SKILL.md)                                                                 | 3             | Explicitly Babylon 7.x; useful React listener cleanup, but1230-line generic guide and quality-degrading optimization recipes are poor defaults.               |
+| GD07  | [Yuki001/game-dev-skills · skills/game-design-review/SKILL.md](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/skills/game-design-review/SKILL.md)                                                                                             | 3             | Observation/mechanism/uncertainty/validation is useful. Formal-document comprehensive mode requires at least 6 domains, adding unnecessary breadth.           |
+| GD08  | [Yuki001/game-dev-skills · README.md](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/README.md)                                                                                                                                               | 2             | Catalog of game architecture/design/balance/image workflows; no license grant established in inspected tree/README.                                           |
+| GD09  | [fcsouza/agent-skills · skills/quest-narrative-coherence/SKILL.md](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/quest-narrative-coherence/SKILL.md)                                                                                     | 3             | Quest facts, chronology, actors and reward coherence; prescribed registry/world files and companion skills risk a second canon.                               |
+| GD10  | [fcsouza/agent-skills · skills/game-economy-design/SKILL.md](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/game-economy-design/SKILL.md)                                                                                                 | 3             | Faucet/sink inventory can help a scoped audit; dual currencies, premium/Stripe, idle formulas and numeric health targets are outside authority.               |
+| GD11  | [Stanestane/narrative-design-skills · skills/audit-impossible-knowledge/SKILL.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-impossible-knowledge/SKILL.md)                                                       | 3             | Trace actor, chronology and acquisition/communication/inference; preserve belief versus knowledge and optional paths. No offscreen excuses.                   |
+| GD12  | [Stanestane/narrative-design-skills · skills/audit-environmental-storytelling/SKILL.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-environmental-storytelling/SKILL.md)                                           | 3             | Visible evidence→player inference, interaction support and navigation readability. New props cannot silently invent history.                                  |
+| GD13  | [Stanestane/narrative-design-skills · skills/audit-dialogue-subtext/SKILL.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-dialogue-subtext/SKILL.md)                                                               | 3             | Speaker intent/tactic, literal versus implied meaning and known relationship; no invented secret motives merely to add subtext.                               |
+| GD14  | [Stanestane/narrative-design-skills · README.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/README.md)                                                                                                                         | 2             | Audit/generation separation and severity/confidence conventions fit; public repository has no discovered license-like file.                                   |
+| GD15  | [morbeo/ai-skills · game-design/SKILL.md](https://github.com/morbeo/ai-skills/blob/548d3d22eb58eb3ec1f4ab526f317e48b753298a/game-design/SKILL.md)                                                                                                                                       | 3             | Broad MDA/core-loop/design/playtest guidance; no demonstrated new procedure for the already specified normal journey.                                         |
+| GD16  | [edhahn/agent-skills · eval-driven-game-development/SKILL.md](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/eval-driven-game-development/SKILL.md)                                                                                               | 3             | Check what simulation actually models, choose one question, report seed/n/policy, keep unapproved balance bands nonblocking.                                  |
+| GD17  | [edhahn/agent-skills · game-designer/SKILL.md](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/game-designer/SKILL.md)                                                                                                                             | 3             | New-design studio workflow with engine/role/document assumptions; not the next step for implementing approved mechanics.                                      |
+| GD18  | [baxatron-git/claude-game-design-suite · playtest-protocol-designer/SKILL.md](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/playtest-protocol-designer/SKILL.md)                                                               | 3             | Blind/facilitated playtests, hypothesis, observation/intervention timestamps; five deliverables and companion roles are disproportionate for code acceptance. |
+| GD19  | [AlterLab-IEU/AlterLab_GameForge · skills/workflows/game-playtest/SKILL.md](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/workflows/game-playtest/SKILL.md)                                                                   | 3             | Human behavior evidence and traceable observations are useful; session/studio templates and universal participant/severity ratios are not acceptance rules.   |
+| GD20  | [AlterLab-IEU/AlterLab_GameForge · skills/agents/game-economy-designer/SKILL.md](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/agents/game-economy-designer/SKILL.md)                                                         | 3             | Approved economy stock/flow modeling can help later. New monetization, MonteCarlo/monitoring quotas and transfer-as-faucet examples need rejection.           |
+| GD21  | [sickn33/agentic-awesome-skills · skills/game-development/multiplayer/SKILL.md](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/multiplayer/SKILL.md)                                                           | 3             | Server validation/privacy/idempotency advice; blanket MMO→distributed-server selection conflicts with current modular-monolith target.                        |
+| GD22  | [sickn33/agentic-awesome-skills · skills/game-development/web-games/SKILL.md](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/web-games/SKILL.md)                                                               | 3             | DOM+canvas lifecycle/audio/fallback hints; new framework/PWA/worker selection, 2MB startup goal and tab-pause recipe are not current requirements.            |
+| GD23  | [sickn33/agentic-awesome-skills · skills/game-development/game-design/SKILL.md](https://github.com/sickn33/agentic-awesome-skills/blob/739c841480587361c3cb2047f5b34cdca69a0623/skills/game-development/game-design/SKILL.md)                                                           | 3             | Concise genre/core-loop heuristics; no new design authority or evidence that RPG defaults match this war-company game.                                        |
+| GD24  | [edgegap/llm-agent-skills · skills/edgegap-colyseus/SKILL.md](https://github.com/edgegap/llm-agent-skills/blob/b153756eeba7174f6d1bf97f6b9b8234fc42988e/skills/edgegap-colyseus/SKILL.md)                                                                                               | 3             | Concrete Edgegap deployment lifecycle and cost boundaries; different hosting, one-match-per-process and 0.17-oriented setup are outside this project.         |
+| GD25  | [TerminalSkills/skills · skills/babylonjs/_scores.json](https://github.com/TerminalSkills/skills/blob/0abb852010feb21984fa40f0bf52352a440ae6d4/skills/babylonjs/_scores.json)                                                                                                           | 2             | Author score87/100 and 2.33x derive from three model-graded scenarios; landing page says stale. No current Warwrit or runtime uplift established.             |
+| GD26  | [Curiosity-Ai-BV/Babylonjs-Skill · BabylonJS/references/performance.md](https://github.com/Curiosity-Ai-BV/Babylonjs-Skill/blob/892b375a85199656f02c4aba98f9cf6c8ed3e174/BabylonJS/references/performance.md)                                                                           | 3             | GPU/CPU counters and disposal pointers; unsafe generic optimization scope and incorrect material.dispose(true) comment conflict with9.28 typings.             |
+| GD27  | [Yuki001/game-dev-skills · skills/game-design-review/references/production-validation-and-responsibility.md](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/skills/game-design-review/references/production-validation-and-responsibility.md) | 3             | Match prototypes/playtests to uncertainty; human experience and production feasibility stay separate from automated technical checks.                         |
+| GD28  | [Yuki001/game-dev-skills · skills/game-design-review/references/interface-feedback-and-accessibility.md](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/skills/game-design-review/references/interface-feedback-and-accessibility.md)         | 3             | Intention→action→feedback, controls, error recovery and accessibility; hypotheses require actual player/interface evidence.                                   |
+| GD29  | [Yuki001/game-dev-skills · skills/game-design-review/references/narrative-world-and-characters.md](https://github.com/Yuki001/game-dev-skills/blob/8a33c687e0d9cadc8c1f1cdeef13f6079e88cb76/skills/game-design-review/references/narrative-world-and-characters.md)                     | 3             | World causality, story through play and audience knowledge; no license or permission to rewrite established lore inferred.                                    |
+| GD30  | [edhahn/agent-skills · eval-driven-game-development/references/harness.md](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/eval-driven-game-development/references/harness.md)                                                                     | 3             | Existing-runner/seed/manifest examples and baseline ownership; full harness/CI work only when explicitly requested.                                           |
+| GD31  | [edhahn/agent-skills · eval-driven-game-development/references/metrics.md](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/eval-driven-game-development/references/metrics.md)                                                                     | 3             | Intervals,n,policy,rare tails and correlation caveats; trial-count tables, Elo/entropy and proposed bands are contextual examples.                            |
+| GD32  | [edhahn/agent-skills · eval-driven-game-development/references/scenario-catalog.md](https://github.com/edhahn/agent-skills/blob/ffc6fc4bf1408bc3cac522916bb58e603f39ab45/eval-driven-game-development/references/scenario-catalog.md)                                                   | 3             | Scenario menu for an actual question; do not complete every genre, add factions, or replace reachable game assertions with toy simulations.                   |
+| GD33  | [Stanestane/narrative-design-skills · skills/audit-narrative-state/SKILL.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-narrative-state/SKILL.md)                                                                 | 3             | Trace narrative state writers/readers/transitions and optional paths; anchor to canonical core instead of a competing state registry.                         |
+| GD34  | [Stanestane/narrative-design-skills · skills/audit-narrative-consistency/SKILL.md](https://github.com/Stanestane/narrative-design-skills/blob/ca3c0f7f2854b59e9ffac6dc5674ca15f166aa57/skills/audit-narrative-consistency/SKILL.md)                                                     | 3             | Chronology, world facts and character consistency; report material contradictions and uncertainty rather than rewriting by default.                           |
+| GD35  | [fcsouza/agent-skills · skills/worldbuilding/SKILL.md](https://github.com/fcsouza/agent-skills/blob/a06a4d1201b5c6f9e718d6d37f0e7c53f863248a/skills/worldbuilding/SKILL.md)                                                                                                             | 3             | World/geography coherence ideas but prescribes new history, religions and at least 3 factions: reject as an authoring default.                                |
+| GD36  | [baxatron-git/claude-game-design-suite · world-logic-checker/SKILL.md](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/world-logic-checker/SKILL.md)                                                                             | 3             | World-rule causal audit with missing-evidence distinctions; document/studio scale and unresolved license prevent adoption as-is.                              |
+| GD37  | [baxatron-git/claude-game-design-suite · scope-feature-prioritizer/SKILL.md](https://github.com/baxatron-git/claude-game-design-suite/blob/5dd265ac2b143d13683766cdaae9695d3d871909/scope-feature-prioritizer/SKILL.md)                                                                 | 3             | Cut scope around player value and production constraints; broad scoring/templates and unresolved license add no immediate implementation capability.          |
+| GD38  | [AlterLab-IEU/AlterLab_GameForge · skills/workflows/game-design-review/SKILL.md](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/workflows/game-design-review/SKILL.md)                                                         | 3             | Quote contradiction sides and testability; mandated finding/check counts,13 dimensions and a required psychology finding are incompatible.                    |
+| GD39  | [AlterLab-IEU/AlterLab_GameForge · skills/agents/game-narrative-director/SKILL.md](https://github.com/AlterLab-IEU/AlterLab_GameForge/blob/189979565d092a84d48f3328bdeaa41ce79d523f/skills/agents/game-narrative-director/SKILL.md)                                                     | 3             | Stateful narrative/consequence ideas; studio pipelines and scripts-as-truth language cannot supersede pure core/canonical facts.                              |
+| GD40  | [SummerEngine/summer · library/skills/playtesting-a-feature/SKILL.md](https://github.com/SummerEngine/summer/blob/705da9341fc666a5654400c287ed134636077d15/library/skills/playtesting-a-feature/SKILL.md)                                                                               | 3             | Concrete played walkthrough and before/after frames; Summer/Godot probes and companion verification skills are unavailable here.                              |
+| GD41  | [SummerEngine/summer · library/skills/agent-playtesting/SKILL.md](https://github.com/SummerEngine/summer/blob/705da9341fc666a5654400c287ed134636077d15/library/skills/agent-playtesting/SKILL.md)                                                                                       | 3             | Atomic frame/state capture and deterministic input distinguish action from evidence; requires Summer runtime ops and engine.                                  |
+| GD42  | [shipshitgames/skills · skills/playwright-game-testing/SKILL.md](https://github.com/shipshitgames/skills/blob/e4d7d2cf6907041df95f6b66964b94ea2ce6e61c/skills/playwright-game-testing/SKILL.md)                                                                                         | 3             | Pixels+HUD/input/pointer-lock diagnosis is concrete; Scourge-Survivors/Three.js hooks and direct start methods are not normal Warwrit acceptance.             |
+| GD43  | [jonmumm/skills · game-qa/SKILL.md](https://github.com/jonmumm/skills/blob/841be8f44106ac9a7dc365cfbbba5ab51276c1db/game-qa/SKILL.md)                                                                                                                                                   | 3             | R3F/actor-kit/Leva and new mutable test bridge; ready-on-mount is not first-frame readiness; no license grant established.                                    |
+| GD44  | [colyseus/skill · references/netcode.md](https://github.com/colyseus/skill/blob/9e3ce1326a057f7f1edb71330e1cbb731b9e9536/references/netcode.md)                                                                                                                                         | 4             | Official 0.18 input/prediction primitives and sanitize-vs-rule distinction. Do not make realtime projections canonical or invent frame-replay acceptance.     |
+| DOC01 | [Babylon: Optimize Your Scene](https://doc.babylonjs.com/features/featuresDeepDive/scene/optimize_your_scene)                                                                                                                                                                           | 4             | Static transforms/materials and active-mesh/picking optimizations have behavioral preconditions. Never freeze dynamic combat or input to gain FPS.            |
+| DOC02 | [Babylon: glTF loader](https://doc.babylonjs.com/features/featuresDeepDive/importers/glTF)                                                                                                                                                                                              | 4             | ESM loader registration and codecs; production resource delivery and embedded-image behavior are separate from mesh correctness.                              |
+| DOC03 | [Colyseus 0.18: Rooms](https://docs.colyseus.io/room)                                                                                                                                                                                                                                   | 4             | Room<{state,...}> options generic, mutable synchronized state and message handling. Framework state does not override PostgreSQL ownership.                   |
+| DOC04 | [Colyseus 0.18: State Synchronization](https://docs.colyseus.io/state)                                                                                                                                                                                                                  | 3             | Server mutation/client projection and latest-property patches; one Room<MyState> example remains inconsistent with current options generic. Verify typings.   |
+| DOC05 | [Babylon: SceneOptimizer](https://doc.babylonjs.com/features/featuresDeepDive/scene/sceneOptimizer)                                                                                                                                                                                     | 4             | Built-in optimizer can disable shadows/postprocessing or shrink textures. Its target FPS is not permission to degrade accepted ink/flat-wash visuals.         |
+| DOC06 | [Colyseus: Migrating to 0.18](https://docs.colyseus.io/migrating/0.18)                                                                                                                                                                                                                  | 4             | Schema 5, metadata replacement, removed client.id and additive prediction APIs; optional new database/admin are not a stack migration instruction.            |
+
+### Search and closeout
+
+Three search directions: renderer/network version compatibility, playable-loop/QA/
+balance procedures, and canon-preserving narrative/environment review. Search used
+primary GitHub sources plus web discovery; catalog mirrors supplied leads only.
+The 13 initial repositories expanded to 16 for concrete browser QA; aliases/forks
+were deduplicated (antigravity now resolves to agentic-awesome-skills). Source
+retrieval under the shared GitHub account was sequential. Up to 20 candidate
+families were allowed; the shortlist stopped at 16 after the useful mechanisms and
+adoption blockers were clear. This is a bounded ecosystem survey, not proof that
+no other matching skill exists.
+
+EngineInstrumentation's dynamic API page supplied no readable body and the Khronos
+spec fetch timed out; neither is counted. Relevant readable official pages replaced
+them. Sources/sidecar notes, metadata, licenses and evidence.json remain under ignored
+output/gamedev-skill-research-20261106/. The tracked register retains every counted
+link, revision, decision and limitation. Final checks cover source/URL uniqueness,
+50-document count, 31 score formulas, local pointers, formatting and scoped diff.
+Independent read-only review: ACCEPT for source counts, all 31 score formulas,
+pinned local paths and sampled engine/network/QA claims. The reviewer did not reopen
+all 50 upstream pages or measure effectiveness. Source-count/deduplication, local
+pointers, formatting and scoped diff checks PASS. Game tests NOT_RUN (documentation
+only); effectiveness NOT_MEASURED.
+
+No installation, game-rule/source change, deployment, merge or new game acceptance
+is claimed by this research.
+
 ## Diagnostic skill installation after survey — 2026-11-06
 
 The owner explicitly requested installation of the most useful surveyed skills.

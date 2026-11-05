@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Select game-development skill candidates against Warwrit's actual stack
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a
+  game/theme-specific skill search. Inspect 50 documents: 44 pinned GitHub
+  artifacts from 16 repositories and six official engine/network pages; compare
+  31 skills against Babylon 9.28, Colyseus 0.18, PostgreSQL canonical ownership,
+  the finite playable journey and approved dark-fantasy canon/style. Recommend
+  bounded Babylon 9 reference and conditional balance-eval use; identify precise
+  narrative audits with unresolved licensing and reject incompatible engine,
+  monetization, world-generation and studio defaults. [Survey, ratings and sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
+  Existing Colyseus entry matches pinned upstream. Static API/manifest probes
+  retain their limitations; no installation, game tests, product change, merge
+  or measured effectiveness claimed. Independent source/sample review ACCEPT;
+  source-count/deduplication, score arithmetic, local pointers, formatting and scoped
+  diff PASS. Game tests NOT_RUN; effectiveness NOT_MEASURED.
+
 ### Install the selected property-testing skill with bounded activation
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested installation
