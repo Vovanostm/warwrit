@@ -53,7 +53,49 @@ and accepted player actions after stopping and restarting the complete stack.
 Reserved resources: Compose `warwrit-launch176-20261106`, PostgreSQL54376,
 Dex5576, API3576, realtime3577, UI5276. No deployment, purchase, schema/rule
 change, separate orchestrator, retained-volume deletion or external-provider
-acceptance is included. Spec review and runtime checks are initially NOT_RUN.
+acceptance is included. Spec review ACCEPT. Current results are recorded below.
+
+### Launch implementation and verification — 2026-11-06
+
+Local candidate reuses PR334 on current main149fa8e6. Independent specification
+and executable-source review ACCEPT. Fresh frozen install passed on Node24.20.0 /
+pnpm11.25.0. Plain `pnpm dev` first reproduced missing `game-core`/`protocol`
+exports. The root command now builds both before starting API/web. Dex supports
+private port/config selection through the existing Compose stack. The
+[runbook](LOCAL_DEVELOPMENT.md#isolated-ordinary-game-worktree--176) contains the
+exact tested setup. Migration up applied all19 migrations to a new private world.
+
+The first actual database shutdown terminated the API on an unhandled idle `pg`
+pool error. The pool now handles that event with a fixed structured warning,
+without logging error/client connection details. Pinned `pg-pool` removes the
+failed client itself. Repeating the same real outage returned live200/ready503;
+PostgreSQL recovery restored ready200 without restarting API. Missing production
+configuration exits1 before listening. Identity discovery returned the correct
+private issuer. Database readiness does not promise external issuer availability.
+
+Ordinary **Войти** → local Dex player-one → **Дозор запуска** with Rell/Mora and
+leader Радан passed. All9 equipment actions, ten rations for40crowns and the
+local **Когда молчит мельница** contract were accepted. Starting upkeep left27
+rations, then purchase gave37 and treasury760. Ctrl+C stopped the dev processes
+and released API/RT/UI ports. `pnpm db:down` retained both volumes. After up,
+migration applied[]/pending[]; reload and logout/ordinary OIDC login restored the
+same account/company, equipped items,37rations,760crowns and accepted contract.
+Read-only SQL retained one account/company and receipt counts11company +1contract.
+No game-state SQL writes or fixture entry were used. Campaign time advanced normally.
+
+Focused config/app/database tests16 PASS; server types/scoped lint PASS after
+building testkit for test declarations. Initial typecheck lacked those generated
+exports, and the added regression's first spy-context typing needed correction.
+Scoped format/diff PASS. Prettier cannot parse `.env.example`; Compose parsing
+and actual startup verify that file. Browser CLI first hit a nonexecutable wrapper
+and restricted npm cache; native in-app browser completed the ordinary flow.
+The first form submission coincided with the deliberate DB outage and failed
+without company creation; retry after recovery created exactly one company.
+
+Ordinary travel/encounter smoke and hosted CI remain pending. Full M1, battle
+outcomes/reward, full visual/device/human acceptance, external-provider identity,
+backup/restore/hosted release and deployment remain outside this bounded result.
+FPS/capacity NOT_MEASURED. Local execution logs are under output/ (untracked).
 
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 
@@ -169,6 +211,14 @@ state and backups. The former destructive reset recipe is withdrawn on 2026-10-2
 For each session: what you tried, what you expected, what happened, and the
 time on the top bar. Note anything slow (map or battle frame rate, waits
 after a command), confusing texts, and any money that looks wrong.
+
+## Current correction to historical gaps — 2026-11-06
+
+The supplies shop is available through settlement buildings and was exercised in
+this launch check. Unarmed profiles exist in current main. The dated no-shop /
+unimplemented-fists bullets below describe2026-10-02. Recovery/payroll delivery
+and the complete eight-contract acceptance remain tracked in CURRENT_PLAN and
+M1 assessment. This launch check does not establish their completion.
 
 ## Known gaps (2026-10-02)
 

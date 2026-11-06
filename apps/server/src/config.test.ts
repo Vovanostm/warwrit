@@ -153,14 +153,22 @@ describe('server configuration', () => {
   });
 
   it('requires database-backed OIDC identity before accepting production configuration', () => {
-    expect(() => loadServerConfig({ NODE_ENV: 'production' })).toThrow(
-      'Production server requires DATABASE_URL and complete OIDC identity configuration',
-    );
-    expect(() =>
-      loadServerConfig({
-        NODE_ENV: 'production',
-        DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit',
-      }),
-    ).toThrow('Production server requires DATABASE_URL and complete OIDC identity configuration');
+    const identity = {
+      OIDC_ISSUER: 'https://identity.example.test',
+      OIDC_CLIENT_ID: 'warwrit',
+      OIDC_CLIENT_SECRET: 'secret',
+      OIDC_REDIRECT_URI: 'https://game.example.test/auth/callback',
+      PUBLIC_ORIGIN: 'https://game.example.test',
+    };
+    for (const configuration of [
+      {},
+      { DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit' },
+      { ...identity, DATABASE_URL: '' },
+      { ...identity, DATABASE_URL: '   ' },
+    ]) {
+      expect(() => loadServerConfig({ ...configuration, NODE_ENV: 'production' })).toThrow(
+        'Production server requires DATABASE_URL and complete OIDC identity configuration',
+      );
+    }
   });
 });
