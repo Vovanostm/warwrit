@@ -164,9 +164,9 @@ vendor total (≤ 40 MB) with `du`.
   [the rubric](../../../docs/engineering/VISUAL_CRITIQUE.md), not with the diff
   reviewer. Build a side-by-side sheet of the candidate and `unit-c-ink.png` at
   equal height (close and game scale), and add the day/night Bereznyak strips and
-  per-clip motion frames. Pass image paths only and send the change list after
-  scoring. Submit at the final acceptance boundary under current AGENTS timing.
-  Resolve material findings and follow the rubric's convergence rule.
+  per-clip motion frames where the feature changes those aspects. Submit current
+  images and the feature criteria at final acceptance under AGENTS. Resolve
+  material findings and recheck affected results under VISUAL_CRITIQUE.
 
 ## Free tools
 

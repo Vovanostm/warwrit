@@ -43,6 +43,40 @@ quality-audit gates in repository instructions, skills and delivery checklists.
   Split independently useful outcomes. Use judgment about size and function count.
   Ask for undefined product behavior or extra authority, continuing independent work.
 
+## Feature specification before implementation
+
+Owner decision — 2026-11-06: focus on the product, remove procedural waste and
+choose an architecture that supports the intended extensions. Before feature
+code, complete the specification in its existing owning wiki/work-package page.
+An issue links that specification; do not maintain a second editable copy.
+
+A complete specification answers the following for the feature in scope:
+
+- **Problem and effect:** who needs it, current behavior, intended improvement
+  and how to observe that improvement. State the baseline when known; label an
+  unmeasured benefit as a hypothesis. Include scope and explicit exclusions.
+- **Player journey:** entry/prerequisites, actions, feedback, success and failure,
+  unavailable/loading states, consequences and the next playable action. Cover
+  retry, disconnect/re-entry and restart when persistent or network state changes.
+- **Rules and state:** authoritative sources, inputs/preconditions, transitions,
+  money/item/ownership effects, time, permissions and public/private knowledge.
+  Resolve behavior-changing questions before implementing the dependent part.
+- **Architecture:** existing owners and consumers, boundaries and data flow,
+  interfaces/persistence/version compatibility, and affected files. Compare the
+  simplest viable approaches when there is a real choice; explain the selected
+  tradeoff, risks and how the next known content/rule variant fits. Use an ADR
+  only for a changed cross-cutting decision. Avoid speculative extension systems.
+- **Delivery and acceptance:** small cohesive tasks with dependencies, one usable
+  result each, action → expected visible/saved outcome → direct check. Cover
+  relevant negative paths and name affected visual checks. Reuse existing checks.
+
+Completeness is coverage of behavior, not document length or a separate planning
+project. Existing specifications may already answer most questions; fill gaps.
+The author chooses technical details within approved product rules and proceeds
+under the implementation assignment without an extra specification-approval gate.
+Ask only for an unresolved product decision or additional authority. After delivery,
+record actual effects, deviations and remaining work in that same specification.
+
 ## Authority and scope
 
 - Follow latest owner decision > canonical Airtable decisions/GDD > accepted ADRs >
@@ -122,6 +156,8 @@ quality-audit gates in repository instructions, skills and delivery checklists.
 
 - Keep the functional modular monolith. Reuse an existing rule after checking its
   consumers. Use cohesive explicit policy/data, public boundaries and readable names.
+  Extend through the existing domain/adapter boundaries and explicit contracts.
+  Add an abstraction for a known variation, with a named consumer and clear owner.
   Remove dead code after inspecting runtime/config/asset consumers. Domain detail
   belongs in [warwrit-domain](.agents/skills/warwrit-domain/SKILL.md).
 
@@ -140,14 +176,18 @@ quality-audit gates in repository instructions, skills and delivery checklists.
 
 ## Independent playable critique
 
-- At final gameplay/visual acceptance use an independent read-only critic with
-  actual journey evidence and current screenshots. Reuse it for material fixes.
-  The 2026-10-29 amendment defers intermediate review rounds. Author checks continue.
-- Visual acceptance uses `warwrit_visual_critic` and [VISUAL_CRITIQUE](docs/engineering/VISUAL_CRITIQUE.md).
-  Pass images before conclusions. Every applicable score must be at least 2.
-  Two passes at 1 or below require a technique change. Missing review is `NOT_RUN`.
-- Code findings identify violated contract, counterexample, affected boundary and
-  smallest fix. Separate defects, risks and preferences. Resolve material findings.
+- At final gameplay/visual acceptance use an independent read-only critic for the
+  feature's specified journey and affected presentation. Give current screenshots,
+  journey evidence and applicable references. Recheck affected results after fixes.
+- [VISUAL_CRITIQUE](docs/engineering/VISUAL_CRITIQUE.md) owns the review method.
+  No mandatory score threshold, fixed number of findings, full-scene capture pack
+  for every feature, or automatic technique change after a fixed number of rounds.
+- A blocker names a concrete unmet feature criterion and player impact. Missing
+  broader art comparisons remain unassessed work, not a global development gate.
+  Preserve the selected style/lore; major violations in changed art are defects.
+  Full M1 still requires its complete journey and relevant quality checks.
+- Code findings identify the violated contract, counterexample, boundary and
+  smallest fix. Separate defects, evidence gaps and polish. No pass without proof.
 
 ## Code discovery
 

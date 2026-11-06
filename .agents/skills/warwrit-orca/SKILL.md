@@ -35,9 +35,9 @@ resource ownership, criteria, check owner and execution mode: delegated editor o
 branch owner. A role alone grants no authority. Use `orca` for Orca Git worktrees;
 `arca` is a separate Arcadia fork.
 
-The issue/accepted contract supplies the outcome, source rules, compatibility and
-proof. The author makes a short working note with producers/consumers and decisive
-uncertainties (see [context](../warwrit-context/SKILL.md)). A separate
+The issue links the complete owning feature specification required by AGENTS;
+finish its gaps before feature code. Reuse it for behavior, architecture, small
+tasks and direct checks (see [context](../warwrit-context/SKILL.md)). A separate
 [contract author](prompts/contract.md) or [shared epic contract](prompts/epic-contract.md)
 is optional for a real dependency. Never create empty functionality or stub tests
 just to satisfy caller metrics. Protocol changes need compatibility analysis;
@@ -78,27 +78,20 @@ approval bypass flags or terminal interrupts that can suspend a process/lock DB.
    holds one short active status; detailed results live once on the owning issue/
    document. Only the assigned shared-file writer updates CHANGELOG/wiki/plan.
 
-## Independent gates
+## Independent acceptance
 
-| Tier | Change                                    | Gates in addition to current CI and proportional local validation                                  |
-| ---- | ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| D    | docs, tests, tooling, prompts             | Fresh independent reviewer (`warwrit-review`)                                                      |
-| L    | core/server/protocol logic                | Reviewer plus evaluator plays the affected journey                                                 |
-| U    | UI in existing layout                     | Evaluator plays it; substantive visuals also require scored visual critic                          |
-| V    | art, scene rendering, new visual elements | As U plus visual critic using full [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md) |
-| T    | player-facing strings                     | As U plus text critic using full [TEXT_CRITIQUE](../../../docs/engineering/TEXT_CRITIQUE.md)       |
+Follow AGENTS and the owning feature specification. The final affected gameplay
+journey needs an independent check; affected visual results use VISUAL_CRITIQUE,
+and player text uses its applicable writing rules. Review concrete code/state
+risks proportionally. Documentation-only edits do not require a mandatory second
+reviewer. No tier matrix adds a universal capture or scoring requirement.
 
-Apply the union for mixed changes. Root acceptance overrides tier labels:
-substantive visual results always need independent scored visual critique,
-including U/T. Visual critics get current images and journey evidence, not the
-author's verdict; retain AGENTS' scoring/technique-change rule. Apply every
-relevant rubric criterion; asset-specific proofs may be N/A only when irrelevant
-to the actual change, never because of its tier alone. Tooling
-acceptance does not imply gameplay acceptance. Gate reports must identify the
-checked revision and limitations. `BLOCKED_ENV` and missing proof are not passes
-or automatically code defects. Obtain missing proof only when authorized and
-feasible inside assigned resources; otherwise report a non-passing BLOCKED_ENV
-with the source/resource/evidence gap. Never start or stop another owner's runtime.
+Reports name the checked revision, criteria and limitations. Missing evidence for
+an assigned criterion remains non-passing; unrelated whole-scene evidence does
+not block the slice. The existing worker protocol uses BLOCKED_ENV for a required
+check that cannot run, REWORK for a defect and ACCEPT for passed scoped criteria.
+Obtain evidence only within assigned resources; never control another owner's
+runtime. These instructions do not activate a stopped Orca mission.
 
 ## Bounded rework and evidence
 

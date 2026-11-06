@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Complete an authentic next contract with the retained company
+
+- 2026-11-07, `codex/m1-next-contract-368`, LOCAL #368 result superseding the
+  initial HUNT-02 route below. The previous hunt was already lost; its saved
+  survivors/proof boundary remains open. Same Company2 completed INVEST-02
+  through ordinary acceptance, stock record, daytime inspection and report.
+  Night inspection was visibly unavailable. Reward40 raised cash693.94→733.94;
+  the next ration purchase4 left729.94. Four quest receipts and captured saved
+  state persisted across the owned API restart; paid UI/facts survived re-entry.
+  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07)
+  distinguishes the report equality from ordinary quest readback. Independent
+  finite journey ACCEPT. Integrate main668dc68b / PR408/412 unchanged and recheck
+  retained UI after protocol build/API restart. No new product code, migration,
+  dependency or tests. Full suite and new CI NOT_RUN under advisory policy.
+
 ### Continue the recovered and paid company to its next contract
 
 - 2026-11-07, `codex/m1-next-contract-368`, LOCAL owner-requested #368 after
@@ -21,6 +36,271 @@ requests.
   fresh game test yet; native continuation and independent critique are pending.
   Integrate merged main35b0e7f3 / PR411 workflow amendment while travelling;
   product source remainsb1c7264e and both changelog histories are retained.
+
+### Record owner authorization for the loss-panel merge
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED closeout for
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412). Owner explicitly answered
+  «Да, слить PR #412». Source/finite visual and36 focused checks retain their
+  existing scope. PR scope PASS; full CI still running and advisory. Merge uses
+  expected-head protection; the PR owns the actual merge receipt. Full #392 open.
+
+### Publish the reviewed loss-panel correction
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412) from724bbe76 after source,
+  finite visual and direct layout/input checks. Publication status read back.
+  The owning wiki and support checkpoint retain replay limits and full #392.
+  This closeout changes documents only. Repeated game/full-gate checks NOT_RUN;
+  merge permission requested separately. No data reset or migration.
+
+### Accept the scoped loss-panel layout result
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL final integrated result before
+  PR publication. Source and finite visual review ACCEPT on e6e8e7c9.36 focused
+  tests, web types and scoped lint PASS; actual presentation replay confirms
+  16px separation, wheel access and Return callback on720/480px desktop heights.
+  [Owning evidence and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  preserve failed probes and replay provenance. Full native succession/game-over
+  NOT_RUN; #392 remains open. Full gate NOT_RUN under advisory CI policy.
+  Merge needs the owner's approval for this slice.
+
+### Integrate the delivered hostile-retreat outcome UI
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main600e19a1 /
+  merged PR408. Retain both histories and the current feature-focused workflow.
+  The optional outcome note uses the existing shared stack. Recheck affected
+  presentation tests/types and replay geometry before publishing the layout fix.
+  Server settlement and broader native escape keep PR408's acceptance boundary.
+
+### Record loss-panel layout measurements
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL UI evidence for the scoped
+  overlap fix. Preserve current720px and480px scroll states with the owning
+  [measurements and provenance](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Actual wheel scrolling reaches the complete notice and Return button. Source
+  review ACCEPT, current visual review pending. Native succession NOT_RUN.
+
+### Integrate the current playable-first workflow
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main35b0e7f /
+  merged PR411. Retain both dated histories and the new AGENTS instructions.
+  This integration changes documentation only. Existing focused checks and
+  presentation-replay evidence retain their scope. Repeated full-suite/CI
+  diagnostics NOT_RUN under the current advisory policy.
+
+### Integrate payroll before validating the loss-panel layout
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main b1c7264e /
+  merged PR338. Preserve both changelog/wiki histories and the payroll owner's
+  checkpoint. The loss-panel correction remains confined to its disjoint files.
+  Presentation-replay checks already measure a16px gap on1280×720/480, pointer
+  access and actual Return callback. Source review ACCEPT. Recheck integrated
+  types/layout and scoped image critique before publication. Existing saved defeat
+  and all world data retained. [Owning result](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+
+### Stack the leader-death notice and battle outcome together
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL implementation of the
+  owner-selected overlap correction within #392. EncounterPanel passes its
+  existing leadership notice through the BattleView terminal slot. Fullscreen
+  game.css owns a bounded scrollable vertical stack and resets both child
+  positions. Restore notice typography after the inherited HUD font shrank it.
+  BattleOutcome/battle-view.css remain owned by PR408. New structural regression
+  first failed, then30 targeted tests/web types/lint PASS. Independent source
+  review ACCEPT. Actual retained loss reached revision62 with effects applied;
+  layout/pointer checks use a labelled presentation replay of its public data.
+  [Owning result and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Fresh native loss/succession/game-over acceptance NOT_RUN. Full #392 stays open.
+  Current-image critic, publication and CI pending.
+
+### Specify the bounded loss-panel overlap fix
+
+- 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
+  owner's choice to fix the overlapping leader-death/outcome panels from #392.
+  [Owning scope and checks](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
+  retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
+  stays with #392. Source/native/review/visual checks initially NOT_RUN.
+
+### Resume the necessary hostile-retreat delivery
+
+- 2026-11-07, `codex/m1-hostile-retreat-378`, PUBLISHED PR408 follow-up under
+  the owner's request to finish #378 with only necessary work and defer minors.
+  CI42290393599 at3e6557a0 completed SUCCESS, including both browser journeys
+  and the corrected audit. Reuse the accepted source/SQL/finite UI results.
+  Integrate current main before merge. Repeat admission stays #409, the existing
+  loss-panel defect #392, captivity #377. Native escape remains not reproduced.
+  Roadmap/queue describe those boundaries. No new gameplay feature or broad checks.
+- Integrate main35b0e7f3 with payroll PR338 and policy PR411. Preserve both
+  histories and current game-first/advisory-CI policy. Final integrated checks
+  PASS for32 focused tests/1 existing skipped, server/web types and the real
+  PostgreSQL hostile-retreat regression1 PASS/24 filtered skips. Its disposable
+  database was removed. Gameplay source is unchanged by the documentation merge.
+
+### Integrate the merged startup correction before retreat delivery
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of main12edc308
+  (PR407/410). Preserve both changelog histories and the launch checkpoint;
+  startup code is inherited unchanged. #378 terminal/UI behavior is unchanged.
+  Guidance correction5f86606a is published and independently accepted; PR CI did
+  not start while the changelog merge conflict existed. Resolve that conflict
+  and rerun the integrated PR pipeline. Integrated config/guidance26 tests PASS.
+  Initial merged changelog format check failed; formatting corrected before final
+  CI. No migration or retained-save change.
+
+### Simplify hunt guidance after final CI audit
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction for
+  [PR408](https://github.com/Vovanostm/warwrit/pull/408). CI42283935845 passed
+  bootstrap, SQL/migrations, both browser journeys and unit coverage, then
+  rejected introduced `firstHuntGuidance` complexity (23 cyclomatic/29 cognitive).
+- Dispatch by contract state and keep participation guidance in one cohesive
+  helper; preserve player text and terminal feedback priority. Add a public
+  regression for the fresh-hunt owner/helper journey. Focused14 tests, web types
+  and scoped lint PASS. Fresh focused coverage plus scoped health diagnostic no
+  longer reports either guidance function; this is not a full PR audit verdict.
+  Independent source review ACCEPT; final published-head CI remains pending.
+  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+
+### Verify hostile-retreat settlement and clarify its player feedback
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, PUBLISHED
+  [PR408](https://github.com/Vovanostm/warwrit/pull/408); local feedback corrections
+  follow independent critique. [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+  records clean integrated gate PASS (1264 unit/100 skipped,10000 stress,90 SQL,
+  migrations), source/infrastructure ACCEPT on d199895f and actual limitations.
+- The native new-company route reached the wolf fight after server restart, but
+  the9HP/28morale leader did not flee. Waiting and subsequent timeout handling
+  ended in a retained defeat; native hostile retreat is not accepted from it.
+  Finite component captures use actual successful SQL scenario HTTP responses,
+  explicitly separate from native play. No game state was rewritten for a capture.
+- Critic found that the battle note implied saved effects while the contract was
+  pending, and inherited tiny header typography. Use persistence-neutral wording
+  and a readable note class; preserve the round header. Six presentation tests
+  PASS, scoped lint/web types PASS; independent affected screenshot review ACCEPT.
+  Stale built protocol after integration caused initial type errors; normal rebuild
+  resolved them. Final PR CI pending. No migration.
+  Initial PR scope failed because the description lacked the required Refs marker;
+  corrected metadata, current scope PASS. Merge has not occurred at this checkpoint.
+
+### Clarify scoped acceptance after integration review
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction from independent
+  review of cae315e7 against main a2348871: clarify historical global visual
+  BLOCKED in [M1 status](docs/wiki/m1-spec.md); #401 remains accepted in scope,
+  broader scene quality unassessed. Source/workflow review found no confirmed
+  code defect and accepted infrastructure changes. Native journey continues;
+  clean integrated verification is running. No gameplay behavior changes.
+
+### Integrate company recovery into hostile-retreat delivery
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of merged
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363), main a2348871.
+  Preserve recovery source and both changelog histories; reconcile the active
+  checkpoint and retain the incoming checkpoint as dated history. #378 remains
+  the active slice here; payroll and the repeat-contract loop retain their owner.
+  Initial full check found only ignored local diagnostic scripts in ESLint;
+  clean-copy verification was started. Integrated-head checks are pending.
+
+### Apply accepted hostile-retreat consequences without a false trophy
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL implementation of the accepted
+  #376 policy under the owner's implement/review/PR/review/merge/update-main mission.
+  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06): V4/V5
+  hostile retreat now prepares atomic release; living targets do not create proof.
+  Persist terminal policy version in audit/request evidence, preserve old replay
+  and V2/V3 behavior, retain surrender residual. No migration or retry-admission change.
+- Participant-scoped contract summary distinguishes pending/applied consequences
+  and unfinished hunt, survives helper leave/reload; battle result names escaped
+  objectives without claiming saved effects. UI stops offering pending leave or
+  rediscovering an applied battle. Optional DTO preserves reading old responses.
+- 31 focused checks PASS / 1 existing skipped; server/web types and scoped lint PASS.
+  Real SQL JOIN/commands/AI, rollback, release/no-proof, helper LEAVE and reopened
+  connection/retry PASS. First test world yielded all deaths; a reproducible world
+  was selected for the real escape regression without editing persisted battle state.
+  First independent source review at c403788c found no confirmed code defect and
+  flagged stale CURRENT_PLAN; corrected its local implementation/SQL status.
+  Native outcome/full gate/publication/merge NOT_RUN at this step.
+
+### Accept hostile-retreat policy and separate captivity
+
+- 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL recording of the owner's
+  explicit answer: «Принять; плен определить отдельно (рекомендую)».
+  [Accepted contract amendment](docs/content/CONTRACTS_M1_DERIVATIVE.md#accepted-hostile-retreat-policy--2026-11-06):
+  escaped hostiles remain alive in the same area with retained wounds/pools;
+  companies are released after atomic consequences; no trophy/reward for a living
+  objective; later attempts reuse survivors without free healing. Captivity stays
+  undefined. The feature specification, Roadmap, queue and CURRENT_PLAN resolve
+  #378's source prerequisite while retaining #377's source gap.
+- Documentation-only decision; no game code/migration/save changes. The prior
+  four focused tests are unchanged evidence; new gameplay/SQL/UI/full gate NOT_RUN.
+  Scoped formatting, CURRENT_PLAN, diff and tracked local-link checks PASS.
+  GitHub issue bodies #376/#377/#378 updated and read back with the decision and
+  remaining boundaries; issues remain open. Repository edits remain LOCAL.
+  No successor implementation or merge is implied by this decision record.
+
+### Specify terminal outcomes and isolate remaining product decisions
+
+- 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL #376 source/specification
+  requested by the owner before implementation. The [owning feature page](docs/wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+  maps current surrender/retreat reachability, company/custody/proof consequences,
+  proposed behavior, transaction/version boundaries and small #377/#378 steps.
+  Ordinary V5 wolf fights cannot surrender; hostile retreat remains pending.
+  Removing that guard alone would enable proof from tactical victory over living
+  targets. Repeat admission also needs a separate storage change, not a reset.
+- Update the source derivative, Roadmap, task queue and CURRENT_PLAN with the
+  exact dependency. Proposed retreat policy awaits an owner answer; capture stays
+  undefined. No source rule, game code, migration, retained world or issue closure
+  changes. Existing kernel/server checks: 4 PASS; 18 not run (filter/existing skip).
+  New ordinary hostile-retreat JOIN, SQL recovery and native UI NOT_RUN; full gate
+  and visual acceptance NOT_RUN for this documentation task. Publication/merge
+  not performed; the specification does not activate successor implementation.
+  Scoped formatting, CURRENT_PLAN guard, diff and 18 local tracked-file links PASS.
+
+### Start terminal-outcome specification on current main
+
+- 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL start of owner-assigned #376.
+  Integrate main0f9ea2a1 (#176 launch) while preserving local workflow/retreat
+  closeout and both changelog histories. Resolve documentation-only conflicts;
+  inherited startup source is unchanged. CURRENT_PLAN records the specification
+  scope and separate recovery/payroll owner. Formatting/plan/diff checks PASS;
+  gameplay/full gate NOT_RUN for this integration. No new outcome rule or merge
+  authorization follows from this local branch integration.
+
+### Focus feature delivery on the product and remove global visual blocking
+
+- 2026-11-06, `codex/product-feature-workflow`, LOCAL instruction/planning change
+  requested by the owner. [AGENTS](AGENTS.md#feature-specification-before-implementation)
+  now requires a complete owning feature specification before code: expected player
+  improvement, full behavior/state, architecture/tradeoffs/known extensions and
+  small tasks with direct acceptance. Context/domain/delivery skills reuse that
+  contract and remove the mandatory handoff inventory. No new approval ceremony.
+- [Visual review](docs/engineering/VISUAL_CRITIQUE.md), critic role instructions
+  and art guidance remove universal capture packs, score/finding quotas and the
+  fixed-round technique switch. Align optional Orca/3D guidance without activating
+  their workflows. Only scoped unmet criteria block their acceptance;
+  broader missing evidence is unassessed work. Preserve style/lore and real defects.
+  CURRENT_PLAN, Roadmap, production plan, task queue and the retreat result record
+  the policy change. Previous checkpoint and failed evidence remain in history.
+- Scoped formatting, CURRENT_PLAN guard, diff and local-link checks PASS.
+  New gameplay/visual/device/full-gate checks NOT_RUN: no game code changed.
+  Full loop/M1 remains open; this change does not claim visual acceptance, publish
+  remote task updates, merge another PR or start a successor implementation.
+
+### Record the approved retreat applicability merge
+
+- 2026-11-06, `codex/m1-retreat-401-closeout`, LOCAL documentation closeout
+  for the owner's “approve”. [PR405](https://github.com/Vovanostm/warwrit/pull/405)
+  is MERGED as149fa8e6 from agreed head95de47b6 with expected-head protection.
+  GitHub/origin/main and empty merged-tree diff confirm actual integration.
+  #401 is closed; #398 retains broader acceptance. CURRENT_PLAN, task queue,
+  M1 wiki and the [owning retreat result](docs/wiki/mechanics/retreat.md#интерфейс-постоянного-боя--2026-11-06)
+  record successful exact-head CI42256073173 and current PR scope42260946534.
+  Preserve the first CI failure, failed native attempt, equivalent-HTML/native
+  limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
+  PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
+  This checkpoint is local; the merged implementation/evidence is in PR405.
 
 ### Prioritize playable game development and make CI advisory
 

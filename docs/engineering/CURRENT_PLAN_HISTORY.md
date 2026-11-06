@@ -1,5 +1,99 @@
 # Historical delivery checkpoints
 
+## Next-contract activation before native continuation — 2026-11-07
+
+Superseded by the completed INVEST-02 result in M1_LOCAL_PLAYTEST. The initial HUNT-02 route was not completed.
+
+## Stepwise M1 implementation — 2026-11-06
+
+Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
+Owner requested “Next issue” after approving payroll PR338. This parent owns #368 ordinary same-company next-contract/reward/restart; parent full-M1 remains open.
+2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
+Active writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; base main35b0e7f3, game sourceb1c7264e. Preserve separate hostile-retreat #378/PR408 writer.
+Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
+#371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
+#372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
+Reserve #368 ordinary UI continuation and owning playtest/wiki/checkpoint docs. Preserve all saves and parked work; no parallel encounter/core edits against #378.
+Current DB warwrit_retreat401_recheck_20261106 retained; prior warwrit/battle372/retreat401 worlds and defeats retained. Fault proxy3531 stopped; ordinary realtime3529 restored.
+#372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
+Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
+Two actual test defeats are retained. The final exit automation repeated46 refused Retreat clicks; #401 owns retreat applicability/real legal exit. No victory/full-loop acceptance.
+Independent finite playable ACCEPT at46c3b75a (2/2/3/2/2); CI42208620357 and current PR scope42219628988 PASS. #401/#392 and broader parent criteria remain open. [Evidence](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
+Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
+Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance. Parents retain full acceptance.
+Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
+Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
+Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
+PR363 MERGED a2348871 from owner-approved63e66ccb; CI42272733258/scope42277998663 PASS. Native37→54HP/retry/restart/return and independent source/finite UI ACCEPT; #169 CLOSED.
+PR338 MERGED b1c7264e at owner-approved2b1e834c; CI42286898832/scope42291895718 PASS. Native TARGETED50hold/DEFAULT50cash/retry/restart and independent source/day-night UI ACCEPT. #167/#320/#322 CLOSED.
+Recovery/payroll are integrated. #368 retains Company2, physician and saved original wound/death history; all3living currently100HP FIELD, company693.94 crowns.
+Current #368 path is accepted HUNT-02 at Березняк: travel → three wolves → authentic pelt →80crowns → next action → owned API restart. No save/clock/seed/money/position edits.
+Next player result: same recovered/paid company completes the next contract and survives server restart.
+Dispatch #368 after recovery/payroll; #369 owns fresh entry, #370 the resulting full loop; #376 owns the finite outcome-policy question.
+Then repeat sign-in → create → equip/supplies → contract → travel → battle → proof/reward → care/payroll → next contract → restart.
+Preserve the retained wounded saves; developer-assisted earlier combat is not unaided first-hour acceptance.
+PR339 transfer remains open/conflicting; PR335 command recovery is integrated in main496ca5f5.
+V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#364](https://github.com/Vovanostm/warwrit/issues/364) open.
+F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
+World knowledge/offline behavior and two-company participation require the full #177 scenarios.
+Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
+PR366/335/402/405/334/406/363/407/410 merged; launch #176 complete, volumes retained. Current #368 assignment authorizes implementation/checks/PR update; new-head merge remains separate.
+Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
+
+## Reproducible launch #176 — 2026-11-06
+
+Coordinator/sole writer: current #176 parent. Owner authorizes spec/review/implement/review/merge/update-main.
+Writer `codex/repro-launch176` in `.claude/worktrees/repro-launch176`, base149fa8e6.
+PR334 MERGED bd919d1a at expected head adedf6c0; issue176 CLOSED. Clean local main updated.
+Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/RT3577/UI5276.
+[Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
+Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
+
+## Stepwise M1 implementation — 2026-11-06
+
+Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
+This mission completed #401 retreat applicability; the existing parent retains recovery/payroll integration and resources.
+2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
+Local closeout writer codex/m1-retreat-401-closeout in .claude/worktrees/m1-entry-369; integrated main149fa8e6.
+Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
+#371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
+#372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
+Root reserves encounter control-grant/protocol/desk/panel and regressions/shared docs; isolated entry369 resources DB54369/API3528/realtime3529/UI5228.
+Current DB warwrit_retreat401_recheck_20261106 retained; prior warwrit/battle372/retreat401 worlds and defeats retained. Fault proxy3531 stopped; ordinary realtime3529 restored.
+#372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
+Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
+Earlier #372 defeats and #401 first2dead run are retained. #401 now proves legal retreat/exact retry and all3 alive; victory/full-loop acceptance stays open.
+Independent finite playable ACCEPT at46c3b75a (2/2/3/2/2); CI42208620357 and current PR scope42219628988 PASS. #401 is merged/closed; #392 and broader parent criteria remain open. [Evidence](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
+Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
+Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance. Parents retain full acceptance.
+Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
+Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
+Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
+Open PR363 at2d6bf3cc: explicit rest/FIELD, real recovery/retry/restart and finite UI accepted.
+Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
+These are candidate results, not integrated-main or full-game acceptance.
+Delivery owner completes PR363 → retarget/check PR338 → current-main continuation using recorded scoped authority.
+Next player result: same recovered/paid company completes the next contract and survives server restart.
+Dispatch #368 after recovery/payroll; #369 owns fresh entry, #370 the resulting full loop; #376 owns the finite outcome-policy question.
+Then repeat sign-in → create → equip/supplies → contract → travel → battle → proof/reward → care/payroll → next contract → restart.
+Preserve the retained wounded saves; developer-assisted earlier combat is not unaided first-hour acceptance.
+PR339 transfer remains open/conflicting; PR335 command recovery is integrated in main496ca5f5.
+V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#364](https://github.com/Vovanostm/warwrit/issues/364) open.
+F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
+World knowledge/offline behavior and two-company participation require the full #177 scenarios.
+Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
+PR366/PR335/PR402/PR405 merges are complete. Owner approved PR405 on2026-11-06; expected-head merge149fa8e6 and identical reviewed tree confirmed.
+Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; First CI audit FAIL retained; corrected95de47b6 CI42256073173 and latest PR scope42260946534 PASS. #401 closed; next gameplay slice awaits assignment.
+
 ## Painted atlas merged — 2026-11-05, NEXT PLAYABLE STEP
 
 Coordinator, sole writer, integrator and validation owner is this chat's parent.
@@ -6089,6 +6183,51 @@ Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/
 Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
 Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
 
+## Incoming PR363 checkpoint retained during #378 integration — 2026-11-06
+
+Historical checkpoint below predates merge a2348871. PR363 is now merged; its
+pending status and global visual BLOCKED are superseded by the current plan.
+
+## Stepwise M1 implementation — 2026-11-06
+
+Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
+Owner resumed #169/PR363 recovery delivery on2026-11-06. This parent owns recovery integration/native validation; payroll remains a subsequent slice.
+2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
+Active recovery writer codex/company-recovery in ~/.codex/worktrees/game-painted-map-client/warwrit; integrating main0f9ea2a1 after launch PR334/406; existing PR363.
+Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
+#371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
+#372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
+Recovery reserves company server/protocol, App recovery props, CompanyPanel/GameShell and its owning docs; preserve entry369/retreat resources and all saved worlds.
+Current DB warwrit_retreat401_recheck_20261106 retained; prior warwrit/battle372/retreat401 worlds and defeats retained. Fault proxy3531 stopped; ordinary realtime3529 restored.
+#372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
+Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
+Two actual test defeats are retained. The final exit automation repeated46 refused Retreat clicks; #401 owns retreat applicability/real legal exit. No victory/full-loop acceptance.
+Independent finite playable ACCEPT at46c3b75a (2/2/3/2/2); CI42208620357 and current PR scope42219628988 PASS. #401/#392 and broader parent criteria remain open. [Evidence](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
+Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
+Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance. Parents retain full acceptance.
+Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
+Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
+Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
+PR363 source/finite UI/native37→54HP/retry/restart/return ACCEPT; CI42267843778/scope PASS at4549975a. Recovery source unchanged while integrating launch main0f9ea2a1; PR owns new-head CI/merge permission.
+Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
+These are candidate results, not integrated-main or full-game acceptance.
+Delivery owner completes PR363 → retarget/check PR338 → current-main continuation using recorded scoped authority.
+Next player result: same recovered/paid company completes the next contract and survives server restart.
+Dispatch #368 after recovery/payroll; #369 owns fresh entry, #370 the resulting full loop; #376 owns the finite outcome-policy question.
+Then repeat sign-in → create → equip/supplies → contract → travel → battle → proof/reward → care/payroll → next contract → restart.
+Preserve the retained wounded saves; developer-assisted earlier combat is not unaided first-hour acceptance.
+PR339 transfer remains open/conflicting; PR335 command recovery is integrated in main496ca5f5.
+V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#364](https://github.com/Vovanostm/warwrit/issues/364) open.
+F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
+World knowledge/offline behavior and two-company participation require the full #177 scenarios.
+Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
+PR366/335/402/405/334/406 merged; launch #176 complete, volumes retained. New recovery-head merge remains separately governed by AGENTS.
+Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
+
 ## Integrated payroll — 2026-11-05, SOURCE / NATIVE ACCEPTED
 
 Coordinator is this chat’s parent, owning payroll integration and validation.
@@ -6132,3 +6271,86 @@ PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both h
 [Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
 
 Integrated through main12edc308 / PR410 during payroll publication.
+
+## Checkpoints before final #378 integration — 2026-11-07
+
+### Prior #378 checkpoint
+
+## Hostile-retreat settlement #378 — 2026-11-06
+
+Coordinator: this chat owns #378 terminal settlement/UI; the existing care/recovery/payroll parent retains its game integration and resources.
+Owner authority: “Implement, review, pr, review, merge, update main” for #378, 2026-11-06; explicit mission merge permission after checks/review, expected-head protection.
+Local branch codex/m1-hostile-retreat-378 in .claude/worktrees/m1-entry-369; integrates main12edc308 (recovery and startup correction) and preserves local workflow/closeout commits.
+Scope: accepted hostile-retreat settlement, no false proof, saved/pending result and next lawful company action. Repeat admission/storage and captivity remain separate.
+[Feature specification contract](../../AGENTS.md#feature-specification-before-implementation): problem/expected improvement → player behavior and state → architecture/tradeoffs → small tasks and direct acceptance.
+Write the specification once in the owning feature page before feature code; proceed within the implementation assignment without another routine approval round.
+Global visual BLOCKED is removed as a development prerequisite by the owner's 2026-11-06 decision; [review](VISUAL_CRITIQUE.md) now follows feature scope and concrete player impact.
+Broader visual quality remains unassessed; missing night/reference/scene comparisons are future scene checks, not a failure of #401 or a blocker for the next feature.
+Full M1 remains in progress: reward → care/payroll → next contract → restart and the complete milestone matrix still require actual integrated results.
+Priority: close the normal repeatable company loop; fix input/readability/state defects encountered on that path. Defer broad art expansion and unrelated tooling.
+Next here: PR408 final CI/review/authorized merge and clean main fast-forward; [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06). #377 capture stays undefined; repeated admission is separate. #368/#370 stay with recovery/payroll.
+PR363 merged a2348871 and is integrated here; payroll PR338 and #368/#370 retain the recovery owner. Preserve their resources; recheck main before merge.
+#369 normal entry, #371 ordinary recovery, #372 deadline recovery and #401 legal retreat/retry have recorded successful bounded results.
+PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is closed. [Retreat result](../wiki/mechanics/retreat.md#нативный-результат-401) retains exact evidence and failed attempts.
+#398 broader tactics, #392 loss UI, #364 unresolved terminal policy and the remaining M1 capabilities keep their individual criteria; this workflow decision does not close them.
+[Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) retain the product scope and small tasks.
+Native #378 runtime: DB54369/API3528/realtime3529/UI5228, warwrit_retreat378_20261106 preserved after native defeat; prior retreat401 saves preserved. Native hostile escape did not reproduce (9HP/28morale); no native PASS claimed.
+At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
+PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
+#378 PUBLISHED [PR408](https://github.com/Vovanostm/warwrit/pull/408): source/infrastructure ACCEPT d199895f. Clean integrated gate PASS (1264unit/90SQL/10000stress); real escape/rollback/no-proof/reopen/LEAVE PASS. Finite UI critic ACCEPT after wording/readability corrections; native escape not reproduced. CI42283935845 failed only introduced guidance complexity after passing gameplay stages; behavior-preserving correction/focused14/types/lint/source review PASS, final CI/merge pending. #376 policy accepted, no closure yet.
+
+## Launch configuration follow-up — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both histories retained.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
+
+## History
+
+[Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
+
+### Incoming payroll checkpoint
+
+## Stepwise M1 implementation — 2026-11-06
+
+Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
+Owner requested “next issue” after approving PR363. This parent resumes #167/PR338 payroll integration and native validation; next-contract #368 follows payroll.
+2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
+Active payroll writer codex/game-payroll-integration in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrates main12edc308 (recovery, launch fix and closeout) into existing PR338.
+Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
+#371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
+#372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
+Payroll reserves company server/protocol, PayrollPanel/CompanyPanel, request hook and owning docs; preserve parked work, retained launch/recovery resources and all saved worlds.
+Current DB warwrit_retreat401_recheck_20261106 retained; prior warwrit/battle372/retreat401 worlds and defeats retained. Fault proxy3531 stopped; ordinary realtime3529 restored.
+#372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
+Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
+Two actual test defeats are retained. The final exit automation repeated46 refused Retreat clicks; #401 owns retreat applicability/real legal exit. No victory/full-loop acceptance.
+Independent finite playable ACCEPT at46c3b75a (2/2/3/2/2); CI42208620357 and current PR scope42219628988 PASS. #401/#392 and broader parent criteria remain open. [Evidence](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
+Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
+Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance. Parents retain full acceptance.
+Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
+Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
+Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
+PR363 MERGED a2348871 from owner-approved63e66ccb; CI42272733258/scope42277998663 PASS. Native37→54HP/retry/restart/return and independent source/finite UI ACCEPT; #169 CLOSED.
+PR338 integrates main12edc308. b6b1ff86 fixes healthy FIELD stale payroll;59focused/SQL18/types/lint PASS; current TARGETED50hold and DEFAULT50cash/reload/retry/restart PASS. Independent source/current finite day-night UI ACCEPT; PR owns required new-head CI/merge permission.
+Payroll remains a candidate until delivery. Parent full-game acceptance remains open.
+Current result: actual accessible-cash payroll and separately backed holds survive retry/restart. New PR338-head merge needs separate permission.
+Next player result: same recovered/paid company completes the next contract and survives server restart.
+Dispatch #368 after recovery/payroll; #369 owns fresh entry, #370 the resulting full loop; #376 owns the finite outcome-policy question.
+Then repeat sign-in → create → equip/supplies → contract → travel → battle → proof/reward → care/payroll → next contract → restart.
+Preserve the retained wounded saves; developer-assisted earlier combat is not unaided first-hour acceptance.
+PR339 transfer remains open/conflicting; PR335 command recovery is integrated in main496ca5f5.
+V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#364](https://github.com/Vovanostm/warwrit/issues/364) open.
+F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
+World knowledge/offline behavior and two-company participation require the full #177 scenarios.
+Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
+PR366/335/402/405/334/406/363/407/410 merged; launch #176 complete, volumes retained. Current #167 assignment authorizes implementation/checks/PR update.
+Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
+
+## History
+
+[Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.

@@ -533,6 +533,9 @@ export function firstHuntRoleLabel(
 export function firstHuntStateLabel(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
 ): string {
+  if (contract.terminal?.effects === 'PENDING') return 'бой завершён, сохраняем последствия';
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'охота не завершена';
   switch (contract.knownState) {
     case 'OFFERED':
       return 'предложен';
@@ -572,40 +575,54 @@ export function firstHuntGuidance(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
   currentSiteId: string | null,
 ): string {
+  if (contract.terminal?.effects === 'PENDING')
+    return 'Бой завершён. Последствия ещё не сохранены; дождитесь обновления.';
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'Противники ушли живыми. Трофея и награды нет. Последствия боя сохранены; отряд больше не связан боем. Повторная попытка пока недоступна.';
   const issuer = contract.terms.issuerLocation.siteId;
   const objective = contract.terms.objectiveLocation.siteId;
-  if (contract.knownState === 'OFFERED' && currentSiteId !== issuer)
-    return `Чтобы принять предложение, вернитесь к заказчику в ${locationLabel(issuer)}.`;
-  if (contract.knownState === 'OFFERED')
-    return 'Условия показаны до принятия; примите контракт у заказчика, когда будете готовы.';
-  if (contract.knownState === 'ACTIVE' && contract.yourRole === 'NONE') {
+  switch (contract.knownState) {
+    case 'OFFERED':
+      return currentSiteId === issuer
+        ? 'Условия показаны до принятия; примите контракт у заказчика, когда будете готовы.'
+        : `Чтобы принять предложение, вернитесь к заказчику в ${locationLabel(issuer)}.`;
+    case 'ACTIVE':
+      return activeHuntGuidance(contract, currentSiteId);
+    case 'ENCOUNTER_ACTIVE':
+      return 'Бой идёт. Участие закреплено сервером; выйти из контракта до завершения нельзя.';
+    case 'PROOF_AVAILABLE':
+      return currentSiteId === objective
+        ? 'Выберите контейнер, предложенный сервером, чтобы забрать трофей.'
+        : `Вернитесь к месту боя: ${locationLabel(objective)}.`;
+    case 'PROOF_HELD':
+      if (!contract.yourProof)
+        return 'Трофей удерживается текущим носителем; вы не можете предъявить его от имени другой компании.';
+      return currentSiteId === issuer
+        ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
+        : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
+    case 'SETTLED':
+      return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+  }
+}
+
+function activeHuntGuidance(
+  contract: NonNullable<FirstHuntReadResponseDto['contract']>,
+  currentSiteId: string | null,
+): string {
+  const issuer = contract.terms.issuerLocation.siteId;
+  if (contract.yourRole === 'NONE') {
     if (contract.helperSlot === 'OCCUPIED')
       return 'Слот помощника занят; второй слот не предусмотрен.';
     return currentSiteId === issuer
       ? 'Помощь добровольна и доступна у заказчика, пока слот свободен.'
       : `Чтобы предложить помощь, прибудьте к заказчику в ${locationLabel(issuer)}.`;
   }
-  if (contract.knownState === 'ACTIVE' && contract.yourRole !== 'NONE') {
-    if (contract.yourJoinIntent)
-      return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
-    return currentSiteId === objective
-      ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
-      : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
-  }
-  if (contract.knownState === 'ENCOUNTER_ACTIVE')
-    return 'Бой идёт. Участие закреплено сервером; выйти из контракта до завершения нельзя.';
-  if (contract.knownState === 'PROOF_AVAILABLE')
-    return currentSiteId === objective
-      ? 'Выберите контейнер, предложенный сервером, чтобы забрать трофей.'
-      : `Вернитесь к месту боя: ${locationLabel(objective)}.`;
-  if (contract.knownState === 'PROOF_HELD')
-    if (!contract.yourProof)
-      return 'Трофей удерживается текущим носителем; вы не можете предъявить его от имени другой компании.';
-    else
-      return currentSiteId === issuer
-        ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
-        : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
-  return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+  if (contract.yourJoinIntent)
+    return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
+  const objective = contract.terms.objectiveLocation.siteId;
+  return currentSiteId === objective
+    ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
+    : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
 }
 
 export async function readHunt(instanceId: string | undefined) {

@@ -562,6 +562,7 @@ export async function updateCompanyAggregateWithExternalReceipt(
 export async function persistFirstHuntTerminalCompanyTransition(
   transaction: Transaction<DatabaseSchema>,
   input: {
+    readonly terminalPolicyVersion: string;
     readonly previous: CompanyCombatAggregateState;
     readonly next: CompanyCombatAggregateState;
     readonly encounterId: string;
@@ -625,6 +626,7 @@ export async function persistFirstHuntTerminalCompanyTransition(
   const requestKey = canonicalJson({
     schemaVersion: 1,
     type: 'FIRST_HUNT_TERMINAL',
+    terminalPolicyVersion: input.terminalPolicyVersion,
     ...identity,
     bindingId: input.bindingId,
     finalStateDigest: input.finalStateDigest,
@@ -644,6 +646,7 @@ export async function persistFirstHuntTerminalCompanyTransition(
   const event = {
     schemaVersion: 1,
     type: 'FirstHuntEncounterTerminalized',
+    terminalPolicyVersion: input.terminalPolicyVersion,
     ...identity,
     bindingId: input.bindingId,
     finalStateDigest: input.finalStateDigest,

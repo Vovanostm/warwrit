@@ -313,6 +313,33 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).not.toContain('data-attackable="true"');
 });
 
+it('groups a terminal notice with the outcome and keeps it out of active combat', () => {
+  const props = {
+    selectedUnitId: null,
+    selectedHex: null,
+    onSelectUnit: () => {},
+    onSelectHex: () => {},
+    terminalNotice: <aside>Глава компании погиб</aside>,
+  };
+  const resolved = renderToStaticMarkup(
+    <BattleView
+      {...props}
+      view={{
+        ...view,
+        status: 'resolved',
+        activation: null,
+        outcome: { reason: 'last-side-standing', winnerSideId: 'opponent' },
+      }}
+    />,
+  );
+  expect(resolved).toMatch(
+    /<div class="battle-terminal-overlays"><aside>Глава компании погиб<\/aside>\s*<section class="battle-outcome-panel"/u,
+  );
+  expect(renderToStaticMarkup(<BattleView {...props} view={view} />)).not.toContain(
+    'Глава компании погиб',
+  );
+});
+
 it('explains defeat from the controlled side while enemies remain active', () => {
   const html = render({
     ...view,

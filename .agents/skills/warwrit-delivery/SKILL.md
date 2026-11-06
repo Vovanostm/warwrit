@@ -34,7 +34,9 @@ normal entry point. Record the observed player/saved result, relevant revision
 and actual check for each closed item. Carry the next failing item forward.
 Source review and unit checks retain their own scope. Player comprehension,
 visual coherence and enjoyment require their applicable journey/critic/owner
-observations. Keep blocking criteria open until their evidence passes. Report
+observations for the specified scope. Use [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md)
+for affected presentation; missing unrelated scene comparisons do not block delivery.
+Keep required feature criteria open until their evidence passes. Report
 passed substeps separately from complete slice acceptance. Avoid a fresh whole-game
 readiness audit for unchanged evidence.
 
@@ -67,17 +69,10 @@ merge. Auto-merge, deployment and purchases are separate operations.
 
 ## Handoff
 
-Persist a detailed result once, with short operational pointers elsewhere:
-
-```text
-Task / contract / source edition / versions:
-Branch / base / reviewed head / tree / actual merge (or NOT_MERGED):
-Implemented effects / finite residual requirements:
-Postulate -> public specification -> actual result:
-Commands / environment / exit result / run+job / logs / checked revision:
-Author vs external review / limitations:
-One next step:
-```
+Update the owning specification once with the player result against the expected
+improvement, actual checks/revision, remaining defects and next task. Keep the
+operational checkpoint and PR summary short and link that result. Do not create
+parallel evidence inventories or mandatory handoff templates.
 
 For a material correction, record its cause with the affected evidence. For a
 harness evaluation, use [HARNESS_EVAL](../../../docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
@@ -98,9 +93,8 @@ push or write external records without current permission, especially after stop
 
 ## Next AI task
 
-Use the actual merged interfaces and remaining requirements as input. Specify
-mission, IN/OUT, sources+precedence, finite trust contracts, compatibility, ordered
-phases, stable behavior postulates and the existing gate. Pin the verified base
-in the issue/checkpoint rather than in every reusable skill. Distinguish completed
-source/code review from unimplemented next-slice tests. Creating a task does not
-start an agent. Do not implement the successor slice during this delivery.
+Use the actual integrated interfaces and remaining product requirements. Complete
+or link the owning feature specification under AGENTS before feature code, then
+split it into cohesive player results with dependencies and direct checks. Pin the
+base in the task, not reusable skills. Creating a task does not start an agent or
+expand the current assignment.
