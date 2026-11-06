@@ -74,7 +74,7 @@ connections; they do not establish correctness of every road or zone.
 - `provenance.json`: tool and model, inputs with roles, each iteration with its
   prompt file, operation, regions and the critic verdict.
 - At final visual acceptance, pass the current integrated images and references
-  to `warwrit-visual-critic` for an absolute scored review. Follow AGENTS for
-  review timing, convergence and applicable acceptance criteria.
+  to `warwrit-visual-critic` for the affected art and player result under
+  VISUAL_CRITIQUE. Evidence and acceptance follow the feature scope.
 - Update the owning wiki page and CHANGELOG. Resolve new lore or product rules
   with the owner. The author owns technical choices within the assigned contract.

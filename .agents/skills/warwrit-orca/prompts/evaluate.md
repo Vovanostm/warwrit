@@ -16,14 +16,14 @@ Follow AGENTS.md and the current assignment's scope, stop and resource ownership
    Without ownership/permission, report BLOCKED_ENV before any service command.
 3. Play the actual affected acceptance journey with the assigned browser/runtime;
    do not substitute the default mill battle when it does not cover the criteria.
-   Capture required current desktop/day/night evidence under
+   Capture the evidence required by the affected feature under
    `.orca/{{SLICE}}/eval-shots/`. Exit 3 from `orca-play.sh` is BLOCKED_ENV; any
    unavailable required browser, screenshot or unexecutable criterion also leaves
    acceptance incomplete, even without a reproduced code defect.
-4. Check the issue's visual criteria. Substantive visual results require the
-   independent visual critic and full applicable VISUAL_CRITIQUE scoring under
-   AGENTS.md, including existing-layout U and text/UI T changes. Evaluator-only
-   evidence never substitutes for that gate. Apply required text critique too.
+4. Check the feature's affected presentation with the independent visual critic
+   under VISUAL_CRITIQUE. No score threshold or unrelated full-scene capture pack.
+   Keep missing required checks open within their scope. Apply relevant writing
+   rules when player-facing text changes.
 5. Findings are reproduced defects, unmet criteria, rule/privacy/replay violations
    or edits outside {{OWNERSHIP}}: file:line/play step, counterexample, smallest
    fix. Separate missing proof/environment from code defects. Obtain missing proof

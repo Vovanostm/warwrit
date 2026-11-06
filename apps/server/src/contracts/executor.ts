@@ -43,6 +43,7 @@ import {
 } from '../company/repository.js';
 import { readFirstHuntTerminalLockSet } from './repository.js';
 import {
+  HUNT_TERMINAL_POLICY_VERSION,
   TerminalAwaitingLeadershipChoice,
   type FirstHuntTerminalEvidence,
   type PrepareFirstHuntTerminalEvidence,
@@ -681,6 +682,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
 
   for (const release of released) {
     await persistFirstHuntTerminalCompanyTransition(transaction, {
+      terminalPolicyVersion: HUNT_TERMINAL_POLICY_VERSION,
       previous: release.previous,
       next: release.next,
       encounterId: input.encounterId,
@@ -702,7 +704,13 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   const companySide = setup.sides.find((side) => side.id === COMPANY_SIDE_ID);
   const hasCompanyVictory =
     companySide !== undefined && state.outcome?.winnerSideId === companySide.id;
-  if (hasCompanyVictory) {
+  // Historical V2/V3 settlements retain their rule. Tactical V4/V5 victory
+  // can include escaped living targets, which do not supply a trophy.
+  const objectivesDead = hostiles.every((hostile) => hostile.currentPools['health'] === 0);
+  const tactical =
+    state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+  if (hasCompanyVictory && (!tactical || objectivesDead)) {
     const groundItem = createGroundProof(input.worldId, proofSourceId, hunt);
     await transaction
       .insertInto('world_proof_claims')

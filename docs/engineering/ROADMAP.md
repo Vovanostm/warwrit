@@ -10,6 +10,38 @@ The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_
 and evidence separately. The superseded September roadmap and queue are retained
 in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
+## Product-first delivery — owner decision 2026-11-06
+
+Prioritize the repeatable company loop. Before feature code, complete the
+[owning specification](../../AGENTS.md#feature-specification-before-implementation)
+with the player problem, expected improvement, full behavior, architecture choice
+and small executable tasks. Select boundaries that support the next known rule or
+content variant within the existing modular monolith; no speculative framework.
+
+The former global visual BLOCKED is removed as a prerequisite for development.
+[Review](VISUAL_CRITIQUE.md) checks the affected result and concrete player impact.
+Missing broader comparisons remain unassessed scene work. This does not claim
+visual acceptance or completion of the still-open full loop/M1. The immediate
+product target remains the retained company's next contract, reward, maintenance
+and restart; refresh its actual integration dependencies before implementation.
+
+## Hostile-retreat delivery — 2026-11-06
+
+[#376 specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+separates battle resolution, physical consequences and contract proof. The owner
+accepted hostile-retreat policy; #378 is implemented and accepted in [PR408](https://github.com/Vovanostm/warwrit/pull/408). Actual encounter/SQL checks prove atomic company release,
+preserved living enemies and no false trophy. Finite result UI is accepted;
+hostile escape was not reproduced in the ordinary native journey.
+[Owning result and limitations](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+
+Next bounded task [#409](https://github.com/Vovanostm/warwrit/issues/409) adds a new
+attempt of the same unfinished hunt using the same survivors and saved pools.
+Complete its storage/interface specification before code; retain encounter history,
+command receipts and one current attempt. It is planned, not started, and distinct
+from #368's next contract with a recovered company. #368/#370 remain with the
+recovery/payroll owner. Surrender/capture #377 still needs a separate policy.
+Full loop/M1 acceptance remains open.
+
 ## Target and authority
 
 Deliver the accepted persistent local M1 on MacBook/Chrome: the same account and

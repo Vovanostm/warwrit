@@ -17,6 +17,22 @@ Mill clues → night beast → worker delivery form an acyclic chain.
 Existing #8/#174/#177 retain their complete final joins and human acceptance;
 task creation is not implementation or a new gameplay-policy approval.
 
+### Product workflow amendment — 2026-11-06
+
+Before implementing each feature, complete its existing owning specification
+under the [feature contract](../../AGENTS.md#feature-specification-before-implementation).
+Include expected player benefit, full journey/failures, state rules, architecture
+and compatibility, known extension needs, small dependent tasks and direct checks.
+The specification precedes code; it is not an extra approval ceremony for already
+authorized behavior. Reuse source-approved rules and ask only about new decisions.
+
+Global visual evidence gaps no longer block this path. Review affected input,
+feedback, readability and art under [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md). Fix
+concrete defects; keep broader unassessed scene work separately visible. Full-loop
+and M1 completion still require their actual results. The dated candidate statuses
+below need live integration readback before resuming; this instruction update does
+not activate a parked writer or grant another merge.
+
 ### 1. Finish the current company, then prove ordinary entry
 
 First integrate the existing recovery/payroll candidates through their delivery
@@ -61,11 +77,14 @@ scenes, including the mill chain. Record an actual result for each of:
 | Loss          | Supported death, incapacity, succession/game-over and retreat; no company stuck after an exposed terminal outcome                                             | #174, #177                                   |
 | UI/content    | Every advertised action has its real result; loading/refusal/retry/loss are readable; selected art/lore and all required assets are coherent                  | #217, #275–#279, #177                        |
 
-[#364](https://github.com/Vovanostm/warwrit/issues/364) owns the V4/V5 terminal
-evidence gap for surrender and hostile retreat.
-Resolve the finite disposition/source contract before enabling those outcomes;
-do not invent capture, rescue, transport, proof or reward policy. Distinguish this
-confirmed source gap from cases that already work, including company flee.
+[#364](https://github.com/Vovanostm/warwrit/issues/364) owns remaining terminal
+outcomes. Hostile-retreat policy is accepted in #376; #378 settlement/result UI
+is implemented and accepted in PR408. The [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+separates real encounter/SQL and finite UI acceptance from the native escape that
+did not reproduce. #409 adds repeat admission/history for the same unfinished
+hunt. Surrender/captivity #377 still needs a finite accepted source contract;
+do not invent capture, rescue, transport, proof or reward policy. Company flee
+retains its separate successful evidence.
 Similarly, initial companion-wallet custody is an observed broader-loop limit,
 not permission to teleport wallets inside payroll.
 

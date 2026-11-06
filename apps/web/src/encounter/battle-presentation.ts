@@ -26,6 +26,14 @@ export function toEncounterBattlePresentation(
     sceneKey: `encounter:${projection.encounterId}`,
     label: 'Сражение',
     sceneEnvironment: 'open-field',
+    ...(projection.status === 'resolved' &&
+    controlledSideId === 'first-hunt-companies' &&
+    projection.units.some((unit) => unit.sideId !== controlledSideId && unit.status === 'retreated')
+      ? {
+          outcomeNote:
+            'Противники ушли живыми. Цель охоты не выполнена. Проверьте сохранение последствий в карточке контракта.',
+        }
+      : {}),
     controlledSideId,
     viewerSideKnown: controlledSideId !== '',
     controlledUnitIds,

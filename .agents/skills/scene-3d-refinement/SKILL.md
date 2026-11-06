@@ -60,8 +60,8 @@ expanding into navigation or collision implementation.
 - Remap/rebake tangent-space normal maps after changing UVs. A documented mesh-normal
   variant is valid for a matte probe; never reuse the old tangent map silently.
 - Before another expensive run, name the observed defect, responsible stage and
-  one affected surface. After two non-converging attempts, change technique or
-  report the precise limit. Reusing an unchanged approved stage is preferred.
+  one affected surface. If a correction fails, investigate why before repeating
+  it. Reuse an unchanged approved stage; choose technique changes from evidence.
 - New tools, paid generation or downloads follow the existing authorization boundary.
   Inspect installed versions before using APIs. This skill grants no audit waiver,
   publication, deployment, background automation or final art acceptance.
@@ -75,8 +75,8 @@ acceptance remains NOT_RUN. No repaint, critic cycle or gameplay work is implied
 For an implementation cycle:
 The requested surface/shape improvement is visible in the actual viewer and the
 candidate can be reproduced from retained inputs. For Warwrit, obtain an independent
-visual critic pass with all inputs required by `docs/engineering/VISUAL_CRITIQUE.md`;
-apply the stricter AGENTS.md threshold (every applicable score at least 2).
+visual critic pass for affected criteria under `docs/engineering/VISUAL_CRITIQUE.md`.
+Use evidence relevant to the changed surface and integrated player result.
 State functional checks, visual verdict, performance measurements or NOT_MEASURED,
 and collision/navigation status separately. Record outcomes in the existing owning
 page and changelog. A scoped texture improvement can pass while full-scene art
