@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Close the merged blank-database startup correction
+
+- 2026-11-06, originating branch `codex/launch-blank-database`, source MERGED
+  through [PR407](https://github.com/Vovanostm/warwrit/pull/407) as 4c1f0ce4 at
+  expected head32b4cca2 under the owner's continue/merge request. Current main
+  recovery integration and both document histories are retained. Source and
+  conflict-resolution review ACCEPT. CI42280535817 and scope42280535469 SUCCESS,
+  full logs read. 1264 tests/99 skipped, 10000 stress battles, migration smoke/89
+  real SQL scenarios, both browser journeys, coverage/aggregation/native audit
+  PASS. Clean main checkout updated, reviewed/merged contents equal.
+  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06)
+  and wiki/checkpoint record the actual result. Author's invalid-config process
+  and19 focused checks retain their stated scope. Full M1/hosted/visual/device
+  acceptance remains open. Retained player worlds were not used by the regression.
+
 ### Integrate recovery before merging the blank-database correction
 
 - 2026-11-06, `codex/launch-blank-database`, PUBLISHED PR407 follow-up under the
