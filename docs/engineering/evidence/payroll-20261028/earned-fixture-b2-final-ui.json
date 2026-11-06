@@ -1,0 +1,17 @@
+{
+  "mode": "APPLIED",
+  "database": "warwrit_payrollqa_20261028_b2",
+  "worldId": "main",
+  "companyId": "aa69954b-f9ec-487f-8136-37e3ae7260de",
+  "commandId": "0c5e51c3-94e2-4460-bb86-f923d08872af",
+  "clockTickBefore": "1179",
+  "companyTickBefore": "1057",
+  "targetTick": "2000",
+  "campaignDays": 1,
+  "syntheticTime": true,
+  "syntheticTimeNote": "QA-only: the clone clock is anchored to wall-clock now at targetTick; this is not proof of real elapsed play time.",
+  "dueClaimCount": 1,
+  "duePayableQ": "10000000",
+  "poolId": "local",
+  "spendableQ": "840830000"
+}

@@ -35,6 +35,24 @@ function bodyChanged(physical: CompanyPhysicalState, characterId: string): boole
   );
 }
 
+function payrollObservationDue(
+  state: CompanyCombatAggregateState,
+  characterId: string,
+  tick: string,
+): boolean {
+  const { lifecycle, finance } = state.economy;
+  return finance.accounts.some(
+    (account) =>
+      account.schedule !== null &&
+      !account.knownDeath &&
+      BigInt(account.confirmedAt) < BigInt(tick) &&
+      lifecycle.memberships.some(
+        (member) =>
+          member.membershipId === account.membershipId && member.characterId === characterId,
+      ),
+  );
+}
+
 function prepareObservationDraft(
   state: CompanyCombatAggregateState,
   characterId: string,
@@ -230,7 +248,7 @@ export async function observeLocalCompanyConditions(
   );
   const changed = local.some(({ identity }) => bodyChanged(physical, identity.characterId));
   const recovering = local.find(({ presence }) => presence.assignment === 'RECOVERY');
-  if (!changed && !recovering) return state;
+  if (local.length === 0) return state;
   const clock = await readWorldClock(transaction, lifecycle.worldId, now, true);
   if (
     BigInt(clock.tick) < BigInt(lifecycle.campaignTick) ||
@@ -239,7 +257,10 @@ export async function observeLocalCompanyConditions(
   )
     return state;
   const recoveryDue = recovering && BigInt(clock.tick) > BigInt(physical.processedTick);
-  if (!changed && !recoveryDue) return state;
+  const payrollDue = local.some(({ identity }) =>
+    payrollObservationDue(state, identity.characterId, clock.tick),
+  );
+  if (!changed && !recoveryDue && !payrollDue) return state;
 
   const prepared = prepareLocalBodyObservations(
     state,
@@ -283,12 +304,15 @@ function prepareLocalBodyObservations(
   let next = state;
   const writes = [];
   for (let observedCount = 0; observedCount < contactIds.length; observedCount += 1) {
-    // The first command advances recovery for everyone. Recheck all local subjects
-    // so changed health and wounds are disclosed in this same read. A recovering
-    // member initiates future settlement even when the old snapshots still match.
+    // The first observation settles elapsed time for everyone. Each local payee
+    // still needs their own observation to disclose newly earned wages. Recheck
+    // changed bodies too, preserving the same read's recovery and wound updates.
     const subject =
-      contactIds.find((characterId) => bodyChanged(next.economy.physical!, characterId)) ??
-      (observedCount === 0 ? recoverySubjectId : undefined);
+      contactIds.find(
+        (characterId) =>
+          bodyChanged(next.economy.physical!, characterId) ||
+          payrollObservationDue(next, characterId, tick),
+      ) ?? (observedCount === 0 ? recoverySubjectId : undefined);
     if (!subject) break;
     const draft = prepareObservationDraft(next, subject, contactIds, tick);
     if (!draft) return undefined;

@@ -1,6 +1,7 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { PayrollPanel } from './PayrollPanel.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
 import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 
@@ -13,6 +14,7 @@ export function CompanyPanel(props: {
   readonly refreshMessage?: string;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
+  readonly ticksPerDay: number;
   readonly supplyVenueName: string;
   readonly canBuySupplies: boolean;
   readonly onBuySupplies: () => void;
@@ -209,6 +211,13 @@ export function CompanyPanel(props: {
                 </li>
               ))}
           </ul>
+          <PayrollPanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            ticksPerDay={props.ticksPerDay}
+            onRefresh={props.onRefreshItems}
+          />
         </>
       )}
     </section>
