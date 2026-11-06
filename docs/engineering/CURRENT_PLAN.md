@@ -43,8 +43,8 @@ Historical PR-specific approvals remain scoped to their owning delivery; no Orca
 ## Launch configuration follow-up — 2026-11-06
 
 Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
-Main a2348871 integrated with recovery history retained. Blank-DB correction/source review unchanged.
-[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated protocol build/server types/19 tests PASS. New CI pending.
+PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both histories retained.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
 
 ## History
 
