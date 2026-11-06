@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Accept the scoped loss-panel layout result
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL final integrated result before
+  PR publication. Source and finite visual review ACCEPT on e6e8e7c9.36 focused
+  tests, web types and scoped lint PASS; actual presentation replay confirms
+  16px separation, wheel access and Return callback on720/480px desktop heights.
+  [Owning evidence and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  preserve failed probes and replay provenance. Full native succession/game-over
+  NOT_RUN; #392 remains open. Full gate NOT_RUN under advisory CI policy.
+  Merge needs the owner's approval for this slice.
+
 ### Integrate the delivered hostile-retreat outcome UI
 
 - 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main600e19a1 /

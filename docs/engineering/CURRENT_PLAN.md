@@ -21,7 +21,8 @@ Preserve primary combat/art WIP, other writers' resources and all retained world
 ## Loss-panel layout #392 — 2026-11-07
 
 Writer codex/loss-panel-layout392 in .claude/worktrees/repro-launch176 owns EncounterPanel/BattleView/props/game.css and focused tests.
-Owner selected only the overlap fix. Spec/source ACCEPT;30 tests/types/lint PASS. Component replay checks pending critic/CI.
+Owner selected only the overlap fix. Main600e19a1 integrated;36 tests/types/lint PASS. Source/finite visual ACCEPT at e6e8e7c9.
+Presentation replay PASS at1280×720/480:16px gap, actual wheel scroll and Return callback. Full gate NOT_RUN under advisory policy; publication next, merge permission pending.
 [Scope/results](../wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06). Actual retained defeat applied at62; no new native succession acceptance. Full #392 open.
 
 ## History
