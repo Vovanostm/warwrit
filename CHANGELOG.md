@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Resume the necessary hostile-retreat delivery
+
+- 2026-11-07, `codex/m1-hostile-retreat-378`, PUBLISHED PR408 follow-up under
+  the owner's request to finish #378 with only necessary work and defer minors.
+  CI42290393599 at3e6557a0 completed SUCCESS, including both browser journeys
+  and the corrected audit. Reuse the accepted source/SQL/finite UI results.
+  Integrate current main before merge. Repeat admission stays #409, the existing
+  loss-panel defect #392, captivity #377. Native escape remains not reproduced.
+  Roadmap/queue describe those boundaries. No new gameplay feature or broad checks.
+
 ### Integrate the merged startup correction before retreat delivery
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of main12edc308

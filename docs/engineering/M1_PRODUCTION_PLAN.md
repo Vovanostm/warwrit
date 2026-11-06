@@ -77,11 +77,14 @@ scenes, including the mill chain. Record an actual result for each of:
 | Loss          | Supported death, incapacity, succession/game-over and retreat; no company stuck after an exposed terminal outcome                                             | #174, #177                                   |
 | UI/content    | Every advertised action has its real result; loading/refusal/retry/loss are readable; selected art/lore and all required assets are coherent                  | #217, #275–#279, #177                        |
 
-[#364](https://github.com/Vovanostm/warwrit/issues/364) owns the V4/V5 terminal
-evidence gap for surrender and hostile retreat.
-Resolve the finite disposition/source contract before enabling those outcomes;
-do not invent capture, rescue, transport, proof or reward policy. Distinguish this
-confirmed source gap from cases that already work, including company flee.
+[#364](https://github.com/Vovanostm/warwrit/issues/364) owns remaining terminal
+outcomes. Hostile-retreat policy is accepted in #376; #378 settlement/result UI
+is published in PR408, awaiting final CI/merge. The [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+separates real encounter/SQL and finite UI acceptance from the native escape that
+did not reproduce. #409 adds repeat admission/history for the same unfinished
+hunt. Surrender/captivity #377 still needs a finite accepted source contract;
+do not invent capture, rescue, transport, proof or reward policy. Company flee
+retains its separate successful evidence.
 Similarly, initial companion-wallet custody is an observed broader-loop limit,
 not permission to teleport wallets inside payroll.
 

@@ -25,14 +25,23 @@ visual acceptance or completion of the still-open full loop/M1. The immediate
 product target remains the retained company's next contract, reward, maintenance
 and restart; refresh its actual integration dependencies before implementation.
 
-## Terminal-policy preparation — 2026-11-06
+## Hostile-retreat delivery — 2026-11-06
 
 [#376 specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
-separates battle resolution, physical consequences and contract proof. Accepted
-next slice: release companies after hostile retreat without false trophies;
-repeat admission needs its own storage step. The owner accepted this policy on 2026-11-06; #378 is source-ready.
-Surrender/capture remains a separate source gap and is unavailable in the current
-ordinary wolf encounter. No new game behavior or full-M1 acceptance is claimed.
+separates battle resolution, physical consequences and contract proof. The owner
+accepted hostile-retreat policy; #378 is published in [PR408](https://github.com/Vovanostm/warwrit/pull/408),
+awaiting final CI/merge. Actual encounter/SQL checks prove atomic company release,
+preserved living enemies and no false trophy. Finite result UI is accepted;
+hostile escape was not reproduced in the ordinary native journey.
+[Owning result and limitations](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+
+Next bounded task [#409](https://github.com/Vovanostm/warwrit/issues/409) adds a new
+attempt of the same unfinished hunt using the same survivors and saved pools.
+Complete its storage/interface specification before code; retain encounter history,
+command receipts and one current attempt. It is planned, not started, and distinct
+from #368's next contract with a recovered company. #368/#370 remain with the
+recovery/payroll owner. Surrender/capture #377 still needs a separate policy.
+Full loop/M1 acceptance remains open.
 
 ## Target and authority
 

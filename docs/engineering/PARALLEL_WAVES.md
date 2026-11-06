@@ -145,7 +145,7 @@ already merged and are not new work.
 
 ## Terminal outcomes
 
-2026-11-06, #376: [source review and feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+Initial preparation, 2026-11-06, #376: [source review and feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
 record ordinary V5 wolf reachability, the surrender source gap and the false-proof
 risk of removing the terminal guard alone. Four existing focused checks PASS;
 real hostile-retreat JOIN/SQL/UI NOT_RUN. The owner accepted the M1 retreat policy
@@ -156,11 +156,21 @@ bounded storage step: the current schema permits one encounter per contract,
 and admission rejects partly dead hostile groups. #377 needs a capture policy
 before any ordinary human V5 rollout; do not infer one from Capture consumers.
 
+Delivery update, 2026-11-06: #376 source triage/policy and #378 implementation are
+published in [PR408](https://github.com/Vovanostm/warwrit/pull/408), final CI/merge
+pending. Real encounter/SQL settlement, rollback, survivor preservation, no false
+proof, retry/reopened connection and ordinary helper LEAVE PASS. Finite result UI
+ACCEPT; native hostile escape not reproduced. [Owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+The preparation-only statuses above are history. #409 owns repeat admission of the
+same unfinished hunt; #368 remains the recovered company's next contract and keeps
+its existing owner. #377 remains blocked on a capture policy.
+
 | Card                                                          | Observable result                                          | Start after                                                                                     | Parent                                                  |
 | ------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376) | Определить конечные правила сдачи и отхода противника      | Current base + resource reservation                                                             | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 | [T02 / #377](https://github.com/Vovanostm/warwrit/issues/377) | Завершать бой со сдавшимся участником по принятому правилу | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 | [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | #376 policy accepted 2026-11-06; coordinate current writer/resources                            | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T04 / #409](https://github.com/Vovanostm/warwrit/issues/409) | Повторить ту же охоту на сохранённых выживших              | #378 merged; specify migration/history and reserve shared files; PLANNED                        | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 
 ## Eight contracts and eleven scenes
 
