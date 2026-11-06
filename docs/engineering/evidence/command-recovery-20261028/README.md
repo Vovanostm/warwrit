@@ -1,5 +1,22 @@
 # Ordinary contract and encounter command recovery
 
+## Pending feedback correction — 2026-11-06 (local)
+
+The native unknown-result image below exposed a real rendering defect: legacy
+inline authority hints were also rendered over the fullscreen battle heading.
+A pending accepted command additionally produced a misleading stale-authority
+explanation, although its actual problem was an unconfirmed response.
+Keep those legacy hints in the inline presentation and suppress the stale hint
+while a command is pending; fullscreen feedback remains in EncounterLiveLane.
+No command, storage, authorization, timing or server policy changes.
+
+The existing mounted recovery test now checks that waiting/restored attempts do
+not claim stale authority. It failed on the old source (1 test failed), then
+the mounted recovery/live-lane files passed (2 files/5 tests). Web typecheck and
+scoped ESLint passed. Current-source native image/readback and final independent
+critique remain pending; the first battle evidence below is historical pre-fix
+evidence and is not silently promoted to the changed presentation.
+
 ## Native battle deadline recovery — 2026-11-06 (partial)
 
 PR335 merged with the owner's explicit permission as `496ca5f5`. #371 is complete;

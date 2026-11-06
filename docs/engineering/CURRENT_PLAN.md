@@ -12,6 +12,7 @@ Active #372: lose one real manual battle reply, reload/reconnect across deadline
 Reserve encounter client/recovery files only if a native defect is reproduced; root owns shared docs and isolated entry369 resources (DB54369/API3528/realtime3529/UI5228).
 #372 native first boundary PASS: same battle, real30-second timeout, original stored wait replay after reload; one manual command/receipt and one later timeout.
 The author did not resume control promptly; AFK battle ended in defeat/three allied deaths, retained. Post-terminal obsolete probe refused without mutation.
+Local feedback fix removes overlapping legacy stale-authority hints during pending/fullscreen recovery; red regression reproduced, then5 tests/types/scoped lint PASS; native readback pending.
 Next: finish the still-missing active-battle obsolete-activation probe and independent finite critique; #372 remains open. [Evidence](evidence/command-recovery-20261028/README.md#native-battle-deadline-recovery--2026-11-06-partial).
 Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
 Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.

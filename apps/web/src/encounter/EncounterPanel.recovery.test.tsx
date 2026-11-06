@@ -132,6 +132,7 @@ describe('EncounterPanel command recovery', () => {
     const storageKey = encounterCommandAttemptStorageKey(scope, encounterId);
     const storedBeforeUnmount = sessionStorage.getItem(storageKey);
     expect(storedBeforeUnmount).not.toBeNull();
+    expect(container.textContent).not.toContain('полномочие управления устарели');
 
     await act(async () => root!.unmount());
     root = undefined;
@@ -148,6 +149,7 @@ describe('EncounterPanel command recovery', () => {
     await act(async () => mount(root!));
     await connectCurrentPanel(retrySender);
     expect(container.textContent).toContain('Повторить команду');
+    expect(container.textContent).not.toContain('полномочие управления устарели');
     const retry = [...container.querySelectorAll('button')].find((button) =>
       button.textContent?.includes('Повторить команду'),
     );

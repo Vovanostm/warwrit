@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Keep pending battle feedback out of legacy authority hints
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL fix for the actual #372
+  unknown-result capture: legacy inline hints overlapped the fullscreen heading
+  and falsely described a pending command as stale authority. Restrict those
+  hints to inline mode and omit the stale hint while a command is pending;
+  preserve the fullscreen live lane, Retry and transport/storage rules.
+  Existing mounted regression failed on old source (1 failure), then recovery/
+  live-lane files passed (5 tests); web types and scoped ESLint PASS.
+  [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md#pending-feedback-correction--2026-11-06-local)
+  and M1 wiki/CURRENT_PLAN retain the pre-fix battle evidence and pending new
+  native/independent acceptance. Full gate NOT_RUN at this step.
+
 ### Exercise a real lost battle reply across its deadline
 
 - 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL partial #372 evidence on
