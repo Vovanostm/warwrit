@@ -9,6 +9,31 @@ requests.
 
 ## Unreleased
 
+### Integrate recovery before merging the blank-database correction
+
+- 2026-11-06, `codex/launch-blank-database`, PUBLISHED PR407 follow-up under the
+  owner's continue/merge request. Main a2348871 now includes recovery PR363.
+  Integrate it with both changelog histories and the recovery current checkpoint
+  retained. Blank-DB source/tests remain unchanged. Update the owning launch
+  result and retain source review ACCEPT. Integrated protocol build, server types
+  and19 focused tests PASS. New integrated CI pending.
+  [Follow-up](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  No saved-world operation or new gameplay change in this integration.
+
+### Reject blank database settings before local identity startup
+
+- 2026-11-06, branch `codex/launch-blank-database`, LOCAL follow-up to the owner's
+  review/fix/PR/merge request for #176. Actual development startup with full OIDC
+  and whitespace DATABASE_URL returned ready200/auth404. Normalize the trimmed
+  empty URL to missing before the existing identity/fixture guards. Production
+  already refused it at a later guard. Valid padded URLs retain trimmed values.
+  New cross-environment regression first failed. Corrected entry process exits1
+  before listening. Config/tests, identity docs, playtest/wiki and CURRENT_PLAN
+  record the boundary and checks. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  Focused19 tests, server types, lint/format and independent source review ACCEPT.
+  CI/publication/merge pending. Fresh valid-config browser/SQL NOT_RUN. No migration
+  or game-rule change. Existing world volumes retained.
+
 ### Integrate the merged reproducible launch into recovery
 
 - 2026-11-06, `codex/company-recovery`, LOCAL follow-up to

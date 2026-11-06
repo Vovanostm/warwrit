@@ -126,6 +126,32 @@ M1 acceptance. External-provider, full battle/reward, backup/restore, deployment
 full visual/device/human acceptance remain NOT_RUN. FPS/capacity NOT_MEASURED.
 Local execution logs are under output/ (untracked).
 
+### Post-review blank-database correction — 2026-11-06
+
+Owner requested another review/fix/PR/merge cycle after the initial delivery.
+With complete OIDC and a blank `DATABASE_URL`, development/test returned
+identity configuration without a usable database. The actual entry process answered ready200 and auth/session404.
+Production already refused the same input at its later mandatory-dependency guard.
+
+Normalize the trimmed empty URL to missing once, before all existing requirements.
+Identity and encounter-fixture setup now reject it before app construction.
+Parameterized regression covers development/test/production with absent/empty/
+whitespace URLs, plus valid padded URLs. Fixture setup also checks blank values.
+The old implementation failed the new matrix. After correction the real entry
+process exited1 with `OIDC identity requires DATABASE_URL` and no listener3586.
+The previously retained world/volumes were not started or changed for this check.
+
+Branch `codex/launch-blank-database`, base0f9ea2a1. Focused config/app/database
+checks19, server types and scoped lint/format PASS. Independent source review
+ACCEPT. The reviewer did not execute product or runtime checks. Fresh browser/SQL replay NOT_RUN for this configuration-only change.
+The earlier accepted valid-configuration journey remains historical evidence.
+[PR407](https://github.com/Vovanostm/warwrit/pull/407) is published. Owner resumed
+with explicit continue/merge permission. Main a2348871 (recovery PR363) advanced
+during the first CI. Integrate it while retaining both document histories and
+the recovery owner's current checkpoint. The blank-database correction is
+unchanged. Integrated protocol build, server types and19 focused tests PASS.
+Current integrated CI/merge pending. Full M1/hosted limits remain.
+
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 
 Текущий локальный кандидат: `codex/game-painted-map`, база `48d8a2ae`.

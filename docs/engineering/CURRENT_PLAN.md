@@ -40,6 +40,12 @@ PR366/335/402/405/334/406 merged; launch #176 complete, volumes retained. New re
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
 #401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
 
+## Launch configuration follow-up — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+Main a2348871 integrated with recovery history retained. Blank-DB correction/source review unchanged.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated protocol build/server types/19 tests PASS. New CI pending.
+
 ## History
 
 [Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
