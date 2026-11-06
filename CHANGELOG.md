@@ -9,6 +9,92 @@ requests.
 
 ## Unreleased
 
+### Record owner authorization for the loss-panel merge
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED closeout for
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412). Owner explicitly answered
+  «Да, слить PR #412». Source/finite visual and36 focused checks retain their
+  existing scope. PR scope PASS; full CI still running and advisory. Merge uses
+  expected-head protection; the PR owns the actual merge receipt. Full #392 open.
+
+### Publish the reviewed loss-panel correction
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412) from724bbe76 after source,
+  finite visual and direct layout/input checks. Publication status read back.
+  The owning wiki and support checkpoint retain replay limits and full #392.
+  This closeout changes documents only. Repeated game/full-gate checks NOT_RUN;
+  merge permission requested separately. No data reset or migration.
+
+### Accept the scoped loss-panel layout result
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL final integrated result before
+  PR publication. Source and finite visual review ACCEPT on e6e8e7c9.36 focused
+  tests, web types and scoped lint PASS; actual presentation replay confirms
+  16px separation, wheel access and Return callback on720/480px desktop heights.
+  [Owning evidence and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  preserve failed probes and replay provenance. Full native succession/game-over
+  NOT_RUN; #392 remains open. Full gate NOT_RUN under advisory CI policy.
+  Merge needs the owner's approval for this slice.
+
+### Integrate the delivered hostile-retreat outcome UI
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main600e19a1 /
+  merged PR408. Retain both histories and the current feature-focused workflow.
+  The optional outcome note uses the existing shared stack. Recheck affected
+  presentation tests/types and replay geometry before publishing the layout fix.
+  Server settlement and broader native escape keep PR408's acceptance boundary.
+
+### Record loss-panel layout measurements
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL UI evidence for the scoped
+  overlap fix. Preserve current720px and480px scroll states with the owning
+  [measurements and provenance](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Actual wheel scrolling reaches the complete notice and Return button. Source
+  review ACCEPT, current visual review pending. Native succession NOT_RUN.
+
+### Integrate the current playable-first workflow
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main35b0e7f /
+  merged PR411. Retain both dated histories and the new AGENTS instructions.
+  This integration changes documentation only. Existing focused checks and
+  presentation-replay evidence retain their scope. Repeated full-suite/CI
+  diagnostics NOT_RUN under the current advisory policy.
+
+### Integrate payroll before validating the loss-panel layout
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main b1c7264e /
+  merged PR338. Preserve both changelog/wiki histories and the payroll owner's
+  checkpoint. The loss-panel correction remains confined to its disjoint files.
+  Presentation-replay checks already measure a16px gap on1280×720/480, pointer
+  access and actual Return callback. Source review ACCEPT. Recheck integrated
+  types/layout and scoped image critique before publication. Existing saved defeat
+  and all world data retained. [Owning result](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+
+### Stack the leader-death notice and battle outcome together
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL implementation of the
+  owner-selected overlap correction within #392. EncounterPanel passes its
+  existing leadership notice through the BattleView terminal slot. Fullscreen
+  game.css owns a bounded scrollable vertical stack and resets both child
+  positions. Restore notice typography after the inherited HUD font shrank it.
+  BattleOutcome/battle-view.css remain owned by PR408. New structural regression
+  first failed, then30 targeted tests/web types/lint PASS. Independent source
+  review ACCEPT. Actual retained loss reached revision62 with effects applied;
+  layout/pointer checks use a labelled presentation replay of its public data.
+  [Owning result and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Fresh native loss/succession/game-over acceptance NOT_RUN. Full #392 stays open.
+  Current-image critic, publication and CI pending.
+
+### Specify the bounded loss-panel overlap fix
+
+- 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
+  owner's choice to fix the overlapping leader-death/outcome panels from #392.
+  [Owning scope and checks](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
+  retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
+  stays with #392. Source/native/review/visual checks initially NOT_RUN.
+
 ### Resume the necessary hostile-retreat delivery
 
 - 2026-11-07, `codex/m1-hostile-retreat-378`, PUBLISHED PR408 follow-up under

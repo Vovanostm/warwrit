@@ -344,6 +344,11 @@ export function EncounterPanel(props: {
       );
   }, [destinationKey, moveDestinations]);
 
+  const leadershipChoice =
+    projection?.status === 'resolved' ? (
+      <LeadershipChoice encounterId={projection.encounterId} />
+    ) : null;
+
   if (props.hideWhenIdle && scopedState?.status === 'no-active') return null;
 
   return (
@@ -395,9 +400,7 @@ export function EncounterPanel(props: {
             {projection.status === 'active' ? 'Бой продолжается' : 'Бой завершён'} · раунд{' '}
             {projection.round} · обновление {projection.revision}
           </p>
-          {projection.status === 'resolved' && (
-            <LeadershipChoice encounterId={projection.encounterId} />
-          )}
+          {!presentation && leadershipChoice}
           <p className="encounter-turn" role="status">
             {projection.status !== 'active'
               ? 'Бой завершён; команды недоступны.'
@@ -410,6 +413,7 @@ export function EncounterPanel(props: {
           {presentation && (
             <BattleView
               view={presentation}
+              terminalNotice={leadershipChoice}
               {...(props.onReturn ? { onContinue: props.onReturn } : {})}
               selectedUnitId={
                 presentation.units.some((unit) => unit.id === inspectedUnitId)

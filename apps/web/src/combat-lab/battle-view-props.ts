@@ -11,6 +11,7 @@ export interface BattleViewProps {
   readonly onSelectHex: (hex: CombatLabHex) => void;
   readonly children?: ReactNode;
   readonly menu?: ReactNode;
+  readonly terminalNotice?: ReactNode;
   readonly onRefusal?: (reason: string) => void;
   readonly onAct?: (action: CombatLabAction['intent']) => void;
   readonly onRestart?: () => void;

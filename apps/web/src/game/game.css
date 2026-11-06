@@ -636,16 +636,32 @@
   display: none;
 }
 
-.encounter-panel--fullscreen .leadership-choice {
+.encounter-panel--fullscreen .battle-terminal-overlays {
   position: absolute;
   z-index: 20;
   top: 5.5rem;
   left: 50%;
   width: min(30rem, calc(100% - 2rem));
   max-height: calc(100% - 7rem);
-  margin: 0;
+  display: grid;
+  gap: 1rem;
   overflow: auto;
   transform: translateX(-50%);
+}
+
+.encounter-panel--fullscreen .battle-terminal-overlays > .leadership-choice,
+.encounter-panel--fullscreen .battle-terminal-overlays > .battle-outcome-panel {
+  position: static;
+  width: auto;
+  max-height: none;
+  margin: 0;
+  overflow: visible;
+  transform: none;
+}
+
+.encounter-panel--fullscreen .battle-terminal-overlays > .leadership-choice {
+  font-size: 1rem;
+  line-height: normal;
 }
 
 .encounter-panel--fullscreen .encounter-live-lane {

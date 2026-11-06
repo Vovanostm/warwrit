@@ -18,6 +18,13 @@ Full M1 and the complete ordinary repeatable loop remain in progress. Broader vi
 Preserve primary combat/art WIP, other writers' resources and all retained worlds. Native DB warwrit_retreat378_20261106 remains preserved.
 [Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) own remaining tasks.
 
+## Loss-panel layout #392 — 2026-11-07
+
+Writer codex/loss-panel-layout392 in .claude/worktrees/repro-launch176 owns EncounterPanel/BattleView/props/game.css and focused tests.
+Owner selected only the overlap fix. Main600e19a1 integrated;36 tests/types/lint PASS. Source/finite visual ACCEPT at e6e8e7c9.
+Presentation replay PASS at1280×720/480:16px gap, actual wheel scroll and Return callback. Full gate NOT_RUN under advisory policy. [PR412](https://github.com/Vovanostm/warwrit/pull/412) PUBLISHED; owner explicitly approved merge on2026-11-07. PR owns live merge receipt; CI advisory.
+[Scope/results](../wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06). Actual retained defeat applied at62; no new native succession acceptance. Full #392 open.
+
 ## History
 
 [Prior checkpoints](CURRENT_PLAN_HISTORY.md) retain both integration histories and actual failed attempts.
