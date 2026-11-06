@@ -112,6 +112,32 @@ describe('server configuration', () => {
     ).toThrow('fixed callback');
   });
 
+  it.each(['development', 'test', 'production'])(
+    'requires a nonblank database for configured identity in %s',
+    (NODE_ENV) => {
+      const identity = {
+        NODE_ENV,
+        HOST: '127.0.0.1',
+        OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+        OIDC_CLIENT_ID: 'warwrit-local',
+        OIDC_CLIENT_SECRET: 'local-only-secret',
+        OIDC_REDIRECT_URI: 'http://127.0.0.1:3107/auth/callback',
+        PUBLIC_ORIGIN: 'http://127.0.0.1:3107',
+      };
+      for (const DATABASE_URL of [undefined, '', ' \t ']) {
+        expect(() => loadServerConfig({ ...identity, DATABASE_URL })).toThrow(
+          'OIDC identity requires DATABASE_URL',
+        );
+      }
+      expect(
+        loadServerConfig({
+          ...identity,
+          DATABASE_URL: '  postgres://unused@127.0.0.1:55433/unused  ',
+        }).databaseUrl,
+      ).toBe('postgres://unused@127.0.0.1:55433/unused');
+    },
+  );
+
   it('enables fixture encounter admission only with an explicit local flag and identity', () => {
     const identity = {
       DATABASE_URL: 'postgres://warwrit:warwrit-local-only@127.0.0.1:55433/warwrit_encounter_test',
@@ -124,6 +150,11 @@ describe('server configuration', () => {
       ENCOUNTER_FIXTURES: '1',
     };
     expect(loadServerConfig(identity).fixtureEncountersEnabled).toBe(true);
+    for (const DATABASE_URL of ['', ' \t ']) {
+      expect(() => loadServerConfig({ ...identity, DATABASE_URL })).toThrow(
+        'database-backed identity',
+      );
+    }
     expect(() =>
       loadServerConfig({ ...identity, PORT: '3107', ENCOUNTER_REALTIME_PORT: '3107' }),
     ).toThrow('loopback HTTP and realtime listeners');
@@ -153,18 +184,9 @@ describe('server configuration', () => {
   });
 
   it('requires database-backed OIDC identity before accepting production configuration', () => {
-    const identity = {
-      OIDC_ISSUER: 'https://identity.example.test',
-      OIDC_CLIENT_ID: 'warwrit',
-      OIDC_CLIENT_SECRET: 'secret',
-      OIDC_REDIRECT_URI: 'https://game.example.test/auth/callback',
-      PUBLIC_ORIGIN: 'https://game.example.test',
-    };
     for (const configuration of [
       {},
       { DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit' },
-      { ...identity, DATABASE_URL: '' },
-      { ...identity, DATABASE_URL: '   ' },
     ]) {
       expect(() => loadServerConfig({ ...configuration, NODE_ENV: 'production' })).toThrow(
         'Production server requires DATABASE_URL and complete OIDC identity configuration',

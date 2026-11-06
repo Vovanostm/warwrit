@@ -41,6 +41,16 @@ Focused config/app checks pass (12 tests); an actual process with missing
 production settings exits with the configuration refusal. A new real
 database-down/issuer journey and deployment are NOT_RUN.
 
+The 2026-11-06 post-review correction trims `DATABASE_URL` and normalizes an empty
+result to missing before checking identity or encounter-fixture requirements.
+With configured OIDC, absent, empty and whitespace-only values refuse startup
+in every environment. Previously development/test could retain an identity
+configuration while omitting database-backed routes and reporting health-only
+readiness200. Production already refused that configuration at its later guard.
+Valid padded URLs still normalize to their trimmed value. Regression and actual
+entry-process results are recorded in the
+[launch follow-up](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+
 When identity is enabled, `/health/ready` checks the required identity tables and
 columns without reading account data or applying migrations. Missing schema
 returns 503. With identity disabled, the database-only readiness probe remains.

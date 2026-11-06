@@ -126,6 +126,47 @@ M1 acceptance. External-provider, full battle/reward, backup/restore, deployment
 full visual/device/human acceptance remain NOT_RUN. FPS/capacity NOT_MEASURED.
 Local execution logs are under output/ (untracked).
 
+### Post-review blank-database correction — 2026-11-06
+
+Owner requested another review/fix/PR/merge cycle after the initial delivery.
+With complete OIDC and a blank `DATABASE_URL`, development/test returned
+identity configuration without a usable database. The actual entry process answered ready200 and auth/session404.
+Production already refused the same input at its later mandatory-dependency guard.
+
+Normalize the trimmed empty URL to missing once, before all existing requirements.
+Identity and encounter-fixture setup now reject it before app construction.
+Parameterized regression covers development/test/production with absent/empty/
+whitespace URLs, plus valid padded URLs. Fixture setup also checks blank values.
+The old implementation failed the new matrix. After correction the real entry
+process exited1 with `OIDC identity requires DATABASE_URL` and no listener3586.
+The previously retained world/volumes were not started or changed for this check.
+
+Branch `codex/launch-blank-database`, base0f9ea2a1. Focused config/app/database
+checks19, server types and scoped lint/format PASS. Independent source review
+ACCEPT. The reviewer did not execute product or runtime checks. Fresh browser/SQL replay NOT_RUN for this configuration-only change.
+The earlier accepted valid-configuration journey remains historical evidence.
+[PR407](https://github.com/Vovanostm/warwrit/pull/407) is published. Owner resumed
+with explicit continue/merge permission. Main a2348871 (recovery PR363) advanced
+during the first CI. Integrate it while retaining both document histories and
+the recovery owner's current checkpoint. The blank-database correction is
+unchanged. Integrated protocol build, server types and19 focused tests PASS.
+[PR407](https://github.com/Vovanostm/warwrit/pull/407) MERGED at 19:59 UTC as
+4c1f0ce477a9f4f608e3c309a1ac32d9ad98b4d0 with expected head
+32b4cca2c4c715d60d12475e8246af4b0eb198e1. Live GitHub/origin/main and the clean
+main checkout were read back at that merge. Reviewed and merged contents match.
+Independent integration/source review ACCEPT applies to the unchanged correction
+and the shared-document conflict resolution, without re-reviewing recovery.
+
+[Integrated CI42280535817](https://github.com/Vovanostm/warwrit/actions/runs/42280535817)
+and [scope42280535469](https://github.com/Vovanostm/warwrit/actions/runs/42280535469)
+SUCCESS, logs read. Existing bootstrap passed 1264 tests with 99 skipped,
+10000 stress battles, migration smoke and 89 real PostgreSQL/auth scenarios.
+Both world-map and ordinary painted-game browser journeys passed. Measured units,
+browser aggregation and unchanged native quality audit passed. The first
+pre-integration CI42276113660 also passed, but current acceptance uses the
+integrated run. No retained-world access was needed for the author regression.
+Full M1/hosted/external-provider and visual/device/human limits remain.
+
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 
 Текущий локальный кандидат: `codex/game-painted-map`, база `48d8a2ae`.

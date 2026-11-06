@@ -4,7 +4,7 @@
 
 Coordinator: this chat owns #378 terminal settlement/UI; the existing care/recovery/payroll parent retains its game integration and resources.
 Owner authority: “Implement, review, pr, review, merge, update main” for #378, 2026-11-06; explicit mission merge permission after checks/review, expected-head protection.
-Local branch codex/m1-hostile-retreat-378 in .claude/worktrees/m1-entry-369; integrates maina2348871 and preserves local workflow/closeout commits.
+Local branch codex/m1-hostile-retreat-378 in .claude/worktrees/m1-entry-369; integrates main12edc308 (recovery and startup correction) and preserves local workflow/closeout commits.
 Scope: accepted hostile-retreat settlement, no false proof, saved/pending result and next lawful company action. Repeat admission/storage and captivity remain separate.
 [Feature specification contract](../../AGENTS.md#feature-specification-before-implementation): problem/expected improvement → player behavior and state → architecture/tradeoffs → small tasks and direct acceptance.
 Write the specification once in the owning feature page before feature code; proceed within the implementation assignment without another routine approval round.
@@ -22,6 +22,12 @@ Native #378 runtime: DB54369/API3528/realtime3529/UI5228, warwrit_retreat378_202
 At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
 PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
 #378 PUBLISHED [PR408](https://github.com/Vovanostm/warwrit/pull/408): source/infrastructure ACCEPT d199895f. Clean integrated gate PASS (1264unit/90SQL/10000stress); real escape/rollback/no-proof/reopen/LEAVE PASS. Finite UI critic ACCEPT after wording/readability corrections; native escape not reproduced. CI42283935845 failed only introduced guidance complexity after passing gameplay stages; behavior-preserving correction/focused14/types/lint/source review PASS, final CI/merge pending. #376 policy accepted, no closure yet.
+
+## Launch configuration follow-up — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both histories retained.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
 
 ## History
 

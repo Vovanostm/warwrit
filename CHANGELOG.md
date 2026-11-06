@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Integrate the merged startup correction before retreat delivery
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of main12edc308
+  (PR407/410). Preserve both changelog histories and the launch checkpoint;
+  startup code is inherited unchanged. #378 terminal/UI behavior is unchanged.
+  Guidance correction5f86606a is published and independently accepted; PR CI did
+  not start while the changelog merge conflict existed. Resolve that conflict
+  and rerun the integrated PR pipeline. No migration or retained-save change.
+
 ### Simplify hunt guidance after final CI audit
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction for
@@ -161,6 +170,45 @@ requests.
   limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
   PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
   This checkpoint is local; the merged implementation/evidence is in PR405.
+### Close the merged blank-database startup correction
+
+- 2026-11-06, originating branch `codex/launch-blank-database`, source MERGED
+  through [PR407](https://github.com/Vovanostm/warwrit/pull/407) as 4c1f0ce4 at
+  expected head32b4cca2 under the owner's continue/merge request. Current main
+  recovery integration and both document histories are retained. Source and
+  conflict-resolution review ACCEPT. CI42280535817 and scope42280535469 SUCCESS,
+  full logs read. 1264 tests/99 skipped, 10000 stress battles, migration smoke/89
+  real SQL scenarios, both browser journeys, coverage/aggregation/native audit
+  PASS. Clean main checkout updated, reviewed/merged contents equal.
+  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06)
+  and wiki/checkpoint record the actual result. Author's invalid-config process
+  and19 focused checks retain their stated scope. Full M1/hosted/visual/device
+  acceptance remains open. Retained player worlds were not used by the regression.
+
+### Integrate recovery before merging the blank-database correction
+
+- 2026-11-06, `codex/launch-blank-database`, PUBLISHED PR407 follow-up under the
+  owner's continue/merge request. Main a2348871 now includes recovery PR363.
+  Integrate it with both changelog histories and the recovery current checkpoint
+  retained. Blank-DB source/tests remain unchanged. Update the owning launch
+  result and retain source review ACCEPT. Integrated protocol build, server types
+  and19 focused tests PASS. New integrated CI pending.
+  [Follow-up](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  No saved-world operation or new gameplay change in this integration.
+
+### Reject blank database settings before local identity startup
+
+- 2026-11-06, branch `codex/launch-blank-database`, LOCAL follow-up to the owner's
+  review/fix/PR/merge request for #176. Actual development startup with full OIDC
+  and whitespace DATABASE_URL returned ready200/auth404. Normalize the trimmed
+  empty URL to missing before the existing identity/fixture guards. Production
+  already refused it at a later guard. Valid padded URLs retain trimmed values.
+  New cross-environment regression first failed. Corrected entry process exits1
+  before listening. Config/tests, identity docs, playtest/wiki and CURRENT_PLAN
+  record the boundary and checks. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  Focused19 tests, server types, lint/format and independent source review ACCEPT.
+  CI/publication/merge pending. Fresh valid-config browser/SQL NOT_RUN. No migration
+  or game-rule change. Existing world volumes retained.
 
 ### Integrate the merged reproducible launch into recovery
 
