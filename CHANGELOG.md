@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Simplify hunt guidance after final CI audit
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction for
+  [PR408](https://github.com/Vovanostm/warwrit/pull/408). CI42283935845 passed
+  bootstrap, SQL/migrations, both browser journeys and unit coverage, then
+  rejected introduced `firstHuntGuidance` complexity (23 cyclomatic/29 cognitive).
+- Dispatch by contract state and keep participation guidance in one cohesive
+  helper; preserve player text and terminal feedback priority. Add a public
+  regression for the fresh-hunt owner/helper journey. Focused14 tests, web types
+  and scoped lint PASS. Fresh focused coverage plus scoped health diagnostic no
+  longer reports either guidance function; this is not a full PR audit verdict.
+  Independent source review ACCEPT; final published-head CI remains pending.
+  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+
 ### Verify hostile-retreat settlement and clarify its player feedback
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, PUBLISHED

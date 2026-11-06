@@ -21,7 +21,7 @@ PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is c
 Native #378 runtime: DB54369/API3528/realtime3529/UI5228, warwrit_retreat378_20261106 preserved after native defeat; prior retreat401 saves preserved. Native hostile escape did not reproduce (9HP/28morale); no native PASS claimed.
 At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
 PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
-#378 PUBLISHED [PR408](https://github.com/Vovanostm/warwrit/pull/408): source/infrastructure ACCEPT d199895f. Clean integrated gate PASS (1264unit/90SQL/10000stress); real escape/rollback/no-proof/reopen/LEAVE PASS. Finite UI critic ACCEPT after wording/readability corrections; native escape not reproduced. CI/merge pending; #376 policy accepted, no closure yet.
+#378 PUBLISHED [PR408](https://github.com/Vovanostm/warwrit/pull/408): source/infrastructure ACCEPT d199895f. Clean integrated gate PASS (1264unit/90SQL/10000stress); real escape/rollback/no-proof/reopen/LEAVE PASS. Finite UI critic ACCEPT after wording/readability corrections; native escape not reproduced. CI42283935845 failed only introduced guidance complexity after passing gameplay stages; behavior-preserving correction/focused14/types/lint/source review PASS, final CI/merge pending. #376 policy accepted, no closure yet.
 
 ## History
 
