@@ -12,16 +12,16 @@ Global visual BLOCKED is removed as a development prerequisite by the owner's 20
 Broader visual quality remains unassessed; missing night/reference/scene comparisons are future scene checks, not a failure of #401 or a blocker for the next feature.
 Full M1 remains in progress: reward → care/payroll → next contract → restart and the complete milestone matrix still require actual integrated results.
 Priority: close the normal repeatable company loop; fix input/readability/state defects encountered on that path. Defer broad art expansion and unrelated tooling.
-Next here: #378 implementation against the [accepted #376 retreat policy](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06); source gate resolved by the owner on 2026-11-06, #377 capture remains undefined. #368/#370 stay with the recovery/payroll flow.
-Before implementing that step, refresh PR363/PR338 integration with their delivery owner; last recorded candidate state is historical, not reverified here. Preserve that owner's resources and saves.
+Next here: native UI, clean gate and PR/review/authorized merge of implemented #378; [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06). #377 capture stays undefined; repeated admission is separate. #368/#370 stay with recovery/payroll.
+PR363 owner is active on final integration/CI (live chat snapshot 2026-11-06); payroll retains that owner. No overlapping writes or resources; recheck main before merge.
 #369 normal entry, #371 ordinary recovery, #372 deadline recovery and #401 legal retreat/retry have recorded successful bounded results.
 PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is closed. [Retreat result](../wiki/mechanics/retreat.md#нативный-результат-401) retains exact evidence and failed attempts.
 #398 broader tactics, #392 loss UI, #364 unresolved terminal policy and the remaining M1 capabilities keep their individual criteria; this workflow decision does not close them.
 [Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) retain the product scope and small tasks.
-Retained runtime: DB54369/API3528/realtime3529/UI5228; warwrit_retreat401_recheck_20261106 and earlier worlds preserved. Recheck liveness before use.
+Native #378 runtime: DB54369/API3528/realtime3529/UI5228, new warwrit_retreat378_20261106. Prior retreat401 databases are preserved; ordinary Dex login/new company/equipment completed.
 At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
 PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
-#376 source review/specification is LOCAL: outcomes, ownership, proof risk, retry-storage boundary and small tasks recorded; 4 focused tests PASS, 18 not run (filter/existing skip). Real hostile-retreat JOIN/SQL/UI NOT_RUN; retreat policy ACCEPTED, capture deferred; #378 implementation now assigned, no issue closure yet. Workflow correction remains LOCAL.
+#378 LOCAL c403788c: release/no-false-proof, private contract result and UI implemented; 31 focused PASS/1 skipped, types/lint PASS, real SQL JOIN/AI/rollback/no-proof/reopen/LEAVE PASS. Review found stale checkpoint (corrected); native outcome/full gate/PR NOT_RUN. #376 policy ACCEPTED; no issue closure yet.
 
 ## History
 

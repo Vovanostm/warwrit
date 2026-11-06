@@ -25,7 +25,9 @@ requests.
   Real SQL JOIN/commands/AI, rollback, release/no-proof, helper LEAVE and reopened
   connection/retry PASS. First test world yielded all deaths; a reproducible world
   was selected for the real escape regression without editing persisted battle state.
-  Native UI, independent review/full gate/publication/merge NOT_RUN at this step.
+  First independent source review at c403788c found no confirmed code defect and
+  flagged stale CURRENT_PLAN; corrected its local implementation/SQL status.
+  Native outcome/full gate/publication/merge NOT_RUN at this step.
 
 ### Accept hostile-retreat policy and separate captivity
 
