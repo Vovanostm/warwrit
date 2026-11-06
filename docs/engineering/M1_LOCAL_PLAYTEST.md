@@ -12,6 +12,49 @@ known to be missing. Start the stack per
 [CURRENT_PLAN](CURRENT_PLAN.md). The earlier 2026-09-29 company-opening evidence
 that lived in this file is in git history (commit `97d8480`).
 
+## Reproducible launch contract — #176, 2026-11-06
+
+Owner requested spec → independent review → implementation → independent review
+→ merge → update main. Sole writer uses `codex/repro-launch176` in
+`.claude/worktrees/repro-launch176`, based on main `149fa8e6`. Reuse PR334's
+production configuration guard and its PR. Shared documentation belongs to this
+writer for this slice. Other delivery histories and retained worlds stay intact.
+
+Observable result: a fresh checkout starts the ordinary painted-atlas game,
+creates a company through local Dex OIDC, then restores that same account/company
+and accepted player actions after stopping and restarting the complete stack.
+
+- Install pinned Node24.20/pnpm11.25 with the frozen lockfile. Build required
+  workspace exports before ordinary development startup. No hidden copied dist,
+  configuration, account or company from another checkout.
+- Configure one explicit Compose project, private PostgreSQL/Dex volumes and
+  unused loopback ports. Keep existing default ports supported. Dex issuer,
+  callback, web origin, API and realtime proxy must agree. Ordinary **Войти** is
+  the identity acceptance path. Quick company login and encounter fixtures do
+  not establish that result.
+- Require database-backed complete OIDC configuration before production startup,
+  reusing PR334. Production refuses fixtures/lab modes. Development health-only
+  tools retain their existing contract.
+- Check HTTP200 live/ready after migration. Stop only this project's PostgreSQL
+  while the API runs: live200 and ready503. Restart it: ready200. Readiness checks
+  database/schema availability. Issuer reachability is verified separately by
+  discovery and actual login, rather than promised by the database probe.
+- Gracefully stop owned development processes and `pnpm db:down` without volume
+  deletion. Repeat up/migrate/dev, reload and logout/OIDC login. Verify the same
+  account/company, equipment/supplies and accepted contract using UI and read-only
+  SQL. Campaign time can advance offline according to existing rules.
+- Reach one ordinary encounter through normal travel/contract/JOIN and verify
+  realtime connection. This is launch smoke, with full battle/reward acceptance
+  retained by the gameplay owners.
+- Document exact commands, troubleshooting, actual checks and limits in the
+  existing runbook/playtest/wiki/checkpoint/changelog. Independent source review
+  follows implementation. Final full gate is the existing clean PR CI sequence.
+
+Reserved resources: Compose `warwrit-launch176-20261106`, PostgreSQL54376,
+Dex5576, API3576, realtime3577, UI5276. No deployment, purchase, schema/rule
+change, separate orchestrator, retained-volume deletion or external-provider
+acceptance is included. Spec review and runtime checks are initially NOT_RUN.
+
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 
 Текущий локальный кандидат: `codex/game-painted-map`, база `48d8a2ae`.

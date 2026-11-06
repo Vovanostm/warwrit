@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Specify the isolated reproducible-launch cycle
+
+- 2026-11-06, `codex/repro-launch176`, LOCAL specification for owner-requested
+  #176 spec/review/implement/review/merge/update-main. Reserve private resources,
+  reuse PR334 and define clean install, ordinary OIDC/company entry, retained-data
+  restart, database readiness and encounter smoke in the
+  [existing playtest contract](docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+  CURRENT_PLAN records ownership. Implementation/runtime/reviews/CI NOT_RUN.
+
+
 ### Integrate current main before rerunning the retreat PR
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL PR405 integration with main802fb89a
