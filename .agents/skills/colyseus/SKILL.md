@@ -1,6 +1,6 @@
 ---
 name: colyseus
-description: "Colyseus 0.18 multiplayer game servers and clients: rooms, Schema state synchronization, state callbacks, reconnection, matchmaking, client SDKs, client-side prediction. Use when colyseus, @colyseus/schema, @colyseus/sdk or colyseus.js appears in the task or in package.json, before writing any Room or Schema code, and when a project contains pre-0.17 code such as getStateCallbacks(), Room<State> generics, onLeave(client, consented), @filter() or new Server()."
+description: Implement or debug Warwrit Colyseus realtime rooms, Schema synchronization, client messages and reconnection. Load before changing Room, Schema or Colyseus client APIs and when diagnosing their version compatibility.
 license: MIT
 metadata:
   version: "0.18.0"
@@ -9,8 +9,10 @@ metadata:
 
 # Colyseus
 
-Colyseus is an authoritative multiplayer framework for Node.js. The server owns
-the state; clients send input and receive binary delta patches.
+Colyseus carries Warwrit realtime messages and client-visible projections.
+Canonical rules belong to `game-core` and durable state to PostgreSQL. Preserve
+existing Fastify/application boundaries under ADR-0003. This entry was locally
+adapted on 2026-11-06. See [PROVENANCE.md](PROVENANCE.md).
 
 The APIs moved substantially in 0.17 and again in 0.18, and most model training
 data predates both. Assume your recall of Colyseus is out of date, and check
@@ -18,15 +20,15 @@ before you write.
 
 ## Step 1: establish the version. Do not skip this.
 
-Read the project's `package.json` (or `pnpm-lock.yaml` / `yarn.lock`) for
-`colyseus` and `@colyseus/schema`.
+Read the server/client `package.json` and `pnpm-lock.yaml` for
+`@colyseus/core`, `@colyseus/sdk` and `@colyseus/schema` (or the `colyseus` aggregate).
 
 | Installed | What to do |
 | --- | --- |
 | `colyseus` 0.18.x, `@colyseus/schema` 5.x | Use this skill's guidance directly. |
 | 0.17.x | Read `https://docs.colyseus.io/migrating/0.18.md` to see what does **not** yet apply, then follow 0.17 idioms. |
 | 0.16.x or older | Follow the version's own docs. Do **not** apply anything below. Version-specific sites: `https://0-16-x.docs.colyseus.io/`. |
-| Nothing installed yet | Scaffold with `npm create colyseus-app@latest`, which is 0.18. |
+| Nothing installed yet | Resolve the assigned adapter/dependency scope under ADR-0003 before implementation. |
 
 If the version is ambiguous, ask rather than guess. Writing 0.18 APIs into a
 0.16 project produces code that fails at import time, and writing 0.16 APIs into

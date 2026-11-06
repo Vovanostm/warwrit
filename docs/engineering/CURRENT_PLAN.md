@@ -5,7 +5,7 @@
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
 This mission owns #401 retreat applicability; the existing parent retains recovery/payroll integration and resources.
 2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
-Active writer codex/m1-retreat-401 in .claude/worktrees/m1-entry-369; integrated main ffaa84a5 plus local closeout47045f10.
+Active writer codex/m1-retreat-401 in .claude/worktrees/m1-entry-369; integrated main802fb89a after PR404, retaining local closeout47045f10.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.

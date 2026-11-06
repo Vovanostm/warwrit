@@ -4,13 +4,13 @@ coverage/
 pnpm-lock.yaml
 artifacts/
 
-# Pinned upstream Colyseus skill; preserve source bytes.
+# Keep upstream API-reference layout in the locally adapted Colyseus entry.
+# Bundled reference files and source record remain pinned.
 .agents/skills/colyseus/SKILL.md
 .agents/skills/colyseus/references/
 .agents/skills/colyseus/sources.json
 
-# Pinned upstream PlayCanvas inspector; preserve source bytes.
-.agents/skills/playcanvas-inspect-glb/SKILL.md
+# The GLB parser remains pinned. Its locally adapted instructions are formatted.
 .agents/skills/playcanvas-inspect-glb/scripts/
 
 # Personal Claude Code settings; git-ignored per user, not repository content.
