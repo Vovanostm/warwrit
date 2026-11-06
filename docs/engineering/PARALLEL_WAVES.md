@@ -148,8 +148,9 @@ already merged and are not new work.
 2026-11-06, #376: [source review and feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
 record ordinary V5 wolf reachability, the surrender source gap and the false-proof
 risk of removing the terminal guard alone. Four existing focused checks PASS;
-real hostile-retreat JOIN/SQL/UI NOT_RUN. The proposed M1 retreat policy awaits
-the owner; #376 remains open, #377/#378 are not activated. After acceptance,
+real hostile-retreat JOIN/SQL/UI NOT_RUN. The owner accepted the M1 retreat policy
+on 2026-11-06 and deferred captivity. #378 is source-ready; #377 stays BLOCKED_SOURCE.
+#376 records the decision; no implementation/issue closure is claimed here.
 #378 splits into settlement/proof and result UI. Repeat admission is a separate
 bounded storage step: the current schema permits one encounter per contract,
 and admission rejects partly dead hostile groups. #377 needs a capture policy
@@ -159,7 +160,7 @@ before any ordinary human V5 rollout; do not infer one from Capture consumers.
 | ------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376) | Определить конечные правила сдачи и отхода противника      | Current base + resource reservation                                                             | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 | [T02 / #377](https://github.com/Vovanostm/warwrit/issues/377) | Завершать бой со сдавшимся участником по принятому правилу | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
-| [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | #376 policy accepted 2026-11-06; coordinate current writer/resources                            | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 
 ## Eight contracts and eleven scenes
 

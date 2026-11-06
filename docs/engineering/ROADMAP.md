@@ -28,9 +28,9 @@ and restart; refresh its actual integration dependencies before implementation.
 ## Terminal-policy preparation — 2026-11-06
 
 [#376 specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
-separates battle resolution, physical consequences and contract proof. Proposed
+separates battle resolution, physical consequences and contract proof. Accepted
 next slice: release companies after hostile retreat without false trophies;
-repeat admission needs its own storage step. The owner decision is pending.
+repeat admission needs its own storage step. The owner accepted this policy on 2026-11-06; #378 is source-ready.
 Surrender/capture remains a separate source gap and is unavailable in the current
 ordinary wolf encounter. No new game behavior or full-M1 acceptance is claimed.
 

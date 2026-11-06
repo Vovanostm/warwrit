@@ -371,3 +371,27 @@ supply a captor/custody fact, and tactical victory does not supply proof of a ki
 The existing ordinary rescue gates require actual deaths. Preserve all accepted
 reward/custody terms; #377/#378 implementation and new capture/transport rules
 are outside #376. The original archive-concordance limitation is unchanged.
+
+## Accepted hostile-retreat policy — 2026-11-06
+
+Owner answer to the #376 M1 policy proposal: «Принять; плен определить отдельно
+(рекомендую)». This supersedes the preceding pending-decision status for hostile
+retreat only; the original 2026-10-20 surrender residual remains applicable.
+
+- An escaped hostile remains alive in the same contract area with its actual
+  wounds and remaining pools. Retreat does not create a kill, capture or travel
+  to another area. The company is released after all actual terminal consequences
+  commit atomically; existing mobility and leadership constraints still apply.
+- No trophy or reward comes from an escaped living objective. Tactical victory
+  alone cannot complete the hunt; actual objective/proof/custody conditions govern.
+  Existing rescue death gates and unique-bearer payout terms remain unchanged.
+- The unfinished contract permits a later physical attempt against the same
+  survivors with their retained pools, without resurrection or free healing.
+  This requires a separate repeat-admission storage step, preserving old attempts.
+- Define surrender/captive ownership separately before #377 activation. No new
+  ransom, interrogation, confiscation, carrying or rescue rule is accepted here.
+
+The [owning feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+contains behavior, architecture, small steps and verification. #378's source gate
+is resolved; gameplay implementation/real-encounter acceptance remain NOT_RUN.
+This records an owner decision, not delivery of its implementation.

@@ -9,6 +9,23 @@ requests.
 
 ## Unreleased
 
+### Accept hostile-retreat policy and separate captivity
+
+- 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL recording of the owner's
+  explicit answer: «Принять; плен определить отдельно (рекомендую)».
+  [Accepted contract amendment](docs/content/CONTRACTS_M1_DERIVATIVE.md#accepted-hostile-retreat-policy--2026-11-06):
+  escaped hostiles remain alive in the same area with retained wounds/pools;
+  companies are released after atomic consequences; no trophy/reward for a living
+  objective; later attempts reuse survivors without free healing. Captivity stays
+  undefined. The feature specification, Roadmap, queue and CURRENT_PLAN resolve
+  #378's source prerequisite while retaining #377's source gap.
+- Documentation-only decision; no game code/migration/save changes. The prior
+  four focused tests are unchanged evidence; new gameplay/SQL/UI/full gate NOT_RUN.
+  Scoped formatting, CURRENT_PLAN, diff and tracked local-link checks PASS.
+  GitHub issue bodies #376/#377/#378 updated and read back with the decision and
+  remaining boundaries; issues remain open. Repository edits remain LOCAL.
+  No successor implementation or merge is implied by this decision record.
+
 ### Specify terminal outcomes and isolate remaining product decisions
 
 - 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL #376 source/specification
