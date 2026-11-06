@@ -6116,3 +6116,11 @@ Follow-on same-company rest began at2542: Mora37 and Rell14 in RECOVERY; physici
 Next: publish the existing PR338 stack, check its full CI, then retarget to main after permitted PR363 merge.
 Neither PR338 nor PR363 has merge permission. Do not infer it from automatic goal continuations.
 At most two active writing worktrees; no Orca, automation, deployment or paid activation.
+
+## Launch configuration follow-up — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+Main a2348871 integrated with recovery history retained. Blank-DB correction/source review unchanged.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated protocol build/server types/19 tests PASS. New CI pending.
+
+Merge receipt: PR407 MERGED4c1f0ce4 at expected32b4cca2; payroll integrates it unchanged.

@@ -30,7 +30,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     'PORT must be a valid TCP port',
   );
 
-  const databaseUrl = environment['DATABASE_URL']?.trim();
+  const databaseUrl = environment['DATABASE_URL']?.trim() || undefined;
   const host = environment['HOST']?.trim() || '0.0.0.0';
   const fixtureEncountersEnabled = environment['ENCOUNTER_FIXTURES'] === '1';
   const encounterRealtimePortValue = environment['ENCOUNTER_REALTIME_PORT']?.trim() ?? '3110';
