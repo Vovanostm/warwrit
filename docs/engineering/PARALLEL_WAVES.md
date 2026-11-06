@@ -26,6 +26,13 @@ The earlier PLANNED/conflicting statements above are historical. #401/#392 and
 all broader parent criteria retain their own acceptance. No successor is activated
 by this merge. [Current result](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
 
+2026-11-06 #401 local result on1bb63f8b. Own exit cells now gate the Retreat
+button. Normal native movement/retreat, lost accepted reply, reload/exact receipt
+retry and three living withdrawals passed. The first run's two deaths are retained;
+Retry now waits for its sender. Finite control critique3/3/2/3/2 has no material
+finding; overall scene visual acceptance remains BLOCKED. Hosted CI/integration
+pending. [Owning result](../wiki/mechanics/retreat.md#нативный-результат-401).
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.

@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Verify retreat applicability and exact recovery through the ordinary game
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL native recheck on1bb63f8b.
+  New19-migration isolated DB; normal Dex OIDC, company/equipment/travel and
+  elder wolf contract/JOIN. Off-exit retreat is disabled with actual own exit
+  coordinates. Native movement to an exit enables retreat. Lose accepted reply,
+  reload, wait for sender readiness and exact retry returns original receipt8;
+  one command/receipt persists, current scoped pending clears. All3 actors then
+  retreat alive (56HP each), six accepted actions/zero refusals, final revision12.
+  Preserve first run's two deaths and old pending request. Retreat wiki and
+  CURRENT_PLAN/public JSON/images record results, transient reload frame and
+  corrected first-terminal file-capture error. Independent finite control checks
+  score3/3/2/3/2 with no material #401 finding; overall visual acceptance remains
+  BLOCKED/NOT_SCORED for missing broader scene inputs. Hosted CI pending.
+  Full M1/reward and broader terminal/visual acceptance remain open. Fault proxy
+  stopped; ordinary realtime restored. New full gate NOT_RUN locally; publication
+  CI owns final verification.
+
 ### Gate restored-command retry until the transport can send it
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL step2 for #401's native retry.
