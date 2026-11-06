@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+## Repeat hunt #409 planning — 2026-11-07
+
+Coordinator: this chat prepares #409's implementation plan. Recovery/payroll retains #368/#370 and its resources.
+Owner request: prepare the next task's implementation plan. Feature code remains NOT_STARTED.
+Base main600e19a1 includes completed #378/PR408 and advisory-CI policy PR411.
+[Owning #409 specification and small steps](../wiki/mechanics/retreat.md#повторная-охота--спецификация-и-план-409-2026-11-07) defines behavior, storage, consent, UI and acceptance.
+Selected design: existing admission history with one current row, attempt-scoped JOIN consent, existing transaction and a small optional read field.
+Sequence:409.1 atomic repeat and readers →409.2 ordinary contract UI →409.3 real SQL/native path and final affected critique.
+Carry forward native escape NOT_REPRODUCED from #378. #409 acceptance requires first escape → saved consequences → ordinary repeat → next outcome/restart.
+Preserve existing helper enrollment and active-binding access semantics. Archive UI and changing helpers are separate scope.
+CI is advisory. Planning checks are source walkthrough and scoped docs checks. Gameplay/SQL/migrations NOT_RUN.
+Next action: implement409.1 after owner assigns implementation, coordinating shared files with the #368 owner.
+
 ## Hostile-retreat result and next work — 2026-11-07
 
 Coordinator: this chat completes #378. The recovery/payroll parent retains #368/#370 and its resources.

@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Plan repeated hunting against saved survivors
+
+- 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL owner-requested implementation
+  plan for #409 on main600e19a1. The [owning retreat page](docs/wiki/mechanics/retreat.md#повторная-охота--спецификация-и-план-409-2026-11-07)
+  specifies the player path, admission history/current row, attempt-scoped JOIN
+  consent, survivor pools, reader/proof/access boundaries, rollback limit and
+  three cohesive implementation steps. Preserve existing helper enrollment.
+- Source trace found stale consent, single-admission readers, contract-wide
+  activation identity and UI polling/discovery assumptions. Carry the ordinary
+  escape not reproduced in #378 into #409 acceptance. Clarify that retained
+  replay history follows existing active-binding access; archive UI is separate.
+  CURRENT_PLAN records specification ready and implementation not started.
+  Scoped source/docs/whitespace/link checks PASS. Game/SQL/migration tests NOT_RUN
+  for planning. This local plan creates no publication or merge permission.
+
 ### Resume the necessary hostile-retreat delivery
 
 - 2026-11-07, `codex/m1-hostile-retreat-378`, PUBLISHED PR408 follow-up under
