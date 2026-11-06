@@ -16,7 +16,9 @@ requests.
   startup code is inherited unchanged. #378 terminal/UI behavior is unchanged.
   Guidance correction5f86606a is published and independently accepted; PR CI did
   not start while the changelog merge conflict existed. Resolve that conflict
-  and rerun the integrated PR pipeline. No migration or retained-save change.
+  and rerun the integrated PR pipeline. Integrated config/guidance26 tests PASS.
+  Initial merged changelog format check failed; formatting corrected before final
+  CI. No migration or retained-save change.
 
 ### Simplify hunt guidance after final CI audit
 
@@ -170,6 +172,7 @@ requests.
   limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
   PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
   This checkpoint is local; the merged implementation/evidence is in PR405.
+
 ### Close the merged blank-database startup correction
 
 - 2026-11-06, originating branch `codex/launch-blank-database`, source MERGED
