@@ -84,6 +84,7 @@ export function FirstHunt(
     readonly onUnauthorized: () => void;
     readonly refreshKey?: number;
     readonly onEncounterDiscovered?: () => void;
+    readonly onRewardPaid?: () => void;
   },
 ) {
   const [view, setView] = useState<ViewState>({ status: 'loading' });
@@ -202,6 +203,7 @@ export function FirstHunt(
           return { ...withoutAttempt, pending: false };
         });
         await refresh();
+        if (attempt.request.type === 'PRESENT') props.onRewardPaid?.();
       } catch (error) {
         setView((state) => ({
           ...state,
@@ -211,7 +213,14 @@ export function FirstHunt(
         }));
       }
     },
-    [props.scope.accountId, props.scope.companyId, refresh, selectedContainerId, view],
+    [
+      props.scope.accountId,
+      props.scope.companyId,
+      props.onRewardPaid,
+      refresh,
+      selectedContainerId,
+      view,
+    ],
   );
 
   const contract = view.response?.contract;
@@ -361,7 +370,7 @@ export function FirstHunt(
             <p className="state-note">
               Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
               {contract.yourProof.redemption === 'REDEEMED'
-                ? 'выплата получена, отметка REDEEMED'
+                ? 'выплата получена'
                 : 'ещё не предъявлен'}
               .
             </p>
@@ -410,7 +419,7 @@ export function FirstHunt(
                 disabled={actionsDisabled}
                 onClick={() => void submit('JOIN')}
               >
-                Вступить в бой
+                {contract.repeatAvailable ? 'Вступить в бой снова' : 'Вступить в бой'}
               </button>
             )}
             {atField && contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
@@ -577,6 +586,16 @@ export function firstHuntGuidance(
 ): string {
   if (contract.terminal?.effects === 'PENDING')
     return 'Бой завершён. Последствия ещё не сохранены; дождитесь обновления.';
+  if (contract.repeatAvailable && contract.knownState === 'ACTIVE') {
+    if (contract.yourJoinIntent) return 'Отряд готов. Ожидаем подтверждения второго участника.';
+    const repeatHint =
+      contract.instanceId === 'ci.m1.wolf-trail.01'
+        ? ' Выживших можно перехватить в середине поля.'
+        : '';
+    return currentSiteId === contract.terms.objectiveLocation.siteId
+      ? `Охота не завершена. Последствия боя сохранены. Можно вступить в бой снова.${repeatHint}`
+      : `Охота не завершена. Для новой попытки вернитесь к ${locationLabel(contract.terms.objectiveLocation.siteId)}.`;
+  }
   if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
     return 'Противники ушли живыми. Трофея и награды нет. Последствия боя сохранены; отряд больше не связан боем. Повторная попытка пока недоступна.';
   const issuer = contract.terms.issuerLocation.siteId;
@@ -601,7 +620,7 @@ export function firstHuntGuidance(
         ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
         : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
     case 'SETTLED':
-      return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+      return 'Награда получена. Трофей остаётся у отряда.';
   }
 }
 

@@ -1,17 +1,18 @@
 # Warwrit current delivery plan
 
-## Repeat hunt #409 planning — 2026-11-07
+## Repeat hunt #409 local delivery — 2026-11-07
 
-Coordinator: this chat prepares #409's implementation plan. Recovery/payroll retains #368/#370 and its resources.
-Owner request: prepare the next task's implementation plan. Feature code remains NOT_STARTED.
-Base main600e19a1 includes completed #378/PR408 and advisory-CI policy PR411.
-[Owning #409 specification and small steps](../wiki/mechanics/retreat.md#повторная-охота--спецификация-и-план-409-2026-11-07) defines behavior, storage, consent, UI and acceptance.
-Selected design: existing admission history with one current row, attempt-scoped JOIN consent, existing transaction and a small optional read field.
-Sequence:409.1 atomic repeat and readers →409.2 ordinary contract UI →409.3 real SQL/native path and final affected critique.
-Carry forward native escape NOT_REPRODUCED from #378. #409 acceptance requires first escape → saved consequences → ordinary repeat → next outcome/restart.
-Preserve existing helper enrollment and active-binding access semantics. Archive UI and changing helpers are separate scope.
-CI is advisory. Planning checks are source walkthrough and scoped docs checks. Gameplay/SQL/migrations NOT_RUN.
-Next action: implement409.1 after owner assigns implementation, coordinating shared files with the #368 owner.
+Coordinator: this chat implements the owner-assigned retreat.md #409 in m1-entry-369.
+Recovery/payroll retains #368/#370 and its resources.
+Branch codex/repeat-hunt-409-plan, base main600e19a1 with merged #378/PR408.
+[Owning specification, owner amendment and actual results](../wiki/mechanics/retreat.md#локальная-реализация-и-проверки-409--2026-11-07).
+LOCAL implementation adds migration 0020, admission history/current row, fresh consent, survivor pools, repeat UI and immediate payout refresh.
+Owner approved wolf repeat interception positions after original spawns caused repeated instant flight. The repeat placement applies after attempt 1.
+Checks PASS for 30 focused/1 existing SKIP, server/web types, scoped lint and real SQL 1 PASS/24 filtered SKIP including final death/proof/one payout, rollback/races/old worker.
+Ordinary App continuation from prepared saved retreat PASS including lost reply, reload, helper LEAVE, renewed JOIN, pickup/payment and fresh-server read.
+Independent source/infrastructure ACCEPT. Affected UI readback 2/3, no remaining material feature defect. Broader unchanged scene-art critique remains BLOCKED.
+Full first escape controlled through the native field with a new company remains NOT_RUN. #409.1/.2 done locally, #409.3 retains that native criterion.
+CI advisory and NOT_RUN. No publication/merge. Next playable acceptance is the remaining first-escape native journey.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

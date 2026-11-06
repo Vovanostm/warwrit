@@ -34,7 +34,7 @@ export function shouldPollForFirstHuntActivation(contract: FirstHuntContractView
     contract.knownState === 'ACTIVE' &&
     contract.yourRole !== 'NONE' &&
     contract.yourJoinIntent &&
-    contract.encounterId === null
+    (contract.encounterId === null || contract.repeatAvailable === true)
   );
 }
 
@@ -162,7 +162,8 @@ export function availableFirstHuntActions(
     contract.yourRole === 'NONE' &&
     atIssuer &&
     contract.knownState === 'ACTIVE' &&
-    contract.helperSlot === 'AVAILABLE'
+    contract.helperSlot === 'AVAILABLE' &&
+    contract.encounterId === null
   )
     actions.push('HELP');
   if (contract.yourRole === 'HELPER' && contract.knownState !== 'ENCOUNTER_ACTIVE')
@@ -172,7 +173,7 @@ export function availableFirstHuntActions(
     atObjective &&
     contract.knownState === 'ACTIVE' &&
     !contract.yourJoinIntent &&
-    contract.encounterId === null
+    (contract.encounterId === null || contract.repeatAvailable === true)
   )
     actions.push('JOIN');
   if (

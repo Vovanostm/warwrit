@@ -598,3 +598,55 @@ it('distinguishes pending and saved retreat from a fresh JOIN or reward', () => 
   expect(availableFirstHuntActions(applied, 'staraya-melnitsa', true)).toEqual(['LEAVE']);
   expect(firstHuntEncounterDiscoveryId(applied)).toBeUndefined();
 });
+
+it('offers a saved hunt repeat, polls fresh consent and discovers only the new battle', async () => {
+  const saved: NonNullable<FirstHuntReadResponseDto['contract']> = {
+    ...offer.contract!,
+    yourRole: 'OWNER',
+    knownState: 'ACTIVE',
+    encounterId: 'previous-battle',
+    terminal: { effects: 'APPLIED', hostileRetreated: true },
+    repeatAvailable: true,
+  };
+  expect(isFirstHuntReadResponse({ ...offer, contract: saved })).toBe(true);
+  expect(
+    isFirstHuntReadResponse({ ...offer, contract: { ...saved, repeatAvailable: 'yes' } }),
+  ).toBe(false);
+  expect(availableFirstHuntActions(saved, 'staraya-melnitsa', false)).toEqual(['JOIN']);
+  expect(firstHuntGuidance(saved, 'staraya-melnitsa')).toContain('Можно вступить в бой снова');
+  expect(firstHuntGuidance(saved, 'kamenny-brod')).toContain('вернитесь');
+  expect(firstHuntEncounterDiscoveryId(saved)).toBeUndefined();
+  const waiting = { ...saved, yourJoinIntent: true };
+  expect(shouldPollForFirstHuntActivation(waiting)).toBe(true);
+  expect(availableFirstHuntActions(waiting, 'staraya-melnitsa', false)).toEqual([]);
+  expect(firstHuntGuidance(waiting, 'staraya-melnitsa')).toContain('Ожидаем подтверждения');
+  vi.useFakeTimers();
+  try {
+    const discovered = vi.fn();
+    const { terminal: _terminal, ...nextContract } = waiting;
+    const stop = startFirstHuntActivationPolling({
+      initialContract: waiting,
+      refresh: async () => ({
+        ...offer,
+        contract: {
+          ...nextContract,
+          encounterId: 'next-battle',
+          knownState: 'ENCOUNTER_ACTIVE',
+          repeatAvailable: false,
+        },
+      }),
+      onEncounterDiscovered: discovered,
+    });
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(discovered).toHaveBeenCalledWith('next-battle');
+    stop();
+  } finally {
+    vi.useRealTimers();
+  }
+  const pending = {
+    ...saved,
+    terminal: { effects: 'PENDING' as const, hostileRetreated: true },
+    repeatAvailable: false,
+  };
+  expect(availableFirstHuntActions(pending, 'staraya-melnitsa', false)).toEqual([]);
+});

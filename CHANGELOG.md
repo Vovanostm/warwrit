@@ -9,6 +9,30 @@ requests.
 
 ## Unreleased
 
+### Repeat unfinished hunts against their saved survivors
+
+- 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL implementation requested by the
+  owner for [retreat #409](docs/wiki/mechanics/retreat.md#локальная-реализация-и-проверки-409--2026-11-07).
+  Add ordered migration 0020 with admission history, one current row and
+  attempt-scoped JOIN consent. Preserve survivors' exact pools, previous deaths,
+  receipts and replay. Current readers, old terminal replay and the next terminal
+  settlement understand multiple attempts. Reject unsafe down after repeat use.
+- Owner approved central wolf repeat positions after original spawns caused
+  instant repeated flight. Existing combat rules now permit interception.
+  The ordinary card offers repeat, waits for fresh helper consent and supports
+  helper LEAVE/reconfirmation and lost-response recovery. Correct a critic-found
+  stale reward balance using the existing app refresh, and remove internal status
+  jargon from completion feedback.
+- Focused 30 PASS/1 existing skip, server/web types, scoped lint and real
+  PostgreSQL 1 PASS/24 filtered skips. SQL covers rollback/races/history/retry,
+  migration compatibility, final death, one proof and one 80-crown payout.
+  Real App continuation from prepared retreat, helper exit, pickup/payment,
+  reload and independent fresh-server read PASS. Source review ACCEPT and
+  corrected affected UI readability 2/3. Full native first escape with a new
+  company remains NOT_RUN. Existing village scene-art critique stays outside
+  this feature and formally BLOCKED. CI/full suite/coverage/stress NOT_RUN.
+  The owning result records failed checks and corrected setup. No publication.
+
 ### Plan repeated hunting against saved survivors
 
 - 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL owner-requested implementation
