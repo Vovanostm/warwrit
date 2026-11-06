@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Prepare reviewed game skills for publication on current main
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL integration for
+  [#403](https://github.com/Vovanostm/warwrit/issues/403). Owner explicitly requested
+  “pr, review, merge”. Integrate current main `ffaa84a5`, retaining both changelog
+  histories. The PR delta contains the reviewed skill instructions, discovery,
+  formatting scope and prior pinned research/installation records. Applicable
+  hosted checks and final integrated independent review are required before
+  the authorized manual merge. Trial evidence retains its original revision and
+  limitations. [Owning result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
+
 ### Adopt bounded game skills and remove stale workflow directions
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner authorized
@@ -80,6 +91,143 @@ requests.
   source/license/provenance/local-reference readback PASS; report formatting was
   corrected. Product source, CURRENT_PLAN and existing skills are unchanged;
   effectiveness NOT_MEASURED. No game tests required or run.
+
+### Complete the current battle recovery boundary and retain failed exits
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL #372 native recheck on
+  product46c3b75a. Fresh19-migration isolated DB; normal OIDC company opening,
+  nine equips, travel and wolf offer/JOIN. Lost accepted wait→real deadline→
+  re-entry/exact retry retains one original command/receipt and one later timeout.
+  HUMAN resume and an old activation with current actor/revision15 return
+  UNAUTHORIZED without changing active state/counts. Current frame no longer
+  shows the legacy stale-authority overlap. Native socket/storage/SQL assertions
+  PASS. The exit automation then repeated46 enabled-but-refused Retreat attempts;
+  no retreat passed and real AFK progression killed all3. Retain this defeat,
+  the earlier defeat and the old database without reset. A local harness guard
+  stops future known refusals (new gameplay guard execution NOT_RUN).
+  [#401](https://github.com/Vovanostm/warwrit/issues/401) owns the separate
+  retreat-applicability/actual-exit gap. Owning report, CURRENT_PLAN and M1 wiki
+  distinguish recovery acceptance from failed exits. Independent finite playable
+  ACCEPT at46c3b75a (2/2/3/2/2), with #401 and loss-layout #392 explicitly open;
+  current Retry screenshot is marked in-flight, later HUMAN frame/JSON own
+  confirmation. Final CI still pending. No new server/rule/protocol/schema change
+  or full-M1 acceptance. Fault proxy stopped; normal realtime3529 restored.
+  [Current evidence](docs/engineering/evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+
+### Keep pending battle feedback out of legacy authority hints
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL fix for the actual #372
+  unknown-result capture: legacy inline hints overlapped the fullscreen heading
+  and falsely described a pending command as stale authority. Restrict those
+  hints to inline mode and omit the stale hint while a command is pending;
+  preserve the fullscreen live lane, Retry and transport/storage rules.
+  Existing mounted regression failed on old source (1 failure), then recovery/
+  live-lane files passed (5 tests); web types and scoped ESLint PASS.
+  [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md#pending-feedback-correction--2026-11-06-local)
+  and M1 wiki/CURRENT_PLAN retain the pre-fix battle evidence and pending new
+  native/independent acceptance. Full gate NOT_RUN at this step.
+
+### Exercise a real lost battle reply across its deadline
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL partial #372 evidence on
+  merged product496ca5f5. Normal OIDC/travel/elder offer/JOIN led to one real
+  wolf encounter. An accepted wait reply was lost; re-entry after the actual
+  deadline restored the identical saved body and replayed its original receipt.
+  Real SQL/socket/storage assertions passed: one manual command/receipt, no
+  timeout for its completed activation, one timeout for the next expired
+  activation, unchanged saved policy, cleared pending request. The author did
+  not resume manual control promptly; AFK automation killed all three allies.
+  Retain that defeat and the post-terminal refusal; do not claim the missing
+  active-battle obsolete-activation probe or independent critique complete.
+  [Owning report](docs/engineering/evidence/command-recovery-20261028/README.md#native-battle-deadline-recovery--2026-11-06-partial),
+  CURRENT_PLAN and M1 wiki record the boundary. No product code or rule change;
+  new game suites/full gate NOT_RUN for this evidence-only step.
+
+### Merge ordinary command recovery and activate the battle deadline scenario
+
+- 2026-11-06, `codex/m1-battle-recovery-372`: MERGED correction for
+  [PR335](https://github.com/Vovanostm/warwrit/pull/335), merge496ca5f5 from
+  reviewed head30e06f15, following the owner's explicit “merge, next - #372”.
+  Fresh CI/scope and empty review-thread readback passed; the actual merged tree
+  matches the verified candidate. Hosted CI42116755511 attempt2 passed bootstrap
+  and measured coverage (1256 passed/98 skipped each), real PostgreSQL88,
+  stress10000, both browser journeys and changed-code audit. Preserve attempt1's
+  unchanged road-junction coverage timeout in the PR report. #371 is complete;
+  CURRENT_PLAN activates only #372's real WebSocket/manual-vs-automatic/deadline
+  scenario in the existing isolated world. That scenario is NOT_RUN at activation;
+  no new combat policy, deployment or successor merge permission.
+
+### Reconcile pending-command recovery with the current ordinary game
+
+- 2026-11-06, `codex/m1-recovery-371`, LOCAL continuation of existing PR335 for
+  owner-requested stepwise implementation (#371). Merge candidate ab7c59c7 with
+  main b89f4128 and the local #369 result. Retain current care/recruitment,
+  painted actual-place guards, contract facts and resolved-battle return wiring;
+  preserve both changelog/wiki histories and archive the old candidate checkpoint.
+  Reuse the original scoped storage/ordinary hook and paired encounter adapter,
+  without changing server, rules, protocol or schema. Web types, scoped lint,
+  eight focused client files/31 tests PASS. Independent source and finite playable
+  critique ACCEPT at5e3dcd5c. Real committed HELP reply loss→reload→identical-body
+  retry PASS: two posts/one HELP effect, total receipts2/revision2,850crowns retained.
+  Conflicting-body same-ID probe rejects409 with unchanged receipt/revision counts.
+  Current public native JSON and screenshot accompany the owning result; an initial
+  raw-response ordering oracle was corrected without changing product code.
+  Hosted CI/publication pending; real battle/deadline #372 remains NOT_RUN.
+  Old worktree's publication-status WIP remains untouched.
+  [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md).
+
+### Prove ordinary entry and preparation for the first real offer
+
+- 2026-11-06, `codex/m1-entry-369`, LOCAL result for owner-requested stepwise
+  implementation. Existing main b89f4128 passes #369 without product changes:
+  local Dex OIDC→one company/two companions→nine equips→ten rations for40crowns→
+  authentic mill-worker ACCEPT→logout/re-entry with unchanged ownership/items/costs.
+  Real SQL readback: one account/company,11company receipts,one ordinary ACCEPT.
+  [Playtest result](docs/engineering/M1_LOCAL_PLAYTEST.md#ordinary-entry-checked--2026-11-06)
+  records invalid-selection/quantity checks, isolated resources, startup/tooling
+  limitations and unexecuted full-game acceptance. Update CURRENT_PLAN and owning
+  M1 wiki; keep recovery/payroll with their current owner. Next #371/PR335.
+  No new tests, gameplay rule, migration, merge or deployment; documentation
+  scoped format/diff and CURRENT_PLAN checks PASS; new combat/reward/recovery/full gate NOT_RUN.
+
+### Split the remaining M1 work into bounded AI tasks
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL documentation
+  follow-up to the owner's request for small AI development tasks.
+  [AI queue](docs/engineering/PARALLEL_WAVES.md#ai-task-contract) defines one result,
+  dependencies, write boundary, exclusions and direct verification per card.
+  GitHub leaf issues #368–#400 are PUBLISHED / PLANNED; seven bounded existing
+  entries reuse recovery/payroll/transfer/service/nickname/performance/launch.
+  Keep original parent acceptance, all eight contracts/eleven scenes and source
+  gates. Separate mill clues, night hunt and worker delivery without a cycle;
+  split course/retraining and individual crash boundaries. Update ROADMAP,
+  M1_PRODUCTION_PLAN, CURRENT_PLAN and the owning M1 wiki. No game implementation,
+  agent launch, new policy, merge to main or deployment. Updated 15 parent/existing
+  issues and the canonical Airtable Roadmap/M1 pointers; readback matches all
+  48 issue bodies and both Airtable amendments. Dependency references/acyclicity,
+  scoped format/diff, 9 added local links/anchors and CURRENT_PLAN (26/40) PASS.
+  Publication continues in [PR366](https://github.com/Vovanostm/warwrit/pull/366);
+  new-head hosted checks remain pending. Game/browser/SQL/visual checks NOT_RUN.
+  Publication base refreshed to b6a04977 (already merged CI-only PR367);
+  preserve both changelog additions. The PR delta remains documentation only.
+
+### Reconcile the game roadmap and tasks with current implementation
+
+- 2026-11-05, originating branch codex/game-roadmap-20261105, LOCAL planning
+  at the owner's request. Replace the September ROADMAP/PARALLEL_WAVES dispatch,
+  refresh CURRENT_PLAN and M1_PRODUCTION_PLAN, and update the owning M1 wiki,
+  navigation and playtest status. Preserve superseded baselines in CURRENT_PLAN_HISTORY.
+  Record merged atlas/markers/care/recruitment, candidate recovery/payroll,
+  conflicting transfer/retry work and the remaining full-M1 scope.
+  [Assessment and evidence boundary](docs/wiki/m1-spec.md#state-2026-11-05)
+  distinguishes current source, earlier runtime and unexecuted acceptance.
+  Task tracking PUBLISHED: 16 existing GitHub issues updated with preserved criteria/history;
+  [outcome task #364](https://github.com/Vovanostm/warwrit/issues/364) created;
+  canonical Airtable Roadmap/M1 index amended and M1 corrected from Planned to In Progress.
+  GitHub readback matches all 16 updates. Scoped format/diff, 45 added local links
+  and CURRENT_PLAN (23/40 nonempty lines) PASS. Documentation PR publication is
+  tracked separately from integration. New game/browser/SQL/load/visual/full gates NOT_RUN,
+  FPS/capacity NOT_MEASURED. No game-code change, merge or deployment.
 
 ### Capture browser failures before measured unit coverage
 
@@ -1150,6 +1298,25 @@ requests.
   UI/contract8 PASS; independent final source ACCEPT and normal correction
   hook PASS atd559e283, no introduced findings. PR/clean-checkout CI/merge pending;
   no bypass/deploy.
+
+### Restore exact ordinary and encounter requests after reload
+
+- 2026-10-28, branch `codex/game-command-recovery`, local: the owner's
+  autonomous game-completion mission includes keeping uncertain commands
+  recoverable across page reload. Account/company-scoped ordinary attempts and
+  additional encounter-scoped attempts persist before send, retain unknown/auth
+  outcomes and clear only the matching terminal response. Storage failures block
+  unsafe sends; scope/unmount generations fence late responses. An independent
+  source finding corrected an unreachable encounter disposer and gained a mounted
+  regression. Focused8 files/31 tests, web types/lint/format PASS; source ACCEPT
+  before quality rework. Normal commit audit FAILED new callback complexity and
+  storage clones; corrected with one scoped lifecycle hook/shared storage owner.
+  Final focused6 files/17 tests with fresh V8, lint/types/format/diff and normal
+  pnpm check:changes PASS; independent post-extraction source ACCEPT, no bypass.
+  Actual local OIDC/two-company HELP response-loss/reload/retry and PostgreSQL
+  unchanged receipt/revision/count PASS. New real battle/WebSocket loss, full
+  day/night visual acceptance and full M1 NOT_RUN. No protocol/server/migration
+  or finance change. [Journey, screenshots and limits](docs/engineering/evidence/command-recovery-20261028/README.md).
 
 ### Road diagnostics publication activation
 

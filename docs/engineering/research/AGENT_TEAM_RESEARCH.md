@@ -12,6 +12,14 @@ stack explanation. LOCAL on `codex/harness-diagnostic-skills`, baseline `f82c278
 Project-local installation was chosen so source, adaptation and discovery changes
 travel with Warwrit. This section supersedes the survey's adoption status below.
 
+Publication follow-up, 2026-11-06. The owner requested “pr, review, merge”,
+which authorizes publication and manual merge of this skill mission after its
+applicable checks and independent review. [Issue403](https://github.com/Vovanostm/warwrit/issues/403)
+owns delivery. Integrate live main `ffaa84a5`, preserving both changelog histories.
+The earlier trials retain their recorded baseline. The resulting PR owns current
+CI, review and actual merge receipts. The game's CURRENT_PLAN stays with its
+existing integration owner.
+
 ### Accepted and removed instructions
 
 | Decision                              | Implemented result                                                                                                                                                                                                                                                               |

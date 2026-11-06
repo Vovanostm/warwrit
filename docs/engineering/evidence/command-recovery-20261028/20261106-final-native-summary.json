@@ -1,0 +1,175 @@
+{
+  "source": "46c3b75a",
+  "base": "496ca5f5",
+  "database": "warwrit_battle372_20261106",
+  "provenance": "New19-migration database; ordinary local Dex OIDC -> UI company Речной дозор / Мирон+Mora+Rell ->9 equips -> normal travel to Bereznyak -> elder ACCEPT -> square JOIN. No snapshots/position/health/clock/RNG edits. Old warwrit database retained.",
+  "encounterId": "6058743c-1f78-403f-9aaf-8f682f4990d4",
+  "command": {
+    "version": 2,
+    "encounterId": "6058743c-1f78-403f-9aaf-8f682f4990d4",
+    "commandId": "1aa245c5-103d-4379-9fe8-e70dc2f6a304",
+    "expectedRevision": 6,
+    "activationId": "1:438334c5-266a-416c-8299-df89cf3f0262",
+    "actorId": "438334c5-266a-416c-8299-df89cf3f0262",
+    "intent": {
+      "type": "wait"
+    }
+  },
+  "originalResponse": {
+    "version": 1,
+    "encounterId": "6058743c-1f78-403f-9aaf-8f682f4990d4",
+    "commandId": "1aa245c5-103d-4379-9fe8-e70dc2f6a304",
+    "receiptId": "6058743c-1f78-403f-9aaf-8f682f4990d4:7",
+    "status": "accepted",
+    "revision": 7
+  },
+  "originalCommandRows": 1,
+  "originalReceiptRows": 1,
+  "nativeSends": 2,
+  "sameCommandValues": true,
+  "sameSavedBody": true,
+  "sameResponseValues": true,
+  "pendingCleared": true,
+  "staleAuthorityHintAbsent": true,
+  "manualPolicy": {
+    "activation_id": "1:438334c5-266a-416c-8299-df89cf3f0262",
+    "activation_epoch": 4,
+    "unit_id": "438334c5-266a-416c-8299-df89cf3f0262",
+    "mode": "HUMAN",
+    "started_at": "2026-11-06T10:51:15.165Z",
+    "deadline_at": "2026-11-06T10:51:45.165Z",
+    "timeout_command_id": "timeout-9e3569f7e2d33fc22fca96d9086561c3e7c546bdef4eb97d559823d0ac0e1c8b"
+  },
+  "manualTimeoutRows": 0,
+  "expiredPolicy": {
+    "activation_id": "1:4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+    "activation_epoch": 5,
+    "unit_id": "4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+    "mode": "HUMAN",
+    "started_at": "2026-11-06T10:51:27.798Z",
+    "deadline_at": "2026-11-06T10:51:57.798Z",
+    "timeout_command_id": "timeout-9ecc5ab97a84998f3b5d7de8dbb8dfed0741310c18454ca2b642cd6ce4e3dc6f"
+  },
+  "timeout": {
+    "revision": 8,
+    "command_id": "timeout-9ecc5ab97a84998f3b5d7de8dbb8dfed0741310c18454ca2b642cd6ce4e3dc6f",
+    "source_kind": "system_timeout",
+    "activation_policy_id": "1:4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+    "command": {
+      "type": "wait",
+      "commandId": "timeout-9ecc5ab97a84998f3b5d7de8dbb8dfed0741310c18454ca2b642cd6ce4e3dc6f",
+      "activationId": "1:4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+      "actorId": "4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23"
+    },
+    "accepted_at": "2026-11-06T10:51:57.939Z"
+  },
+  "awayAt": "2026-11-06T10:51:59.304Z",
+  "reloadedAt": "2026-11-06T10:52:02.155Z",
+  "retriedAt": "2026-11-06T10:52:02.363Z",
+  "revisionBefore": 7,
+  "revisionAfterRetry": 8,
+  "activeGuard": {
+    "at": "2026-11-06T10:52:30.950Z",
+    "probe": {
+      "version": 2,
+      "encounterId": "6058743c-1f78-403f-9aaf-8f682f4990d4",
+      "commandId": "cd648bf5-29b0-44d0-8779-26143e10a031",
+      "expectedRevision": 15,
+      "activationId": "1:438334c5-266a-416c-8299-df89cf3f0262",
+      "actorId": "438334c5-266a-416c-8299-df89cf3f0262",
+      "intent": {
+        "type": "wait"
+      }
+    },
+    "response": {
+      "version": 1,
+      "commandId": "cd648bf5-29b0-44d0-8779-26143e10a031",
+      "status": "rejected",
+      "code": "UNAUTHORIZED"
+    },
+    "before": {
+      "status": "active",
+      "revision": 15,
+      "activationId": "2:438334c5-266a-416c-8299-df89cf3f0262",
+      "actorId": "438334c5-266a-416c-8299-df89cf3f0262",
+      "position": {
+        "q": -1,
+        "r": -2
+      },
+      "commandCount": 15,
+      "receiptCount": 15
+    },
+    "after": {
+      "status": "active",
+      "revision": 15,
+      "activationId": "2:438334c5-266a-416c-8299-df89cf3f0262",
+      "commandCount": 15,
+      "receiptCount": 15
+    },
+    "participants": [
+      {
+        "side_id": "first-hunt-companies",
+        "unit_ids": [
+          "438334c5-266a-416c-8299-df89cf3f0262",
+          "4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+          "ce59294e-7568-4cad-a261-aedfa95b6c13"
+        ],
+        "admission_source": "company_binding",
+        "afk": false,
+        "resume_requested_after_epoch": null
+      }
+    ]
+  },
+  "exitAttempt": {
+    "uiClickAttempts": 46,
+    "acceptedRetreats": 0,
+    "responseCode": "INVALID_COMMAND",
+    "authorError": "Automation repeated an enabled but refused action instead of stopping at the first known refusal.",
+    "followupIssue": 401
+  },
+  "terminal": {
+    "at": "2026-11-06T10:53:56.303Z",
+    "status": "resolved",
+    "revision": 60,
+    "units": [
+      {
+        "id": "438334c5-266a-416c-8299-df89cf3f0262",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "4e5eae36-2f82-468c-9e0e-2f1d5fd6ba23",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "ce59294e-7568-4cad-a261-aedfa95b6c13",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "world.wolf.bereznyak.02",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      },
+      {
+        "id": "world.wolf.bereznyak.03",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      },
+      {
+        "id": "world.wolf.bereznyak.leader.01",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      }
+    ]
+  },
+  "limits": "Recovery/old-activation boundary passed. No successful retreat, victory/reward/full-loop, full scene/device/performance or wider-crash acceptance. Both actual defeats retained.",
+  "imageTiming": "final-retried.png is in-flight (button hidden during send). Confirmation uses recheck-retried-ui.json pending={} and native/SQL receipt values; final-active-guard.png shows later stable HUMAN control."
+}
