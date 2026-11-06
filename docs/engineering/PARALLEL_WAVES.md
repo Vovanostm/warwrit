@@ -12,6 +12,13 @@ CI-only main `b6a04977` / PR367, with no gameplay change. PR363 and PR338 are st
 PR339/335/334 conflict with main. All new cards are PLANNED / NOT_RUN.
 Creating a card does not assign or start an agent.
 
+2026-11-06 observed follow-up: [#401](https://github.com/Vovanostm/warwrit/issues/401)
+is a bounded Q01/#398 child for retreat applicability, found during #372's real
+recovery run. It supplements the dated33-leaf baseline; it does not introduce a
+retreat rule or start another writer. The current terminal banner overlap was
+added to existing W05/#392. Recovery proof does not accept either tactical exit
+or loss-layout behavior.
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.

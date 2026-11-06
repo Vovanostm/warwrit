@@ -9,6 +9,28 @@ requests.
 
 ## Unreleased
 
+### Complete the current battle recovery boundary and retain failed exits
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL #372 native recheck on
+  product46c3b75a. Fresh19-migration isolated DB; normal OIDC company opening,
+  nine equips, travel and wolf offer/JOIN. Lost accepted wait→real deadline→
+  re-entry/exact retry retains one original command/receipt and one later timeout.
+  HUMAN resume and an old activation with current actor/revision15 return
+  UNAUTHORIZED without changing active state/counts. Current frame no longer
+  shows the legacy stale-authority overlap. Native socket/storage/SQL assertions
+  PASS. The exit automation then repeated46 enabled-but-refused Retreat attempts;
+  no retreat passed and real AFK progression killed all3. Retain this defeat,
+  the earlier defeat and the old database without reset. A local harness guard
+  stops future known refusals (new gameplay guard execution NOT_RUN).
+  [#401](https://github.com/Vovanostm/warwrit/issues/401) owns the separate
+  retreat-applicability/actual-exit gap. Owning report, CURRENT_PLAN and M1 wiki
+  distinguish recovery acceptance from failed exits. Independent finite playable
+  ACCEPT at46c3b75a (2/2/3/2/2), with #401 and loss-layout #392 explicitly open;
+  current Retry screenshot is marked in-flight, later HUMAN frame/JSON own
+  confirmation. Final CI still pending. No new server/rule/protocol/schema change
+  or full-M1 acceptance. Fault proxy stopped; normal realtime3529 restored.
+  [Current evidence](docs/engineering/evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+
 ### Keep pending battle feedback out of legacy authority hints
 
 - 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL fix for the actual #372
