@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Record loss-panel layout measurements
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL UI evidence for the scoped
+  overlap fix. Preserve current720px and480px scroll states with the owning
+  [measurements and provenance](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Actual wheel scrolling reaches the complete notice and Return button. Source
+  review ACCEPT, current visual review pending. Native succession NOT_RUN.
+
 ### Integrate the current playable-first workflow
 
 - 2026-11-07, `codex/loss-panel-layout392`, LOCAL integration of main35b0e7f /
@@ -50,6 +58,7 @@ requests.
   reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
   retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
   stays with #392. Source/native/review/visual checks initially NOT_RUN.
+
 ### Prioritize playable game development and make CI advisory
 
 - 2026-11-07, `codex/game-first-advisory-ci`, LOCAL owner-requested update to
