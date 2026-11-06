@@ -9,8 +9,8 @@ Writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/wor
 Night inspection was visibly unavailable; actual HTTP refusal was NOT_RUN. Cash693.94→733.94; next ordinary ration purchase4 leaves729.94.
 Owned API restart preserves the captured report exactly; paid quest/facts persist in UI and after-restart ordinary quest readback. Four quest receipts, one reward.
 [Owning checklist, actual result and limits](M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07). Independent finite journey ACCEPT; current-main retained-view smoke PASS.
-No product code changes were needed. Docs/plan/diff checks own closeout; full suite/CI NOT_RUN under advisory policy.
-#368 result is LOCAL pending documentation publication. New-head merge requires separate owner approval.
+No product code changes were needed. Docs/plan/diff checks own closeout; full suite NOT_RUN; hosted CI not used as acceptance evidence.
+#368 documentation/result [PR413](https://github.com/Vovanostm/warwrit/pull/413) is PUBLISHED, NOT_MERGED. New-head merge requires separate owner approval.
 Initial HUNT-02 was the previous lost encounter, not a fresh hunt. No reset/respawn/reward was introduced; #380/#409 remain open.
 Retained resources include warwrit_payroll_native_20261105, PostgreSQL32769, Dex5618/API3598/RT3599/UI5398/relay3597; ignored output/playwright/next-contract368-20261107/.
 The next result after #368 closeout is #370 complete ordinary first-hour loop; #369 fresh-entry evidence has its own boundary. Full #177/#161 remain open.

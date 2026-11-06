@@ -360,7 +360,8 @@ The actual result below supersedes this plan.
 
 ### Actual result — #368, 2026-11-07
 
-**LOCAL native PASS, independent finite journey ACCEPT.** Issue368 permits one
+**PUBLISHED [PR413](https://github.com/Vovanostm/warwrit/pull/413), NOT_MERGED.
+Native PASS, independent finite journey ACCEPT.** Issue368 permits one
 available authentic next contract. Existing game code already supports this
 result; no product code, migration, dependency or new test was required.
 
@@ -403,7 +404,8 @@ text polish remains «Купить 1 рационов».
 Current main 668dc68b (PR408/412) was then integrated with product source unchanged
 from main. Protocol build PASS, owned API restart/readiness PASS and ordinary
 re-entry/Place smoke PASS at1440×900. Same company/party at Березняк, paid herb
-card, learned clues,729.94crowns and four quest receipts remain. The old lost
+card, learned clues,729.94crowns and four quest receipts remain. Independent
+affected-view readback ACCEPT with no observed regression. The old lost
 wolf card still says «принят, ждёт участия»/«Отряд готов к бою» without JOIN;
 PR408's hostile-escape guidance does not cover this defeat. Preserve it for its
 bounded follow-up; do not infer that the hunt was completed.
@@ -415,4 +417,5 @@ An earlier travel snapshot recorded a transient Colyseus offline warning;
 current-main retained-view console has no error. This is finite continuation
 and persistence evidence. All-eight-contract, new-player first-hour, whole-scene
 art/device acceptance, capacity and full backup/restore remain outside #368.
-Game suites and fresh CI NOT_RUN for this documentation-only closeout.
+Scoped formatting, current-plan and whitespace checks PASS. Game suites NOT_RUN
+for this documentation-only closeout; hosted CI is not acceptance evidence here.

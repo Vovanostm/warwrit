@@ -11,7 +11,8 @@ requests.
 
 ### Complete an authentic next contract with the retained company
 
-- 2026-11-07, `codex/m1-next-contract-368`, LOCAL #368 result superseding the
+- 2026-11-07, `codex/m1-next-contract-368`, PUBLISHED #368 result in
+  [PR413](https://github.com/Vovanostm/warwrit/pull/413) superseding the
   initial HUNT-02 route below. The previous hunt was already lost; its saved
   survivors/proof boundary remains open. Same Company2 completed INVEST-02
   through ordinary acceptance, stock record, daytime inspection and report.
@@ -20,9 +21,9 @@ requests.
   state persisted across the owned API restart; paid UI/facts survived re-entry.
   [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07)
   distinguishes the report equality from ordinary quest readback. Independent
-  finite journey ACCEPT. Integrate main668dc68b / PR408/412 unchanged and recheck
+  finite journey and current-main retained-view ACCEPT. Integrate main668dc68b / PR408/412 unchanged and recheck
   retained UI after protocol build/API restart. No new product code, migration,
-  dependency or tests. Full suite and new CI NOT_RUN under advisory policy.
+  dependency or tests. Full suite NOT_RUN; hosted CI not used as acceptance evidence under advisory policy.
 
 ### Continue the recovered and paid company to its next contract
 
