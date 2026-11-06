@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Record the approved retreat applicability merge
+
+- 2026-11-06, `codex/m1-retreat-401-closeout`, LOCAL documentation closeout
+  for the owner's “approve”. [PR405](https://github.com/Vovanostm/warwrit/pull/405)
+  is MERGED as149fa8e6 from agreed head95de47b6 with expected-head protection.
+  GitHub/origin/main and empty merged-tree diff confirm actual integration.
+  #401 is closed; #398 retains broader acceptance. CURRENT_PLAN, task queue,
+  M1 wiki and the [owning retreat result](docs/wiki/mechanics/retreat.md#интерфейс-постоянного-боя--2026-11-06)
+  record successful exact-head CI42256073173 and current PR scope42260946534.
+  Preserve the first CI failure, failed native attempt, equivalent-HTML/native
+  limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
+  PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
+  This checkpoint is local; the merged implementation/evidence is in PR405.
+
 ### Integrate current main before rerunning the retreat PR
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL PR405 integration with main802fb89a

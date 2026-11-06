@@ -33,6 +33,12 @@ Retry now waits for its sender. Finite control critique3/3/2/3/2 has no material
 finding; overall scene visual acceptance remains BLOCKED. Hosted CI/integration
 pending. [Owning result](../wiki/mechanics/retreat.md#нативный-результат-401).
 
+2026-11-06 integration correction for #401. Owner-approved
+[PR405](https://github.com/Vovanostm/warwrit/pull/405) merged as149fa8e6 from95de47b6;
+#401 is complete and closed. Current exact-head CI/PR scope and actual merged-tree
+readback passed. The preceding local/pending entries retain their dated context.
+Broader #398/#173, #392 and full-M1/visual acceptance remain open.
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.
