@@ -95,6 +95,8 @@ export interface EncounterTacticalPreviewDto {
   readonly actorId: string;
   readonly actionPoints: number;
   readonly stamina: number;
+  /** Own side's canonical exit cells; absent on older servers. */
+  readonly retreatHexes?: readonly Readonly<{ q: number; r: number }>[];
   readonly moves: readonly {
     readonly to: Readonly<{ q: number; r: number }>;
     readonly path: readonly Readonly<{ q: number; r: number }>[];
@@ -310,7 +312,17 @@ export function isEncounterTacticalPreviewDto(
     natural(item['maximum']) &&
     item['minimum'] <= item['maximum'];
   return (
-    exact(value, ['activationId', 'actorId', 'actionPoints', 'stamina', 'moves', 'attacks']) &&
+    exact(value, [
+      'activationId',
+      'actorId',
+      'actionPoints',
+      'stamina',
+      'moves',
+      'attacks',
+      ...(isRecord(value) && Object.hasOwn(value, 'retreatHexes') ? ['retreatHexes'] : []),
+    ]) &&
+    (!Object.hasOwn(value, 'retreatHexes') ||
+      (Array.isArray(value['retreatHexes']) && value['retreatHexes'].every(hex))) &&
     isId(value['activationId']) &&
     isId(value['actorId']) &&
     natural(value['actionPoints']) &&

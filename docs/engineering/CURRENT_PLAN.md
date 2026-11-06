@@ -3,13 +3,13 @@
 ## Stepwise M1 implementation — 2026-11-06
 
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
-This mission owns command recovery; the existing parent retains recovery/payroll integration and resources.
+This mission owns #401 retreat applicability; the existing parent retains recovery/payroll integration and resources.
 2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
-Local closeout writer codex/m1-recovery-372-closeout in .claude/worktrees/m1-entry-369; integrated main ffaa84a5.
+Active writer codex/m1-retreat-401 in .claude/worktrees/m1-entry-369; integrated main ffaa84a5 plus local closeout47045f10.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
-Reserve encounter client/recovery files only if a native defect is reproduced; root owns shared docs and isolated entry369 resources (DB54369/API3528/realtime3529/UI5228).
+Root reserves encounter control-grant/protocol/desk/panel and regressions/shared docs; isolated entry369 resources DB54369/API3528/realtime3529/UI5228.
 Current DB warwrit_battle372_20261106 and prior warwrit DB/companies/defeats are retained. Socket fault proxy3531 is stopped; normal realtime3529 is restored.
 #372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
 Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
@@ -36,9 +36,9 @@ World knowledge/offline behavior and two-company participation require the full 
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
 [Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
-PR366/PR335/PR402 merges are complete; owner approved PR402 on2026-11-06. Local closeout records the merge; next gameplay slice awaits assignment.
+PR366/PR335/PR402 merges are complete. Owner “Implement” activates #401 only; native legal retreat/retry and independent critique are pending.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
-Closeout is documentation-only; diff/current-plan checks PASS. Reuse exact-head CI/native evidence; new gameplay/full gate NOT_RUN for closeout.
+#401 step1: old-source mounted regression FAIL as expected; corrected5files/32tests, web/server types and scoped lint PASS. Native/full gate pending.
 
 ## History
 

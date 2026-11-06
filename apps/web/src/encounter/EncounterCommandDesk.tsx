@@ -31,6 +31,7 @@ export function EncounterCommandDesk({
   defendAllowed,
   waitAllowed,
   retreatAllowed,
+  retreatRequirement,
   autoplayAllowed,
   fleeAllowed,
   surrenderAllowed,
@@ -49,6 +50,7 @@ export function EncounterCommandDesk({
   readonly defendAllowed: boolean;
   readonly waitAllowed: boolean;
   readonly retreatAllowed: boolean;
+  readonly retreatRequirement?: string;
   readonly autoplayAllowed: boolean;
   readonly fleeAllowed: boolean;
   readonly surrenderAllowed: boolean;
@@ -106,9 +108,10 @@ export function EncounterCommandDesk({
           ))}
         </div>
       </div>
-      {feedback && (
+      {(feedback || retreatRequirement) && (
         <div className="battle-feedback-row" role="status">
-          <p>{feedback}</p>
+          {feedback && <p>{feedback}</p>}
+          {retreatRequirement && <p>{retreatRequirement}</p>}
         </div>
       )}
     </section>

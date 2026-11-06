@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Match the retreat button to the current side's exit cells
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL step1 for owner-requested #401.
+  The owner-only V4/V5 tactical grant copies current-side retreatHexes; the
+  additive optional protocol field stays readable when absent on older servers.
+  EncounterPanel checks actor position separately from condition capability,
+  disables unconfirmed/off-exit retreat and shows exit coordinates in the existing
+  command feedback row. No core/replay change. The existing mounted regression
+  reproduced the old enabled-button defect (1 FAIL), then5files/32tests PASS.
+  Protocol build, web/server types and scoped ESLint PASS. The first reader run
+  used stale protocol dist; rebuilding its owning package resolved that failure.
+  CURRENT_PLAN and the [owning retreat page](docs/wiki/mechanics/retreat.md#интерфейс-постоянного-боя--2026-11-06)
+  retain native legal-retreat/retry and independent critique as pending. Full gate
+  NOT_RUN at this step; earlier worlds and defeats retained.
+
 ### Record the approved battle recovery merge
 
 - 2026-11-06, `codex/m1-recovery-372-closeout`, LOCAL documentation closeout

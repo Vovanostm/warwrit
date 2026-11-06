@@ -231,6 +231,9 @@ function tacticalPreview(
       actorId: actor.id,
       actionPoints: activation.remainingActionPoints,
       stamina: actor.stamina,
+      retreatHexes: (state.sides.find((side) => side.id === actor.sideId)?.retreatHexes ?? [])
+        .toSorted(combat.compareHex)
+        .map(({ q, r }) => ({ q, r })),
       moves: combat.previewCombatMovement(state).map((move) => ({
         to: move.to,
         path: move.path,
