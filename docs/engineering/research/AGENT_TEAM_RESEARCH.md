@@ -20,6 +20,41 @@ The earlier trials retain their recorded baseline. The resulting PR owns current
 CI, review and actual merge receipts. The game's CURRENT_PLAN stays with its
 existing integration owner.
 
+### Publication CI fixture repair — 2026-11-06
+
+[PR404](https://github.com/Vovanostm/warwrit/pull/404) attempt 1 on `b22d7191`
+failed its PostgreSQL encounter scenario with `TERMINAL_DISPOSITION_EVIDENCE_MISSING`.
+Units passed 1,256 with 98 skipped, stress passed 10,000 battles with 100 replay
+checks and 20 deterministic reruns, and SQL passed 87 of 88. Browser capture and
+final measured audit were NOT_RUN after bootstrap failed.
+
+The failed scenario used a random world ID, which selects the battle RNG seed.
+The victory helper permits hostile retreat, while the accepted V4/V5 terminal
+contract leaves that disposition pending. Participant IDs also influence tactical
+ties. An independent source diagnosis identified this fixture/expectation gap.
+The original failing terminal state was not retained, so its exact residual branch
+was not reproduced. Base main had passed the same randomly generated scenario.
+
+Make this supported-settlement scenario's world and participant/item IDs explicit
+and deterministic, then assert that all hostile units are dead before settlement.
+Retain its normal JOIN, move/bow shot, real SQL/reopened replay, one-receipt retry,
+terminal settlement and idempotency assertions. The existing separate hostile-
+retreat test retains the pending contract. The test-only ID factory defaults to
+random UUIDs for other scenarios.
+
+The focused scenario passed on an exclusively owned disposable PostgreSQL 17
+container. All 24 tests in its file then passed with V8/source resolution, matching
+the failing CI mode. The existing pending-retreat unit scenario passed (one selected
+test, five skipped). Server types and scoped ESLint PASS. The first typecheck
+failed because the helper default inferred a UUID template type. An explicit
+string annotation admits the valid deterministic world identifier. The corrected
+typecheck/lint passed. This annotation changes no executed SQL behavior. The owned
+container, volume and network were removed after validation.
+
+Independent repair source review ACCEPT preserves the original assertions. The
+final PR records corrected-head review, fresh CI and merge. These checks expand
+publication verification beyond the earlier instruction-only trials.
+
 ### Accepted and removed instructions
 
 | Decision                              | Implemented result                                                                                                                                                                                                                                                               |

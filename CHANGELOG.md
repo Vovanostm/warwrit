@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Make the wolf settlement regression use reproducible combat inputs
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL correction for
+  [PR404](https://github.com/Vovanostm/warwrit/pull/404) attempt 1. Existing SQL
+  scenario failed terminal evidence after its random world selected a different
+  battle. The victory helper also permits hostile retreat, which V4/V5 deliberately
+  leave pending. Set deterministic world/actor/item fixture IDs and assert dead
+  hostiles before preserving actual settlement/replay/retry checks. Keep the
+  separate pending-retreat regression and random defaults for other fixtures.
+  Exact failed terminal state was unavailable. Focused real PostgreSQL 17 case
+  and file-wide V8/source-mode SQL24 PASS; pending-retreat unit1 PASS. Initial
+  world-ID type inference failure corrected with an explicit string parameter;
+  server types/scoped lint PASS. Owned DB removed. Independent repair source
+  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
+
 ### Prepare reviewed game skills for publication on current main
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL integration for
