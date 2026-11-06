@@ -1,6 +1,6 @@
 # Warwrit skills
 
-The five `warwrit-*` skills own the project workflow. They are workflows, not a
+The `warwrit-*` skills own the project workflow. They are workflows, not a
 GDD or a source of authorization; [AGENTS.md](../../AGENTS.md) and the active
 contract take precedence.
 
@@ -13,16 +13,29 @@ contract take precedence.
 | `warwrit-orca`     | Parallel waves through Orca worktrees, supervised workers, merge order   |
 | `warwrit-art`      | Generated raster art: Codex image_gen, region compositing, critic loop   |
 
+## Renderer, balance and asset diagnosis
+
+| Skill                                                                 | Use                                                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [babylonjs](babylonjs/SKILL.md)                                       | Existing-scene loading, resource lifetime, readiness and observed rendering failures              |
+| [eval-driven-game-development](eval-driven-game-development/SKILL.md) | Assigned balance measurements through the current rules/runner with explicit samples and policies |
+| [colyseus](colyseus/SKILL.md)                                         | Realtime adapter/API work and reconnection                                                        |
+| [inspect-glb](playcanvas-inspect-glb/SKILL.md)                        | Offline geometry/clip inspection for Babylon asset placement                                      |
+
+The two new skills are pinned, locally adapted instruction entries with retained
+licenses and provenance. Load them for their assigned task. Player-facing review
+of narrative, quests, UI and combat feedback is routed by `warwrit-review`.
+
 ## Character production
 
 Project-local additions, 2026-10-04:
 
-| Skill                                                   | Source and use                                                                                                                                                                                                                                      |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [blender-image-to-3d](blender-image-to-3d/SKILL.md)     | MIT upstream [blender-game-skills](https://github.com/majidmanzarpour/blender-game-skills/tree/f0ef29385a03de139957e6f700b801cdc00b7e29/skills/blender-image-to-3d), locally scoped for Blender modeling, skinning and GLB export                   |
-| [meshy-3d-generation](meshy-3d-generation/SKILL.md)     | Official Meshy-maintained [meshy-3d-agent](https://github.com/meshy-dev/meshy-3d-agent/tree/644fd7058aec61404dc696a6b57e292021f00d81/skills/meshy-3d-generation), CLI 0.4.0; generation, rigging, animation and downloads within an approved budget |
-| [mixamo-blender](mixamo-blender/SKILL.md)               | Project-authored Adobe/Blender workflow: one skeleton, compatible FBX actions, baked GLB for Babylon.js                                                                                                                                             |
-| [warwrit-characters-3d](warwrit-characters-3d/SKILL.md) | Project-authored, 2026-10-07: active M1-CHARACTERS-3D workflow — Quaternius parts on the UAL skeleton, approved character tilt, ink material plugin, sockets, Mixamo gap clips, `scripts/optimize-glb.sh` (glTF-Transform) and gate evidence        |
+| Skill                                                   | Source and use                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [blender-image-to-3d](blender-image-to-3d/SKILL.md)     | MIT upstream [blender-game-skills](https://github.com/majidmanzarpour/blender-game-skills/tree/f0ef29385a03de139957e6f700b801cdc00b7e29/skills/blender-image-to-3d), locally scoped for Blender modeling, skinning and GLB export                                      |
+| [meshy-3d-generation](meshy-3d-generation/SKILL.md)     | Official Meshy-maintained [meshy-3d-agent](https://github.com/meshy-dev/meshy-3d-agent/tree/644fd7058aec61404dc696a6b57e292021f00d81/skills/meshy-3d-generation), CLI 0.4.0; generation, rigging, animation and downloads within an approved budget                    |
+| [mixamo-blender](mixamo-blender/SKILL.md)               | Project-authored Adobe/Blender workflow: one skeleton, compatible FBX actions, baked GLB for Babylon.js                                                                                                                                                                |
+| [warwrit-characters-3d](warwrit-characters-3d/SKILL.md) | Project-authored, 2026-10-07: retained, explicitly assigned M1-CHARACTERS-3D workflow — Quaternius parts on the UAL skeleton, approved character tilt, ink material plugin, sockets, Mixamo combat clips, `scripts/optimize-glb.sh` (glTF-Transform) and gate evidence |
 
 The upstream commits are pinned and their MIT licenses are included. Local
 integration notes take precedence over upstream example engines and full-phase

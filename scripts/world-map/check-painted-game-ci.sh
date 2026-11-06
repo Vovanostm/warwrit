@@ -2,11 +2,40 @@
 # Own disposable campaign data; an existing stand and its volumes are never reset.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
+merge_capture() {
+  [[ -s "$1" ]] || { echo 'Runtime capture missing' >&2; return 1; }
+  node scripts/world-map/runtime-coverage-merge.mjs "$1" coverage/coverage-final.json
+}
+
+usage() {
+  printf 'Usage: %s [--capture runtime.json | --merge runtime.json]\n' "$0" >&2
+}
+mode=full
+capture_path=''
+if [[ "$#" -ne 0 ]]; then
+  [[ "$#" -eq 2 ]] || { usage; exit 2; }
+  [[ -n "$2" ]] || { usage; exit 2; }
+  case "$1" in
+    --capture)
+      mode=capture
+      capture_path="$2"
+      [[ ! -e "$capture_path" ]] || { echo 'Capture output already exists' >&2; exit 1; }
+      mkdir -p "$(dirname "$capture_path")"
+      ;;
+    --merge)
+      merge_capture "$2"
+      exit 0
+      ;;
+    *) usage; exit 2 ;;
+  esac
+fi
+
 source scripts/compose-cli.sh
 select_compose_cli
 run_id="$(date +%s)-$$-${RANDOM}"
 evidence="$PWD/output/painted-game-ci/$run_id"
 mkdir -p "$evidence"
+[[ -n "$capture_path" ]] || capture_path="$evidence/runtime.json"
 project="warwrit-painted-check-$run_id"
 dex_id=''
 api_pid=''
@@ -103,13 +132,13 @@ for ((attempt=0; attempt<30; attempt++)); do
   [[ ! -s "$evidence/server.json" || ! -s "$evidence/vite.json" ]] || break
   sleep 1
 done
-node --input-type=module - "$evidence" <<'JS'
+node --input-type=module - "$evidence" "$capture_path" <<'JS'
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const directory = process.argv[2];
 const reports = await Promise.all(['browser', 'server', 'vite', 'driver'].map(async name =>
   JSON.parse(await readFile(resolve(directory, `${name}.json`), 'utf8'))));
-await writeFile(resolve(directory, 'runtime.json'), JSON.stringify({ entries: reports.flatMap(report => report.entries) }));
+await writeFile(process.argv[3], JSON.stringify({ entries: reports.flatMap(report => report.entries) }), { flag: 'wx' });
 JS
-node scripts/world-map/runtime-coverage-merge.mjs "$evidence/runtime.json" coverage/coverage-final.json
+if [[ "$mode" == full ]]; then merge_capture "$capture_path"; fi
 printf 'Ordinary painted-map journey passed. Evidence: %s\n' "$evidence"

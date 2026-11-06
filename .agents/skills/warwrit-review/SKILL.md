@@ -1,6 +1,6 @@
 ---
 name: warwrit-review
-description: Review Warwrit domain code for SSOT, SRP, KISS/YAGNI, conservation, temporal causality and hidden-state leaks. Use for PR review or a reproduced bug; not blanket test counts, cosmetic rewrites or balance approval.
+description: Review Warwrit game rules and player-facing changes for invariants, knowledge leaks, quest-state consistency and actionable UX defects. Use for an assigned review or reproduced bug.
 ---
 
 # Review executable game invariants
@@ -31,6 +31,13 @@ Independent oracles must not call the helper under test to calculate expectation
 A small enumeration is suitable for a tiny C04 oracle, never production monetary
 allocation. Assert observable allocations, balances, custody, deadlines and
 rejections rather than helper call order or catalogue snapshots.
+
+## Player-facing changes
+
+For narrative, quest flow, UI or battle feedback, read the matching section of
+[player-facing review](references/player-facing-review.md). Use accepted facts,
+the affected state transitions and the actual player view as evidence. Text and
+visual critics own their applicable final acceptance.
 
 ## Acceptance evidence
 

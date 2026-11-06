@@ -31,6 +31,7 @@ export function EncounterCommandDesk({
   defendAllowed,
   waitAllowed,
   retreatAllowed,
+  retreatRequirement,
   autoplayAllowed,
   fleeAllowed,
   surrenderAllowed,
@@ -49,6 +50,7 @@ export function EncounterCommandDesk({
   readonly defendAllowed: boolean;
   readonly waitAllowed: boolean;
   readonly retreatAllowed: boolean;
+  readonly retreatRequirement?: string;
   readonly autoplayAllowed: boolean;
   readonly fleeAllowed: boolean;
   readonly surrenderAllowed: boolean;
@@ -70,6 +72,7 @@ export function EncounterCommandDesk({
     'retarget-threat': false,
     'execute-threat': false,
   };
+  const messages = [feedback, retreatRequirement].filter(Boolean);
   return (
     <section className="combat-lab-controls" aria-label="Приказы текущего участника">
       <div className="battle-command-group">
@@ -106,9 +109,11 @@ export function EncounterCommandDesk({
           ))}
         </div>
       </div>
-      {feedback && (
+      {messages.length > 0 && (
         <div className="battle-feedback-row" role="status">
-          <p>{feedback}</p>
+          {messages.map((message) => (
+            <p key={message}>{message}</p>
+          ))}
         </div>
       )}
     </section>

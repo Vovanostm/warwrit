@@ -1,13 +1,14 @@
 ---
 name: warwrit-characters-3d
-description: Build, tune and verify Warwrit's real-time Babylon.js 3D characters (M1-CHARACTERS-3D) from free Quaternius modular parts on the shared UAL skeleton — assembly, character tilt, ink material, weapon sockets, Mixamo gap clips, GLB optimisation and gate evidence. Use for any work on characters.html, character-model.ts or the characters-3d vendor assets.
+description: Build, tune and verify Warwrit's real-time Babylon.js 3D characters (M1-CHARACTERS-3D) from free Quaternius modular parts on the shared UAL skeleton — assembly, character tilt, ink material, weapon sockets, Mixamo combat clips, GLB optimisation and gate evidence. Use for any work on characters.html, character-model.ts or the characters-3d vendor assets.
 ---
 
 # Warwrit 3D characters
 
-Workflow for the active contract
-[M1-CHARACTERS-3D](../../../docs/work-packages/M1-CHARACTERS-3D.md). The contract,
-ADR-0006 and AGENTS.md take precedence; this skill grants no permission.
+Retained workflow for an explicitly assigned 3D-character task under
+[M1-CHARACTERS-3D](../../../docs/work-packages/M1-CHARACTERS-3D.md). Check its latest
+decisions and ADR-0006 amendments before using the dated settings below. The
+sprite-production decision preserves this experiment. AGENTS owns activation.
 
 ## Start
 
@@ -156,17 +157,16 @@ vendor total (≤ 40 MB) with `du`.
 - Required images go in `docs/work-packages/assets/characters-3d/`: day game,
   night game, day close, a pose sheet, and a tilt comparison while the tilt value
   is open.
-- Step checks: `pnpm --filter web typecheck`, scoped ESLint and a browser console
-  with zero errors and warnings. No build, coverage or full suites before
-  contract step 8. Branch commits may use `--no-verify` with the audit recorded
-  as NOT_RUN; the audit must pass before the PR.
+- Step checks use `pnpm --filter @warwrit/web typecheck`, scoped ESLint and the
+  affected browser console/result. Follow current proportional verification and
+  commit hooks. PR CI owns measured coverage/audit under the delivery contract.
 - Critique with `warwrit_visual_critic` (Claude: `warwrit-visual-critic`) and
   [the rubric](../../../docs/engineering/VISUAL_CRITIQUE.md), not with the diff
   reviewer. Build a side-by-side sheet of the candidate and `unit-c-ink.png` at
   equal height (close and game scale), and add the day/night Bereznyak strips and
   per-clip motion frames. Pass image paths only and send the change list after
-  scoring. Continue only on ACCEPT; a REJECT with a convergence note means change
-  the technique.
+  scoring. Submit at the final acceptance boundary under current AGENTS timing.
+  Resolve material findings and follow the rubric's convergence rule.
 
 ## Free tools
 
@@ -176,4 +176,4 @@ vendor total (≤ 40 MB) with `du`.
 | glTF-Transform CLI 4.5.1                                                                                            | `inspect`, `dedup`, `prune`, `resize`, `webp`                                                             |
 | `playcanvas-inspect-glb/scripts/inspect.mjs`                                                                        | Joints, clips and bounds metadata                                                                         |
 | Babylon Inspector, optional (`scene.debugLayer.show()` loads the 9.28.0 bundle from CDN; dev only, never committed) | Live material, bone and node inspection; the panel did not open in a hidden pane, so use a visible window |
-| Quaternius UAL viewer, Mixamo                                                                                       | Picking clips; gap clips only                                                                             |
+| Quaternius UAL viewer, Mixamo                                                                                       | UAL non-combat and approved Mixamo combat clips                                                           |

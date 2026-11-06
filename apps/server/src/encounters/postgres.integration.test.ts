@@ -196,11 +196,12 @@ function makeFirstHuntJoinActor(
   mixed = false,
   overloadedPartySupply = false,
   carriedPartyRations?: number,
+  createId: () => string = randomUUID,
 ): FirstHuntJoinActor {
-  const accountId = randomUUID();
-  const companyId = randomUUID();
-  const partyId = randomUUID();
-  const sessionToken = randomUUID();
+  const accountId = createId();
+  const companyId = createId();
+  const partyId = createId();
+  const sessionToken = createId();
   const base = createCompanyCombatAggregateFixture().state;
   const lifecycle = base.economy.lifecycle;
   const basePartyId = lifecycle.parties[0]?.partyId;
@@ -208,14 +209,14 @@ function makeFirstHuntJoinActor(
   const members = lifecycle.characters
     .filter((character) => character.presence.fieldPartyId !== null)
     .map((character) => character.identity.characterId);
-  const memberIds = members.map(() => randomUUID());
+  const memberIds = members.map(() => createId());
   const replacements = new Map<string, string>([
     [lifecycle.worldId, worldId],
     [lifecycle.companyId, companyId],
     [basePartyId, partyId],
     ...members.map((id, index) => [id, memberIds[index]!] as const),
     // Two companies built from one fixture must not share physical item identities.
-    ...(base.economy.physical?.items ?? []).map((item) => [item.itemId, randomUUID()] as const),
+    ...(base.economy.physical?.items ?? []).map((item) => [item.itemId, createId()] as const),
   ]);
   const remapped = JSON.parse(
     JSON.stringify(base, (_key, value: unknown) =>
@@ -497,19 +498,26 @@ function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
 async function seedFirstHuntJoinScenario(
   database: (typeof databases)[number],
   mixed = false,
-  worldId = randomUUID(),
+  worldId: string = randomUUID(),
   encountersEnabled = mixed,
   overloadedOwner = false,
   helperCarriedPartyRations?: number,
   wolfHunt = false,
+  createId: () => string = randomUUID,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
-  const ownerFixture = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner);
-  const helperFixture = makeFirstHuntJoinActor(worldId, false, false, helperCarriedPartyRations);
+  const ownerFixture = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner, undefined, createId);
+  const helperFixture = makeFirstHuntJoinActor(
+    worldId,
+    false,
+    false,
+    helperCarriedPartyRations,
+    createId,
+  );
   const owner = wolfHunt ? bowHuntActor(ownerFixture) : ownerFixture;
   const helper = wolfHunt ? bowHuntActor(helperFixture) : helperFixture;
   for (const [actor, subject] of [
@@ -3928,14 +3936,20 @@ it.skipIf(connectionString === undefined)(
   'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects',
   async () => {
     const database = databases[0]!;
+    // The world selects battle RNG, and participant IDs break tactical ties.
+    // This settlement scenario needs a reproducible supported terminal outcome.
+    let identityIndex = 0;
+    const createFixtureId = () =>
+      `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`;
     const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
       database,
       false,
-      randomUUID(),
+      'world.test.wolf-bridge-v5-terminal',
       true,
       false,
       undefined,
       true,
+      createFixtureId,
     );
     const restoreClock = freezeCampaignClock();
     try {
@@ -4146,6 +4160,18 @@ it.skipIf(connectionString === undefined)(
         await reopened.destroy();
       }
       await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
+      const terminalBattle = await database
+        .selectFrom('encounters')
+        .select('state')
+        .where('id', '=', encounterId)
+        .executeTakeFirstOrThrow();
+      const terminalUnits = (terminalBattle.state as combat.BattleState).units;
+      expect(
+        terminalUnits
+          .filter((unit) => unit.sideId !== 'first-hunt-companies')
+          .every((unit) => unit.status === 'dead'),
+        JSON.stringify({ worldId, seed: savedSetup.seed, terminalUnits }),
+      ).toBe(true);
       const applied = await applyPendingFirstHuntTerminalEffects(database);
       if (!applied.includes(encounterId)) {
         // Victory can still require the real owner to choose a fallen leader's successor.
