@@ -17,6 +17,22 @@ Mill clues → night beast → worker delivery form an acyclic chain.
 Existing #8/#174/#177 retain their complete final joins and human acceptance;
 task creation is not implementation or a new gameplay-policy approval.
 
+### Product workflow amendment — 2026-11-06
+
+Before implementing each feature, complete its existing owning specification
+under the [feature contract](../../AGENTS.md#feature-specification-before-implementation).
+Include expected player benefit, full journey/failures, state rules, architecture
+and compatibility, known extension needs, small dependent tasks and direct checks.
+The specification precedes code; it is not an extra approval ceremony for already
+authorized behavior. Reuse source-approved rules and ask only about new decisions.
+
+Global visual evidence gaps no longer block this path. Review affected input,
+feedback, readability and art under [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md). Fix
+concrete defects; keep broader unassessed scene work separately visible. Full-loop
+and M1 completion still require their actual results. The dated candidate statuses
+below need live integration readback before resuming; this instruction update does
+not activate a parked writer or grant another merge.
+
 ### 1. Finish the current company, then prove ordinary entry
 
 First integrate the existing recovery/payroll candidates through their delivery

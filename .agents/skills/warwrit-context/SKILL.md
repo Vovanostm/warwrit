@@ -41,18 +41,13 @@ remembered PR, old attachment or cache as the current head.
 4. Read nested instructions and actual affected definitions and consumers.
    For command changes trace authorization through receipt and projection.
    Check the installed lockfile and type declarations before changing library APIs.
-5. Use the existing task/contract for one observable outcome and its short acceptance
-   checklist. For gameplay, each item names the player action, expected visible or
-   saved result and the smallest way to verify it through the normal entry.
-   Trace each criterion to an accepted requirement available to the author. Resolve
-   a disputed criterion before using it to judge the result.
-   Start with the next failing item. Reuse existing tests/journeys. Mark a criterion
-   complete only after that scenario passes on the affected build. Keep missing
-   integration or runtime proof explicit. A new test framework/list file is optional
-   only when the current contract cannot represent acceptance.
-   Resolve uncertainties that could change the solution with targeted reading or a
-   safe probe. Ask for undefined product rules/authority. The author owns technical
-   choices within the accepted contract. Reuse unchanged source/check pointers.
+5. Before implementation, complete the owning feature specification using
+   [AGENTS feature contract](../../../AGENTS.md#feature-specification-before-implementation):
+   player problem/effect, full behavior, state/rules, architecture and small tasks
+   with direct acceptance checks. Reuse existing sources and unchanged evidence.
+   Resolve undefined product rules; choose technical details within the assignment.
+   Broad visual evidence gaps do not block unrelated feature work. Start the next
+   specified player improvement, not another general readiness audit.
 
 ## Working checkpoint
 

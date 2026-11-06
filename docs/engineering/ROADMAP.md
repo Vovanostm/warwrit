@@ -10,6 +10,21 @@ The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_
 and evidence separately. The superseded September roadmap and queue are retained
 in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
+## Product-first delivery — owner decision 2026-11-06
+
+Prioritize the repeatable company loop. Before feature code, complete the
+[owning specification](../../AGENTS.md#feature-specification-before-implementation)
+with the player problem, expected improvement, full behavior, architecture choice
+and small executable tasks. Select boundaries that support the next known rule or
+content variant within the existing modular monolith; no speculative framework.
+
+The former global visual BLOCKED is removed as a prerequisite for development.
+[Review](VISUAL_CRITIQUE.md) checks the affected result and concrete player impact.
+Missing broader comparisons remain unassessed scene work. This does not claim
+visual acceptance or completion of the still-open full loop/M1. The immediate
+product target remains the retained company's next contract, reward, maintenance
+and restart; refresh its actual integration dependencies before implementation.
+
 ## Target and authority
 
 Deliver the accepted persistent local M1 on MacBook/Chrome: the same account and

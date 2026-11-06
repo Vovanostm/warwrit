@@ -1,117 +1,67 @@
-# Visual critique rubric
+# Visual and playable review
 
-Owner request — 2026-10-07: the independent critic must catch the gaps the owner
-sees. Earlier passes used the diff reviewer, which checked only whether the
-author's fixes landed, and returned "no new material defect" while the character
-still clearly differed from the reference. This rubric applies to every
-substantive visual result (characters, places, map, UI art), not only to
-characters. It implements
-[AGENTS.md § Independent playable critique](../../AGENTS.md#independent-playable-critique).
+## Product-focused review — owner decision 2026-11-06
 
-Critics: Codex `warwrit_visual_critic` (`.codex/agents/`), Claude Code
-`warwrit-visual-critic` (`.claude/agents/`). The diff reviewer stays responsible
-for code; it does not accept visuals.
+This replaces the 2026-10-07 mandatory scoring/capture/convergence procedure.
+Review the feature's specified player result and affected visuals. Missing
+whole-scene evidence does not block unrelated gameplay development or reopen an
+accepted control fix. The selected art direction and lore remain binding.
+The historical calibration below records a real art failure, not a current gate.
 
-## Author obligations
+## Inputs and scope
 
-- Give the critic image paths, not conclusions. Required every pass:
-  1. the current approved 2D references from
-     `assets/art/styles/graphic-novel.json`, or `fog-wet-stone.json` for an
-     explicitly assigned location/environment asset; inspect the referenced
-     PNGs under `assets/art/styles/references/`. The
-     [2026-10-25 selection](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
-     supersedes old style-C texture density for new 2D art. Historical
-     `assets/art/m1/style/unit-c-ink.png` and relevant `assets/art/m1/places/`
-     scenes remain additional proportion/material/geography sources. For a
-     separately scoped 3D-character task use its owning accepted references;
-  2. a side-by-side sheet of the candidate and the reference at equal height, in
-     close view and at game scale;
-  3. in-scene views at game scale, by day and by night;
-  4. motion frames (start, contact, end) for every clip in scope.
-- Send the change list only after the critic has scored, so the scores are not
-  primed by what you fixed.
-- A missing input makes the result BLOCKED, never a pass.
+Use the feature specification, inspected revision, current integrated screenshots
+and actual journey evidence. Read [ART_LORE_POLICY](ART_LORE_POLICY.md) and the
+applicable approved references when art/style/lore is affected. For new 2D art use
+the current graphic-novel profile, or an explicitly assigned fog-wet-stone profile;
+historical assets retain their documented geography/material/proportion authority.
 
-## Procedure
+Choose evidence for the claim being made:
 
-1. Open every image yourself and write one line per image saying what is
-   actually visible.
-2. **First-look test:** name the three differences from the reference that a
-   player would notice in five seconds. Each one is a finding unless a recorded
-   owner decision accepts it.
-3. Score every criterion below from 0 to 3 against the **reference**, never
-   against the previous pass. Cite image and region for each score.
-4. Verdict: **ACCEPT** only if every criterion is at least 2 at game scale and
-   none is 0 in close view. Otherwise **REJECT**. "No material defects" is
-   forbidden while any score is below 2.
-5. **Convergence:** if a criterion stays at 1 or below for two passes, state that
-   tuning is not converging and name the technique-level change (different
-   asset, clip, render technique or reference-matched painting).
-6. Readback of earlier findings is additional work and never replaces the full
-   absolute review.
+- Controls/feedback: the relevant states at supported desktop scale, visible
+  feedback and actual input/result. A screenshot alone cannot prove interaction.
+- Art/proportions: the changed asset beside its applicable reference at a useful
+  comparable scale, integrated in the scene. Close views only when needed.
+- Lighting: day/night when lighting or night readability is affected.
+- Animation: relevant motion when a clip, pose or transition changes.
+- Combat layering/picking: affected overlays, silhouettes, targets and overlap
+  scenarios when those systems change. Keep ground overlays behind opaque figures;
+  preserve readable targets, hover/pin linkage and unobstructed controls.
 
-### Mandatory combat layering checks — 2026-10-13
+A feature need not provide every category. Final integrated scene acceptance
+covers all relevant categories in its own scope. Reuse evidence for unchanged
+behavior. State missing evidence for a required criterion as NOT_RUN and leave
+that criterion open; do not infer a pass or declare a global project block.
 
-The owner rejected a selected ground hex crossing an archer's waist/legs after
-an earlier visual ACCEPT. A general scene-integration score did not establish
-the ground/figure invariant. For combat, inspect the concrete scenarios in the
-[current specification](../wiki/battlefield-test-maps.md#полное-техническое-тз-пошагового-боя--2026-10-13),
-in addition to the absolute reference comparison:
+## Review
 
-- Ground grid, movement/shot fills, paths, threats and active/pinned/portrait-hover
-  rings remain behind opaque body, weapon, shield and foot pixels. Entity outlines
-  are separate silhouette effects. A readable ring across the body is a defect.
-- Include the owner's rejected state, a crowded group, long weapon/large creature,
-  height steps and day/night with grid on/off and camera zoom. State missing
-  required cases; do not generalize from an isolated uncluttered actor.
-- Compare captures with/without ground overlays while preserving figures/HUD.
-  Inspect transparent sprite borders separately; rectangular transparency masks,
-  depth errors and broken grounding fail scene integration.
-- Hover/pin/initiative linkage and tooltip/terminal overlap need actual journey
-  evidence. Captures establish appearance, not successful pointer targeting.
+Inspect images yourself and compare affected art to references. Play/read the
+actual journey evidence for input, understandable goals/costs/consequences,
+loading/refusal/retry and the next player action. Check credible form/materials,
+projection, grounding, palette, lore and motion where affected.
 
-A reproduced layer violation scores scene integration at most 1 and forces
-REJECT regardless of other scores. Missing required visual inputs are BLOCKED;
-unexecuted input journeys are NOT_RUN, never inferred from images. Do not accept
-a remedy by shrinking characters or moving ground rings up to the body.
+Report only observed findings: exact image/region or journey step, unmet criterion,
+player impact and smallest appropriate fix. Separate:
 
-Scores: 3 — reads as the same artist and family at that scale; 2 — only polish
-remains; 1 — a clear gap a player notices; 0 — a different style, or broken.
+- **Defect:** prevents the specified result, misleads the player, obstructs input
+  or materially violates the feature's approved art/lore contract. Fix before
+  accepting that result.
+- **Evidence gap:** a required claim was not checked; name the smallest missing
+  check. Unrelated missing comparisons belong to their future scene review.
+- **Polish:** optional improvement; prioritize by player benefit, not score.
 
-| Criterion                  | What to compare with the reference                                                                                                                              |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Silhouette and proportions | Adult grounded body; head, hand and limb ratios; no hero, toy or cute shapes                                                                                    |
-| Pose and gesture           | Weight, guard and intent; compact readable attitude; no stumble or ape-like reach                                                                               |
-| Rendering language         | Current selected reference: irregular major ink contours, broad matte washes, coherent shadows and selective detail; no uniform microtexture or smooth CG fills |
-| Value and palette          | Day and night values relative to the scene; slate/soot/umber/ochre; no glowing or sticker-like figure at night                                                  |
-| Materials and wear         | Credible cloth, leather, wood and metal with weathering; nothing pristine, toy-like or glossy                                                                   |
-| Props and lore             | Weapon and shield scale in metres; no emblems or invented symbols; period-plausible gear                                                                        |
-| Scene integration          | Scale against doors, barrels and people in the place art; grounding and contact shadow; one light direction; readable target                                    |
-| Motion (when in scope)     | Foot contact, arcs, grip through the clip, believable weight; no sliding or popping                                                                             |
+No mandatory score table, three-difference quota or fixed-round technique switch.
+If fixes do not solve a defect, investigate the cause and reconsider the approach.
+After a fix review affected results and regressions; repeat the full review only
+when the change invalidates its wider evidence.
 
-## Finding format
+## Result
 
-Each finding gives:
-
-- the criterion and its score;
-- the image and region;
-- what is observed versus the reference;
-- the player impact;
-- the smallest fix, marked as **tuning** or **approach change**.
-
-Owner-taste questions are listed separately and never offset a score below 2.
-
-## Output
-
-Return:
-
-- the verdict (ACCEPT, REJECT or BLOCKED);
-- the per-image lines;
-- the first-look three;
-- the score table;
-- findings ordered by player impact;
-- the convergence note;
-- the inspected revision and image paths.
+Return the reviewed scope/revision, observed player result, material defects,
+missing required checks, optional polish and next action. ACCEPT means the scoped
+criteria passed; REWORK names a concrete defect; NOT_RUN names missing required
+evidence. None of these labels alone accepts or blocks the whole game. Read-only
+critics do not edit, publish or grant owner acceptance.
 
 ## Calibration example — character A, `1687b19`, 2026-10-07
 

@@ -39,6 +39,14 @@ pending. [Owning result](../wiki/mechanics/retreat.md#нативный-резу�
 readback passed. The preceding local/pending entries retain their dated context.
 Broader #398/#173, #392 and full-M1/visual acceptance remain open.
 
+## Product workflow amendment — 2026-11-06
+
+The owner removed the global visual BLOCKED prerequisite. Its earlier entries
+above are historical evidence boundaries; full-scene quality remains unassessed.
+Use the affected feature's player criteria and [review method](VISUAL_CRITIQUE.md).
+A missing unrelated capture pack does not stop implementation. Full-loop/M1 and
+real source/integration dependencies remain open until their own results pass.
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.
@@ -58,8 +66,13 @@ concurrent heavy runtime checks. At most two game-writing worktrees remain activ
   One attempt owns one observable scenario and one existing responsibility.
   Each issue gives its result, predecessors, change boundary, exclusions and
   direct verification. There is no invented hour, line-count or test-count quota.
-- Before editing, read live AGENTS/CURRENT_PLAN, the full parent sources and
-  dated amendments, and the issue/PR state. Confirm the actual integrated base;
+- Before feature code, complete the existing owning [feature specification](../../AGENTS.md#feature-specification-before-implementation):
+  problem and expected improvement, full player behavior/state, architecture and
+  known extensions, then cohesive tasks and direct checks. Child issues link the
+  same specification; do not duplicate it or require a separate approval round.
+- Read AGENTS/CURRENT_PLAN, applicable source sections/amendments and the issue/PR
+  state. Read full canonical Notes/Purpose when interpreting their rules; avoid
+  rereading unrelated parent history. Confirm the actual integrated base;
   do not copy an unmerged dependency or restart a parked writer. Source-approved
   rules outrank older provisional profiles. Preserve the source ZIP limitation.
 - Reserve exact files and one persistent worktree. App, protocol/executor,
@@ -82,13 +95,15 @@ concurrent heavy runtime checks. At most two game-writing worktrees remain activ
   the exact result/checks and one next task. A source-backed no-change result
   does not require a filler code commit. Follow the existing final integrated
   gate once, not a new full suite after every card.
-- Substantive gameplay/visual cycles require the existing independent critic
-  with actual images/journey evidence. No card grants merge, auto-merge,
+- At final gameplay/visual acceptance use the independent critic for the specified
+  player journey and affected presentation; recheck affected results after fixes.
+  Missing broader art evidence is not a global gate. No card grants merge, auto-merge,
   deployment, paid resources or automation permission.
 
 To dispatch: “Complete issue #N from the current integrated base under the AI
-task contract in PARALLEL_WAVES.md. Reserve its write set, show the stated player
-result, record actual checks and publish the bounded change. Do not implement
+task contract in PARALLEL_WAVES.md. Complete/link its feature specification before
+code, reserve its write set, show the expected player improvement, record actual
+checks and publish the bounded change. Do not implement
 the successor.” The issue contains the task-specific inputs; this is not an
 instruction to launch workers during planning.
 

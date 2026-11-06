@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Focus feature delivery on the product and remove global visual blocking
+
+- 2026-11-06, `codex/product-feature-workflow`, LOCAL instruction/planning change
+  requested by the owner. [AGENTS](AGENTS.md#feature-specification-before-implementation)
+  now requires a complete owning feature specification before code: expected player
+  improvement, full behavior/state, architecture/tradeoffs/known extensions and
+  small tasks with direct acceptance. Context/domain/delivery skills reuse that
+  contract and remove the mandatory handoff inventory. No new approval ceremony.
+- [Visual review](docs/engineering/VISUAL_CRITIQUE.md), critic role instructions
+  and art guidance remove universal capture packs, score/finding quotas and the
+  fixed-round technique switch. Align optional Orca/3D guidance without activating
+  their workflows. Only scoped unmet criteria block their acceptance;
+  broader missing evidence is unassessed work. Preserve style/lore and real defects.
+  CURRENT_PLAN, Roadmap, production plan, task queue and the retreat result record
+  the policy change. Previous checkpoint and failed evidence remain in history.
+- Scoped formatting, CURRENT_PLAN guard, diff and local-link checks PASS.
+  New gameplay/visual/device/full-gate checks NOT_RUN: no game code changed.
+  Full loop/M1 remains open; this change does not claim visual acceptance, publish
+  remote task updates, merge another PR or start a successor implementation.
+
 ### Record the approved retreat applicability merge
 
 - 2026-11-06, `codex/m1-retreat-401-closeout`, LOCAL documentation closeout
