@@ -22,7 +22,7 @@ Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PROD
 Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
 Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
 PR363 MERGED a2348871 from owner-approved63e66ccb; CI42272733258/scope42277998663 PASS. Native37→54HP/retry/restart/return and independent source/finite UI ACCEPT; #169 CLOSED.
-PR338 atfc717f3f has prior lawful payroll/exact retry/restart/finite UI acceptance. Retarget to main after integration; new-head affected checks/native readback/CI pending.
+PR338 integrates maina2348871. b6b1ff86 fixes healthy FIELD stale payroll;59focused/SQL18/types/lint PASS; current TARGETED50hold and DEFAULT50cash/reload/retry/restart PASS. Final UI/CI pending.
 Payroll remains a candidate until delivery. Parent full-game acceptance remains open.
 Current result: actual accessible-cash payroll and separately backed holds survive retry/restart. New PR338-head merge needs separate permission.
 Next player result: same recovered/paid company completes the next contract and survives server restart.

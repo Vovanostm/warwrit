@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Validate current-main payroll on the retained company
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL result for
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Corrected current-time
+  observation leaves five cash balances unchanged. Native TARGETED50 and DEFAULT50
+  lost-reply/reload/exact retries each retain one receipt/event. Rell's50 is a
+  backed hold; physician receives50 actual cash (743.94→693.94 company,
+  56.06→106.06 physician), total cash conserved. Complete saved report matches
+  across API restart. Independent source re-review ACCEPT; final finite UI and
+  new-head hosted CI pending. [Owning result](docs/work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06)
+  retains transient tile409/network errors, measured viewport sizes and limits.
+
 ### Refresh earned payroll after healthy FIELD time
 
 - 2026-11-06, `codex/game-payroll-integration`, LOCAL correction in
