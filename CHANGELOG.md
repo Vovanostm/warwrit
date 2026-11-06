@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Refresh earned payroll after healthy FIELD time
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL correction in
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Ordinary saved entry
+  reproduced company tick2635 despite real world past7000: matching body snapshots
+  and FIELD assignments skipped future payroll observation, hiding newly due
+  payments. Reuse ordered local observations for each paid account needing current
+  confirmation. Keep cash, remote knowledge, food/learning admission and same-tick
+  idempotency. Existing route regression now uses public GET after the isolated
+  clock change instead of a domain-accrual helper. Red1000/expected2000 reproduced;
+  corrected real SQL18/18/types/lint PASS. [Owning result](docs/work-packages/WP-02.3.md#healthy-field-payroll-read-correction)
+  records the initial invalid setup and remaining native/review/CI checks.
+
 ### Resume payroll after integrated company recovery
 
 - 2026-11-06, `codex/game-payroll-integration`, LOCAL work under the owner's

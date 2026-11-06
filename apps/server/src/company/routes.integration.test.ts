@@ -7,11 +7,7 @@ import {
   COMPANY_SCHEMA_VERSION,
   initialSkillProgress,
   campaignTick,
-  canonicalJson,
-  companySourceKey,
   moneyQ,
-  parseCompanyCommand,
-  prepareCompanyEconomy,
   projectCompanyEconomy,
   projectCompanyLifecycle,
   readCompanyCombatAggregateState,
@@ -26,97 +22,25 @@ import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { createDatabase } from '../db/database.js';
 import { createOpeningAggregate } from './opening.js';
-import { loadCompanyAggregate, updateCompanyAggregateWithReceipt } from './repository.js';
+import { loadCompanyAggregate } from './repository.js';
 import { projectPayroll } from './payroll-view.js';
-import { prepareStationaryFoodFacts } from './travel-food.js';
 
 const connectionString = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const database = connectionString === undefined ? undefined : createDatabase(connectionString);
 const apps: ReturnType<typeof buildApp>[] = [];
 
-async function advanceRealPayroll(worldId: string, companyId: string) {
+async function setPayrollWorldTick(worldId: string, companyId: string) {
   if (!database) throw new Error('company test database missing');
   const previous = await database
     .transaction()
     .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId));
   if (!previous) throw new Error('company snapshot missing before payroll advance');
-  const targetTick = '2000';
   await database
     .updateTable('world_campaign_clocks')
-    .set({ epoch_ms: String(Date.now()), starting_tick: targetTick })
+    .set({ epoch_ms: String(Date.now()), starting_tick: '2000' })
     .where('world_id', '=', worldId)
     .executeTakeFirstOrThrow();
-  const commandId = randomUUID();
-  const food = prepareStationaryFoodFacts(previous, targetTick, commandId);
-  if (food.kind !== 'PREPARED') throw new Error(food.reason);
-  const parsed = parseCompanyCommand({
-    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
-    commandId,
-    worldId,
-    companyId,
-    actorRef: { kind: 'SYSTEM', id: 'payroll-api-test-clock' },
-    expectedRevision: previous.economy.lifecycle.revision,
-    campaignTick: previous.economy.lifecycle.campaignTick,
-    rulesetId: COMPANY_RULESET_ID,
-    sourceEventId: randomUUID(),
-    type: 'AdvanceCampaign',
-    payload: { toTick: targetTick, authoritativeInputs: [] },
-  });
-  if (!parsed.ok || parsed.command.type !== 'AdvanceCampaign')
-    throw new Error('failed to construct canonical campaign advance');
-  const lifecycle = previous.economy.lifecycle;
-  const prepared = prepareCompanyEconomy(previous.economy, parsed.command, {
-    worldId,
-    companyId,
-    principal: parsed.command.actorRef,
-    atTick: lifecycle.campaignTick,
-    canonicalRevision: lifecycle.revision,
-    publicRevision: lifecycle.knowledge.revision,
-    completeGraph: true,
-    contactIds: [],
-    facts: [],
-    financeFacts: [],
-    physicalFacts: food.facts,
-    practiceFacts: [],
-    internalGrant: {
-      commandId: parsed.command.commandId,
-      sourceEventId: parsed.command.sourceEventId!,
-      canonicalRequest: canonicalJson(parsed.command),
-    },
-  });
-  if (prepared.kind !== 'PREPARED' || prepared.receipt.requirements.length !== 0)
-    throw new Error('real campaign advance did not settle cleanly');
-  const next = readCompanyCombatAggregateState({ ...previous, economy: prepared.next });
-  const response = {
-    commandId,
-    ok: true as const,
-    publicRevision: next.economy.lifecycle.knowledge.revision,
-  };
-  await database.transaction().execute((transaction) =>
-    updateCompanyAggregateWithReceipt(
-      transaction,
-      lifecycle.revision,
-      next.economy.lifecycle.revision,
-      next,
-      {
-        command: parsed.command,
-        receipt: {
-          receiptId: randomUUID(),
-          commandId,
-          sourceKey: companySourceKey(parsed.command),
-          requestKey: canonicalJson(parsed.command),
-          response,
-          resultingRevision: next.economy.lifecycle.revision,
-        },
-        auditEvents: prepared.receipt.events.map((event) => ({
-          eventId: event.id,
-          revision: next.economy.lifecycle.revision,
-          event,
-        })),
-      },
-    ),
-  );
-  return next;
+  return previous;
 }
 
 afterAll(async () => {
@@ -1156,11 +1080,28 @@ describe('authenticated company read (PostgreSQL)', () => {
             .executeTakeFirstOrThrow();
         });
 
-        const accrued = await advanceRealPayroll(worldId, companyId!);
-        const accruedPayroll = projectPayroll(accrued.economy, companyId!);
-        expect(BigInt(accruedPayroll?.duePayableQ ?? '0')).toBeGreaterThanOrEqual(4n);
+        // Observe at the fixture's current tick before testing future time.
+        await database
+          .updateTable('world_campaign_clocks')
+          .set({
+            epoch_ms: String(Date.now()),
+            starting_tick: payrollState.economy.lifecycle.campaignTick,
+          })
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        // A later healthy FIELD read must disclose new wages without a
+        // test-only domain advance or an unrelated order.
+        const beforeAccrualRead = await createdApp.inject({
+          method: 'GET',
+          url: '/company',
+          headers,
+        });
+        expect(beforeAccrualRead.statusCode).toBe(200);
+        const accrued = await setPayrollWorldTick(worldId, companyId!);
         const payrollRead = await createdApp.inject({ method: 'GET', url: '/company', headers });
         expect(payrollRead.statusCode).toBe(200);
+        expect(payrollRead.json().holdings.payroll.atTick).toBe('2000');
+        expect(BigInt(payrollRead.json().holdings.payroll.duePayableQ)).toBeGreaterThanOrEqual(4n);
         const observedAccrued = await database
           .transaction()
           .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!));
@@ -1169,6 +1110,36 @@ describe('authenticated company read (PostgreSQL)', () => {
           projectPayroll(observedAccrued.economy, companyId!),
         );
         expect(observedAccrued.economy.finance.wallets).toEqual(accrued.economy.finance.wallets);
+        const paidMembers = observedAccrued.economy.lifecycle.memberships.filter((member) =>
+          member.characterId.startsWith('a-worker-'),
+        );
+        expect(paidMembers.length).toBeGreaterThanOrEqual(2);
+        for (const member of paidMembers) {
+          expect(
+            observedAccrued.economy.finance.accounts.find(
+              (account) => account.membershipId === member.membershipId,
+            )?.confirmedAt,
+          ).toBe('2000');
+          expect(
+            payrollRead
+              .json()
+              .holdings.payroll.claims.some(
+                (claim: { membershipId: string; unsecuredQ: string }) =>
+                  claim.membershipId === member.membershipId && BigInt(claim.unsecuredQ) > 0n,
+              ),
+          ).toBe(true);
+        }
+        const stablePayrollRead = await createdApp.inject({
+          method: 'GET',
+          url: '/company',
+          headers,
+        });
+        expect(stablePayrollRead.json()).toEqual(payrollRead.json());
+        expect(
+          await database
+            .transaction()
+            .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!)),
+        ).toEqual(observedAccrued);
 
         const payrollHeaders = {
           ...headers,
