@@ -1,5 +1,15 @@
 # Historical delivery checkpoints
 
+## Reproducible launch #176 — 2026-11-06
+
+Coordinator/sole writer: current #176 parent. Owner authorizes spec/review/implement/review/merge/update-main.
+Writer `codex/repro-launch176` in `.claude/worktrees/repro-launch176`, base149fa8e6.
+PR334 MERGED bd919d1a at expected head adedf6c0; issue176 CLOSED. Clean local main updated.
+Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/RT3577/UI5276.
+[Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
+Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
+
 ## Stepwise M1 implementation — 2026-11-06
 
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
@@ -6101,3 +6111,20 @@ One generic map-init failure observed; later reload worked, cause unproven, map 
 Final source browser reload/Place readback PASS; same company850 crowns and helper state.
 Next: normal commit hook, PR publication and hosted gates.
 Owned local API3188/realtime3189/web5188/proxy3190 and fresh DB/Dex retained for payroll successor QA.
+
+## Production game readiness — 2026-10-28, PR334 / source ACCEPT
+
+Coordinator/validation owner: parent; branch `codex/game-production-readiness`, base `caee351b`.
+Integrated main `48d8a2ae` after PR333; only shared-record conflicts, both histories retained.
+Current owner mission: autonomous game implementation, isolated worktrees and PRs.
+No current merge, deployment, paid-resource or Orca/automation permission.
+Outcome: production cannot report a ready health-only process without game dependencies.
+Guard requires DATABASE_URL and complete validated OIDC before app construction/listen.
+Development defaults and existing HTTPS, fixture/lab prohibitions remain.
+Independent read-only source review ACCEPT; config/app12 PASS, package builds/server types PASS.
+Actual missing-config production entry process exits with the intended refusal.
+Owning contract: [ID01 identity](ID01-IDENTITY.md); related launch task #176 remains open.
+Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
+[PR334](https://github.com/Vovanostm/warwrit/pull/334), initial head `efcddb06`; normal commit audit PASS.
+Parent owns integration and applicable hosted-check readback; no merge authorized.
+Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
