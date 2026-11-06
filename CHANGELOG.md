@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Exercise a real lost battle reply across its deadline
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL partial #372 evidence on
+  merged product496ca5f5. Normal OIDC/travel/elder offer/JOIN led to one real
+  wolf encounter. An accepted wait reply was lost; re-entry after the actual
+  deadline restored the identical saved body and replayed its original receipt.
+  Real SQL/socket/storage assertions passed: one manual command/receipt, no
+  timeout for its completed activation, one timeout for the next expired
+  activation, unchanged saved policy, cleared pending request. The author did
+  not resume manual control promptly; AFK automation killed all three allies.
+  Retain that defeat and the post-terminal refusal; do not claim the missing
+  active-battle obsolete-activation probe or independent critique complete.
+  [Owning report](docs/engineering/evidence/command-recovery-20261028/README.md#native-battle-deadline-recovery--2026-11-06-partial),
+  CURRENT_PLAN and M1 wiki record the boundary. No product code or rule change;
+  new game suites/full gate NOT_RUN for this evidence-only step.
+
 ### Merge ordinary command recovery and activate the battle deadline scenario
 
 - 2026-11-06, `codex/m1-battle-recovery-372`: MERGED correction for

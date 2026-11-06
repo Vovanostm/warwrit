@@ -10,7 +10,9 @@ Active result #369 PASS on main b89f4128: local OIDC → one company → nine eq
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 Active #372: lose one real manual battle reply, reload/reconnect across deadline, exact retry and obsolete-activation refusal without duplicate effects.
 Reserve encounter client/recovery files only if a native defect is reproduced; root owns shared docs and isolated entry369 resources (DB54369/API3528/realtime3529/UI5228).
-Next: prepare socket interception and SQL/readback before entering a timed battle; actual #372 scenario NOT_RUN.
+#372 native first boundary PASS: same battle, real30-second timeout, original stored wait replay after reload; one manual command/receipt and one later timeout.
+The author did not resume control promptly; AFK battle ended in defeat/three allied deaths, retained. Post-terminal obsolete probe refused without mutation.
+Next: finish the still-missing active-battle obsolete-activation probe and independent finite critique; #372 remains open. [Evidence](evidence/command-recovery-20261028/README.md#native-battle-deadline-recovery--2026-11-06-partial).
 Owner request: assess the current game and update Roadmap, tasks and the plan to playable specification.
 Owner follow-up: split implementation into small AI tasks; [queue](PARALLEL_WAVES.md#ai-task-contract) now has 33 new leaf issues and 7 reused bounded entries.
 Other #368–#400 tasks remain planned; #369/#371 have executed acceptance; #372 is active. Parents retain full acceptance.

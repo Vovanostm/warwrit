@@ -1,5 +1,51 @@
 # Ordinary contract and encounter command recovery
 
+## Native battle deadline recovery — 2026-11-06 (partial)
+
+PR335 merged with the owner's explicit permission as `496ca5f5`. #371 is complete;
+the owner activated #372. Product code is unchanged in `codex/m1-battle-recovery-372`.
+Reuse the isolated entry369 world and normal OIDC company **Серая тропа**:
+actual travel North Yard→Bereznyak, talk to the elder, accept **Волчья тропа**,
+return to the square and JOIN. All three people were healthy and equipped before
+travel. No state, position, clock, seed or health edits were used.
+
+The loopback-only3531 proxy forwards the real Colyseus HTTP/WebSocket transport.
+It uses installed SDK0.18.4/schema5.0.34/msgpackr2.1.0 decoding and suppresses one
+matching accepted result; cookies remain in memory, outside evidence.
+
+- Native manual **Завершить ход**, command37da8d69, committed as revision7 and
+  receipt `42e80acf-71e3-464a-b761-9dfbc3444bee:7` before its reply was dropped.
+  UI exposed unknown-result feedback and Retry: [unknown](20261106-battle-unknown.png).
+- The browser left the game for about:blank. The next real30-second deadline
+  expired at09:29:40.517Z; PostgreSQL committed exactly one `system_timeout`
+  transition at09:29:40.766Z. No test clock adjustment was used.
+- Normal return at09:29:44 restored the same battle and byte-identical saved
+  JSON body with expectedRevision6: [restored](20261106-battle-restored.png).
+  Retry returned the original revision7 receipt after canonical state reached8;
+  the pending body cleared: [retried](20261106-battle-retried.png).
+- SQL retains one command and one receipt for that manual ID throughout. The
+  manual activation's timeout has zero rows; the next expired activation's
+  timeout has one. Its recorded policy/deadline is unchanged after re-entry.
+  Revision7→8 is the legitimate timeout, not another manual effect.
+
+[Native summary](20261106-battle-native-summary.json) contains public command,
+receipt, policy, timing and once-only readbacks. The author checked actual socket
+records, session-storage envelopes and PostgreSQL with independent assertions.
+Full local snapshots/logs remain under output/playwright/battle372/ (untracked).
+
+The author failed to resume manual control promptly after the successful retry.
+AFK automation subsequently ended the battle in defeat at revision57, with all
+three allies dead: [terminal result](20261106-battle-terminal.png). This is an
+actual retained outcome, not proof of a recovery defect or successful combat.
+A new-ID old-activation probe sent only after resolution was refused UNAUTHORIZED,
+with revision/command/receipt counts unchanged. That proves terminal refusal;
+an isolated active-battle obsolete-activation probe remains NOT_RUN and #372
+is still open. Prepare and execute that remaining boundary, then request the
+independent finite playable critique. No new game tests/full gate were run for
+this evidence-only step; the unchanged product's PR335 checks remain scoped to
+their original revision. Full M1, victory/reward, broader crashes and visual/
+device acceptance remain separate.
+
 ## Current integration — 2026-11-06
 
 Owner requested implementation toward full playability, step by step. Continue
