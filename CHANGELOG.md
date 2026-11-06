@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Retain the completed launch receipt before payroll CI
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL integration of
+  main12edc308 / launch-closeout PR410. This documentation-only main update landed
+  during payroll publication and initially prevented its CI merge ref. Preserve
+  both changelog histories, append the final launch receipt to plan history and
+  retain payroll as current. Product source and accepted native/UI evidence stay
+  atb6b1ff86 with merged startup4c1f0ce4. Scoped docs/plan/diff checks apply;
+  game tests were NOT_RUN again for this documentation integration.
+
 ### Include the final blank-database launch guard before payroll publication
 
 - 2026-11-06, `codex/game-payroll-integration`, PUBLISHED integration of merged
@@ -161,6 +171,21 @@ requests.
   complexity/guard clone/selectors and quality rework is active without bypass.
   TARGETED browser, final-source acceptance/commit/PR/CI and full game remain
   pending. [Journey and actual limits](docs/engineering/evidence/payroll-20261028/README.md).
+
+### Close the merged blank-database startup correction
+
+- 2026-11-06, originating branch `codex/launch-blank-database`, source MERGED
+  through [PR407](https://github.com/Vovanostm/warwrit/pull/407) as 4c1f0ce4 at
+  expected head32b4cca2 under the owner's continue/merge request. Current main
+  recovery integration and both document histories are retained. Source and
+  conflict-resolution review ACCEPT. CI42280535817 and scope42280535469 SUCCESS,
+  full logs read. 1264 tests/99 skipped, 10000 stress battles, migration smoke/89
+  real SQL scenarios, both browser journeys, coverage/aggregation/native audit
+  PASS. Clean main checkout updated, reviewed/merged contents equal.
+  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06)
+  and wiki/checkpoint record the actual result. Author's invalid-config process
+  and19 focused checks retain their stated scope. Full M1/hosted/visual/device
+  acceptance remains open. Retained player worlds were not used by the regression.
 
 ### Integrate recovery before merging the blank-database correction
 

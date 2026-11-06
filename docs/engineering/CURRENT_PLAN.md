@@ -5,7 +5,7 @@
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
 Owner requested “next issue” after approving PR363. This parent resumes #167/PR338 payroll integration and native validation; next-contract #368 follows payroll.
 2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
-Active payroll writer codex/game-payroll-integration in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrates main4c1f0ce4 (recovery and blank-DB launch fix) into existing PR338.
+Active payroll writer codex/game-payroll-integration in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrates main12edc308 (recovery, launch fix and closeout) into existing PR338.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
@@ -22,7 +22,7 @@ Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PROD
 Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
 Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
 PR363 MERGED a2348871 from owner-approved63e66ccb; CI42272733258/scope42277998663 PASS. Native37→54HP/retry/restart/return and independent source/finite UI ACCEPT; #169 CLOSED.
-PR338 integrates main4c1f0ce4. b6b1ff86 fixes healthy FIELD stale payroll;59focused/SQL18/types/lint PASS; current TARGETED50hold and DEFAULT50cash/reload/retry/restart PASS. Independent source/current finite day-night UI ACCEPT; PR owns required new-head CI/merge permission.
+PR338 integrates main12edc308. b6b1ff86 fixes healthy FIELD stale payroll;59focused/SQL18/types/lint PASS; current TARGETED50hold and DEFAULT50cash/reload/retry/restart PASS. Independent source/current finite day-night UI ACCEPT; PR owns required new-head CI/merge permission.
 Payroll remains a candidate until delivery. Parent full-game acceptance remains open.
 Current result: actual accessible-cash payroll and separately backed holds survive retry/restart. New PR338-head merge needs separate permission.
 Next player result: same recovered/paid company completes the next contract and survives server restart.
@@ -36,7 +36,7 @@ World knowledge/offline behavior and two-company participation require the full 
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
 [Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
-PR366/335/402/405/334/406/363/407 merged; launch #176 complete, volumes retained. Current #167 assignment authorizes implementation/checks/PR update.
+PR366/335/402/405/334/406/363/407/410 merged; launch #176 complete, volumes retained. Current #167 assignment authorizes implementation/checks/PR update.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
 #401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
 

@@ -6124,3 +6124,11 @@ Main a2348871 integrated with recovery history retained. Blank-DB correction/sou
 [Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated protocol build/server types/19 tests PASS. New CI pending.
 
 Merge receipt: PR407 MERGED4c1f0ce4 at expected32b4cca2; payroll integrates it unchanged.
+
+## Launch configuration merged closeout — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both histories retained.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
+
+Integrated through main12edc308 / PR410 during payroll publication.
