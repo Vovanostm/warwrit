@@ -11,14 +11,18 @@ requests.
 
 ### Resume explicit company recovery on current integrated main
 
-- 2026-11-06, `codex/company-recovery`, LOCAL continuation of
+- 2026-11-06, `codex/company-recovery`, PUBLISHED continuation in
   [PR363](https://github.com/Vovanostm/warwrit/pull/363) under the owner's request
   to implement company recovery. Integrate main149fa8e6, retaining ordinary
   request recovery, retreat applicability, current skills and both changelog
   histories. The recovery slice remains explicit FIELD↔RECOVERY, fed future
   observation, exact retry and return to the same party slot. Earlier source,
   native and CI evidence retain their recorded revisions. Protocol build, web/server types,13 focused web tests and scoped lint PASS.
-  Affected saved-game readback remains pending. [Owning contract](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+  Current saved-game native PASS on1acd5063 covers37→54HP on real future fed
+  ticks, lost-response/reload/exact retry with one receipt, identical restart
+  readback and same-party FIELD return. Real PostgreSQL18/18 PASS. Current
+  independent source/finite UI review ACCEPT; the linked PR owns required
+  new-head hosted CI and live delivery state. New-head merge permission is pending. [Owning contract](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
 
 ### Integrate merged quality feedback into recovery verification
 

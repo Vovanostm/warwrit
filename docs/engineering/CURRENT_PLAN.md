@@ -21,7 +21,7 @@ Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance.
 Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
 Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
 Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
-PR363 at2d6bf3cc has prior native recovery/retry/restart and finite UI acceptance; current-main integration and affected checks are underway.
+PR363 integrates main149fa8e6 at1acd5063; web13/SQL18/types/lint PASS; current native37→54HP, exact retry/reload/restart/same-party return PASS. Independent source/finite UI ACCEPT; PR363 owns new-head hosted CI and required new-head merge permission.
 Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
 These are candidate results, not integrated-main or full-game acceptance.
 Delivery owner completes PR363 → retarget/check PR338 → current-main continuation using recorded scoped authority.
