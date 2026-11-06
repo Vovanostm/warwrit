@@ -92,7 +92,14 @@ and restricted npm cache; native in-app browser completed the ordinary flow.
 The first form submission coincided with the deliberate DB outage and failed
 without company creation; retry after recovery created exactly one company.
 
-Ordinary travel/encounter smoke and hosted CI remain pending. Full M1, battle
+Ordinary right-click travel from Северный Двор to Березняк completed. The
+**Волчья тропа** contract was accepted at its actual issuer, and **Вступить в бой**
+created encounter b22828d2-304f-4f47-8d87-71ec9899e8a2 with company_binding
+admission. UI displayed all6 fighters and **Сводка боя синхронизирована**;
+read-only socket inspection confirmed an established realtime3577 connection.
+No fixture admission or position edit was used. No manual combat action was sent;
+the ordinary deadline marked the observing player AFK. The API/web were then
+stopped, preserving the active encounter. Hosted CI remains pending. Full M1, battle
 outcomes/reward, full visual/device/human acceptance, external-provider identity,
 backup/restore/hosted release and deployment remain outside this bounded result.
 FPS/capacity NOT_MEASURED. Local execution logs are under output/ (untracked).

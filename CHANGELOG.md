@@ -22,7 +22,9 @@ requests.
   contract/full-stop-restart/re-entry and16focused tests/server types/lint PASS.
   Runbook, playtest, identity contract, wiki and checkpoint record actual checks,
   initial failures and limits. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06).
-  Ordinary encounter smoke/hosted CI pending; no full-M1/hosted/deployment acceptance.
+  Ordinary travel/HUNT-02/JOIN and established realtime3577 smoke PASS; server
+  stopped with the active encounter retained. Hosted CI pending; no full-M1/hosted/
+  deployment acceptance.
 
 ### Require playable dependencies before production startup
 

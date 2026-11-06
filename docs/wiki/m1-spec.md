@@ -35,8 +35,9 @@ sources:
 
 Точный [runbook](../engineering/LOCAL_DEVELOPMENT.md#isolated-ordinary-game-worktree--176)
 и [результаты с ограничениями](../engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06)
-содержат команды, ресурсы и реальные проверки. Текущий статус — local, нативный
-вход в бой и CI ожидаются. Полный M1, внешняя identity, hosted release,
+содержат команды, ресурсы и реальные проверки. Обычное путешествие в Березняк,
+HUNT-02 и JOIN открыли реальный бой с company_binding и подключением realtime.
+Сервер остановлен с сохранённым активным боем. Текущий статус — local, CI ожидается. Полный M1, внешняя identity, hosted release,
 backup/restore и производительность этим срезом не приняты.
 
 ## 1. Игра и границы
