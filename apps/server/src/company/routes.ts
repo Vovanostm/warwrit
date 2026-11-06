@@ -42,6 +42,7 @@ import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { projectCompanyHoldings } from './holdings.js';
+import { isPayrollPayload } from './payroll-intent.js';
 import {
   ensureWorldRecruitPool,
   localCompanyContacts,
@@ -461,6 +462,8 @@ function parseOrdinaryCompanyCommandV2(
       Number(payload['quantity']) > 100
     )
       return undefined;
+  } else if (value['type'] === 'PayClaims') {
+    if (!isPayrollPayload(payload)) return undefined;
   } else if (value['type'] === 'RenameCompany') {
     if (
       canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['bannerId', 'name']) ||
