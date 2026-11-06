@@ -4,11 +4,11 @@
 
 Coordinator/sole writer: current #176 parent. Owner authorizes spec/review/implement/review/merge/update-main.
 Writer `codex/repro-launch176` in `.claude/worktrees/repro-launch176`, base149fa8e6.
-Parent owns launch configuration, config guard/tests and slice shared docs; reuse PR334.
+PR334 MERGED bd919d1a at expected head adedf6c0; issue176 CLOSED. Clean local main updated.
 Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/RT3577/UI5276.
 [Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
-Spec/source review ACCEPT. Clean install/OIDC/company/full-stack retention/ordinary encounter-realtime smoke PASS; hosted CI pending.
-Existing recovery/payroll and encounter owners retain their files and resources.
+Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
+Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
 
 ## Stepwise M1 implementation — 2026-11-06
 

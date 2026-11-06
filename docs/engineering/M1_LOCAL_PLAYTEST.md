@@ -57,7 +57,7 @@ acceptance is included. Spec review ACCEPT. Current results are recorded below.
 
 ### Launch implementation and verification — 2026-11-06
 
-Local candidate reuses PR334 on current main149fa8e6. Independent specification
+The candidate reused PR334 on main149fa8e6; its merged delivery is recorded below. Independent specification
 and executable-source review ACCEPT. Fresh frozen install passed on Node24.20.0 /
 pnpm11.25.0. Plain `pnpm dev` first reproduced missing `game-core`/`protocol`
 exports. The root command now builds both before starting API/web. Dex supports
@@ -99,7 +99,31 @@ admission. UI displayed all6 fighters and **Сводка боя синхрони
 read-only socket inspection confirmed an established realtime3577 connection.
 No fixture admission or position edit was used. No manual combat action was sent;
 the ordinary deadline marked the observing player AFK. The API/web were then
-stopped, preserving the active encounter. Hosted CI remains pending. Full M1, battle
+stopped, preserving the active encounter.
+
+### Merged launch closeout — 2026-11-06
+
+[PR334](https://github.com/Vovanostm/warwrit/pull/334) MERGED at18:24UTC as
+bd919d1a5be4eee5766e404e464f6caca8bfe48e, expected head
+adedf6c0166ef3bbcd20452902df96c1624d55ec enforced. Issue176 CLOSED. GitHub main,
+origin/main and the clean main checkout `.claude/worktrees/agent-harness-cleanup`
+were read back at that merge. Ordinary diff found no content change between the
+reviewed head and actual merge. The original dirty sprite-combat checkout remains
+with its existing owner.
+
+[CI42266945856](https://github.com/Vovanostm/warwrit/actions/runs/42266945856)
+SUCCESS, full logs read. Existing bootstrap passed1259tests/98skipped,10000combat
+stress, migration smoke and88real PostgreSQL/auth checks. Both real world-map
+and ordinary painted-game browser journeys passed. Measured units, source-checked
+browser aggregation and unchanged quality audit passed. Final
+[PR scope42267008090](https://github.com/Vovanostm/warwrit/actions/runs/42267008090)
+SUCCESS; the earlier same-head scope run was cancelled when the PR body update
+triggered its replacement. Final code and documentation source reviews ACCEPT.
+Runtime evidence above is author-owned; the reviewer did not replay browser/SQL.
+The isolated development processes were stopped after smoke and project volumes
+retained. Runbook restarts the same stack. Hosted checks do not replace the wider
+M1 acceptance. External-provider, full battle/reward, backup/restore, deployment,
+full visual/device/human acceptance remain NOT_RUN; FPS/capacity NOT_MEASURED. Full M1, battle
 outcomes/reward, full visual/device/human acceptance, external-provider identity,
 backup/restore/hosted release and deployment remain outside this bounded result.
 FPS/capacity NOT_MEASURED. Local execution logs are under output/ (untracked).
