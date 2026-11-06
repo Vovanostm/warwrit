@@ -9,6 +9,71 @@ requests.
 
 ## Unreleased
 
+### Complete the current battle recovery boundary and retain failed exits
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL #372 native recheck on
+  product46c3b75a. Fresh19-migration isolated DB; normal OIDC company opening,
+  nine equips, travel and wolf offer/JOIN. Lost accepted wait→real deadline→
+  re-entry/exact retry retains one original command/receipt and one later timeout.
+  HUMAN resume and an old activation with current actor/revision15 return
+  UNAUTHORIZED without changing active state/counts. Current frame no longer
+  shows the legacy stale-authority overlap. Native socket/storage/SQL assertions
+  PASS. The exit automation then repeated46 enabled-but-refused Retreat attempts;
+  no retreat passed and real AFK progression killed all3. Retain this defeat,
+  the earlier defeat and the old database without reset. A local harness guard
+  stops future known refusals (new gameplay guard execution NOT_RUN).
+  [#401](https://github.com/Vovanostm/warwrit/issues/401) owns the separate
+  retreat-applicability/actual-exit gap. Owning report, CURRENT_PLAN and M1 wiki
+  distinguish recovery acceptance from failed exits. Independent finite playable
+  ACCEPT at46c3b75a (2/2/3/2/2), with #401 and loss-layout #392 explicitly open;
+  current Retry screenshot is marked in-flight, later HUMAN frame/JSON own
+  confirmation. Final CI still pending. No new server/rule/protocol/schema change
+  or full-M1 acceptance. Fault proxy stopped; normal realtime3529 restored.
+  [Current evidence](docs/engineering/evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+
+### Keep pending battle feedback out of legacy authority hints
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL fix for the actual #372
+  unknown-result capture: legacy inline hints overlapped the fullscreen heading
+  and falsely described a pending command as stale authority. Restrict those
+  hints to inline mode and omit the stale hint while a command is pending;
+  preserve the fullscreen live lane, Retry and transport/storage rules.
+  Existing mounted regression failed on old source (1 failure), then recovery/
+  live-lane files passed (5 tests); web types and scoped ESLint PASS.
+  [Owning result](docs/engineering/evidence/command-recovery-20261028/README.md#pending-feedback-correction--2026-11-06-local)
+  and M1 wiki/CURRENT_PLAN retain the pre-fix battle evidence and pending new
+  native/independent acceptance. Full gate NOT_RUN at this step.
+
+### Exercise a real lost battle reply across its deadline
+
+- 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL partial #372 evidence on
+  merged product496ca5f5. Normal OIDC/travel/elder offer/JOIN led to one real
+  wolf encounter. An accepted wait reply was lost; re-entry after the actual
+  deadline restored the identical saved body and replayed its original receipt.
+  Real SQL/socket/storage assertions passed: one manual command/receipt, no
+  timeout for its completed activation, one timeout for the next expired
+  activation, unchanged saved policy, cleared pending request. The author did
+  not resume manual control promptly; AFK automation killed all three allies.
+  Retain that defeat and the post-terminal refusal; do not claim the missing
+  active-battle obsolete-activation probe or independent critique complete.
+  [Owning report](docs/engineering/evidence/command-recovery-20261028/README.md#native-battle-deadline-recovery--2026-11-06-partial),
+  CURRENT_PLAN and M1 wiki record the boundary. No product code or rule change;
+  new game suites/full gate NOT_RUN for this evidence-only step.
+
+### Merge ordinary command recovery and activate the battle deadline scenario
+
+- 2026-11-06, `codex/m1-battle-recovery-372`: MERGED correction for
+  [PR335](https://github.com/Vovanostm/warwrit/pull/335), merge496ca5f5 from
+  reviewed head30e06f15, following the owner's explicit “merge, next - #372”.
+  Fresh CI/scope and empty review-thread readback passed; the actual merged tree
+  matches the verified candidate. Hosted CI42116755511 attempt2 passed bootstrap
+  and measured coverage (1256 passed/98 skipped each), real PostgreSQL88,
+  stress10000, both browser journeys and changed-code audit. Preserve attempt1's
+  unchanged road-junction coverage timeout in the PR report. #371 is complete;
+  CURRENT_PLAN activates only #372's real WebSocket/manual-vs-automatic/deadline
+  scenario in the existing isolated world. That scenario is NOT_RUN at activation;
+  no new combat policy, deployment or successor merge permission.
+
 ### Reconcile pending-command recovery with the current ordinary game
 
 - 2026-11-06, `codex/m1-recovery-371`, LOCAL continuation of existing PR335 for

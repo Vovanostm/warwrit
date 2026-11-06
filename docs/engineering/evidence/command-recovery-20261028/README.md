@@ -1,5 +1,161 @@
 # Ordinary contract and encounter command recovery
 
+## Current battle recovery result — 2026-11-06
+
+Current product source `46c3b75a`, base `496ca5f5`. The only new product change
+is the pending/fullscreen feedback correction below. Transport, saved request,
+server authority, combat policy, protocol and migrations are unchanged.
+
+The affected native recheck uses a new database `warwrit_battle372_20261106`
+in the owned entry369 PostgreSQL container54369, with all19 existing migrations
+applied by the normal migration tool. The earlier `warwrit` database, companies,
+defeat and partially explored river approach are retained without reset. The
+older helper could not opt into an already admitted hunt; continuing its other
+contract required exploring a river crossing. A fresh isolated world kept this
+check bounded to request recovery instead of widening it into world exploration.
+
+Normal local Dex OIDC→company **Речной дозор**, leader **Мирон**, Mora/Rell→nine
+equipment actions→normal North Yard/Bereznyak travel→elder's **Волчья тропа**
+offer/ACCEPT→square JOIN. Company opening, health, equipment and positions came
+through the app; no ready-made snapshot, position/health/clock/RNG edit was used.
+An immediate post-equipment move was refused STALE_REVISION; a new normal click
+after the map refreshed started the real journey.
+
+### Executed recovery boundary
+
+- Manual wait1aa245c5 committed at revision7; the loopback socket proxy withheld
+  its matching accepted reply. Current [unknown feedback](20261106-final-unknown.png)
+  shows Retry and no overlapping/misleading stale-authority hint.
+- The browser left to about:blank, then returned after the next real30-second
+  deadline. [Restored state](20261106-final-restored.png) retained the same saved
+  JSON body, original ID and expectedRevision6 in the same encounter6058743c.
+- The [in-flight Retry frame](20261106-final-retried.png) still shows waiting;
+  hiding the Retry button during send was not a confirmation oracle. Actual
+  socket/SQL records and the later recheck-retried-ui.json readback confirm the
+  original revision7 receipt after canonical state reached8 and cleared storage.
+  The [later active frame](20261106-final-active-guard.png) shows stable HUMAN
+  control after that confirmation.
+  There is exactly one command and one receipt for that ID. The manually
+  completed activation has zero timeout rows; the next expired activation has
+  exactly one `system_timeout` row, with its recorded deadline/policy unchanged
+  after re-entry. Those are distinct legitimate transitions, not duplicate effects.
+- The native **Вернуться к управлению** request returned the participant to
+  HUMAN control (`afk=false`). At revision15, the same living owned actor's
+  current activation was2:438334c5; a new-ID probe supplied that current actor
+  and revision15 but the old activation1:438334c5. The real socket returned
+  UNAUTHORIZED; active status, revision15, command count15 and receipt count15
+  stayed unchanged: [active state after refusal](20261106-final-active-guard.png).
+
+[Current public readback](20261106-final-native-summary.json) records command,
+receipt, policies, real timings, resumed participation and the isolated active
+old-activation probe. Author assertions independently compared native socket
+records, exact saved envelopes and PostgreSQL rows. Raw local snapshots/logs are
+under output/playwright/battle372/ (untracked); no cookies or headers are filed.
+This one current encounter covers both #372 criteria; the earlier encounter is
+retained as a separate historical attempt below.
+
+### Failed exit and remaining acceptance
+
+The prepared exit automation incorrectly treated an enabled **Отступить**
+button as a legal action. At q=-1,r=-2 it sent46 native attempts, all refused
+INVALID_COMMAND; no retreat command was accepted. It should have stopped after
+the first known refusal. Subsequent real deadline/AFK progression ended this
+attempt with all three allies dead: [actual terminal state](20261106-final-terminal.png).
+The defeat is retained. The local harness now stops on a known command refusal;
+that guard was not exercised by another gameplay run.
+
+[Follow-up401](https://github.com/Vovanostm/warwrit/issues/401) owns accurate
+retreat applicability and a genuinely legal exit; it grants no new retreat rule.
+Neither successful retreat nor victory/reward/full-loop acceptance passed here.
+Both actual defeats and author/harness errors are part of the result.
+The independent image inspection also found the leader-death banner overlapping
+the defeat panel at1280×720 (around y203–239). Existing #392 owns that loss-layout
+finding; terminal/full-game visual acceptance is not established here.
+
+The old-source regression failed1 test; the corrected mounted recovery/live-lane
+files passed5 tests. Web typecheck and scoped ESLint passed. Current native
+assertions passed. Independent finite playable critic ACCEPT at46c3b75a:
+uncertainty2, unobstructed Retry2, same battle/request/deadline3, HUMAN authority/
+controls2, no misleading legacy overlap2. It inspected images before summaries
+and independently compared retained socket/storage/SQL files; no independent
+browser, SQL or tests were executed. It accepted both bounded #372 criteria and
+kept retreat applicability (#401) and terminal presentation (#392) at1/outside
+that finite acceptance. No successful new post-resume tactical order, controlled
+simultaneous native deadline race, retreat/victory/reward/full-loop, full scene/
+art/device/performance or full-M1 acceptance is established. Hosted final CI
+remains pending. Existing seeded PG race regressions have their own scope.
+
+The fault proxy has been stopped and the ordinary realtime target restored to3529.
+The owned normal preview remains on5228/API3528 with the new retained database;
+the current company has the actual three-death outcome. No test world was reset.
+
+## Pending feedback correction — 2026-11-06 (local)
+
+The native unknown-result image below exposed a real rendering defect: legacy
+inline authority hints were also rendered over the fullscreen battle heading.
+A pending accepted command additionally produced a misleading stale-authority
+explanation, although its actual problem was an unconfirmed response.
+Keep those legacy hints in the inline presentation and suppress the stale hint
+while a command is pending; fullscreen feedback remains in EncounterLiveLane.
+No command, storage, authorization, timing or server policy changes.
+
+The existing mounted recovery test now checks that waiting/restored attempts do
+not claim stale authority. It failed on the old source (1 test failed), then
+the mounted recovery/live-lane files passed (2 files/5 tests). Web typecheck and
+scoped ESLint passed. Current-source native image/readback and final independent
+critique were pending at that step commit; the current native recheck above
+records the later result. The first battle evidence below is historical pre-fix
+evidence and is not silently promoted to the changed presentation.
+
+## Native battle deadline recovery — 2026-11-06 (partial)
+
+Historical first attempt; the current recheck above owns the later active guard
+and changed-presentation evidence. Its original partial boundary remains below.
+
+PR335 merged with the owner's explicit permission as `496ca5f5`. #371 is complete;
+the owner activated #372. Product code is unchanged in `codex/m1-battle-recovery-372`.
+Reuse the isolated entry369 world and normal OIDC company **Серая тропа**:
+actual travel North Yard→Bereznyak, talk to the elder, accept **Волчья тропа**,
+return to the square and JOIN. All three people were healthy and equipped before
+travel. No state, position, clock, seed or health edits were used.
+
+The loopback-only3531 proxy forwards the real Colyseus HTTP/WebSocket transport.
+It uses installed SDK0.18.4/schema5.0.34/msgpackr2.1.0 decoding and suppresses one
+matching accepted result; cookies remain in memory, outside evidence.
+
+- Native manual **Завершить ход**, command37da8d69, committed as revision7 and
+  receipt `42e80acf-71e3-464a-b761-9dfbc3444bee:7` before its reply was dropped.
+  UI exposed unknown-result feedback and Retry: [unknown](20261106-battle-unknown.png).
+- The browser left the game for about:blank. The next real30-second deadline
+  expired at09:29:40.517Z; PostgreSQL committed exactly one `system_timeout`
+  transition at09:29:40.766Z. No test clock adjustment was used.
+- Normal return at09:29:44 restored the same battle and byte-identical saved
+  JSON body with expectedRevision6: [restored](20261106-battle-restored.png).
+  Retry returned the original revision7 receipt after canonical state reached8;
+  the pending body cleared: [retried](20261106-battle-retried.png).
+- SQL retains one command and one receipt for that manual ID throughout. The
+  manual activation's timeout has zero rows; the next expired activation's
+  timeout has one. Its recorded policy/deadline is unchanged after re-entry.
+  Revision7→8 is the legitimate timeout, not another manual effect.
+
+[Native summary](20261106-battle-native-summary.json) contains public command,
+receipt, policy, timing and once-only readbacks. The author checked actual socket
+records, session-storage envelopes and PostgreSQL with independent assertions.
+Full local snapshots/logs remain under output/playwright/battle372/ (untracked).
+
+The author failed to resume manual control promptly after the successful retry.
+AFK automation subsequently ended the battle in defeat at revision57, with all
+three allies dead: [terminal result](20261106-battle-terminal.png). This is an
+actual retained outcome, not proof of a recovery defect or successful combat.
+A new-ID old-activation probe sent only after resolution was refused UNAUTHORIZED,
+with revision/command/receipt counts unchanged. That proves terminal refusal;
+an isolated active-battle obsolete-activation probe remains NOT_RUN and #372
+is still open. Prepare and execute that remaining boundary, then request the
+independent finite playable critique. No new game tests/full gate were run for
+this evidence-only step; the unchanged product's PR335 checks remain scoped to
+their original revision. Full M1, victory/reward, broader crashes and visual/
+device acceptance remain separate.
+
 ## Current integration — 2026-11-06
 
 Owner requested implementation toward full playability, step by step. Continue

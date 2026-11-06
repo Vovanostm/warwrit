@@ -538,8 +538,10 @@ export function EncounterPanel(props: {
               );
             })}
           </ul>
-          {actorIsOurs &&
+          {!presentation &&
+            actorIsOurs &&
             !canIssue &&
+            pendingCommand === undefined &&
             projection.status === 'active' &&
             scopedState?.grant?.selfAfk !== true && (
               <p className="state-note">
@@ -547,7 +549,7 @@ export function EncounterPanel(props: {
                 синхронизации связи.
               </p>
             )}
-          {!actorIsOurs && projection.status === 'active' && (
+          {!presentation && !actorIsOurs && projection.status === 'active' && (
             <p className="state-note">
               Команды появятся, когда сервер подтвердит ваш ход и право управления.
             </p>
