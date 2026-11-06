@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Stack the leader-death notice and battle outcome together
+
+- 2026-11-07, `codex/loss-panel-layout392`, LOCAL implementation of the
+  owner-selected overlap correction within #392. EncounterPanel passes its
+  existing leadership notice through the BattleView terminal slot. Fullscreen
+  game.css owns a bounded scrollable vertical stack and resets both child
+  positions. Restore notice typography after the inherited HUD font shrank it.
+  BattleOutcome/battle-view.css remain owned by PR408. New structural regression
+  first failed, then30 targeted tests/web types/lint PASS. Independent source
+  review ACCEPT. Actual retained loss reached revision62 with effects applied;
+  layout/pointer checks use a labelled presentation replay of its public data.
+  [Owning result and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  Fresh native loss/succession/game-over acceptance NOT_RUN. Full #392 stays open.
+  Current-image critic, publication and CI pending.
+
 ### Specify the bounded loss-panel overlap fix
 
 - 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
