@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Merge ordinary command recovery and activate the battle deadline scenario
+
+- 2026-11-06, `codex/m1-battle-recovery-372`: MERGED correction for
+  [PR335](https://github.com/Vovanostm/warwrit/pull/335), merge496ca5f5 from
+  reviewed head30e06f15, following the owner's explicit “merge, next - #372”.
+  Fresh CI/scope and empty review-thread readback passed; the actual merged tree
+  matches the verified candidate. Hosted CI42116755511 attempt2 passed bootstrap
+  and measured coverage (1256 passed/98 skipped each), real PostgreSQL88,
+  stress10000, both browser journeys and changed-code audit. Preserve attempt1's
+  unchanged road-junction coverage timeout in the PR report. #371 is complete;
+  CURRENT_PLAN activates only #372's real WebSocket/manual-vs-automatic/deadline
+  scenario in the existing isolated world. That scenario is NOT_RUN at activation;
+  no new combat policy, deployment or successor merge permission.
+
 ### Reconcile pending-command recovery with the current ordinary game
 
 - 2026-11-06, `codex/m1-recovery-371`, LOCAL continuation of existing PR335 for
