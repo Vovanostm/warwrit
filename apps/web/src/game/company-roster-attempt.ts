@@ -8,7 +8,7 @@ import { classifyCompanyCarePost, type CarePostResult } from './company-care-att
 
 export type CompanyRosterCommand = Extract<
   OrdinaryPlayerCompanyCommandV2Dto,
-  { readonly type: 'Recruit' | 'JoinFieldParty' }
+  { readonly type: 'Recruit' | 'JoinFieldParty' | 'SetAssignment' }
 >;
 export type CompanyRosterCommandType = CompanyRosterCommand['type'];
 export interface CompanyRosterScope {
@@ -54,6 +54,12 @@ function isRosterCommand(
   )
     return false;
   const payload = value['payload'];
+  if (type === 'SetAssignment')
+    return (
+      Object.keys(payload).length === 2 &&
+      isId(payload['characterId']) &&
+      (payload['assignment'] === 'FIELD' || payload['assignment'] === 'RECOVERY')
+    );
   return type === 'Recruit'
     ? Object.keys(payload).length === 2 &&
         isId(payload['offerId']) &&

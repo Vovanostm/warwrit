@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Integrate company recovery into hostile-retreat delivery
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of merged
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363), main a2348871.
+  Preserve recovery source and both changelog histories; reconcile the active
+  checkpoint and retain the incoming checkpoint as dated history. #378 remains
+  the active slice here; payroll and the repeat-contract loop retain their owner.
+  Initial full check found only ignored local diagnostic scripts in ESLint;
+  clean-copy verification was started. Integrated-head checks are pending.
+
 ### Apply accepted hostile-retreat consequences without a false trophy
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL implementation of the accepted
@@ -107,6 +117,99 @@ requests.
   limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
   PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
   This checkpoint is local; the merged implementation/evidence is in PR405.
+
+### Integrate the merged reproducible launch into recovery
+
+- 2026-11-06, `codex/company-recovery`, LOCAL follow-up to
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). Full CI42267843778 and
+  scope42267843972 PASS at4549975a with1259 unit tests/99 skipped,10000 stress
+  battles,89 real SQL scenarios, both browser journeys, measured coverage and
+  native audit (zero introduced complexity errors/clone groups). During that
+  run, launch PR334/406 advanced main to0f9ea2a1. Integrate its startup/readiness
+  fixes unchanged, preserving both histories. Only CHANGELOG conflicted.
+  Move the completed launch checkpoint to history and retain recovery as current.
+  Recovery product source/native proof is unchanged; startup/database12 tests
+  and server types PASS. Integrated CI and separate
+  new-head merge permission remain required. [Owning result](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+
+### Resume explicit company recovery on current integrated main
+
+- 2026-11-06, `codex/company-recovery`, PUBLISHED continuation in
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363) under the owner's request
+  to implement company recovery. Integrate main149fa8e6, retaining ordinary
+  request recovery, retreat applicability, current skills and both changelog
+  histories. The recovery slice remains explicit FIELD↔RECOVERY, fed future
+  observation, exact retry and return to the same party slot. Earlier source,
+  native and CI evidence retain their recorded revisions. Protocol build, web/server types,13 focused web tests and scoped lint PASS.
+  Current saved-game native PASS on1acd5063 covers37→54HP on real future fed
+  ticks, lost-response/reload/exact retry with one receipt, identical restart
+  readback and same-party FIELD return. Real PostgreSQL18/18 PASS. Current
+  independent source/finite UI review ACCEPT; the linked PR owns required
+  new-head hosted CI and live delivery state. New-head merge permission is pending. [Owning contract](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+
+### Integrate merged quality feedback into recovery verification
+
+- 2026-11-05, `codex/company-recovery`, LOCAL integration of maincf973d35 /
+  merged [PR362](https://github.com/Vovanostm/warwrit/pull/362). Preserve both
+  changelog histories, the native audit reporter/artifacts, inherited35-minute
+  whole-job allowance and unchanged individual scenario/quality gates. Recovery
+  product source is unchanged from7b90194f; source/SQL18 and finite UI acceptance
+  retain their stated scope. [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records integration review ACCEPT; new-head CI remains pending.
+
+### Separate local observation preparation from persistence
+
+- 2026-11-05, `codex/company-recovery`, LOCAL correction for
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). CI42049872539 passed full
+  bootstrap, SQL89, unit coverage and both browser journeys, then the final
+  audit flagged observer cognitive complexity21 above15. Extract the complete
+  bounded observation-preparation loop; retain local admission and persistence
+  in the caller and prepare every draft before any write. No rule/UI change.
+  Server types and real executor/routes/recruitment SQL18/18 PASS. Local
+  structural diagnostic no longer flags either function; stale local coverage
+  is not used as CRAP acceptance. Independent affected review ACCEPT; new-head CI pending.
+  [Owning result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+
+### Select the company tab by its exact name in the painted journey
+
+- 2026-11-05, `codex/company-recovery`, LOCAL correction to
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). CI42044125361 passed
+  bootstrap1247/99 SKIP, stress10000, SQL89, measured unit coverage and the world
+  browser. The painted probe then matched both the Отряд tab and the new refresh
+  button. Use exact tab names at all three existing Отряд selectors; preserve
+  clicks, selected-tab assertions and journey steps. Native UI confirms two
+  substring matches, one exact match and selected tab=true. Syntax/lint/format
+  and independent affected readback PASS; new-head CI remains required.
+  [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+
+### Preserve current fixture revisions after company observation
+
+- 2026-11-05, `codex/company-recovery`, LOCAL test-setup correction for
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). Full CI42040569966 passed
+  verify1247/99 SKIP and combat stress10000, then SQL88 passed/1 failed. The old
+  recruitment privacy fixture rewrote a genesis root after a lawful body
+  observation advanced its persisted revision. Retain the current aggregate and
+  known revision when preparing hidden variants and later hire requests; preserve
+  repository scope guards and all privacy/payment/replay assertions. Gameplay
+  source is unchanged. [Owning recovery result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records the exact result. Original failure reproduced; corrected recruitment SQL1,
+  server types and scoped lint/format PASS. Independent affected readback ACCEPT; new-head CI remains pending.
+
+### Connect treatment to explicit recovery
+
+- 2026-11-05, `codex/company-recovery`, LOCAL work on main1121665c. Expose the
+  existing FIELD↔RECOVERY assignment and lawful future fed refresh in the Company
+  screen; retain exact saved retries and party membership. No implicit settlement
+  healing or retroactive recovery. [Owning acceptance](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  records native saved-game PASS: no historical healing,17→20→31HP on future fed
+  ticks, lost-reply/reload/exact retry, unchanged restart and same-slot FIELD return.
+  Focused web9/SQL17/projection5 and types/lint PASS. First UI critique REWORK
+  corrections add wound labels, exact-repeat explanation and visible refresh
+  success/error; native corrected UI PASS. Source/finite day UI ACCEPT; final night readability
+  and integrated CI remain pending.
+- PR360 recruitment is MERGED as1121665c with explicit owner permission for final
+  23aa287b, full CI42028536324/scope42032224662 PASS and clean-main readback.
+  [Recruitment closeout](docs/work-packages/WP-02.2.md#merged-ordinary-recruitment--2026-11-05).
 
 ### Close the merged reproducible-launch delivery
 

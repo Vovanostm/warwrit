@@ -1374,6 +1374,16 @@ export function App() {
     journey.status === 'company-ready'
       ? `${journey.session.accountId}\u0000${journey.company.companyId}`
       : undefined;
+  const [companyRefresh, setCompanyRefresh] = useState(0);
+  const [companyRead, setCompanyRead] = useState<{
+    readonly scope: string;
+    readonly busy: boolean;
+    readonly message: string;
+  }>();
+  const activeCompanyRead = companyRead?.scope === readyScope ? companyRead : undefined;
+  const refreshCompanyForShell = useCallback(() => {
+    setCompanyRefresh((revision) => revision + 1);
+  }, []);
   const refreshWorldForShell = useCallback(() => {
     if (!readyScope) return;
     const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
@@ -1390,30 +1400,46 @@ export function App() {
     journey.status === 'company-ready' ? journey.world.publicRevision : undefined;
   useEffect(() => {
     if (!readyScope || worldRevision === undefined) return;
+    const [accountId, companyId] = readyScope.split('\u0000') as [string, string];
     const controller = new AbortController();
+    setCompanyRead({ scope: readyScope, busy: true, message: 'Обновляем сведения об отряде…' });
     void (async () => {
       try {
         const response = await fetch(`${apiBaseUrl}/company`, {
           credentials: 'same-origin',
           cache: 'no-store',
           signal: controller.signal,
+          headers: { [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId },
         });
-        if (!response.ok) return;
+        if (!response.ok) throw responseError(response);
         const body: unknown = await response.json();
         const company = readCompany(body);
-        if (!company || controller.signal.aborted) return;
+        if (controller.signal.aborted) return;
+        if (!company || company.companyId !== companyId)
+          throw new Error('Company read unavailable');
         const holdings = readHoldings(body);
+        if (!holdings) throw new Error('Company holdings unavailable');
         setJourney((state) =>
-          state.status === 'company-ready' && state.company.companyId === company.companyId
+          state.status === 'company-ready' &&
+          state.session.accountId === accountId &&
+          state.company.companyId === companyId &&
+          company.companyId === companyId
             ? { ...state, company, holdings }
             : state,
         );
+        setCompanyRead({ scope: readyScope, busy: false, message: 'Состояние отряда обновлено.' });
       } catch {
-        // Keep the last company view; the next world change retries.
+        if (!controller.signal.aborted)
+          setCompanyRead({
+            scope: readyScope,
+            busy: false,
+            message:
+              'Не удалось обновить состояние. Показаны последние сведения; проверьте связь и повторите обновление.',
+          });
       }
     })();
     return () => controller.abort();
-  }, [readyScope, worldRevision]);
+  }, [readyScope, worldRevision, companyRefresh]);
 
   useEffect(() => {
     // The OIDC callback lands on /auth/session; the game lives at the root.
@@ -1668,6 +1694,9 @@ export function App() {
         onTravel={(action) => startWorldTravel(action, journey.world, scope)}
         onRetryTravel={() => retryWorldTravel(journey.world, scope)}
         onRefreshWorld={refreshWorldForShell}
+        onRefreshCompany={refreshCompanyForShell}
+        companyReadBusy={activeCompanyRead?.busy ?? false}
+        {...(activeCompanyRead ? { companyReadMessage: activeCompanyRead.message } : {})}
         onRefreshFreeMovement={refreshFreeMovementForShell}
         onFreeMovement={(action) => startFreeMovement(action, journey.freeMovement, scope)}
         onRetryFreeMovement={() => retryFreeMovement(scope)}

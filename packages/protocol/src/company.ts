@@ -187,6 +187,12 @@ export interface CompanyHoldingsDto {
     readonly maximumStamina: number | null;
     /** Unresolved physical conditions (wounds, illness) by definition id. */
     readonly conditions: readonly string[];
+    /** Lawfully observed local duty state and actions currently available to the owner. */
+    readonly recovery?: {
+      readonly assignment: 'FIELD' | 'RECOVERY' | 'OTHER';
+      readonly canRest: boolean;
+      readonly canReturnToField: boolean;
+    };
   }[];
   /** The company's party is in a field camp that covers its current food. */
   readonly fieldCamp: boolean;
@@ -292,6 +298,11 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly conditionId: string;
     readonly providerId: string;
     readonly resourceItemId: string;
+  };
+  /** Rest locally or return to field duty; location, funding and eligibility are server-derived. */
+  readonly SetAssignment: {
+    readonly characterId: string;
+    readonly assignment: 'FIELD' | 'RECOVERY';
   };
 }
 
