@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Gate restored-command retry until the transport can send it
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL step2 for #401's native retry.
+  First native run passed off-exit disable, legal movement and one accepted
+  retreat, then the harness clicked Retry before the reloaded sender was ready.
+  The enabled control silently sent nothing; the harness stopped and subsequent
+  AFK progression killed two companions. Preserve the retained encounter8169a64a
+  and its first accepted receipt8. Fullscreen and inline Retry now require a
+  connected sender. The existing mounted regression fails on609eb99a, then the
+  corrected6files/36tests, web types/scoped lint PASS. Include an irregular
+  configured-exit assertion in the retreat regression. Owning retreat wiki and
+  CURRENT_PLAN record the failure and pending native recheck. New normally
+  migrated DB is separate; older worlds/defeats stay retained. Full gate NOT_RUN
+  at this step.
+
 ### Match the retreat button to the current side's exit cells
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL step1 for owner-requested #401.

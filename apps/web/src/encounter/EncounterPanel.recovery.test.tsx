@@ -149,6 +149,17 @@ describe('EncounterPanel command recovery', () => {
     const retrySender = vi.fn(async (command: EncounterCommandDto) => response(command));
     root = createRoot(container);
     await act(async () => mount(root!));
+    await act(async () => {
+      const observer = harness.observers.at(-1)!;
+      observer['onStatus']!('connected' as never);
+      observer['onProjection']!(projection as never);
+      observer['onControlGrant']!(grant as never);
+    });
+    expect(
+      [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Повторить команду'),
+      )?.disabled,
+    ).toBe(true);
     await connectCurrentPanel(retrySender);
     expect(container.textContent).toContain('Повторить команду');
     expect(container.textContent).not.toContain('полномочие управления устарели');
@@ -197,6 +208,11 @@ describe('EncounterPanel command recovery', () => {
     expect(container.textContent).toContain('(-3, 0)');
     await act(async () => retreat().click());
     expect(sender).not.toHaveBeenCalled();
+    await connectCurrentPanel(sender, projection, {
+      ...tacticalGrant,
+      tactical: { ...tacticalGrant.tactical, retreatHexes: [{ q: 0, r: 0 }] },
+    });
+    expect(retreat().disabled).toBe(false);
 
     await connectCurrentPanel(
       sender,

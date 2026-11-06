@@ -10,7 +10,7 @@ Active result #369 PASS on main b89f4128: local OIDC → one company → nine eq
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
 Root reserves encounter control-grant/protocol/desk/panel and regressions/shared docs; isolated entry369 resources DB54369/API3528/realtime3529/UI5228.
-Current DB warwrit_battle372_20261106 and prior warwrit DB/companies/defeats are retained. Socket fault proxy3531 is stopped; normal realtime3529 is restored.
+Current DB warwrit_retreat401_recheck_20261106 is separately migrated; prior warwrit/battle372/retreat401 worlds and defeats retained. Local fault proxy3531 active for native retry.
 #372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
 Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
 Two actual test defeats are retained. The final exit automation repeated46 refused Retreat clicks; #401 owns retreat applicability/real legal exit. No victory/full-loop acceptance.
@@ -38,7 +38,7 @@ Current visual/device/owner acceptance and full backup/restore remain open; FPS/
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/PR335/PR402 merges are complete. Owner “Implement” activates #401 only; native legal retreat/retry and independent critique are pending.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
-#401 step1: old-source mounted regression FAIL as expected; corrected5files/32tests, web/server types and scoped lint PASS. Native/full gate pending.
+#401 step2: off-exit/legal retreat PASS; early-reload Retry no-op reproduced/fixed. First run ended2dead/1retreated. Current6files/36tests/types/lint PASS; native recheck/critic/CI pending.
 
 ## History
 

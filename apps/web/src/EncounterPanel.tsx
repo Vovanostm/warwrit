@@ -378,6 +378,9 @@ export function EncounterPanel(props: {
           {...(scopedState?.grant !== undefined ? { grant: scopedState.grant } : {})}
           resumePending={scopedState?.resumePending === true}
           commandPending={scopedState?.commandPending === true}
+          retryAvailable={
+            scopedState?.status === 'connected' && scopedState.commandSender !== undefined
+          }
           {...(pendingCommand !== undefined ? { pendingCommand } : {})}
           onResume={() => void requestResume()}
           onRetry={(command) => void submitIntent(command)}
@@ -575,6 +578,9 @@ export function EncounterPanel(props: {
                 <button
                   className="quiet-action"
                   type="button"
+                  disabled={
+                    scopedState.status !== 'connected' || scopedState.commandSender === undefined
+                  }
                   onClick={() => void submitIntent(pendingCommand)}
                 >
                   Повторить команду
