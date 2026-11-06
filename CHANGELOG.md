@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Reject blank database settings before local identity startup
+
+- 2026-11-06, branch `codex/launch-blank-database`, LOCAL follow-up to the owner's
+  review/fix/PR/merge request for #176. Actual development startup with full OIDC
+  and whitespace DATABASE_URL returned ready200/auth404. Normalize the trimmed
+  empty URL to missing before the existing identity/fixture guards. Production
+  already refused it at a later guard. Valid padded URLs retain trimmed values.
+  New cross-environment regression first failed. Corrected entry process exits1
+  before listening. Config/tests, identity docs, playtest/wiki and CURRENT_PLAN
+  record the boundary and checks. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  Focused19 tests, server types, lint/format and independent source review ACCEPT.
+  CI/publication/merge pending. Fresh valid-config browser/SQL NOT_RUN. No migration
+  or game-rule change. Existing world volumes retained.
+
 ### Close the merged reproducible-launch delivery
 
 - 2026-11-06, originating branch `codex/repro-launch176`, source MERGED through

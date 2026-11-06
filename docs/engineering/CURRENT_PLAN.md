@@ -9,6 +9,9 @@ Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/
 [Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
 Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
 Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
+Owner follow-up authorizes review/fix/PR/merge. Writer codex/launch-blank-database reserves config/tests and owning docs.
+Blank-DB/OIDC mismatch reproduced ready200/auth404. Single normalization fixes development/test and fixture setup.
+[Follow-up](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06) local. Source review ACCEPT. Checks19/types/lint PASS. CI/merge pending. Retained DB stopped.
 
 ## Stepwise M1 implementation — 2026-11-06
 
