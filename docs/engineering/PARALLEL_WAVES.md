@@ -19,6 +19,13 @@ retreat rule or start another writer. The current terminal banner overlap was
 added to existing W05/#392. Recovery proof does not accept either tactical exit
 or loss-layout behavior.
 
+2026-11-06 integration correction. A04/#371 is merged in PR335. A05/#372 is
+complete and closed after owner-approved [PR402](https://github.com/Vovanostm/warwrit/pull/402),
+merge `ffaa84a5`, exact-head CI/PR scope and finite native/independent acceptance.
+The earlier PLANNED/conflicting statements above are historical. #401/#392 and
+all broader parent criteria retain their own acceptance. No successor is activated
+by this merge. [Current result](evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06).
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.

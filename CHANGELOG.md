@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Record the approved battle recovery merge
+
+- 2026-11-06, `codex/m1-recovery-372-closeout`, LOCAL documentation closeout
+  for the owner's “approve”. [PR402](https://github.com/Vovanostm/warwrit/pull/402)
+  is MERGED as `ffaa84a5` from the agreed head `9ceb09a6` with expected-head
+  protection. GitHub/origin/main and empty merged-tree diff confirm integration.
+  #372 is closed and its #174 leaf checkbox updated. CURRENT_PLAN, task queue,
+  M1 wiki and the [owning report](docs/engineering/evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06)
+  record actual CI/merge status. Exact-head CI42208620357 and current PR scope
+  PASS; preserve native/critic boundaries, both defeats and open #401/#392.
+  Documentation diff/current-plan checks PASS. New gameplay/full gate NOT_RUN
+  for this closeout. This follow-up documentation is local; the merged product
+  and evidence remain in PR402.
+
 ### Complete the current battle recovery boundary and retain failed exits
 
 - 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL #372 native recheck on
