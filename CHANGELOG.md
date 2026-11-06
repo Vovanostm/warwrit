@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Specify the bounded loss-panel overlap fix
+
+- 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
+  owner's choice to fix the overlapping leader-death/outcome panels from #392.
+  [Owning scope and checks](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
+  retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
+  stays with #392. Source/native/review/visual checks initially NOT_RUN.
+
 ### Close the merged blank-database startup correction
 
 - 2026-11-06, originating branch `codex/launch-blank-database`, source MERGED
