@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+### Record owner authorization for the loss-panel merge
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED closeout for
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412). Owner explicitly answered
+  «Да, слить PR #412». Source/finite visual and36 focused checks retain their
+  existing scope. PR scope PASS; full CI still running and advisory. Merge uses
+  expected-head protection; the PR owns the actual merge receipt. Full #392 open.
+
 ### Publish the reviewed loss-panel correction
 
 - 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED
