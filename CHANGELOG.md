@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Integrate the merged reproducible launch into recovery
+
+- 2026-11-06, `codex/company-recovery`, LOCAL follow-up to
+  [PR363](https://github.com/Vovanostm/warwrit/pull/363). Full CI42267843778 and
+  scope42267843972 PASS at4549975a with1259 unit tests/99 skipped,10000 stress
+  battles,89 real SQL scenarios, both browser journeys, measured coverage and
+  native audit (zero introduced complexity errors/clone groups). During that
+  run, launch PR334/406 advanced main to0f9ea2a1. Integrate its startup/readiness
+  fixes unchanged, preserving both histories. Only CHANGELOG conflicted.
+  Move the completed launch checkpoint to history and retain recovery as current.
+  Recovery product source/native proof is unchanged; startup/database12 tests
+  and server types PASS. Integrated CI and separate
+  new-head merge permission remain required. [Owning result](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+
 ### Resume explicit company recovery on current integrated main
 
 - 2026-11-06, `codex/company-recovery`, PUBLISHED continuation in
@@ -87,6 +101,60 @@ requests.
 - PR360 recruitment is MERGED as1121665c with explicit owner permission for final
   23aa287b, full CI42028536324/scope42032224662 PASS and clean-main readback.
   [Recruitment closeout](docs/work-packages/WP-02.2.md#merged-ordinary-recruitment--2026-11-05).
+
+### Close the merged reproducible-launch delivery
+
+- 2026-11-06, originating branch `codex/repro-launch176`, source MERGED through
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334) as bd919d1a at expected
+  head adedf6c0. Owner authorized the complete spec/review/implementation/review/
+  merge/update-main cycle. Issue176 CLOSED; clean main checkout fast-forwarded,
+  reviewed/merged contents equal. CI42266945856 and final scope42267008090 SUCCESS,
+  logs read. 1259 unit tests/98 skipped, 10000 stress battles, migration smoke/88 real SQL
+  checks, both browser journeys, measured coverage/aggregation and quality audit.
+  Owning playtest/wiki/checkpoint now record actual integration and limits.
+  [Closeout](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06).
+  Local stack stopped with volumes/active encounter retained; external-provider,
+  full-M1/visual/device, hosted/backup/restore/deployment NOT_RUN; FPS NOT_MEASURED.
+
+### Make ordinary launch reproducible in an isolated worktree
+
+- 2026-11-06, `codex/repro-launch176`, LOCAL owner-requested #176 cycle reuses
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334). Root dev builds public
+  workspace exports after the observed clean-install failure. Compose Dex port/
+  config overrides and example realtime settings support private resources.
+  The reused production guard requires DB/OIDC. A real DB shutdown exposed an
+  unhandled pg idle-client event; handle it with a sanitized fixed warning so
+  live200/ready503 recover to ready200. No schema/game-rule change. Spec and
+  executable-source review ACCEPT. Install/migrate19/OIDC/company/equip9/supplies/
+  contract/full-stop-restart/re-entry and16focused tests/server types/lint PASS.
+  Runbook, playtest, identity contract, wiki and checkpoint record actual checks,
+  initial failures and limits. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06).
+  Ordinary travel/HUNT-02/JOIN and established realtime3577 smoke PASS; server
+  stopped with the active encounter retained. Hosted CI pending; no full-M1/hosted/
+  deployment acceptance.
+
+### Require playable dependencies before production startup
+
+- 2026-10-28, branch `codex/game-production-readiness`, published in
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334): the owner's
+  autonomous game-completion mission includes correcting a production server
+  that could start without database/identity game routes and report ready.
+  `loadServerConfig` now requires nonblank DATABASE_URL and complete validated
+  OIDC in production; development health-only use remains supported. No new
+  dependency, migration or gameplay rule. Config/app12, package builds/server
+  types, formatting/diff and an actual missing-config entry-process refusal PASS;
+  independent source review ACCEPT. Real database-down/issuer journey, hosted CI
+  and deployment NOT_RUN. [Configuration contract](docs/engineering/ID01-IDENTITY.md).
+
+### Specify the isolated reproducible-launch cycle
+
+- 2026-11-06, `codex/repro-launch176`, LOCAL specification for owner-requested
+  #176 spec/review/implement/review/merge/update-main. Reserve private resources,
+  reuse PR334 and define clean install, ordinary OIDC/company entry, retained-data
+  restart, database readiness and encounter smoke in the
+  [existing playtest contract](docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+  CURRENT_PLAN records ownership. Initial specification state was NOT_RUN; dated
+  implementation results below supersede it for the affected checks.
 
 ### Integrate current main before rerunning the retreat PR
 

@@ -228,7 +228,7 @@ cp .env.example .env     # once; loopback-only test values
 pnpm install --frozen-lockfile
 pnpm db:up               # PostgreSQL 17 on 127.0.0.1:55432 and Dex on 127.0.0.1:5556
 pnpm db:migrate:up       # applies every pending ordered migration
-pnpm dev                 # server :3000, realtime :3110, web :5173
+pnpm dev                 # builds shared exports, then server :3000, realtime :3110, web :5173
 ```
 
 Open `http://127.0.0.1:5173` (use `127.0.0.1`, not `localhost`: the session
@@ -253,9 +253,103 @@ the Compose volumes, so the next `pnpm db:up` returns the same world. To restart
 only the server (persistence check), stop and rerun `pnpm dev`. `docker compose
 down --volumes` deletes the local world and identities irreversibly.
 
-The Compose project name is the checkout directory name, so two checkouts get
-separate volumes but share the published ports; stop one stack before starting
-another.
+Compose defaults to the checkout directory name. Checkouts with the same final
+folder name share that default, even when their parent paths differ. For concurrent
+campaign stacks, configure a unique `COMPOSE_PROJECT_NAME` and all ports using the
+isolated recipe below.
+
+### Isolated ordinary-game worktree — #176
+
+Prerequisites are the pinned toolchain above, running Colima/Docker Compose and
+GitHub access. Create a new persistent worktree from current main, or clone the
+repository into a new folder. Work only inside that checkout. Check that the five
+ports below are unused with `lsof -nP -iTCP:<port> -sTCP:LISTEN`; choose another
+set if occupied. Reserve the project name as well. Reuse this exact configuration
+for every restart. This example owns PostgreSQL54376/Dex5576/API3576/RT3577/UI5276.
+Use another unique name and matching ports for a second checkout.
+
+```bash
+pnpm install --frozen-lockfile
+mkdir -p output
+cat > .env <<'ENV'
+NODE_ENV=development
+HOST=127.0.0.1
+PORT=3576
+LOG_LEVEL=info
+COMPOSE_PROJECT_NAME=warwrit-launch176-20261106
+POSTGRES_PORT=54376
+DATABASE_URL=postgres://warwrit:warwrit@127.0.0.1:54376/warwrit
+DEX_PORT=5576
+DEX_CONFIG_FILE=./output/dex.dev.yaml
+OIDC_ISSUER=http://127.0.0.1:5576/dex
+OIDC_CLIENT_ID=warwrit-local
+OIDC_CLIENT_SECRET=warwrit-local-only-secret
+OIDC_REDIRECT_URI=http://127.0.0.1:5276/auth/callback
+PUBLIC_ORIGIN=http://127.0.0.1:5276
+WEB_PORT=5276
+API_PROXY_TARGET=http://127.0.0.1:3576
+VITE_API_BASE_URL=/api
+ENCOUNTER_REALTIME_PORT=3577
+ENCOUNTER_REALTIME_PROXY_TARGET=http://127.0.0.1:3577
+WORLD_MAP=painted-atlas
+ENV
+sed -e 's@^issuer:.*@issuer: http://127.0.0.1:5576/dex@' \
+    -e 's@http://127.0.0.1:5173/auth/callback@http://127.0.0.1:5276/auth/callback@' \
+    fixtures/identity/dex.dev.yaml > output/dex.dev.yaml
+pnpm db:up
+pnpm db:migrate:up
+pnpm dev
+```
+
+This generates the local Dex configuration from tracked source and public test
+values. Its internal listener remains5556. `DEX_PORT` changes the published port;
+`DEX_CONFIG_FILE` selects the matching issuer/callback. Default configuration
+continues to use5556/5173. `.env` and `output/` are ignored local files. The ordinary
+`pnpm dev` builds core/protocol before starting the two development processes.
+
+In another terminal inside the same checkout, wait for readiness before opening
+`http://127.0.0.1:5276`. Use **Войти** and a fixture account from the table above.
+Create a company, equip a member, buy supplies and accept an available local
+contract. Record the visible company name, equipment, supplies and contract.
+Ordinary travel/JOIN then checks an encounter and the realtime socket at3577.
+
+```bash
+curl -fsS http://127.0.0.1:3576/health/ready
+curl -fsS http://127.0.0.1:5576/dex/.well-known/openid-configuration
+# Keep pnpm dev running while checking a database outage.
+docker compose stop postgres
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3576/health/live  # 200
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3576/health/ready # 503
+docker compose up -d --wait postgres
+curl -fsS http://127.0.0.1:3576/health/ready
+```
+
+Stop `pnpm dev` with Ctrl+C, then run `pnpm db:down`. Both project volumes remain.
+Restart with `pnpm db:up && pnpm db:migrate:up && pnpm dev`. Reload, log out and
+use **Войти** again. The same account/company and accepted actions must return.
+Campaign clock/upkeep may advance across downtime. Keep the same issuer, project,
+world selector and configuration. Do not use `down --volumes`, prune, a new project
+name or manual SQL edits as restart recovery.
+
+Troubleshooting follows the failing boundary.
+
+- Connection refused or Vite proxy errors. Check API readiness first. An occupied
+  port fails startup. Stop only its known owner or reserve a different complete set.
+- Dex redirect failure. Check the generated callback and issuer against `.env`.
+  Restart Dex after changing its configuration and start a new login flow.
+- Readiness503. Check this project's PostgreSQL and pending migrations. A startup
+  with unavailable schema/database can refuse before opening HTTP. Running-server
+  dependency loss is checked separately above. Preserve the volume.
+- Failed login while ready200. Readiness probes database/schema. Check issuer
+  discovery and perform ordinary login to establish local identity availability.
+- Apparent new company. Confirm the same database/project, issuer, account and
+  `WORLD_MAP`. Atlas and legacy saves are separate. Cookies are host-scoped, so
+  separate Chrome profiles are required for concurrent stacks on127.0.0.1.
+
+The [playtest result](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06)
+records actual verification and remaining limits. Production requires complete
+DB/OIDC configuration, uses deployment-supplied environment and prohibits local
+fixture/lab modes. This local recipe uses public development credentials.
 
 Orca worktrees run [`scripts/orca-setup.sh`](../../scripts/orca-setup.sh) on
 creation: dependencies, package builds and private combat-lab ports in
@@ -457,4 +551,4 @@ The server uses Pino-compatible JSON logging with a stable `service` field. Even
 ## Health semantics
 
 - `/health/live`: process can answer HTTP; no downstream checks.
-- `/health/ready`: required database probe succeeds. Without a configured database, the foundation process is considered ready for isolated HTTP tests.
+- `/health/ready`: the configured database/schema probe succeeds. Production startup requires database-backed OIDC configuration. Development health-only tools can omit it and use the existing HTTP-only readiness. Issuer reachability is established by discovery/login separately.

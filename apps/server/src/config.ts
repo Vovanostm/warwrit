@@ -143,6 +143,10 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
         : {}),
     };
   }
+  invariant(
+    environment['NODE_ENV'] !== 'production' || (Boolean(databaseUrl) && identity !== undefined),
+    'Production server requires DATABASE_URL and complete OIDC identity configuration',
+  );
   return {
     worldId: gameWorldId(environment['WORLD_MAP']?.trim()),
     host,

@@ -7,9 +7,10 @@ import {
   sql,
 } from 'kysely';
 import { describe, expect, it, vi } from 'vitest';
+import { Pool } from 'pg';
 import { buildApp, listenOrClose } from '../app.js';
 import type { DatabaseSchema } from './database.js';
-import { createDatabaseReadinessProbe } from './database.js';
+import { createDatabase, createDatabaseReadinessProbe } from './database.js';
 
 function createRecordingDatabase(
   queries: string[],
@@ -48,6 +49,18 @@ function createRecordingDatabase(
 }
 
 describe('database readiness dependencies', () => {
+  it('survives an idle PostgreSQL connection error so readiness can report the outage', async () => {
+    const registration = vi.spyOn(Pool.prototype, 'on');
+    const database = createDatabase('postgres://unused@127.0.0.1:1/unused');
+    try {
+      const pool = registration.mock.contexts[0] as Pool;
+      expect(() => pool.emit('error', new Error('idle connection terminated'))).not.toThrow();
+    } finally {
+      registration.mockRestore();
+      await database.destroy();
+    }
+  });
+
   it('probes persisted encounter activation and FIRST HUNT state before reporting ready', async () => {
     const queries: string[] = [];
     const database = createRecordingDatabase(queries);
