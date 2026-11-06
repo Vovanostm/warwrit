@@ -175,6 +175,7 @@ describe('public encounter projection', () => {
       activationId: v4.state.activation!.id,
       actionPoints: 4,
       moves: [],
+      retreatHexes: FIRST_HUNT_RETREAT_HEXES.allied,
     });
     const v5Setup: combat.BattleSetupV2 = {
       ...v4Setup,
@@ -201,6 +202,9 @@ describe('public encounter projection', () => {
         }),
       ]),
     );
+    expect(grant5?.tactical?.retreatHexes).toEqual(FIRST_HUNT_RETREAT_HEXES.allied);
+    expect(toEncounterPublicProjection(v5)).not.toHaveProperty('retreatHexes');
+    expect(toEncounterControlGrant(v5, { unit_ids: ['foreign'] })?.tactical).toBeUndefined();
     const surrendered = toEncounterPublicProjection({
       ...v4,
       state: {

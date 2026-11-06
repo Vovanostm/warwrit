@@ -2,6 +2,18 @@
 
 ## Current battle recovery result — 2026-11-06
 
+Integration correction, 2026-11-06. The owner approved [PR402](https://github.com/Vovanostm/warwrit/pull/402)
+with “approve”. Expected-head merge from `9ceb09a6` completed as
+`ffaa84a506fb2e424b7ba16113c7d1cb82f084d4`; GitHub and origin/main confirm the
+actual merge, whose tree matches the reviewed head. #372 is complete and closed.
+[CI42208620357](https://github.com/Vovanostm/warwrit/actions/runs/42208620357)
+and current PR scope42219628988 passed. Actual CI logs were read back before
+approval. Unit and measured coverage each passed 1256 tests with 98 skipped;
+separate real PostgreSQL checks passed 88 tests, migration smoke passed, stress
+passed 10000 battles, both existing browser journeys passed within their finite
+boundaries and the changed-code audit passed. No new gameplay run or full gate
+was needed for this documentation closeout. Both defeats and #401/#392 remain.
+
 Current product source `46c3b75a`, base `496ca5f5`. The only new product change
 is the pending/fullscreen feedback correction below. Transport, saved request,
 server authority, combat policy, protocol and migrations are unchanged.
@@ -83,7 +95,8 @@ kept retreat applicability (#401) and terminal presentation (#392) at1/outside
 that finite acceptance. No successful new post-resume tactical order, controlled
 simultaneous native deadline race, retreat/victory/reward/full-loop, full scene/
 art/device/performance or full-M1 acceptance is established. Hosted final CI
-remains pending. Existing seeded PG race regressions have their own scope.
+subsequently passed as recorded in the integration correction above. Existing
+seeded PG race regressions have their own scope.
 
 The fault proxy has been stopped and the ordinary realtime target restored to3529.
 The owned normal preview remains on5228/API3528 with the new retained database;

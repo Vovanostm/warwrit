@@ -83,12 +83,14 @@ function mount(root: Root) {
 
 async function connectCurrentPanel(
   sender: (command: EncounterCommandDto) => Promise<EncounterCommandResponse>,
+  nextProjection = projection,
+  nextGrant: EncounterControlGrantDto = grant,
 ) {
   const observer = harness.observers.at(-1)!;
   await act(async () => {
     observer['onStatus']!('connected' as never);
-    observer['onProjection']!(projection as never);
-    observer['onControlGrant']!(grant as never);
+    observer['onProjection']!(nextProjection as never);
+    observer['onControlGrant']!(nextGrant as never);
     observer['onCommandSender']!(sender as never);
   });
 }
@@ -147,6 +149,17 @@ describe('EncounterPanel command recovery', () => {
     const retrySender = vi.fn(async (command: EncounterCommandDto) => response(command));
     root = createRoot(container);
     await act(async () => mount(root!));
+    await act(async () => {
+      const observer = harness.observers.at(-1)!;
+      observer['onStatus']!('connected' as never);
+      observer['onProjection']!(projection as never);
+      observer['onControlGrant']!(grant as never);
+    });
+    expect(
+      [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Повторить команду'),
+      )?.disabled,
+    ).toBe(true);
     await connectCurrentPanel(retrySender);
     expect(container.textContent).toContain('Повторить команду');
     expect(container.textContent).not.toContain('полномочие управления устарели');
@@ -160,5 +173,76 @@ describe('EncounterPanel command recovery', () => {
     });
     expect(retrySender).toHaveBeenCalledWith(sentCommand);
     expect(sessionStorage.getItem(storageKey)).toBeNull();
+  });
+
+  it('requires a current owned retreat cell before sending retreat, independently of capability', async () => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+    container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () => mount(root!));
+    const sender = vi.fn(async (command: EncounterCommandDto) => response(command));
+    const tacticalGrant = {
+      ...grant,
+      actorActions: {
+        activationId: 'activation-a',
+        actorId: 'fighter-a',
+        permittedIntents: ['move', 'attack', 'defend', 'wait', 'retreat'] as const,
+      },
+      tactical: {
+        activationId: 'activation-a',
+        actorId: 'fighter-a',
+        actionPoints: 4,
+        stamina: 80,
+        moves: [],
+        attacks: [],
+        retreatHexes: [{ q: -3, r: 0 }],
+      },
+    };
+    await connectCurrentPanel(sender, projection, tacticalGrant);
+    const retreat = () => container!.querySelector<HTMLButtonElement>('[aria-label="Отступить"]')!;
+    expect(retreat().disabled).toBe(true);
+    expect(container.textContent).toContain('Клетки отхода вашей стороны');
+    expect(container.textContent).toContain('(-3, 0)');
+    await act(async () => retreat().click());
+    expect(sender).not.toHaveBeenCalled();
+    await connectCurrentPanel(sender, projection, {
+      ...tacticalGrant,
+      tactical: { ...tacticalGrant.tactical, retreatHexes: [{ q: 0, r: 0 }] },
+    });
+    expect(retreat().disabled).toBe(false);
+
+    await connectCurrentPanel(
+      sender,
+      {
+        ...projection,
+        units: [{ ...projection.units[0]!, q: -3, r: 0 }],
+      },
+      tacticalGrant,
+    );
+    expect(retreat().disabled).toBe(false);
+    await act(async () => retreat().click());
+    expect(sender).toHaveBeenCalledTimes(1);
+    expect(sender.mock.calls[0]![0].intent).toEqual({ type: 'retreat' });
+
+    await connectCurrentPanel(
+      sender,
+      {
+        ...projection,
+        units: [{ ...projection.units[0]!, q: -3, r: 0 }],
+      },
+      {
+        ...tacticalGrant,
+        actorActions: {
+          ...tacticalGrant.actorActions,
+          permittedIntents: ['wait'],
+        },
+      },
+    );
+    expect(retreat().disabled).toBe(true);
+    await connectCurrentPanel(sender, projection, grant);
+    expect(retreat().disabled).toBe(true);
   });
 });

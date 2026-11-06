@@ -9,6 +9,95 @@ requests.
 
 ## Unreleased
 
+### Integrate current main before rerunning the retreat PR
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL PR405 integration with main802fb89a
+  after PR404 landed during the first CI. Preserve both changelog histories,
+  newly adopted skills and the merged deterministic SQL fixture repair. Product
+  retreat/retry code retains the native-tested behavior plus the identical-HTML
+  message rendering. First audit failure remains recorded. Focused36 tests,
+  web/server types PASS. Initial merged CHANGELOG formatting failed and was
+  corrected; scoped format/diff/current-plan checks then PASS. Current clean
+  hosted CI is required on the integrated head; no new native battle/full local
+  gate for this integration. [Owning result](docs/wiki/mechanics/retreat.md#нативный-результат-401).
+
+### Simplify the retreat feedback row after the first PR audit
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL follow-up in PR405. Exact-head
+  CI42232438150 passed bootstrap, real PostgreSQL, stress, both browser journeys
+  and measured units, then failed native audit for EncounterCommandDesk cognitive18.
+  Retain the failed report. Filter the finite two-message list and render it once;
+  source-only metrics are now cyclomatic2/cognitive15 (within default thresholds).
+  Ten targeted tests, web types/scoped lint and exact rendered-HTML equivalence
+  for nine message-presence combinations PASS. Standalone SSR attempts first
+  failed root React resolution and CSS loading; the owning Vitest runner passed
+  the comparison. This structural report does not replace measured current-head
+  audit. Owning retreat wiki/CURRENT_PLAN retain native evidence and scope;
+  second exact-head hosted CI pending. No new native battle was run for the
+  HTML-equivalent change.
+
+### Verify retreat applicability and exact recovery through the ordinary game
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL native recheck on1bb63f8b.
+  New19-migration isolated DB; normal Dex OIDC, company/equipment/travel and
+  elder wolf contract/JOIN. Off-exit retreat is disabled with actual own exit
+  coordinates. Native movement to an exit enables retreat. Lose accepted reply,
+  reload, wait for sender readiness and exact retry returns original receipt8;
+  one command/receipt persists, current scoped pending clears. All3 actors then
+  retreat alive (56HP each), six accepted actions/zero refusals, final revision12.
+  Preserve first run's two deaths and old pending request. Retreat wiki and
+  CURRENT_PLAN/public JSON/images record results, transient reload frame and
+  corrected first-terminal file-capture error. Independent finite control checks
+  score3/3/2/3/2 with no material #401 finding; overall visual acceptance remains
+  BLOCKED/NOT_SCORED for missing broader scene inputs. Hosted CI pending.
+  Full M1/reward and broader terminal/visual acceptance remain open. Fault proxy
+  stopped; ordinary realtime restored. New full gate NOT_RUN locally; publication
+  CI owns final verification.
+
+### Gate restored-command retry until the transport can send it
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL step2 for #401's native retry.
+  First native run passed off-exit disable, legal movement and one accepted
+  retreat, then the harness clicked Retry before the reloaded sender was ready.
+  The enabled control silently sent nothing; the harness stopped and subsequent
+  AFK progression killed two companions. Preserve the retained encounter8169a64a
+  and its first accepted receipt8. Fullscreen and inline Retry now require a
+  connected sender. The existing mounted regression fails on609eb99a, then the
+  corrected6files/36tests, web types/scoped lint PASS. Include an irregular
+  configured-exit assertion in the retreat regression. Owning retreat wiki and
+  CURRENT_PLAN record the failure and pending native recheck. New normally
+  migrated DB is separate; older worlds/defeats stay retained. Full gate NOT_RUN
+  at this step.
+
+### Match the retreat button to the current side's exit cells
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL step1 for owner-requested #401.
+  The owner-only V4/V5 tactical grant copies current-side retreatHexes; the
+  additive optional protocol field stays readable when absent on older servers.
+  EncounterPanel checks actor position separately from condition capability,
+  disables unconfirmed/off-exit retreat and shows exit coordinates in the existing
+  command feedback row. No core/replay change. The existing mounted regression
+  reproduced the old enabled-button defect (1 FAIL), then5files/32tests PASS.
+  Protocol build, web/server types and scoped ESLint PASS. The first reader run
+  used stale protocol dist; rebuilding its owning package resolved that failure.
+  CURRENT_PLAN and the [owning retreat page](docs/wiki/mechanics/retreat.md#интерфейс-постоянного-боя--2026-11-06)
+  retain native legal-retreat/retry and independent critique as pending. Full gate
+  NOT_RUN at this step; earlier worlds and defeats retained.
+
+### Record the approved battle recovery merge
+
+- 2026-11-06, `codex/m1-recovery-372-closeout`, LOCAL documentation closeout
+  for the owner's “approve”. [PR402](https://github.com/Vovanostm/warwrit/pull/402)
+  is MERGED as `ffaa84a5` from the agreed head `9ceb09a6` with expected-head
+  protection. GitHub/origin/main and empty merged-tree diff confirm integration.
+  #372 is closed and its #174 leaf checkbox updated. CURRENT_PLAN, task queue,
+  M1 wiki and the [owning report](docs/engineering/evidence/command-recovery-20261028/README.md#current-battle-recovery-result--2026-11-06)
+  record actual CI/merge status. Exact-head CI42208620357 and current PR scope
+  PASS; preserve native/critic boundaries, both defeats and open #401/#392.
+  Documentation diff/current-plan checks PASS. New gameplay/full gate NOT_RUN
+  for this closeout. This follow-up documentation is local; the merged product
+  and evidence remain in PR402.
+
 ### Make the wolf settlement regression use reproducible combat inputs
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL correction for

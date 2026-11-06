@@ -10,6 +10,7 @@ export function EncounterLiveLane({
   resumePending,
   commandPending,
   pendingCommand,
+  retryAvailable,
   onResume,
   onRetry,
 }: {
@@ -21,6 +22,7 @@ export function EncounterLiveLane({
   readonly resumePending: boolean;
   readonly commandPending: boolean;
   readonly pendingCommand?: EncounterCommandDto;
+  readonly retryAvailable: boolean;
   readonly onResume: () => void;
   readonly onRetry: (command: EncounterCommandDto) => void;
 }) {
@@ -36,7 +38,12 @@ export function EncounterLiveLane({
       )}
       <ParticipantActivity status={status} active={battleActive} selfAfk={grant?.selfAfk} />
       {pendingCommand && (
-        <PendingCommand pending={commandPending} command={pendingCommand} onRetry={onRetry} />
+        <PendingCommand
+          pending={commandPending}
+          available={retryAvailable}
+          command={pendingCommand}
+          onRetry={onRetry}
+        />
       )}
       {battleActive && grant?.selfAfk === true && (
         <ResumeNotice
@@ -69,10 +76,12 @@ function ParticipantActivity({
 
 function PendingCommand({
   pending,
+  available,
   command,
   onRetry,
 }: {
   pending: boolean;
+  available: boolean;
   command: EncounterCommandDto;
   onRetry: (command: EncounterCommandDto) => void;
 }) {
@@ -84,7 +93,12 @@ function PendingCommand({
           : 'Ответ не подтверждён. Повтор отправит тот же запрос с тем же ID.'}
       </p>
       {!pending && (
-        <button className="quiet-action" type="button" onClick={() => onRetry(command)}>
+        <button
+          className="quiet-action"
+          type="button"
+          disabled={!available}
+          onClick={() => onRetry(command)}
+        >
           Повторить команду
         </button>
       )}

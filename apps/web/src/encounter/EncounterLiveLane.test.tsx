@@ -21,6 +21,7 @@ it('keeps the same-command retry inside the fullscreen live lane', () => {
       battleActive
       resumePending={false}
       commandPending={false}
+      retryAvailable={false}
       pendingCommand={pendingCommand}
       onResume={() => {}}
       onRetry={() => {}}
@@ -31,7 +32,9 @@ it('keeps the same-command retry inside the fullscreen live lane', () => {
     /<div class="encounter-live-lane"><span[^>]*>Связь прервана · восстанавливаем подключение<\/span><div class="encounter-command-pending" role="status">/,
   );
   expect(html).toContain('Повтор отправит тот же запрос с тем же ID.');
-  expect(html).toContain('<button class="quiet-action" type="button">Повторить команду</button>');
+  expect(html).toContain(
+    '<button class="quiet-action" type="button" disabled="">Повторить команду</button>',
+  );
 });
 
 it('hides AFK controls after battle resolution but keeps an uncertain command retry', () => {
@@ -40,6 +43,7 @@ it('hides AFK controls after battle resolution but keeps an uncertain command re
       status="connected"
       statusLabel="Сводка боя синхронизирована"
       battleActive={false}
+      retryAvailable
       grant={{
         version: 1,
         encounterId: 'encounter-1',
@@ -82,6 +86,7 @@ it('hides routine AFK state notices after battle resolution', () => {
         {...(grant !== undefined ? { grant } : {})}
         resumePending={false}
         commandPending={false}
+        retryAvailable={false}
         onResume={() => {}}
         onRetry={() => {}}
       />,
@@ -114,6 +119,7 @@ it('shows active AFK resume progress and the accepted next-turn state', () => {
         grant={grant}
         resumePending={resumePending}
         commandPending={false}
+        retryAvailable={false}
         onResume={() => {}}
         onRetry={() => {}}
       />,
