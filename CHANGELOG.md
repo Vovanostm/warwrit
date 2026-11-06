@@ -19,6 +19,22 @@ requests.
   retained-data restart. [Owning checklist](docs/engineering/M1_LOCAL_PLAYTEST.md#same-company-next-contract--368-2026-11-07)
   names current resources, exact source and remaining limits. No code change or
   fresh game test yet; native continuation and independent critique are pending.
+  Integrate merged main35b0e7f3 / PR411 workflow amendment while travelling;
+  product source remainsb1c7264e and both changelog histories are retained.
+
+### Prioritize playable game development and make CI advisory
+
+- 2026-11-07, `codex/game-first-advisory-ci`, LOCAL owner-requested update to
+  [AGENTS.md](AGENTS.md#playable-game-priority--owner-decision-2026-11-07).
+  Prioritize game logic, complete player scenarios, UX, visual coherence and
+  convenient controls. Describe behavior before code and deliver small playable
+  improvements using simple, extensible architecture.
+- Permit skipping CI and ignoring its status for implementation, PR publication
+  and owner-authorized merges. Replace mandatory full-suite and static-audit
+  gates with focused checks of concrete gameplay/state risks. Defer supporting
+  tooling and optional hardening until needed by a playable scenario.
+  Scoped instruction readback and whitespace check PASS. Game tests and CI
+  NOT_RUN for this documentation change.
 
 ### Retain the completed launch receipt before payroll CI
 

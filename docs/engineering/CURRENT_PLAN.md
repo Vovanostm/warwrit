@@ -5,7 +5,7 @@
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
 Owner requested “Next issue” after approving payroll PR338. This parent owns #368 ordinary same-company next-contract/reward/restart; parent full-M1 remains open.
 2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
-Active writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; base mainb1c7264e. Preserve separate hostile-retreat #378/PR408 writer.
+Active writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; base main35b0e7f3, game sourceb1c7264e. Preserve separate hostile-retreat #378/PR408 writer.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
