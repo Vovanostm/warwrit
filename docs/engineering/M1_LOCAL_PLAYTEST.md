@@ -12,6 +12,98 @@ known to be missing. Start the stack per
 [CURRENT_PLAN](CURRENT_PLAN.md). The earlier 2026-09-29 company-opening evidence
 that lived in this file is in git history (commit `97d8480`).
 
+## Reproducible launch contract — #176, 2026-11-06
+
+Owner requested spec → independent review → implementation → independent review
+→ merge → update main. Sole writer uses `codex/repro-launch176` in
+`.claude/worktrees/repro-launch176`, based on main `149fa8e6`. Reuse PR334's
+production configuration guard and its PR. Shared documentation belongs to this
+writer for this slice. Other delivery histories and retained worlds stay intact.
+
+Observable result: a fresh checkout starts the ordinary painted-atlas game,
+creates a company through local Dex OIDC, then restores that same account/company
+and accepted player actions after stopping and restarting the complete stack.
+
+- Install pinned Node24.20/pnpm11.25 with the frozen lockfile. Build required
+  workspace exports before ordinary development startup. No hidden copied dist,
+  configuration, account or company from another checkout.
+- Configure one explicit Compose project, private PostgreSQL/Dex volumes and
+  unused loopback ports. Keep existing default ports supported. Dex issuer,
+  callback, web origin, API and realtime proxy must agree. Ordinary **Войти** is
+  the identity acceptance path. Quick company login and encounter fixtures do
+  not establish that result.
+- Require database-backed complete OIDC configuration before production startup,
+  reusing PR334. Production refuses fixtures/lab modes. Development health-only
+  tools retain their existing contract.
+- Check HTTP200 live/ready after migration. Stop only this project's PostgreSQL
+  while the API runs: live200 and ready503. Restart it: ready200. Readiness checks
+  database/schema availability. Issuer reachability is verified separately by
+  discovery and actual login, rather than promised by the database probe.
+- Gracefully stop owned development processes and `pnpm db:down` without volume
+  deletion. Repeat up/migrate/dev, reload and logout/OIDC login. Verify the same
+  account/company, equipment/supplies and accepted contract using UI and read-only
+  SQL. Campaign time can advance offline according to existing rules.
+- Reach one ordinary encounter through normal travel/contract/JOIN and verify
+  realtime connection. This is launch smoke, with full battle/reward acceptance
+  retained by the gameplay owners.
+- Document exact commands, troubleshooting, actual checks and limits in the
+  existing runbook/playtest/wiki/checkpoint/changelog. Independent source review
+  follows implementation. Final full gate is the existing clean PR CI sequence.
+
+Reserved resources: Compose `warwrit-launch176-20261106`, PostgreSQL54376,
+Dex5576, API3576, realtime3577, UI5276. No deployment, purchase, schema/rule
+change, separate orchestrator, retained-volume deletion or external-provider
+acceptance is included. Spec review ACCEPT. Current results are recorded below.
+
+### Launch implementation and verification — 2026-11-06
+
+Local candidate reuses PR334 on current main149fa8e6. Independent specification
+and executable-source review ACCEPT. Fresh frozen install passed on Node24.20.0 /
+pnpm11.25.0. Plain `pnpm dev` first reproduced missing `game-core`/`protocol`
+exports. The root command now builds both before starting API/web. Dex supports
+private port/config selection through the existing Compose stack. The
+[runbook](LOCAL_DEVELOPMENT.md#isolated-ordinary-game-worktree--176) contains the
+exact tested setup. Migration up applied all19 migrations to a new private world.
+
+The first actual database shutdown terminated the API on an unhandled idle `pg`
+pool error. The pool now handles that event with a fixed structured warning,
+without logging error/client connection details. Pinned `pg-pool` removes the
+failed client itself. Repeating the same real outage returned live200/ready503;
+PostgreSQL recovery restored ready200 without restarting API. Missing production
+configuration exits1 before listening. Identity discovery returned the correct
+private issuer. Database readiness does not promise external issuer availability.
+
+Ordinary **Войти** → local Dex player-one → **Дозор запуска** with Rell/Mora and
+leader Радан passed. All9 equipment actions, ten rations for40crowns and the
+local **Когда молчит мельница** contract were accepted. Starting upkeep left27
+rations, then purchase gave37 and treasury760. Ctrl+C stopped the dev processes
+and released API/RT/UI ports. `pnpm db:down` retained both volumes. After up,
+migration applied[]/pending[]; reload and logout/ordinary OIDC login restored the
+same account/company, equipped items,37rations,760crowns and accepted contract.
+Read-only SQL retained one account/company and receipt counts11company +1contract.
+No game-state SQL writes or fixture entry were used. Campaign time advanced normally.
+
+Focused config/app/database tests16 PASS; server types/scoped lint PASS after
+building testkit for test declarations. Initial typecheck lacked those generated
+exports, and the added regression's first spy-context typing needed correction.
+Scoped format/diff PASS. Prettier cannot parse `.env.example`; Compose parsing
+and actual startup verify that file. Browser CLI first hit a nonexecutable wrapper
+and restricted npm cache; native in-app browser completed the ordinary flow.
+The first form submission coincided with the deliberate DB outage and failed
+without company creation; retry after recovery created exactly one company.
+
+Ordinary right-click travel from Северный Двор to Березняк completed. The
+**Волчья тропа** contract was accepted at its actual issuer, and **Вступить в бой**
+created encounter b22828d2-304f-4f47-8d87-71ec9899e8a2 with company_binding
+admission. UI displayed all6 fighters and **Сводка боя синхронизирована**;
+read-only socket inspection confirmed an established realtime3577 connection.
+No fixture admission or position edit was used. No manual combat action was sent;
+the ordinary deadline marked the observing player AFK. The API/web were then
+stopped, preserving the active encounter. Hosted CI remains pending. Full M1, battle
+outcomes/reward, full visual/device/human acceptance, external-provider identity,
+backup/restore/hosted release and deployment remain outside this bounded result.
+FPS/capacity NOT_MEASURED. Local execution logs are under output/ (untracked).
+
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 
 Текущий локальный кандидат: `codex/game-painted-map`, база `48d8a2ae`.
@@ -126,6 +218,14 @@ state and backups. The former destructive reset recipe is withdrawn on 2026-10-2
 For each session: what you tried, what you expected, what happened, and the
 time on the top bar. Note anything slow (map or battle frame rate, waits
 after a command), confusing texts, and any money that looks wrong.
+
+## Current correction to historical gaps — 2026-11-06
+
+The supplies shop is available through settlement buildings and was exercised in
+this launch check. Unarmed profiles exist in current main. The dated no-shop /
+unimplemented-fists bullets below describe2026-10-02. Recovery/payroll delivery
+and the complete eight-contract acceptance remain tracked in CURRENT_PLAN and
+M1 assessment. This launch check does not establish their completion.
 
 ## Known gaps (2026-10-02)
 

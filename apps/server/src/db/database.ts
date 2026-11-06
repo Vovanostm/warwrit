@@ -1,5 +1,6 @@
 import { Kysely, PostgresDialect, sql, type Generated } from 'kysely';
 import { Pool } from 'pg';
+import { createLogger } from '../logger.js';
 
 interface SchemaMigrationsTable {
   readonly name: string;
@@ -342,13 +343,14 @@ export interface DatabaseSchema {
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
+  const pool = new Pool({ connectionString, max: 5 });
+  // pg removes the failed idle client. Handle its event so readiness can report
+  // the outage and the pool can reconnect when PostgreSQL returns.
+  pool.on('error', () => {
+    createLogger().warn({ event: 'database.connection_lost' }, 'Idle database connection lost');
+  });
   return new Kysely<DatabaseSchema>({
-    dialect: new PostgresDialect({
-      pool: new Pool({
-        connectionString,
-        max: 5,
-      }),
-    }),
+    dialect: new PostgresDialect({ pool }),
   });
 }
 

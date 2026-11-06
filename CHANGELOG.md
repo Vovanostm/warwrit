@@ -9,6 +9,46 @@ requests.
 
 ## Unreleased
 
+### Make ordinary launch reproducible in an isolated worktree
+
+- 2026-11-06, `codex/repro-launch176`, LOCAL owner-requested #176 cycle reuses
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334). Root dev builds public
+  workspace exports after the observed clean-install failure. Compose Dex port/
+  config overrides and example realtime settings support private resources.
+  The reused production guard requires DB/OIDC. A real DB shutdown exposed an
+  unhandled pg idle-client event; handle it with a sanitized fixed warning so
+  live200/ready503 recover to ready200. No schema/game-rule change. Spec and
+  executable-source review ACCEPT. Install/migrate19/OIDC/company/equip9/supplies/
+  contract/full-stop-restart/re-entry and16focused tests/server types/lint PASS.
+  Runbook, playtest, identity contract, wiki and checkpoint record actual checks,
+  initial failures and limits. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06).
+  Ordinary travel/HUNT-02/JOIN and established realtime3577 smoke PASS; server
+  stopped with the active encounter retained. Hosted CI pending; no full-M1/hosted/
+  deployment acceptance.
+
+### Require playable dependencies before production startup
+
+- 2026-10-28, branch `codex/game-production-readiness`, published in
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334): the owner's
+  autonomous game-completion mission includes correcting a production server
+  that could start without database/identity game routes and report ready.
+  `loadServerConfig` now requires nonblank DATABASE_URL and complete validated
+  OIDC in production; development health-only use remains supported. No new
+  dependency, migration or gameplay rule. Config/app12, package builds/server
+  types, formatting/diff and an actual missing-config entry-process refusal PASS;
+  independent source review ACCEPT. Real database-down/issuer journey, hosted CI
+  and deployment NOT_RUN. [Configuration contract](docs/engineering/ID01-IDENTITY.md).
+
+### Specify the isolated reproducible-launch cycle
+
+- 2026-11-06, `codex/repro-launch176`, LOCAL specification for owner-requested
+  #176 spec/review/implement/review/merge/update-main. Reserve private resources,
+  reuse PR334 and define clean install, ordinary OIDC/company entry, retained-data
+  restart, database readiness and encounter smoke in the
+  [existing playtest contract](docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+  CURRENT_PLAN records ownership. Initial specification state was NOT_RUN; dated
+  implementation results below supersede it for the affected checks.
+
 ### Integrate current main before rerunning the retreat PR
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL PR405 integration with main802fb89a
