@@ -61,11 +61,25 @@ export function projectCompanyHoldings(
     ),
   );
   const people = [...characterIds].map((characterId) => {
-    const vitals = physical?.vitals.find((entry) => entry.characterId === characterId);
+    const vitals = physical?.knowledge.vitalSnapshots.find(
+      (entry) => entry.characterId === characterId,
+    );
+    const known = state.economy.lifecycle.knowledge.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    );
+    const knownAssignment = known?.presence.assignment;
+    const knownLocalAvailability =
+      !fallen.has(characterId) &&
+      known?.presence.availability === 'AVAILABLE' &&
+      known.presence.encounterBindingId === null &&
+      known.presence.fieldPartyId !== null &&
+      known.presence.location.kind === 'AT';
+    const recoveryAssignment: 'FIELD' | 'RECOVERY' | 'OTHER' =
+      knownAssignment === 'FIELD' || knownAssignment === 'RECOVERY' ? knownAssignment : 'OTHER';
     return {
       characterId,
       fallen: fallen.has(characterId),
-      currentHealth: vitals?.currentHealth ?? null,
+      currentHealth: fallen.has(characterId) ? 0 : (vitals?.currentHealth ?? null),
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
@@ -74,6 +88,11 @@ export function projectCompanyHoldings(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
         )
         .map((condition) => condition.definitionId),
+      recovery: {
+        assignment: recoveryAssignment,
+        canRest: knownLocalAvailability && knownAssignment === 'FIELD',
+        canReturnToField: knownLocalAvailability && knownAssignment === 'RECOVERY',
+      },
     };
   });
 

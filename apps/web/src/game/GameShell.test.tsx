@@ -102,6 +102,8 @@ const props = {
   placeSlot: () => null,
   onSignOut: () => undefined,
   onRefreshWorld: () => undefined,
+  onRefreshCompany: () => undefined,
+  companyReadBusy: false,
 } as unknown as ComponentProps<typeof GameShell>;
 
 let cleanup: (() => void) | undefined;

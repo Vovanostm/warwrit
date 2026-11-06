@@ -53,6 +53,9 @@ export function GameShell(props: {
   readonly onTravel: (action: WorldTravelAction) => void;
   readonly onRetryTravel: () => void;
   readonly onRefreshWorld: () => void;
+  readonly onRefreshCompany: () => void;
+  readonly companyReadBusy: boolean;
+  readonly companyReadMessage?: string;
   readonly onRefreshFreeMovement: () => void;
   readonly onFreeMovement: (action: FreeMovementAction) => void;
   readonly onRetryFreeMovement: () => void;
@@ -643,7 +646,11 @@ export function GameShell(props: {
             )}
             <CompanyPanel
               accountId={props.freeMovementScope.accountId}
-              onRefreshItems={props.onRefreshWorld}
+              onRefreshItems={props.onRefreshCompany}
+              refreshBusy={props.companyReadBusy}
+              {...(props.companyReadMessage === undefined
+                ? {}
+                : { refreshMessage: props.companyReadMessage })}
               company={props.company}
               holdings={props.holdings}
               supplyVenueName={supplyVenueName}
