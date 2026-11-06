@@ -103,7 +103,7 @@ stopped, preserving the active encounter.
 
 ### Merged launch closeout — 2026-11-06
 
-[PR334](https://github.com/Vovanostm/warwrit/pull/334) MERGED at18:24UTC as
+[PR334](https://github.com/Vovanostm/warwrit/pull/334) MERGED at 18:24 UTC as
 bd919d1a5be4eee5766e404e464f6caca8bfe48e, expected head
 adedf6c0166ef3bbcd20452902df96c1624d55ec enforced. Issue176 CLOSED. GitHub main,
 origin/main and the clean main checkout `.claude/worktrees/agent-harness-cleanup`
@@ -112,8 +112,8 @@ reviewed head and actual merge. The original dirty sprite-combat checkout remain
 with its existing owner.
 
 [CI42266945856](https://github.com/Vovanostm/warwrit/actions/runs/42266945856)
-SUCCESS, full logs read. Existing bootstrap passed1259tests/98skipped,10000combat
-stress, migration smoke and88real PostgreSQL/auth checks. Both real world-map
+SUCCESS, full logs read. Existing bootstrap passed 1259 tests with 98 skipped, 10000 combat
+stress battles, migration smoke and 88 real PostgreSQL/auth checks. Both real world-map
 and ordinary painted-game browser journeys passed. Measured units, source-checked
 browser aggregation and unchanged quality audit passed. Final
 [PR scope42267008090](https://github.com/Vovanostm/warwrit/actions/runs/42267008090)
@@ -123,10 +123,8 @@ Runtime evidence above is author-owned; the reviewer did not replay browser/SQL.
 The isolated development processes were stopped after smoke and project volumes
 retained. Runbook restarts the same stack. Hosted checks do not replace the wider
 M1 acceptance. External-provider, full battle/reward, backup/restore, deployment,
-full visual/device/human acceptance remain NOT_RUN; FPS/capacity NOT_MEASURED. Full M1, battle
-outcomes/reward, full visual/device/human acceptance, external-provider identity,
-backup/restore/hosted release and deployment remain outside this bounded result.
-FPS/capacity NOT_MEASURED. Local execution logs are under output/ (untracked).
+full visual/device/human acceptance remain NOT_RUN. FPS/capacity NOT_MEASURED.
+Local execution logs are under output/ (untracked).
 
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 

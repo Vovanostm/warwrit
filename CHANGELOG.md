@@ -12,11 +12,11 @@ requests.
 ### Close the merged reproducible-launch delivery
 
 - 2026-11-06, originating branch `codex/repro-launch176`, source MERGED through
-  [PR334](https://github.com/Vovanostm/warwrit/pull/334) asbd919d1a at expected
-  headadedf6c0. Owner authorized the complete spec/review/implementation/review/
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334) as bd919d1a at expected
+  head adedf6c0. Owner authorized the complete spec/review/implementation/review/
   merge/update-main cycle. Issue176 CLOSED; clean main checkout fast-forwarded,
   reviewed/merged contents equal. CI42266945856 and final scope42267008090 SUCCESS,
-  logs read:1259unit tests/98skipped,10000stress battles, migration smoke/88real SQL
+  logs read. 1259 unit tests/98 skipped, 10000 stress battles, migration smoke/88 real SQL
   checks, both browser journeys, measured coverage/aggregation and quality audit.
   Owning playtest/wiki/checkpoint now record actual integration and limits.
   [Closeout](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06).
