@@ -157,8 +157,7 @@ and admission rejects partly dead hostile groups. #377 needs a capture policy
 before any ordinary human V5 rollout; do not infer one from Capture consumers.
 
 Delivery update, 2026-11-06: #376 source triage/policy and #378 implementation are
-published in [PR408](https://github.com/Vovanostm/warwrit/pull/408), final CI/merge
-pending. Real encounter/SQL settlement, rollback, survivor preservation, no false
+implemented and accepted in [PR408](https://github.com/Vovanostm/warwrit/pull/408). Real encounter/SQL settlement, rollback, survivor preservation, no false
 proof, retry/reopened connection and ordinary helper LEAVE PASS. Finite result UI
 ACCEPT; native hostile escape not reproduced. [Owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
 The preparation-only statuses above are history. #409 owns repeat admission of the

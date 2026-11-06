@@ -653,6 +653,7 @@ export function GameShell(props: {
                 : { refreshMessage: props.companyReadMessage })}
               company={props.company}
               holdings={props.holdings}
+              ticksPerDay={ticksPerDay}
               supplyVenueName={supplyVenueName}
               canBuySupplies={
                 props.company.runStatus === 'ACTIVE' &&

@@ -7,6 +7,7 @@ import {
   isExactInteger,
 } from '@warwrit/game-core';
 import type { PartyRouteExecution } from '@warwrit/game-core';
+import { hasExactKeys, isRecord } from '../record-guards.js';
 
 export interface StoredRouteExecutionEnvelope {
   readonly acceptedByAccountId: string;
@@ -156,12 +157,4 @@ function validDangerousAuthorization(value: unknown): boolean {
     typeof value['termsDigest'] === 'string' &&
     /^[0-9a-f]{64}$/.test(value['termsDigest'])
   );
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function hasExactKeys(value: Record<string, unknown>, keys: readonly string[]): boolean {
-  return JSON.stringify(Object.keys(value).toSorted()) === JSON.stringify(keys.toSorted());
 }

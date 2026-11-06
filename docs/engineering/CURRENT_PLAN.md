@@ -1,34 +1,23 @@
 # Warwrit current delivery plan
 
-## Hostile-retreat settlement #378 — 2026-11-06
+## Hostile-retreat result and next work — 2026-11-07
 
-Coordinator: this chat owns #378 terminal settlement/UI; the existing care/recovery/payroll parent retains its game integration and resources.
-Owner authority: “Implement, review, pr, review, merge, update main” for #378, 2026-11-06; explicit mission merge permission after checks/review, expected-head protection.
-Local branch codex/m1-hostile-retreat-378 in .claude/worktrees/m1-entry-369; integrates main12edc308 (recovery and startup correction) and preserves local workflow/closeout commits.
-Scope: accepted hostile-retreat settlement, no false proof, saved/pending result and next lawful company action. Repeat admission/storage and captivity remain separate.
-[Feature specification contract](../../AGENTS.md#feature-specification-before-implementation): problem/expected improvement → player behavior and state → architecture/tradeoffs → small tasks and direct acceptance.
-Write the specification once in the owning feature page before feature code; proceed within the implementation assignment without another routine approval round.
-Global visual BLOCKED is removed as a development prerequisite by the owner's 2026-11-06 decision; [review](VISUAL_CRITIQUE.md) now follows feature scope and concrete player impact.
-Broader visual quality remains unassessed; missing night/reference/scene comparisons are future scene checks, not a failure of #401 or a blocker for the next feature.
-Full M1 remains in progress: reward → care/payroll → next contract → restart and the complete milestone matrix still require actual integrated results.
-Priority: close the normal repeatable company loop; fix input/readability/state defects encountered on that path. Defer broad art expansion and unrelated tooling.
-Next here: PR408 final CI/review/authorized merge and clean main fast-forward; [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06). #377 capture stays undefined; repeated admission is separate. #368/#370 stay with recovery/payroll.
-PR363 merged a2348871 and is integrated here; payroll PR338 and #368/#370 retain the recovery owner. Preserve their resources; recheck main before merge.
-#369 normal entry, #371 ordinary recovery, #372 deadline recovery and #401 legal retreat/retry have recorded successful bounded results.
-PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is closed. [Retreat result](../wiki/mechanics/retreat.md#нативный-результат-401) retains exact evidence and failed attempts.
-#398 broader tactics, #392 loss UI, #364 unresolved terminal policy and the remaining M1 capabilities keep their individual criteria; this workflow decision does not close them.
-[Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) retain the product scope and small tasks.
-Native #378 runtime: DB54369/API3528/realtime3529/UI5228, warwrit_retreat378_20261106 preserved after native defeat; prior retreat401 saves preserved. Native hostile escape did not reproduce (9HP/28morale); no native PASS claimed.
-At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
-PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
-#378 PUBLISHED [PR408](https://github.com/Vovanostm/warwrit/pull/408): source/infrastructure ACCEPT d199895f. Clean integrated gate PASS (1264unit/90SQL/10000stress); real escape/rollback/no-proof/reopen/LEAVE PASS. Finite UI critic ACCEPT after wording/readability corrections; native escape not reproduced. CI42283935845 failed only introduced guidance complexity after passing gameplay stages; behavior-preserving correction/focused14/types/lint/source review PASS, final CI/merge pending. #376 policy accepted, no closure yet.
-
-## Launch configuration follow-up — 2026-11-06
-
-Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
-PR407 MERGED 4c1f0ce4 at expected head32b4cca2. Recovery maina2348871 and both histories retained.
-[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated types/19 tests PASS. CI42280535817/scope42280535469 SUCCESS. Clean local main updated.
+Coordinator: this chat completes #378. The recovery/payroll parent retains #368/#370 and its resources.
+Owner authority: original implement/review/PR/review/merge/update-main mission, resumed with “Заверши теперь issue - только самое необходимое, миноры вынеси”.
+CI is advisory under owner decision 2026-11-07 / merged PR411. Use accepted evidence and concrete affected checks.
+Branch codex/m1-hostile-retreat-378, .claude/worktrees/m1-entry-369, integrates main35b0e7f3 including payroll PR338 and policy PR411.
+#378 terminal settlement/proof and result UI are implemented and independently accepted. [PR408](https://github.com/Vovanostm/warwrit/pull/408) owns the publication and merge receipt.
+[Owning specification and actual results](../wiki/mechanics/retreat.md#реализация-378--2026-11-06) records the accepted #376 policy and executed criteria.
+Real HTTP JOIN/commands/AI → mixed death/retreat → atomic saved consequences → ordinary helper LEAVE PASS. Rollback, retry/reopened connection, living-target no-proof and retained pools PASS.
+Finite pending/applied UI critique ACCEPT. Native wolf escape was not reproduced, and the defeat/save remain retained.
+CI42290393599 on3e6557a0 SUCCESS, including bootstrap, SQL, both browser journeys, coverage and corrected audit. Reuse this evidence with its stated pre-payroll-integration boundary.
+Final integrated32focused/1existingSKIP, server/web types and real PostgreSQL hostile-retreat1PASS/24filteredSKIP passed after main integration.
+Next scoped task #409 is PLANNED: repeat the same unfinished hunt with the saved survivors, exact pools and preserved encounter history. Finish its storage specification before code.
+#392 owns the existing loss-panel overlap. Captivity #377 remains undefined. #368 is the recovered/paid company's next contract, distinct from #409.
+Full M1 and the complete ordinary repeatable loop remain in progress. Broader visual quality is unassessed under the scoped review policy.
+Preserve primary combat/art WIP, other writers' resources and all retained worlds. Native DB warwrit_retreat378_20261106 remains preserved.
+[Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) own remaining tasks.
 
 ## History
 
-[Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
+[Prior checkpoints](CURRENT_PLAN_HISTORY.md) retain both integration histories and actual failed attempts.

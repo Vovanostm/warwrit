@@ -18,6 +18,11 @@ requests.
   Integrate current main before merge. Repeat admission stays #409, the existing
   loss-panel defect #392, captivity #377. Native escape remains not reproduced.
   Roadmap/queue describe those boundaries. No new gameplay feature or broad checks.
+- Integrate main35b0e7f3 with payroll PR338 and policy PR411. Preserve both
+  histories and current game-first/advisory-CI policy. Final integrated checks
+  PASS for32 focused tests/1 existing skipped, server/web types and the real
+  PostgreSQL hostile-retreat regression1 PASS/24 filtered skips. Its disposable
+  database was removed. Gameplay source is unchanged by the documentation merge.
 
 ### Integrate the merged startup correction before retreat delivery
 
@@ -182,6 +187,183 @@ requests.
   limits and overall visual BLOCKED. Scoped formatting/current-plan/diff checks
   PASS. New gameplay/full gate NOT_RUN for this documentation-only closeout.
   This checkpoint is local; the merged implementation/evidence is in PR405.
+
+### Prioritize playable game development and make CI advisory
+
+- 2026-11-07, `codex/game-first-advisory-ci`, LOCAL owner-requested update to
+  [AGENTS.md](AGENTS.md#playable-game-priority--owner-decision-2026-11-07).
+  Prioritize game logic, complete player scenarios, UX, visual coherence and
+  convenient controls. Describe behavior before code and deliver small playable
+  improvements using simple, extensible architecture.
+- Permit skipping CI and ignoring its status for implementation, PR publication
+  and owner-authorized merges. Replace mandatory full-suite and static-audit
+  gates with focused checks of concrete gameplay/state risks. Defer supporting
+  tooling and optional hardening until needed by a playable scenario.
+  Scoped instruction readback and whitespace check PASS. Game tests and CI
+  NOT_RUN for this documentation change.
+
+### Retain the completed launch receipt before payroll CI
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL integration of
+  main12edc308 / launch-closeout PR410. This documentation-only main update landed
+  during payroll publication and initially prevented its CI merge ref. Preserve
+  both changelog histories, append the final launch receipt to plan history and
+  retain payroll as current. Product source and accepted native/UI evidence stay
+  atb6b1ff86 with merged startup4c1f0ce4. Scoped docs/plan/diff checks apply;
+  game tests were NOT_RUN again for this documentation integration.
+
+### Include the final blank-database launch guard before payroll publication
+
+- 2026-11-06, `codex/game-payroll-integration`, PUBLISHED integration of merged
+  [PR407](https://github.com/Vovanostm/warwrit/pull/407) / main4c1f0ce4 before
+  publishing the new payroll head. Preserve its config/tests/runbook exactly and
+  both histories in the CHANGELOG-only conflict; archive the completed launch
+  checkpoint. Payroll source/native result remainsb6b1ff86. Independent staged integration
+  and current finite day/night UI ACCEPT (all4applicable scores2). Final current-head
+  hosted CI and merge permission remain required. [Payroll owner](docs/work-packages/WP-02.3.md#payroll-delivery-resume--2026-11-06).
+
+### Validate current-main payroll on the retained company
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL result for
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Corrected current-time
+  observation leaves five cash balances unchanged. Native TARGETED50 and DEFAULT50
+  lost-reply/reload/exact retries each retain one receipt/event. Rell's50 is a
+  backed hold; physician receives50 actual cash (743.94→693.94 company,
+  56.06→106.06 physician), total cash conserved. Complete saved report matches
+  across API restart. Independent source and current finite day/night UI ACCEPT;
+  new-head hosted CI remains required. [Owning result](docs/work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06)
+  retains transient tile409/network errors, measured viewport sizes and limits.
+
+### Refresh earned payroll after healthy FIELD time
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL correction in
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Ordinary saved entry
+  reproduced company tick2635 despite real world past7000: matching body snapshots
+  and FIELD assignments skipped future payroll observation, hiding newly due
+  payments. Reuse ordered local observations for each paid account needing current
+  confirmation. Keep cash, remote knowledge, food/learning admission and same-tick
+  idempotency. Existing route regression now uses public GET after the isolated
+  clock change instead of a domain-accrual helper. Red1000/expected2000 reproduced;
+  corrected real SQL18/18/types/lint PASS. [Owning result](docs/work-packages/WP-02.3.md#healthy-field-payroll-read-correction)
+  records the initial invalid setup and remaining native/review/CI checks.
+
+### Resume payroll after integrated company recovery
+
+- 2026-11-06, `codex/game-payroll-integration`, LOCAL work under the owner's
+  “next issue” request. Recovery [PR363](https://github.com/Vovanostm/warwrit/pull/363)
+  MERGED a2348871 at approved63e66ccb; full CI42272733258/scope42277998663 PASS and
+  local main matches. Resume #167 in existing [PR338](https://github.com/Vovanostm/warwrit/pull/338),
+  integrate maina2348871 and preserve both histories in four document conflicts.
+  Product files merge automatically. Archive the older payroll checkpoint and
+  update current scope/wiki plus the [owning payroll contract](docs/work-packages/WP-02.3.md#payroll-delivery-resume--2026-11-06).
+  Protocol build/types,59 focused tests,18 real PostgreSQL scenarios and scoped
+  lint PASS. Current native readback/new-head hosted CI remain pending; earlier
+  source/UI/native evidence retains its original boundary. Payroll merge requires
+  separate permission on its final head.
+
+### Play integrated payroll through reload and server restart
+
+- 2026-11-05, `codex/game-payroll-integration`, LOCAL follow-up for
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Source integration and
+  finite day/night payroll UI ACCEPT. On a new retained-save copy, normal
+  TARGETED19.04 and DEFAULT6.33 lost-reply/reload/exact retries each retain
+  2identicalPOSTs/1receipt/1event and an unchanged complete root on retry.
+  Restart preserves saved root/receipts/events. Actual6.06kr reaches the hired
+  physician with balanced wallets;19.31 for remote personal wallets is reserved,
+  not paid. [Owning result](docs/work-packages/WP-02.3.md#current-build-native-continuation-and-acceptance)
+  records the personal-wallet travel gap, prior battle assistance and exact limits.
+  No new clock/save edits, financial rules, migration, dependency or art. Existing
+  PR338 will temporarily target reviewed recovery PR363; both remain unmerged
+  and need separate permission. Recovery final CI/scope PASS, payroll hosted
+  integrated gate still required. Detailed new evidence stays ignored or in CI.
+
+### Reconcile ordinary payroll with the current company loop
+
+- 2026-11-05, `codex/game-payroll-integration`, LOCAL integration preparation for
+  [PR338](https://github.com/Vovanostm/warwrit/pull/338). Combine its existing
+  PayClaims implementation with merged care/recruitment and proposed recovery
+  candidate2d6bf3cc; retain both command registries, server evidence and Company
+  controls. Recovery PR363 is NOT_MERGED and still needs its separate owner
+  permission. Preserve both histories and existing financial rules; no migration,
+  dependency or art change. [Owning acceptance](docs/work-packages/WP-02.3.md#ordinary-payroll-integration--2026-11-05)
+  records the local integration boundary. Types/lint, payroll/roster48, recovery/
+  shell/projection11 and real company SQL18/18 PASS. Correct the old fixture to
+  compare the persisted post-observation revision while retaining financial and
+  retry/refusal assertions; route payroll refresh through the existing company
+  callback. Formatting initially flagged three merged documents; pinned formatting
+  applied. Current native path/review NOT_RUN; historical PR338 evidence does not
+  establish new-head acceptance.
+
+### Complete payroll presentation and exact retry evidence
+
+- 2026-10-28, branch `codex/game-payroll`, local correction superseding the
+  earlier rework checkpoint below: strict parsing/readback, shared record guards
+  and component-owned CSS pass normal audit; server/client source ACCEPT,
+  realPG/focused47 and latest mounted8/types/lint/format PASS. Final controls
+  retain amount/mode/payee across unknown/reload/confirmation and show actual
+  claim deadlines from the server calendar. Current-source TARGETED10kr lost
+  successful response/reload/retry preserves one receipt/event, revision7 and
+  830.83 company/69.17 Rell. Same critic's second absolute bounded payroll ACCEPT,
+  seven applicable scores2; whole-scene visual/stability remains separate.
+  Canonical time preparation is synthetic on owned restored clones. No new
+  finance rule or migration; normal commit/PR/CI/merge not yet performed.
+  [Owning result](docs/engineering/evidence/payroll-20261028/README.md),
+  [player-facing behavior](docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
+
+- Same-day correction: actual stale-revision browser refusal exposed its
+  explanation being cleared during a same-company revision refresh. Preserve
+  terminal messages within that scope, clear on account/company change; mounted8/
+  types/lint and independent affected-source ACCEPT. Clean browser rerun keeps
+  refusal and unchanged scoped state/receipt/audit counts. Real PG routes2 PASS
+  now also covers a fresh same-ID/different-body race, one winning payment and
+  one idempotency conflict; independent test-source ACCEPT. No production server
+  or finance rule change in this correction. Final normal hook/PR/CI pending.
+
+- Final-source browser DEFAULT40 successful-response loss/reload and natural
+  night retry PASS:790.83 company/109.17 Rell, one receipt/event and revision13
+  unchanged on retry. Native prior/default/targeted/refusal records keep their
+  separate source/time provenance; no new full-game acceptance.
+
+- Final third absolute payroll critique ACCEPT, eight applicable scores2 on
+  current refusal and DEFAULT day/night/retry captures. Initial normal hook audit
+  passed but its hidden related tests failed the integration-DB prefix guard;
+  preserve the failure, create a proper empty owned integration DB and migrate
+  without weakening the guard. A subsequent unrelated world assertion compared
+  unchanged audit rows in SQL's unspecified order; add one event_id ORDER BY in
+  its existing test readback. Independent correction SOURCE ACCEPT and exact
+  regression1PASS13filteredSKIP. Final whole-scope normal hook pending; no new
+  production behavior in this test correction. Final whole-scope normal commit
+  hook/related tests/audit PASS on the proper isolated DB, without bypass.
+
+### Payroll hosted formatting correction
+
+- 2026-10-28, branch `codex/game-payroll`, local correction to published
+  PR338: first CI40755025345 stopped at formatting in executor.ts and22
+  native evidence JSON files. Apply the pinned formatter; ordinary source diff
+  changes only line wrapping and parsed evidence values remain equal. No
+  finance/request behavior changed. Normal hooks and current-head CI remain
+  required. The staged-only hook refresh initially omitted unchanged branch
+  client coverage; fresh whole-branch related coverage457 PASS/21 SKIP is reused
+  through the existing source-freshness-checked report merger, with independent
+  source ACCEPT. No audit-base/threshold change; no merge or deployment.
+  Final ordinary hook/related/audit PASS; corrected-head hosted CI remains.
+  See the owning payroll evidence.
+
+### Pay earned wages through the company panel
+
+- 2026-10-28, branch `codex/game-payroll`, LOCAL: the autonomous game mission
+  adds the real PayClaims V2 adapter and company-panel DEFAULT/TARGETED controls,
+  retaining immutable scoped requests across unknown responses and reload.
+  Existing core finance/access rules, transactional root/receipts and prospective
+  qualification observation are reused; no migration or new financial policy.
+  Corrected source server/web ACCEPT; focused32+5 and actual PG2 PASS. Parent
+  browser DEFAULT19.17kr committed-response loss/reload/retry PASS with one
+  receipt/event, revision4 and unchanged balances on retry. Time preparation used
+  canonical AdvanceCampaign on a restored disposable clone, not direct claim or
+  money edits. Fresh unit coverage1220 PASS/84 skipped; normal audit FAILED new
+  complexity/guard clone/selectors and quality rework is active without bypass.
+  TARGETED browser, final-source acceptance/commit/PR/CI and full game remain
+  pending. [Journey and actual limits](docs/engineering/evidence/payroll-20261028/README.md).
 
 ### Close the merged blank-database startup correction
 

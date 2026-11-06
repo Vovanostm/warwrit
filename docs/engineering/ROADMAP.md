@@ -29,8 +29,7 @@ and restart; refresh its actual integration dependencies before implementation.
 
 [#376 specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
 separates battle resolution, physical consequences and contract proof. The owner
-accepted hostile-retreat policy; #378 is published in [PR408](https://github.com/Vovanostm/warwrit/pull/408),
-awaiting final CI/merge. Actual encounter/SQL checks prove atomic company release,
+accepted hostile-retreat policy; #378 is implemented and accepted in [PR408](https://github.com/Vovanostm/warwrit/pull/408). Actual encounter/SQL checks prove atomic company release,
 preserved living enemies and no false trophy. Finite result UI is accepted;
 hostile escape was not reproduced in the ordinary native journey.
 [Owning result and limitations](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
