@@ -6035,3 +6035,29 @@ Finite art follow-ups for parent dispatch: **INK-04 picking** probes transparent
 G10 PR126 and F01 consumer PR127 are merged into main `307810d` (which also includes PR125 quality tooling). Full F01 authentic producer/content remains open. The [I02a amendment](M1_EXECUTION_READINESS.md), canonical readback `comfbUJMfwcjVWq2v`, changes only W04/CT02 enabling edges to their exact consumer-specific durable-command readiness after H01–H08/I01. Full F01/D02/I02 remain final. World/JOIN require real physical/durable predecessors; ART is independent of H storage. No new policy or acceptance prerequisite is created by this queue.
 
 Pre-alias H evidence in `/private/tmp/warwrit-h-fresh-evidence-luna-result.md`: fresh `pnpm build` passed, `pnpm test:unit` 454 passed/5 skipped, `pnpm check:changes` failed; the earlier stale-`dist` result is not current proof. Real paired A/B coverage in `coverage/luna-producer-*` isolated mixed compiled-public/direct-source imports; a minimal Vitest test-only source alias removed duplicate mappings, with 26/26 and `coverage_source=istanbul`. Sol's `/private/tmp/warwrit-h-alias-review-sol-result.md` found no actionable alias defect, not full integration proof. `coverage/coverage-final.json`/`coverage/fallow-audit.json` are preserved pre-alias evidence; same-span numeric-column synthetic probe was diagnosis only. `no-project` syntactic attribution is expected fallback, not direct matcher failure. Full current-source suite/coverage/audit, final real PG, H03/H04, ID03 and full renderer comparison remain open. Each packet returns exact head/tree/dirty diff, changed paths, check outcomes and dependencies. Parent rechecks the union with applicable CI `check:changes` and the final exact-tree sequence owned by [AGENTS.md](../../AGENTS.md#verification-without-duplicate-work) and `scripts/bootstrap.sh`; only the owner/parent's scoped authorization permits checked mission PR merges, not auto-merge/deploy/paid provisioning/force-push. No full persistent M1 or local manual journey is accepted.
+
+## PR335 candidate checkpoint retained on 2026-11-06
+
+Imported from published candidate ab7c59c7 while reconciling #371. Historical
+results/permissions remain scoped; this does not accept the current integration.
+
+### Recover exact pending commands — 2026-10-28, LOCAL / quality PASS, source ACCEPT
+
+Coordinator/validation owner: parent; branch `codex/game-command-recovery`, base `caee351b`.
+Fast-forwarded current main `48d8a2ae`; recovery source unchanged by integration.
+Owner mission authorizes autonomous implementation/worktrees/PRs, not merge/deployment/Orca.
+Outcome: ordinary contract and encounter requests survive reload as the same scoped command.
+Storage precedes send; unknown/auth-loss retains, matching terminal response clears exactly.
+Independent source REWORK caught unreachable encounter cleanup; combined disposer and mounted regression fix it.
+Earlier focused8 files/31 tests PASS; final hook extraction focused6 files/17 tests with fresh V8, web types/lint/format PASS.
+Initial audit FAILED callback complexity/storage clones; scoped lifecycle hook/shared storage fixed the owning delta.
+Final pnpm check:changes PASS; independent post-extraction source ACCEPT, no bypass/threshold change.
+Parent ordinary OIDC/company creation for two accounts → real HELP response loss → reload → exact retry PASS.
+Native PostgreSQL retains the same receipt, total2 receipts and contract revision2;850 crowns unchanged.
+[Owning evidence/limits](evidence/command-recovery-20261028/README.md), related recovery task #174 remains open.
+Independent finite ordinary HELP/reload/retry playable ACCEPT; full day/night visual/full-M1 acceptance NOT_RUN.
+New actual encounter/WebSocket response-loss journey NOT_RUN; mounted late-unmount/remount proof PASS.
+One generic map-init failure observed; later reload worked, cause unproven, map source unchanged.
+Final source browser reload/Place readback PASS; same company850 crowns and helper state.
+Next: normal commit hook, PR publication and hosted gates.
+Owned local API3188/realtime3189/web5188/proxy3190 and fresh DB/Dex retained for payroll successor QA.

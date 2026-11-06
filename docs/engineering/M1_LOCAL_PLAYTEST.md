@@ -43,6 +43,31 @@ that lived in this file is in git history (commit `97d8480`).
 
 ## Start
 
+### Ordinary entry checked — 2026-11-06
+
+On main `b89f4128`, a fresh isolated PostgreSQL world passed the ordinary local
+Dex OIDC flow (the **Войти** link), company opening with two selected companions,
+all nine equipment actions, a ten-ration purchase and acceptance of the real
+local mill-worker offer. No account/company/position/health/money edits were used.
+The unfilled opening form and a third companion were disabled; quantity zero
+disabled purchase. Ten rations cost40crowns: treasury800→760, stock300→290;
+company rations27→37 after the existing upkeep settlement.
+
+Normal logout and another OIDC login, including a separate browser context,
+restored the same company, all equipment,37rations,760crowns and the accepted
+contract. SQL readback found one account/company,11company receipts
+(opening+nine equips+purchase) and one accepted mill-worker receipt. The contract's
+remote steps correctly named their location/prerequisite blockers.
+
+Owned resources: Compose `warwrit-entry369-20261106`, PostgreSQL54369,
+API3528/realtime3529/UI5228; retained player databases were not touched.
+Local evidence: output/playwright/entry369/ (untracked).
+The initial browser reached Vite before the API was ready; a reload after ready
+recovered. A shared CLI version mismatch required switching browser automation;
+neither is a gameplay defect established by this check. External-provider login,
+new combat/reward/rest/payroll/restart, full visual/device/human acceptance and
+the full M1 remain NOT_RUN. Next: #371/PR335 exact ordinary-request recovery.
+
 ```bash
 pnpm db:up && pnpm db:migrate:up && pnpm dev
 ```
