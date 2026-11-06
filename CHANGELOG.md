@@ -16,7 +16,8 @@ requests.
   newly adopted skills and the merged deterministic SQL fixture repair. Product
   retreat/retry code retains the native-tested behavior plus the identical-HTML
   message rendering. First audit failure remains recorded. Focused36 tests,
-  web/server types, scoped format/diff/current-plan checks PASS. Current clean
+  web/server types PASS. Initial merged CHANGELOG formatting failed and was
+  corrected; scoped format/diff/current-plan checks then PASS. Current clean
   hosted CI is required on the integrated head; no new native battle/full local
   gate for this integration. [Owning result](docs/wiki/mechanics/retreat.md#нативный-результат-401).
 
@@ -96,6 +97,7 @@ requests.
   Documentation diff/current-plan checks PASS. New gameplay/full gate NOT_RUN
   for this closeout. This follow-up documentation is local; the merged product
   and evidence remain in PR402.
+
 ### Make the wolf settlement regression use reproducible combat inputs
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL correction for
