@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { EncounterControlGrantDto, EncounterPublicProjectionDto } from '@warwrit/protocol';
 import { toEncounterBattlePresentation } from './battle-presentation.js';
 import { fromCombatLabView } from '../combat-lab/battle-presentation.js';
+import { BattleOutcome } from '../combat-lab/BattleOutcome.js';
 import { UnitVitals } from '../combat-lab/UnitVitals.js';
 
 const projection: EncounterPublicProjectionDto = {
@@ -205,4 +206,47 @@ it('keeps lab-only provenance on lab views while persistent views use their own 
   expect(toEncounterBattlePresentation(projection, undefined, label)).not.toHaveProperty(
     'sourceNote',
   );
+});
+
+it('shows escaped living objectives in the persistent battle result without claiming saved effects', () => {
+  const terminal: EncounterPublicProjectionDto = {
+    ...projection,
+    status: 'resolved',
+    activationId: null,
+    actorUnitId: null,
+    outcome: { reason: 'last-side-standing', winnerSideId: 'first-hunt-companies' },
+    units: projection.units.map((unit, i) => ({
+      ...unit,
+      sideId: i === 0 ? 'first-hunt-companies' : 'first-hunt-hostiles',
+      status: i === 0 ? 'active' : 'retreated',
+    })),
+  };
+  const view = toEncounterBattlePresentation(terminal, undefined, label, [terminal.units[0]!.id]);
+  const html = renderToStaticMarkup(
+    createElement(BattleOutcome, {
+      view,
+      busy: false,
+      onRestart: undefined,
+      onEditor: undefined,
+      onContinue: () => {},
+    }),
+  );
+  expect(html).toContain('Цель охоты не выполнена');
+  expect(html).toContain('Вернуться к отряду');
+  expect(html).not.toContain('Последствия боя сохранены');
+  expect(toEncounterBattlePresentation(terminal, undefined, label).outcomeNote).toBeUndefined();
+  expect(
+    toEncounterBattlePresentation(
+      {
+        ...terminal,
+        units: terminal.units.map((unit) => ({
+          ...unit,
+          status: unit.sideId === 'first-hunt-companies' ? 'retreated' : 'active',
+        })),
+      },
+      undefined,
+      label,
+      [terminal.units[0]!.id],
+    ).outcomeNote,
+  ).toBeUndefined();
 });

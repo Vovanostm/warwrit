@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Apply accepted hostile-retreat consequences without a false trophy
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL implementation of the accepted
+  #376 policy under the owner's implement/review/PR/review/merge/update-main mission.
+  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06): V4/V5
+  hostile retreat now prepares atomic release; living targets do not create proof.
+  Persist terminal policy version in audit/request evidence, preserve old replay
+  and V2/V3 behavior, retain surrender residual. No migration or retry-admission change.
+- Participant-scoped contract summary distinguishes pending/applied consequences
+  and unfinished hunt, survives helper leave/reload; battle result names escaped
+  objectives without claiming saved effects. UI stops offering pending leave or
+  rediscovering an applied battle. Optional DTO preserves reading old responses.
+- 31 focused checks PASS / 1 existing skipped; server/web types and scoped lint PASS.
+  Real SQL JOIN/commands/AI, rollback, release/no-proof, helper LEAVE and reopened
+  connection/retry PASS. First test world yielded all deaths; a reproducible world
+  was selected for the real escape regression without editing persisted battle state.
+  Native UI, independent review/full gate/publication/merge NOT_RUN at this step.
+
 ### Accept hostile-retreat policy and separate captivity
 
 - 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL recording of the owner's

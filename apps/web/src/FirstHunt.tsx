@@ -533,6 +533,9 @@ export function firstHuntRoleLabel(
 export function firstHuntStateLabel(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
 ): string {
+  if (contract.terminal?.effects === 'PENDING') return 'бой завершён, сохраняем последствия';
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'охота не завершена';
   switch (contract.knownState) {
     case 'OFFERED':
       return 'предложен';
@@ -572,6 +575,10 @@ export function firstHuntGuidance(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
   currentSiteId: string | null,
 ): string {
+  if (contract.terminal?.effects === 'PENDING')
+    return 'Бой завершён. Последствия ещё не сохранены; дождитесь обновления.';
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'Противники ушли живыми. Трофея и награды нет. Последствия боя сохранены; отряд больше не связан боем. Повторная попытка пока недоступна.';
   const issuer = contract.terms.issuerLocation.siteId;
   const objective = contract.terms.objectiveLocation.siteId;
   if (contract.knownState === 'OFFERED' && currentSiteId !== issuer)

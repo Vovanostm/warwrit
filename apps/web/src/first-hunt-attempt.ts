@@ -95,7 +95,7 @@ export function startFirstHuntActivationPolling(input: {
 export function firstHuntEncounterDiscoveryId(
   contract: FirstHuntContractViewDto,
 ): string | undefined {
-  return contract.encounterId ?? undefined;
+  return contract.terminal?.effects === 'APPLIED' ? undefined : (contract.encounterId ?? undefined);
 }
 
 export function firstHuntAttemptKey(scope: FirstHuntScope): string {
@@ -151,6 +151,7 @@ export function availableFirstHuntActions(
   currentSiteId: string | null,
   hasPickupTarget: boolean,
 ): readonly FirstHuntCommandDto['type'][] {
+  if (contract.terminal?.effects === 'PENDING') return [];
   const actions: FirstHuntCommandDto['type'][] = [];
   const atIssuer = currentSiteId === contract.terms.issuerLocation.siteId;
   const atObjective = currentSiteId === contract.terms.objectiveLocation.siteId;
@@ -170,7 +171,8 @@ export function availableFirstHuntActions(
     contract.yourRole !== 'NONE' &&
     atObjective &&
     contract.knownState === 'ACTIVE' &&
-    !contract.yourJoinIntent
+    !contract.yourJoinIntent &&
+    contract.encounterId === null
   )
     actions.push('JOIN');
   if (

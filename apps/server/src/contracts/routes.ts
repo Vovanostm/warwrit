@@ -1,3 +1,4 @@
+import { huntTerminalSummary } from './terminal-result.js';
 import { executeCommandTransaction } from '../db/command-transaction.js';
 import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
 import { randomUUID } from 'node:crypto';
@@ -756,7 +757,7 @@ async function readHuntView(
   const encounter = admission
     ? await transaction
         .selectFrom('encounters')
-        .select(['id', 'status'])
+        .select(['id', 'status', 'state'])
         .where('id', '=', admission.encounter_id)
         .executeTakeFirst()
     : undefined;
@@ -813,6 +814,10 @@ async function readHuntView(
           redemption: proof.redemption_receipt_id ? ('REDEEMED' as const) : ('UNREDEEMED' as const),
         }
       : null;
+  const terminal =
+    encounter && admission
+      ? huntTerminalSummary(encounter, admission.effects_applied_at, currentAggregate)
+      : undefined;
   const body: FirstHuntReadResponseDto = {
     schemaVersion: 1,
     publicRevision: contract.revision,
@@ -830,6 +835,7 @@ async function readHuntView(
               : role === 'HELPER' && contract.helper_join !== null,
           helperSlot: contract.helper_company_id ? 'OCCUPIED' : 'AVAILABLE',
           encounterId: admission?.encounter_id ?? null,
+          ...(terminal ? { terminal } : {}),
           pickupTargets:
             companyId &&
             (role === 'OWNER' || role === 'HELPER') &&

@@ -38,6 +38,11 @@ export interface FirstHuntContractViewDto {
   readonly yourJoinIntent: boolean;
   readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
   readonly encounterId: string | null;
+  /** Private to a company that actually participated, including a former helper. */
+  readonly terminal?: {
+    readonly effects: 'PENDING' | 'APPLIED';
+    readonly hostileRetreated: boolean;
+  };
   readonly pickupTargets: readonly FirstHuntPickupTargetDto[];
   readonly yourProof: null | {
     readonly itemId: string;
@@ -214,6 +219,7 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
       'encounterId',
       'pickupTargets',
       'yourProof',
+      ...(Object.hasOwn(contract, 'terminal') ? ['terminal'] : []),
     ]) ||
     !HUNT_INSTANCE_IDS.includes(contract['instanceId'] as HuntInstanceId) ||
     !isText(contract['definitionEdition']) ||
@@ -253,6 +259,16 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
     )
   )
     return false;
+  if (Object.hasOwn(contract, 'terminal')) {
+    const terminal = contract['terminal'];
+    if (
+      !isRecord(terminal) ||
+      !hasExactKeys(terminal, ['effects', 'hostileRetreated']) ||
+      !['PENDING', 'APPLIED'].includes(String(terminal['effects'])) ||
+      typeof terminal['hostileRetreated'] !== 'boolean'
+    )
+      return false;
+  }
   if (contract['yourProof'] === null) return true;
   return (
     isRecord(contract['yourProof']) &&

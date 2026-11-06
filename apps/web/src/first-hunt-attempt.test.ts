@@ -552,3 +552,25 @@ describe('FIRST HUNT meeting offer transport', () => {
     }
   });
 });
+
+it('distinguishes pending and saved retreat from a fresh JOIN or reward', () => {
+  const pending: NonNullable<FirstHuntReadResponseDto['contract']> = {
+    ...offer.contract!,
+    yourRole: 'HELPER',
+    knownState: 'ACTIVE',
+    encounterId: 'saved-battle',
+    terminal: { effects: 'PENDING', hostileRetreated: true },
+  };
+  expect(firstHuntStateLabel(pending)).toContain('сохраняем последствия');
+  expect(firstHuntGuidance(pending, 'staraya-melnitsa')).toContain('ещё не сохранены');
+  expect(availableFirstHuntActions(pending, 'staraya-melnitsa', true)).toEqual([]);
+  expect(firstHuntEncounterDiscoveryId(pending)).toBe('saved-battle');
+  const applied = { ...pending, terminal: { effects: 'APPLIED' as const, hostileRetreated: true } };
+  expect(firstHuntStateLabel(applied)).toBe('охота не завершена');
+  expect(firstHuntGuidance(applied, 'staraya-melnitsa')).toContain('Противники ушли живыми');
+  expect(firstHuntGuidance(applied, 'staraya-melnitsa')).toContain(
+    'Повторная попытка пока недоступна',
+  );
+  expect(availableFirstHuntActions(applied, 'staraya-melnitsa', true)).toEqual(['LEAVE']);
+  expect(firstHuntEncounterDiscoveryId(applied)).toBeUndefined();
+});

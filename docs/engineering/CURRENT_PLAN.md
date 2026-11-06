@@ -1,11 +1,11 @@
 # Warwrit current delivery plan
 
-## Terminal outcome specification #376 — 2026-11-06
+## Hostile-retreat settlement #378 — 2026-11-06
 
-Coordinator: this chat owns #376 terminal-outcome specification; the existing care/recovery/payroll parent retains its game integration and resources.
-Owner request: “ok, implement” for #376; source-backed surrender/hostile-retreat specification before #377/#378 code.
-Local branch codex/m1-terminal-policy-376 in .claude/worktrees/m1-entry-369; integrates main0f9ea2a1 and preserves local workflow/closeout commits.
-Scope: accepted sources, actual terminal paths, reproducibility and complete outcome/architecture specification. No unapproved custody/reward rule or successor implementation.
+Coordinator: this chat owns #378 terminal settlement/UI; the existing care/recovery/payroll parent retains its game integration and resources.
+Owner authority: “Implement, review, pr, review, merge, update main” for #378, 2026-11-06; explicit mission merge permission after checks/review, expected-head protection.
+Local branch codex/m1-hostile-retreat-378 in .claude/worktrees/m1-entry-369; integrates main0f9ea2a1 and preserves local workflow/closeout commits.
+Scope: accepted hostile-retreat settlement, no false proof, saved/pending result and next lawful company action. Repeat admission/storage and captivity remain separate.
 [Feature specification contract](../../AGENTS.md#feature-specification-before-implementation): problem/expected improvement → player behavior and state → architecture/tradeoffs → small tasks and direct acceptance.
 Write the specification once in the owning feature page before feature code; proceed within the implementation assignment without another routine approval round.
 Global visual BLOCKED is removed as a development prerequisite by the owner's 2026-11-06 decision; [review](VISUAL_CRITIQUE.md) now follows feature scope and concrete player impact.
@@ -19,9 +19,9 @@ PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is c
 #398 broader tactics, #392 loss UI, #364 unresolved terminal policy and the remaining M1 capabilities keep their individual criteria; this workflow decision does not close them.
 [Roadmap](ROADMAP.md), [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) and [AI queue](PARALLEL_WAVES.md#ai-task-contract) retain the product scope and small tasks.
 Retained runtime: DB54369/API3528/realtime3529/UI5228; warwrit_retreat401_recheck_20261106 and earlier worlds preserved. Recheck liveness before use.
-At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation restart or new merge permission.
+At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation/deployment permission; merge authority is limited to this mission.
 PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
-#376 source review/specification is LOCAL: outcomes, ownership, proof risk, retry-storage boundary and small tasks recorded; 4 focused tests PASS, 18 not run (filter/existing skip). Real hostile-retreat JOIN/SQL/UI NOT_RUN; retreat policy ACCEPTED, capture deferred; no successor code or issue closure. Workflow correction remains LOCAL.
+#376 source review/specification is LOCAL: outcomes, ownership, proof risk, retry-storage boundary and small tasks recorded; 4 focused tests PASS, 18 not run (filter/existing skip). Real hostile-retreat JOIN/SQL/UI NOT_RUN; retreat policy ACCEPTED, capture deferred; #378 implementation now assigned, no issue closure yet. Workflow correction remains LOCAL.
 
 ## History
 
