@@ -9,6 +9,35 @@ requests.
 
 ## Unreleased
 
+### Complete an authentic next contract with the retained company
+
+- 2026-11-07, `codex/m1-next-contract-368`, PUBLISHED #368 result in
+  [PR413](https://github.com/Vovanostm/warwrit/pull/413) superseding the
+  initial HUNT-02 route below. The previous hunt was already lost; its saved
+  survivors/proof boundary remains open. Same Company2 completed INVEST-02
+  through ordinary acceptance, stock record, daytime inspection and report.
+  Night inspection was visibly unavailable. Reward40 raised cash693.94→733.94;
+  the next ration purchase4 left729.94. Four quest receipts and captured saved
+  state persisted across the owned API restart; paid UI/facts survived re-entry.
+  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07)
+  distinguishes the report equality from ordinary quest readback. Independent
+  finite journey and current-main retained-view ACCEPT. Integrate main668dc68b / PR408/412 unchanged and recheck
+  retained UI after protocol build/API restart. No new product code, migration,
+  dependency or tests. Full suite NOT_RUN; hosted CI not used as acceptance evidence under advisory policy.
+
+### Continue the recovered and paid company to its next contract
+
+- 2026-11-07, `codex/m1-next-contract-368`, LOCAL owner-requested #368 after
+  payroll [PR338](https://github.com/Vovanostm/warwrit/pull/338) mergedb1c7264e at
+  approved2b1e834c. CI42286898832/scope42291895718 PASS and clean-main readback
+  retain that payroll boundary; #167/#320/#322 CLOSED. Same Company2 now resumes
+  its already accepted HUNT-02 through ordinary travel/combat/pelt/reward and
+  retained-data restart. [Owning checklist](docs/engineering/M1_LOCAL_PLAYTEST.md#same-company-next-contract--368-2026-11-07)
+  names current resources, exact source and remaining limits. No code change or
+  fresh game test yet; native continuation and independent critique are pending.
+  Integrate merged main35b0e7f3 / PR411 workflow amendment while travelling;
+  product source remainsb1c7264e and both changelog histories are retained.
+
 ### Record owner authorization for the loss-panel merge
 
 - 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED closeout for

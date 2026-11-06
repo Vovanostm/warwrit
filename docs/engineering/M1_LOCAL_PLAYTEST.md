@@ -324,3 +324,98 @@ unavailable; unsupported surrender outcomes remain pending without payment.
 [Current delivery and proof boundaries](evidence/persistent-hud/main-readback.md).
 The representative trophy/payment/restart check is in progress, not full M1
 or a new external sign-in/company-creation acceptance.
+
+## Same-company next contract — #368, 2026-11-07
+
+Owner requested the next issue after approving payroll2b1e834c. PR338 merged as
+b1c7264e, with fullCI42286898832 and final scope42291895718 PASS; local main readback
+matched with an empty approved-head diff. Recovery PR363/#169 is also integrated.
+Parent owns branch codex/m1-next-contract-368 in the existing payroll-integration
+worktree. Reserve ordinary contract/player continuation plus its owning docs.
+The separate #378/PR408 hostile-retreat writer retains its encounter/core scope.
+
+Use the same retained Company2, company4c9a440c-1795-4156-a82b-d46c16f25f77,
+partya93231cb-3691-40f3-ba5b-7c94bfca3fcf, and database
+warwrit_payroll_native_20261105. API3598/realtime3599/UI5398 and relay3597 remain
+owned here; PostgreSQL maps to32769 and Dex5618 is retained. New ignored records
+are output/playwright/next-contract368-20261107/. Original native records and
+saves stay intact. Prior assisted battle and full-M1 limits remain.
+
+Initial route plan, superseded by the actual result below. The ordinary UI
+showed accepted HUNT-02, Волчья тропа. All three living members had100HP FIELD; Mora retains a treated severe wound, the captain remains dead,
+and cash693.94 follows the real50 payroll. The physician is unarmed; normal fist
+profiles are supported. Inspect/equip available gear before entering a timed fight.
+
+- [ ] Ordinary preparation/travel with existing provisions reaches Березняк.
+- [ ] Same-company JOIN, real three-wolf outcome, source-bound pelt pickup and
+      ordinary PRESENT yield the fixed80-crown reward once.
+- [ ] The same party can take its next ordinary action after the reward.
+- [ ] Owned server restart/re-entry retains company, people, custody, knowledge,
+      cash and receipts once. No saved-state/time/seed/health/position edits.
+
+Use ordinary UI and read-only SQL. Fix only the first reproduced blocker. An
+already working path needs a source-grounded result rather than a filler code
+change. At activation, native checks and independent final critique were pending.
+The actual result below supersedes this plan.
+
+### Actual result — #368, 2026-11-07
+
+**PUBLISHED [PR413](https://github.com/Vovanostm/warwrit/pull/413), NOT_MERGED.
+Native PASS, independent finite journey ACCEPT.** Issue368 permits one
+available authentic next contract. Existing game code already supports this
+result; no product code, migration, dependency or new test was required.
+
+The initial wolf route was not completed. Ordinary gear preparation and travel
+reached the exact Березняк/деревенский луг anchor. The accepted wolf card referred
+to the previous lost encounter039c5bab-6e4d-4f5a-93b4-a5a3b517ce8c, with dead
+captain, two dead wolves and a living leader with24HP. There was no new JOIN or proof.
+The UI still described readiness; that feedback/continuation boundary stays with
+#380/#409. No state, time, health, seed, position or reward was edited. Route
+planning took44 ticks; no exact stopwatch duration was measured.
+
+The same recovered/paid Company2 instead completed **Пропавшие травы / INVEST-02**,
+ci.m1.missing-herbs.01, through ordinary UI at Березняк.
+
+- [x] Accept at the herbalist and record missing stock, fact
+      missing-herbs-stock-record at7416.
+- [x] At night, inspection is visibly unavailable with «ночью следов не
+      разглядеть»; report is also unavailable. This is a UI prerequisite check,
+      not an executed HTTP409 refusal. Natural daylight enables inspection.
+- [x] Inspect the meadow at7419, retaining missing-herbs-trail-observation and
+      «Свежие срезы у корня, ножом. Тропа уходит к Северному Двору.»
+- [x] Report to Agafya at7421, retaining missing-herbs-report, SUCCESS/revision4
+      and the visible paid state. Treasury693.94→733.94 is exactly40 crowns.
+      Four ordinary-contract receipts contain one rewardQ40000000.
+- [x] Take the next ordinary action. Buy one ration for4crowns at the bazaar,
+      treasury733.94→729.94, rations6→7 and stock300→299.
+- [x] Restart only the owned API and re-enter. Captured before/after reports are
+      deeply equal, preserving company, people, custody, observed knowledge,
+      cash, hunt/proof rows and captured receipts/audit. The helper excludes the
+      ordinary_contracts row. Before/after UI and a separate after-restart query
+      retain its three authentic facts, SUCCESS/revision4 and paid state.
+      Re-entry offers no repeat reward and records no duplicate purchase.
+
+Native journey source is merged payroll b1c7264e, branch checkpoint a97004bd.
+Five1440×900 images cover night refusal, daytime clue, paid result, next purchase
+and re-entry. The independent read-only critic inspected all five and the saved
+reports, accepted the finite criteria and found no material issue. Optional shop
+text polish remains «Купить 1 рационов».
+
+Current main 668dc68b (PR408/412) was then integrated with product source unchanged
+from main. Protocol build PASS, owned API restart/readiness PASS and ordinary
+re-entry/Place smoke PASS at1440×900. Same company/party at Березняк, paid herb
+card, learned clues,729.94crowns and four quest receipts remain. Independent
+affected-view readback ACCEPT with no observed regression. The old lost
+wolf card still says «принят, ждёт участия»/«Отряд готов к бою» without JOIN;
+PR408's hostile-escape guidance does not cover this defeat. Preserve it for its
+bounded follow-up; do not infer that the hunt was completed.
+
+Detailed ignored local records are in
+output/playwright/next-contract368-20261107/, including before-restart.json,
+after-restart.json, ordinary-herbs-retained.json and current-main-retained.png.
+An earlier travel snapshot recorded a transient Colyseus offline warning;
+current-main retained-view console has no error. This is finite continuation
+and persistence evidence. All-eight-contract, new-player first-hour, whole-scene
+art/device acceptance, capacity and full backup/restore remain outside #368.
+Scoped formatting, current-plan and whitespace checks PASS. Game suites NOT_RUN
+for this documentation-only closeout; hosted CI is not acceptance evidence here.
