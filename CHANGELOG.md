@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Close the merged reproducible-launch delivery
+
+- 2026-11-06, originating branch `codex/repro-launch176`, source MERGED through
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334) as bd919d1a at expected
+  head adedf6c0. Owner authorized the complete spec/review/implementation/review/
+  merge/update-main cycle. Issue176 CLOSED; clean main checkout fast-forwarded,
+  reviewed/merged contents equal. CI42266945856 and final scope42267008090 SUCCESS,
+  logs read. 1259 unit tests/98 skipped, 10000 stress battles, migration smoke/88 real SQL
+  checks, both browser journeys, measured coverage/aggregation and quality audit.
+  Owning playtest/wiki/checkpoint now record actual integration and limits.
+  [Closeout](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06).
+  Local stack stopped with volumes/active encounter retained; external-provider,
+  full-M1/visual/device, hosted/backup/restore/deployment NOT_RUN; FPS NOT_MEASURED.
+
 ### Make ordinary launch reproducible in an isolated worktree
 
 - 2026-11-06, `codex/repro-launch176`, LOCAL owner-requested #176 cycle reuses

@@ -37,7 +37,9 @@ sources:
 и [результаты с ограничениями](../engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06)
 содержат команды, ресурсы и реальные проверки. Обычное путешествие в Березняк,
 HUNT-02 и JOIN открыли реальный бой с company_binding и подключением realtime.
-Сервер остановлен с сохранённым активным боем. Текущий статус — local, CI ожидается. Полный M1, внешняя identity, hosted release,
+Сервер остановлен с сохранённым активным боем. PR334 слит в main как bd919d1a,
+#176 закрыта, чистый локальный main обновлён. CI42266945856 и проверка scope
+прошли с чтением логов. [Итог слияния](../engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06). Полный M1, внешняя identity, hosted release,
 backup/restore и производительность этим срезом не приняты.
 
 ## 1. Игра и границы
