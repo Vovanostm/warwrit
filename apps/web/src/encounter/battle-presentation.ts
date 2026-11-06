@@ -31,7 +31,7 @@ export function toEncounterBattlePresentation(
     projection.units.some((unit) => unit.sideId !== controlledSideId && unit.status === 'retreated')
       ? {
           outcomeNote:
-            'Противники ушли живыми. Цель охоты не выполнена. Сохранённый результат — в карточке контракта.',
+            'Противники ушли живыми. Цель охоты не выполнена. Проверьте сохранение последствий в карточке контракта.',
         }
       : {}),
     controlledSideId,

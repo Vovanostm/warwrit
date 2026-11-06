@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Verify hostile-retreat settlement and clarify its player feedback
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, PUBLISHED
+  [PR408](https://github.com/Vovanostm/warwrit/pull/408); local feedback corrections
+  follow independent critique. [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+  records clean integrated gate PASS (1264 unit/100 skipped,10000 stress,90 SQL,
+  migrations), source/infrastructure ACCEPT on d199895f and actual limitations.
+- The native new-company route reached the wolf fight after server restart, but
+  the9HP/28morale leader did not flee. Waiting and subsequent timeout handling
+  ended in a retained defeat; native hostile retreat is not accepted from it.
+  Finite component captures use actual successful SQL scenario HTTP responses,
+  explicitly separate from native play. No game state was rewritten for a capture.
+- Critic found that the battle note implied saved effects while the contract was
+  pending, and inherited tiny header typography. Use persistence-neutral wording
+  and a readable note class; preserve the round header. Six presentation tests
+  PASS, scoped lint/web types PASS; independent affected screenshot review ACCEPT.
+  Stale built protocol after integration caused initial type errors; normal rebuild
+  resolved them. Final PR CI pending. No migration.
+  Initial PR scope failed because the description lacked the required Refs marker;
+  corrected metadata, current scope PASS. Merge has not occurred at this checkpoint.
+
 ### Clarify scoped acceptance after integration review
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction from independent

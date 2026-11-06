@@ -234,6 +234,7 @@ it('shows escaped living objectives in the persistent battle result without clai
   expect(html).toContain('Цель охоты не выполнена');
   expect(html).toContain('Вернуться к отряду');
   expect(html).not.toContain('Последствия боя сохранены');
+  expect(html).not.toContain('Сохранённый результат');
   expect(toEncounterBattlePresentation(terminal, undefined, label).outcomeNote).toBeUndefined();
   expect(
     toEncounterBattlePresentation(
