@@ -12,7 +12,7 @@ Global visual BLOCKED is removed as a development prerequisite by the owner's 20
 Broader visual quality remains unassessed; missing night/reference/scene comparisons are future scene checks, not a failure of #401 or a blocker for the next feature.
 Full M1 remains in progress: reward → care/payroll → next contract → restart and the complete milestone matrix still require actual integrated results.
 Priority: close the normal repeatable company loop; fix input/readability/state defects encountered on that path. Defer broad art expansion and unrelated tooling.
-Next here: determine reachable surrender/hostile-retreat outcomes and source-defined consequences; isolate any remaining owner decision. #368/#370 stay with the recovery/payroll flow.
+Next here: owner decision on the [#376 proposed retreat policy](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06); #377 capture remains undefined. #368/#370 stay with the recovery/payroll flow.
 Before implementing that step, refresh PR363/PR338 integration with their delivery owner; last recorded candidate state is historical, not reverified here. Preserve that owner's resources and saves.
 #369 normal entry, #371 ordinary recovery, #372 deadline recovery and #401 legal retreat/retry have recorded successful bounded results.
 PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is closed. [Retreat result](../wiki/mechanics/retreat.md#нативный-результат-401) retains exact evidence and failed attempts.
@@ -21,7 +21,7 @@ PR335/496ca5f5, PR402/ffaa84a5 and PR405/149fa8e6 are recorded merged; #401 is c
 Retained runtime: DB54369/API3528/realtime3529/UI5228; warwrit_retreat401_recheck_20261106 and earlier worlds preserved. Recheck liveness before use.
 At most two game-writing worktrees; protected primary combat/art WIP remains untouched. No automation restart or new merge permission.
 PR334/#176 and closeout PR406 are merged in main0f9ea2a1; launch resources/volumes stay with their owner, stack stopped. See M1_LOCAL_PLAYTEST for recorded checks.
-#376 source review is in progress; no new gameplay/visual/device acceptance yet. Workflow correction remains LOCAL.
+#376 source review/specification is LOCAL: outcomes, ownership, proof risk, retry-storage boundary and small tasks recorded; 4 focused tests PASS, 18 not run (filter/existing skip). Real hostile-retreat JOIN/SQL/UI NOT_RUN; policy awaits owner answer, no successor code or issue closure. Workflow correction remains LOCAL.
 
 ## History
 

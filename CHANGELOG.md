@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Specify terminal outcomes and isolate remaining product decisions
+
+- 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL #376 source/specification
+  requested by the owner before implementation. The [owning feature page](docs/wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+  maps current surrender/retreat reachability, company/custody/proof consequences,
+  proposed behavior, transaction/version boundaries and small #377/#378 steps.
+  Ordinary V5 wolf fights cannot surrender; hostile retreat remains pending.
+  Removing that guard alone would enable proof from tactical victory over living
+  targets. Repeat admission also needs a separate storage change, not a reset.
+- Update the source derivative, Roadmap, task queue and CURRENT_PLAN with the
+  exact dependency. Proposed retreat policy awaits an owner answer; capture stays
+  undefined. No source rule, game code, migration, retained world or issue closure
+  changes. Existing kernel/server checks: 4 PASS; 18 not run (filter/existing skip).
+  New ordinary hostile-retreat JOIN, SQL recovery and native UI NOT_RUN; full gate
+  and visual acceptance NOT_RUN for this documentation task. Publication/merge
+  not performed; the specification does not activate successor implementation.
+  Scoped formatting, CURRENT_PLAN guard, diff and 18 local tracked-file links PASS.
+
 ### Start terminal-outcome specification on current main
 
 - 2026-11-06, `codex/m1-terminal-policy-376`, LOCAL start of owner-assigned #376.

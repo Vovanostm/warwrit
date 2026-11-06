@@ -359,3 +359,15 @@ Killing the beast does not establish guilt for the grain theft; the
 grain-cart tracks stay an open observation. A person in custody who is not
 delivered stays with the company; a company that ends its run releases no
 one automatically.
+
+## Terminal policy source review — 2026-11-06 (#376)
+
+The [owning outcome specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+records current reachability, source-defined consequences and the finite proposed
+M1 hostile-retreat policy. This is a LOCAL source/specification result, not an
+accepted amendment: the owner question is pending. The 2026-10-20 pending rule
+continues until an explicit replacement is recorded. Surrender does not itself
+supply a captor/custody fact, and tactical victory does not supply proof of a kill.
+The existing ordinary rescue gates require actual deaths. Preserve all accepted
+reward/custody terms; #377/#378 implementation and new capture/transport rules
+are outside #376. The original archive-concordance limitation is unchanged.

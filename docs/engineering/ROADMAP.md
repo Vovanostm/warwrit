@@ -25,6 +25,15 @@ visual acceptance or completion of the still-open full loop/M1. The immediate
 product target remains the retained company's next contract, reward, maintenance
 and restart; refresh its actual integration dependencies before implementation.
 
+## Terminal-policy preparation — 2026-11-06
+
+[#376 specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+separates battle resolution, physical consequences and contract proof. Proposed
+next slice: release companies after hostile retreat without false trophies;
+repeat admission needs its own storage step. The owner decision is pending.
+Surrender/capture remains a separate source gap and is unavailable in the current
+ordinary wolf encounter. No new game behavior or full-M1 acceptance is claimed.
+
 ## Target and authority
 
 Deliver the accepted persistent local M1 on MacBook/Chrome: the same account and

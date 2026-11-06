@@ -145,6 +145,16 @@ already merged and are not new work.
 
 ## Terminal outcomes
 
+2026-11-06, #376: [source review and feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+record ordinary V5 wolf reachability, the surrender source gap and the false-proof
+risk of removing the terminal guard alone. Four existing focused checks PASS;
+real hostile-retreat JOIN/SQL/UI NOT_RUN. The proposed M1 retreat policy awaits
+the owner; #376 remains open, #377/#378 are not activated. After acceptance,
+#378 splits into settlement/proof and result UI. Repeat admission is a separate
+bounded storage step: the current schema permits one encounter per contract,
+and admission rejects partly dead hostile groups. #377 needs a capture policy
+before any ordinary human V5 rollout; do not infer one from Capture consumers.
+
 | Card                                                          | Observable result                                          | Start after                                                                                     | Parent                                                  |
 | ------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376) | Определить конечные правила сдачи и отхода противника      | Current base + resource reservation                                                             | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
