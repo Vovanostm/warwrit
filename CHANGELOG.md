@@ -11,11 +11,12 @@ requests.
 
 ### Include the final blank-database launch guard before payroll publication
 
-- 2026-11-06, `codex/game-payroll-integration`, LOCAL integration of merged
+- 2026-11-06, `codex/game-payroll-integration`, PUBLISHED integration of merged
   [PR407](https://github.com/Vovanostm/warwrit/pull/407) / main4c1f0ce4 before
   publishing the new payroll head. Preserve its config/tests/runbook exactly and
   both histories in the CHANGELOG-only conflict; archive the completed launch
-  checkpoint. Payroll source/native result remainsb6b1ff86. Final current-head
+  checkpoint. Payroll source/native result remainsb6b1ff86. Independent staged integration
+  and current finite day/night UI ACCEPT (all4applicable scores2). Final current-head
   hosted CI and merge permission remain required. [Payroll owner](docs/work-packages/WP-02.3.md#payroll-delivery-resume--2026-11-06).
 
 ### Validate current-main payroll on the retained company
@@ -26,8 +27,8 @@ requests.
   lost-reply/reload/exact retries each retain one receipt/event. Rell's50 is a
   backed hold; physician receives50 actual cash (743.94→693.94 company,
   56.06→106.06 physician), total cash conserved. Complete saved report matches
-  across API restart. Independent source re-review ACCEPT; final finite UI and
-  new-head hosted CI pending. [Owning result](docs/work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06)
+  across API restart. Independent source and current finite day/night UI ACCEPT;
+  new-head hosted CI remains required. [Owning result](docs/work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06)
   retains transient tile409/network errors, measured viewport sizes and limits.
 
 ### Refresh earned payroll after healthy FIELD time
