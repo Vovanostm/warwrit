@@ -1,52 +1,95 @@
 # Warwrit development roadmap
 
-- Status: repository-side continuation map, as of 2026-09-29
-- Operational checkpoint: [CURRENT_PLAN.md](CURRENT_PLAN.md)
-- Product/task authority: canonical [full M1 index](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s), [current batch](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recB6KuIPTQiSCpCe), dated owner amendments and [issue #8](https://github.com/Vovanostm/warwrit/issues/8)
+Updated 2026-11-05 at the owner's request. M1 is **in progress**, not accepted.
+[CURRENT_PLAN](CURRENT_PLAN.md) owns the live checkpoint;
+[execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05)
+owns the next playable steps; [task queue](PARALLEL_WAVES.md) maps them to GitHub.
+The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_WAVES.md#ai-task-contract):
+33 new leaf issues plus 7 reused bounded entries, with explicit dependencies and acceptance.
+[Current assessment](../wiki/m1-spec.md#state-2026-11-05) records implementation
+and evidence separately. The superseded September roadmap and queue are retained
+in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
-This is the delivery order for the owner's **full M1 alpha on the Mac**, not a new game rulebook or a promised PR count. M0, S-02, WP-00 and WP-01 are done; WP-02 and M1 remain incomplete. A source-ready task, a merged preparer and a green open PR do not establish an activated game path.
+## Target and authority
 
-## Current frontier
+Deliver the accepted persistent local M1 on MacBook/Chrome: the same account and
+company travel, take authentic contracts, participate physically in two-company
+PvE, obtain lawful proof, receive one reward, live with consequences and return
+after disconnect/restart. Warwrit's larger goal remains a dark-fantasy MMO about
+mercenary companies in warring duchies.
 
-The live checkout, worker paths, API readiness, and evidence are recorded only in
-[CURRENT_PLAN](CURRENT_PLAN.md). The task ownership queue is
-[PARALLEL_WAVES](PARALLEL_WAVES.md). This roadmap keeps the durable dependency
-map and accepted M1 scope below; prior branch snapshots and lane statuses are
-historical and do not establish current integration readiness.
+Authority remains the [M1 milestone](https://airtable.com/apph3bj1NyVrfJeLM/tbleBIa46HLrKEEvP/recX4Qx8bvArvSAEQ),
+[complete M1 index and amendments](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recZhUoTiwT7kIc8s),
+[vision](../wiki/vision.md), accepted ADRs and newer owner decisions.
+This roadmap sequences delivery; it approves no new mechanic or reduced scope.
+The October 30 external roadmap remains a proposal: its three-contract cut,
+negotiation system, fixed playtest counts and ten showcase frames are not new gates.
 
-## Domain and durable company
+## Delivery order
 
-```text
-C05-FIN -> C05-TIME -> C05-COMPOSE -> C06 -> C07 -> C08 -> D01 -> D02
-E04-ACCEPT -> E05 -> F01
-G07 -> G08 -> G09
-G09 + C08 + E05 -> G10
-required domain + G10 -> H durable company/executor -> I01 -> I02
-```
+| Stage                                    | Observable player result                                                                                                                        | Exit evidence and task owner                                                                                                                                                              |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — close the ordinary loop              | Sign in → company → contract → atlas travel → battle → proof/reward → treatment, rest, payroll → next contract → restart, with the same company | Complete the current retained continuation, then repeat from ordinary new-player entry without database edits. #169, #167, #171, #174 and the first checklist of #177.                    |
+| B — complete M1 capabilities and content | All eight contracts and required company actions are usable; investigation, rescue and hunt follow their real facts and distinct outcomes       | #168 service, #170 learning/retraining, #171 remaining inventory/roster, #172 authentic nickname and residual #8; all contract branches and world knowledge checks under #177.            |
+| C — accept the full game                 | A new player understands goals, costs, turns and consequences; two accounts can play and recover safely on the supported device                 | #173 tactics, #174 durability/restore, #175 measured performance, #176 clean launch, #177 final journey; affected #217 UI/text issues and independent integrated critique.                |
+| D — hosted closed test                   | Approved participants use a repeatable hosted build with normal identity, backups, restore and rollback                                         | Prepare release/runbook after the local loop is accepted; deployment is a separately authorized operation. The proposed 10–20-player pilot needs an explicit scope and measured capacity. |
 
-C08 activates real learning only after the full finance/time/composition and interruption/casualty path. G10 activates combat binding, receipt consumption and finalization only when all required physical, life, practice and social/learning effects join one atomic candidate and cursor. H owns the complete versioned PostgreSQL root, authenticated executor, audit/receipts and real parallel-connection/process-crash proof. I owns actual durable command journeys and complete required handler coverage; I02 also needs D02 and F01, while F02/B04 are merged. Implement H responsibilities against real predecessor APIs; the indexed H01–H08 are coverage, not a forced numeric serial chain.
+Work on the next failed player step in A. Do not wait for every B/C task to run
+the first journey. Conversely, a successful A does not close full M1.
+Fix an input, loss or readability blocker when it obstructs that journey;
+defer broad art expansion, new terrain sets and unrelated tooling.
+Implementation may overlap only with separate writers/resources; the existing
+publication mission retains at most two active game-writing worktrees.
 
-## Persistent world and battle joins
+## What is already available
 
-The accepted playable loop is **company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry**. The work can proceed in disjoint source and implementation lanes, then join at real authority boundaries:
+Main contains native identity/company persistence, world clocks and movement,
+camp/supplies/equipment, authored contracts and durable tactical combat with the
+commander HUD. The painted company-private atlas, accepted hunt destination
+markers, ordinary wound treatment and local recruitment are merged.
+Reuse these implementations. They are no longer foundation tasks.
 
-1. **Finite source contracts.** [WORLD](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recTrujX2wy7V49qk)'s RC-P2 proposal is accepted as `AAAA` by [canonical approval](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/rechIKj0hsvfXIvFU) and the [lore v1.2 amendment](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recQNKqYfwoJpCXVu): initial six real hours/1,000 Campaign ticks per day, independent 600-second Light day/300-second night, prospective clock segments, continued accepted travel with defensive offline policy, and a visible supply guard for new dangerous routes without blocking a valid return or camp. PR #103 fixes authored topology/coordinates and pure clocks; SPEC-WORLD/W03 onward still fix routes and actual producers for arrival, visibility and handoff; accepted RC-P2 is not a fresh owner choice. SPEC-CONTRACTS fixes eight instances, three contract types, eleven scenes, helper terms, proof and terminal cases. ID01 fixes own-site account/recovery; RT01 fixes encounter authority/deadline; BATTLE-PROFILES fixes the minimum actor profiles; ART01 establishes the same-scene renderer comparison. Genuinely unsupported material policy needs one bounded owner decision before the affected activation.
-2. **Durable foundations.** ID02–ID03 authenticate and bind an account to the same company on reconnect. W01–W03 provide source-bound topology, persistent Campaign Day and Light clocks, real routes/arrival; W04–W06 add supplies, camp, entities and one world writer. RT02–RT07 own persistent encounters, authenticated transitions, deadlines, Colyseus projections, reconnect and restart. ART02–ART07 implement and validate scene/actor assets against the accepted PlayCanvas selection in ADR-0005; they do not reopen renderer selection. K01–K04 enforce source/time-aware map, battle and rumor knowledge.
-3. **Contracts and physical join.** CT01–CT07 own versioned instances, accessible clues/captives/hunt proof, custody, globally unique authorized claims, rewards and the complete authored content. JOIN01–JOIN03 transfer the actual world/encounter writer, bind two companies by presence and opt-in terms, and apply terminal effects plus world/proof release atomically. A second company is physical participation, not a second bounty; a prepared single-company H transaction alone does not complete this join.
-4. **Player path.** UI01 consumes PB06's controller experience but connects to persistent RT authority and the selected renderer. UI02–UI06 expose real company/services, map/travel, contracts/battle/proof, losses and re-entry without duplicating canonical state or disclosing private facts. Each advertised button needs its real command/result; do not present an ornamental quest as completion.
+At the assessment snapshot, recovery assignment PR363 and payroll PR338 are
+published, verified candidates awaiting actual integration; PR338 is stacked on
+PR363. Item transfer PR339 and command recovery PR335 retain useful prior
+evidence but conflict with current main. Old green checks do not accept a new
+integration. Local art/novel laboratories retain their own boundaries.
 
-The accepted region is one city, three NPC villages and one dangerous site. Content completion means all eight HUNT/INVESTIGATE/RESCUE contract instances, eleven scenes, four reusable backgrounds, six portraits, two trophy images and three enemy archetypes, with source/licensing evidence. The chain is «Когда молчит мельница». These counts are acceptance scope, not current file counts or a test-count target. Preserve the original source-archive concordance limitation.
+The player-facing target uses Babylon.js under ADR-0006 and the selected
+«Сдержанный графический роман» art direction, with the explicit
+«Туман и мокрый камень» environment override. No new engine competition or full
+3D conversion is a prerequisite.
 
-## Diagnostic local battle
+## Full M1 scope that remains binding
 
-PB01–PB04 are merged, providing the protocol/scenario, loopback server/session/actions and protocol-only view. PB06 joins server and view in a browser controller; its in-app browser journey exercised create, move, rejection, defend, reload, retreat and deletion through the local API. It is useful early proof of command/UI wiring but remains disposable server-memory gameplay, not M1 persistence, fog, timers or world join. PB06 is a source dependency for UI01.
+- One region, one city, three NPC villages and one dangerous site.
+- Eight HUNT/INVESTIGATE/RESCUE contract instances, eleven scenes and the
+  «Когда молчит мельница» chain, with real clues, captives, custody and failure paths.
+- Four reusable backgrounds, six portraits, two trophy images and three enemy
+  archetypes with source/licensing evidence; counts alone do not establish quality.
+- Actual company maintenance, care, recruitment, inventory, progression,
+  service and remaining F01/D02/I02 responsibilities; no successful placeholder.
+- Physical owner plus one consenting helper; server-owned time, knowledge,
+  encounter authority and one lawful reward. No teleport, invented witness,
+  resurrection or automatic heir.
+- Current integrated browser, persistence, privacy, visual/device and owner
+  comprehension evidence. Preserve historical replay/saves and exact money.
 
-PB05 AI stepping, PB07 replay import/export, PB08 launcher/reset controls and PB09 browser/Mac lab evidence are **optional** for the full-M1 alpha and unassigned here. Select them only when they improve diagnostic evidence. The final persistent alpha has its own RT/H/QA replay and browser obligations. Do not advertise a lab launcher until one exists or wait for optional PB follow-ups to start full-M1 lanes.
+Original source ZIP concordance remains RC-GAP-MACHINE-01 / NOT_RUN.
+Canonical proposals and provisional numeric profiles retain their original status.
 
-## Final acceptance and running it
+## Beyond M1
 
-QA00 prepares an actual browser runner, traces, ports and disposable database fixtures. QA01 then documents one working local launch only after the integrated server, database, identity, realtime, world, content and UI can start. QA02 exercises two-browser company/travel/contract/battle/proof/payment/re-entry and failure paths; QA03 tests real process crashes and competing actions/claims; QA04 measures privacy, input limits and renderer performance on the named Mac; QA05 records the owner's Mac playtest and actual player comprehension/turn evidence. M1-ACCEPT reads those results with the full indexed criteria. No runnable final launch instruction or owner playtest is currently proven.
+| Horizon                                       | Intended result                                                                                 | Entry boundary                                                                                                                                                                |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| First expansion after M1                      | Second region and second city, per the October 7 owner decision                                 | Complete M1 first; define the finite regional contract and compatible transition.                                                                                             |
+| M2 — one persistent MMO world                 | PvP, direct trade, captivity, three-sided battles/reinforcements and first capturable holding   | Source-defined policies, real integration and 50–100 CCU load/soak evidence. Historical numeric scope is not measured capacity or a reason to restore superseded roster caps. |
+| M3 — repeatability and retention              | Content and world causes sustain decisions, progression and stories beyond the authored opening | Observe real players and measure content cost, economy and reasons to stop; use evidence to select changes.                                                                   |
+| M4 — own-site Early Access / Yandex candidate | Platform identity, localization/accessibility, support and release/rollback operations          | Platform journeys and release acceptance; payments/ads only if separately approved.                                                                                           |
+| M5 — seasonal/political expansion             | Expeditions and politics preserve the permanent company and its history                         | Accepted season/transfer policy and real duplication/recovery checks.                                                                                                         |
 
-Use small, nonduplicative public-invariant tests for deterministic replay, money/item conservation, authorization/privacy, atomic rejection/idempotency, serialization and real transaction/migration behavior. Do not add a test for each helper or substitute structural snapshots for gameplay evidence. The existing clean combined-tree gate remains `pnpm verify`, `pnpm test:combat:stress`, `pnpm test:migrations`; run it once for the final code tree and record actual outcomes. Browser, Mac, human, frame-rate and server-capacity evidence need their own measurements. No fixed PR line cap applies; keep changes cohesive and reviewable.
-
-The original source ZIP concordance remains `NOT_RUN` / `RC-GAP-MACHINE-01`. Missing archives do not permit reconstructed canon or claims that historical catalogue checks ran. Deployment, paid resources, production load and M2 scope are separate from local alpha acceptance.
+These are canonical horizons, not an authorization to start them during M1.
+No completion percentage, delivery date, enjoyment or server capacity is inferred
+from test totals. Use the smallest meaningful checks during each step; run the
+existing clean integrated game gate once at final code delivery. Documentation
+updates do not require game tests.
