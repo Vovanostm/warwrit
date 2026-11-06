@@ -38,7 +38,7 @@ Current visual/device/owner acceptance and full backup/restore remain open; FPS/
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/PR335/PR402 merges are complete. Owner “Implement” activates #401; current source/native criteria passed, publication/CI and separate merge approval remain.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
-#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; publish/check CI next.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. Second CI pending.
 
 ## History
 

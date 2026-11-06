@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+### Simplify the retreat feedback row after the first PR audit
+
+- 2026-11-06, `codex/m1-retreat-401`, LOCAL follow-up in PR405. Exact-head
+  CI42232438150 passed bootstrap, real PostgreSQL, stress, both browser journeys
+  and measured units, then failed native audit for EncounterCommandDesk cognitive18.
+  Retain the failed report. Filter the finite two-message list and render it once;
+  source-only metrics are now cyclomatic2/cognitive15 (within default thresholds).
+  Ten targeted tests, web types/scoped lint and exact rendered-HTML equivalence
+  for nine message-presence combinations PASS. Standalone SSR attempts first
+  failed root React resolution and CSS loading; the owning Vitest runner passed
+  the comparison. This structural report does not replace measured current-head
+  audit. Owning retreat wiki/CURRENT_PLAN retain native evidence and scope;
+  second exact-head hosted CI pending. No new native battle was run for the
+  HTML-equivalent change.
+
 ### Verify retreat applicability and exact recovery through the ordinary game
 
 - 2026-11-06, `codex/m1-retreat-401`, LOCAL native recheck on1bb63f8b.

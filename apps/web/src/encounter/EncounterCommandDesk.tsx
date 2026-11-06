@@ -72,6 +72,7 @@ export function EncounterCommandDesk({
     'retarget-threat': false,
     'execute-threat': false,
   };
+  const messages = [feedback, retreatRequirement].filter(Boolean);
   return (
     <section className="combat-lab-controls" aria-label="Приказы текущего участника">
       <div className="battle-command-group">
@@ -108,10 +109,11 @@ export function EncounterCommandDesk({
           ))}
         </div>
       </div>
-      {(feedback || retreatRequirement) && (
+      {messages.length > 0 && (
         <div className="battle-feedback-row" role="status">
-          {feedback && <p>{feedback}</p>}
-          {retreatRequirement && <p>{retreatRequirement}</p>}
+          {messages.map((message) => (
+            <p key={message}>{message}</p>
+          ))}
         </div>
       )}
     </section>
