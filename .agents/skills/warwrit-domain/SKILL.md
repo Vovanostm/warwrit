@@ -11,6 +11,10 @@ Use the active contract from [CURRENT_PLAN.md](../../../docs/engineering/CURRENT
 Apply [AGENTS.md](../../../AGENTS.md); use `warwrit-context` when resuming.
 For items/care/outcomes read [physical-state.md](references/physical-state.md).
 
+Before changing code, complete the owning [feature specification](../../../AGENTS.md#feature-specification-before-implementation).
+Explain the player effect and architecture choice, including existing rule owners,
+compatibility and the next known extension. Reuse the approved specification.
+
 ## Work from behavior to one owner
 
 Use the task's acceptance to identify the affected transition and normal consumer.

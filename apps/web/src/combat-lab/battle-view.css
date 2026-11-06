@@ -850,6 +850,13 @@
   letter-spacing: 1.7px;
   color: #c3b188;
 }
+.battle-outcome-panel > .battle-outcome-note {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: inherit;
+}
 .battle-outcome-panel h2 {
   margin: 9px 0;
   font-size: 30px;

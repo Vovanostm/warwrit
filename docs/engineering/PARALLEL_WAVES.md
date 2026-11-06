@@ -33,6 +33,20 @@ Retry now waits for its sender. Finite control critique3/3/2/3/2 has no material
 finding; overall scene visual acceptance remains BLOCKED. Hosted CI/integration
 pending. [Owning result](../wiki/mechanics/retreat.md#нативный-результат-401).
 
+2026-11-06 integration correction for #401. Owner-approved
+[PR405](https://github.com/Vovanostm/warwrit/pull/405) merged as149fa8e6 from95de47b6;
+#401 is complete and closed. Current exact-head CI/PR scope and actual merged-tree
+readback passed. The preceding local/pending entries retain their dated context.
+Broader #398/#173, #392 and full-M1/visual acceptance remain open.
+
+## Product workflow amendment — 2026-11-06
+
+The owner removed the global visual BLOCKED prerequisite. Its earlier entries
+above are historical evidence boundaries; full-scene quality remains unassessed.
+Use the affected feature's player criteria and [review method](VISUAL_CRITIQUE.md).
+A missing unrelated capture pack does not stop implementation. Full-loop/M1 and
+real source/integration dependencies remain open until their own results pass.
+
 ## Start here
 
 1. Existing delivery owner finishes E01 → E02; this queue grants no new merge permission.
@@ -52,8 +66,13 @@ concurrent heavy runtime checks. At most two game-writing worktrees remain activ
   One attempt owns one observable scenario and one existing responsibility.
   Each issue gives its result, predecessors, change boundary, exclusions and
   direct verification. There is no invented hour, line-count or test-count quota.
-- Before editing, read live AGENTS/CURRENT_PLAN, the full parent sources and
-  dated amendments, and the issue/PR state. Confirm the actual integrated base;
+- Before feature code, complete the existing owning [feature specification](../../AGENTS.md#feature-specification-before-implementation):
+  problem and expected improvement, full player behavior/state, architecture and
+  known extensions, then cohesive tasks and direct checks. Child issues link the
+  same specification; do not duplicate it or require a separate approval round.
+- Read AGENTS/CURRENT_PLAN, applicable source sections/amendments and the issue/PR
+  state. Read full canonical Notes/Purpose when interpreting their rules; avoid
+  rereading unrelated parent history. Confirm the actual integrated base;
   do not copy an unmerged dependency or restart a parked writer. Source-approved
   rules outrank older provisional profiles. Preserve the source ZIP limitation.
 - Reserve exact files and one persistent worktree. App, protocol/executor,
@@ -76,13 +95,15 @@ concurrent heavy runtime checks. At most two game-writing worktrees remain activ
   the exact result/checks and one next task. A source-backed no-change result
   does not require a filler code commit. Follow the existing final integrated
   gate once, not a new full suite after every card.
-- Substantive gameplay/visual cycles require the existing independent critic
-  with actual images/journey evidence. No card grants merge, auto-merge,
+- At final gameplay/visual acceptance use the independent critic for the specified
+  player journey and affected presentation; recheck affected results after fixes.
+  Missing broader art evidence is not a global gate. No card grants merge, auto-merge,
   deployment, paid resources or automation permission.
 
 To dispatch: “Complete issue #N from the current integrated base under the AI
-task contract in PARALLEL_WAVES.md. Reserve its write set, show the stated player
-result, record actual checks and publish the bounded change. Do not implement
+task contract in PARALLEL_WAVES.md. Complete/link its feature specification before
+code, reserve its write set, show the expected player improvement, record actual
+checks and publish the bounded change. Do not implement
 the successor.” The issue contains the task-specific inputs; this is not an
 instruction to launch workers during planning.
 
@@ -124,11 +145,31 @@ already merged and are not new work.
 
 ## Terminal outcomes
 
+Initial preparation, 2026-11-06, #376: [source review and feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
+record ordinary V5 wolf reachability, the surrender source gap and the false-proof
+risk of removing the terminal guard alone. Four existing focused checks PASS;
+real hostile-retreat JOIN/SQL/UI NOT_RUN. The owner accepted the M1 retreat policy
+on 2026-11-06 and deferred captivity. #378 is source-ready; #377 stays BLOCKED_SOURCE.
+#376 records the decision; no implementation/issue closure is claimed here.
+#378 splits into settlement/proof and result UI. Repeat admission is a separate
+bounded storage step: the current schema permits one encounter per contract,
+and admission rejects partly dead hostile groups. #377 needs a capture policy
+before any ordinary human V5 rollout; do not infer one from Capture consumers.
+
+Delivery update, 2026-11-06: #376 source triage/policy and #378 implementation are
+implemented and accepted in [PR408](https://github.com/Vovanostm/warwrit/pull/408). Real encounter/SQL settlement, rollback, survivor preservation, no false
+proof, retry/reopened connection and ordinary helper LEAVE PASS. Finite result UI
+ACCEPT; native hostile escape not reproduced. [Owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+The preparation-only statuses above are history. #409 owns repeat admission of the
+same unfinished hunt; #368 remains the recovered company's next contract and keeps
+its existing owner. #377 remains blocked on a capture policy.
+
 | Card                                                          | Observable result                                          | Start after                                                                                     | Parent                                                  |
 | ------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376) | Определить конечные правила сдачи и отхода противника      | Current base + resource reservation                                                             | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 | [T02 / #377](https://github.com/Vovanostm/warwrit/issues/377) | Завершать бой со сдавшимся участником по принятому правилу | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
-| [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | [T01 / #376](https://github.com/Vovanostm/warwrit/issues/376); accepted outcome policy required | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T03 / #378](https://github.com/Vovanostm/warwrit/issues/378) | Завершать бой при отходе противника по принятому правилу   | #376 policy accepted 2026-11-06; coordinate current writer/resources                            | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
+| [T04 / #409](https://github.com/Vovanostm/warwrit/issues/409) | Повторить ту же охоту на сохранённых выживших              | #378 merged; specify migration/history and reserve shared files; PLANNED                        | [#364](https://github.com/Vovanostm/warwrit/issues/364) |
 
 ## Eight contracts and eleven scenes
 

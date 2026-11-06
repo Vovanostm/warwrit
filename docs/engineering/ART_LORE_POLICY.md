@@ -4,6 +4,12 @@ Owner policy moved verbatim from [AGENTS.md](../../AGENTS.md) on 2026-10-21 to
 keep the always-loaded contract short; its authority is unchanged. Read it
 before any art, scene, UI-art, lore or player-text work.
 
+Owner amendment — 2026-11-06: style/lore requirements below remain binding.
+[VISUAL_CRITIQUE](VISUAL_CRITIQUE.md) now owns proportional evidence selection.
+The historical full day/night/overview/close-view requirement applies when the
+scene/art feature needs those views, not as a universal prerequisite for controls
+or unrelated gameplay. Missing broader comparisons leave scene quality unassessed.
+
 Owner amendment — 2026-10-25:
 
 - The default for new 2D illustrations and sprites is **«Сдержанный графический

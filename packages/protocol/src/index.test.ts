@@ -140,6 +140,31 @@ describe('protocol foundation', () => {
     expect(
       isFirstHuntReadResponse({ schemaVersion: 1, publicRevision: '5', contract: contractView }),
     ).toBe(true);
+    for (const terminal of [
+      { effects: 'PENDING', hostileRetreated: true },
+      { effects: 'APPLIED', hostileRetreated: false },
+    ])
+      expect(
+        isFirstHuntReadResponse({
+          schemaVersion: 1,
+          publicRevision: '5',
+          contract: { ...contractView, terminal },
+        }),
+      ).toBe(true);
+    for (const terminal of [
+      null,
+      { effects: 'UNKNOWN', hostileRetreated: true },
+      { effects: 'APPLIED', hostileRetreated: 'yes' },
+      { effects: 'APPLIED', hostileRetreated: true, hiddenHostiles: [] },
+    ])
+      expect(
+        isFirstHuntReadResponse({
+          schemaVersion: 1,
+          publicRevision: '5',
+          contract: { ...contractView, terminal },
+        }),
+      ).toBe(false);
+
     expect(
       isFirstHuntReadResponse({
         schemaVersion: 1,
