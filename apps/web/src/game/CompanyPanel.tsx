@@ -2,12 +2,15 @@ import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
+import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
 export function CompanyPanel(props: {
   readonly accountId: string;
   readonly onRefreshItems: () => void;
+  readonly refreshBusy?: boolean;
+  readonly refreshMessage?: string;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
   readonly supplyVenueName: string;
@@ -150,6 +153,17 @@ export function CompanyPanel(props: {
             company={company}
             holdings={holdings}
             onRefresh={props.onRefreshItems}
+          />
+          <CompanyRecoveryPanel
+            key={`${props.accountId}:${company.companyId}`}
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            onRefresh={props.onRefreshItems}
+            refreshBusy={props.refreshBusy ?? false}
+            {...(props.refreshMessage === undefined
+              ? {}
+              : { refreshMessage: props.refreshMessage })}
           />
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (

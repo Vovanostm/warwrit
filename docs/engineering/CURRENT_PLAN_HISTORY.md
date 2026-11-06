@@ -6078,3 +6078,13 @@ Real DB-down/issuer journey, final hosted CI and deployment NOT_RUN.
 [PR334](https://github.com/Vovanostm/warwrit/pull/334), initial head `efcddb06`; normal commit audit PASS.
 Parent owns integration and applicable hosted-check readback; no merge authorized.
 Parallel payroll/recovery implementations and the authorized writing chat have separate owners/worktrees.
+
+## Reproducible launch #176 — 2026-11-06
+
+Coordinator/sole writer: current #176 parent. Owner authorizes spec/review/implement/review/merge/update-main.
+Writer `codex/repro-launch176` in `.claude/worktrees/repro-launch176`, base149fa8e6.
+PR334 MERGED bd919d1a at expected head adedf6c0; issue176 CLOSED. Clean local main updated.
+Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/RT3577/UI5276.
+[Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
+Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.

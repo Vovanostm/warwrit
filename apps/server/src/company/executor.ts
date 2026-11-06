@@ -251,7 +251,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'EquipItem' &&
     input.request.type !== 'ApplyCare' &&
     input.request.type !== 'BeginFieldCamp' &&
-    input.request.type !== 'EndFieldCamp'
+    input.request.type !== 'EndFieldCamp' &&
+    input.request.type !== 'SetAssignment'
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -292,6 +293,20 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       ? prepareCompanyCareFulfillment(state, input.request.payload, input.worldId, clock.tick)
       : undefined;
   if (input.request.type === 'ApplyCare' && careFulfillment === undefined)
+    return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+
+  const assignmentEvidence =
+    input.request.type === 'SetAssignment'
+      ? prepareLocalAssignmentEvidence(
+          state,
+          input.worldId,
+          companyId,
+          input.request.payload.characterId,
+          input.request.payload.assignment,
+          clock.tick,
+        )
+      : undefined;
+  if (input.request.type === 'SetAssignment' && assignmentEvidence === undefined)
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
   // A field camp needs a server-attested site: the party stands still where no living
@@ -536,6 +551,9 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       accessEvidenceId: equipAccess?.id,
       careEvidenceId: careFulfillment?.id,
       careDefinitionId: careFulfillment?.careDefinitionId,
+      assignmentEvidenceId: assignmentEvidence?.duty.id,
+      assignmentLocationId: assignmentEvidence?.duty.location.siteId,
+      assignmentFundingPoolId: assignmentEvidence?.duty.fundingPoolId,
     }),
   };
 
@@ -628,20 +646,25 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
           ? [equipAccess.operatorId]
           : careFulfillment
             ? [careFulfillment.providerId]
-            : (input.request.type === 'BeginFieldCamp' || input.request.type === 'EndFieldCamp') &&
-                party
-              ? lifecycle.characters
-                  .filter((character) => character.presence.fieldPartyId === party.partyId)
-                  .map((character) => character.identity.characterId)
-              : [],
+            : assignmentEvidence
+              ? assignmentEvidence.contactIds
+              : (input.request.type === 'BeginFieldCamp' ||
+                    input.request.type === 'EndFieldCamp') &&
+                  party
+                ? lifecycle.characters
+                    .filter((character) => character.presence.fieldPartyId === party.partyId)
+                    .map((character) => character.identity.characterId)
+                : [],
     facts: [
       ...(recruitEvidence ? [recruitEvidence] : []),
       ...(meetingEvidence ? [meetingEvidence] : []),
+      ...(assignmentEvidence ? [assignmentEvidence.duty] : []),
     ],
     financeFacts: [
       ...(campSite ? [campSite] : []),
       ...(serviceTerms ? [serviceTerms] : []),
       ...(localMoneyAccess ? [localMoneyAccess] : []),
+      ...(assignmentEvidence?.moneyAccess ? [assignmentEvidence.moneyAccess] : []),
     ],
     physicalFacts: [
       ...foodFacts,
@@ -765,6 +788,14 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       clock.tick,
     );
     if (!observed) throw new Error('Joined member could not be observed locally');
+  } else if (input.request.type === 'SetAssignment') {
+    const observed = await observeLocalRecruit(
+      input.transaction,
+      nextState,
+      input.request.payload.characterId,
+      clock.tick,
+    );
+    if (!observed) throw new Error('Assigned member could not be observed locally');
   }
   await persistDueContinuousMovementRoute(input.transaction, due);
   return { kind: 'COMMITTED', response };
@@ -803,6 +834,93 @@ function createRecruitMoneyAccess(
     location: { ...location },
     poolIds: ['local'],
     recipientWalletIds: [recipientWalletId],
+  };
+}
+
+function prepareLocalAssignmentEvidence(
+  state: CompanyCombatAggregateState,
+  worldId: string,
+  companyId: string,
+  characterId: string,
+  assignment: 'FIELD' | 'RECOVERY',
+  tick: string,
+) {
+  const lifecycle = state.economy.lifecycle;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  const character = lifecycle.characters.find(
+    (entry) => entry.identity.characterId === characterId,
+  );
+  if (
+    !party ||
+    party.location.kind !== 'AT' ||
+    !character ||
+    character.presence.fieldPartyId !== party.partyId ||
+    character.presence.availability !== 'AVAILABLE' ||
+    character.presence.encounterBindingId !== null ||
+    character.presence.location.kind !== 'AT' ||
+    character.presence.location.siteId !== party.location.siteId ||
+    character.presence.location.areaId !== party.location.areaId ||
+    !lifecycle.memberships.some(
+      (member) =>
+        member.companyId === companyId &&
+        member.characterId === characterId &&
+        member.endedAt === null,
+    )
+  )
+    return undefined;
+  const contactIds = localCompanyContacts(state, companyId, party.location);
+  if (!contactIds.includes(characterId)) return undefined;
+  const membership = lifecycle.memberships.find(
+    (member) =>
+      member.companyId === companyId &&
+      member.characterId === characterId &&
+      member.endedAt === null,
+  );
+  const account = membership
+    ? state.economy.finance.accounts.find((entry) => entry.membershipId === membership.membershipId)
+    : undefined;
+  const localPool = account
+    ? state.economy.finance.pools.find((pool) => pool.poolId === account.poolId)
+    : undefined;
+  const localWallet = localPool
+    ? state.economy.finance.wallets.find((wallet) => wallet.walletId === localPool.walletId)
+    : undefined;
+  if (
+    !localPool ||
+    !localWallet ||
+    localWallet.location.siteId !== party.location.siteId ||
+    localWallet.location.areaId !== party.location.areaId
+  )
+    return undefined;
+  const scope = {
+    id: randomUUID(),
+    sourceEventId: randomUUID(),
+    worldId,
+    companyId,
+    revision: lifecycle.revision,
+    atTick: campaignTick(tick),
+  };
+  return {
+    duty: {
+      ...scope,
+      kind: 'DUTY' as const,
+      characterId,
+      assignment,
+      location: { ...party.location },
+      fundingPoolId: localPool.poolId,
+      handoverToId: null,
+      partyId: party.partyId,
+    },
+    moneyAccess: {
+      ...scope,
+      id: randomUUID(),
+      kind: 'LOCAL_MONEY_ACCESS' as const,
+      operatorId: contactIds[0]!,
+      location: { ...party.location },
+      poolIds: [localPool.poolId],
+      recipientWalletIds: [],
+    },
+    contactIds,
   };
 }
 

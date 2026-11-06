@@ -1,28 +1,15 @@
 # Warwrit current delivery plan
 
-## Reproducible launch #176 — 2026-11-06
-
-Coordinator/sole writer: current #176 parent. Owner authorizes spec/review/implement/review/merge/update-main.
-Writer `codex/repro-launch176` in `.claude/worktrees/repro-launch176`, base149fa8e6.
-PR334 MERGED bd919d1a at expected head adedf6c0; issue176 CLOSED. Clean local main updated.
-Resources reserved: Compose warwrit-launch176-20261106, DB54376/Dex5576/API3576/RT3577/UI5276.
-[Contract](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
-Spec/source review ACCEPT; install/OIDC/retention/encounter smoke PASS. CI42266945856 + scope42267008090 SUCCESS.
-Next game cycle remains with recovery/payroll and encounter owners. #176 stack stopped; volumes retained.
-Owner follow-up authorizes review/fix/PR/merge. Writer codex/launch-blank-database reserves config/tests and owning docs.
-Blank-DB/OIDC mismatch reproduced ready200/auth404. Single normalization fixes development/test and fixture setup.
-[Follow-up](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06) local. Source review ACCEPT. Checks19/types/lint PASS. CI/merge pending. Retained DB stopped.
-
 ## Stepwise M1 implementation — 2026-11-06
 
 Coordinator: the existing care/recovery/payroll delivery parent retains game integration and resources.
-This mission owns #401 retreat applicability; the existing parent retains recovery/payroll integration and resources.
+Owner resumed #169/PR363 recovery delivery on2026-11-06. This parent owns recovery integration/native validation; payroll remains a subsequent slice.
 2026-11-06 owner follow-up: “merge, next - #372”; PR335 merged with expected-head protection as496ca5f5; #371 complete.
-Active writer codex/m1-retreat-401 in .claude/worktrees/m1-entry-369; integrated main802fb89a after PR404, retaining local closeout47045f10.
+Active recovery writer codex/company-recovery in ~/.codex/worktrees/game-painted-map-client/warwrit; integrating main0f9ea2a1 after launch PR334/406; existing PR363.
 Active result #369 PASS on main b89f4128: local OIDC → one company → nine equips → ten rations/40crowns → mill offer → logout/re-entry; isolated entry369 DB, API3528/realtime3529/UI5228.
 #371/PR335: source/finite playable ACCEPT; ordinary native retry PASS; hosted CI42116755511 attempt2 and PR scope PASS; attempt1 timeout retained in PR.
 #372 complete/closed: owner approved PR402; expected-head merge from9ceb09a6 is ffaa84a5, read back on GitHub and origin/main with unchanged reviewed tree.
-Root reserves encounter control-grant/protocol/desk/panel and regressions/shared docs; isolated entry369 resources DB54369/API3528/realtime3529/UI5228.
+Recovery reserves company server/protocol, App recovery props, CompanyPanel/GameShell and its owning docs; preserve entry369/retreat resources and all saved worlds.
 Current DB warwrit_retreat401_recheck_20261106 retained; prior warwrit/battle372/retreat401 worlds and defeats retained. Fault proxy3531 stopped; ordinary realtime3529 restored.
 #372 current native boundary PASS on46c3b75a: lost wait→real deadline/re-entry→original receipt atcanonical8; HUMAN resume and old activation with current actor/revision15 rejected without mutation.
 Feedback fix removes overlapping legacy hints; red regression reproduced, then5 tests/types/scoped lint and current native assertions PASS.
@@ -34,7 +21,7 @@ Other #368–#400 tasks remain planned; #369/#371/#372 have executed acceptance.
 Target remains full local M1; [Roadmap](ROADMAP.md) and [execution plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05) define the order.
 Game assessment: cf973d35; publication base b6a04977 includes CI-only PR367; no fresh game run in this assessment.
 Merged: atlas PR344, hunt markers PR353, care PR350 and local Recruit/Join PR360.
-Open PR363 at2d6bf3cc: explicit rest/FIELD, real recovery/retry/restart and finite UI accepted.
+PR363 source/finite UI/native37→54HP/retry/restart/return ACCEPT; CI42267843778/scope PASS at4549975a. Recovery source unchanged while integrating launch main0f9ea2a1; PR owns new-head CI/merge permission.
 Open PR338 atfc717f3f: payroll, exact retry/restart and finite UI accepted; base is PR363.
 These are candidate results, not integrated-main or full-game acceptance.
 Delivery owner completes PR363 → retarget/check PR338 → current-main continuation using recorded scoped authority.
@@ -49,9 +36,15 @@ World knowledge/offline behavior and two-company participation require the full 
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
 [Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
-PR366/PR335/PR402 merges are complete. Owner “Implement” activates #401; current source/native criteria passed, publication/CI and separate merge approval remain.
+PR366/335/402/405/334/406 merged; launch #176 complete, volumes retained. New recovery-head merge remains separately governed by AGENTS.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
-#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. Second CI pending.
+#401 native PASS on1bb63f8b: off-exit disabled, legal retreat/lost reply/reload/exact receipt8 retry, then all3 retreated alive. First2dead run retained. Finite critic3/3/2/3/2/no material issue; full visual BLOCKED.6files/36tests/types/lint PASS; PR405 first CI audit FAIL (desk cognitive18); simplified to15 with identical HTML9cases. PR405 merged149fa8e6 after green checks.
+
+## Launch configuration follow-up — 2026-11-06
+
+Owner requests continue/merge of PR407. Writer codex/launch-blank-database owns config/tests and its existing launch docs.
+Main a2348871 integrated with recovery history retained. Blank-DB correction/source review unchanged.
+[Result](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06). Integrated protocol build/server types/19 tests PASS. New CI pending.
 
 ## History
 

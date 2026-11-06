@@ -241,7 +241,12 @@ describe('local recruitment (PostgreSQL)', () => {
           url: '/company',
           headers: headers[0]!,
         });
-        const original = storedStates[0]!;
+        expect(beforeHiddenChange.statusCode, beforeHiddenChange.body).toBe(200);
+        const afterFirstRead = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companies[0]!));
+        if (!afterFirstRead) throw new Error('company snapshot disappeared after first read');
+        const original = afterFirstRead;
         const hidden = {
           ...original,
           economy: {
@@ -275,17 +280,22 @@ describe('local recruitment (PostgreSQL)', () => {
           url: '/company',
           headers: headers[0]!,
         });
+        expect(afterHiddenChange.statusCode, afterHiddenChange.body).toBe(200);
         expect(afterHiddenChange.json().company.characters).toEqual(
           beforeHiddenChange.json().company.characters,
         );
+        const afterHiddenRead = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companies[0]!));
+        if (!afterHiddenRead) throw new Error('company snapshot disappeared after hidden read');
         // A local reserve is sufficient contact even if every field member is unavailable.
         const reserveContact = {
-          ...original,
+          ...afterHiddenRead,
           economy: {
-            ...original.economy,
+            ...afterHiddenRead.economy,
             lifecycle: {
-              ...original.economy.lifecycle,
-              characters: original.economy.lifecycle.characters.map((person) =>
+              ...afterHiddenRead.economy.lifecycle,
+              characters: afterHiddenRead.economy.lifecycle.characters.map((person) =>
                 person.presence.fieldPartyId !== null
                   ? {
                       ...person,
@@ -296,7 +306,12 @@ describe('local recruitment (PostgreSQL)', () => {
                         assignment: 'NONE' as const,
                       },
                     }
-                  : person,
+                  : person.identity.characterId === 'a-worker-1'
+                    ? {
+                        ...person,
+                        presence: { ...person.presence, availability: 'AVAILABLE' as const },
+                      }
+                    : person,
               ),
             },
           },
@@ -314,9 +329,28 @@ describe('local recruitment (PostgreSQL)', () => {
         });
         expect(reserveOffers.statusCode, reserveOffers.body).toBe(200);
         expect(reserveOffers.json().offers).toHaveLength(1);
+        const afterReserveRead = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companies[0]!));
+        if (!afterReserveRead) throw new Error('company snapshot disappeared after reserve read');
+        const restored = {
+          ...afterReserveRead,
+          economy: {
+            ...afterReserveRead.economy,
+            lifecycle: {
+              ...afterReserveRead.economy.lifecycle,
+              characters: afterReserveRead.economy.lifecycle.characters.map((person) => {
+                const baseline = original.economy.lifecycle.characters.find(
+                  (entry) => entry.identity.characterId === person.identity.characterId,
+                );
+                return baseline ? { ...person, presence: baseline.presence } : person;
+              }),
+            },
+          },
+        };
         await database
           .updateTable('company_snapshots')
-          .set({ state: original })
+          .set({ state: restored })
           .where('world_id', '=', worldId)
           .where('company_id', '=', companies[0])
           .execute();
@@ -343,8 +377,17 @@ describe('local recruitment (PostgreSQL)', () => {
         expect(physician?.aptitudes.find((entry) => entry.skillId === 'medicine')).toBeDefined();
         expect(offers[1]!.find((offer) => offer.physician)?.offerId).toBe(physician!.offerId);
 
-        const baseRevisions = storedStates.map(
-          (state) => state.economy.lifecycle.knowledge.revision,
+        const currentStates = await Promise.all(
+          companies.map((companyId) =>
+            database
+              .transaction()
+              .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId)),
+          ),
+        );
+        if (currentStates.some((state) => !state))
+          throw new Error('company snapshot disappeared before recruitment commands');
+        const baseRevisions = currentStates.map(
+          (state) => state!.economy.lifecycle.knowledge.revision,
         );
         const hireRequests = headers.map((header, index) => ({
           header,
@@ -376,7 +419,7 @@ describe('local recruitment (PostgreSQL)', () => {
                 id: companyId,
                 worldId,
                 companyId,
-                partyId: storedStates[index]!.economy.lifecycle.parties[0]!.partyId,
+                partyId: currentStates[index]!.economy.lifecycle.parties[0]!.partyId,
               },
               expires_at: new Date(Date.now() + 60_000),
               consumed_at: new Date(),
@@ -451,7 +494,7 @@ describe('local recruitment (PostgreSQL)', () => {
               movement.purpose === 'SIGNING' && movement.to === candidateWallet?.walletId,
           ),
         ).toHaveLength(1);
-        expect(loserState).toEqual(storedStates[loser]);
+        expect(loserState).toEqual(currentStates[loser]);
 
         // Let the recruit spend real campaign time in local reserve before Join.
         await database

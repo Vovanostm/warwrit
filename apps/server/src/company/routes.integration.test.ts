@@ -837,7 +837,7 @@ describe('authenticated company read (PostgreSQL)', () => {
           code: 'STALE_REVISION',
           publicRevision: renamedRevision,
         });
-        const unsupported = await createdApp.inject({
+        const invalidAssignment = await createdApp.inject({
           method: 'POST',
           url: '/company/commands',
           headers: commandHeaders,
@@ -847,6 +847,20 @@ describe('authenticated company read (PostgreSQL)', () => {
             expectedPublicRevision: renamedRevision,
             type: 'SetAssignment',
             payload: {},
+          },
+        });
+        expect(invalidAssignment.statusCode).toBe(400);
+        expect(invalidAssignment.json()).toMatchObject({ code: 'INVALID_COMMAND' });
+        const unsupported = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: commandHeaders,
+          payload: {
+            schemaVersion: 2,
+            commandId: `unsupported-action-${accountId}`,
+            expectedPublicRevision: renamedRevision,
+            type: 'ReturnToService',
+            payload: { characterId: 'a-member' },
           },
         });
         expect(unsupported.statusCode).toBe(409);

@@ -129,9 +129,8 @@ Local execution logs are under output/ (untracked).
 ### Post-review blank-database correction — 2026-11-06
 
 Owner requested another review/fix/PR/merge cycle after the initial delivery.
-Review found a concrete configuration mismatch: complete OIDC plus a blank
-`DATABASE_URL` in development/test returned identity configuration without a
-usable database. The actual entry process answered ready200 and auth/session404.
+With complete OIDC and a blank `DATABASE_URL`, development/test returned
+identity configuration without a usable database. The actual entry process answered ready200 and auth/session404.
 Production already refused the same input at its later mandatory-dependency guard.
 
 Normalize the trimmed empty URL to missing once, before all existing requirements.
@@ -146,7 +145,12 @@ Branch `codex/launch-blank-database`, base0f9ea2a1. Focused config/app/database
 checks19, server types and scoped lint/format PASS. Independent source review
 ACCEPT. The reviewer did not execute product or runtime checks. Fresh browser/SQL replay NOT_RUN for this configuration-only change.
 The earlier accepted valid-configuration journey remains historical evidence.
-Current local correction awaits publication/CI/merge. Full M1/hosted limits remain.
+[PR407](https://github.com/Vovanostm/warwrit/pull/407) is published. Owner resumed
+with explicit continue/merge permission. Main a2348871 (recovery PR363) advanced
+during the first CI. Integrate it while retaining both document histories and
+the recovery owner's current checkpoint. The blank-database correction is
+unchanged. Integrated protocol build, server types and19 focused tests PASS.
+Current integrated CI/merge pending. Full M1/hosted limits remain.
 
 ## Проверенный обычный путь рисованной карты — 2026-10-29
 

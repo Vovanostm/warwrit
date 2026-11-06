@@ -498,6 +498,13 @@ function parseOrdinaryCompanyCommandV2(
       !isEntityId(payload['resourceItemId'])
     )
       return undefined;
+  } else if (value['type'] === 'SetAssignment') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['assignment', 'characterId']) ||
+      !isEntityId(payload['characterId']) ||
+      (payload['assignment'] !== 'FIELD' && payload['assignment'] !== 'RECOVERY')
+    )
+      return undefined;
   }
 
   return value as unknown as OrdinaryPlayerCompanyCommandV2Dto;
