@@ -32,6 +32,15 @@ The server rejects partial configuration, a missing database, an inexact public
 origin, or any callback URI except the fixed callback on that origin. HTTP is
 accepted only when both the issuer and public origin are loopback URLs.
 
+Production startup correction — 2026-10-28: `NODE_ENV=production` now requires
+a nonblank `DATABASE_URL` and the complete validated OIDC configuration above.
+The server refuses missing game dependencies before constructing or listening
+on the app, rather than starting a health-only server that reports ready.
+Nonproduction retains the optional identity/database setup used by local tools.
+Focused config/app checks pass (12 tests); an actual process with missing
+production settings exits with the configuration refusal. A new real
+database-down/issuer journey and deployment are NOT_RUN.
+
 When identity is enabled, `/health/ready` checks the required identity tables and
 columns without reading account data or applying migrations. Missing schema
 returns 503. With identity disabled, the database-only readiness probe remains.

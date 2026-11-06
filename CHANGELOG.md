@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Require playable dependencies before production startup
+
+- 2026-10-28, branch `codex/game-production-readiness`, published in
+  [PR334](https://github.com/Vovanostm/warwrit/pull/334): the owner's
+  autonomous game-completion mission includes correcting a production server
+  that could start without database/identity game routes and report ready.
+  `loadServerConfig` now requires nonblank DATABASE_URL and complete validated
+  OIDC in production; development health-only use remains supported. No new
+  dependency, migration or gameplay rule. Config/app12, package builds/server
+  types, formatting/diff and an actual missing-config entry-process refusal PASS;
+  independent source review ACCEPT. Real database-down/issuer journey, hosted CI
+  and deployment NOT_RUN. [Configuration contract](docs/engineering/ID01-IDENTITY.md).
+
+
 ### Specify the isolated reproducible-launch cycle
 
 - 2026-11-06, `codex/repro-launch176`, LOCAL specification for owner-requested
