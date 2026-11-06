@@ -9,6 +9,104 @@ requests.
 
 ## Unreleased
 
+### Make the wolf settlement regression use reproducible combat inputs
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL correction for
+  [PR404](https://github.com/Vovanostm/warwrit/pull/404) attempt 1. Existing SQL
+  scenario failed terminal evidence after its random world selected a different
+  battle. The victory helper also permits hostile retreat, which V4/V5 deliberately
+  leave pending. Set deterministic world/actor/item fixture IDs and assert dead
+  hostiles before preserving actual settlement/replay/retry checks. Keep the
+  separate pending-retreat regression and random defaults for other fixtures.
+  Exact failed terminal state was unavailable. Focused real PostgreSQL 17 case
+  and file-wide V8/source-mode SQL24 PASS; pending-retreat unit1 PASS. Initial
+  world-ID type inference failure corrected with an explicit string parameter;
+  server types/scoped lint PASS. Owned DB removed. Independent repair source
+  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
+
+### Prepare reviewed game skills for publication on current main
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL integration for
+  [#403](https://github.com/Vovanostm/warwrit/issues/403). Owner explicitly requested
+  “pr, review, merge”. Integrate current main `ffaa84a5`, retaining both changelog
+  histories. The PR delta contains the reviewed skill instructions, discovery,
+  formatting scope and prior pinned research/installation records. Applicable
+  hosted checks and final integrated independent review are required before
+  the authorized manual merge. Trial evidence retains its original revision and
+  limitations. [Owning result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
+
+### Adopt bounded game skills and remove stale workflow directions
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner authorized
+  review/add/try with subagents. Add project-local adapted Babylon diagnosis and
+  balance-eval skills with pinned provenance/licenses and host discovery links.
+  Extend existing review with on-demand narrative/quest/UX checks. Narrow Colyseus
+  activation, select current 2D references, preserve transparent sprite alpha,
+  scope retained 3D work and replace PlayCanvas-specific inspector guidance.
+  Remove stale audit bypass and nested art CLI/model recipe. Preserve parser and
+  existing distinct workflows. [Adoption decisions and trials](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
+  records three independent task attempts, requested clarification and the actual
+  eight-battle sample. Manifest, local-link, discovery, format/diff checks PASS and independent sampled
+  source/diff review ACCEPT. Two first submissions accepted, third accepted after
+  review-timing clarification. Product browser/SQL/release checks NOT_RUN.
+  General efficiency NOT_MEASURED.
+
+### Select game-development skill candidates against Warwrit's actual stack
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a
+  game/theme-specific skill search. Inspect 50 documents: 44 pinned GitHub
+  artifacts from 16 repositories and six official engine/network pages; compare
+  31 skills against Babylon 9.28, Colyseus 0.18, PostgreSQL canonical ownership,
+  the finite playable journey and approved dark-fantasy canon/style. Recommend
+  bounded Babylon 9 reference and conditional balance-eval use; identify precise
+  narrative audits with unresolved licensing and reject incompatible engine,
+  monetization, world-generation and studio defaults. [Survey, ratings and sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
+  Existing Colyseus entry matches pinned upstream. Static API/manifest probes
+  retain their limitations; no installation, game tests, product change, merge
+  or measured effectiveness claimed. Independent source/sample review ACCEPT;
+  source-count/deduplication, score arithmetic, local pointers, formatting and scoped
+  diff PASS. Game tests NOT_RUN; effectiveness NOT_MEASURED.
+
+### Install the selected property-testing skill with bounded activation
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested installation
+  following the expanded survey. Add pinned Trail of Bits property-based-testing
+  to the user Codex directory with its license and modification provenance.
+  Remove unsupported effort metadata, narrow its trigger and bound refactoring,
+  integration claims and severity heuristics. Retain the two existing diagnostic
+  skills. Manifest/source/license/reference readback PASS; no new product test
+  dependency or game-code change. Behavioral tests NOT_RUN; effectiveness
+  NOT_MEASURED. [Installation result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
+
+### Expand diagnostic skill research to 62 rated sources
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested at least
+  50 sources and ratings after the initial comparison was too narrow. Compare
+  23 skill/agent/command candidates using 38 pinned GitHub documents from 13
+  repositories, 12 primary studies/reports and 12 opened Reddit discussions.
+  Separate suitability scores, popularity, anecdotes and measured effects;
+  downgrade the earlier generic-debugging recommendation to an optional trial.
+  Property-testing adoption stays conditional: fast-check already exists, but
+  the unchanged upstream manifest fails the local validator on `effort`.
+  [Expanded survey, method, ratings and all sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
+  No new installation, product change, paid evaluation or game tests. Actual
+  effectiveness remains NOT_MEASURED. Independent source/sample review ACCEPT;
+  source-count/deduplication, score arithmetic, local links, formatting and scoped
+  diff PASS. These checks establish only their stated boundaries.
+
+### Select standalone diagnostic skills after GitHub source review
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a deep
+  GitHub skill comparison and installation for project error finding. Install
+  pinned debugging-strategies and variant-analysis in the user's Codex skill
+  directory, retaining upstream licenses/provenance. Reject conflicting repeat-check,
+  size-gate and plugin-heavy alternatives; keep Warwrit's domain/browser workflows.
+  [Research and acceptance](docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
+  records source evidence, limitations and the next trial. Manifest validation,
+  source/license/provenance/local-reference readback PASS; report formatting was
+  corrected. Product source, CURRENT_PLAN and existing skills are unchanged;
+  effectiveness NOT_MEASURED. No game tests required or run.
+
 ### Complete the current battle recovery boundary and retain failed exits
 
 - 2026-11-06, `codex/m1-battle-recovery-372`, LOCAL #372 native recheck on
