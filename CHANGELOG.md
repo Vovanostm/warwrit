@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Publish the reviewed loss-panel correction
+
+- 2026-11-07, `codex/loss-panel-layout392`, PUBLISHED
+  [PR412](https://github.com/Vovanostm/warwrit/pull/412) from724bbe76 after source,
+  finite visual and direct layout/input checks. Publication status read back.
+  The owning wiki and support checkpoint retain replay limits and full #392.
+  This closeout changes documents only. Repeated game/full-gate checks NOT_RUN;
+  merge permission requested separately. No data reset or migration.
+
 ### Accept the scoped loss-panel layout result
 
 - 2026-11-07, `codex/loss-panel-layout392`, LOCAL final integrated result before
