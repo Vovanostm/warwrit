@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Clarify scoped acceptance after integration review
+
+- 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL correction from independent
+  review of cae315e7 against main a2348871: clarify historical global visual
+  BLOCKED in [M1 status](docs/wiki/m1-spec.md); #401 remains accepted in scope,
+  broader scene quality unassessed. Source/workflow review found no confirmed
+  code defect and accepted infrastructure changes. Native journey continues;
+  clean integrated verification is running. No gameplay behavior changes.
+
 ### Integrate company recovery into hostile-retreat delivery
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL integration of merged
