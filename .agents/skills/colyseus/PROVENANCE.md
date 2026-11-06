@@ -4,11 +4,12 @@
 - Commit: `9e3ce1326a057f7f1edb71330e1cbb731b9e9536`
 - Installed: 2026-09-28 with the Codex skill installer.
 - License: MIT; see LICENSE.
-- Scope: unchanged SKILL.md, bundled references and sources.json. Upstream development scripts, package and CI are excluded.
+- Original install scope included SKILL.md, bundled references and sources.json. Upstream development scripts, package and CI were excluded.
+- Local amendment, 2026-11-06. Narrowed discovery to actual realtime work, clarified canonical ownership and removed automatic app scaffolding. Bundled API references remain at the pinned source.
 - Warwrit ADR-0003 overrides generic scaffolding examples: retain Fastify, PostgreSQL and package boundaries. Do not scaffold another app or import server code into web.
 - Installed guidance does not prove runtime integration or an installed Colyseus dependency.
 
-## Installed source digests
+## Original installed source digests
 
 - `LICENSE`: `d12a94006ac16e7a17fc4af03d6e2820c69a9541d0d169eb525f51c293486e43`
 - `SKILL.md`: `c5cb3ccde1a8463c995215eac118a2cb77140be8d2e74e5fe833c51cafc24046`

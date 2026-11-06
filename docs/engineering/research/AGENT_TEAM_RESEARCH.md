@@ -5,6 +5,91 @@
 > `code-simplifier` helpers named below were later removed; see
 > [skills history](../../../.agents/skills/README.md#history).
 
+## Game-skill adoption and forward trials — 2026-11-06
+
+The owner authorized review, addition and subagent trials after the survey and
+stack explanation. LOCAL on `codex/harness-diagnostic-skills`, baseline `f82c278b`.
+Project-local installation was chosen so source, adaptation and discovery changes
+travel with Warwrit. This section supersedes the survey's adoption status below.
+
+### Accepted and removed instructions
+
+| Decision                              | Implemented result                                                                                                                                                                                                                                                               |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adopt Babylon reference narrowly      | [babylonjs](../../../.agents/skills/babylonjs/SKILL.md) diagnoses the existing scene, resource owner, late loads and visible readiness. Retains Apache-2.0 license and pinned provenance.                                                                                        |
+| Adopt balance measurement narrowly    | [eval-driven-game-development](../../../.agents/skills/eval-driven-game-development/SKILL.md) checks modeled mechanics, ruleset, seeds, sample and policies. Both absolute targets and regression deltas need approval before gating. Retains MIT license and pinned provenance. |
+| Reuse narrative/quest/UX review       | [warwrit-review](../../../.agents/skills/warwrit-review/SKILL.md) routes to an on-demand project-authored reference grounded in writing, canonical knowledge and state transitions.                                                                                              |
+| Keep Colyseus with narrower discovery | Activate for actual realtime/API work. Remove the package-presence trigger and automatic new-app scaffolding. Record the local amendment in its provenance.                                                                                                                      |
+| Correct art and character routing     | New 2D selects current graphic-novel references. RGB compositing applies to opaque art. Transparent sprite edits preserve alpha. Retained 3D work activates for its assignment. Final critic timing follows current AGENTS.                                                      |
+| Retain engine-independent GLB parser  | Replace PlayCanvas-only instruction assumptions and unavailable neighbor-skill links with Babylon placement/runtime checks. Parser and license remain intact.                                                                                                                    |
+| Remove stale operational directions   | Delete the character audit-bypass clause and nested CLI/model art-generation recipe. Use current hooks and available image tools.                                                                                                                                                |
+
+No whole existing skill was removed. The reviewed workflows have distinct local
+consumers. Four Claude discovery links cover the two additions plus previously
+missing Colyseus and GLB inspection entries. Codex uses `.agents/skills/`.
+
+The Babylon upstream's unconditional engine disposal conflicts with Warwrit's
+shared per-canvas engine owner and delayed release. The adaptation preserves that
+owner. Generic PBR/orbit setup, Havok/XR/WebGPU/GUI/MCP additions and author benchmark
+numbers were omitted. The balance adaptation also removes the claim that matching
+aggregate win rates proves a seed/refactor preserves deterministic semantics.
+
+Stanestane narrative packages remain research candidates with unresolved licensing.
+The local review reference derives from Warwrit's existing rules. Ink/Inky remains
+a candidate for a separately bounded narrative integration experiment. This task
+adds instruction workflows to the existing product stack.
+
+### Trials and actual observations
+
+Two read-only agents first reviewed candidate adoption and local cleanup. Three
+fresh agents then received separate tasks, the adapted skills and minimal raw
+sources, without the parent rubric or previous conclusions. Criteria were recorded
+before dispatch in ignored `output/gamedev-skill-trial-20261106/rubric.json`.
+
+| Assigned trial                                       | First submitted result                                                 | Actual evidence and limits                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Babylon map close/reopen diagnosis                   | Accepted within source-review scope                                    | Traced `WorldMapCanvas` → map scene → engine owner, delayed release, reacquisition and render-loop cleanup. Preserved the owner. Proposed one native reproduction for a blank canvas. Browser/remount execution NOT_RUN.                                                                                                                                                                                                        |
+| Eight-battle sample and physician inference          | Accepted with explicit model limits                                    | `pnpm exec tsx scripts/combat-stress.ts 8`, exit 0. Seeds 1–8, generated `m0-prototype-v1`, mixed aggressive/survivor policies. All eight resolved, alpha 5 / beta 3, 1,019 commands. Replay checks 0 and deterministic reruns 0 because this sample never reaches their interval triggers.                                                                                                                                     |
+| Art/GLB routing and supplied narrative/state fixture | Core routing/diagnosis accepted, review-timing clarification requested | Selected current 2D references, alpha-preserving sprite edits and explicitly assigned 3D/GLB workflow. Identified the fixture's hidden-death disclosure and reward-success contradiction. The first plan omitted explicit independent-review scheduling. On clarification, it supplied final-only specialist review, actual images/journey inputs and rubric criteria. No asset generation, GLB execution or visual acceptance. |
+
+The physician question was correctly left open because the executed combat sample
+omits recruitment, treatment, medical supplies, rewards and payroll. A larger
+unchanged combat run would retain that omission. The generated sample's outcomes
+leave ordinary campaign difficulty and player enjoyment unmeasured.
+
+All three initial reports completed. Two were accepted at first submission for
+all assigned criteria. The third needed the review-timing clarification described
+above. This is a development trial using cases related to the design review.
+There was no baseline/control variant or held-out reliability evaluation. General
+agent efficiency, token cost and end-to-end product delivery improvement are
+NOT_MEASURED. Raw sample output remains at
+`output/gamedev-skill-trial-20261106/balance-run.txt`.
+
+The affected five existing skill entrypoints plus two additions grew from 44,925
+to 50,322 bytes, a net 5,397-byte increase. This is on-demand workflow content.
+No root AGENTS expansion was needed. Narrower discovery and removed stale advice
+are expected to prevent specific errors. Their actual savings remain unmeasured.
+
+### Closeout
+
+Pinned upstream entries were downloaded with the built-in installer to owned
+ignored staging and byte-compared with the reviewed source. Adapted entries keep
+the applicable licenses and local modification records. The local-validator-only
+`compatibility` problem was avoided by putting runtime details in the body.
+Independent sampled instruction/source diff review ACCEPT. The reviewer checked
+resource ownership, installed versions, actual stress sampling, art authority,
+alpha behavior, license/provenance pointers and discovery links. The retained 3D
+entry still names historical experiment files absent from this checkout. Its
+explicit task/contract routing is preserved. Manifest/link/discovery/format/diff
+checks PASS. Full game, SQL, browser and release acceptance are NOT_RUN.
+
+All three initial reports were available between the parent dispatch marker at
+13:09:52 UTC and readback at 13:15:26 UTC. This 5m34s observation window includes
+parallel work, concurrent review and parent activity. The clarification and final
+checks followed. Individual agent active effort/token usage is NOT_MEASURED. First-submission acceptance was 2/3 for this development set, eventual
+bounded-task acceptance 3/3 after clarification. These counts have no control or
+held-out comparison and establish only the described trial outcomes.
+
 ## Game-development skills for Warwrit — 2026-11-06
 
 Owner request: find useful skills for this game and its theme. **Supported shortlist,

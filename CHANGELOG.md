@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Adopt bounded game skills and remove stale workflow directions
+
+- 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner authorized
+  review/add/try with subagents. Add project-local adapted Babylon diagnosis and
+  balance-eval skills with pinned provenance/licenses and host discovery links.
+  Extend existing review with on-demand narrative/quest/UX checks. Narrow Colyseus
+  activation, select current 2D references, preserve transparent sprite alpha,
+  scope retained 3D work and replace PlayCanvas-specific inspector guidance.
+  Remove stale audit bypass and nested art CLI/model recipe. Preserve parser and
+  existing distinct workflows. [Adoption decisions and trials](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
+  records three independent task attempts, requested clarification and the actual
+  eight-battle sample. Manifest, local-link, discovery, format/diff checks PASS and independent sampled
+  source/diff review ACCEPT. Two first submissions accepted, third accepted after
+  review-timing clarification. Product browser/SQL/release checks NOT_RUN.
+  General efficiency NOT_MEASURED.
+
 ### Select game-development skill candidates against Warwrit's actual stack
 
 - 2026-11-06, `codex/harness-diagnostic-skills`, LOCAL. Owner requested a
