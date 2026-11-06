@@ -324,3 +324,35 @@ unavailable; unsupported surrender outcomes remain pending without payment.
 [Current delivery and proof boundaries](evidence/persistent-hud/main-readback.md).
 The representative trophy/payment/restart check is in progress, not full M1
 or a new external sign-in/company-creation acceptance.
+
+## Same-company next contract — #368, 2026-11-07
+
+Owner requested the next issue after approving payroll2b1e834c. PR338 merged as
+b1c7264e, with fullCI42286898832 and final scope42291895718 PASS; local main readback
+matched with an empty approved-head diff. Recovery PR363/#169 is also integrated.
+Parent owns branch codex/m1-next-contract-368 in the existing payroll-integration
+worktree. Reserve ordinary contract/player continuation plus its owning docs.
+The separate #378/PR408 hostile-retreat writer retains its encounter/core scope.
+
+Use the same retained Company2, company4c9a440c-1795-4156-a82b-d46c16f25f77,
+partya93231cb-3691-40f3-ba5b-7c94bfca3fcf, and database
+warwrit_payroll_native_20261105. API3598/realtime3599/UI5398 and relay3597 remain
+owned here; PostgreSQL maps to32769 and Dex5618 is retained. New ignored records
+are output/playwright/next-contract368-20261107/. Original native records and
+saves stay intact. Prior assisted battle and full-M1 limits remain.
+
+The ordinary UI shows accepted HUNT-02, Волчья тропа. All three living members
+have100HP FIELD; Mora retains a treated severe wound, the captain remains dead,
+and cash693.94 follows the real50 payroll. The physician is unarmed; normal fist
+profiles are supported. Inspect/equip available gear before entering a timed fight.
+
+- [ ] Ordinary preparation/travel with existing provisions reaches Березняк.
+- [ ] Same-company JOIN, real three-wolf outcome, source-bound pelt pickup and
+      ordinary PRESENT yield the fixed80-crown reward once.
+- [ ] The same party can take its next ordinary action after the reward.
+- [ ] Owned server restart/re-entry retains company, people, custody, knowledge,
+      cash and receipts once. No saved-state/time/seed/health/position edits.
+
+Use ordinary UI and read-only SQL. Fix only the first reproduced blocker. An
+already working path needs a source-grounded result rather than a filler code
+change. Current outcome, native checks and independent final critique are pending.

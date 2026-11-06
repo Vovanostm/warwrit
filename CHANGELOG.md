@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Continue the recovered and paid company to its next contract
+
+- 2026-11-07, `codex/m1-next-contract-368`, LOCAL owner-requested #368 after
+  payroll [PR338](https://github.com/Vovanostm/warwrit/pull/338) mergedb1c7264e at
+  approved2b1e834c. CI42286898832/scope42291895718 PASS and clean-main readback
+  retain that payroll boundary; #167/#320/#322 CLOSED. Same Company2 now resumes
+  its already accepted HUNT-02 through ordinary travel/combat/pelt/reward and
+  retained-data restart. [Owning checklist](docs/engineering/M1_LOCAL_PLAYTEST.md#same-company-next-contract--368-2026-11-07)
+  names current resources, exact source and remaining limits. No code change or
+  fresh game test yet; native continuation and independent critique are pending.
+
 ### Retain the completed launch receipt before payroll CI
 
 - 2026-11-06, `codex/game-payroll-integration`, LOCAL integration of
