@@ -18,8 +18,8 @@ an empty static reference list alone never makes a file safe to delete.
 Owner assignment: remove the pilot in a standalone cleanup PR; Babylon.js is the
 only supported production renderer. WLC-01 is merged via PR419. Implementation
 base: main `79a6ba02`; writer: `codex/wlc-02-remove-playcanvas` in
-`.claude/worktrees/wlc-02`. Status: PUBLISHED in [PR420](https://github.com/Vovanostm/warwrit/pull/420),
-OPEN / NOT_MERGED.
+`.claude/worktrees/wlc-02`. Status: MERGED via [PR420](https://github.com/Vovanostm/warwrit/pull/420);
+see the dated confirmed-merge receipt below.
 This dated section supersedes the spike retention hold below for executable code
 only; the original per-file registry remains an immutable WLC-01 source snapshot.
 
@@ -131,6 +131,26 @@ PASS. Production web/server/domain/protocol/assets have no task delta against
 main93adaef9. Repeated build/browser/full-suite checks NOT_RUN for this
 integration; previous runtime evidence remains explicitly scoped. The native
 campaign-combat and broader acceptance limits above remain open.
+
+### WLC-02 confirmed merge — 2026-11-07
+
+Owner-authorized PR420 is CLOSED/MERGED, merged at17:36:10UTC as
+`fd16fd23c0d0a7506e98c1a9a8ebc198f64ff9da`, with expected final head
+`099cc7d631fff40030746665d488e3521c285adc`. Fetched origin/main and the clean
+local `main` checkout at `.claude/worktrees/agent-harness-cleanup` both reached
+that commit. Ordinary Git diff confirms identical reviewed-head/merge contents.
+WLC-03 and its asset archive are retained; original dirty sprite checkout,
+other worktrees, processes and player databases are untouched.
+
+This documentation-only receipt supersedes earlier OPEN/NOT_MERGED and pending
+permission snapshots, preserving their chronology. Fresh integration web types,
+74 tests, architecture/content (130 assets), scoped format/diff/local links PASS;
+earlier browser/build evidence and native-campaign limits remain as recorded.
+Repeated gameplay/SQL/browser/build/full-suite/coverage checks NOT_RUN for this
+receipt. Final hosted completion was not a merge prerequisite and no hosted PASS
+is claimed; the actual earlier formatting failure remains qualified above.
+No deployment or full-M1 acceptance. The receipt's GitHub PR owns its own final
+integration status; it adds no implementation or new acceptance claim.
 
 ## Classification and coverage
 

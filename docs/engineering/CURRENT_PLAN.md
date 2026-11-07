@@ -11,7 +11,11 @@ map/place lifecycle and game rules remain unchanged. Owner explicitly requested
 “merge, update main” on2026-11-07: PR420 merge, documentation receipt and clean
 local-main fast-forward are authorized. Deployment remains unauthorized.
 [Owning scope and results](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
-PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), OPEN / NOT_MERGED.
+MERGED [PR420](https://github.com/Vovanostm/warwrit/pull/420) on2026-11-07
+at17:36:10UTC asfd16fd23, expected head099cc7d6; reviewed/merged contents equal.
+Clean local main fast-forwarded tofd16fd23.
+[Merge receipt](LEGACY_INVENTORY.md#wlc-02-confirmed-merge--2026-11-07) retains
+actual checks, advisory CI and open native-campaign acceptance limits.
 Frozen install, workspace builds/types,
 74 focused tests, architecture/content/scoped lint/format/diff PASS. Disposable
 lab manual turn, auto start/stop, day/night, overview/zoom and scene disposal/

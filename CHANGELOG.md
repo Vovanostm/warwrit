@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Record WLC-02 merge and local main update
+
+- 2026-11-07, `codex/wlc-02-merge-receipt`, records MERGED
+  [PR420](https://github.com/Vovanostm/warwrit/pull/420) at17:36:10UTC asfd16fd23,
+  expected head099cc7d6. Reviewed/merged contents are identical; clean local
+  main fast-forwarded tofd16fd23. WLC-03 and original dirty work are retained.
+  Update CURRENT_PLAN and the
+  [owning receipt](docs/engineering/LEGACY_INVENTORY.md#wlc-02-confirmed-merge--2026-11-07).
+  Documentation-only closeout for the owner-authorized WLC-02 mission; scoped
+  format/diff/local-link readback PASS, repeated game/SQL/browser/build checks
+  NOT_RUN. Retain advisory CI and native campaign-combat limits; no deployment.
+
 ### Authorize WLC-02 merge and integrate current main
 
 - 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED integration receipt for
