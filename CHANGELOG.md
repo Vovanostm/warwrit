@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Record the merged first-loop delivery
+
+- 2026-11-07, `codex/m1-full-loop-370-closeout`, documents the MERGED #370 result
+  from `codex/m1-full-loop-370`. [PR414](https://github.com/Vovanostm/warwrit/pull/414)
+  merged at05:47:45UTC asf5709c8c with expected head0e0c5df0. #370 CLOSED.
+  Clean local main, origin/main and GitHub main matched that merge, with no
+  content diff from the reviewed head. [Owning receipt](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-first-loop-receipt--2026-11-07)
+  retains actual player/check results and the fresh-company/no-wound/held-pay
+  limitations. This correction updates delivery documents only. Scoped plan,
+  format and diff checks PASS; game checks reused, full suite NOT_RUN, CI advisory.
+
 ### Publish the reviewed complete first-loop result
 
 - 2026-11-07, `codex/m1-full-loop-370`, PUBLISHED in
