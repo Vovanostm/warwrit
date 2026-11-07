@@ -7,9 +7,11 @@ Owner authorizes implementation, standalone PR, merge and clean local-main updat
 WLC-04/PR424 is merged in base a6d5e364. Scope: protected shell, isolated
 sandbox lifecycle, versioned scenarios and inspection through existing renderer.
 [Owning contract and results](DEVELOPER_PLAYGROUND.md). Editor functionality is deferred.
-Status: LOCAL implementation; SQL5/config+lab16, types, lint/format/architecture and
+Status: MERGED [PR426](https://github.com/Vovanostm/warwrit/pull/426) as e14e549d; clean local main updated.
+SQL5/config+lab16, types, lint/format/architecture and
 production artifact checks PASS. Native lifecycle/retry and scene disposal3 PASS;
-independent shell/infrastructure ACCEPT; final delivery pending. Preserve other WIP/saves.
+independent shell/infrastructure ACCEPT. CI advisory: unchanged formatter and contract-link parser failed.
+[Confirmed receipt](DEVELOPER_PLAYGROUND.md#confirmed-merge--2026-11-07). Preserve other WIP/saves.
 
 ## WLC-04 — Server authority, 2026-11-07
 
