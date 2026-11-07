@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Publish the current-main item-transfer integration
+
+- 2026-11-07, `codex/item-transfer-339`, PUBLISHED implementation `0ce317f3`
+  in the original [PR339](https://github.com/Vovanostm/warwrit/pull/339), integrating
+  main `fbd34b22` and prior head `c2051f3f` without rewriting history. GitHub
+  confirms the PR is open and conflict-free; NOT_MERGED. Current checks, native
+  journey and independent scoped critic ACCEPT are recorded in the
+  [owning wiki](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  This receipt updates delivery status and ROADMAP only. Repeated game checks
+  NOT_RUN; CI remains advisory. No merge/deployment permission or data reset.
+
 ### Integrate existing-item transfer with the current company panel
 
 - 2026-11-07, `codex/item-transfer-339`, LOCAL owner-requested PR339/#171
