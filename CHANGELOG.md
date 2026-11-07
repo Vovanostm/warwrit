@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Record merged item transfer and updated local main
+
+- 2026-11-07, `codex/item-transfer-339-closeout`, records MERGED
+  [PR339](https://github.com/Vovanostm/warwrit/pull/339) at15:15:20UTC as
+  `c8128c54`, expected head `957087bc`. Owner explicitly requested merge and
+  updating main; clean local main fast-forwarded to the merge with identical
+  content to the reviewed head. [Owning receipt](docs/wiki/m1-spec.md#слияние-pr339-и-обновление-main--2026-11-07)
+  preserves focused/native/critic evidence, advisory CI and full-M1 limits.
+  Update CURRENT_PLAN/ROADMAP; retain #171 OPEN and all unrelated WIP/data.
+  Documentation-only receipt: scoped format/plan/diff/local links PASS,
+  repeated game/SQL/browser/full-suite checks NOT_RUN. No deployment.
+
 ### Authorize item-transfer merge and local main update
 
 - 2026-11-07, `codex/item-transfer-339`, PUBLISHED authorization checkpoint:
