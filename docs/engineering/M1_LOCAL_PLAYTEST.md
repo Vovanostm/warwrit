@@ -762,3 +762,13 @@ Unique focused checks comprise27food/recovery/terminal tests with1existingSKIP,
 No migration, dependency, serialization-version or public protocol change.
 Publication and owner-authorized merge receipts belong to the delivery PR.
 Full suite/CI NOT_RUN. Formal art scoring and full #177/#161 remain open.
+
+### Published delivery — PR414, 2026-11-07
+
+[PR414](https://github.com/Vovanostm/warwrit/pull/414) publishes the reviewed
+source and native result from f29e7d86 on base4a22a09c. The owner explicitly
+authorized merge and updating main for #370. PR414 owns the actual expected-head
+merge receipt, hosted checks and issue closure. This publication closeout changes
+documents only, so game checks are not repeated. Current-plan/diff/readback are
+checked before commit. CI remains advisory. Retained task processes/worlds remain
+available, and the original dirty checkout is untouched.

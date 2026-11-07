@@ -15,7 +15,7 @@ Company cash780.35/free760.35, original personal wallets remain at Severny Dvor.
 Next ordinary Следы на дороге accepted. Owned API/RT/web restart and ordinary OIDC re-entry PASS, complete pre-browser report equality.
 People/equipment/custody/health/contracts/proof/money/reservations and original once-only receipts retained after login.
 Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Bounded source and affected feedback critique ACCEPT.
-Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. Publication pending. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
+Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. [PR414](https://github.com/Vovanostm/warwrit/pull/414) PUBLISHED from f29e7d86, owner-authorized merge next. PR owns live delivery/merge receipt. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
 Keep task stand and all retained worlds available. Owner authorized merge/update main for this mission.
 
 ## Hostile-retreat result and next work — 2026-11-07

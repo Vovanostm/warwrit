@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Publish the reviewed complete first-loop result
+
+- 2026-11-07, `codex/m1-full-loop-370`, PUBLISHED in
+  [PR414](https://github.com/Vovanostm/warwrit/pull/414), reviewed source f29e7d86
+  on main4a22a09c. Native loop/restart/OIDC retention and finite source/playable
+  review ACCEPT with the documented fresh-company, no-wound and pending-pay
+  limits. [Owning delivery record](docs/engineering/M1_LOCAL_PLAYTEST.md#published-delivery--pr414-2026-11-07)
+  links actual checks and retained resources. Owner explicitly authorized merge
+  and updating main, with the PR owning its actual merge receipt/date. This
+  closeout changes documents only. Repeated game checks NOT_RUN, CI advisory.
+
 ### Distinguish payroll allocation from cash handover
 
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL final critic correction in web
