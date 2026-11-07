@@ -1,6 +1,7 @@
 # WLC-01 — Legacy inventory and dependency audit
 
 2026-11-07. P0 audit/planning, no behavior change or resource deletion.
+Publication: [PR419](https://github.com/Vovanostm/warwrit/pull/419), OPEN / NOT_MERGED.
 Owner acceptance: **PENDING_REVIEW**. Baseline and all actual checks are in
 [CONSOLIDATION_BASELINE](CONSOLIDATION_BASELINE.md). Machine-readable records:
 [legacy-inventory.json](legacy-inventory.json). This page owns the audit and

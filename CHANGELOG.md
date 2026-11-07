@@ -11,7 +11,7 @@ requests.
 
 ### Audit legacy resources and consolidation dependencies (WLC-01)
 
-- 2026-11-07, `codex/wlc-01-legacy-audit`, LOCAL audit requested by the owner:
+- 2026-11-07, `codex/wlc-01-legacy-audit`, PUBLISHED [audit PR419](https://github.com/Vovanostm/warwrit/pull/419), requested by the owner:
   add [inventory](docs/engineering/LEGACY_INVENTORY.md),
   [baseline](docs/engineering/CONSOLIDATION_BASELINE.md) and per-file
   `docs/engineering/legacy-inventory.json`, pinned to main `f3c76d8c`.

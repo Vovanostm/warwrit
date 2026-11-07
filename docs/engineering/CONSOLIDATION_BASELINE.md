@@ -2,7 +2,8 @@
 
 Date: 2026-11-07. Owner assignment: Legacy Inventory & Dependency Audit (P0).
 Coordinator/writer: `codex/wlc-01-legacy-audit`, isolated checkout
-`.claude/worktrees/wlc-01`. Status: audit proposal, owner acceptance pending.
+`.claude/worktrees/wlc-01`. Status: [PUBLISHED audit PR419](https://github.com/Vovanostm/warwrit/pull/419),
+owner acceptance pending; NOT_MERGED.
 Publication is authorized; merge, deployment and resource deletion are not.
 [Inventory and proposed order](LEGACY_INVENTORY.md) own the detailed findings;
 [per-file registry](legacy-inventory.json) owns classifications and consumers.

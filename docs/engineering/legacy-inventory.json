@@ -5,7 +5,7 @@
   "source_sha": "f3c76d8c0974c8457925bc547dbadaada5eabe7f",
   "source_ref": "origin/main",
   "branch": "codex/wlc-01-legacy-audit",
-  "status": "audit proposal; no deletions; owner acceptance pending",
+  "status": "PUBLISHED audit PR419; OPEN / NOT_MERGED; no deletions; owner acceptance pending",
   "tracked_file_count": 2520,
   "coverage": {
     "rule": "all tracked assets, docs, web, renderer-spike, scripts, and named authority/test/config boundaries",
@@ -77433,5 +77433,11 @@
       "boundary": "historical measurements do not prove equivalent animated workload",
       "wlc_result": "spike build PASS; visual/performance NOT_RUN"
     }
-  ]
+  ],
+  "publication": {
+    "url": "https://github.com/Vovanostm/warwrit/pull/419",
+    "number": 419,
+    "audit_content_commit": "18da09597350d917ba697de9bc4918f7f33dfd47",
+    "state": "OPEN / NOT_MERGED"
+  }
 }
