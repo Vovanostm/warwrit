@@ -7,15 +7,16 @@ Owner explicitly requested implement, review, merge and update main for #370. CI
 #368/PR413 and #369 are integrated predecessors. Original #369 company is now GAME_OVER after later combat recovery checks.
 Retain that history. A fresh ordinary OIDC company «Первый круг» uses isolated DB warwrit_full_loop370_20261107.
 Own API3570/RT3571/UI5370, Dex5637 and browser transport proxy3572/Chrome5373. Retain all other worlds and processes.
-Ordinary opening/equips/food/offer PASS. Fixed prepaid-food departure after local hire; native same-company MOVE200/saved route PASS.
-[Owning journey, prerequisite correction and actual limits](M1_LOCAL_PLAYTEST.md#complete-first-ordinary-loop--370-2026-11-07).
-Food21/core+server+testkit types/lint PASS; independent source ACCEPT. Full suite/CI NOT_RUN.
-Current writes own the first-loop source fix only if reproduced, M1_LOCAL_PLAYTEST, m1-spec, CHANGELOG and this checkpoint/history.
-Native six-allies victory/trophy/PRESENT PASS, cash710→790 once. Food terminal blocker and stale retry/SETTLED feedback fixed.
-Native rest completed HP/stamina100, primary3 returned FIELD at295, treasury790/food36/kits2 retained. Natural payroll tick1000 around08:27MSK pending, then next offer/restart.
-Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Source and affected finite feedback critique ACCEPT.
-Initial retry screenshot exposed below-fold control, fixed by automatic failed-panel scroll. Native visible retry PASS; independent affected feedback/source recheck ACCEPT.
-Full #177/#161 remain open. Preserve task processes until post-payroll restart.
+Ordinary opening/equips/food/offer/travel, six-allies victory, trophy/PRESENT PASS. Bounty80 once, treasury710→790.
+[Owning journey and actual limits](M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk).
+Food prepaid remainder and terminal evidence fixed. Failed discovery retry is visible; SETTLED feedback is neutral.
+Natural rest HP/stamina100, primary3 FIELD. At natural1001 food36→33, payroll29.65 allocated, CASH9.65 to Ratko,20pending physical handover.
+Company cash780.35/free760.35, original personal wallets remain at Severny Dvor. Existing WP-02.3 limitation retained.
+Next ordinary Следы на дороге accepted. Owned API/RT/web restart and ordinary OIDC re-entry PASS, complete pre-browser report equality.
+People/equipment/custody/health/contracts/proof/money/reservations and original once-only receipts retained after login.
+Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Bounded source and affected feedback critique ACCEPT.
+Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. Publication pending. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
+Keep task stand and all retained worlds available. Owner authorized merge/update main for this mission.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

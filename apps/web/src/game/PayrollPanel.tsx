@@ -1,5 +1,6 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 import './payroll.css';
+import { lookup } from '../i18n/index.js';
 import { formatCrowns } from './format.js';
 import {
   payrollDeadline,
@@ -83,6 +84,7 @@ export function PayrollPanel(props: Props) {
           кр.
         </p>
       )}
+      <p className="state-note">{lookup('journey.payroll.access')}</p>
       {pending ? (
         <div className="payroll-pending" role="status">
           <p>
@@ -116,6 +118,7 @@ export function PayrollPanel(props: Props) {
                   (character) => character.characterId === wallet.ownerCharacterId,
                 )?.name ?? 'Кошелёк участника')
               : 'Казна компании';
+            const walletSiteId = pool.location['siteId'];
             return (
               <div className="payroll-pool" key={pool.poolId}>
                 <div className="payroll-pool-head">
@@ -124,6 +127,14 @@ export function PayrollPanel(props: Props) {
                     Свободно {formatCrowns(pool.spendableQ)} кр.
                   </span>
                 </div>
+                {pool.location.kind === 'AT' && walletSiteId && (
+                  <p className="state-note">
+                    {lookup('journey.payroll.wallet-place').replace(
+                      '{place}',
+                      () => lookup(`place.${walletSiteId}.name`) ?? walletSiteId,
+                    )}
+                  </p>
+                )}
                 {BigInt(dueAmountQ) > 0n && BigInt(paymentLimitQ) > 0n ? (
                   <>
                     <button
@@ -132,7 +143,10 @@ export function PayrollPanel(props: Props) {
                       disabled={!canAct}
                       onClick={() => pay(pool.poolId, paymentLimitQ, 'DEFAULT')}
                     >
-                      Выплатить по очереди · {formatCrowns(paymentLimitQ)} кр.
+                      {lookup('journey.payroll.allocate').replace(
+                        '{amount}',
+                        formatCrowns(paymentLimitQ),
+                      )}
                     </button>
                     {payees.map((payee) => {
                       const targetLimitQ =
@@ -146,7 +160,6 @@ export function PayrollPanel(props: Props) {
                       );
                       return (
                         <div className="payroll-target" key={payee.id}>
-                          <span>Получатель: {name}</span>
                           <button
                             type="button"
                             className="quiet-action"
@@ -155,7 +168,9 @@ export function PayrollPanel(props: Props) {
                               pay(pool.poolId, targetLimitQ.toString(), 'TARGETED', payee.id)
                             }
                           >
-                            Выдать жалованье · {formatCrowns(targetLimitQ.toString())} кр.
+                            {lookup('journey.payroll.target')
+                              .replace('{amount}', formatCrowns(targetLimitQ.toString()))
+                              .replace('{name}', () => name)}
                           </button>
                         </div>
                       );

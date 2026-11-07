@@ -455,10 +455,12 @@ remains with #177/#161.
       disclosed fresh ordinary company for this loop, as recorded below.
 - [x] Ordinary preparation/travel and actual combat produce a lawful trophy.
 - [x] Pickup and presentation pay the existing bounty once.
-- [ ] Actual wounds/costs guide treatment, rest with food and lawful pay.
-- [ ] The company can accept its next available ordinary contract.
-- [ ] Owned API restart/re-entry retains the relevant state and once-only receipts.
-- [ ] Independent read-only review of current journey/images has no material defect.
+- [x] Known absence of wounds explains unavailable care. Natural food-backed rest
+      restored100health/stamina. Due payroll allocated29.65, comprising9.65cash
+      and20pending physical handover, under existing payroll rules.
+- [x] The company accepted its next available ordinary contract.
+- [x] Owned API restart/re-entry retains the relevant state and once-only receipts.
+- [x] Independent read-only review of current journey/images has no material defect.
 
 ### Resources and initial limits
 
@@ -650,3 +652,113 @@ visible Russian retry, corrected completed card and observed rest progress.
 Independent source recheck found no defect in the scroll effect. Broader art
 scores remain unassessed. Remaining native steps are pay at natural tick1000,
 next contract and owned API restart/re-entry. Preserve the live stand while waiting.
+
+### Full-circle retained result — 2026-11-07 08:34 MSK
+
+Natural waiting reached campaign1001 at08:28MSK. Native refresh retained
+four living100health/stamina members, the three field assignments, both kits,
+gear/custody and the redeemed trophy. Food36→33 reflects actual elapsed meals.
+No clock, health, money, game-state or response edit was used for the journey.
+
+The ordinary DEFAULT payroll button recorded29.65crowns at1002. Actual CASH
+payment9.65 reached Ratko, company790→780.35 and physician50→59.65. Mora/Rell
+have10each reserved as PENDING_CONFIRMATION, company free balance760.35.
+Their personal wallets remain physically at Severny Dvor, so these20crowns are
+awaiting handover, not cash paid. This is the existing accepted payroll/access
+boundary in [WP-02.3](../work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06).
+The UI separates pending sums from issued money and shows no overdue unallocated
+claim. Personal-wallet movement/custody remains the broader-loop limitation.
+
+Next ordinary offer INVEST-01 «Следы на дороге» was read with its existing
+40crown terms and accepted at the Kamenny Brod bazaar. The journal shows the
+actual prerequisite for inspecting the bank at Tikhaya Gat, and its issuer/report
+step. Existing mill-worker and settled wolf records remain. No second contract
+completion or extra reward is claimed.
+
+Both browser pages were moved to about:blank, then the owned dev session stopped
+API3570/realtime3571/Vite5370. The same worktree/.env restarted with ordinary
+pnpm dev. A repeatable-read read-only report before browser return is deeply
+equal to before-restart.json, including the complete root, ordinary contracts,
+hunts, proof/custody, receipts and audit. Ordinary session re-entry then logout,
+Войти and local Dex OIDC login restored «Первый круг» and the same four people.
+The post-login check retains exact wallets/reservations, items/containers/custody,
+conditions, all original command receipts, hunt/proof and ordinary contract rows.
+Four additional maintenance observation receipts advanced time1002→1012 without
+duplicating the bounty, payroll or accepted offer. This is native UI/API/PostgreSQL
+persistence evidence, with no manufactured game responses or database writes.
+
+Ignored local evidence includes payroll-before.png, payroll-recorded.png,
+payroll-after-reentry.png, recovered-after-reentry.png,
+next-contract-accepted.png, next-contract-after-reentry.png and
+reward-after-reentry.png. Read-only records are payroll-matured.json,
+payroll-after.json, next-accepted.json, before-restart.json,
+after-restart-before-browser.json and after-reentry.json. A first ad-hoc key
+inspection looked for an absent economy.inventory property and failed. Corrected
+inspection/assertions used the actual economy.physical representation and passed.
+
+Final finite journey critique remains pending. The reviewed source is unchanged
+since e3adc8e4, with earlier bounded source and affected-feedback ACCEPT. The
+executed checks retain their recorded scope. Full suite/CI NOT_RUN under advisory
+policy. Broader art scoring, human playtest, all eight contracts and full M1
+acceptance remain open. A fresh company was required because the original #369
+save is GAME_OVER, as recorded above. The task publishes these fixes and the
+complete ordinary sequence with explicit care/payroll limits.
+
+### Payroll feedback correction — 2026-11-07
+
+The final critic found that allocation29.65 could read as cash paid although20
+awaits handover. The floating recipient label belongs to the next TARGETED
+button, but its spacing makes the DEFAULT button above look named. Use allocation
+wording for DEFAULT and accepted feedback, explain the wallet-access prerequisite,
+and place each targeted recipient in its own button label. Keep exact request,
+retry, reservation and payment semantics unchanged. Check existing mounted
+accepted/readback-failure cases and the available native helper payroll controls.
+
+The two existing mounted cases failed before correction and now pass among11
+payroll checks. Web types and scoped lint PASS. Native helper payroll shows
+allocation19.24 and separate named9.62 actions with the wallet-access explanation,
+retained in payroll-allocation-before.png. Its ordinary attempted command refused
+LOCATION_MISMATCH because the helper company purse remains at Severny Dvor.
+The expected accepted-status screenshot wait timed out30seconds. Fresh UI and
+read-only wallet/location facts confirmed the real refusal with no payment.
+payroll-allocation-refusal.png preserves that prerequisite. Primary readback
+payroll-allocation-primary.png retains9.65issued/20pending and the explanation.
+New accepted-status wording is covered by the mounted regression, with native
+post-edit accepted status NOT_RUN. Primary payment and restart evidence above
+remain unchanged. No clock/state mutation or extra travel was used to manufacture
+an accepted screenshot. Replacement callbacks preserve literal player names.
+
+The source reviewer found the first note omitted payer-wallet locality before
+promising recipient holds. The final paired note now states that allocation
+requires a local paying wallet, then distinguishes issued cash and an accepted
+allocation awaiting handover. This matches the native helper refusal and the
+accepted primary result. Requests and game state are unchanged.
+
+The critic additionally required the actual paying-wallet destination for a
+location refusal. The panel now renders the known AT payroll-pool site beside
+that pool, using existing place names. The mounted case checks Severny Dvor from
+the payroll snapshot even with no holdings-wallet entry. Native
+payroll-locality-final.png shows the helper purse at Severny Dvor, named actions
+and the final locality/hold note. payroll-primary-final.png shows Kamenny Brod
+with the retained issued/pending split. An earlier note-capture wait timed out
+because hot reload returned the active tab to Path and hid the mounted panel.
+Selecting the ordinary Отряд tab recovered the actual visible captures.
+Independent finite persistence review ACCEPT confirms the equal pre-browser
+reports and unchanged money/reservation/proof/ordinary-contract state after OIDC
+login, with prior command IDs retained. Final source/wording readback is pending.
+
+### Independent closeout — 2026-11-07
+
+Final bounded source review ACCEPT covers both food corrections, encounter retry,
+completed-hunt feedback and payroll allocation/locality wording. Final finite
+playable/affected-feedback critique ACCEPT covers the actual first loop and
+retained restart/login result with the stated fresh-company, no-wound and pending
+handover boundaries. The critic inspected current images and persisted reports,
+and did not operate gameplay controls. The post-edit accepted payroll status
+remains mounted-test evidence only. All confirmed material findings were corrected.
+
+Unique focused checks comprise27food/recovery/terminal tests with1existingSKIP,
+27web connection/retry/hunt tests and11payroll tests, plus affected types/lint.
+No migration, dependency, serialization-version or public protocol change.
+Publication and owner-authorized merge receipts belong to the delivery PR.
+Full suite/CI NOT_RUN. Formal art scoring and full #177/#161 remain open.

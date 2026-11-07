@@ -9,6 +9,32 @@ requests.
 
 ## Unreleased
 
+### Distinguish payroll allocation from cash handover
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL final critic correction in web
+  PayrollPanel/use-payroll and journey translations. Actions now say allocate,
+  targeted buttons include their recipient, and accepted feedback records the
+  allocation. The visible wallet-access explanation separates cash issue from
+  pending reservation. Requests/payment semantics are unchanged. Two existing
+  mounted cases failed before correction,11payroll checks/types/lint PASS after.
+  [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#payroll-feedback-correction--2026-11-07)
+  records native action/readback/refusal and the missing post-edit accepted-status
+  capture. Known wallet destinations now appear beside the paying pool, and the
+  note explicitly requires payer locality before recipient cash/hold handling. Native primary payroll/restart evidence retains its scope. CI NOT_RUN.
+
+### Retain the complete first ordinary circle across restart
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 completion candidate.
+  Native entry/preparation/travel/combat/trophy80reward/rest100/payroll/next-offer
+  and owned API/realtime/web restart/OIDC re-entry exercised without clock or
+  saved-state edits. Due payroll29.65 comprises9.65cash to Ratko and20pending
+  handover under the existing remote-wallet boundary. Company cash780.35/free760.35,
+  food33, no known wound, both kits retained. The complete pre-browser restart
+  report is equal, and re-entry retains people/items/custody/money/contracts/proof
+  and original receipts without duplicate effects. [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk)
+  records fresh-company provenance, actual checks and remaining broader limits.
+  Final bounded source and finite journey/feedback review ACCEPT; publication pending. Full suite/CI NOT_RUN.
+
 ### Complete natural rest before the first payroll
 
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 native result. The three
