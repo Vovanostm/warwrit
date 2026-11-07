@@ -8,7 +8,7 @@ const workspaceRoot = fileURLToPath(new URL('../..', import.meta.url));
 function privateAtlasPathAllowed(path: string): boolean {
   return !(
     path.includes('/assets/art/world/porechye-atlas-v1/') ||
-    /\/scripts\/world-map\/(?:navigation-maps|navigation-lab|porechye-navigation|fog-design|world-lab)(?:[/.])/u.test(
+    /\/scripts\/world-map\/(?:navigation-maps|navigation-lab|porechye-atlas(?:-places|-layout|-contracts)?|fog-design|world-lab)(?:[/.])/u.test(
       path,
     )
   );

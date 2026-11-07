@@ -1,4 +1,4 @@
-import type { Pixel } from './porechye-navigation.js';
+import type { Pixel } from './map-camera.js';
 
 export interface ContractCopy {
   readonly place: string;

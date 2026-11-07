@@ -108,6 +108,30 @@ Production source/assets remain identical to the checked base. GitHub owns live
 head, mergeability and CI; no completed hosted pass is claimed. Original dirty
 checkout and all other worktrees/player databases remain untouched.
 
+### WLC-02 integration and merge authorization — 2026-11-07
+
+Owner requested “merge, update main” for PR420. Merge of this PR, its delivery
+receipt and clean local-main fast-forward are authorized; deployment is not.
+This supersedes the earlier NOT_AUTHORIZED merge snapshot above.
+Latest main `93adaef9` includes WLC-03/PR421 and its receipt PR422. Integration
+preserves its archived assets, manifest/editor/Vite changes and all WLC-03
+records; the only merge conflicts were added CURRENT_PLAN/CHANGELOG sections,
+resolved by retaining both deliveries. No production renderer/rule/lifecycle
+change is introduced by this integration.
+
+PR420 head `4bb2a743` had no reviews or review threads at readback. Its
+[CI42391670090](https://github.com/Vovanostm/warwrit/actions/runs/42391670090)
+FAILED at Prettier on unchanged `apps/web/src/encounter/connection.test.ts`;
+job128460421825 actual logs read. Scope42391670367 PASSED. CI advisory; no
+unrelated formatting repair, full-suite rerun or polling required. Earlier
+74-test/build/browser evidence belongs to the pre-integration source boundary;
+fresh integration web typecheck,74focused tests, architecture (five packages/
+525source files), content (130assets), scoped format/diff/local-link readback
+PASS. Production web/server/domain/protocol/assets have no task delta against
+main93adaef9. Repeated build/browser/full-suite checks NOT_RUN for this
+integration; previous runtime evidence remains explicitly scoped. The native
+campaign-combat and broader acceptance limits above remain open.
+
 ## Classification and coverage
 
 | Classification  | Paths | Meaning in this audit                                                                                                           |

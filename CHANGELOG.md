@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Authorize WLC-02 merge and integrate current main
+
+- 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED integration receipt for
+  [PR420](https://github.com/Vovanostm/warwrit/pull/420): owner requested
+  “merge, update main”. Merge authorization and main93adaef9/WLC-03 integration
+  preserve both deliveries, archive decisions and unrelated WIP; only additive
+  CURRENT_PLAN/CHANGELOG conflicts were resolved. No gameplay/migration change.
+  [Owning integration and evidence limits](docs/engineering/LEGACY_INVENTORY.md#wlc-02-integration-and-merge-authorization--2026-11-07).
+  Earlier CI42391670090 FAILED at unchanged connection.test.ts formatting;
+  actual logs read, scope PASSED, CI advisory. Fresh web types/74tests/architecture/
+  content130/scoped format/diff/link readback PASS; earlier full native campaign
+  battle and broader limits retained.
+  Merge and clean-main update authorized, not yet performed; no deployment.
+
 ### Remove the PlayCanvas renderer pilot (WLC-02)
 
 - 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), owner-requested cleanup
@@ -30,6 +44,33 @@ requests.
   visual acceptance and broad local CI/full suite NOT_RUN; CI advisory.
   PR420 OPEN / NOT_MERGED; hosted CI completion not awaited. Merge/deployment
   not performed.
+
+### Record WLC-03 merge
+
+- 2026-11-07, `codex/wlc-03-merge-receipt`, records MERGED
+  [PR421](https://github.com/Vovanostm/warwrit/pull/421) at16:46:47UTC as25743a75,
+  expected headf6a3953a, with identical reviewed content. Update CURRENT_PLAN and
+  the [owning receipt](docs/engineering/COMBAT_ASSET_CONSOLIDATION.md#confirmed-merge--2026-11-07).
+  Documentation-only closeout for the owner-authorized WLC-03 mission;
+  scoped format/diff/link readback PASS, repeated game/SQL/build checks NOT_RUN.
+  Preserve the recorded advisory CI limits and unrelated work; no deployment.
+
+### Consolidate combat assets and atlas v6 (WLC-03)
+
+- 2026-11-07, `codex/wlc-03-assets`, PUBLISHED [PR421](https://github.com/Vovanostm/warwrit/pull/421), owner request:
+  preserve the current sprite HUD and saved-world contracts, archive historical
+  combat/map art externally, retain v6 as the editor/runtime atlas and document
+  active assets in `assets/manifest.json`.
+  [Scope and actual checks](docs/engineering/COMBAT_ASSET_CONSOLIDATION.md).
+  Archived199 retired paths with source/checksum manifest and verified download/restore;
+  removed old editor geometry and unused tile generation roads. Manifest130 entries
+  now records41 active combat and3 map files. Current HUD/core geometry/save contracts
+  retained; game dev origin blocks current private authoring modules. Production build,
+  40focused tests,11PG regressions and ordinary map MOVE/STOP/reload PASS; independent
+  diff review found no material issue; scoped visual preservation ACCEPT (2–3/3).
+  Hosted CI on7e1f6b69 failed existing connection.test.ts formatting; scope failed
+  its contract-link pattern. Actual logs read; full suite NOT_RUN, CI advisory;
+  performance NOT_MEASURED. Review, PR and merge authorized; no deployment or real-save writes.
 
 ### Review WLC-01 and authorize its audit merge
 
@@ -7135,7 +7176,7 @@ requests.
   and a below-field actor/AP/action dock with canonical prices/disabled reasons.
   Updated web BattleView/CombatLab/scene/CSS/tests, declared existing public
   game-core workspace dependency with pnpm, added a four-view screenshot
-  [UI reference](assets/art/combat/stage1-2026-10-09/ui-reference-v1.html).
+  [UI reference](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-reference-v1.html).
   After full mill visual REJECT for overlapping diagonal, server default
   new drafts use two columns/three spaced ranks; accepted/imported setups,
   rules and old replays unchanged. Earlier rush/hold evidence uses former start.

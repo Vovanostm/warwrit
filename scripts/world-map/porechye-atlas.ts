@@ -5,8 +5,8 @@ import {
   paintedAtlasPixel,
   paintedAtlasPoint,
 } from '@warwrit/game-core';
-import type { Pixel } from './porechye-navigation.js';
-import * as district from './porechye-regional.js';
+import type { Pixel } from './map-camera.js';
+import * as district from './porechye-atlas-places.js';
 import { atlasTiles } from './porechye-atlas-layout.js';
 import { atlasContracts } from './porechye-atlas-contracts.js';
 

@@ -7,7 +7,9 @@ Owner assignment: standalone cleanup PR after merged WLC-01/PR419; base main79a6
 Remove the executable paired renderer comparison/baker and PlayCanvas dependency;
 retain public source assets/licenses/manifests, Git history and PR129's unmerged
 branch. Production encounters and Combat Lab already share Babylon 9.28.0;
-map/place lifecycle and game rules remain unchanged. No merge/deployment permission.
+map/place lifecycle and game rules remain unchanged. Owner explicitly requested
+“merge, update main” on2026-11-07: PR420 merge, documentation receipt and clean
+local-main fast-forward are authorized. Deployment remains unauthorized.
 [Owning scope and results](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
 PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), OPEN / NOT_MERGED.
 Frozen install, workspace builds/types,
@@ -16,8 +18,26 @@ lab manual turn, auto start/stop, day/night, overview/zoom and scene disposal/
 re-entry PASS (engines/scenes1/1 →0/0 →1/1). Ordinary App local login/map/place/
 quest/travel/stop PASS on a disposable DB. Native campaign battle continuation,
 full suite/coverage/performance and independent visual acceptance NOT_RUN.
-CI advisory; hosted completion not awaited, full-M1 acceptance not claimed.
+Integration with main93adaef9/WLC-03 retains both deliveries. Fresh web types/
+74tests/architecture/content (130assets) PASS; no game-source task delta.
+Earlier CI4bb2a743 failed at unchanged connection.test.ts formatting, scope PASS.
+CI advisory; final hosted completion not awaited, full-M1 acceptance not claimed.
 Preserve the gameplay delivery blocks below and original dirty checkout.
+
+## WLC-03 combat assets and atlas consolidation — 2026-11-07
+
+Coordinator/writer: codex/wlc-03-assets, .claude/worktrees/wlc-03.
+Base origin/main79a6ba02 includes WLC-01/PR419. Owner authorizes implementation,
+review, PR and merge for this mission; no deployment or real-save mutation.
+[Scope, player journey, archive and results](COMBAT_ASSET_CONSOLIDATION.md).
+Status: MERGED [PR421](https://github.com/Vovanostm/warwrit/pull/421), implementation7e1f6b69; external archive restored;40focused +11PG
+checks, production build and ordinary map journey PASS. Independent diff review
+passed; scoped visual preservation ACCEPT (2–3/3). Hosted CI on7e1f6b69 failed at
+unchanged connection.test.ts formatting; scope failed its contract-link pattern.
+CI advisory; full suite NOT_RUN. PR421 merged2026-11-07 at16:46:47UTC as
+25743a75, expected headf6a3953a; merge content equals the reviewed final head.
+This worktree records the receipt; other local main/worktrees remain untouched.
+Preserve other checkouts and WLC-02.
 
 ## Existing-item transfer #171 / PR339 — 2026-11-07
 

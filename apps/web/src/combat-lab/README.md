@@ -67,11 +67,10 @@ The sprite scenario advances the opponent automatically. Restart uses the
 accepted battle setup. New default mill drafts spread twelve units into two
 columns/three ranks per side; saved/imported setups retain their positions.
 
-[Battle UI reference](../../../../assets/art/combat/stage1-2026-10-09/ui-reference-v1.html)
-shows integrated bow day/night, melee and full mill views. Under Vite use
-`http://127.0.0.1:5320/@fs/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/ui-reference-v1.html`.
-The original acceptance excluded later crowded formations; the v2 amendment
-below records the inspected dense round-two day/night result.
+Historical HUD concepts and their exact source metadata are available in the
+[WLC-03 archive](https://github.com/Vovanostm/warwrit/releases/tag/wlc-03-history-2026-11-07).
+The current shared production HUD is `BattleView` and the Command desk;
+[active resources and revisions](../../../../assets/manifest.json) own its catalogue.
 Replay export contains both sides' accepted commands and no capability.
 
 Sessions are volatile: restarting the API loses them. An uncertain create is
