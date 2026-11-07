@@ -11,7 +11,7 @@ requests.
 
 ### Unified Map Editor (WLC-07)
 
-- 2026-11-08, `codex/wlc-07-map-editor`, LOCAL owner-assigned work: protected
+- 2026-11-08, `codex/wlc-07-map-editor`, PUBLISHED [PR429](https://github.com/Vovanostm/warwrit/pull/429), owner-assigned work: protected
   World/Battle authoring, server drafts/validation, versioned artifacts and
   current renderer preview. [Owning scope and checks](docs/engineering/UNIFIED_MAP_EDITOR.md).
   Reuse BattleEditor/Babylon and game-core navigation; extract existing road
@@ -25,7 +25,8 @@ requests.
   retry, migration up/down/up, types/lint/architecture, production builds/artifact
   guards PASS. Fix object-linked corridor errors, wheel scrolling and zoomed SVG
   input overlap found during self-review. CI/full suite/M1/art/deployment NOT_RUN;
-  CI advisory. Existing worlds, saves and revision references unchanged.
+  CI advisory; hosted completion not awaited. Existing worlds, saves and revision
+  references unchanged. Own test stand cleaned up; no merge or deployment.
 
 ### Record WLC-05 merge and local main update
 

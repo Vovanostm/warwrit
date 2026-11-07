@@ -95,7 +95,7 @@ origin continues to deny direct atlas file access.
    Babylon preview retains its day/night, grid, overview and camera controls.
    Export/import creates another Draft, without starting a game encounter.
 
-## Results — 2026-11-08, LOCAL
+## Results — 2026-11-08, PUBLISHED
 
 - 52 focused tests PASS across six files, including 3 real PostgreSQL editor
   scenarios, current atlas regression, road diagnostics and existing battle
@@ -142,3 +142,14 @@ an isolated preparation catalogue, not a game-world rollout.
 [World editor](evidence/wlc07/world-editor.png) ·
 [Battle preview](evidence/wlc07/battle-preview.png) ·
 [Content delivery](evidence/wlc07/content-delivery.png).
+
+## Publication — 2026-11-08
+
+PUBLISHED [PR429](https://github.com/Vovanostm/warwrit/pull/429), implementation
+`82cb5994fcd8a15d1d73f12a360039ae378d5284`, base `fdbb0dc2`. Both reproducible
+editor journeys, SQL evidence and screenshots accompany the PR. Self-review,
+changed-file formatting/local links and scoped whitespace PASS. CI is advisory;
+hosted completion is not awaited and no hosted PASS is claimed. No merge or
+world rollout is authorized. Owned browser/API33507/web53507 and the exclusively
+owned PostgreSQL54507 container/volume were removed; other stands and saves remain.
+This documentation receipt changes no executable source; repeated game checks NOT_RUN.
