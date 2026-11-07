@@ -515,6 +515,18 @@ loopback transport на этот процесс. Первый запрос пр�
 Подготовка browser-сохранения — временная локальная копия существующего теста,
 не новый production-режим и не замена исходного SQL regression.
 
+### Публикация #409 — PR416, 2026-11-07
+
+Реализация опубликована как draft [PR416](https://github.com/Vovanostm/warwrit/pull/416),
+`codex/repeat-hunt-409`, проверенный implementation head `6d1b238e`, base/main
+`1d0667ce`. PUBLISHED/NOT_MERGED; #409 остаётся открытым из-за непроверенного
+первого нативного отхода. PR readback подтвердил ветки, head и draft/open status.
+Hosted CI NOT_CHECKED по advisory-политике; новые игровые проверки для этой
+документальной записи NOT_RUN. Дополнительный React checklist не выявил дефекта
+в передаче callback обновления награды и зависимостях изменённого обработчика.
+Временная browser-копия теста и одноразовые БД удалены; собственные браузеры и
+preview/API-процессы остановлены. Сохранение неудачной нативной роты оставлено.
+
 ## Реализация #378 — 2026-11-06
 
 PUBLISHED в [PR408](https://github.com/Vovanostm/warwrit/pull/408),

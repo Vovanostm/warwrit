@@ -39,7 +39,8 @@ current main in `codex/repeat-hunt-409`: historical attempts, fresh JOIN consent
 exact saved survivors and the ordinary repeat/retry/payout continuation.
 [Current evidence and remaining native criterion](../wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
 distinguish the passing SQL/prepared-save App journey from the unsuccessful new-company
-first-escape run. Publication and full native first-escape acceptance remain open.
+first-escape run. Draft [PR416](https://github.com/Vovanostm/warwrit/pull/416) publishes the implementation;
+full native first-escape acceptance and merge remain open.
 Captivity #377, helper replacement and a player battle archive remain separate scope.
 
 ## Target and authority

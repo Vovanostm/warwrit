@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Publish the repeat-hunt implementation for review
+
+- 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED as draft
+  [PR416](https://github.com/Vovanostm/warwrit/pull/416), implementation head6d1b238e
+  against main1d0667ce. [Receipt and limits](docs/wiki/mechanics/retreat.md#публикация-409--pr416-2026-11-07)
+  preserve the passing SQL/current App continuation and scoped critic acceptance.
+  Full native first hostile escape is still unproved; #409 OPEN, NOT_MERGED.
+  Temporary browser fixture/databases and owned preview processes were cleaned up;
+  the unsuccessful native save is retained. Documentation-only closeout: local
+  repeated game checks NOT_RUN, hosted CI NOT_CHECKED under the advisory policy.
+
 ### Integrate repeat hunts with the current ordinary game
 
 - 2026-11-07, `codex/repeat-hunt-409`, LOCAL owner-assigned #409 implementation
