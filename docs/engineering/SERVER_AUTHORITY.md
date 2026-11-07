@@ -72,8 +72,8 @@ The graph indexes the original dirty checkout, so current source is the fallback
 
 ## Results
 
-Implementation complete on `codex/wlc-04-server-authority`; delivery PR owns live
-publication/merge status. No server/domain serialization or schema changes.
+PUBLISHED [PR424](https://github.com/Vovanostm/warwrit/pull/424), implementation
+`97d50eb9` on `codex/wlc-04-server-authority`; GitHub owns live merge status. No server/domain serialization or schema changes.
 
 - Equipment/camp reuse existing scoped roster attempt storage and transport;
   matching terminal replies trigger company projection refresh independently of
@@ -94,7 +94,7 @@ Actual checks on2026-11-07:
 - 16focused client attempt/mounted recovery tests PASS. Another33focused existing
   config/terminal evidence/encounter recovery/contracts/payroll/care/supply checks
   PASS, one pre-existing terminal-evidence scenario SKIPPED (not accepted).
-- Real PostgreSQL:57PASS across company executor/routes/recruitment, contract
+- Integration mode:57PASS (51database scenarios plus6pure ownership checks) across company executor/routes/recruitment, contract
   transition, continuous movement and encounter files. Each file used its own
   migrated disposable database; cleanup completed. Covers exact replay, changed
   body, stale revision, ownership, atomic rollback, receipt/state/projection,
