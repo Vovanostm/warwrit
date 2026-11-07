@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Audit legacy resources and consolidation dependencies (WLC-01)
+
+- 2026-11-07, `codex/wlc-01-legacy-audit`, LOCAL audit requested by the owner:
+  add [inventory](docs/engineering/LEGACY_INVENTORY.md),
+  [baseline](docs/engineering/CONSOLIDATION_BASELINE.md) and per-file
+  `docs/engineering/legacy-inventory.json`, pinned to main `f3c76d8c`.
+  Record renderer/PlayCanvas/paired Babylon experiment, actual shared battle HUD,
+  sprite/provenance generations, atlas v6 runtime versus v5 regeneration/editor
+  dependencies, client authority, fixture/E2E claim limits, open PRs and CI consumers.
+  No game code, resources, dependencies, configuration or player data changed.
+- 2171 tracked paths:1040KEEP,618ARCHIVE,507REVIEW_REQUIRED,5MIGRATE,1conditional
+  DELETE candidate (test-only hex helper; preserve current mixed-file regressions).
+  Frozen install, protocol/web/spike builds and29focused tests PASS; scoped
+  JSON/path/consumer/link/format/diff checks PASS after formatting the new files.
+  Main CI42385711569 FAILS at existing connection.test.ts formatting; no game
+  result follows. Fresh browser/SQL/visual/full-M1/full-suite checks NOT_RUN,
+  performance NOT_MEASURED. CI advisory. Inventory/removal order await owner
+  acceptance; successor implementation, deletion, merge and deployment not run.
+  Preserve the gameplay integrator's CURRENT_PLAN block and original dirty WIP.
+
 ### Record merged item transfer and updated local main
 
 - 2026-11-07, `codex/item-transfer-339-closeout`, records MERGED
