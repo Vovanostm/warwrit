@@ -10,6 +10,7 @@ import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-comm
 import { observeLocalPayees } from './payroll-observation.js';
 import { payrollCommandIntent } from './payroll-intent.js';
 import type { PayrollRequest } from './payroll-intent.js';
+import { itemTransferAccess } from './item-transfer.js';
 import { prepareCompanyCareFulfillment } from './care.js';
 import { observeLocalRecruit } from './observation.js';
 import {
@@ -255,6 +256,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&
     input.request.type !== 'ApplyCare' &&
+    input.request.type !== 'TransferItem' &&
     input.request.type !== 'BeginFieldCamp' &&
     input.request.type !== 'EndFieldCamp' &&
     input.request.type !== 'SetAssignment'
@@ -289,8 +291,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   const equipAccess =
     input.request.type === 'EquipItem'
       ? equipAccessFact(state, input.worldId, companyId, input.request.payload, clock.tick)
-      : undefined;
-  if (input.request.type === 'EquipItem' && equipAccess === undefined)
+      : input.request.type === 'TransferItem'
+        ? itemTransferAccess(state, input.request.payload, clock.tick)
+        : undefined;
+  if (
+    (input.request.type === 'EquipItem' || input.request.type === 'TransferItem') &&
+    equipAccess === undefined
+  )
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
   const careFulfillment =
@@ -1780,7 +1787,8 @@ function commandIdFrom(value: unknown): string {
 }
 
 function mapDomainError(error: string): CompanyCommandRejectionDto['code'] {
-  return error === 'INSUFFICIENT_ITEMS' ||
+  return error === 'CAPACITY' ||
+    error === 'INSUFFICIENT_ITEMS' ||
     error === 'INSUFFICIENT_STAMINA' ||
     error === 'INSUFFICIENT_FUNDS'
     ? error

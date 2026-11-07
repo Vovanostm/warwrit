@@ -1,0 +1,6 @@
+{
+  "path": "/company/commands",
+  "body": "{\"schemaVersion\":2,\"commandId\":\"c34ebca9-43f5-4ae2-9466-2ca52e0ea792\",\"expectedPublicRevision\":\"2\",\"type\":\"TransferItem\",\"payload\":{\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"sword\\\"]\",\"quantity\":1,\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\",\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"carry\\\"]\"}}",
+  "response": "{\"commandId\":\"c34ebca9-43f5-4ae2-9466-2ca52e0ea792\",\"ok\":true,\"publicRevision\":\"3\"}",
+  "httpStatus": 200
+}

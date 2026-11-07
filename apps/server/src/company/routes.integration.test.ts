@@ -730,6 +730,40 @@ describe('authenticated company read (PostgreSQL)', () => {
         });
         expect(malformedPerk.statusCode).toBe(400);
 
+        for (const payload of [
+          { itemId: 'ration', quantity: 0, fromContainerId: 'supply', toContainerId: 'pack' },
+          { itemId: 'ration', quantity: 1.5, fromContainerId: 'supply', toContainerId: 'pack' },
+          {
+            itemId: 'ration',
+            quantity: 1,
+            fromContainerId: 'supply',
+            toContainerId: 'pack',
+            splitItemId: 'injected',
+          },
+          {
+            itemId: 'ration',
+            quantity: 1,
+            fromContainerId: 'supply',
+            toContainerId: 'pack',
+            accessEvidenceId: 'injected',
+          },
+        ]) {
+          const invalidTransfer = await createdApp.inject({
+            method: 'POST',
+            url: '/company/commands',
+            headers: commandHeaders,
+            payload: {
+              schemaVersion: 2,
+              commandId: `invalid-transfer-${accountId}`,
+              expectedPublicRevision: ownerCompany.revision,
+              type: 'TransferItem',
+              payload,
+            },
+          });
+          expect(invalidTransfer.statusCode).toBe(400);
+          expect(invalidTransfer.json()).toMatchObject({ code: 'INVALID_COMMAND' });
+        }
+
         const malformedPayroll = await createdApp.inject({
           method: 'POST',
           url: '/company/commands',

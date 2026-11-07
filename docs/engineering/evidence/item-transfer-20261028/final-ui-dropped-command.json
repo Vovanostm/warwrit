@@ -1,0 +1,6 @@
+{
+  "path": "/company/commands",
+  "body": "{\"schemaVersion\":2,\"commandId\":\"8f7c6c85-9290-489f-9d7d-4ee71010a4a0\",\"expectedPublicRevision\":\"7\",\"type\":\"TransferItem\",\"payload\":{\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"medical-unit\\\"]\",\"quantity\":1,\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\"}}",
+  "response": "{\"commandId\":\"8f7c6c85-9290-489f-9d7d-4ee71010a4a0\",\"ok\":true,\"publicRevision\":\"8\"}",
+  "httpStatus": 200
+}
