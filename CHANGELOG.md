@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Record WLC-03 merge
+
+- 2026-11-07, `codex/wlc-03-merge-receipt`, records MERGED
+  [PR421](https://github.com/Vovanostm/warwrit/pull/421) at16:46:47UTC as25743a75,
+  expected headf6a3953a, with identical reviewed content. Update CURRENT_PLAN and
+  the [owning receipt](docs/engineering/COMBAT_ASSET_CONSOLIDATION.md#confirmed-merge--2026-11-07).
+  Documentation-only closeout for the owner-authorized WLC-03 mission;
+  scoped format/diff/link readback PASS, repeated game/SQL/build checks NOT_RUN.
+  Preserve the recorded advisory CI limits and unrelated work; no deployment.
+
 ### Consolidate combat assets and atlas v6 (WLC-03)
 
 - 2026-11-07, `codex/wlc-03-assets`, PUBLISHED [PR421](https://github.com/Vovanostm/warwrit/pull/421), owner request:
