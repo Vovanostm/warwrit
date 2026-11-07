@@ -15,6 +15,9 @@ const closeDatabase =
     ? undefined
     : (): Promise<void> => (databaseClosePromise ??= database.destroy());
 const app = buildApp({
+  ...(config.playground === undefined || database === undefined
+    ? {}
+    : { playground: { ...config.playground, host: config.host, database } }),
   ...(closeDatabase === undefined ? {} : { closeDatabase }),
   ...(database === undefined
     ? {}

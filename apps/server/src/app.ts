@@ -1,3 +1,4 @@
+import { registerPlayground, type PlaygroundSettings } from './playground/routes.js';
 import { PROTOCOL_VERSION, type HealthResponse } from '@warwrit/protocol';
 import fastify, {
   type FastifyBaseLogger,
@@ -15,11 +16,16 @@ import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.j
 import { registerEncounterRoutes, type EncounterRoutesOptions } from './encounters/routes.js';
 import { registerEncounterRealtime } from './encounters/realtime.js';
 
+// Defined only by the production packaging build; source execution uses runtime guards.
+declare const WARWRIT_PRODUCTION_BUILD: boolean;
+const productionBuild = typeof WARWRIT_PRODUCTION_BUILD !== 'undefined' && WARWRIT_PRODUCTION_BUILD;
+
 export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
   readonly closeDatabase?: () => Promise<void>;
   readonly combatLab?: CombatLabSettings;
+  readonly playground?: PlaygroundSettings;
   readonly identity?: IdentityRoutesOptions;
   readonly company?: CompanyRoutesOptions;
   readonly encounters?: EncounterRoutesOptions;
@@ -80,10 +86,22 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     });
   }
   if (options.combatLab !== undefined) {
-    if (process.env['NODE_ENV'] === 'production') {
+    if (productionBuild || process.env['NODE_ENV'] === 'production') {
       throw new Error('Combat lab is unavailable in production');
     }
     registerCombatLab(app, options.combatLab);
+  }
+  if (options.playground !== undefined) {
+    if (productionBuild || process.env['NODE_ENV'] === 'production')
+      throw new Error('Playground requires explicit development/test');
+    if (
+      options.identity === undefined ||
+      options.identity.database !== options.playground.database ||
+      options.identity.config.publicOrigin !== options.playground.origin
+    ) {
+      throw new Error('Playground requires matching authenticated identity and database');
+    }
+    registerPlayground(app, options.playground);
   }
   app.get('/health/ready', async (request, reply) => {
     try {

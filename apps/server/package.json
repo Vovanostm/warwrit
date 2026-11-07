@@ -24,7 +24,7 @@
     "@warwrit/testkit": "workspace:*"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json --noEmit && vite build --config vite.production.config.ts",
     "clean": "node ../../scripts/clean.mjs",
     "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
     "start": "node dist/index.js",

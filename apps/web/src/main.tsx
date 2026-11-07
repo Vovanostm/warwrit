@@ -1,8 +1,15 @@
-import { StrictMode } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './App.js';
 import './styles.css';
+
+const Playground = import.meta.env.DEV
+  ? lazy(() =>
+      import('./playground/Playground.js').then((module) => ({ default: module.Playground })),
+    )
+  : null;
+const isPlayground = /^\/dev\/playground(?:\/(?:combat|maps))?\/?$/u.test(window.location.pathname);
 
 const rootElement = document.querySelector('#root');
 if (rootElement === null) {
@@ -11,6 +18,18 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    {isPlayground && !Playground ? (
+      <main>
+        <h1>Инструмент недоступен</h1>
+        <p>Developer Playground доступен только в разрешённой среде разработки.</p>
+        <a href="/">Вернуться в игру</a>
+      </main>
+    ) : isPlayground && Playground ? (
+      <Suspense fallback={<p>Проверка доступа…</p>}>
+        <Playground />
+      </Suspense>
+    ) : (
+      <App />
+    )}
   </StrictMode>,
 );
