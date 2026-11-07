@@ -15,13 +15,28 @@ sources:
 
 # Глобальная карта
 
+## Единственный рабочий атлас — WLC-03, 2026-11-07
+
+Клиент, сервер и мастерская карты используют v6. В мастерской больше нет
+переключателя старых рисунков; `pnpm dev:map` открывает актуальную карту.
+Параметры `?map=v2`, `?map=v5` и `?map=atlas` не выбирают другую версию.
+[Текущий manifest](../../../assets/manifest.json) фиксирует ресурсы и ревизии;
+[архив](https://github.com/Vovanostm/warwrit/releases/tag/wlc-03-history-2026-11-07)
+сохраняет предыдущие изображения, исходники и metadata.
+[Результаты и восстановление](../../engineering/COMBAT_ASSET_CONSOLIDATION.md).
+ID миров, координаты и принятые маршруты сохранены. Старые миры читаются своими
+существующими readers; автоматического переноса координат нет.
+Ниже сохранена датированная история: её прежние переключатели, команды и локальные
+пути не являются текущими инструкциями запуска. Ссылки на удалённые ресурсы
+закреплены за исходной Git-ревизией.
+
 Владелец попросил: «Продумай и подготовь глобальную карту — сгенерируй
 изображение мира в соответствии с лором». Результат этого цикла — обзорный
 атлас королевства, который можно открыть целиком и рассмотреть крупно.
 
-![Расширенная глобальная карта Стожарского королевства](../../../assets/art/world/stozhar-v3/world-map-engraved.png)
+![Расширенная глобальная карта Стожарского королевства](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/world-map-engraved.png)
 
-Первая версия: [атлас пяти опорных городов](../../../assets/art/world/stozhar-v1/world-map.png).
+Первая версия: [атлас пяти опорных городов](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v1/world-map.png).
 После просмотра владелец потребовал больший масштаб и содержательное
 разнообразие мест; эта версия сохранена как промежуточный рисунок.
 
@@ -165,9 +180,9 @@ sources:
 немного ржавого. Материалы — тёмная черепица, старое дерево, неровный
 камень; поля и леса различимы без ярких цветных заливок владений.
 
-Точный [английский запрос](../../../assets/art/world/stozhar-v1/prompt.txt)
-сохранён рядом с [рисунком](../../../assets/art/world/stozhar-v1/world-map.png)
-и [происхождением](../../../assets/art/world/stozhar-v1/provenance.json).
+Точный [английский запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v1/prompt.txt)
+сохранён рядом с [рисунком](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v1/world-map.png)
+и [происхождением](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v1/provenance.json).
 Генерация — встроенный `imagegen`;
 референсы просмотрены автором и описаны в запросе. Они не переданы как
 изображения-мишени для редактирования.
@@ -185,7 +200,7 @@ PNG. На запрос предпочтительного 3072×2048 инстр�
 Остальные применимые критерии — 2; движение не относится к неподвижному
 атласу. Для исправления запрошены новая низкая городская композиция у
 переправы, серый ил в реке и более плотные нерегулярные тени у опорных
-городов. Точный [запрос исправления](../../../assets/art/world/stozhar-v1/edit-prompt.txt).
+городов. Точный [запрос исправления](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v1/edit-prompt.txt).
 Исправленная версия получена: Мутня серая, у Каменного Брода низкая
 каменная переправа и плотная группа тёмных крыш. Второй полный проход
 статичного атласа: **ACCEPT**, применимые оценки 2/3/2/2/2/2/3; движение N/A.
@@ -196,9 +211,9 @@ PNG. На запрос предпочтительного 3072×2048 инстр�
 Расширенный атлас получен: **1586×992**. На рисунке нанесены новые города,
 болотный округ с гатью, разорённый Вязов и хлебная полоса, покинутые штольни,
 работающие и разрушенный порты. Точный
-[запрос](../../../assets/art/world/stozhar-v2/prompt.txt),
-[изображение](../../../assets/art/world/stozhar-v2/world-map.png),
-[происхождение](../../../assets/art/world/stozhar-v2/provenance.json).
+[запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v2/prompt.txt),
+[изображение](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v2/world-map.png),
+[происхождение](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v2/provenance.json).
 Независимая оценка второй версии: **REJECT**, мелкие подписи терялись
 на обзоре; потребовалась увеличиваемая подача. Число деревенских групп и доля суши
 Поречья **NOT_MEASURED**; изображение не является координатным каталогом мира.
@@ -220,7 +235,7 @@ PNG. На запрос предпочтительного 3072×2048 инстр�
 > Ещё раз перепроверь карту и расположи все элементы на ней логично —
 > проверь дороги, леса, болота, мосты, деревни, поля и пр.
 
-Текущая версия — [увеличиваемый атлас](../../../assets/art/world/stozhar-v3/atlas.html)
+Текущая версия — [увеличиваемый атлас](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/atlas.html)
 с поиском, фильтрами и выбором места. Его [каталог](../../../assets/art/world/stozhar-v3/places.json)
 содержит **128** уникальных мест: 24 города, 40 деревень/хуторов,
 18 следов войны, 16 природных мест, 16 дорожных узлов, 14 промысловых
@@ -279,12 +294,12 @@ PNG. На запрос предпочтительного 3072×2048 инстр�
 
 ### Происхождение и пределы результата
 
-[Исходный запрос](../../../assets/art/world/stozhar-v3/prompt.txt),
-[правка географии](../../../assets/art/world/stozhar-v3/geography-edit-prompt.txt),
-[правка переправ и водяных хозяйств](../../../assets/art/world/stozhar-v3/landmarks-edit-prompt.txt),
-[правка по прямым референсам](../../../assets/art/world/stozhar-v3/style-edit-prompt.txt),
-[графическая реконструкция](../../../assets/art/world/stozhar-v3/engraving-edit-prompt.txt)
-и [provenance](../../../assets/art/world/stozhar-v3/provenance.json) сохранены
+[Исходный запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/prompt.txt),
+[правка географии](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/geography-edit-prompt.txt),
+[правка переправ и водяных хозяйств](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/landmarks-edit-prompt.txt),
+[правка по прямым референсам](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/style-edit-prompt.txt),
+[графическая реконструкция](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/engraving-edit-prompt.txt)
+и [provenance](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/stozhar-v3/provenance.json) сохранены
 рядом с текущим рисунком. Использован встроенный imagegen.
 
 Новые названия и география остаются предложением; атлас не подключён
@@ -405,13 +420,13 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 встроенный `image_gen` (модель `gpt-6.1-sol`), вызов из Claude Code через
 `codex exec` с вырезкой атласа как раскладкой и тремя утверждёнными
 референсами. Файлы, точные запросы и
-[provenance](../../../assets/art/world/porechye-v1/provenance.json) —
+[provenance](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/provenance.json) —
 в `assets/art/world/porechye-v1/`.
 
-| Версия                                                                         | Критик | Оценки                                                           |
-| ------------------------------------------------------------------------------ | ------ | ---------------------------------------------------------------- |
-| [Первая](../../../assets/art/world/porechye-v1/porechye-detail.png)            | REJECT | Предметы и лор 1, раскладка 1; силуэты, язык, тон, материалы — 2 |
-| [Вторая, правка](../../../assets/art/world/porechye-v1/porechye-detail-v2.png) | REJECT | Предметы и лор 2, раскладка 1; остальные — 2                     |
+| Версия                                                                                                                                                   | Критик | Оценки                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------- |
+| [Первая](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail.png)            | REJECT | Предметы и лор 1, раскладка 1; силуэты, язык, тон, материалы — 2 |
+| [Вторая, правка](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail-v2.png) | REJECT | Предметы и лор 2, раскладка 1; остальные — 2                     |
 
 Исправлено во второй версии: Караульный мост — деревянный настил на
 каменных опорах; Каменный Брод — низкая двухарочная переправа без замка;
@@ -429,7 +444,7 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 день/ночь и сравнительная таблица — **NOT_RUN**; лист не принят.
 
 **Третья версия — решение владельца «a», 2026-10-09.**
-[Лист](../../../assets/art/world/porechye-v1/porechye-detail-v3.png) собран
+[Лист](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail-v3.png) собран
 по участкам: Березняк вклеен из первой версии; одна правка Codex по листу
 с рамками, из которой взяты только участки ниже мельницы и на северо-востоке
 (остальное — Codex убрал нижнюю Мутню — отброшено); три правки Codex по
@@ -448,7 +463,7 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 
 **Четвёртая версия — полировка, 2026-10-09.** Владелец поручил выбрать облик
 Брода автору («all yours») и согласился перенести Тихую Гать на южный берег.
-[Лист](../../../assets/art/world/porechye-v1/porechye-detail-v4.png): Каменный
+[Лист](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail-v4.png): Каменный
 Брод на карте совпадает со сценой посещения — нижние этажи из бутового камня,
 приземистая караульня у моста не выше домов с одним выцветшим знаменем,
 каменный амбар с подъёмником, дым; без высоких башен и креста, пока вера
@@ -466,7 +481,7 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 **Пятая версия — решения владельца, 2026-10-09:** эмблема с рогами на знамени
 остаётся; фонарный столб, похожий на виселицу, заменён простым фонарём
 (одна правка Codex, вклеен участок 55×75 px).
-[Текущий лист](../../../assets/art/world/porechye-v1/porechye-detail-v5.png):
+[Текущий лист](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail-v5.png):
 критик — **ACCEPT** концепта, материалы — 3, остальные — 2; шов не виден,
 фонарь читается фонарём только при 2×. Открытая полировка прежняя плюс
 след лодки у Брода.
@@ -476,7 +491,7 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 Запрос: наложить дороги, леса, болота и другие биомы с разной скоростью,
 попробовать поиск пути и проверить готовые GitHub-решения. Владелец выбрал
 первый результат: **«Да, сначала интерактивный стенд»**. Подложка —
-[Поречье v5](../../../assets/art/world/porechye-v1/porechye-detail-v5.png).
+[Поречье v5](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/porechye-detail-v5.png).
 Это локальный опыт, не новая принятая география игрового мира.
 
 ### Как попробовать
@@ -496,7 +511,7 @@ Native Chrome — **NOT_RUN** (этот браузер недоступен в �
 
 ### Данные и границы
 
-[Разметка](../../../scripts/world-map/porechye-navigation.ts) задана в пикселях
+[Разметка](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/scripts/world-map/porechye-navigation.ts) задана в пикселях
 исходника. Одни полигоны питают подсветку и поиск пути. Дороги имеют ширину
 и соединения; река образует непрерывную преграду. Два целых моста открывают
 переправу; разрушенный пролёт не получает разрешающего коридора.
@@ -619,22 +634,22 @@ GitHub-поиск 2026-10-25: weighted A*, terrain costs, Recast JavaScript;
 новую композицию региона, сохраняя идентичность мест; километры и новое
 время переходов не утверждены.
 
-Подготовлена [схема](../../../assets/art/world/porechye-v2/layout-guide.svg)
+Подготовлена [схема](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/layout-guide.svg)
 с непрерывной рекой, двумя целыми основными мостами, разрушенной верхней
 переправой, отдельными лесными массивами, полями, болотами и сухими
 площадками деревень. Малый ручей у мельницы имеет свой деревянный переход.
 Большие спокойные пространства между группами построек важнее простого
 растяжения пикселей. Схема — производственный эскиз, не новый канон.
 
-Встроенный `imagegen` создал [вариант 1](../../../assets/art/world/porechye-v2/porechye-spacious-v1.png)
+Встроенный `imagegen` создал [вариант 1](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/porechye-spacious-v1.png)
 по схеме, v5 и трём арт-референсам. Критик отметил простор и читаемость,
 но отклонил смещение каменного моста и недостаточно сломанное колесо.
-[Вариант 2](../../../assets/art/world/porechye-v2/porechye-spacious-v2.png)
+[Вариант 2](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/porechye-spacious-v2.png)
 создан заново по схеме и трём референсам стиля/материалов, без v5 во входах,
 чтобы не импортировать его компоновку. Точные
-[первый запрос](../../../assets/art/world/porechye-v2/prompt.txt),
-[второй запрос](../../../assets/art/world/porechye-v2/prompt-v2.txt) и
-[происхождение](../../../assets/art/world/porechye-v2/provenance.json) сохранены.
+[первый запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/prompt.txt),
+[второй запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/prompt-v2.txt) и
+[происхождение](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/provenance.json) сохранены.
 
 Оба запроса предпочитали нативные 3072×2048, инструмент вернул **1536×1024**.
 Апскейла нет; увеличена просторность композиции, увеличение нативного
@@ -693,15 +708,15 @@ v5 и три исходных арт-референса. Разделение м
 фрагментом и вклеен обратно с мягкой маской. Оси, окружающие поля и
 поселения сохранены. Дорожная светлая полоса включает обочины; рабочие
 коридоры отмечают середину пути. Промежуточная
-[подложка](../../../assets/art/world/porechye-v2/porechye-regional-v3.png),
-[новая схема](../../../assets/art/world/porechye-v2/regional-guide.svg),
-[запрос](../../../assets/art/world/porechye-v2/prompt-regional-v2.txt),
-[локальные правки](../../../assets/art/world/porechye-v2/prompt-bridge-edits.txt)
-и [происхождение](../../../assets/art/world/porechye-v2/provenance.json)
+[подложка](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/porechye-regional-v3.png),
+[новая схема](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/regional-guide.svg),
+[запрос](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/prompt-regional-v2.txt),
+[локальные правки](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/prompt-bridge-edits.txt)
+и [происхождение](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/provenance.json)
 сохранены рядом. Нативный лист по-прежнему 1536×1024; увеличение фрагментов
 для правки не является повышением разрешения всего листа.
 
-[Новая разметка](../../../scripts/world-map/porechye-regional.ts) построена
+[Новая разметка](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/scripts/world-map/porechye-regional.ts) построена
 по полученному рисунку; водный контур имеет приоритет 100, только два
 узких мостовых коридора открывают переход. Прежние полигоны поверх новой
 картинки не переносились. Леса обобщены; отдельные дома, деревья и маленькие
@@ -769,7 +784,7 @@ PASS. В браузере Брод→Гать: 232 наблюдения марк
 
 **Физические ориентиры и окончательная разметка.** Независимый просмотр
 отклонил два новых места, представленных только подписями. В активную
-[подложку v4](../../../assets/art/world/porechye-v2/porechye-regional-v4.png)
+[подложку v4](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v2/porechye-regional-v4.png)
 вклеены отдельные сгенерированные фрагменты с низкими земляными валами
 и тремя погребальными насыпями; полная местность не перегенерировалась.
 После замечания о перекрытии насыпей точка подхода перенесена на сухую
@@ -942,7 +957,7 @@ PASS. Первый аудит нашёл один неиспользуемый �
 удовольствию игрока, канону карты, балансу или выполнению контрактов.
 
 **Сохранение:** `codex/world-map-painted`, локально; итоговая подложка —
-[atlas-v5.png](../../../assets/art/world/porechye-atlas-v1/atlas-v5.png),
+[atlas-v5.png](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-atlas-v1/atlas-v5.png),
 девять вырезанных из неё native-тайлов и промпты лежат рядом.
 Финальные 12 сценариев/типы, scoped lint/format, архитектура и аудит
 изменений — PASS. Полный игровой/DB-gate — NOT_RUN: игра, сервер и

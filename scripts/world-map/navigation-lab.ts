@@ -10,8 +10,8 @@ import {
   type NavigationRegion,
   type PointFp,
 } from '@warwrit/game-core';
-import { type Pixel } from './porechye-navigation.js';
-import * as regional from './porechye-regional.js';
+import { type Pixel } from './map-camera.js';
+import { metresPerPixel, walkingMetresPerSecond } from './porechye-atlas-places.js';
 import {
   advanceMapView,
   boundedMapView,
@@ -21,22 +21,16 @@ import {
   type MapView,
 } from './map-camera.js';
 import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
-import { mapProfiles } from './navigation-maps.js';
+import { atlasMap } from './navigation-maps.js';
 import { mountContractPreview } from './navigation-contracts.js';
 import { canEnterPlace, planPlaceArrival, type PlaceEntry } from './place-entries.js';
 import { inspectRoadNetwork, mountRoadDiagnostics } from './road-diagnostics.js';
 
-const requested = new URLSearchParams(location.search).get('map');
-const editionId = requested === 'v5' || requested === 'v2' ? requested : 'atlas';
-const legacy = editionId === 'v5';
-const expanded = editionId === 'atlas';
-const mapInfo = mapProfiles[editionId];
+const mapInfo = atlasMap;
 const { region, presets, sheet: SHEET, point, pixel, places } = mapInfo;
 // Only playback/display time is calibrated. Core plans and biome ratios stay intact.
-const walkingTimeScale = legacy
-  ? 1
-  : ((BASE_SPEED_FP_PER_SECOND / SHEET.fpPerPixel) * regional.metresPerPixel) /
-    regional.walkingMetresPerSecond;
+const walkingTimeScale =
+  ((BASE_SPEED_FP_PER_SECOND / SHEET.fpPerPixel) * metresPerPixel) / walkingMetresPerSecond;
 
 const element = <T extends Element>(id: string) => document.getElementById(id)! as unknown as T;
 const map = element<SVGSVGElement>('map');
@@ -117,23 +111,15 @@ function drawLayers() {
 }
 
 function drawGeography() {
-  map.classList.toggle('atlas', expanded);
+  map.classList.add('atlas');
   map.setAttribute('viewBox', `0 0 ${SHEET.width} ${SHEET.height}`);
   element('sheet').setAttribute('width', String(SHEET.width));
   element('sheet').setAttribute('height', String(SHEET.height));
   element('sheet').setAttribute('href', `../../assets/art/world/${mapInfo.image}`);
   element('edition-note').textContent = mapInfo.note;
-  const edition = element<HTMLSelectElement>('edition');
-  edition.value = editionId;
-  edition.addEventListener('change', () => {
-    location.search = `?map=${edition.value}`;
-  });
-  if (legacy) return;
   element('time-note').textContent =
     'Пробный пеший темп: поле 1 м/с, местность меняет скорость. Ускорение меняет только просмотр.';
-  element('scale').textContent = expanded
-    ? 'Атлас 7,2 × 4,8 км · 9 участков'
-    : 'Округ 2,4 × 1,6 км · масштаб эскиза';
+  element('scale').textContent = 'Атлас v6 · 7,2 × 4,8 км · 9 участков';
   for (const place of places) {
     const label = document.createElementNS(svgNS, 'text');
     label.textContent = place.name;
@@ -163,7 +149,7 @@ function choosePlace(index: number) {
   }
   drawEntryZones();
   updateEntryControls();
-  if (expanded) focusPlace(place.at);
+  focusPlace(place.at);
   element<HTMLSelectElement>('place').value = String(index);
   element('place-description').textContent = place.description;
 }
@@ -258,7 +244,6 @@ function clearDestination() {
 }
 
 function drawPlaces() {
-  if (legacy) return;
   element('places-section').removeAttribute('hidden');
   const select = element<HTMLSelectElement>('place');
   select.options[0]!.textContent = `Выберите одно из ${places.length} мест`;
@@ -287,7 +272,6 @@ function drawPlaces() {
 }
 
 function durationText(milliseconds: number) {
-  if (legacy) return `${(milliseconds / 1000).toFixed(1)} с`;
   const seconds = Math.ceil(milliseconds / 1000),
     minutes = Math.floor(seconds / 60);
   return minutes ? `${minutes} мин ${seconds % 60} с` : `${seconds} с`;
@@ -313,8 +297,8 @@ function addLayerToggle(
   label.className = 'switch';
   const input = document.createElement('input');
   input.type = 'checkbox';
-  input.checked = !expanded;
-  if (expanded) toggle(false);
+  input.checked = false;
+  toggle(false);
   input.id = `layer-${id}`;
   const swatch = document.createElement('span');
   swatch.className = 'swatch';
@@ -390,7 +374,7 @@ function showRouteMetrics() {
     ? durationText((Number(plan.totalDurationUs) / 1000) * walkingTimeScale)
     : '—';
   element('distance').textContent = '—';
-  if (!plan || legacy) return;
+  if (!plan) return;
   const length = plan.path.slice(1).reduce((sum, p, i) => {
     const before = plan!.path[i]!;
     return (
@@ -403,7 +387,7 @@ function showRouteMetrics() {
         SHEET.fpPerPixel
     );
   }, 0);
-  element('distance').textContent = `${Math.round(length * regional.metresPerPixel)} м`;
+  element('distance').textContent = `${Math.round(length * metresPerPixel)} м`;
 }
 
 function calculateRoute() {
@@ -468,9 +452,8 @@ function mapPoint(event: MouseEvent): Pixel {
 }
 
 function showCoordinates(p: Pixel) {
-  element('coordinates').textContent = legacy
-    ? `${Math.round(p[0])}, ${Math.round(p[1])} px · Север ↑`
-    : `${Math.round(p[0] * regional.metresPerPixel)} м В · ${Math.round(p[1] * regional.metresPerPixel)} м Ю · Север ↑`;
+  element('coordinates').textContent =
+    `${Math.round(p[0] * metresPerPixel)} м В · ${Math.round(p[1] * metresPerPixel)} м Ю · Север ↑`;
 }
 
 map.addEventListener('pointermove', (event) => {
@@ -518,7 +501,7 @@ function animateKeyboardPan(elapsedMs: number) {
   applyView(next);
 }
 function symbolScale() {
-  return expanded ? view.width / 1536 : 1;
+  return view.width / 1536;
 }
 function focusPlace(at: Pixel) {
   const width = Math.min(view.width, 2304),
@@ -532,8 +515,7 @@ function updateViewportDetails() {
       'transform',
       `translate(${label.dataset['x']} ${label.dataset['y']}) scale(${scale})`,
     );
-    label.style.display =
-      expanded && view.width > 2304 && label.dataset['major'] !== 'true' ? 'none' : '';
+    label.style.display = view.width > 2304 && label.dataset['major'] !== 'true' ? 'none' : '';
   });
   map
     .querySelectorAll<SVGElement>('.poi-symbol')
@@ -547,7 +529,7 @@ function drawRuler(scale: number) {
   // The line stays 500m in source coordinates; only glyphs adapt to the view.
   const x = view.x + 55 * scale,
     y = view.y + view.height - 65 * scale;
-  const end = x + 500 / regional.metresPerPixel;
+  const end = x + 500 / metresPerPixel;
   element('map-scale').setAttribute('transform', `translate(${x} ${y})`);
   element('map-scale').innerHTML =
     `<path d="M0 0V${12 * scale}H${end - x}V0"/><text transform="translate(0 ${35 * scale}) scale(${scale})">0</text><text text-anchor="end" transform="translate(${end - x} ${35 * scale}) scale(${scale})">500 м</text>`;
@@ -654,11 +636,10 @@ async function initialize() {
     pixel,
   );
   drawPlaces();
-  if (expanded)
-    mountContractPreview((name) => {
-      choosePlace(places.findIndex((p) => p.name === name));
-      element<HTMLDetailsElement>('contracts-section').open = false;
-    });
+  mountContractPreview((name) => {
+    choosePlace(places.findIndex((p) => p.name === name));
+    element<HTMLDetailsElement>('contracts-section').open = false;
+  });
   setView({ x: 0, y: 0, width: SHEET.width, height: SHEET.height });
   const samples = mapInfo.samples;
   for (const terrain of Object.keys(samples)) {

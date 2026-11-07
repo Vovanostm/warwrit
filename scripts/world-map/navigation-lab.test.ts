@@ -9,158 +9,38 @@ import {
   continuousSurfaceAt,
   findTravelPath,
 } from '@warwrit/game-core';
-import { pixel, point, presets, region } from './porechye-navigation.js';
-import * as regional from './porechye-regional.js';
 import { atlasRegion, atlasPoint, atlasPlaces, atlasPresets } from './porechye-atlas.js';
 import { atlasContracts } from './porechye-atlas-contracts.js';
-import { mapProfiles } from './navigation-maps.js';
+import { atlasMap } from './navigation-maps.js';
 import { canEnterPlace, planPlaceArrival } from './place-entries.js';
-
-const field = buildNavigationField(region);
-const compile = (path: Parameters<typeof compileMovementPlan>[0]['path']) =>
-  compileMovementPlan({ field, path, startedAtMs: '0', movementEpoch: '0', planId: 'test' });
-
-test('the drawn forest, marsh, hill and road resolve to their existing speeds', () => {
-  assert.deepEqual(
-    [
-      [100, 500],
-      [1480, 580],
-      [1200, 270],
-      [108, 328],
-    ].map(([x, y]) => continuousSurfaceAt(field, point([x!, y!])).speedPermille),
-    [600, 300, 800, 1800],
-  );
-});
-
-test('visible open water below the stone bridge cannot be treated as dry ground', () => {
-  assert.deepEqual(
-    [
-      [790, 600],
-      [810, 650],
-      [900, 650],
-      [1100, 730],
-      [1360, 805],
-      [1400, 815],
-    ].map(([x, y]) => continuousSurfaceAt(field, point([x!, y!])).speedPermille),
-    [0, 0, 0, 0, 0, 0],
-  );
-});
-
-test('the town-to-mill route crosses water only on a bridge', () => {
-  const { from, to } = presets[0]!;
-  const plan = compile(findTravelPath(field, point(from), point(to))!);
-  assert.deepEqual(
-    [
-      ...new Set(
-        plan.speedSpans.filter((s) => s.terrainId === 'deep_water').map((s) => s.overlayId),
-      ),
-    ],
-    ['bridge'],
-  );
-});
-
-test('a crossing near the ruined bridge requires a detour to the open bridge', () => {
-  const { from, to } = presets[1]!;
-  assert.throws(() => compile([point(from), point(to)]), /NO_PATH/u);
-  const path = findTravelPath(field, point(from), point(to))!;
-  assert.ok(Math.max(...path.map((p) => pixel(p)[0])) > 600);
-});
-
-test('the road detour takes less time than the walkable straight line', () => {
-  const { from, to } = presets[2]!;
-  const plan = compile(findTravelPath(field, point(from), point(to))!);
-  const direct = compile([point(from), point(to)]);
-  assert.ok(BigInt(plan.totalDurationUs) < BigInt(direct.totalDurationUs));
-});
-
-const regionalField = buildNavigationField(regional.regionalRegion);
-
-test('independently selected visible water stays blocked on the regional painting', () => {
-  assert.deepEqual(
-    [
-      [100, 400],
-      [285, 440],
-      [430, 460],
-      [600, 550],
-      [740, 590],
-      [1010, 525],
-      [1250, 550],
-      [1440, 635],
-      [880, 690],
-      [900, 680],
-      [925, 670],
-      [950, 660],
-    ].map(([x, y]) => continuousSurfaceAt(regionalField, point([x!, y!])).speedPermille),
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  );
-});
-
-test('regional journeys use the stone bridge and the timber bypass, never the broken crossing', () => {
-  const waterCrossings = regional.regionalPresets.slice(0, 2).map(({ from, to }) => {
-    const plan = compileMovementPlan({
-      field: regionalField,
-      path: findTravelPath(regionalField, point(from), point(to))!,
-      startedAtMs: '0',
-      movementEpoch: '0',
-      planId: 'regional-journey',
-    });
-    return plan.speedSpans
-      .filter((s) => s.terrainId === 'deep_water')
-      .map((s) => ({
-        overlay: s.overlayId,
-        x: Math.round(
-          pixel({ xFp: Number(s.from.xMicroFp) / 65536, zFp: Number(s.from.zMicroFp) / 65536 })[0],
-        ),
-      }));
-  });
-  assert.deepEqual(waterCrossings, [
-    [{ overlay: 'bridge', x: 1156 }],
-    [{ overlay: 'bridge', x: 315 }],
-  ]);
-});
-
-test('every selectable place has a reachable arrival point, including the bank of the ruined bridge', () => {
-  assert.deepEqual(
-    regional.places
-      .filter((place) => !findTravelPath(regionalField, point([1160, 400]), point(place.at)))
-      .map((place) => place.name),
-    [],
-  );
-});
 
 // The atlas is one continuous region; tile edges are not artificial barriers.
 const atlasField = buildNavigationField(atlasRegion);
 
-test('both map scales reach the settlement boundary from roads and fields without targeting its center', () => {
-  const journeys = ([mapProfiles.v2, mapProfiles.atlas] as const).map((map, i) => {
-    const field = i ? atlasField : regionalField;
-    const offset = i ? [1536, 1024] : [0, 0];
-    const entry = map.entries[0]!;
-    return (
-      [
-        [60, 190],
-        [400, 225],
-        [195, 120],
-      ] as const
-    ).map((p) => {
-      const arrival = planPlaceArrival(
-        field,
-        entry,
-        map.point([p[0] + offset[0]!, p[1] + offset[1]!]),
-      )!;
-      const [x, y] = map.pixel(arrival.goal);
-      return {
-        canVisit: canEnterPlace(field, entry, arrival.goal),
-        stopsAtOutskirts: Math.hypot(x - 195 - offset[0]!, y - 220 - offset[1]!) > 50,
-      };
-    });
+test('atlas journeys reach the settlement boundary from roads and fields without targeting its center', () => {
+  const entry = atlasMap.entries[0]!;
+  const journeys = (
+    [
+      [60, 190],
+      [400, 225],
+      [195, 120],
+    ] as const
+  ).map((p) => {
+    const arrival = planPlaceArrival(atlasField, entry, atlasPoint([p[0] + 1536, p[1] + 1024]))!;
+    const [x, y] = atlasMap.pixel(arrival.goal);
+    return {
+      canVisit: canEnterPlace(atlasField, entry, arrival.goal),
+      stopsAtOutskirts: Math.hypot(x - 1731, y - 1244) > 50,
+    };
   });
-  const expected = Array.from({ length: 3 }, () => ({ canVisit: true, stopsAtOutskirts: true }));
-  assert.deepEqual(journeys, [expected, expected]);
+  assert.deepEqual(
+    journeys,
+    Array.from({ length: 3 }, () => ({ canVisit: true, stopsAtOutskirts: true })),
+  );
 });
 
 test('the whole dry village area is visitable, including field-facing edges outside the former approach circles', () => {
-  const entry = mapProfiles.atlas.entries[0]!;
+  const entry = atlasMap.entries[0]!;
   assert.deepEqual(
     [
       [195, 220],
@@ -173,7 +53,7 @@ test('the whole dry village area is visitable, including field-facing edges outs
 });
 
 test('area arrival ends before the center and charges the actual trimmed travel plan', () => {
-  const entry = mapProfiles.atlas.entries[0]!;
+  const entry = atlasMap.entries[0]!;
   const start = atlasPoint([1936, 1249]);
   const arrival = planPlaceArrival(atlasField, entry, start)!;
   const center = compileMovementPlan({
@@ -187,14 +67,14 @@ test('area arrival ends before the center and charges the actual trimmed travel 
 });
 
 test('Brod arrival from the south crosses the bridge before allowing entry', () => {
-  const entry = mapProfiles.atlas.entries[1]!;
+  const entry = atlasMap.entries[1]!;
   const start = atlasPoint([2636, 1579]); // District [1100,555], southern bank.
   const arrival = planPlaceArrival(atlasField, entry, start)!;
   assert.deepEqual(
     {
       southBankEntry: canEnterPlace(atlasField, entry, start),
       arrivalEntry: canEnterPlace(atlasField, entry, arrival.goal),
-      beforeBridge: mapProfiles.atlas.pixel(arrival.goal)[1] < 1478,
+      beforeBridge: atlasMap.pixel(arrival.goal)[1] < 1478,
       water: arrival.plan.speedSpans
         .filter((s) => s.terrainId === 'deep_water')
         .map((s) => s.overlayId),
@@ -204,7 +84,7 @@ test('Brod arrival from the south crosses the bridge before allowing entry', () 
 });
 
 test('an erroneous area across the river still cannot grant entry through open water', () => {
-  const entry = mapProfiles.atlas.entries[1]!;
+  const entry = atlasMap.entries[1]!;
   const overlapping = {
     ...entry,
     footprint: [
