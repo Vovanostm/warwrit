@@ -621,3 +621,15 @@ Touched feedback uses journey.ru.ts/journey.en.ts through the existing typed
 catalogue. Literal known keys return strings, dynamic IDs retain optional lookup.
 Transport TypeError now shows authored retry guidance, covered by the failed-fetch
 regression. Formal whole-scene art acceptance remains unassessed.
+
+### Visible retry correction — 2026-11-07 04:01 MSK
+
+The critic rejected the first unscrolled1440×900 retry capture because the error
+and retry button were below the map. The focused image proved wording only.
+Failed nonfullscreen discovery now scrolls its retry control into view. A fresh
+reload with discovery GET deliberately aborted required no manual scrolling.
+retry-localized-auto-visible.png shows the full error and button at y804.03,
+height36.19 within viewport900. Removing the deliberate network failure and
+clicking retry hid the panel, gameplay POST63→63. The panel's existing command
+recovery is preserved. Web connection/retry13PASS, types/lint PASS. Independent
+recheck remains pending. Native rest progress shows71/75/68 versus56/60/53.

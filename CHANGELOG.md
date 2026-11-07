@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Keep battle recovery visible in the desktop viewport
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 critic correction in
+  EncounterPanel. Failed discovery now scrolls its retry into view after the
+  initial desktop screenshot showed it below the map. Fresh native capture
+  confirms visible message/control without manual scrolling and successful
+  real discovery retry with zero gameplay POSTs. Web13PASS/types/lint PASS.
+  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#visible-retry-correction--2026-11-07-0401-msk)
+  retains provenance and the pending final review. Full suite/CI NOT_RUN.
+
 ### Preserve the ordinary victory and make its result readable
 
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 continuation. Server encounter

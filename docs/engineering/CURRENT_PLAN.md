@@ -14,6 +14,7 @@ Current writes own the first-loop source fix only if reproduced, M1_LOCAL_PLAYTE
 Native six-allies victory/trophy/PRESENT PASS, cash710→790 once. Food terminal blocker and stale retry/SETTLED feedback fixed.
 Rest assigned to primary3, unwounded HP56/60/53→57/61/54. Natural payroll tick1000 around08:27MSK remains pending, then next offer/restart.
 Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Source review ACCEPT, final finite playable critique pending.
+Initial retry screenshot exposed below-fold control, fixed by automatic failed-panel scroll. Native visible retry PASS; independent recheck pending.
 Full #177/#161 remain open. Preserve task processes until post-payroll restart.
 
 ## Hostile-retreat result and next work — 2026-11-07
