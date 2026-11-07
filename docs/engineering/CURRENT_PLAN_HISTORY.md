@@ -4074,7 +4074,7 @@ completed after agreement; all PNG/provenance files saved. Gallery shows ninetee
 new figures and existing B001 after new wolf alpha failures. B023 v3 is a
 separate creature sprite; `fixture.png` supplies its stationary rooted tree/loop.
 Flexible tether and occupancy remain actual scene-integration requirements.
-[Local review board](../../assets/art/combat/stage1-2026-10-09/index.html),
+[Local review board](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/index.html),
 localhost:5319, supports scale comparison and 6×6 draft lineups; it executes
 no combat. Direction approval is separate from integrated acceptance: grid,
 occupancy, real day/night and completed journey remain BLOCKED. Motion is out

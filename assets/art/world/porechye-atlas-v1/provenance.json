@@ -29,7 +29,7 @@
       "role": "approved materials and scene identity, review reference"
     },
     {
-      "path": "../../../../scripts/world-map/porechye-atlas-layout.ts",
+      "path": "https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/porechye-atlas-layout-source.ts",
       "role": "local layout proposal; source-image geometry corrected where art differs"
     }
   ],

@@ -22,7 +22,7 @@ import {
 } from './map-camera.js';
 import { bindMapPanDrag, bindMapPanKeys } from './map-camera-input.js';
 import { createCartographyView, knownCartographyBounds } from './cartography-view.js';
-import type { Pixel } from './porechye-navigation.js';
+import type { Pixel } from './map-camera.js';
 import { createMapIcon, createPartyKey, isMapIconName, partyIconName } from './map-symbols.js';
 import { layoutMapLabels } from './map-labels.js';
 import {

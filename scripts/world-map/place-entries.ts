@@ -9,7 +9,7 @@ import {
   type NavigationField,
   type PointFp,
 } from '@warwrit/game-core';
-import { type Pixel } from './porechye-navigation.js';
+import { type Pixel } from './map-camera.js';
 
 export interface PlaceEntry {
   readonly name: string;

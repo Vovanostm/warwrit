@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 import { expect, test } from 'vitest';
 import { buildNavigationField, findTravelPath } from '@warwrit/game-core';
-import { mapProfiles } from './navigation-maps.js';
+import { atlasMap } from './navigation-maps.js';
 import { inspectRoadNetwork, mountRoadDiagnostics } from './road-diagnostics.js';
 
-const atlas = mapProfiles.atlas;
+const atlas = atlasMap;
 const field = buildNavigationField(atlas.region);
 
 test('both repaired road connections are linked without treating ordinary dead ends as errors', () => {
