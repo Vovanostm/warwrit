@@ -633,3 +633,20 @@ height36.19 within viewport900. Removing the deliberate network failure and
 clicking retry hid the panel, gameplay POST63→63. The panel's existing command
 recovery is preserved. Web connection/retry13PASS, types/lint PASS. Independent
 recheck remains pending. Native rest progress shows71/75/68 versus56/60/53.
+
+### Recovery completed before payroll — 2026-11-07 04:14 MSK
+
+Native refresh and read-only state at294 show all four living members100health.
+All three recovering field members also reached100stamina and were returned to
+FIELD through ordinary controls, one command each, by tick295. No wounds were
+present and both medical kits remain. The existing consumed ration/carry covers
+rest, stock36 unchanged during this fraction of the campaign day. Treasury790,
+proof1 redeemed and prior receipts remain retained. rest-full.png,
+field-restored.png and matching JSON capture that result. Payroll still shows its
+real end-of-day prerequisite and no payable overdue balance at tick295.
+
+Independent affected feedback review ACCEPT now includes the automatically
+visible Russian retry, corrected completed card and observed rest progress.
+Independent source recheck found no defect in the scroll effect. Broader art
+scores remain unassessed. Remaining native steps are pay at natural tick1000,
+next contract and owned API restart/re-entry. Preserve the live stand while waiting.

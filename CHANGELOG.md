@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Complete natural rest before the first payroll
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 native result. The three
+  unwounded fighters recovered to100health/stamina with backed food and returned
+  FIELD at tick295. Treasury790, stock36 and medical kits2 retained. Source and
+  finite changed-feedback critique ACCEPT. [Owning checkpoint](docs/engineering/M1_LOCAL_PLAYTEST.md#recovery-completed-before-payroll--2026-11-07-0414-msk)
+  retains pay/next/restart as pending until natural campaign maturity. No new code
+  or tests in this checkpoint. Full suite/CI NOT_RUN.
+
 ### Keep battle recovery visible in the desktop viewport
 
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 critic correction in
