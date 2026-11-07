@@ -462,7 +462,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
           entry.terminalRevision === input.terminalRevision &&
           entry.terminalSourceEventId === `encounter:${input.encounterId}:terminal`,
       );
-      if (!previous || previous.encounter.active !== null || !completed)
+      if (
+        !previous ||
+        previous.encounter.active?.binding.setup.battleId === input.encounterId ||
+        !completed
+      )
         throw new TypeError('FIRST HUNT terminal acknowledgement has an unreleased company');
       const receiptIdentity = firstHuntTerminalReceiptIdentity({
         worldId: input.worldId,
@@ -546,10 +550,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   )
     throw new TypeError('FIRST HUNT terminal encounter replay is invalid');
 
-  const hostileIds = new Set(world.hostiles.map((hostile) => hostile.entityId));
+  const admittedHostiles = world.hostiles.filter((hostile) => hostile.currentPools['health']! > 0);
+  const hostileIds = new Set(admittedHostiles.map((hostile) => hostile.entityId));
   const hostileUnits = setup.units.filter((unit) => hostileIds.has(unit.id));
   if (
-    hostileUnits.length !== world.hostiles.length ||
+    hostileUnits.length !== admittedHostiles.length ||
     hostileUnits.some((unit) => {
       const hostile = world.hostiles.find((entry) => entry.entityId === unit.id);
       return (
@@ -582,10 +587,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
         },
       ]),
   );
-  if (terminalPools.size !== world.hostiles.length)
+  if (terminalPools.size !== admittedHostiles.length)
     throw new TypeError('FIRST HUNT terminal hostile pool set is incomplete');
 
   const hostiles: readonly FirstHuntHostileState[] = world.hostiles.map((hostile) => {
+    if (hostile.currentPools['health'] === 0) return hostile;
     const pools = terminalPools.get(String(hostile.entityId));
     if (
       !pools ||

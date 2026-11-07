@@ -220,9 +220,13 @@ interface ContractInstanceTable {
   readonly helper_company_id: string | null;
   readonly owner_join: unknown | null;
   readonly helper_join: unknown | null;
+  readonly owner_join_attempt_no: Generated<number | null>;
+  readonly helper_join_attempt_no: Generated<number | null>;
 }
 
 interface EncounterAdmissionTable {
+  readonly attempt_no: Generated<number>;
+  readonly is_current: Generated<boolean>;
   readonly encounter_id: string;
   readonly world_id: string;
   readonly instance_id: string;
@@ -467,8 +471,9 @@ export function createDatabaseReadinessProbe(
           w.seed, w.issuer_id, w.issuer_area_id, w.wallet_id, w.wallet_q, w.hostiles,
           c.world_id, c.instance_id, c.profile_id, c.terms, c.terms_digest, c.revision,
           c.owner_company_id, c.helper_company_id, c.owner_join, c.helper_join,
+          c.owner_join_attempt_no, c.helper_join_attempt_no,
           a.encounter_id, a.world_id, a.instance_id, a.binding_version, a.binding,
-          a.terminal_revision, a.effects_source_id, a.effects_applied_at,
+          a.terminal_revision, a.effects_source_id, a.effects_applied_at, a.attempt_no, a.is_current,
           p.world_id, p.item_id, p.source_id, p.encounter_id, p.terminal_revision,
           p.ground_item, p.custodian_company_id, p.redeemed_company_id,
           p.redemption_receipt_id

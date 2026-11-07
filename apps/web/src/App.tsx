@@ -1742,6 +1742,7 @@ export function App() {
               location={journey.world.party?.location ?? null}
               onUnauthorized={onContractUnauthorized}
               refreshKey={contractRefreshGeneration}
+              onRewardPaid={refreshWorldForShell}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
             <HuntList
@@ -1750,6 +1751,7 @@ export function App() {
               location={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
               onUnauthorized={onContractUnauthorized}
+              onRewardPaid={refreshWorldForShell}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
           </>
