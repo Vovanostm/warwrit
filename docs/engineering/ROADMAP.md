@@ -10,6 +10,16 @@ The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_
 and evidence separately. The superseded September roadmap and queue are retained
 in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
+## Consolidation integration — 2026-11-08
+
+[WLC-08](WLC_08_ACCEPTANCE.md) owns the current fresh integration acceptance.
+WLC-02–05 are merged; WLC-06/PR428 and WLC-07/PR429 are included as explicit
+unmerged candidates in that branch. Preserve their original PRs and historical
+results. Consolidation, the ordinary first loop and full M1 are separate claims.
+Only observed current-build journeys close acceptance criteria. Broad art evidence
+is not a global development prerequisite; a concrete unreadable or unusable
+control blocks its affected journey until fixed and checked.
+
 ## Product-first delivery — owner decision 2026-11-06
 
 Prioritize the repeatable company loop. Before feature code, complete the

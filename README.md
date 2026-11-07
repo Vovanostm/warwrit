@@ -1,14 +1,29 @@
 # Warwrit
 
-Warwrit is a browser-first persistent tactical game project. **M0, S-02, WP-00 and WP-01 are complete; WP-02 and the full M1 alpha are in progress.** The target is a persistent company → travel → contract → physical two-company PvE → proof → consequences → save/re-entry journey on the owner's Mac. Learning activation, combat consequences, durable execution, identity, world, content, production realtime, player UI and final player evidence remain ahead.
+Warwrit is a browser-first persistent tactical game. **M1 is in progress.**
+The ordinary local game supports OIDC sign-in, a persistent company, equipment,
+supplies, painted-atlas travel, contracts, server-authoritative tactical combat,
+physical proof, rewards, care, rest and payroll. Implementation and earlier
+bounded journeys do not establish complete M1 acceptance.
 
 ## Current development
 
-- [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live repository-side status, active blockers and ownership.
-- [Development roadmap](docs/engineering/ROADMAP.md) — executable dependency joins and acceptance route for the full M1 alpha.
-- [Documentation map](docs/README.md) — authority, ADRs, engineering guidance and work-package records.
+- [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live integration status and ownership.
+- [WLC-08 acceptance](docs/engineering/WLC_08_ACCEPTANCE.md) — exact candidate, fresh results and remaining M1 criteria.
+- [Development roadmap](docs/engineering/ROADMAP.md) — full M1 scope and next playable steps.
+- [Documentation map](docs/README.md) — authority, architecture and owning contracts.
 
-The diagnostic combat lab has merged PB01–PB04 protocol, server and view slices. PB06 browser integration is in progress; PB05/PB07–PB09 are optional diagnostic follow-ups. The lab is disposable and does not establish persistent M1 playability.
+Babylon.js is the supported renderer under [ADR-0006](docs/architecture/0006-m1-renderer-babylon.md).
+The protected development-only [Playground](docs/engineering/DEVELOPER_PLAYGROUND.md)
+contains the authoritative [Combat Lab](docs/engineering/COMBAT_LAB_CONSOLIDATION.md)
+and [World/Battle Map Editor](docs/engineering/UNIFIED_MAP_EDITOR.md).
+Their results apply to isolated developer scenarios; use the ordinary game for
+campaign acceptance. See WLC-08 for whether these changes are merged or candidates.
+
+For a new local game use the [isolated OIDC setup](docs/engineering/LOCAL_DEVELOPMENT.md#isolated-ordinary-game-worktree--176),
+then `pnpm db:up`, `pnpm db:migrate:up` and `pnpm dev`. Use a dedicated named
+Compose project and retain its volumes for restart/re-entry. The full diagnostic
+bootstrap below is optional; it is not the ordinary player launch command.
 
 ## Bootstrap
 
@@ -48,13 +63,13 @@ Copy `.env.example` to `.env` for local overrides. The default Docker database U
 ```text
 apps/
   server/       Server-authoritative HTTP process and persistence adapters
-  web/          Browser shell and protocol-only combat lab view; no selected M1 renderer yet
+  web/          React player UI, Babylon.js scenes and development-only Playground
 packages/
   game-core/    Pure deterministic combat/domain kernel; no I/O imports
   protocol/     Versioned transport contracts and shared API types
   testkit/      Test-only generators and helpers
-assets/         Versioned asset manifest and future source assets
-content/        Future validated authored content
+assets/         Active asset manifest, original art and retained source assets
+content/        Versioned authored game content
 scripts/        Repository verification, combat stress, and migration tools
 docs/           Authority, architecture, engineering, and work-package records
 ```
@@ -63,7 +78,10 @@ docs/           Authority, architecture, engineering, and work-package records
 
 `packages/game-core` now owns axial hex coordinates, deterministic pathfinding, versioned prototype rules, explicit RNG state, immutable command reduction, individual initiative, movement, melee/ranged prototype attacks, defense, waiting, physical retreat, wounds, death, morale, stamina, AI doctrines, canonical state serialization, and command-stream replay.
 
-All numeric combat values are **provisional M0 parameters**, not approved final balance. Their single source of truth is `COMBAT_RULES_V1` (`m0-prototype-v1`).
+Current campaign and Combat Lab encounters use `m1-domain-bridge-v5`. Historical
+`m0-prototype-v1` and sprite rules remain for versioned replay and fixtures; they
+are not the current campaign balance contract. Provisional parameters retain their
+source status. [Combat mechanics](docs/wiki/combat.md) documents the rules.
 
 The kernel still may not import filesystem, network, clock, process, ambient randomness, database, framework, or rendering APIs. The repository-level architecture check fails on forbidden imports, undeclared workspace edges, and circular dependencies.
 

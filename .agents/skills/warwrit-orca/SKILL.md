@@ -11,6 +11,13 @@ and [current team guidance](../../../docs/engineering/AGENT_TEAM.md#current-oper
 The 2026-10-24 owner cancellation remains in force. This skill and old slice
 plans do not authorize workers, automation, GitHub mutation or merge.
 
+Owner policy — 2026-11-08: current AGENTS.md supersedes older mandatory
+CI, independent-review and critic gates below. CI/audits/full suites and
+independent reviewers are advisory/optional. Self-review is required. A concrete
+UI defect blocks its affected journey, not unrelated development; missing broad
+visual evidence is not a global BLOCKED state. Merge still requires explicit
+current permission and expected-head protection.
+
 ## Activation and stop
 
 Before any tick, loop, model, mailbox/run, network or mutation check
@@ -69,9 +76,9 @@ approval bypass flags or terminal interrupts that can suspend a process/lock DB.
    commands/environment/results and recheck affected evidence after changes.
 5. Run independent gates below. Fix material findings, then repeat affected gates;
    code integration can invalidate review even when Git merges cleanly.
-6. Publish/merge only under current explicit permission, green applicable CI,
+6. Publish within the current assignment; merge only with explicit current permission,
    no blocking findings and expected head. Read back head, merge and issue state.
-   All infrastructure requires independent reviewer ACCEPT for its head. Size is
+   Independent review is optional. Size is
    advisory; `check-pr-scope.sh` cannot prove semantic cohesion. Several related
    issues may share a PR only with separate acceptance for each.
 7. Preserve a short checkpoint: branch/head, done, next, blockers. CURRENT_PLAN

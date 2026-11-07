@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Integrate consolidation and refresh acceptance guidance (WLC-08)
+
+- 2026-11-08, `codex/wlc-08-integration`, LOCAL, owner-assigned integration/QA.
+  Combine main fdbb0dc2/WLC-02–05 with explicit unmerged PR428 and PR429 heads;
+  preserve both histories and other worktrees. Fix reproduced migration-smoke
+  expectations/rollback order through0023 without editing released migrations or
+  weakening older data-preservation checks; failing-before/passing-after on an
+  isolated empty database. Refresh README/docs/roadmap/ADR historical markers,
+  Playground/combat entry guidance and optional-review/scoped visual-gate policy.
+  [Owning evidence and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
+  Frozen install, clean migration up/full smoke and ordinary OIDC/preparation
+  PASS; remaining integrated acceptance pending. CI advisory; no merge/deployment
+  or full-M1 acceptance. Retained player data and original dirty work untouched.
+
 ### Consolidate Combat Lab (WLC-06)
 
 - 2026-11-08, `codex/wlc-06-combat-lab`, PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), owner-assigned consolidation.

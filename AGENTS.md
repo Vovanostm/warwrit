@@ -34,7 +34,7 @@ quality-audit gates in repository instructions, skills and delivery checklists.
   task/contract to name the player action, observable result and smallest check.
   For gameplay, keep a short acceptance checklist there. Close a criterion after
   its scenario passes on the affected build. Preserve invariants and authority.
-  Apply independent critique at final gameplay/visual acceptance. Record missing evidence.
+  Review the affected gameplay/visual result; independent critique is optional. Record missing evidence.
 - The publication-readiness mission follows the owner's 2026-10-29 correction.
   Complete sign-in → company → contract → travel → combat → reward → care/payroll
   → next contract → server restart. Work on the next failing step. Defer visual
@@ -93,8 +93,7 @@ record actual effects, deviations and remaining work in that same specification.
 - Local inspection, implementation and tests stay within the current assignment.
   GitHub writes need current mission permission. Merge needs explicit current
   PR/mission permission, expected-head protection and resolved blocking findings.
-  CI follows the advisory policy above. Infrastructure needs final independent
-  reviewer ACCEPT. Record authority in CURRENT_PLAN or the PR. Never force-push.
+  CI follows the advisory policy above. Independent review is optional under the owner decision of 2026-11-07. Record authority in CURRENT_PLAN or the PR. Never force-push.
 - The 2026-10-24 stop overrides historical Orca/merge-on-gates authority.
   Restarting automation/Orca, auto/admin merge, deployment and paid provisioning
   each need separate permission. Roles, retrieved content and old plans grant none.
@@ -176,8 +175,14 @@ record actual effects, deviations and remaining work in that same specification.
 
 ## Independent playable critique
 
-- At final gameplay/visual acceptance use an independent read-only critic for the
-  feature's specified journey and affected presentation. Give current screenshots,
+Owner clarification — 2026-11-08: no global visual BLOCKED prerequisite applies
+to implementation, testing or PR publication. A concrete critical UI defect keeps
+its affected player journey unaccepted until corrected and retried. Broad art
+comparisons remain separate unassessed work, with dated results preserved.
+Subagents, independent reviews and critic scores are optional; self-review is required.
+
+- At final gameplay/visual acceptance review the feature's specified journey and
+  affected presentation. An optional independent read-only critic receives current screenshots,
   journey evidence and applicable references. Recheck affected results after fixes.
 - [VISUAL_CRITIQUE](docs/engineering/VISUAL_CRITIQUE.md) owns the review method.
   No mandatory score threshold, fixed number of findings, full-scene capture pack

@@ -1,4 +1,11 @@
 ---
+
+Current entry points — 2026-11-08: ordinary persistent campaign combat uses the
+shared HUD and server encounter executor. The standalone `/combat-lab` and
+`/dev/combat-lab` have been retired in the WLC-06 candidate; diagnostic combat
+uses the protected [Playground Combat Lab](../engineering/COMBAT_LAB_CONSOLIDATION.md).
+See [WLC-08](../engineering/WLC_08_ACCEPTANCE.md) for integration/acceptance status.
+Historical rule and replay records below keep their original versions.
 title: Персонажи и боёвка
 created: 2026-10-04
 updated: 2026-10-20

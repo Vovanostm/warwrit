@@ -22,7 +22,7 @@ The map route no longer displays or activates a combat sandbox. The historical
 foundation journey below records the pre-editor state. Map content delivery
 registers immutable versions for new worlds only; it never assigns live world refs.
 
-## Journey and scope
+## Historical foundation journey and scope — SUPERSEDED by WLC-06/07
 
 An authenticated, allowlisted developer opens `/dev/playground`, sees a conspicuous
 DEBUG environment label, account/session identity and server content revision,

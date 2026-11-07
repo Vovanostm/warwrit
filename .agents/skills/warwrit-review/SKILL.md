@@ -9,6 +9,13 @@ Read the exact active contract and actual diff/callers, not only the PR descript
 Follow [AGENTS.md](../../../AGENTS.md). A separate author pass is still author
 review; do not claim another agent's approval.
 
+Owner policy — 2026-11-08: current AGENTS.md supersedes older mandatory
+CI, independent-review and critic gates below. CI/audits/full suites and
+independent reviewers are advisory/optional. Self-review is required. A concrete
+UI defect blocks its affected journey, not unrelated development; missing broad
+visual evidence is not a global BLOCKED state. Merge still requires explicit
+current permission and expected-head protection.
+
 ## Counterexample pass
 
 Choose the relevant postulates and trace public preparation plus projection.
