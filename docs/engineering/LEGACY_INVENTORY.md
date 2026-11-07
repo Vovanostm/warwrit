@@ -18,7 +18,8 @@ an empty static reference list alone never makes a file safe to delete.
 Owner assignment: remove the pilot in a standalone cleanup PR; Babylon.js is the
 only supported production renderer. WLC-01 is merged via PR419. Implementation
 base: main `79a6ba02`; writer: `codex/wlc-02-remove-playcanvas` in
-`.claude/worktrees/wlc-02`. Status: LOCAL / implemented; publication pending.
+`.claude/worktrees/wlc-02`. Status: PUBLISHED in [PR420](https://github.com/Vovanostm/warwrit/pull/420),
+OPEN / NOT_MERGED.
 This dated section supersedes the spike retention hold below for executable code
 only; the original per-file registry remains an immutable WLC-01 source snapshot.
 
@@ -97,8 +98,15 @@ untouched. Removed main source remains accessible at the WLC-02 base commit.
 - Full campaign loop, every scene/device/target-performance acceptance, injected
   construction failures, full suite/coverage/stress and broad local CI NOT_RUN;
   performance/enjoyment NOT_MEASURED. No independent gameplay/visual acceptance
-  is claimed by this deletion-only cycle. CI is advisory; publication readback
-  will be recorded below. Merge and deployment are NOT_AUTHORIZED / NOT_RUN.
+  is claimed by this deletion-only cycle. CI is advisory; hosted completion is not awaited. Merge and deployment are
+  NOT_AUTHORIZED / NOT_RUN.
+
+Publication readback: PR420 opened from `codex/wlc-02-remove-playcanvas` against
+main `79a6ba02`, initial implementation head `0bb0298f`;27 scoped files,13
+executable/config removals. This receipt only updates delivery documentation.
+Production source/assets remain identical to the checked base. GitHub owns live
+head, mergeability and CI; no completed hosted pass is claimed. Original dirty
+checkout and all other worktrees/player databases remain untouched.
 
 ## Classification and coverage
 

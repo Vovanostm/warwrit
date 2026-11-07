@@ -9,13 +9,14 @@ retain public source assets/licenses/manifests, Git history and PR129's unmerged
 branch. Production encounters and Combat Lab already share Babylon 9.28.0;
 map/place lifecycle and game rules remain unchanged. No merge/deployment permission.
 [Owning scope and results](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
-LOCAL / implemented, publication pending. Frozen install, workspace builds/types,
+PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), OPEN / NOT_MERGED.
+Frozen install, workspace builds/types,
 74 focused tests, architecture/content/scoped lint/format/diff PASS. Disposable
 lab manual turn, auto start/stop, day/night, overview/zoom and scene disposal/
 re-entry PASS (engines/scenes1/1 →0/0 →1/1). Ordinary App local login/map/place/
 quest/travel/stop PASS on a disposable DB. Native campaign battle continuation,
 full suite/coverage/performance and independent visual acceptance NOT_RUN.
-CI advisory; full-M1 acceptance not claimed.
+CI advisory; hosted completion not awaited, full-M1 acceptance not claimed.
 Preserve the gameplay delivery blocks below and original dirty checkout.
 
 ## Existing-item transfer #171 / PR339 — 2026-11-07

@@ -11,7 +11,7 @@ requests.
 
 ### Remove the PlayCanvas renderer pilot (WLC-02)
 
-- 2026-11-07, `codex/wlc-02-remove-playcanvas`, LOCAL, owner-requested cleanup
+- 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), owner-requested cleanup
   after WLC-01/PR419: remove `apps/renderer-spike` executable comparison,
   PlayCanvas/baker/query switches/package, obsolete lint/coverage/architecture
   entries and regenerate `pnpm-lock.yaml`. Preserve its public models, baked
@@ -28,7 +28,8 @@ requests.
   scene disposal/re-entry PASS; ordinary App login/map/place/quest/travel/stop
   PASS on a disposable DB. Native campaign battle continuation, independent
   visual acceptance and broad local CI/full suite NOT_RUN; CI advisory.
-  Publication pending; merge/deployment not performed.
+  PR420 OPEN / NOT_MERGED; hosted CI completion not awaited. Merge/deployment
+  not performed.
 
 ### Review WLC-01 and authorize its audit merge
 
