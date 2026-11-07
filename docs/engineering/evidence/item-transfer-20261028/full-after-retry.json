@@ -1,0 +1,1880 @@
+{
+  "snapshots": [
+    {
+      "world_id": "main",
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "public_revision": "3",
+      "canonical_revision": "3",
+      "state": {
+        "social": {
+          "chronicle": [],
+          "relations": [
+            {
+              "base": {
+                "fear": 0,
+                "respect": 5,
+                "rivalry": 0,
+                "friendship": 0
+              },
+              "toId": "cc535187-7345-47c9-bece-68a0051875d0",
+              "fromId": "local-village-steward",
+              "baseSourceEventId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]"
+            }
+          ]
+        },
+        "economy": {
+          "finance": {
+            "food": [
+              {
+                "intervals": [
+                  {
+                    "toTick": "27",
+                    "fromTick": "3",
+                    "agreementId": null
+                  }
+                ],
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]"
+              },
+              {
+                "intervals": [
+                  {
+                    "toTick": "27",
+                    "fromTick": "3",
+                    "agreementId": null
+                  }
+                ],
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]"
+              }
+            ],
+            "pools": [
+              {
+                "poolId": "local",
+                "walletId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:company-purse"
+              }
+            ],
+            "claims": [
+              {
+                "dueAt": "1000",
+                "paidQ": "0",
+                "earned": [
+                  {
+                    "toTick": "27",
+                    "fromTick": "3",
+                    "maintenanceId": null,
+                    "dailyWageMilli": "10000"
+                  }
+                ],
+                "poolId": "local",
+                "toTick": "27",
+                "claimId": "[\"wage\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"membership\\\"]\",\"3\"]",
+                "fromTick": "3",
+                "reportedQ": "240000",
+                "rateVersion": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"wage\"]",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                "maintenanceId": null,
+                "dailyWageMilli": "10000",
+                "reportedCoveredQ": "0"
+              }
+            ],
+            "epochs": [],
+            "applied": [
+              {
+                "events": [
+                  {
+                    "id": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+                    "type": "CompanyStarted",
+                    "atTick": "3",
+                    "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["f16fb5d8-e7b2-4452-aa27-3275ea931735"]
+                  }
+                ],
+                "commandId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                "sourceKey": null,
+                "requestKey": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"3\",\"commandId\":\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"0\",\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"CreateCompany\",\"worldId\":\"main\"}",
+                "allocations": [],
+                "semanticKey": "{\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"type\":\"CreateCompany\"}",
+                "requirements": [
+                  {
+                    "kind": "OPENING_NONFINANCIAL",
+                    "items": [],
+                    "hookId": "lost-standard",
+                    "contactReaction": {
+                      "respect": 5,
+                      "rivalry": 0,
+                      "contactId": "local-village-steward"
+                    }
+                  }
+                ],
+                "lifecycleReceipt": {
+                  "events": [
+                    {
+                      "id": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+                      "type": "CompanyStarted",
+                      "atTick": "3",
+                      "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                    },
+                    {
+                      "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+                      "type": "CompanyObserved",
+                      "atTick": "3",
+                      "subjectIds": ["b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"]
+                    },
+                    {
+                      "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+                      "type": "CompanyObserved",
+                      "atTick": "3",
+                      "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                    },
+                    {
+                      "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]",
+                      "type": "CompanyObserved",
+                      "atTick": "3",
+                      "subjectIds": ["f16fb5d8-e7b2-4452-aa27-3275ea931735"]
+                    }
+                  ],
+                  "commandId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "sourceKey": null,
+                  "requestKey": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"3\",\"commandId\":\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"0\",\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"CreateCompany\",\"worldId\":\"main\"}",
+                  "semanticKey": "{\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"type\":\"CreateCompany\"}",
+                  "requirements": [
+                    {
+                      "kind": "OPENING_ASSETS",
+                      "assets": {
+                        "debt": null,
+                        "cashQ": "900000000",
+                        "items": [
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"sword\"]",
+                            "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                            "quantity": 1,
+                            "definitionId": "sword",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"shield\"]",
+                            "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                            "quantity": 1,
+                            "definitionId": "shield",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"simple-helmet\"]",
+                            "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                            "quantity": 1,
+                            "definitionId": "simple-helmet",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"padded-coat\"]",
+                            "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                            "quantity": 1,
+                            "definitionId": "padded-coat",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"sword\"]",
+                            "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                            "quantity": 1,
+                            "definitionId": "sword",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"shield\"]",
+                            "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                            "quantity": 1,
+                            "definitionId": "shield",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"padded-coat\"]",
+                            "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                            "quantity": 1,
+                            "definitionId": "padded-coat",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]",
+                            "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                            "quantity": 30,
+                            "definitionId": "ration",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"medical-unit\"]",
+                            "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                            "quantity": 2,
+                            "definitionId": "medical-unit",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          },
+                          {
+                            "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"repair-unit\"]",
+                            "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                            "quantity": 2,
+                            "definitionId": "repair-unit",
+                            "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                          }
+                        ],
+                        "hookId": "lost-standard",
+                        "serviceTerms": [
+                          {
+                            "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                            "dailyWageMilli": "10000"
+                          }
+                        ],
+                        "signingCharges": [
+                          {
+                            "amountQ": "50000000",
+                            "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735"
+                          }
+                        ],
+                        "contactReaction": {
+                          "respect": 5,
+                          "rivalry": 0,
+                          "contactId": "local-village-steward"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "events": [],
+                "commandId": "6d953e2b-0ac8-469f-a35b-1af9a03cab34",
+                "sourceKey": null,
+                "requestKey": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"11\",\"commandId\":\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"1\",\"payload\":{\"accessEvidenceId\":\"3f253374-94b2-4c2a-ad44-634c1feb0207\",\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"quantity\":2,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"TransferItem\",\"worldId\":\"main\"}",
+                "allocations": [],
+                "semanticKey": "{\"payload\":{\"accessEvidenceId\":\"3f253374-94b2-4c2a-ad44-634c1feb0207\",\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"quantity\":2,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\"},\"type\":\"TransferItem\"}",
+                "requirements": [],
+                "lifecycleReceipt": null
+              },
+              {
+                "events": [],
+                "commandId": "c34ebca9-43f5-4ae2-9466-2ca52e0ea792",
+                "sourceKey": null,
+                "requestKey": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"27\",\"commandId\":\"c34ebca9-43f5-4ae2-9466-2ca52e0ea792\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"2\",\"payload\":{\"accessEvidenceId\":\"19b0956d-3037-4f79-969a-5f2f10443bc5\",\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"sword\\\"]\",\"quantity\":1,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"carry\\\"]\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"TransferItem\",\"worldId\":\"main\"}",
+                "allocations": [],
+                "semanticKey": "{\"payload\":{\"accessEvidenceId\":\"19b0956d-3037-4f79-969a-5f2f10443bc5\",\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"sword\\\"]\",\"quantity\":1,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"carry\\\"]\"},\"type\":\"TransferItem\"}",
+                "requirements": [],
+                "lifecycleReceipt": null
+              }
+            ],
+            "arrears": [],
+            "wallets": [
+              {
+                "cashQ": "850000000",
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "walletId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:company-purse"
+              },
+              {
+                "cashQ": "0",
+                "owner": {
+                  "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "kind": "CHARACTER"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "walletId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:wallet:cc535187-7345-47c9-bece-68a0051875d0"
+              },
+              {
+                "cashQ": "50000000",
+                "owner": {
+                  "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "kind": "CHARACTER"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "walletId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:wallet:f16fb5d8-e7b2-4452-aa27-3275ea931735"
+              }
+            ],
+            "accounts": [
+              {
+                "death": null,
+                "known": true,
+                "poolId": "local",
+                "schedule": null,
+                "recipient": {
+                  "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "kind": "CHARACTER"
+                },
+                "knownDeath": false,
+                "confirmedAt": "3",
+                "knownPaused": false,
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]"
+              },
+              {
+                "death": null,
+                "known": true,
+                "poolId": "local",
+                "schedule": {
+                  "rates": [
+                    {
+                      "minimumLevel": 0,
+                      "dailyWageMilli": "10000"
+                    },
+                    {
+                      "minimumLevel": 25,
+                      "dailyWageMilli": "10000"
+                    },
+                    {
+                      "minimumLevel": 50,
+                      "dailyWageMilli": "10000"
+                    },
+                    {
+                      "minimumLevel": 75,
+                      "dailyWageMilli": "10000"
+                    }
+                  ],
+                  "notices": [],
+                  "agreedAt": "3",
+                  "scheduleId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"wage\"]",
+                  "agreedDailyWageMilli": "10000"
+                },
+                "recipient": {
+                  "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "kind": "CHARACTER"
+                },
+                "knownDeath": false,
+                "confirmedAt": "3",
+                "knownPaused": false,
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]"
+              }
+            ],
+            "farewells": [],
+            "movements": [
+              {
+                "to": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:company-purse",
+                "from": "d5643f83-b5e3-434f-96dc-29da07a83325",
+                "atTick": "3",
+                "amountQ": "900000000",
+                "purpose": "ORIGIN_ENDOWMENT",
+                "movementId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"endowment\"]"
+              },
+              {
+                "to": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:wallet:f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                "from": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87:company-purse",
+                "atTick": "3",
+                "amountQ": "50000000",
+                "purpose": "SIGNING",
+                "movementId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"signing\"]"
+              }
+            ],
+            "departures": [],
+            "maintenance": [],
+            "obligations": [],
+            "reservations": [],
+            "policyVersion": "s02-economy-1",
+            "processedTick": "27",
+            "schemaVersion": 1,
+            "sourceEffects": [],
+            "maintenanceReceipts": []
+          },
+          "physical": {
+            "food": [
+              {
+                "toTick": "11",
+                "channel": "STOCK",
+                "fromTick": "3",
+                "sourceId": "world-travel-food-cfafcc349601d14c27746f08de4ac55e53997cbf55d25d4ea78bfccb2c6b5657",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]",
+                "unitsConsumed": "1"
+              },
+              {
+                "toTick": "11",
+                "channel": "STOCK",
+                "fromTick": "3",
+                "sourceId": "world-travel-food-cbecff2c5630506d1d549ec94693c1949565d6cb9e62512e19107d3bf3b2232f",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                "unitsConsumed": "1"
+              },
+              {
+                "toTick": "27",
+                "channel": "STOCK",
+                "fromTick": "11",
+                "sourceId": "world-travel-food-d3c15a37f7669d7408828641cb110b6571b9b221102b85a34f41945d8deccb25",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]",
+                "unitsConsumed": "0"
+              },
+              {
+                "toTick": "27",
+                "channel": "STOCK",
+                "fromTick": "11",
+                "sourceId": "world-travel-food-de3ab07e8a5a602aa6b0fa82562b27cf345a3b3d53094d0c839659eb024762c5",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                "unitsConsumed": "0"
+              }
+            ],
+            "items": [
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"sword\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                "definitionId": "sword",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"shield\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                "definitionId": "shield",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"simple-helmet\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                "definitionId": "simple-helmet",
+                "contentRevision": "1",
+                "currentCondition": 20,
+                "maximumCondition": 20
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"padded-coat\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                "definitionId": "padded-coat",
+                "contentRevision": "1",
+                "currentCondition": 40,
+                "maximumCondition": 40
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"sword\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                "definitionId": "sword",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"shield\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                "definitionId": "shield",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"padded-coat\"]",
+                "equipped": null,
+                "quantity": 1,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                "definitionId": "padded-coat",
+                "contentRevision": "1",
+                "currentCondition": 40,
+                "maximumCondition": 40
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]",
+                "equipped": null,
+                "quantity": 26,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                "definitionId": "ration",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"medical-unit\"]",
+                "equipped": null,
+                "quantity": 2,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                "definitionId": "medical-unit",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"repair-unit\"]",
+                "equipped": null,
+                "quantity": 2,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 0,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": null
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                "definitionId": "repair-unit",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              },
+              {
+                "owner": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "itemId": "[\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"split\"]",
+                "equipped": null,
+                "quantity": 2,
+                "tombstone": null,
+                "provenance": {
+                  "ordinal": 1,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "parentItemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]"
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                "definitionId": "ration",
+                "contentRevision": "1",
+                "currentCondition": 10000,
+                "maximumCondition": 10000
+              }
+            ],
+            "vitals": [
+              {
+                "morale": 50,
+                "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                "healthCarry": "0",
+                "staminaCarry": "0",
+                "currentHealth": 100,
+                "maximumHealth": 100,
+                "currentStamina": 100,
+                "maximumStamina": 100
+              },
+              {
+                "morale": 50,
+                "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                "healthCarry": "0",
+                "staminaCarry": "0",
+                "currentHealth": 100,
+                "maximumHealth": 100,
+                "currentStamina": 100,
+                "maximumStamina": 100
+              }
+            ],
+            "custody": [],
+            "foodCarry": [
+              {
+                "tickUnits": "24",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]"
+              },
+              {
+                "tickUnits": "24",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]"
+              }
+            ],
+            "knowledge": {
+              "itemSnapshots": [
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"shield\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                  "definitionId": "shield",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"simple-helmet\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                  "definitionId": "simple-helmet",
+                  "contentRevision": "1",
+                  "currentCondition": 20,
+                  "maximumCondition": 20
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"padded-coat\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                  "definitionId": "padded-coat",
+                  "contentRevision": "1",
+                  "currentCondition": 40,
+                  "maximumCondition": 40
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"sword\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                  "definitionId": "sword",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"shield\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                  "definitionId": "shield",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"padded-coat\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                  "definitionId": "padded-coat",
+                  "contentRevision": "1",
+                  "currentCondition": 40,
+                  "maximumCondition": 40
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"medical-unit\"]",
+                  "equipped": null,
+                  "quantity": 2,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                  "definitionId": "medical-unit",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"repair-unit\"]",
+                  "equipped": null,
+                  "quantity": 2,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                  "definitionId": "repair-unit",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]",
+                  "equipped": null,
+                  "quantity": 26,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]",
+                  "definitionId": "ration",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"split\"]",
+                  "equipped": null,
+                  "quantity": 2,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 1,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]"
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]",
+                  "definitionId": "ration",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                },
+                {
+                  "owner": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "itemId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"sword\"]",
+                  "equipped": null,
+                  "quantity": 1,
+                  "tombstone": null,
+                  "provenance": {
+                    "ordinal": 0,
+                    "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                    "parentItemId": null
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]",
+                  "definitionId": "sword",
+                  "contentRevision": "1",
+                  "currentCondition": 10000,
+                  "maximumCondition": 10000
+                }
+              ],
+              "vitalSnapshots": [
+                {
+                  "morale": 50,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "healthCarry": "0",
+                  "staminaCarry": "0",
+                  "currentHealth": 100,
+                  "maximumHealth": 100,
+                  "currentStamina": 100,
+                  "maximumStamina": 100
+                },
+                {
+                  "morale": 50,
+                  "sourceId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                  "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "healthCarry": "0",
+                  "staminaCarry": "0",
+                  "currentHealth": 100,
+                  "maximumHealth": 100,
+                  "currentStamina": 100,
+                  "maximumStamina": 100
+                }
+              ],
+              "conditionSnapshots": [],
+              "containerSnapshots": [
+                {
+                  "kind": "PARTY_SUPPLY",
+                  "access": "COMPANY",
+                  "closed": null,
+                  "carrier": {
+                    "id": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                    "kind": "PARTY"
+                  },
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "capacityG": 60000,
+                  "custodian": {
+                    "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                    "kind": "COMPANY"
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]"
+                },
+                {
+                  "kind": "CARRIED",
+                  "access": "OWNER",
+                  "closed": null,
+                  "carrier": {
+                    "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                    "kind": "CHARACTER"
+                  },
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "capacityG": 30000,
+                  "custodian": {
+                    "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                    "kind": "CHARACTER"
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]"
+                },
+                {
+                  "kind": "CARRIED",
+                  "access": "OWNER",
+                  "closed": null,
+                  "carrier": {
+                    "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                    "kind": "CHARACTER"
+                  },
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "capacityG": 30000,
+                  "custodian": {
+                    "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                    "kind": "CHARACTER"
+                  },
+                  "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]"
+                }
+              ]
+            },
+            "conditions": [],
+            "containers": [
+              {
+                "kind": "CARRIED",
+                "access": "OWNER",
+                "closed": null,
+                "carrier": {
+                  "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "kind": "CHARACTER"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "capacityG": 30000,
+                "custodian": {
+                  "id": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "kind": "CHARACTER"
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"carry\"]"
+              },
+              {
+                "kind": "CARRIED",
+                "access": "OWNER",
+                "closed": null,
+                "carrier": {
+                  "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "kind": "CHARACTER"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "capacityG": 30000,
+                "custodian": {
+                  "id": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "kind": "CHARACTER"
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"carry\"]"
+              },
+              {
+                "kind": "PARTY_SUPPLY",
+                "access": "COMPANY",
+                "closed": null,
+                "carrier": {
+                  "id": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                  "kind": "PARTY"
+                },
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                },
+                "capacityG": 60000,
+                "custodian": {
+                  "id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                  "kind": "COMPANY"
+                },
+                "containerId": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\",\"party-supply\"]"
+              }
+            ],
+            "careHandovers": [],
+            "policyVersion": "s02-physical-2",
+            "processedTick": "27",
+            "schemaVersion": 1,
+            "sourceEffects": [
+              {
+                "key": "[\"FOOD_FULFILLMENT\",\"world-travel-food-cfafcc349601d14c27746f08de4ac55e53997cbf55d25d4ea78bfccb2c6b5657\",[\"membership\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"membership\\\"]\"]]",
+                "requestKey": "{\"atTick\":\"11\",\"channel\":\"STOCK\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"containerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"fromTick\":\"3\",\"kind\":\"FOOD_FULFILLMENT\",\"location\":{\"areaId\":\"severny-dvor-yard\",\"kind\":\"AT\",\"siteId\":\"severny-dvor\"},\"membershipId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"membership\\\"]\",\"ordinal\":0,\"sourceEventId\":\"world-travel-food-cfafcc349601d14c27746f08de4ac55e53997cbf55d25d4ea78bfccb2c6b5657\",\"toTick\":\"11\",\"version\":\"s02-physical-2\",\"worldId\":\"main\"}"
+              },
+              {
+                "key": "[\"FOOD_FULFILLMENT\",\"world-travel-food-cbecff2c5630506d1d549ec94693c1949565d6cb9e62512e19107d3bf3b2232f\",[\"membership\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"membership\\\"]\"]]",
+                "requestKey": "{\"atTick\":\"11\",\"channel\":\"STOCK\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"containerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"fromTick\":\"3\",\"kind\":\"FOOD_FULFILLMENT\",\"location\":{\"areaId\":\"severny-dvor-yard\",\"kind\":\"AT\",\"siteId\":\"severny-dvor\"},\"membershipId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"membership\\\"]\",\"ordinal\":1,\"sourceEventId\":\"world-travel-food-cbecff2c5630506d1d549ec94693c1949565d6cb9e62512e19107d3bf3b2232f\",\"toTick\":\"11\",\"version\":\"s02-physical-2\",\"worldId\":\"main\"}"
+              },
+              {
+                "key": "[\"FOOD_FULFILLMENT\",\"world-travel-food-d3c15a37f7669d7408828641cb110b6571b9b221102b85a34f41945d8deccb25\",[\"membership\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"membership\\\"]\"]]",
+                "requestKey": "{\"atTick\":\"27\",\"channel\":\"STOCK\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"containerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"fromTick\":\"11\",\"kind\":\"FOOD_FULFILLMENT\",\"location\":{\"areaId\":\"severny-dvor-yard\",\"kind\":\"AT\",\"siteId\":\"severny-dvor\"},\"membershipId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"membership\\\"]\",\"ordinal\":0,\"sourceEventId\":\"world-travel-food-d3c15a37f7669d7408828641cb110b6571b9b221102b85a34f41945d8deccb25\",\"toTick\":\"27\",\"version\":\"s02-physical-2\",\"worldId\":\"main\"}"
+              },
+              {
+                "key": "[\"FOOD_FULFILLMENT\",\"world-travel-food-de3ab07e8a5a602aa6b0fa82562b27cf345a3b3d53094d0c839659eb024762c5\",[\"membership\",\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"membership\\\"]\"]]",
+                "requestKey": "{\"atTick\":\"27\",\"channel\":\"STOCK\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"containerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"fromTick\":\"11\",\"kind\":\"FOOD_FULFILLMENT\",\"location\":{\"areaId\":\"severny-dvor-yard\",\"kind\":\"AT\",\"siteId\":\"severny-dvor\"},\"membershipId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"membership\\\"]\",\"ordinal\":1,\"sourceEventId\":\"world-travel-food-de3ab07e8a5a602aa6b0fa82562b27cf345a3b3d53094d0c839659eb024762c5\",\"toTick\":\"27\",\"version\":\"s02-physical-2\",\"worldId\":\"main\"}"
+              }
+            ]
+          },
+          "lifecycle": {
+            "applied": [
+              {
+                "events": [
+                  {
+                    "id": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+                    "type": "CompanyStarted",
+                    "atTick": "3",
+                    "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+                  },
+                  {
+                    "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]",
+                    "type": "CompanyObserved",
+                    "atTick": "3",
+                    "subjectIds": ["f16fb5d8-e7b2-4452-aa27-3275ea931735"]
+                  }
+                ],
+                "commandId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+                "sourceKey": null,
+                "requestKey": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"3\",\"commandId\":\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"0\",\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"CreateCompany\",\"worldId\":\"main\"}",
+                "semanticKey": "{\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"type\":\"CreateCompany\"}",
+                "requirements": [
+                  {
+                    "kind": "OPENING_ASSETS",
+                    "assets": {
+                      "debt": null,
+                      "cashQ": "900000000",
+                      "items": [
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"sword\"]",
+                          "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                          "quantity": 1,
+                          "definitionId": "sword",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"shield\"]",
+                          "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                          "quantity": 1,
+                          "definitionId": "shield",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"simple-helmet\"]",
+                          "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                          "quantity": 1,
+                          "definitionId": "simple-helmet",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"padded-coat\"]",
+                          "holderId": "cc535187-7345-47c9-bece-68a0051875d0",
+                          "quantity": 1,
+                          "definitionId": "padded-coat",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"sword\"]",
+                          "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                          "quantity": 1,
+                          "definitionId": "sword",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"shield\"]",
+                          "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                          "quantity": 1,
+                          "definitionId": "shield",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"padded-coat\"]",
+                          "holderId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                          "quantity": 1,
+                          "definitionId": "padded-coat",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"ration\"]",
+                          "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                          "quantity": 30,
+                          "definitionId": "ration",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"medical-unit\"]",
+                          "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                          "quantity": 2,
+                          "definitionId": "medical-unit",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        },
+                        {
+                          "id": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"shared\",\"repair-unit\"]",
+                          "holderId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                          "quantity": 2,
+                          "definitionId": "repair-unit",
+                          "ownerCompanyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"
+                        }
+                      ],
+                      "hookId": "lost-standard",
+                      "serviceTerms": [
+                        {
+                          "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                          "dailyWageMilli": "10000"
+                        }
+                      ],
+                      "signingCharges": [
+                        {
+                          "amountQ": "50000000",
+                          "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735"
+                        }
+                      ],
+                      "contactReaction": {
+                        "respect": 5,
+                        "rivalry": 0,
+                        "contactId": "local-village-steward"
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "company": {
+              "name": "Дорожная стража",
+              "worldId": "main",
+              "bannerId": "broken-company",
+              "companyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+              "founderId": "cc535187-7345-47c9-bece-68a0051875d0",
+              "runStatus": "ACTIVE",
+              "chronicleIds": [
+                "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]"
+              ],
+              "householdIds": [],
+              "regencyHeirId": null,
+              "actingLeaderId": null,
+              "homeLocationId": "severny-dvor",
+              "currentLeaderId": "cc535187-7345-47c9-bece-68a0051875d0",
+              "designatedHeirId": null
+            },
+            "kinship": [],
+            "parties": [
+              {
+                "partyId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                "location": {
+                  "kind": "AT",
+                  "areaId": "severny-dvor-yard",
+                  "siteId": "severny-dvor"
+                }
+              }
+            ],
+            "worldId": "main",
+            "bypasses": [],
+            "revision": "3",
+            "companyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+            "knowledge": {
+              "eventIds": [
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+                "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]"
+              ],
+              "leaderId": "cc535187-7345-47c9-bece-68a0051875d0",
+              "revision": "3",
+              "runStatus": "ACTIVE",
+              "characters": [
+                {
+                  "perks": [],
+                  "skills": {
+                    "heavy": 3,
+                    "blades": 5,
+                    "archery": 3,
+                    "defense": 3,
+                    "medicine": 3,
+                    "polearms": 3,
+                    "leadership": 3,
+                    "scholarship": 3
+                  },
+                  "identity": {
+                    "sex": "male",
+                    "bornAt": "-10000000",
+                    "originId": "broken-company",
+                    "birthName": "Яромир",
+                    "speciesId": "human",
+                    "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                    "birthplaceId": "severny-dvor",
+                    "birthCultureId": "north"
+                  },
+                  "presence": {
+                    "location": {
+                      "kind": "AT",
+                      "areaId": "severny-dvor-yard",
+                      "siteId": "severny-dvor"
+                    },
+                    "assignment": "FIELD",
+                    "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                    "availability": "AVAILABLE",
+                    "fieldPartyId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                    "encounterBindingId": null
+                  },
+                  "conditionIds": [],
+                  "aptitudeBySkill": {
+                    "heavy": 10000,
+                    "blades": 10000,
+                    "archery": 10000,
+                    "defense": 10000,
+                    "medicine": 10000,
+                    "polearms": 10000,
+                    "leadership": 10000,
+                    "scholarship": 10000
+                  }
+                },
+                {
+                  "perks": [],
+                  "skills": {
+                    "blades": 5,
+                    "defense": 7
+                  },
+                  "identity": {
+                    "sex": "male",
+                    "bornAt": "-7540997",
+                    "originId": "broken-company",
+                    "birthName": "Rell",
+                    "speciesId": "human",
+                    "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                    "birthplaceId": "severny-dvor",
+                    "birthCultureId": "north"
+                  },
+                  "presence": {
+                    "location": {
+                      "kind": "AT",
+                      "areaId": "severny-dvor-yard",
+                      "siteId": "severny-dvor"
+                    },
+                    "assignment": "FIELD",
+                    "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                    "availability": "AVAILABLE",
+                    "fieldPartyId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                    "encounterBindingId": null
+                  },
+                  "conditionIds": [],
+                  "aptitudeBySkill": {
+                    "heavy": 10000,
+                    "blades": 10000,
+                    "archery": 10000,
+                    "defense": 10000,
+                    "medicine": 10000,
+                    "polearms": 10000,
+                    "leadership": 10000,
+                    "scholarship": 10000
+                  }
+                }
+              ],
+              "candidateIds": [
+                "cc535187-7345-47c9-bece-68a0051875d0",
+                "f16fb5d8-e7b2-4452-aa27-3275ea931735"
+              ],
+              "nicknameHistory": [],
+              "designatedHeirId": null,
+              "nicknameProposals": []
+            },
+            "characters": [
+              {
+                "perks": [],
+                "skills": {},
+                "identity": {
+                  "sex": "male",
+                  "bornAt": "-10000000",
+                  "originId": "broken-company",
+                  "birthName": "Сельский староста",
+                  "speciesId": "human",
+                  "characterId": "local-village-steward",
+                  "birthplaceId": "severny-dvor",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "assignment": "NONE",
+                  "characterId": "local-village-steward",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": null,
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {}
+              },
+              {
+                "perks": [],
+                "skills": {},
+                "identity": {
+                  "sex": "male",
+                  "bornAt": "-10000000",
+                  "originId": "broken-company",
+                  "birthName": "Сельский поставщик",
+                  "speciesId": "human",
+                  "characterId": "village-provisioner",
+                  "birthplaceId": "bereznyak",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "bereznyak-green",
+                    "siteId": "bereznyak"
+                  },
+                  "assignment": "NONE",
+                  "characterId": "village-provisioner",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": null,
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {}
+              },
+              {
+                "perks": [],
+                "skills": {
+                  "heavy": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "blades": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "150000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "archery": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "defense": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "medicine": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "polearms": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "leadership": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "scholarship": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  }
+                },
+                "identity": {
+                  "sex": "male",
+                  "bornAt": "-10000000",
+                  "originId": "broken-company",
+                  "birthName": "Яромир",
+                  "speciesId": "human",
+                  "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "birthplaceId": "severny-dvor",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "assignment": "FIELD",
+                  "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {
+                  "heavy": 10000,
+                  "blades": 10000,
+                  "archery": 10000,
+                  "defense": 10000,
+                  "medicine": 10000,
+                  "polearms": 10000,
+                  "leadership": 10000,
+                  "scholarship": 10000
+                }
+              },
+              {
+                "perks": [],
+                "skills": {
+                  "blades": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "150000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "defense": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "280000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  }
+                },
+                "identity": {
+                  "sex": "male",
+                  "bornAt": "-7540997",
+                  "originId": "broken-company",
+                  "birthName": "Rell",
+                  "speciesId": "human",
+                  "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "birthplaceId": "severny-dvor",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "assignment": "FIELD",
+                  "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": "004eb77e-aa3e-4cf1-9fe2-295d285faee3",
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {
+                  "heavy": 10000,
+                  "blades": 10000,
+                  "archery": 10000,
+                  "defense": 10000,
+                  "medicine": 10000,
+                  "polearms": 10000,
+                  "leadership": 10000,
+                  "scholarship": 10000
+                }
+              },
+              {
+                "perks": [],
+                "skills": {
+                  "defense": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "100000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "polearms": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "60000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  }
+                },
+                "identity": {
+                  "sex": "female",
+                  "bornAt": "-9632997",
+                  "originId": "broken-company",
+                  "birthName": "Mora",
+                  "speciesId": "human",
+                  "characterId": "da6f10bd-f4cf-4026-88db-e7fec387c01b",
+                  "birthplaceId": "severny-dvor",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "assignment": "NONE",
+                  "characterId": "da6f10bd-f4cf-4026-88db-e7fec387c01b",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": null,
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {
+                  "heavy": 10000,
+                  "blades": 10000,
+                  "archery": 10000,
+                  "defense": 10000,
+                  "medicine": 10000,
+                  "polearms": 10000,
+                  "leadership": 10000,
+                  "scholarship": 10000
+                }
+              },
+              {
+                "perks": [],
+                "skills": {
+                  "blades": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "30000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  },
+                  "medicine": {
+                    "amount": {
+                      "carry": "0",
+                      "milliXp": "210000"
+                    },
+                    "binding": {
+                      "kind": "INITIAL_CREDIT",
+                      "sourceId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+                    },
+                    "rulesVersion": "s02-progression-parameters-1",
+                    "schemaVersion": 1
+                  }
+                },
+                "identity": {
+                  "sex": "male",
+                  "bornAt": "-13257997",
+                  "originId": "broken-company",
+                  "birthName": "Kest",
+                  "speciesId": "human",
+                  "characterId": "08ab4a31-ef40-4548-97f1-14d32f2000ef",
+                  "birthplaceId": "severny-dvor",
+                  "birthCultureId": "north"
+                },
+                "presence": {
+                  "location": {
+                    "kind": "AT",
+                    "areaId": "severny-dvor-yard",
+                    "siteId": "severny-dvor"
+                  },
+                  "assignment": "NONE",
+                  "characterId": "08ab4a31-ef40-4548-97f1-14d32f2000ef",
+                  "availability": "AVAILABLE",
+                  "fieldPartyId": null,
+                  "encounterBindingId": null
+                },
+                "conditionIds": [],
+                "aptitudeBySkill": {
+                  "heavy": 10000,
+                  "blades": 10000,
+                  "archery": 10000,
+                  "defense": 10000,
+                  "medicine": 10000,
+                  "polearms": 10000,
+                  "leadership": 10000,
+                  "scholarship": 10000
+                }
+              }
+            ],
+            "memberships": [
+              {
+                "basis": "FOUNDER",
+                "endedAt": null,
+                "companyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                "startedAt": "3",
+                "characterId": "cc535187-7345-47c9-bece-68a0051875d0",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"cc535187-7345-47c9-bece-68a0051875d0\",\"membership\"]",
+                "wageScheduleId": null
+              },
+              {
+                "basis": "PAID",
+                "endedAt": null,
+                "companyId": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+                "startedAt": "3",
+                "characterId": "f16fb5d8-e7b2-4452-aa27-3275ea931735",
+                "membershipId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"membership\"]",
+                "wageScheduleId": "[\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"f16fb5d8-e7b2-4452-aa27-3275ea931735\",\"wage\"]"
+              }
+            ],
+            "campaignTick": "27",
+            "schemaVersion": 1
+          }
+        },
+        "learning": {
+          "tasks": {
+            "tasks": [],
+            "schemaVersion": 1
+          },
+          "studyAccess": {
+            "intervals": [],
+            "schemaVersion": 1
+          },
+          "schemaVersion": 1,
+          "studyProgress": [],
+          "ownerTransitions": []
+        },
+        "encounter": {
+          "active": null,
+          "completed": [],
+          "schemaVersion": 1
+        }
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "command_id": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+      "request_key": "{\"actorRef\":{\"id\":\"458885ff-cea3-4d73-8167-22e7feeac055\",\"kind\":\"PLAYER\"},\"campaignTick\":\"3\",\"commandId\":\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"expectedRevision\":\"0\",\"payload\":{\"bannerId\":\"broken-company\",\"candidateSetId\":\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\",\"companyId\":\"b70c3d8a-ebe4-485c-888b-d28e5bc48bf3\",\"cultureId\":\"north\",\"familyStoryId\":\"no-present-kin\",\"homelandId\":\"severny-dvor\",\"leaderInput\":{\"birthCultureId\":\"north\",\"birthName\":\"Яромир\",\"birthplaceId\":\"severny-dvor\",\"bornAt\":\"-10000000\",\"originId\":\"broken-company\",\"sex\":\"male\",\"speciesId\":\"human\"},\"name\":\"Дорожная стража\",\"originId\":\"broken-company\",\"selectedCandidateIds\":[\"f16fb5d8-e7b2-4452-aa27-3275ea931735\"],\"worldId\":\"main\"},\"rulesetId\":\"s02-domain-provisional-0.2\",\"schemaVersion\":2,\"type\":\"CreateCompany\",\"worldId\":\"main\"}",
+      "response": {
+        "ok": true,
+        "commandId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+        "publicRevision": "1"
+      },
+      "resulting_revision": "1"
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "command_id": "6d953e2b-0ac8-469f-a35b-1af9a03cab34",
+      "request_key": "{\"commandId\":\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"expectedPublicRevision\":\"1\",\"payload\":{\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"quantity\":2,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\"},\"schemaVersion\":2,\"type\":\"TransferItem\"}",
+      "response": {
+        "ok": true,
+        "commandId": "6d953e2b-0ac8-469f-a35b-1af9a03cab34",
+        "publicRevision": "2"
+      },
+      "resulting_revision": "2"
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "command_id": "c34ebca9-43f5-4ae2-9466-2ca52e0ea792",
+      "request_key": "{\"commandId\":\"c34ebca9-43f5-4ae2-9466-2ca52e0ea792\",\"expectedPublicRevision\":\"2\",\"payload\":{\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\",\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"sword\\\"]\",\"quantity\":1,\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"f16fb5d8-e7b2-4452-aa27-3275ea931735\\\",\\\"carry\\\"]\"},\"schemaVersion\":2,\"type\":\"TransferItem\"}",
+      "response": {
+        "ok": true,
+        "commandId": "c34ebca9-43f5-4ae2-9466-2ca52e0ea792",
+        "publicRevision": "3"
+      },
+      "resulting_revision": "3"
+    }
+  ],
+  "audit": [
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "event_id": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+      "revision": "1",
+      "event": {
+        "id": "[\"1a7a3488-c54c-459e-851a-b75c2bdea978\",\"CompanyStarted\"]",
+        "type": "CompanyStarted",
+        "atTick": "3",
+        "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+      }
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "event_id": "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+      "revision": "1",
+      "event": {
+        "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"0\\\"]\",\"CompanyObserved\"]",
+        "type": "CompanyObserved",
+        "atTick": "3",
+        "subjectIds": ["b70c3d8a-ebe4-485c-888b-d28e5bc48bf3"]
+      }
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "event_id": "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+      "revision": "1",
+      "event": {
+        "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"1\\\"]\",\"CompanyObserved\"]",
+        "type": "CompanyObserved",
+        "atTick": "3",
+        "subjectIds": ["cc535187-7345-47c9-bece-68a0051875d0"]
+      }
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "event_id": "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]",
+      "revision": "1",
+      "event": {
+        "id": "[\"[\\\"opening-owner-observation-command\\\",\\\"2\\\"]\",\"CompanyObserved\"]",
+        "type": "CompanyObserved",
+        "atTick": "3",
+        "subjectIds": ["f16fb5d8-e7b2-4452-aa27-3275ea931735"]
+      }
+    },
+    {
+      "company_id": "b70c3d8a-ebe4-485c-888b-d28e5bc48bf3",
+      "event_id": "a7f12295-4d78-4745-abf7-a2e14de70acc",
+      "revision": "1",
+      "event": {
+        "type": "OpeningHookSelected",
+        "hookId": "lost-standard",
+        "commandId": "1a7a3488-c54c-459e-851a-b75c2bdea978",
+        "candidateSetId": "2f4cbbc3-7cae-499c-b4ca-15b45771ca87"
+      }
+    }
+  ]
+}

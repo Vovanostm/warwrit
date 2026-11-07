@@ -74,6 +74,15 @@ export function ordinaryCommandIntent(
           accessEvidenceId: ids.accessEvidenceId,
         },
       };
+    case 'TransferItem':
+      return {
+        type: request.type,
+        payload: {
+          ...request.payload,
+          accessEvidenceId: ids.accessEvidenceId,
+          splitItemId: request.commandId,
+        },
+      };
     case 'ApplyCare':
       return {
         type: request.type,
@@ -156,6 +165,17 @@ function requestedEffectPresent(
       );
     case 'EquipItem':
       return itemEquipped(prepared, request.payload);
+    case 'TransferItem':
+      return (
+        prepared.next.physical?.items.some(
+          (item) =>
+            (item.itemId === request.payload.itemId ||
+              item.provenance.parentItemId === request.payload.itemId) &&
+            item.containerId === request.payload.toContainerId &&
+            item.quantity === request.payload.quantity &&
+            item.tombstone === null,
+        ) ?? false
+      );
     case 'ApplyCare':
       return (
         prepared.next.physical?.conditions.some(

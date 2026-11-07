@@ -9,6 +9,49 @@ requests.
 
 ## Unreleased
 
+### Integrate existing-item transfer with the current company panel
+
+- 2026-11-07, `codex/item-transfer-339`, LOCAL owner-requested PR339/#171
+  integration on main fbd34b22. Preserve current care/recovery/payroll/recruitment
+  and existing transfer retry/ownership/capacity/split semantics. Resolve shared
+  protocol, executor, parser, holdings and company-panel conflicts. Use the current
+  company refresh callback after transfer. No migration. Fix observed duplicate component keys and preserve CAPACITY in
+  the server rejection mapper.25focused,4PG executor,2PG routes,builds/types/lint
+  PASS; native sword/equip,split/lost-response/reload/retry and capacity refusal PASS.
+  Independent scoped critique ACCEPT (criteria2–3/3);
+  CI/full suite/stress NOT_RUN. [Owning journey and results](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+
+### Complete the local item-transfer path and repeated splitting
+
+- 2026-10-28, branch `codex/game-item-transfer`, local implementation for #171:
+  enable authenticated owner-preserving transfers using server-derived access,
+  private container readback and exact persisted client retries. Normal browser
+  login/onboarding, split/full movement, lost successful responses, reload and
+  natural-night retry retain one command receipt and identical native state.
+  Fix a real repeated-split limit with optional core splitItemId, supplied by
+  the new server producer; omitted-field legacy commands retain exact IDs.
+  Core2/mounted3/real-PG1, types and scoped checks PASS; independent source
+  reviews ACCEPT. Initial hook audit failed four introduced web findings;
+  finite panel/terminal correction, real-panel/parser18 and affected review PASS.
+  Final-source medical1 loss/reload/night retry preserves identical native state.
+  Same critic final absolute bounded UI ACCEPT (six applicable scores2);
+  whole-scene REJECT remains separate. Final small submit-message extraction
+  retains source ACCEPT and focused18/types/lint PASS. Final normal hook,
+  related checks and audit PASS without bypass; hosted gate remains.
+  No migration, new
+  custody rule, stationary stash, merge or deployment.
+  [Owning evidence](docs/engineering/evidence/item-transfer-20261028/README.md).
+
+### Activate owner-preserving player item transfer
+
+- 2026-10-28, branch `codex/game-item-transfer`, local implementation activation
+  under the owner's autonomous game mission: scope #171 to moving an existing
+  item/quantity between actual accessible co-located company containers through
+  the existing TransferItem owner. No new ownership, stationary stash or
+  aggregate-load offloading claim. Parent owns documentation/resources/delivery;
+  delegated editor owns the isolated vertical source slice. Implementation,
+  tests, browser/visual acceptance and publication pending; no merge/deployment.
+
 ### Record the merged repeat-hunt delivery
 
 - 2026-11-07, `codex/repeat-hunt-409-closeout`, records the MERGED implementation

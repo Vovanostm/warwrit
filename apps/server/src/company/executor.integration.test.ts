@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 
 import {
+  COMPANY_CATALOGUE,
   COMPANY_CATALOGUE_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
@@ -534,6 +535,124 @@ describe('trusted company command executor (PostgreSQL)', () => {
 
 // These are real executor/transaction scenarios: no prepared draft or persistence is mocked.
 describe('ordinary company command executor (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'moves existing property once between local containers and rejects inaccessible transfers',
+    async () => {
+      await withOrdinaryScenario(async (scenario) => {
+        const physical = scenario.priorState.economy.physical!;
+        const item = physical.items.find((entry) => entry.itemId === 'a-leader-sword')!;
+        const destination = physical.containers.find(
+          (entry) => entry.containerId === 'fixture-supply',
+        )!;
+        const request = ordinaryRequest(scenario, {
+          type: 'TransferItem',
+          payload: {
+            itemId: item.itemId,
+            quantity: item.quantity,
+            fromContainerId: item.containerId!,
+            toContainerId: destination.containerId,
+          },
+        });
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, toContainerId: 'foreign-container' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+        await rejectOrdinaryUnchanged(
+          scenario,
+          request,
+          'NOT_AUTHORIZED',
+          scenario.foreignAccountId,
+          403,
+        );
+        const results = await Promise.all([
+          executeOrdinary(scenario, request),
+          executeOrdinary(scenario, request),
+        ]);
+        expect(results[0]).toEqual(results[1]);
+        expect(results[0]?.kind).toBe('COMMITTED');
+        const stored = await readOrdinaryPersistence(scenario);
+        expect(
+          stored.state.economy.physical!.items.find((entry) => entry.itemId === item.itemId),
+        ).toMatchObject({
+          owner: item.owner,
+          quantity: item.quantity,
+          containerId: destination.containerId,
+          equipped: null,
+        });
+        expect(
+          stored.state.economy.physical!.items.filter((entry) => entry.itemId === item.itemId),
+        ).toHaveLength(1);
+        expect(
+          stored.receipts.filter((entry) => entry.command_id === request.commandId),
+        ).toHaveLength(1);
+        await rejectOrdinaryUnchanged(
+          scenario,
+          { ...request, payload: { ...request.payload, quantity: item.quantity + 1 } },
+          'IDEMPOTENCY_CONFLICT',
+        );
+        expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+      });
+    },
+  );
+  it.skipIf(database === undefined)(
+    'reports a full transfer destination as capacity and leaves saved state unchanged',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const sword = scenario.priorState.economy.physical!.items.find(
+            (item) => item.itemId === 'a-leader-sword',
+          )!;
+          await rejectOrdinaryUnchanged(
+            scenario,
+            ordinaryRequest(scenario, {
+              type: 'TransferItem',
+              payload: {
+                itemId: sword.itemId,
+                quantity: 1,
+                fromContainerId: sword.containerId!,
+                toContainerId: 'fixture-supply',
+              },
+            }),
+            'CAPACITY',
+          );
+        },
+        (state) => {
+          const physical = state.economy.physical!;
+          const occupiedG = physical.items
+            .filter((item) => item.containerId === 'fixture-supply' && item.tombstone === null)
+            .reduce(
+              (sum, item) =>
+                sum +
+                item.quantity *
+                  COMPANY_CATALOGUE.items.find((definition) => definition.id === item.definitionId)!
+                    .weightG,
+              0,
+            );
+          const containers = physical.containers.map((container) =>
+            container.containerId === 'fixture-supply'
+              ? { ...container, capacityG: Math.max(1, occupiedG) }
+              : container,
+          );
+          return readCompanyCombatAggregateState({
+            ...state,
+            economy: {
+              ...state.economy,
+              physical: {
+                ...physical,
+                containers,
+                knowledge: { ...physical.knowledge, containerSnapshots: containers },
+              },
+            },
+          });
+        },
+      );
+    },
+  );
   it.skipIf(database === undefined)(
     'observes saved local wounds through authenticated company reads once, preserves remote knowledge, and enables care',
     async () => {
