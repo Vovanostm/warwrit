@@ -2,9 +2,10 @@
 
 Date: 2026-11-07. Owner assignment: Legacy Inventory & Dependency Audit (P0).
 Coordinator/writer: `codex/wlc-01-legacy-audit`, isolated checkout
-`.claude/worktrees/wlc-01`. Status: [PUBLISHED audit PR419](https://github.com/Vovanostm/warwrit/pull/419),
-owner acceptance pending; NOT_MERGED.
-Publication is authorized; merge, deployment and resource deletion are not.
+`.claude/worktrees/wlc-01`. Status: reviewed for owner-authorized integration in
+[PR419](https://github.com/Vovanostm/warwrit/pull/419); GitHub owns live merge status.
+The owner requested “review, merge” on2026-11-07. This authorizes this audit PR's
+merge only; resource deletion, successor implementation and deployment remain outside scope.
 [Inventory and proposed order](LEGACY_INVENTORY.md) own the detailed findings;
 [per-file registry](legacy-inventory.json) owns classifications and consumers.
 No game behavior, configuration, dependency, resource or saved state is changed.
@@ -126,7 +127,35 @@ The active gameplay coordinator’s CURRENT_PLAN block is preserved: WLC-01 is a
 supporting audit, not a takeover of item transfer or retreat acceptance. The
 changelog links this owning status. The suggested checkpoint pointer for the
 integrator is: “WLC-01 audit published; source f3c76d8c; inventory acceptance and
-507 dependency reviews remain; see LEGACY_INVENTORY.” WLC-02/WLC-03 planning and
+507 dependency reviews remain; see LEGACY_INVENTORY.” This publication-era
+pointer is superseded by the review/merge authorization below. WLC-02/WLC-03 planning and
 WLC-04 preparation may use this map; executing deletions requires the later slice.
-Owner acceptance and the proposed removal sequence are **PENDING_REVIEW**.
-No merge, deployment, new game acceptance or successor implementation is claimed.
+At initial publication, owner acceptance and the removal sequence were pending.
+The following dated review authorizes integration of the audit, not execution of
+its proposed deletion sequence or acceptance of new gameplay.
+
+## Review and merge authorization — 2026-11-07
+
+Owner request: “review, merge”, scoped to PR419. Review of audit head
+`a203510eb05bf81f4ebf4de9367c9b0a334d21f8` against unchanged main f3c76d8c found
+no blocking source-backed defect. This was an author review, not an independent
+agent approval. All2171 registry records were checked for required fields,
+exact source links and source consumer lines, unique path/scope partition and
+classification totals. The sole DELETE candidate's test/document consumers,
+shared production HUD, final atlas raster and v5 provenance were read back.
+507REVIEW_REQUIRED records remain unresolved; their retention conditions and the
+mixed-file regression protection remain binding for future work.
+
+New scoped format and diff checks PASS; source/doc links were checked. Earlier
+web/spike builds and29tests are retained evidence; game tests/builds were not
+repeated for this review-only documentation update. No game or resource changed.
+Current a203510e [CI42389070490](https://github.com/Vovanostm/warwrit/actions/runs/42389070490)
+FAILED at the unchanged connection.test.ts formatting; actual job128452687444 logs
+read. [Scope42389070503](https://github.com/Vovanostm/warwrit/actions/runs/42389070503)
+FAILED the same contract-link pattern with0changed source lines; actual
+job128452614906 logs read. CI is advisory; no rerun or unrelated repair is needed.
+No submitted review or unresolved review thread existed at readback.
+The expected final PR head must be supplied to the merge operation. The actual
+merge receipt belongs to PR419, whose live state supersedes publication snapshots.
+No WLC-02/WLC-03 execution, resource deletion, deployment or full-M1 acceptance
+is authorized or claimed by this review.

@@ -9,6 +9,20 @@ requests.
 
 ## Unreleased
 
+### Review WLC-01 and authorize its audit merge
+
+- 2026-11-07, `codex/wlc-01-legacy-audit`, PUBLISHED review/authorization
+  receipt for [PR419](https://github.com/Vovanostm/warwrit/pull/419).
+  Owner requested “review, merge”. Author review of a203510e found no blocking
+  source-backed defect; no independent approval claimed. All2171 registry
+  entries/source consumer lines and scoped links/format/diff checked;507held
+  dependencies and the conditional deletion order remain unchanged. Record
+  [review and exact-head merge boundary](docs/engineering/CONSOLIDATION_BASELINE.md#review-and-merge-authorization--2026-11-07).
+  Both hosted checks at a203510e FAILED (existing formatter and contract-link
+  pattern); actual logs read, CI advisory. Prior builds/29tests not repeated.
+  No game/resource/config change, deletion, migration, deployment or successor
+  implementation. GitHub PR419 owns the actual merge receipt and live state.
+
 ### Audit legacy resources and consolidation dependencies (WLC-01)
 
 - 2026-11-07, `codex/wlc-01-legacy-audit`, PUBLISHED [audit PR419](https://github.com/Vovanostm/warwrit/pull/419), requested by the owner:
