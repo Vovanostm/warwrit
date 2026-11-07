@@ -2,13 +2,14 @@
 
 ## Existing-item transfer #171 / PR339 — 2026-11-07
 
-Coordinator/writer: codex/item-transfer-339, .claude/worktrees/item-transfer-339.
+Coordinator/writer: codex/item-transfer-339-closeout, .claude/worktrees/item-transfer-339.
 Owner assignment: integrate PR339 with current company UI; base main fbd34b22.
 Owner explicitly requested “merge, update main” on2026-11-07.
 PR339 merge, delivery documentation receipt and clean local-main update authorized; no deployment.
 [Player journey and current results](../wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
-PUBLISHED [PR339](https://github.com/Vovanostm/warwrit/pull/339), implementation0ce317f3 integrates mainfbd34b22/priorc2051f3f.
-GitHub mergeable; NOT_MERGED. Next: expected-head merge and local-main fast-forward.
+MERGED [PR339](https://github.com/Vovanostm/warwrit/pull/339) at15:15:20UTC as c8128c54, expected head957087bc.
+Clean local main fast-forwarded to c8128c54; merge and reviewed head have identical content.
+[Merge receipt](../wiki/m1-spec.md#слияние-pr339-и-обновление-main--2026-11-07) retains checks and remaining scope; #171 stays OPEN.
 Preserve care/recovery/payroll/recruitment.
 25focused,4PG executor/13filteredSKIP,2PG routes,builds/types/lint PASS.
 Native sword transfer/equip and split/lost-response/reload/retry PASS;28rations,one receipt.

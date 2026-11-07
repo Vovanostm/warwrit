@@ -90,9 +90,9 @@ integration. Local art/novel laboratories retain their own boundaries.
 
 2026-11-07 correction: recovery and payroll are now merged in main. Transfer
 [PR339](https://github.com/Vovanostm/warwrit/pull/339) is integrated with current
-main and PUBLISHED without conflicts; native sword/equip, split/reload/retry,
-capacity refusal and scoped critique passed. It remains NOT_MERGED pending
-separate owner permission. [Current result and limits](../wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07)
+main and MERGED as `c8128c54` after explicit owner permission; native sword/equip,
+split/reload/retry, capacity refusal and scoped critique passed. Clean local main
+was fast-forwarded to the merge. [Current result and limits](../wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07)
 supersede only that transfer status; full M1 acceptance remains open.
 
 The player-facing target uses Babylon.js under ADR-0006 and the selected
