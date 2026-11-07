@@ -255,17 +255,38 @@ export function useContinuousMovement(
         const body = await r.json();
         if (!live) return;
         const v = readContinuousMovement(body);
+        if (body?.commandId !== pending.current?.commandId) throw new Error('unmatched response');
         if (
-          !v &&
+          !(r.status === 200 && v) &&
           !(
+            ((r.status === 409 &&
+              [
+                'STALE_REVISION',
+                'STALE_MOVEMENT_EPOCH',
+                'COMMAND_ID_CONFLICT',
+                'MAP_EDITION_MISMATCH',
+              ].includes(body?.code)) ||
+              (r.status === 422 &&
+                [
+                  'INVALID_COMMAND',
+                  'UNSUPPORTED_VERSION',
+                  'TARGET_BLOCKED',
+                  'OUT_OF_BOUNDS',
+                  'NO_PATH',
+                  'MAP_INFORMATION_REQUIRED',
+                  'ROUTE_TOO_COMPLEX',
+                  'MOVEMENT_NOT_ALLOWED',
+                  'ROUTE_FORBIDDEN',
+                  'KNOWN_SUPPLY_SHORTAGE',
+                ].includes(body?.code))) &&
             body?.schemaVersion === 2 &&
             body?.result === 'REJECTED' &&
             typeof body.code === 'string'
           )
         )
           throw new Error('unknown response');
-        pending.current = null;
         localStorage.removeItem(storageKey);
+        pending.current = null;
         setUnknown(false);
         if (v) {
           apply(v, sent);

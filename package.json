@@ -13,7 +13,7 @@
     "agent:status": "bash scripts/agent-status.sh",
     "bootstrap": "pnpm install --frozen-lockfile && pnpm verify",
     "build": "pnpm -r --if-present run build",
-    "check:architecture": "node scripts/check-architecture.mjs",
+    "check:architecture": "node --test scripts/check-architecture.test.mjs && node scripts/check-architecture.mjs",
     "check:changes": "fallow audit --coverage coverage/coverage-final.json",
     "check:dead-code": "fallow dead-code",
     "check:migrations": "node scripts/check-migrations.mjs",

@@ -9,6 +9,25 @@ requests.
 
 ## Unreleased
 
+### Enforce server authority and retain uncertain commands (WLC-04)
+
+- 2026-11-07, `codex/wlc-04-server-authority`, LOCAL implementation for the owner's
+  architecture/recovery mission; PR publication, merge and clean local-main update
+  explicitly authorized. [Owning audit, journey and results](docs/engineering/SERVER_AUTHORITY.md).
+  Preserve WLC-01/02/03, current game rules and other writers' saved work.
+- Ordinary equipment/camp now reuse existing scoped saved attempts/transport,
+  block replacement and expose exact retry across reload/re-entry. Company
+  projection refresh is independent of pending travel. Movement acknowledgements
+  must match the command ID/status; unknown/unauthorized replies and failed storage
+  cleanup retain exact retry. No simulated outcomes, new executor or migration.
+- Strengthen existing architecture import checks and include an executable boundary
+  regression.57PG +49focused tests PASS/1pre-existingSKIP; public library builds,
+  web types, scoped lint/format/diff and architecture PASS. Ordinary real commit/
+  dropped response/reload/retry and owned API restart recovery PASS on a disposable
+  database; source reviewer ACCEPT. Full suite/coverage/hosted CI acceptance NOT_RUN,
+  CI advisory; broader scene-art/M1 acceptance unclaimed. No deployment or real-save
+  mutation. GitHub delivery PR owns live publication/merge status.
+
 ### Record WLC-02 merge and local main update
 
 - 2026-11-07, `codex/wlc-02-merge-receipt`, records MERGED

@@ -8,7 +8,15 @@ import { classifyCompanyCarePost, type CarePostResult } from './company-care-att
 
 export type CompanyRosterCommand = Extract<
   OrdinaryPlayerCompanyCommandV2Dto,
-  { readonly type: 'Recruit' | 'JoinFieldParty' | 'SetAssignment' }
+  {
+    readonly type:
+      | 'Recruit'
+      | 'JoinFieldParty'
+      | 'SetAssignment'
+      | 'EquipItem'
+      | 'BeginFieldCamp'
+      | 'EndFieldCamp';
+  }
 >;
 export type CompanyRosterCommandType = CompanyRosterCommand['type'];
 export interface CompanyRosterScope {
@@ -54,6 +62,15 @@ function isRosterCommand(
   )
     return false;
   const payload = value['payload'];
+  if (type === 'BeginFieldCamp' || type === 'EndFieldCamp')
+    return Object.keys(payload).length === 0;
+  if (type === 'EquipItem')
+    return (
+      Object.keys(payload).length === 3 &&
+      isId(payload['characterId']) &&
+      isId(payload['itemId']) &&
+      ['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
+    );
   if (type === 'SetAssignment')
     return (
       Object.keys(payload).length === 2 &&
@@ -200,6 +217,7 @@ export async function postCompanyRosterAttempt(
       },
       body: attempt.body,
     });
+    if (response.status === 403) return 'UNKNOWN';
     const value: unknown =
       response.status === 401 ? undefined : await response.json().catch(() => undefined);
     return classifyCompanyCarePost(response.status, value, attempt.request.commandId);
