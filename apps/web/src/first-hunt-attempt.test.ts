@@ -575,6 +575,13 @@ it('guides a fresh hunt by location and participation before terminal feedback t
   expect(firstHuntGuidance({ ...outsider, helperSlot: 'OCCUPIED' }, 'kamenny-brod')).toContain(
     'Слот помощника занят',
   );
+  for (const yourRole of ['OWNER', 'HELPER'] as const) {
+    const settled = { ...active, yourRole, knownState: 'SETTLED' as const };
+    expect(firstHuntStateLabel(settled)).toBe('поручение выполнено');
+    expect(firstHuntGuidance(settled, 'kamenny-brod')).toBe(
+      'Носитель трофея получил награду. Трофей отмечен как погашенный.',
+    );
+  }
 });
 
 it('distinguishes pending and saved retreat from a fresh JOIN or reward', () => {

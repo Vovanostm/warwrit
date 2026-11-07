@@ -1,3 +1,4 @@
+import { journeyRu } from './journey.ru.js';
 import { contractsRu } from './contracts.ru.js';
 
 /**
@@ -6,6 +7,7 @@ import { contractsRu } from './contracts.ru.js';
  */
 export const ru = {
   ...contractsRu,
+  ...journeyRu,
 } as const;
 
 export type MessageKey = keyof typeof ru;

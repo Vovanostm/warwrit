@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Preserve the ordinary victory and make its result readable
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 continuation. Server encounter
+  food preparation now includes a stationary member's already-backed meal while
+  keeping combat-party stock access scoped. The actual retained victory settled,
+  one trophy paid80crowns once. Web failed discovery offers retry, and completed
+  hunts hide stale instructions and use neutral translated bearer feedback.
+  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#combat-reward-and-rest-checkpoint--2026-11-07-0354-msk)
+  records native rest, known absence of wounds and pending natural pay/restart.
+  Food/recovery27PASS/1existingSKIP, web27PASS, server/web types/lint PASS, source
+  review ACCEPT. Full suite/CI NOT_RUN. No schema, dependency or game-rule change.
+
 ### Check the complete ordinary first circle
 
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL owner-requested #370

@@ -11,7 +11,10 @@ Ordinary opening/equips/food/offer PASS. Fixed prepaid-food departure after loca
 [Owning journey, prerequisite correction and actual limits](M1_LOCAL_PLAYTEST.md#complete-first-ordinary-loop--370-2026-11-07).
 Food21/core+server+testkit types/lint PASS; independent source ACCEPT. Full suite/CI NOT_RUN.
 Current writes own the first-loop source fix only if reproduced, M1_LOCAL_PLAYTEST, m1-spec, CHANGELOG and this checkpoint/history.
-Independent final playable/source review is pending. Full #177/#161 remain open.
+Native six-allies victory/trophy/PRESENT PASS, cash710→790 once. Food terminal blocker and stale retry/SETTLED feedback fixed.
+Rest assigned to primary3, unwounded HP56/60/53→57/61/54. Natural payroll tick1000 around08:27MSK remains pending, then next offer/restart.
+Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Source review ACCEPT, final finite playable critique pending.
+Full #177/#161 remain open. Preserve task processes until post-payroll restart.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

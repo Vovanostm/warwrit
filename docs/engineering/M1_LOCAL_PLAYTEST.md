@@ -451,9 +451,10 @@ remains with #177/#161.
 
 ### Direct acceptance
 
-- [ ] Same #369 company and its accepted offer restored through normal sign-in.
-- [ ] Ordinary preparation/travel and actual combat produce a lawful trophy.
-- [ ] Pickup and presentation pay the existing bounty once.
+- [x] Ordinary sign-in restored #369 GAME_OVER. Preserve that save and use the
+      disclosed fresh ordinary company for this loop, as recorded below.
+- [x] Ordinary preparation/travel and actual combat produce a lawful trophy.
+- [x] Pickup and presentation pay the existing bounty once.
 - [ ] Actual wounds/costs guide treatment, rest with food and lawful pay.
 - [ ] The company can accept its next available ordinary contract.
 - [ ] Owned API restart/re-entry retains the relevant state and once-only receipts.
@@ -542,3 +543,81 @@ moving-after-fix.json. This is an actual browser/API/PostgreSQL check, not an
 additional synthetic SQL scenario. The second ordinary account «Дорожная помощь»
 was opened/equipped through OIDC and travelled independently to Bereznyak for
 one opt-in helper. Primary-company reward/care/pay/restart remain unexecuted.
+
+### Second blocker at the saved victory
+
+The same primary company and one physically arrived, consenting helper completed
+the existing wolf encounter through ordinary controls. All six allies survived;
+three wolves died at round4. Terminal application then refused with
+PHYSICAL_CONSEQUENCE_EVIDENCE_MISSING, leaving the real victory saved and no proof.
+The company-wide elapsed finance interval includes Ratko, but encounter food
+preparation filtered out every unbound member. His already backed meal therefore
+had no matching fulfillment fact.
+
+Prepare all actual food requirements for that company interval. Bound combatants
+retain frozen-party stock access. Unbound people may contribute only their own
+already backed zero-new-unit remainder, with their actual location and no stock
+container. A fresh meal still refuses without its real local source. Reuse the
+same core zero-unit validation. The existing retained encounter must settle on
+retry without replaying the battle, granting food, changing money or editing data.
+The regression must include a real financed unbound membership and an exhaustion
+case. This stays in the same food adapter and existing encounter-food test file.
+
+### Recoverable stale battle view after return
+
+Returning while the terminal worker was still pending left a failed battle panel.
+After the food repair, the actual reward was paid (710→790), active discovery
+returned encounterId=null, but that old error stayed visible without a retry.
+Add a connection-check button only to the failed, non-fullscreen panel, using its
+existing connection generation. It re-discovers server state and hides the panel
+when there is no active encounter. Stored commands retain their existing recovery
+path and server authority. Check the mounted failed→retry→no-active transition
+and the ordinary retained view, with no game-command POST required by the retry.
+
+### Completed-contract feedback
+
+The independent playable pass found that a paid hunt kept its travel instructions
+expanded above the settled-state message. Hide the route conversation for SETTLED
+contracts and retain the authoritative paid state, story, reward and trophy
+custody. Remove the exposed internal REDEEMED word from the paid trophy sentence.
+Check the actual paid card after the change through the normal company journal.
+
+### Combat, reward and rest checkpoint — 2026-11-07 03:54 MSK
+
+The retained round4 victory settled after the unbound-member food correction.
+Proof count changed0→1 without replaying combat. Native PICKUP/PRESENT paid
+exactly80crowns, treasury710→790, and marked that one trophy redeemed. The helper
+retained800crowns. Unique lawful bearer terms determine payment independently
+of OWNER/HELPER role. The completed card now uses neutral completion/custody
+feedback and hides obsolete route, reward and readiness conversations.
+
+A mounted failed-panel regression and native retry confirm fresh discovery hides
+the stale panel when the server has no active encounter. Gameplay POST count
+remained60→60. To expose the retry for a screenshot, two discovery GETs were
+intentionally aborted. The retry then used the real backend without response
+stubs or state writes. An early capture had transient map loading errors. Ordinary
+reload completed with tile loads/error-free GETs, retained in map-settled-after-reload.png
+and map-settled-current.png. Use those settled images for map observations.
+
+Known wound conditions are absent. The ordinary care panel explains why bandaging
+is unavailable. No wound or kit consumption was fabricated. All three field
+members were assigned RECOVERY in Kamenny Brod through the actual buttons, and
+native refresh/read-only snapshot already increased health56/60/53→57/61/54.
+Ratko remains healthy100 and local. Food36rations, treasury790 and medical kits2
+remain retained at this checkpoint. The next ordinary refresh will assess further
+recovery. Payroll is not due before natural tick1000, approximately08:27MSK.
+No clock edits are used. Pay, next offer and owned API restart remain pending.
+
+Focused food/recovery/terminal-evidence27PASS/1existingSKIP and web
+connection/retry/hunt27PASS. A first command named three obsolete test paths and
+ran only the actual travel-food file11PASS. The corrected three-file command
+produced the27PASS/1SKIP result above. Server/web types and scoped lint PASS.
+Independent source review ACCEPT covers the current food/UI/text changes, with
+no reviewer runtime tests. The all-bound-combatants-dead early return was not
+exercised and reachability of missing unbound evidence remains unproven. Full
+suite/CI NOT_RUN. Final affected visual/playable review remains pending.
+
+Touched feedback uses journey.ru.ts/journey.en.ts through the existing typed
+catalogue. Literal known keys return strings, dynamic IDs retain optional lookup.
+Transport TypeError now shows authored retry guidance, covered by the failed-fetch
+regression. Formal whole-scene art acceptance remains unassessed.

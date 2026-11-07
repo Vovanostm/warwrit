@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { lookup } from './i18n/index.js';
 
 import type {
   EncounterCommandDto,
@@ -373,6 +374,15 @@ export function EncounterPanel(props: {
         <p className="encounter-message" role="status">
           {scopedState.message}
         </p>
+      )}
+      {!presentation && scopedState?.status === 'failed' && (
+        <button
+          type="button"
+          className="quiet-action"
+          onClick={() => setConnectionGeneration((generation) => generation + 1)}
+        >
+          {lookup('journey.encounter.retry')}
+        </button>
       )}
       {isFullscreen && (
         <EncounterLiveLane
