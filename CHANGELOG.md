@@ -11,7 +11,7 @@ requests.
 
 ### Consolidate combat assets and atlas v6 (WLC-03)
 
-- 2026-11-07, `codex/wlc-03-assets`, LOCAL implementation, owner request:
+- 2026-11-07, `codex/wlc-03-assets`, PUBLISHED [PR421](https://github.com/Vovanostm/warwrit/pull/421), owner request:
   preserve the current sprite HUD and saved-world contracts, archive historical
   combat/map art externally, retain v6 as the editor/runtime atlas and document
   active assets in `assets/manifest.json`.
@@ -21,7 +21,9 @@ requests.
   now records41 active combat and3 map files. Current HUD/core geometry/save contracts
   retained; game dev origin blocks current private authoring modules. Production build,
   40focused tests,11PG regressions and ordinary map MOVE/STOP/reload PASS; independent
-  diff review found no material issue. Scoped visual review pending. CI NOT_RUN/advisory;
+  diff review found no material issue; scoped visual preservation ACCEPT (2–3/3).
+  Hosted CI on7e1f6b69 failed existing connection.test.ts formatting; scope failed
+  its contract-link pattern. Actual logs read; full suite NOT_RUN, CI advisory;
   performance NOT_MEASURED. Review, PR and merge authorized; no deployment or real-save writes.
 
 ### Review WLC-01 and authorize its audit merge

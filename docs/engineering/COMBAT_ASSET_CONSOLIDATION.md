@@ -79,7 +79,7 @@ contains [wlc-03-history.tar.gz](https://github.com/Vovanostm/warwrit/releases/d
 and [per-file manifest](https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/archive-manifest.json),
 source revision `79a6ba025bba236dfe4be0665aece98d1c8c4353`.
 199 retired paths plus61 original catalogue/source/metadata context paths are
-retained. Byte-identical original paths are represented once in the tar; no
+retained. Each original path is represented once in the tar; no
 temporary exports are retained in the active set. Original generator arguments,
 license/source records and rejected history remain recoverable. Local tool-output
 paths inside provenance are historical; external generator originals remain
@@ -108,7 +108,8 @@ downloaded and checked. No archive binary is tracked or imported by production.
 
 - PASS: protocol/core/testkit prerequisite builds; editor/server/web types;
   scoped ESLint/Prettier and ordinary diff checks; `validate:content`130 entries.
-  First editor typecheck lacked built testkit declarations; after building that
+  A known-bad catalogue omitting active W01 was correctly rejected; the valid
+  manifest was restored unchanged. First editor typecheck lacked built testkit declarations; after building that
   existing prerequisite it passed. No dependency/lockfile change.
 - PASS:40 focused tests across eight files (sprite selection, shared battle
   presentation/scene, v6 core/editor road/arrival, raster and stored-route reader).
@@ -138,14 +139,27 @@ downloaded and checked. No archive binary is tracked or imported by production.
 - Independent read-only diff review: no material defect; final affected readback
   ACCEPT for private authoring restrictions and exact tile-position preservation.
   Reviewers did not run product tests or independently replay author inputs.
-- Independent scoped visual/playable critique: PENDING final response.
-- CI/full suite/coverage/stress/full M1/new ordinary campaign battle: NOT_RUN.
+- Independent scoped visual critique: ACCEPT on implementation7e1f6b69 after
+  viewing equal-height baseline/current and asset/reference game/close sheets.
+  Applicable preservation scores2–3/3; motion N/A (no clips changed). No
+  WLC-03 visual defect found. Existing detailed terrain and dark-night character
+  treatment remain outside this consolidation; no broader art approval claimed.
+- Hosted checks on implementation7e1f6b69: [CI42392581792](https://github.com/Vovanostm/warwrit/actions/runs/42392581792)
+  FAILED at Prettier on unchanged `apps/web/src/encounter/connection.test.ts`.
+  [Scope42392581955](https://github.com/Vovanostm/warwrit/actions/runs/42392581955)
+  reports2159 source lines (primarily deleted old geometry), then FAILS because
+  its restricted issue/contract pattern does not accept this engineering contract.
+  Actual failed logs were read. No product check ran after that formatter stop;
+  no rerun or unrelated quality-gate fix is part of WLC-03. CI remains advisory.
+- Local full suite/coverage/stress/full M1/new ordinary campaign battle: NOT_RUN.
   Performance, enjoyment and broader scene-art acceptance: NOT_MEASURED.
   CI is advisory. No deployment or real-save migration.
 
 ## Visual evidence
 
-Current captures are release assets outside production:
+[Equal-height comparison sheets](https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/comparisons.png)
+render unaltered images side by side in a local HTML page; no screenshot or art
+pixels were generated/retouched. Current captures are release assets outside production:
 [shared HUD day](https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/hud-after-day.png),
 [night](https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/hud-after-night.png),
 [victory](https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/hud-result.png),
@@ -159,5 +173,9 @@ Local raw captures/logs are under `output/wlc-03` and
 
 ## Delivery
 
-LOCAL implementation; review/PR/merge authorized by the owner's WLC-03 request.
-Publication and actual merge receipt will be read back from GitHub.
+PUBLISHED implementation `7e1f6b69` in
+[PR421](https://github.com/Vovanostm/warwrit/pull/421). Independent source and scoped
+visual reviews are complete. The owner's WLC-03 request explicitly authorizes
+review, PR and merge; no deployment. Final documentation-only changes preserve
+the checked implementation. Supply the actual final head to the merge operation;
+GitHub owns the actual merge receipt.

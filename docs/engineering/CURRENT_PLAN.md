@@ -6,9 +6,12 @@ Coordinator/writer: codex/wlc-03-assets, .claude/worktrees/wlc-03.
 Base origin/main79a6ba02 includes WLC-01/PR419. Owner authorizes implementation,
 review, PR and merge for this mission; no deployment or real-save mutation.
 [Scope, player journey, archive and results](COMBAT_ASSET_CONSOLIDATION.md).
-Status: LOCAL implementation checked; external archive restored;40focused +11PG
+Status: PUBLISHED [PR421](https://github.com/Vovanostm/warwrit/pull/421), implementation7e1f6b69; external archive restored;40focused +11PG
 checks, production build and ordinary map journey PASS. Independent diff review
-passed; scoped visual critique pending. CI NOT_RUN/advisory. Preserve other checkouts and WLC-02.
+passed; scoped visual preservation ACCEPT (2–3/3). Hosted CI on7e1f6b69 failed at
+unchanged connection.test.ts formatting; scope failed its contract-link pattern.
+CI advisory; full suite NOT_RUN. Owner-authorized expected-head merge next.
+Preserve other checkouts and WLC-02.
 
 ## Existing-item transfer #171 / PR339 — 2026-11-07
 
