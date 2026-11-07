@@ -8,6 +8,9 @@ tags: [meta]
 
 # Локальная wiki проекта
 
+[Developer Playground — WLC-05](../engineering/DEVELOPER_PLAYGROUND.md) — защищённый
+фундамент Combat Lab / Map Editor, lifecycle и изолированные сценарии.
+
 [Текущее состояние и план до полной M1 — 2026-11-05](m1-spec.md#state-2026-11-05)
 — что объединено, что остаётся в PR и какой следующий игровой шаг;
 [актуальный Roadmap](../engineering/ROADMAP.md) и [задачи](../engineering/PARALLEL_WAVES.md).

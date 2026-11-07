@@ -562,3 +562,28 @@ The server uses Pino-compatible JSON logging with a stable `service` field. Even
 
 - `/health/live`: process can answer HTTP; no downstream checks.
 - `/health/ready`: the configured database/schema probe succeeds. Production startup requires database-backed OIDC configuration. Development health-only tools can omit it and use the existing HTTP-only readiness. Issuer reachability is established by discovery/login separately.
+
+## Developer Playground (WLC-05)
+
+Use a disposable development database, apply ordinary migrations, then enable
+`PLAYGROUND=1` and `PLAYGROUND_ACCOUNT_IDS` (comma-separated authenticated account
+IDs from `/auth/session`). Keep `NODE_ENV=development` or `test`, a loopback
+`HOST`, complete OIDC settings and exact `PUBLIC_ORIGIN` matching the browser.
+Sign in normally, then open `/dev/playground` (Combat Lab / Map Editor).
+The server rejects missing/unauthorized sessions and foreign mutation origins.
+No wildcard developer grant or company/identity mutation endpoint is added.
+
+Create → save JSON draft → Validate → Activate → inspect the shared Babylon scene.
+Clone/reset/delete and exact retry share the shell. TTL is fixed at 24 hours;
+tombstones count toward quotas until cleanup. WLC-05 does not implement editor
+commands. [Contract, isolation and actual checks](DEVELOPER_PLAYGROUND.md).
+
+Production server packaging uses `pnpm --filter @warwrit/server build`
+and `pnpm --filter @warwrit/server start`, with shared packages built
+first. Deploy only `apps/server/dist/` plus ordinary runtime dependencies,
+shared package distributions, required content and migration files. The existing
+Vite compiler strips debug registrations with a production build constant; it
+preserves module paths for relative content URLs and external workspace packages.
+Development runs source through the existing `dev`/tsx command; standard build/start always use the stripped production distribution.
+No deployment is performed by these instructions. The ordinary production web
+build strips both debug entrypoints even when `VITE_COMBAT_LAB=1` is supplied.

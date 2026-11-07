@@ -10,6 +10,11 @@ export interface ServerConfig {
   readonly fixtureEncountersEnabled?: true;
   readonly encounterRealtimePort: number;
   readonly identity?: IdentityConfig;
+  readonly playground?: {
+    readonly environment: 'development' | 'test';
+    readonly origin: string;
+    readonly accountIds: readonly string[];
+  };
 }
 
 export interface IdentityConfig {
@@ -147,7 +152,25 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     environment['NODE_ENV'] !== 'production' || (Boolean(databaseUrl) && identity !== undefined),
     'Production server requires DATABASE_URL and complete OIDC identity configuration',
   );
+  let playground: ServerConfig['playground'];
+  if (environment['PLAYGROUND'] === '1') {
+    const nodeEnvironment = environment['NODE_ENV'];
+    const accountIds = (environment['PLAYGROUND_ACCOUNT_IDS'] ?? '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean);
+    invariant(
+      (nodeEnvironment === 'development' || nodeEnvironment === 'test') &&
+        (host === '127.0.0.1' || host === '::1') &&
+        identity !== undefined &&
+        databaseUrl !== undefined &&
+        accountIds.length > 0,
+      'Playground requires explicit development/test, loopback, OIDC database and developer allowlist',
+    );
+    playground = { environment: nodeEnvironment, origin: identity.publicOrigin, accountIds };
+  }
   return {
+    ...(playground === undefined ? {} : { playground }),
     worldId: gameWorldId(environment['WORLD_MAP']?.trim()),
     host,
     port,

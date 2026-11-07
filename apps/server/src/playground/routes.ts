@@ -1,0 +1,153 @@
+import type { FastifyInstance } from 'fastify';
+import type { Kysely } from 'kysely';
+import { PLAYGROUND_CONTENT_REVISION, type PlaygroundCommand } from '@warwrit/protocol';
+import { resolveSessionAccount } from '../auth/session.js';
+import type { DatabaseSchema } from '../db/database.js';
+import { exportPlaygroundReplay, isPlaygroundScenario, playgroundTemplate } from './scenario.js';
+import {
+  cleanupPlayground,
+  executePlayground,
+  listPlayground,
+  PlaygroundRefusal,
+  readPlayground,
+} from './store.js';
+
+export interface PlaygroundSettings {
+  readonly environment: 'development' | 'test';
+  readonly host: string;
+  readonly origin: string;
+  readonly accountIds: readonly string[];
+  readonly database: Kysely<DatabaseSchema>;
+}
+
+const uuid = (value: unknown): value is string =>
+  typeof value === 'string' &&
+  /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/iu.test(value);
+
+function isCommand(value: unknown): value is PlaygroundCommand {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const row = value as Record<string, unknown>;
+  const operation = row['operation'];
+  const allowed = [
+    'commandId',
+    'issuedAt',
+    'operation',
+    ...(operation === 'create' ? [] : ['sandboxId', 'expectedRevision']),
+    ...(operation === 'configure' ? ['scenario'] : []),
+  ];
+  return (
+    Object.keys(row).length === allowed.length &&
+    allowed.every((key) => Object.hasOwn(row, key)) &&
+    uuid(row['commandId']) &&
+    typeof row['issuedAt'] === 'string' &&
+    Number.isFinite(Date.parse(row['issuedAt'])) &&
+    ['create', 'configure', 'validate', 'activate', 'clone', 'reset', 'delete'].includes(
+      String(operation),
+    ) &&
+    (operation === 'create' ||
+      (uuid(row['sandboxId']) &&
+        Number.isSafeInteger(row['expectedRevision']) &&
+        Number(row['expectedRevision']) >= 0)) &&
+    (operation !== 'configure' || isPlaygroundScenario(row['scenario']))
+  );
+}
+
+export function registerPlayground(app: FastifyInstance, settings: PlaygroundSettings): void {
+  if (
+    !['development', 'test'].includes(process.env['NODE_ENV'] ?? '') ||
+    !['development', 'test'].includes(settings.environment) ||
+    !['127.0.0.1', '::1'].includes(settings.host) ||
+    settings.accountIds.length === 0
+  ) {
+    throw new Error(
+      'Playground requires explicit development/test, loopback and developer allowlist',
+    );
+  }
+  app.register(async (scope) => {
+    let timer: ReturnType<typeof setInterval> | undefined;
+    let cleaning: Promise<void> | undefined;
+    scope.addHook('onReady', async () => {
+      await cleanupPlayground(settings.database);
+      timer = setInterval(() => {
+        if (cleaning) return;
+        cleaning = cleanupPlayground(settings.database)
+          .catch(() => {
+            scope.log.warn({ event: 'playground.cleanup.failed' }, 'Playground cleanup failed');
+          })
+          .finally(() => {
+            cleaning = undefined;
+          });
+      }, 60_000);
+      timer.unref();
+    });
+    scope.addHook('onClose', async () => {
+      if (timer) clearInterval(timer);
+      await cleaning;
+    });
+    scope.decorateRequest('playgroundAccountId', '');
+    scope.addHook('preValidation', async (request, reply) => {
+      reply.header('Cache-Control', 'private, no-store');
+      if (!['development', 'test'].includes(process.env['NODE_ENV'] ?? ''))
+        return reply.code(404).send({ code: 'NOT_FOUND' });
+      const origin = request.headers.origin;
+      if (
+        (request.method !== 'GET' && origin !== settings.origin) ||
+        (origin !== undefined && origin !== settings.origin)
+      )
+        return reply.code(403).send({ code: 'ORIGIN_FORBIDDEN' });
+      const accountId = await resolveSessionAccount(request, settings.database);
+      if (!accountId) return reply.code(401).send({ code: 'AUTHENTICATION_REQUIRED' });
+      if (!settings.accountIds.includes(accountId))
+        return reply.code(403).send({ code: 'DEVELOPER_REQUIRED' });
+      request.playgroundAccountId = accountId;
+    });
+    scope.setErrorHandler((error, request, reply) => {
+      if (error instanceof PlaygroundRefusal)
+        return reply.code(error.status).send({ code: error.code });
+      const status =
+        error instanceof Error && 'statusCode' in error ? Number(error.statusCode) : 500;
+      if (status >= 400 && status < 500)
+        return reply.code(status).send({ code: 'INVALID_REQUEST' });
+      request.log.error({ event: 'playground.request.failed' }, 'Playground request failed');
+      return reply.code(503).send({ code: 'PLAYGROUND_UNAVAILABLE' });
+    });
+    scope.get('/dev/playground/api', async (request) => ({
+      environment: settings.environment,
+      accountId: request.playgroundAccountId,
+      contentRevision: PLAYGROUND_CONTENT_REVISION,
+      template: playgroundTemplate(),
+      sandboxes: await listPlayground(settings.database, request.playgroundAccountId),
+    }));
+    scope.get<{ Params: { id: string } }>('/dev/playground/api/:id', async (request, reply) => {
+      if (!uuid(request.params.id)) return reply.code(404).send({ code: 'NOT_FOUND' });
+      return readPlayground(settings.database, request.playgroundAccountId, request.params.id);
+    });
+    scope.get<{ Params: { id: string } }>(
+      '/dev/playground/api/:id/replay',
+      async (request, reply) => {
+        if (!uuid(request.params.id)) return reply.code(404).send({ code: 'NOT_FOUND' });
+        const inspected = await readPlayground(
+          settings.database,
+          request.playgroundAccountId,
+          request.params.id,
+        );
+        if (inspected.validationError)
+          return reply.code(409).send({ code: inspected.validationError });
+        if (inspected.sandbox.status !== 'active')
+          return reply.code(409).send({ code: 'SANDBOX_NOT_ACTIVE' });
+        return exportPlaygroundReplay(inspected.sandbox.id, inspected.sandbox.scenario);
+      },
+    );
+    scope.post('/dev/playground/api/commands', { bodyLimit: 64 * 1024 }, async (request, reply) => {
+      if (!isCommand(request.body))
+        return reply.code(400).send({ code: 'SCENARIO_OR_COMMAND_INVALID' });
+      return executePlayground(settings.database, request.playgroundAccountId, request.body);
+    });
+  });
+}
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    playgroundAccountId: string;
+  }
+}

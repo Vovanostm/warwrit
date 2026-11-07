@@ -1,5 +1,16 @@
 # Warwrit current delivery plan
 
+## WLC-05 — Developer Playground Foundation, 2026-11-07
+
+Coordinator/writer: codex/wlc-05-playground, .claude/worktrees/wlc-05.
+Owner authorizes implementation, standalone PR, merge and clean local-main update.
+WLC-04/PR424 is merged in base a6d5e364. Scope: protected shell, isolated
+sandbox lifecycle, versioned scenarios and inspection through existing renderer.
+[Owning contract and results](DEVELOPER_PLAYGROUND.md). Editor functionality is deferred.
+Status: LOCAL implementation; SQL5/config+lab16, types, lint/format/architecture and
+production artifact checks PASS. Native lifecycle/retry and scene disposal3 PASS;
+independent shell/infrastructure ACCEPT; final delivery pending. Preserve other WIP/saves.
+
 ## WLC-04 — Server authority, 2026-11-07
 
 Coordinator/writer: codex/wlc-04-server-authority, .claude/worktrees/wlc-04.

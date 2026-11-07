@@ -9,7 +9,6 @@ import {
   type WorldFreeMovementResponseDto,
   WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
-import { CombatLab } from './combat-lab/CombatLab.js';
 import { CompanyOpening } from './CompanyOpening.js';
 import { SignIn } from './SignIn.js';
 import {
@@ -62,6 +61,12 @@ import {
   type FreeMovementAttempt,
   type FreeMovementScope,
 } from './world-free-movement-attempt.js';
+
+const CombatLab = import.meta.env.DEV
+  ? lazy(() =>
+      import('./combat-lab/CombatLab.js').then((module) => ({ default: module.CombatLab })),
+    )
+  : null;
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const EncounterPanel = lazy(() =>
@@ -1582,7 +1587,12 @@ export function App() {
     }
   };
 
-  if (isCombatLab) return <CombatLab />;
+  if (isCombatLab && CombatLab)
+    return (
+      <Suspense fallback={<p>Загрузка…</p>}>
+        <CombatLab />
+      </Suspense>
+    );
   const hasSession =
     journey.status === 'loading-company' ||
     journey.status === 'loading-opening' ||

@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Developer Playground foundation (WLC-05)
+
+- 2026-11-07, `codex/wlc-05-playground`, LOCAL infrastructure for the owner-assigned
+  WLC-05 after merged WLC-04. Owner authorizes standalone PR, merge and clean
+  local-main update. Add `/dev/playground/combat` and `/dev/playground/maps` shell,
+  authenticated server account allowlist, development/test and production guards,
+  migration0021 isolated `playground` schema, versioned shared-entity scenarios,
+  exact-retry lifecycle/receipts/audit, TTL cleanup and existing Babylon/replay
+  inspection. Editor command functionality remains subsequent work; no world writes.
+- Standard server production packaging strips executable dev registrations using
+  existing Vite; browser entrypoints are DEV-only dynamic imports. Fix unsaved-draft
+  false validation and old-content reinterpretation found in independent review.
+  [Owning journey, isolation, setup and actual results](docs/engineering/DEVELOPER_PLAYGROUND.md).
+  SQL5 and config/lab16 PASS; scoped types/lint/format/architecture, production
+  artifact closure and native lifecycle/drop-reply/reload/retry PASS. Babylon
+  engine/scene disposal repeated3 PASS; heap profiling NOT_MEASURED. Independent
+  shell/infrastructure ACCEPT after corrections. Full suite/M1/art/deployment NOT_RUN; CI advisory.
+
 ### Record WLC-04 merge and local main update
 
 - 2026-11-07, `codex/wlc-04-merge-receipt`, records MERGED
