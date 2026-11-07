@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Record WLC-05 merge and local main update
+
+- 2026-11-07, `codex/wlc-05-merge-receipt`, records MERGED
+  [PR426](https://github.com/Vovanostm/warwrit/pull/426) at20:09:58UTC as e14e549d,
+  expected head cb61d30a, identical reviewed/merged content and clean local-main
+  fast-forward. Update CURRENT_PLAN and the
+  [owning receipt](docs/engineering/DEVELOPER_PLAYGROUND.md#confirmed-merge--2026-11-07).
+  Actual CI logs: unchanged connection.test.ts formatter and contract-link parser
+  FAILED; CI advisory, main completion not awaited. Own disposable runtime cleaned
+  up; original WIP and saves retained. Scoped documentation format/diff/link readback
+  PASS; repeated game/SQL/build checks NOT_RUN. No deployment.
+
 ### Developer Playground foundation (WLC-05)
 
 - 2026-11-07, `codex/wlc-05-playground`, LOCAL infrastructure for the owner-assigned

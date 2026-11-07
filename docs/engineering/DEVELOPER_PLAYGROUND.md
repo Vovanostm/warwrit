@@ -112,3 +112,26 @@ Local browser evidence is under `output/playground/` (ignored, not committed).
 Full M1, full suite, load, hosted deployment and broad scene-art acceptance: NOT_RUN.
 Heap/timer leak profiling, long-term capacity and enjoyment: NOT_MEASURED.
 CI is advisory and its completion is not required for this owner-authorized merge.
+
+## Confirmed merge — 2026-11-07
+
+MERGED [PR426](https://github.com/Vovanostm/warwrit/pull/426) at20:09:58UTC as
+`e14e549d32f4a3c98f5194848949f49f33057d44`, expected reviewed head
+`cb61d30a1bd7834938c8a3e541a0f2e7c59d4125`. Ordinary reviewed-head/merged-main
+content diff is empty. Clean local main in `.claude/worktrees/agent-harness-cleanup`
+was fast-forwarded to that merge. Primary dirty sprite checkout and other worktrees,
+player databases and saves were preserved. This receipt branch records actual
+merged delivery rather than rewriting the original LOCAL implementation checkpoint.
+
+After merge, actual job logs were read: CI42409685419 FAILED at the pre-existing,
+unchanged `apps/web/src/encounter/connection.test.ts` formatter warning; scope
+42409685397 FAILED its owning-contract link parser despite the linked owning page.
+CI advisory; no reruns or unrelated formatting changes. Main CI completion is not
+awaited and no hosted PASS is claimed. Local focused checks and independent
+ACCEPTs above remain their measured boundaries. Full M1/art/load/heap limits remain.
+
+Owned UI53505/API33505/production-preview53506 processes and browser session were
+closed; the exclusively owned PostgreSQL54505 container and its disposable volume
+were removed. No deployment or retained-save mutation. Repeating game/SQL/build
+checks for this documentation-only receipt is NOT_RUN; scoped format/diff/readback
+and local links are checked before publication. GitHub PR remains live merge authority.
