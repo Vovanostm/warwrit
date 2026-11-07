@@ -1,7 +1,7 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-30
+updated: 2026-11-08
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
 status: direction-approved; merged-playable-sandbox; combat-readability-merged; PR160-merged; full-spec-review-draft; camera-grid-selected-2026-10-30; visual-transfer-pending
@@ -13,6 +13,17 @@ sources:
 ---
 
 # Поле боя и тестовые карты
+
+## Единый Developer Combat Lab — WLC-06, 2026-11-08
+
+Текущий вход: `/dev/playground/combat` с авторизованным аккаунтом разработчика.
+Визуальные редактор и HUD сохранены; новый sandbox запускается по игровым
+`m1-domain-bridge-v5`, через общий серверный encounter executor и изолированное
+PostgreSQL-хранилище. Старые `/combat-lab`, `/dev/combat-lab` и volatile-сессии
+удалены. Версии прежних правил, replay и ресурсы сохранены; unmapped навыки и
+особые силы прототипа не превращаются в игровые правила кампании.
+[Сценарий, границы, проверки и ограничения WLC-06](../engineering/COMBAT_LAB_CONSOLIDATION.md).
+Исторические результаты ниже не являются приёмкой нового стенда или всей M1.
 
 ## Обзор и разделение пульта — 2026-10-20
 
@@ -1920,7 +1931,7 @@ Gamedev дополнительно воспроизвёл через чисто�
 - Горизонт — доступность удара в текущей активации. Нет оценки ответного
   урона следующего хода, угрозы отхода цели, защиты своего стрелка или
   согласования нескольких бойцов. Лук стреляет и в соседнюю цель.
-- [Lab continuation](../../apps/server/src/combat-lab/routes.ts) использует
+- [Historical lab continuation](https://github.com/Vovanostm/warwrit/blob/fdbb0dc2/apps/server/src/combat-lab/routes.ts) использует
   стандартную `aggressive`: атака → сближение → защита/ожидание.
   `survivor` с порогами здоровья/морали существует, но здесь не выбран.
   Паника/сдача не подключены; в завершённых боях враги с моралью 0 продолжали

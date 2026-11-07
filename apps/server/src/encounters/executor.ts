@@ -1,7 +1,11 @@
 import { createHash, randomUUID } from 'node:crypto';
 
 import * as combat from '@warwrit/game-core';
-import type { EncounterCommandDto, EncounterCommandResponse } from '@warwrit/protocol';
+import {
+  PLAYGROUND_CONTENT_REVISION,
+  type EncounterCommandDto,
+  type EncounterCommandResponse,
+} from '@warwrit/protocol';
 import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely';
 
 import type { FirstHuntTerminalEvidence } from '../contracts/terminal-evidence-types.js';
@@ -99,12 +103,22 @@ function systemCommandDigest(
 async function replayMatches(
   executor: SqlExecutor,
   encounter: EncounterStoredRow,
+  sandbox = false,
 ): Promise<boolean> {
   try {
+    if (
+      sandbox &&
+      (encounter.setup.schemaVersion !== 2 ||
+        encounter.setup.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+        encounter.deadline_at !== null ||
+        encounter.ai_wake_at !== null)
+    )
+      return false;
     const fixtureEncounter =
-      encounter.schema_version === 1 &&
-      encounter.setup.schemaVersion === combat.COMBAT_SCHEMA_VERSION &&
-      encounter.setup.rulesetId === combat.M0_COMBAT_RULESET_ID;
+      sandbox ||
+      (encounter.schema_version === 1 &&
+        encounter.setup.schemaVersion === combat.COMBAT_SCHEMA_VERSION &&
+        encounter.setup.rulesetId === combat.M0_COMBAT_RULESET_ID);
     const companyBindingEncounter =
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
       isPersistentEncounterSetup(encounter.setup);
@@ -121,7 +135,7 @@ async function replayMatches(
       return false;
     if (encounter.status === 'resolved') {
       if (encounter.ai_wake_at !== null) return false;
-    } else {
+    } else if (!sandbox) {
       const currentActor = encounter.state.activation?.unitId;
       if (currentActor === undefined) return false;
       const currentController = await controllerFor(executor, encounter.id, currentActor);
@@ -174,16 +188,18 @@ async function replayMatches(
     const controllers = new Map(
       controllersResult.rows.map((controller) => [controller.unit_id, controller]),
     );
-    const policiesResult = await sql<{
-      readonly activation_id: string;
-      readonly activation_epoch: number;
-      readonly account_id: string;
-      readonly unit_id: string;
-      readonly policy_version: string;
-      readonly mode: 'HUMAN' | 'AFK';
-      readonly campaign_tick: string;
-      readonly timeout_command_id: string;
-    }>`
+    const policiesResult = sandbox
+      ? { rows: [] }
+      : await sql<{
+          readonly activation_id: string;
+          readonly activation_epoch: number;
+          readonly account_id: string;
+          readonly unit_id: string;
+          readonly policy_version: string;
+          readonly mode: 'HUMAN' | 'AFK';
+          readonly campaign_tick: string;
+          readonly timeout_command_id: string;
+        }>`
       select activation_id, activation_epoch, account_id, unit_id, policy_version,
         mode, campaign_tick, timeout_command_id
       from encounter_activation_policies where encounter_id = ${encounter.id}
@@ -200,7 +216,7 @@ async function replayMatches(
     for (const grant of grantsResult.rows) {
       if (
         grant.admission_source !== expectedParticipantSource ||
-        !hasValidParticipantGrant(grant, encounter.setup.units)
+        !hasValidParticipantGrant(grant, encounter.setup.units, sandbox)
       )
         return false;
       for (const unitId of grant.unit_ids) {
@@ -231,8 +247,9 @@ async function replayMatches(
             actorGrant === undefined ||
             !Array.isArray(actorGrant.unit_ids) ||
             !actorGrant.unit_ids.includes(row.command.actorId) ||
-            actorGrant.side_id !==
-              encounter.setup.units.find((unit) => unit.id === row.command.actorId)?.sideId ||
+            (!sandbox &&
+              actorGrant.side_id !==
+                encounter.setup.units.find((unit) => unit.id === row.command.actorId)?.sideId) ||
             actorController !== undefined)) ||
         (row.source_kind === 'system_ai' &&
           (row.account_id !== null ||
@@ -279,6 +296,7 @@ async function replayMatches(
           return false;
       }
       if (
+        !sandbox &&
         row.source_kind === 'account' &&
         encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
         (row.activation_policy_id !== row.command.activationId ||
@@ -619,6 +637,7 @@ async function persistTransition(
   encounter: EncounterStoredRow,
   command: combat.CombatCommand,
   authority: TransitionAuthority,
+  sandbox = false,
 ): Promise<EncounterCommandResponse | undefined> {
   const result = combat.applyCombatCommand(encounter.state, command);
   if (!result.ok) return undefined;
@@ -630,7 +649,7 @@ async function persistTransition(
   let aiWakeAt = encounter.ai_wake_at;
   let nextPolicy: Omit<ActivationPolicyRow, 'activation_epoch'> | undefined;
   let clearAfkAccountId: string | undefined;
-  if (result.state.status === 'resolved') {
+  if (sandbox || result.state.status === 'resolved') {
     deadlineAt = null;
     aiWakeAt = null;
   } else if (activationChanged || authority.kind === 'system_ai') {
@@ -770,6 +789,7 @@ async function persistTransition(
       .execute();
   }
   if (
+    !sandbox &&
     result.state.status === 'resolved' &&
     encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION
   ) {
@@ -843,12 +863,14 @@ async function participant(
 function hasValidParticipantGrant(
   admitted: ParticipantRow,
   units: readonly Pick<combat.BattleState['units'][number], 'id' | 'sideId'>[],
+  sandbox = false,
 ): admitted is ParticipantRow & { readonly side_id: string; readonly unit_ids: readonly string[] } {
   if (
     typeof admitted.side_id !== 'string' ||
     admitted.side_id.length === 0 ||
     !Array.isArray(admitted.unit_ids) ||
-    admitted.unit_ids.length === 0
+    admitted.unit_ids.length === 0 ||
+    (sandbox && admitted.unit_ids.length !== units.length)
   )
     return false;
 
@@ -858,7 +880,7 @@ function hasValidParticipantGrant(
       typeof unitId !== 'string' ||
       unitId.length === 0 ||
       grantedUnitIds.has(unitId) ||
-      !units.some((unit) => unit.id === unitId && unit.sideId === admitted.side_id)
+      !units.some((unit) => unit.id === unitId && (sandbox || unit.sideId === admitted.side_id))
     )
       return false;
     grantedUnitIds.add(unitId);
@@ -881,7 +903,9 @@ export async function executeEncounterCommand(
   accountId: string,
   dto: EncounterCommandDto,
   activeCompanyBinding = false,
+  scope?: 'playground',
 ): Promise<EncounterCommandResponse> {
+  const sandbox = scope === 'playground';
   const digest = bodyDigest(dto);
   const rejected = (code: Extract<EncounterCommandResponse, { status: 'rejected' }>['code']) => ({
     version: 1 as const,
@@ -891,6 +915,17 @@ export async function executeEncounterCommand(
   });
 
   return database.transaction().execute(async (transaction) => {
+    if (sandbox) {
+      // Trusted server-only scope; no public fallback and no client-chosen namespace.
+      await sql`set local search_path to playground, pg_catalog`.execute(transaction);
+      const owned = await sql`select sandbox.id from sandboxes as sandbox
+        join encounters as encounter on encounter.sandbox_id = sandbox.id
+        where encounter.id = ${dto.encounterId}::uuid and sandbox.owner_id = ${accountId}
+        and sandbox.status = 'active' and sandbox.expires_at > now()
+        and sandbox.scenario->>'contentRevision' = ${PLAYGROUND_CONTENT_REVISION}
+        for update of sandbox`.execute(transaction);
+      if (owned.rows.length !== 1) return rejected('NOT_FOUND');
+    }
     const admitted = await participant(transaction, dto.encounterId, accountId);
     if (admitted === undefined) return rejected('NOT_FOUND');
 
@@ -926,14 +961,14 @@ export async function executeEncounterCommand(
     const participantUnits = (encounter.state as { readonly units?: unknown } | null)?.units;
     if (!Array.isArray(participantUnits) || !hasCombatUnitIdentities(participantUnits))
       return rejected('CONFLICT');
-    const fixtureEncounter = encounter.schema_version === FIXTURE_SCHEMA_VERSION;
+    const fixtureEncounter = sandbox || encounter.schema_version === FIXTURE_SCHEMA_VERSION;
     const companyBindingEncounter =
       encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
       admitted.admission_source === 'company_binding';
     if (
       (!fixtureEncounter && (!companyBindingEncounter || !activeCompanyBinding)) ||
       (fixtureEncounter && admitted.admission_source !== 'fixture') ||
-      !hasValidParticipantGrant(admitted, participantUnits)
+      !hasValidParticipantGrant(admitted, participantUnits, sandbox)
     )
       return rejected('UNAUTHORIZED');
 
@@ -961,7 +996,7 @@ export async function executeEncounterCommand(
 
     const state = encounter.state;
     if (
-      !(await replayMatches(transaction, encounter)) ||
+      !(await replayMatches(transaction, encounter, sandbox)) ||
       state.revision !== dto.expectedRevision ||
       encounter.status !== 'active'
     ) {
@@ -972,7 +1007,7 @@ export async function executeEncounterCommand(
       actor === undefined ? undefined : await controllerFor(transaction, dto.encounterId, actor.id);
     if (
       actor === undefined ||
-      actor.sideId !== admitted.side_id ||
+      (!sandbox && actor.sideId !== admitted.side_id) ||
       !admitted.unit_ids.includes(dto.actorId) ||
       state.activation?.unitId !== actor.id ||
       state.activation.id !== dto.activationId ||
@@ -981,12 +1016,12 @@ export async function executeEncounterCommand(
       return rejected('UNAUTHORIZED');
     }
     const nowMs = Date.now();
-    if (encounter.deadline_at === null || encounter.deadline_at.getTime() <= nowMs)
+    if (!sandbox && (encounter.deadline_at === null || encounter.deadline_at.getTime() <= nowMs))
       return rejected('CONFLICT');
 
     let activationPolicyId: string | null = null;
     let commandTick: string | null = null;
-    if (companyBindingEncounter) {
+    if (companyBindingEncounter && !sandbox) {
       const policy = await transaction
         .selectFrom('encounter_activation_policies')
         .selectAll()
@@ -998,7 +1033,7 @@ export async function executeEncounterCommand(
         policy.account_id !== accountId ||
         policy.unit_id !== dto.actorId ||
         policy.mode !== 'HUMAN' ||
-        policy.deadline_at.getTime() !== encounter.deadline_at.getTime() ||
+        policy.deadline_at.getTime() !== encounter.deadline_at?.getTime() ||
         policy.activation_epoch !== encounter.activation_epoch
       )
         return rejected('UNAUTHORIZED');
@@ -1020,13 +1055,19 @@ export async function executeEncounterCommand(
             commandId: combat.commandId(dto.commandId),
           }
         : toCombatCommand(dto);
-    const acceptedResponse = await persistTransition(transaction, encounter, command, {
-      kind: 'account',
-      accountId,
-      digest,
-      activationPolicyId,
-      campaignTick: commandTick,
-    });
+    const acceptedResponse = await persistTransition(
+      transaction,
+      encounter,
+      command,
+      {
+        kind: 'account',
+        accountId,
+        digest,
+        activationPolicyId,
+        campaignTick: commandTick,
+      },
+      sandbox,
+    );
     return acceptedResponse ?? rejected('INVALID_COMMAND');
   });
 }
@@ -1335,18 +1376,23 @@ export async function executeEncounterTimeout(
 export async function verifyEncounterReplay(
   database: Kysely<DatabaseSchema>,
   encounterId: string,
+  scope?: 'playground',
 ): Promise<boolean> {
   return database
     .transaction()
     .setIsolationLevel('repeatable read')
     .execute(async (transaction) => {
+      if (scope === 'playground')
+        await sql`set local search_path to playground, pg_catalog`.execute(transaction);
       const encounterResult = await sql<EncounterStoredRow>`
         select id, schema_version, setup, state, revision, status, activation_id,
           activation_epoch, deadline_at, ai_wake_at
         from encounters where id = ${encounterId}
       `.execute(transaction);
       const encounter = encounterResult.rows[0];
-      return encounter === undefined ? false : replayMatches(transaction, encounter);
+      return encounter === undefined
+        ? false
+        : replayMatches(transaction, encounter, scope === 'playground');
     });
 }
 

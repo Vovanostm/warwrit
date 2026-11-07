@@ -58,21 +58,8 @@ describe('server configuration', () => {
     }
   });
 
-  it('enables the lab only with an explicit local nonproduction configuration', () => {
-    expect(loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', PORT: '3000' })).toMatchObject({
-      combatLabOrigin: 'http://127.0.0.1:5173',
-    });
-    expect(() => loadServerConfig({ COMBAT_LAB: '1' })).toThrow('loopback');
-    expect(() =>
-      loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', NODE_ENV: 'production' }),
-    ).toThrow('loopback');
-    expect(() =>
-      loadServerConfig({
-        HOST: '127.0.0.1',
-        COMBAT_LAB: '1',
-        COMBAT_LAB_ORIGIN: 'https://example.test',
-      }),
-    ).toThrow('local HTTP origin');
+  it('refuses the retired standalone lab switch', () => {
+    expect(() => loadServerConfig({ COMBAT_LAB: '1', HOST: '127.0.0.1' })).toThrow('retired');
   });
 
   it('accepts only a complete fixed-origin OIDC configuration with database storage', () => {

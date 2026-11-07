@@ -9,6 +9,7 @@ import {
 } from '@warwrit/protocol';
 import type { DatabaseSchema } from '../db/database.js';
 import { inspectPlaygroundScenario, playgroundTemplate } from './scenario.js';
+import { activateSandboxEncounter, readSandboxEncounter } from './combat.js';
 
 export class PlaygroundRefusal extends Error {
   constructor(
@@ -54,6 +55,13 @@ export async function listPlayground(database: Kysely<DatabaseSchema>, owner: st
 }
 
 export async function readPlayground(database: Kysely<DatabaseSchema>, owner: string, id: string) {
+  return database
+    .transaction()
+    .setIsolationLevel('repeatable read')
+    .execute((transaction) => readPlaygroundSnapshot(transaction, owner, id));
+}
+
+async function readPlaygroundSnapshot(database: Kysely<DatabaseSchema>, owner: string, id: string) {
   const result = await sql<SandboxRow>`select * from playground.sandboxes
     where id = ${id}::uuid and owner_id = ${owner} and status <> 'deleted' and expires_at > now()`.execute(
     database,
@@ -61,6 +69,10 @@ export async function readPlayground(database: Kysely<DatabaseSchema>, owner: st
   const row = result.rows[0];
   if (!row) throw new PlaygroundRefusal('NOT_FOUND', 404);
   const compatible = row.scenario.contentRevision === PLAYGROUND_CONTENT_REVISION;
+  const combat =
+    row.status === 'active' && compatible
+      ? await readSandboxEncounter(database, id, row.scenario)
+      : null;
   const audit = await sql<{ response: PlaygroundResult }>`select response from playground.receipts
     where sandbox_id = ${id}::uuid and owner_id = ${owner} order by created_at, command_id`.execute(
     database,
@@ -68,10 +80,16 @@ export async function readPlayground(database: Kysely<DatabaseSchema>, owner: st
   return {
     sandbox: project(row),
     ...(compatible ? {} : { validationError: 'CONTENT_REVISION_MISMATCH' as const }),
-    view:
-      row.status === 'active' && compatible
-        ? inspectPlaygroundScenario(row.id, row.scenario)
-        : null,
+    view: combat?.view ?? null,
+    ...(combat
+      ? {
+          encounterId: combat.row.id,
+          commands: combat.commands,
+          receipts: combat.receipts,
+          rejections: combat.rejections,
+          events: combat.events,
+        }
+      : {}),
     audit: audit.rows.map(({ response }) => response.receipt),
   };
 }
@@ -155,6 +173,10 @@ export async function executePlayground(
       status = command.operation === 'activate' ? 'active' : 'validated';
     } else if (command.operation === 'reset') status = 'draft';
     else if (command.operation === 'delete') status = 'deleted';
+    if (!creating && (command.operation === 'reset' || command.operation === 'delete'))
+      await sql`delete from playground.encounters where sandbox_id = ${id}::uuid`.execute(
+        transaction,
+      );
     const revision = creating ? 0 : source!.revision + 1;
     const rows = creating
       ? await sql<SandboxRow>`insert into playground.sandboxes (id, owner_id, revision, status, scenario, expires_at)
@@ -165,6 +187,8 @@ export async function executePlayground(
           scenario = ${JSON.stringify(scenario)}::jsonb, updated_at = now() where id = ${id}::uuid and owner_id = ${owner} returning *`.execute(
           transaction,
         );
+    if (command.operation === 'activate')
+      await activateSandboxEncounter(transaction, id, owner, scenario);
     const receipt: PlaygroundReceipt = {
       commandId: command.commandId,
       receiptId: randomUUID(),

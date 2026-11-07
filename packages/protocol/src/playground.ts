@@ -1,7 +1,8 @@
-import type { CombatLabBattleConfig, CombatLabView } from './combat-lab.js';
+import type { EncounterCommandResponse } from './encounter.js';
+import type { CombatLabBattleConfig, CombatLabView, CombatLabCatalog } from './combat-lab.js';
 
-export const PLAYGROUND_SCHEMA_REVISION = 1 as const;
-export const PLAYGROUND_CONTENT_REVISION = 'playground-v1:sprite-prototype-v4' as const;
+export const PLAYGROUND_SCHEMA_REVISION = 2 as const;
+export const PLAYGROUND_CONTENT_REVISION = 'playground-v2:m1-domain-bridge-v5' as const;
 
 /** Editor adapter: combat/map/participant/seed entities remain owned by combat-lab. */
 export interface PlaygroundScenario {
@@ -11,6 +12,18 @@ export interface PlaygroundScenario {
   readonly mapRef: 'inline';
   readonly initial: CombatLabBattleConfig;
   readonly controls: { readonly mode: 'manual' };
+  readonly rulesetId: 'm1-domain-bridge-v5';
+  readonly equipment: readonly {
+    readonly unitId: string;
+    readonly weaponId: 'sword-shield' | 'spear' | 'bow' | 'raider' | 'great-weapon';
+  }[];
+  readonly resources: readonly {
+    readonly unitId: string;
+    readonly health: number;
+    readonly armor: number;
+    readonly stamina: number;
+    readonly morale: number;
+  }[];
 }
 
 export type PlaygroundOperation =
@@ -57,6 +70,8 @@ export interface PlaygroundBootstrap {
   readonly accountId: string;
   readonly contentRevision: string;
   readonly template: PlaygroundScenario;
+  readonly catalog: CombatLabCatalog;
+  readonly debugScenarios: readonly PlaygroundScenario[];
   readonly sandboxes: readonly PlaygroundSandbox[];
 }
 
@@ -64,5 +79,24 @@ export interface PlaygroundInspection {
   readonly validationError?: 'CONTENT_REVISION_MISMATCH';
   readonly sandbox: PlaygroundSandbox;
   readonly view: CombatLabView | null;
+  readonly encounterId?: string;
+  readonly commands?: readonly unknown[];
+  readonly receipts?: readonly EncounterCommandResponse[];
+  readonly rejections?: readonly EncounterCommandResponse[];
+  readonly events?: readonly unknown[];
   readonly audit: readonly PlaygroundReceipt[];
+}
+
+export interface PlaygroundFieldError {
+  readonly field: string;
+  readonly message: string;
+}
+export interface PlaygroundReplayReport {
+  readonly reason: string | null;
+  readonly matches: boolean;
+  readonly expectedDigest: string;
+  readonly actualDigest: string | null;
+  readonly rulesetId: string;
+  readonly contentRevision: string;
+  readonly replay: unknown;
 }

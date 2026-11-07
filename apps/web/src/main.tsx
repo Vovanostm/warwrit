@@ -11,6 +11,10 @@ const Playground = import.meta.env.DEV
   : null;
 const isPlayground = /^\/dev\/playground(?:\/(?:combat|maps))?\/?$/u.test(window.location.pathname);
 
+if (import.meta.env.DEV && /^\/dev\/playground\/?$/u.test(window.location.pathname)) {
+  window.history.replaceState(null, '', `/dev/playground/combat${window.location.search}`);
+}
+
 const rootElement = document.querySelector('#root');
 if (rootElement === null) {
   throw new Error('Missing #root element');

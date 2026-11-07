@@ -1,10 +1,18 @@
-# Local sprite combat prototype
+# Shared combat UI and Developer Combat Lab
 
-Run `pnpm dev:combat`, then open `http://127.0.0.1:5320/combat-lab`.
-The launcher builds protocol/core and starts a separate loopback API on 3022
-and web on 5320 without opening the campaign database. Override
-`COMBAT_API_PORT` / `COMBAT_WEB_PORT` when those ports are occupied. Orca worktrees get private
-ports from `.worktree-ports` (written by `scripts/orca-setup.sh`).
+Open `/dev/playground/combat` in an authenticated, allowlisted development stand.
+[Setup](../../../../docs/engineering/LOCAL_DEVELOPMENT.md#developer-playground-wlc-05)
+and [WLC-06 contract/results](../../../../docs/engineering/COMBAT_LAB_CONSOLIDATION.md)
+replace the old DB-free `/combat-lab` launcher. `pnpm dev:combat` is only a
+configuration-checked alias to that same Playground. Old capability/session
+transport and the standalone React entry are removed.
+
+The existing BattleEditor, BattleView, CommandDesk and Babylon scene are shared.
+The ordinary game retains its own normal command transport. Playground sends the
+standard encounter DTO, persists exact pending intents, displays server projections
+and inspects deterministic replay reports. The following older sprite-specific
+sections preserve visual/history context; their session, rule and launch claims
+are superseded by WLC-06 for new developer encounters.
 
 Choose up to six units per side from twenty approved visual profiles. Paint
 terrain, heights and obstacles, place units, then start the accepted draft.

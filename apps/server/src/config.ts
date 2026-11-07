@@ -6,7 +6,6 @@ export interface ServerConfig {
   readonly host: string;
   readonly port: number;
   readonly databaseUrl?: string;
-  readonly combatLabOrigin?: string;
   readonly fixtureEncountersEnabled?: true;
   readonly encounterRealtimePort: number;
   readonly identity?: IdentityConfig;
@@ -62,24 +61,10 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
         ].every((value) => Boolean(value?.trim()))),
     'Encounter fixtures require nonproduction loopback HTTP and realtime listeners with database-backed identity',
   );
-  const labEnabled = environment['COMBAT_LAB'] === '1';
   invariant(
-    !labEnabled ||
-      (environment['NODE_ENV'] !== 'production' && (host === '127.0.0.1' || host === '::1')),
-    'Combat lab requires a nonproduction loopback server',
+    environment['COMBAT_LAB'] !== '1',
+    'COMBAT_LAB is retired; use authenticated PLAYGROUND=1',
   );
-  const combatLabOrigin = environment['COMBAT_LAB_ORIGIN']?.trim() || 'http://127.0.0.1:5173';
-  if (labEnabled) {
-    const origin = new URL(combatLabOrigin);
-    invariant(
-      origin.protocol === 'http:' &&
-        (origin.hostname === '127.0.0.1' ||
-          origin.hostname === 'localhost' ||
-          origin.hostname === '[::1]') &&
-        origin.origin === combatLabOrigin,
-      'COMBAT_LAB_ORIGIN must be an exact local HTTP origin',
-    );
-  }
   const identityValues = [
     environment['OIDC_ISSUER'],
     environment['OIDC_CLIENT_ID'],
@@ -175,7 +160,6 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     host,
     port,
     ...(databaseUrl ? { databaseUrl } : {}),
-    ...(labEnabled ? { combatLabOrigin } : {}),
     ...(fixtureEncountersEnabled ? { fixtureEncountersEnabled: true as const } : {}),
     encounterRealtimePort,
     ...(identity === undefined ? {} : { identity }),

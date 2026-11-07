@@ -12,7 +12,6 @@ import { registerWorldRoutes } from './world/routes.js';
 import { registerOrdinaryContractRoutes } from './contracts/ordinary.js';
 import { registerFirstHuntRoutes } from './contracts/routes.js';
 import { createLogger } from './logger.js';
-import { registerCombatLab, type CombatLabSettings } from './combat-lab/routes.js';
 import { registerEncounterRoutes, type EncounterRoutesOptions } from './encounters/routes.js';
 import { registerEncounterRealtime } from './encounters/realtime.js';
 
@@ -24,7 +23,6 @@ export interface BuildAppOptions {
   readonly logger?: FastifyBaseLogger | false;
   readonly readinessProbe?: () => Promise<void>;
   readonly closeDatabase?: () => Promise<void>;
-  readonly combatLab?: CombatLabSettings;
   readonly playground?: PlaygroundSettings;
   readonly identity?: IdentityRoutesOptions;
   readonly company?: CompanyRoutesOptions;
@@ -84,12 +82,6 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
             roomTicketIssuer: realtime.issueRoomTicket,
           }),
     });
-  }
-  if (options.combatLab !== undefined) {
-    if (productionBuild || process.env['NODE_ENV'] === 'production') {
-      throw new Error('Combat lab is unavailable in production');
-    }
-    registerCombatLab(app, options.combatLab);
   }
   if (options.playground !== undefined) {
     if (productionBuild || process.env['NODE_ENV'] === 'production')
