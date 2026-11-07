@@ -19,6 +19,9 @@ requests.
   isolated empty database. Refresh README/docs/roadmap/ADR historical markers,
   Playground/combat entry guidance and optional-review/scoped visual-gate policy.
   [Owning evidence and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
+  Fix reproduced development-env leakage of Playground into the standard web
+  build by pinning production for Vite; remove unconsumed retired editor exports
+  and stale Fallow paths, and format the previously failing connection test.
   Frozen install, clean migration up/full smoke and ordinary OIDC/preparation
   PASS; remaining integrated acceptance pending. CI advisory; no merge/deployment
   or full-M1 acceptance. Retained player data and original dirty work untouched.

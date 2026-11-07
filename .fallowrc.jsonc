@@ -16,8 +16,6 @@
   ],
   // Manual browser probes are run by hand with Playwright, not imported.
   "entry": [
-    "scripts/world-map/navigation-lab.ts",
-    "scripts/world-map/navigation-lab.css",
     "scripts/world-map/world-lab.ts",
     "scripts/world-map/world-lab.css",
     "scripts/world-map/fog-design/view.ts",

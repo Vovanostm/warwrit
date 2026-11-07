@@ -11,12 +11,6 @@ const EDITOR_MAP_HEIGHT = 11;
 const EDITOR_SIDE_LIMIT = 6;
 const EDITOR_SEED_MAX = 0xffff_ffff;
 
-export type CombatLabMapDraft = Readonly<{
-  version: 1;
-  name: string;
-  tiles: readonly CombatLabTile[];
-}>;
-
 export type TilePatch = Partial<Pick<CombatLabTile, 'height' | 'terrain' | 'blocked'>>;
 
 const key = ({ q, r }: CombatLabHex) => `${q},${r}`;
@@ -326,8 +320,4 @@ export function validateBattleDraft(value: unknown, catalog: CombatLabCatalog): 
   errors.push(...validateBattleUnits(value['units'], rawMap, catalog));
   // Connectivity and combat admission are validated by the server's canonical core.
   return [...new Set(errors)];
-}
-
-export function toMapDraft(battle: CombatLabBattleConfig): CombatLabMapDraft {
-  return { version: 1, name: battle.map.name, tiles: battle.map.tiles };
 }

@@ -18,7 +18,7 @@
     "vite": "^7.0.0"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "build": "tsc -p tsconfig.json --noEmit && NODE_ENV=production vite build",
     "clean": "node ../../scripts/clean.mjs",
     "dev": "vite",
     "preview": "vite preview",

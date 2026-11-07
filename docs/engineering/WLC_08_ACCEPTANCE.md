@@ -79,6 +79,24 @@ is used as fresh evidence. Checks below are local observations unless named othe
 - Payroll requires natural day2/tick0 (six real hours from world genesis).
   No clock or persisted-state edits substitute for that observation.
 
+### Integration defects and corrections
+
+The standard web build with the ordinary local `.env` (`NODE_ENV=development`)
+produced executable Playground chunks. This is a reproduced production-isolation
+defect despite prior candidate artifact claims. The web build command now pins
+`NODE_ENV=production` for Vite, preserving normal development behavior and using
+Vite's existing dead-code elimination. Fresh artifact results follow below.
+Removed six unused exports left by retired editor paths (two become private;
+obsolete map-draft helper/type, unused drawing pace constants and type re-export
+are removed), plus stale Fallow paths. The sole repository formatting failure
+was corrected without changing that test's behavior.
+
+The first ordinary unit command accidentally inherited the gameplay stand's
+DATABASE_URL. It was stopped and is INVALID evidence; a later SQL read retained
+the same ordinary company/revision and no encounters. SQL checks use the existing
+integration runner with independently migrated per-file databases. No world reset
+or manual repair of the ordinary company was used.
+
 ## Documentation and visual gate
 
 Current README/docs map/roadmap now point to the ordinary game, selected Babylon,

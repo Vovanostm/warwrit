@@ -1,7 +1,6 @@
 import type { PointFp } from '@warwrit/game-core';
 import type { inspectRoadNetwork } from '@warwrit/game-core';
 export { inspectRoadNetwork } from '@warwrit/game-core';
-export type { RoadConnection } from '@warwrit/game-core';
 
 /** Optional author overlay; diagnostics never block travel or capture map input. */
 export function mountRoadDiagnostics(

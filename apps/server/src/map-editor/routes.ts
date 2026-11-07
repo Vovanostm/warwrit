@@ -54,7 +54,7 @@ function artifact(document: MapDocument): MapArtifact {
     content: document.content,
   };
 }
-export function isMapArtifact(v: unknown): v is MapArtifact {
+function isMapArtifact(v: unknown): v is MapArtifact {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
   const a = v as Record<string, unknown>;
   const s = a['source'] as Record<string, unknown> | undefined;
@@ -71,7 +71,7 @@ export function isMapArtifact(v: unknown): v is MapArtifact {
     isMapContent(a['content'])
   );
 }
-export async function executeMapCommand(
+async function executeMapCommand(
   db: Kysely<DatabaseSchema>,
   owner: string,
   c: MapEditorCommand | MapDeliveryCommand,
