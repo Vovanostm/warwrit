@@ -25,7 +25,7 @@
     "db:migrate:up": "tsx --env-file-if-exists=.env apps/server/src/db/migrate.ts up",
     "db:up": "docker compose up -d --wait postgres dex",
     "dev": "pnpm --filter @warwrit/game-core --filter @warwrit/protocol build && pnpm --parallel --filter @warwrit/server --filter @warwrit/web run dev",
-    "dev:map": "pnpm --filter @warwrit/game-core build && pnpm exec vite --config scripts/world-map/navigation-lab-vite.config.ts --open /scripts/world-map/navigation-lab.html",
+    "dev:map": "pnpm --filter @warwrit/web dev --open /dev/playground/maps",
     "dev:combat": "bash scripts/start-sprite-combat.sh",
     "dev:world": "bash scripts/start-world-lab.sh",
     "format": "prettier . --check",

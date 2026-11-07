@@ -5,6 +5,15 @@ Coordinator/writer: `codex/wlc-05-playground`, `.claude/worktrees/wlc-05`.
 Owner authorizes implementation, standalone PR, merge and local main update.
 No deployment, paid service, game-rule change or retained-save mutation.
 
+## WLC-07 map-authoring extension — 2026-11-08
+
+`/dev/playground/maps` now opens the [Unified Map Editor](UNIFIED_MAP_EDITOR.md).
+It shares this authenticated/allowlisted scope but owns separate persistent map
+rows and versioned artifacts; combat sandbox schema/TTL remain unchanged.
+The map route no longer displays or activates a combat sandbox. The historical
+foundation journey below records the pre-editor state. Map content delivery
+registers immutable versions for new worlds only; it never assigns live world refs.
+
 ## Journey and scope
 
 An authenticated, allowlisted developer opens `/dev/playground`, sees a conspicuous

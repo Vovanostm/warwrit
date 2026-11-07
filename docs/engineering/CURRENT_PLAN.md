@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+## WLC-07 — Unified Map Editor, 2026-11-08
+
+Coordinator/writer: codex/wlc-07-map-editor, .claude/worktrees/wlc-07.
+Owner authorizes implementation and standalone PR; no merge/deployment.
+Base fdbb0dc2 includes merged WLC-03/05. Preserve WLC-06's independent PR428.
+[Owning journeys, isolation and acceptance](UNIFIED_MAP_EDITOR.md).
+Status LOCAL implementation complete. 52focused (3real PostgreSQL), native World/
+Battle journeys, artifact delivery/recovery, migration rollback, types/lint/
+architecture and production builds/artifact checks PASS. Current atlas v6 and
+canonical rules remain owners; drafts never change active worlds. CI/full suite/
+M1/deployment NOT_RUN; CI advisory. Next: commit and publish standalone PR.
+
 ## WLC-05 — Developer Playground Foundation, 2026-11-07
 
 Coordinator/writer: codex/wlc-05-playground, .claude/worktrees/wlc-05.

@@ -9,6 +9,24 @@ requests.
 
 ## Unreleased
 
+### Unified Map Editor (WLC-07)
+
+- 2026-11-08, `codex/wlc-07-map-editor`, LOCAL owner-assigned work: protected
+  World/Battle authoring, server drafts/validation, versioned artifacts and
+  current renderer preview. [Owning scope and checks](docs/engineering/UNIFIED_MAP_EDITOR.md).
+  Reuse BattleEditor/Babylon and game-core navigation; extract existing road
+  diagnostics without changing rules. Retire standalone Navigation Lab execution
+  and old map-file controls; retain battle presets/saves and World Lab.
+  Migration0023 adds persistent isolated map documents/receipts. Separate content
+  delivery freezes an exact exported artifact for new worlds only, with explicit
+  acknowledgement; no automatic world assignment.
+- 52focused tests (3real PostgreSQL), native World/Battle journeys, import/export,
+  day/night/cameras, explicit artifact publication, lost-response/reload/exact
+  retry, migration up/down/up, types/lint/architecture, production builds/artifact
+  guards PASS. Fix object-linked corridor errors, wheel scrolling and zoomed SVG
+  input overlap found during self-review. CI/full suite/M1/art/deployment NOT_RUN;
+  CI advisory. Existing worlds, saves and revision references unchanged.
+
 ### Record WLC-05 merge and local main update
 
 - 2026-11-07, `codex/wlc-05-merge-receipt`, records MERGED

@@ -505,7 +505,9 @@ function compileExactRoadGraph(
           field.exactSurfacePolicy ?? surfacePolicy(region),
         );
         if (!trace || trace.intervals.some((span) => span.overlayId === null))
-          throw new RangeError('Invalid authored road corridor');
+          throw Object.assign(new RangeError('Invalid authored road corridor'), {
+            objectId: road.shapeId,
+          });
         connect(previous, node);
       }
       previous = node;

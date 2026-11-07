@@ -1,3 +1,4 @@
+import { registerMapEditor } from '../map-editor/routes.js';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 import { PLAYGROUND_CONTENT_REVISION, type PlaygroundCommand } from '@warwrit/protocol';
@@ -111,6 +112,7 @@ export function registerPlayground(app: FastifyInstance, settings: PlaygroundSet
       request.log.error({ event: 'playground.request.failed' }, 'Playground request failed');
       return reply.code(503).send({ code: 'PLAYGROUND_UNAVAILABLE' });
     });
+    registerMapEditor(scope, settings.database);
     scope.get('/dev/playground/api', async (request) => ({
       environment: settings.environment,
       accountId: request.playgroundAccountId,

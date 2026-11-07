@@ -134,10 +134,12 @@ the normal migration command unchanged. The CI-only helper
 API/Vite child processes in a fresh `output/world-lab-ci/runtime-*` directory.
 It stops/waits only its own children and removes only its own Compose project.
 The persistent laboratory database is never reset. Private UI5338 keeps its
-file allowlist; legacy atlas controls run on a separate loopback authoring
-origin5326, without an API proxy. Both Vite processes and actual browser pages
-supply source-checked measurements. `pnpm dev:map` uses that authoring config;
-the private ordinary-game configuration intentionally denies the full atlas.
+file allowlist; retired Navigation Lab notice and fog-design references run on a separate loopback
+origin5326. The full atlas is denied there. `pnpm dev:map` now opens
+`/dev/playground/maps` on the ordinary development web stand; it requires the
+[Playground setup](DEVELOPER_PLAYGROUND.md) and an allowlisted authenticated
+account. Atlas bytes and draft API are served only through that protected scope.
+See [Map Editor journeys and lifecycle](UNIFIED_MAP_EDITOR.md).
 Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
 previous local evidence is not uploaded as CI proof. The job budget is35 minutes
