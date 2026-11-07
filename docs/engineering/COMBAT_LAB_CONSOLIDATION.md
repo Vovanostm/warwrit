@@ -76,8 +76,8 @@ LOCAL implementation verified; standalone PR publication follows this checkpoint
 Merge/deployment not authorized. Original dirty checkout, other worktrees and
 player saves are untouched.
 
-- Final real PostgreSQL run:33PASS (25 ordinary encounter regressions +8 Playground
-  cases), each file on a separately migrated disposable database. Covers owner/
+- Final integration-mode run:33PASS (19 ordinary encounter SQL cases +7 Playground
+  SQL cases +6 pure ownership guards +1 configuration guard), each file on a separately migrated disposable database. Covers owner/
   origin/session isolation, exact concurrent retry/conflict/stale revisions,
   blocked-move atomic refusal, 1AP move +3AP bow shot, terminal replay and events/
   receipts, clone/reset/new encounter IDs, TTL and old-content refusal. Deliberate
@@ -129,3 +129,20 @@ The owner explicitly confirmed the reinforcement boundary on2026-11-08.
 
 Raw local probes/logs are retained under `output/wlc06/` and `output/playwright/`
 (ignored, not committed). Screenshots show only this disposable stand.
+
+## Publication — 2026-11-08
+
+PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), implementation
+`6bd10ce0`, base `fdbb0dc2`. This dated receipt records actual publication; it does
+not grant merge/deployment permission. The original local verification checkpoint
+above remains the executed boundary. Verification count clarified:33 integration-
+mode checks include26 SQL-backed scenarios and7 pure guards;67 other focused
+checks passed. Hosted CI remains advisory and is not awaited for delivery.
+
+Owned browser wlc06, UI53606/API33606 and the disposable PostgreSQL54606 container
+and volume were closed/removed. No retained player data or other stand was changed.
+Local Git upstream/tracking updates were refused by shared-config filesystem
+permissions after the successful remote push; remote publication is independently
+verified through GitHub. Subsequent pushes use the explicit branch destination.
+Documentation-only receipt: game checks are not repeated; links/format/diff and
+checkpoint readback are checked before its commit. PR428 is OPEN/NOT_MERGED.

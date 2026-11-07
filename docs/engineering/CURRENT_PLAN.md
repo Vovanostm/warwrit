@@ -6,8 +6,8 @@ Coordinator/writer: codex/wlc-06-combat-lab, .claude/worktrees/wlc-06.
 Owner authorizes implementation and standalone PR; merge/deployment not authorized.
 Base fdbb0dc2 includes WLC-04/05. Preserve original WIP and player saves.
 [Owning journey, architecture and checks](COMBAT_LAB_CONSOLIDATION.md).
-Status: LOCAL implementation verified; standalone PR publication next.
-33 PostgreSQL +67 focused tests PASS; types/lint/architecture and migration up/down/up PASS.
+Status: PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), implementation6bd10ce0; OPEN/NOT_MERGED.
+33 integration-mode (26SQL/7guards) +67 focused tests PASS; types/lint/architecture and migration up/down/up PASS.
 Native setup/manual/auto/Pause/loss/reload/API restart/exact retry/terminal/replay PASS.
 Owner confirmed active-battle reinforcements unavailable; game rules unchanged.
 Screenshots and remaining limits are in the owning page. CI advisory; full M1 NOT_RUN.
