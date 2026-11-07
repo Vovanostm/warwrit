@@ -1,6 +1,6 @@
 # Warwrit current delivery plan
 
-## Complete first ordinary loop #370 — 2026-11-07
+## Complete first ordinary loop #370 — merged 2026-11-07
 
 Coordinator/writer codex/m1-full-loop-370 in .claude/worktrees/m1-full-loop-370, base main4a22a09c.
 Owner explicitly requested implement, review, merge and update main for #370. CI is advisory.
@@ -15,8 +15,9 @@ Company cash780.35/free760.35, original personal wallets remain at Severny Dvor.
 Next ordinary Следы на дороге accepted. Owned API/RT/web restart and ordinary OIDC re-entry PASS, complete pre-browser report equality.
 People/equipment/custody/health/contracts/proof/money/reservations and original once-only receipts retained after login.
 Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Bounded source and affected feedback critique ACCEPT.
-Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. [PR414](https://github.com/Vovanostm/warwrit/pull/414) PUBLISHED from f29e7d86, owner-authorized merge next. PR owns live delivery/merge receipt. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
-Keep task stand and all retained worlds available. Owner authorized merge/update main for this mission.
+Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. [PR414](https://github.com/Vovanostm/warwrit/pull/414) MERGED at05:47:45UTC as f5709c8c with expected head0e0c5df0. #370 CLOSED. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
+Clean local main fast-forwarded to f5709c8c, matching GitHub/origin main. Reviewed head and merge have no content diff.
+Documentation receipt uses codex/m1-full-loop-370-closeout. Keep task stand and all retained worlds available.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

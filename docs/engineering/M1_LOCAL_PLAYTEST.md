@@ -772,3 +772,15 @@ merge receipt, hosted checks and issue closure. This publication closeout change
 documents only, so game checks are not repeated. Current-plan/diff/readback are
 checked before commit. CI remains advisory. Retained task processes/worlds remain
 available, and the original dirty checkout is untouched.
+
+### Merged first-loop receipt — 2026-11-07
+
+[PR414](https://github.com/Vovanostm/warwrit/pull/414) MERGED at05:47:45UTC as
+f5709c8cdb7381ce8480b2a3ef1705b9e6b23221. Expected head
+0e0c5df02ac1dd9ea515070f99e671c4dbfdf01b was enforced. #370 is CLOSED.
+An ordinary diff found no content difference between that reviewed head and the
+actual merge. The clean local main worktree agent-harness-cleanup fast-forwarded
+to the same f5709c8c as GitHub main/origin main. Original dirty work is preserved.
+Hosted CI was still advisory at merge, with no full-suite acceptance claim.
+The documentation-only receipt on codex/m1-full-loop-370-closeout reconciles
+status after the actual merge. Game checks are reused on unchanged product code.
