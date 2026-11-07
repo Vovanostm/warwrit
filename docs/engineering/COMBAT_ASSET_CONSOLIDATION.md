@@ -179,3 +179,14 @@ visual reviews are complete. The owner's WLC-03 request explicitly authorizes
 review, PR and merge; no deployment. Final documentation-only changes preserve
 the checked implementation. Supply the actual final head to the merge operation;
 GitHub owns the actual merge receipt.
+
+### Confirmed merge — 2026-11-07
+
+GitHub confirms PR421 MERGED at16:46:47UTC (19:46:47 Moscow), merge
+`25743a75e72d8442f7092565d7a503146a2f258f`, expected head
+`f6a3953a00405efcd0083428888061216f0ac369`. An ordinary Git diff confirms merge
+content equals that final head. No unresolved GitHub review thread or submitted
+blocking review existed at merge. Source and scoped visual reviews above apply;
+CI remains advisory. Existing player data, primary dirty work and WLC-02 remain
+untouched. This receipt updates documents only; format/diff/link readback PASS,
+repeated game/build/SQL checks NOT_RUN. No deployment.
