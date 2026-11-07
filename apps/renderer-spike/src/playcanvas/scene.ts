@@ -15,6 +15,7 @@ import {
 } from 'playcanvas';
 import type { AnimTrack, RenderComponent } from 'playcanvas';
 import { createArtSprite } from './art-sprite.js';
+import { createAnimatedArtSprites } from './art-animated-sprite.js';
 import {
   actors,
   firstAttacker,
@@ -26,13 +27,55 @@ import {
 } from '../shared/scenario.js';
 import type { RendererController, RendererMount } from '../shared/renderer.js';
 
-function loadContainer(app: Application, url: string) {
+async function loadContainer(
+  app: Application,
+  url: string,
+  signal: AbortSignal | undefined,
+  trackContainerLoad: () => () => void,
+) {
+  if (signal?.aborted) throw new Error('PlayCanvas scene mount cancelled.');
+  const assets = app.assets;
+  if (!assets) throw new Error('PlayCanvas scene mount cancelled.');
+  const response = await fetch(url, signal ? { signal } : undefined);
+  if (!response.ok) throw new Error(`Failed to load PlayCanvas asset: ${response.status}`);
+  const contents = await response.arrayBuffer();
+  if (signal?.aborted) throw new Error('PlayCanvas scene mount cancelled.');
+
+  const asset = new Asset(url, 'container', { url, contents });
   return new Promise<Asset>((resolve, reject) => {
-    const asset = new Asset(url, 'container', { url });
-    asset.once('load', () => resolve(asset));
-    asset.once('error', (error: unknown) => reject(error));
-    app.assets.add(asset);
-    app.assets.load(asset);
+    let cleanupComplete = false;
+    let settleContainerLoad = () => {};
+    const cleanup = () => {
+      if (cleanupComplete) return;
+      cleanupComplete = true;
+      asset.off('load', onLoad);
+      asset.off('error', onError);
+      settleContainerLoad();
+    };
+    const onLoad = () => {
+      cleanup();
+      if (signal?.aborted) reject(new Error('PlayCanvas scene mount cancelled.'));
+      else resolve(asset);
+    };
+    const onError = (error: unknown) => {
+      cleanup();
+      reject(error);
+    };
+    asset.once('load', onLoad);
+    asset.once('error', onError);
+    if (signal?.aborted) {
+      cleanup();
+      reject(new Error('PlayCanvas scene mount cancelled.'));
+      return;
+    }
+    assets.add(asset);
+    settleContainerLoad = trackContainerLoad();
+    try {
+      assets.load(asset);
+    } catch (error) {
+      cleanup();
+      reject(error);
+    }
   });
 }
 
@@ -73,28 +116,66 @@ function rayAabbDistance(from: Vec3, to: Vec3, bounds: MeshInstance['aabb']) {
 
 const actorRenderScale = 0.92;
 
-export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics) => {
-  const artBakeMode = new URLSearchParams(location.search).get('art-bake') === '1';
+export const PlayCanvasScene: RendererMount = async (canvas, emit, metrics, signal) => {
+  if (signal?.aborted) throw new Error('PlayCanvas scene mount cancelled.');
+  const query = new URLSearchParams(location.search);
+  const artBakeMode = query.get('art-bake') === '1';
+  const artAnimatedSpriteMode = !artBakeMode && query.get('art-animated') === '1';
   const artSpritePreviewMode =
-    !artBakeMode && new URLSearchParams(location.search).get('art-preview') === 'sprite';
+    !artBakeMode && !artAnimatedSpriteMode && query.get('art-preview') === 'sprite';
   const app = new Application(canvas, {
     graphicsDeviceOptions: {
       antialias: scenario.quality.antialias,
       ...(artBakeMode ? { alpha: true, preserveDrawingBuffer: true } : {}),
     },
   });
+  let appDestroyed = false;
+  let destroyRequested = false;
+  let pendingContainerLoads = 0;
+  const destroyAppNow = () => {
+    if (appDestroyed) return;
+    appDestroyed = true;
+    app.destroy();
+  };
+  const destroyApp = () => {
+    destroyRequested = true;
+    if (pendingContainerLoads === 0) destroyAppNow();
+  };
+  const trackContainerLoad = () => {
+    pendingContainerLoads += 1;
+    let settled = false;
+    return () => {
+      if (settled) return;
+      settled = true;
+      pendingContainerLoads -= 1;
+      if (destroyRequested && pendingContainerLoads === 0) queueMicrotask(destroyAppNow);
+    };
+  };
+  signal?.addEventListener('abort', destroyApp, { once: true });
   try {
-    return await initializePlayCanvasScene(
+    const controller = await initializePlayCanvasScene(
       canvas,
       emit,
       metrics,
       app,
       artBakeMode,
+      artAnimatedSpriteMode,
       artSpritePreviewMode,
+      signal,
+      trackContainerLoad,
+      destroyApp,
+      () => appDestroyed,
     );
+    if (signal?.aborted) {
+      controller.destroy();
+      throw new Error('PlayCanvas scene mount cancelled.');
+    }
+    return controller;
   } catch (error) {
-    app.destroy();
+    destroyApp();
     throw error;
+  } finally {
+    signal?.removeEventListener('abort', destroyApp);
   }
 };
 
@@ -104,7 +185,12 @@ async function initializePlayCanvasScene(
   metrics: Parameters<RendererMount>[2],
   app: Application,
   artBakeMode: boolean,
+  artAnimatedSpriteMode: boolean,
   artSpritePreviewMode: boolean,
+  signal: AbortSignal | undefined,
+  trackContainerLoad: () => () => void,
+  destroyApp: () => void,
+  isAppDestroyed: () => boolean,
 ): Promise<RendererController> {
   metrics.attachRendererContext();
   app.setCanvasFillMode(FILLMODE_NONE, scenario.canvas.width, scenario.canvas.height);
@@ -198,7 +284,10 @@ async function initializePlayCanvasScene(
 
   const containers = new Map<string, Asset>();
   for (const classId of ['Knight', 'Rogue', 'Barbarian'] as const) {
-    containers.set(classId, await loadContainer(app, `/assets/characters/${classId}.glb`));
+    containers.set(
+      classId,
+      await loadContainer(app, `/assets/characters/${classId}.glb`, signal, trackContainerLoad),
+    );
   }
   const roots = new Map<string, Entity>();
   const animationPaths = [
@@ -208,7 +297,7 @@ async function initializePlayCanvasScene(
   ];
   const tracks = new Map<string, AnimTrack>();
   for (const path of animationPaths) {
-    const containerAsset = await loadContainer(app, path);
+    const containerAsset = await loadContainer(app, path, signal, trackContainerLoad);
     const resource = containerAsset.resource as {
       animations?: Array<{ resource?: AnimTrack }>;
     } | null;
@@ -260,7 +349,10 @@ async function initializePlayCanvasScene(
   }
   const accessoryContainers = new Map<string, Asset>();
   for (const name of ['sword_1handed', 'shield_round', 'dagger', 'axe_1handed'])
-    accessoryContainers.set(name, await loadContainer(app, `/assets/accessories/${name}.gltf`));
+    accessoryContainers.set(
+      name,
+      await loadContainer(app, `/assets/accessories/${name}.gltf`, signal, trackContainerLoad),
+    );
   for (const actor of actors) {
     const model = containers.get(actor.classId)!.resource;
     if (
@@ -375,6 +467,27 @@ async function initializePlayCanvasScene(
   const spriteActorId = 'red-knight-1';
   const spriteActor = actors.find((actor) => actor.id === spriteActorId)!;
   const spriteActorPosition = hexToWorld(spriteActor.q, spriteActor.r);
+  const animatedKnightActors = artAnimatedSpriteMode
+    ? actors.filter((actor) => actor.classId === 'Knight')
+    : [];
+  const artAnimatedActorIds = new Set(animatedKnightActors.map((actor) => actor.id));
+  const artAnimatedSprite = artAnimatedSpriteMode
+    ? await createAnimatedArtSprites(
+        app,
+        animatedKnightActors.map((actor) => {
+          const position = hexToWorld(actor.q, actor.r);
+          return { id: actor.id, position: new Vec3(position.x, 0, position.z) };
+        }),
+      )
+    : null;
+  if (artAnimatedSprite) {
+    for (const actorId of artAnimatedActorIds) {
+      roots.get(actorId)!.anim!.playing = false;
+      roots.get(actorId)!.enabled = false;
+      statusBars.get(actorId)!.enabled = false;
+    }
+    artAnimatedSprite.update(camera.getPosition(), 0);
+  }
   const artSprite = artSpritePreviewMode
     ? await createArtSprite(app, new Vec3(spriteActorPosition.x, 0, spriteActorPosition.z))
     : null;
@@ -510,6 +623,7 @@ async function initializePlayCanvasScene(
   let selectedId: string | null = null;
   let selectedCell: string | null = null;
   let destroyed = false;
+  let artAnimatedElapsedSeconds = 0;
   let previousHitVisible = false;
   let sparkStartedAt: number | null = null;
   const startBurst = () => {
@@ -530,12 +644,17 @@ async function initializePlayCanvasScene(
     gpuQuery = null;
     metrics.cpuSubmit(frameStart, performance.now());
   });
-  app.on('update', () => {
+  app.on('update', (deltaSeconds) => {
     if (destroyed) return;
     if (artBakeMode) return;
     artSprite?.update(camera.getPosition());
+    if (artAnimatedSprite) {
+      artAnimatedElapsedSeconds += deltaSeconds;
+      artAnimatedSprite.update(camera.getPosition(), artAnimatedElapsedSeconds);
+    }
     const sample = sampleTimeline((performance.now() - timelineEpochMs) / 1000);
     for (const [actorId, clip] of sample.animationByActor) {
+      if (artAnimatedActorIds.has(actorId)) continue;
       const root = roots.get(actorId);
       if (root && currentClip.get(actorId) !== clip) {
         root.anim?.baseLayer?.play(clip);
@@ -618,7 +737,7 @@ async function initializePlayCanvasScene(
     if (!ray) return null;
     let closest: { actorId: string; distance: number } | null = null;
     for (const [actorId, instances] of actorMeshInstances) {
-      if (artSprite && actorId === spriteActorId) continue;
+      if ((artSprite && actorId === spriteActorId) || artAnimatedActorIds.has(actorId)) continue;
       for (const instance of instances) {
         const distance = rayAabbDistance(ray.from, ray.to, instance.aabb);
         if (distance !== null && (!closest || distance < closest.distance))
@@ -632,6 +751,8 @@ async function initializePlayCanvasScene(
       (!closest || spriteDistance < closest.distance)
     )
       closest = { actorId: spriteActorId, distance: spriteDistance };
+    const animatedHit = artAnimatedSprite?.pickDistance(ray.from, ray.to);
+    if (animatedHit && (!closest || animatedHit.distance < closest.distance)) closest = animatedHit;
     return closest?.actorId ?? null;
   };
   const applyTileHighlight = () => {
@@ -916,6 +1037,8 @@ async function initializePlayCanvasScene(
     },
     resetTimeline: () => {
       timelineEpochMs = performance.now();
+      artAnimatedElapsedSeconds = 0;
+      artAnimatedSprite?.update(camera.getPosition(), 0);
       previousHitVisible = false;
       for (const spark of sparks) spark.enabled = false;
       sparkStartedAt = null;
@@ -932,10 +1055,13 @@ async function initializePlayCanvasScene(
       canvas.style.height = 'auto';
     },
     destroy: () => {
+      if (destroyed) return;
       destroyed = true;
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('click', onClick);
-      app.destroy();
+      if (isAppDestroyed()) return;
+      artAnimatedSprite?.destroy();
+      destroyApp();
       for (const actorId of markers.keys()) roots.get(actorId)?.destroy();
       selectedId = null;
     },

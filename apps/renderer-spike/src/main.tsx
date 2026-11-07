@@ -43,6 +43,7 @@ function App() {
     collectorRef.current = nextCollector;
     setCollector(nextCollector);
     let alive = true;
+    const mountAbort = new AbortController();
     const emit = (event: SceneEvent) => {
       if (!alive) return;
       switch (event.type) {
@@ -83,9 +84,12 @@ function App() {
         ? import('./babylon/scene.js').then(({ BabylonScene }) => BabylonScene)
         : import('./playcanvas/scene.js').then(({ PlayCanvasScene }) => PlayCanvasScene);
     void loadScene
-      .then((mount) => mount(canvas, emit, nextCollector))
+      .then((mount) =>
+        mountAbort.signal.aborted ? null : mount(canvas, emit, nextCollector, mountAbort.signal),
+      )
       .then((controller) => {
-        if (!alive) controller.destroy();
+        if (!controller) return;
+        if (!alive || mountAbort.signal.aborted) controller.destroy();
         else {
           controllerRef.current = controller;
           nextCollector.markFirstInteractive();
@@ -97,6 +101,7 @@ function App() {
         }
       })
       .catch((reason: unknown) => {
+        if (mountAbort.signal.aborted) return;
         const message = reason instanceof Error ? reason.message : String(reason);
         emit({ type: 'error', message });
       });
@@ -105,6 +110,7 @@ function App() {
     return () => {
       alive = false;
       window.removeEventListener('resize', resize);
+      mountAbort.abort();
       controllerRef.current?.destroy();
       controllerRef.current = null;
       nextCollector.dispose();

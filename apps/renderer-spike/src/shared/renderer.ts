@@ -24,4 +24,5 @@ export type RendererMount = (
   canvas: HTMLCanvasElement,
   emit: (event: SceneEvent) => void,
   metrics: MetricsCollector,
+  signal?: AbortSignal,
 ) => Promise<RendererController>;
