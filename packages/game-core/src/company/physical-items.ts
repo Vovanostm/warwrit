@@ -71,6 +71,7 @@ function splitOrMove(
   destinationId: string,
   commandId: string,
   authorization?: OwnershipAuthorizationEvidence,
+  splitItemId?: string,
 ): CompanyPhysicalState {
   requirePhysical(
     quantity > 0 && quantity <= item.quantity && item.containerId !== null,
@@ -88,7 +89,7 @@ function splitOrMove(
     );
     return replaceItem(state, moved);
   }
-  const childId = physicalId(commandId, item.itemId, 'split');
+  const childId = splitItemId ?? physicalId(commandId, item.itemId, 'split');
   requirePhysical(!state.items.some((entry) => entry.itemId === childId), 'IDEMPOTENCY_CONFLICT');
   const remainder = { ...item, quantity: item.quantity - quantity };
   const child = changeOwner(
@@ -174,6 +175,7 @@ export function transferItem(
     p.toContainerId,
     command.commandId,
     authorization,
+    p.splitItemId,
   );
   if (authorization) {
     const recorded = recordPhysicalSource(physical, authorization);
@@ -183,7 +185,9 @@ export function transferItem(
   requirePartyTransportCapacity(root, physical);
   const affected = [
     p.itemId,
-    ...(p.quantity < item.quantity ? [physicalId(command.commandId, p.itemId, 'split')] : []),
+    ...(p.quantity < item.quantity
+      ? [p.splitItemId ?? physicalId(command.commandId, p.itemId, 'split')]
+      : []),
   ];
   physical = knownItemMutation(physical, affected, [p.fromContainerId, p.toContainerId]);
   return { ...root, physical, requirements: [] };

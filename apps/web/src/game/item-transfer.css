@@ -1,0 +1,56 @@
+.item-transfer,
+.item-transfer-fields,
+.item-transfer-pending {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.item-transfer .panel-subtitle,
+.item-transfer .state-note,
+.item-transfer-pending p {
+  margin: 0;
+}
+
+.item-transfer-field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.item-transfer-field select,
+.item-transfer-field input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--bronze);
+  background: #171612;
+  color: var(--ink);
+  color-scheme: dark;
+}
+
+.item-transfer-field select:focus-visible,
+.item-transfer-field input:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.item-transfer-field select:disabled,
+.item-transfer-field input:disabled {
+  opacity: 0.55;
+}
+
+.item-transfer .action {
+  width: 100%;
+}
+
+.item-transfer .quiet-action {
+  justify-self: start;
+}
+
+.item-transfer .state-note,
+.item-transfer-pending p {
+  line-height: 1.5;
+}
