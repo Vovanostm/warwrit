@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+### Record the merged repeat-hunt delivery
+
+- 2026-11-07, `codex/repeat-hunt-409-closeout`, records the MERGED implementation
+  from `codex/repeat-hunt-409`: [PR416](https://github.com/Vovanostm/warwrit/pull/416)
+  merged at12:01:02UTC as d19193da with expected head941a505f. Clean local main
+  fast-forwarded to that merge; reviewed head and merge have identical content.
+  [Owning receipt](docs/wiki/mechanics/retreat.md#слияние-409-и-обновление-main--2026-11-07)
+  preserves actual checks and the unproved first-native-escape criterion; #409
+  remains OPEN. CURRENT_PLAN and ROADMAP now distinguish merged implementation
+  from incomplete full native acceptance. Documentation-only receipt: focused
+  plan/format/diff checks PASS, repeated game checks NOT_RUN, CI advisory.
+
 ### Authorize repeat-hunt delivery and correct its checkpoint label
 
 - 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED PR416 follow-up: owner explicitly

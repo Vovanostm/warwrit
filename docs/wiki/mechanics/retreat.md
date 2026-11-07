@@ -538,6 +538,24 @@ CI на548d0027 остановился до игровых проверок: CUR
 Источник проверки — job128372849003/run42362236832. CI advisory, повтор полного
 suite не требуется. Фактический merge и обновление main фиксируются после операции.
 
+### Слияние #409 и обновление main — 2026-11-07
+
+MERGED [PR416](https://github.com/Vovanostm/warwrit/pull/416) в12:01:02UTC
+(15:01:02МСК), merge `d19193dadec762817386d82951e56adaa6e39b36`,
+защищённый expected head `941a505f87d89ce918005b3875538ba1bf73fa2e`.
+Readback GitHub подтвердил closed/merged и фактический merge commit.
+Чистый локальный `main` в `.claude/worktrees/agent-harness-cleanup` обновлён
+fast-forward до того же коммита; diff проверенного head и merge пуст.
+Основной checkout с прежним combat/art WIP и сохранённые миры не изменялись.
+
+#409 остаётся OPEN: слияние реализации не закрывает непроверенный первый
+нативный отход. Прежние реальные PostgreSQL/App проверки и scoped critic ACCEPT
+сохраняют свою границу. CI advisory; повтор игровых тестов для неизменённого
+игрового содержимого NOT_RUN. Новая документальная квитанция в
+`codex/repeat-hunt-409-closeout` меняет только статус поставки; focused plan,
+format и scoped diff проверяются перед её публикацией. Фактический merge этой
+квитанции фиксируется её PR; он не является новым игровым результатом.
+
 ## Реализация #378 — 2026-11-06
 
 PUBLISHED в [PR408](https://github.com/Vovanostm/warwrit/pull/408),
