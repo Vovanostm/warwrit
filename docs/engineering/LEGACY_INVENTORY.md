@@ -13,6 +13,16 @@ Registry links pin every path to that SHA. File/line pointers in the tables use
 that edition. Age, `lab` in a directory name, a v1 suffix, a successful build or
 an empty static reference list alone never makes a file safe to delete.
 
+## WLC-06 amendment — 2026-11-08
+
+[Combat Lab consolidation](COMBAT_LAB_CONSOLIDATION.md) supersedes the historical
+KEEP classification of the standalone `/combat-lab` entry and process-local lab
+routes/transport. Their shared visual editor/HUD, catalogue, versioned rules,
+replays and resources remain; execution moves to protected Playground and the
+ordinary encounter executor. The mill model viewer contains no combat simulation
+and is not a second Combat Lab. Older inventory rows below preserve their audited
+revision and do not claim that removed runtime files remain current.
+
 ## WLC-02 — Remove PlayCanvas pilot (2026-11-07)
 
 Owner assignment: remove the pilot in a standalone cleanup PR; Babylon.js is the

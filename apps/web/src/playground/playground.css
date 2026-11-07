@@ -154,3 +154,32 @@
   height: 100%;
   min-height: 0;
 }
+
+.playground-layout--fighting {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.playground-layout--fighting > aside {
+  border-right: 0;
+  padding: 0;
+}
+.playground-layout--fighting > aside details {
+  margin-top: 8px;
+}
+.playground :where(select, input:not([type='file'])) {
+  background: #20272d;
+  color: #e4e0d7;
+  border: 1px solid #66727a;
+  border-radius: 4px;
+  padding: 7px 9px;
+  font: inherit;
+}
+.sandbox-setup fieldset > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 12px 6px 0;
+}
+.sandbox-setup input[type='number'] {
+  width: 85px;
+}

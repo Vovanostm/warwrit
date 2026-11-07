@@ -62,12 +62,6 @@ import {
   type FreeMovementScope,
 } from './world-free-movement-attempt.js';
 
-const CombatLab = import.meta.env.DEV
-  ? lazy(() =>
-      import('./combat-lab/CombatLab.js').then((module) => ({ default: module.CombatLab })),
-    )
-  : null;
-
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const EncounterPanel = lazy(() =>
   import('./EncounterPanel.js').then((module) => ({ default: module.EncounterPanel })),
@@ -315,9 +309,6 @@ export function App() {
   const joinAttemptRef = useRef<CompanyRosterAttempt | undefined>(undefined);
   const pendingCreateAttempt = useRef<CreateCompanyRequestDto | undefined>(undefined);
   const pendingCreateAccountId = useRef<string | undefined>(undefined);
-  const combatLabEnabled = import.meta.env.DEV && import.meta.env['VITE_COMBAT_LAB'] === '1';
-  const isCombatLab =
-    combatLabEnabled && typeof window !== 'undefined' && window.location.pathname === '/combat-lab';
 
   const resetTransientTravelState = useCallback((scope?: WorldTravelScope) => {
     travelGeneration.current += 1;
@@ -1370,11 +1361,10 @@ export function App() {
   );
 
   useEffect(() => {
-    if (isCombatLab) return;
     const controller = new AbortController();
     void restoreJourney(controller.signal);
     return () => controller.abort();
-  }, [restoreJourney, isCombatLab]);
+  }, [restoreJourney]);
 
   const readyScope =
     journey.status === 'company-ready'
@@ -1587,12 +1577,6 @@ export function App() {
     }
   };
 
-  if (isCombatLab && CombatLab)
-    return (
-      <Suspense fallback={<p>Загрузка…</p>}>
-        <CombatLab />
-      </Suspense>
-    );
   const hasSession =
     journey.status === 'loading-company' ||
     journey.status === 'loading-opening' ||
@@ -1823,9 +1807,9 @@ export function App() {
         )}
         <span>Локальная альфа · игра в разработке</span>
       </footer>
-      {combatLabEnabled && (
-        <a className="lab-link" href="/combat-lab">
-          Открыть диагностику боя
+      {import.meta.env.DEV && (
+        <a className="lab-link" href="/dev/playground/combat">
+          Developer Combat Lab
         </a>
       )}
     </main>

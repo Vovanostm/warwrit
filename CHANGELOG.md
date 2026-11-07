@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+### Consolidate Combat Lab (WLC-06)
+
+- 2026-11-08, `codex/wlc-06-combat-lab`, LOCAL owner-assigned consolidation.
+  Reuse protected Playground, existing editor/HUD and authoritative encounter
+  executor with isolated durable storage.
+  [Owning contract and actual results](docs/engineering/COMBAT_LAB_CONSOLIDATION.md).
+  Replace volatile standalone routes/entry/session transport with schema2 bridge-v5
+  encounters using the common executor, strict isolated schema and explicit debug clock.
+  Add visual setup, field preflight, equipment/pools, commands/receipts/events,
+  manual/Step/Autoplay/Pause, response-loss/duplicate/reload diagnostics and digest replay.
+  Preserve shared UI/assets and historical replay versions; no game-rule change.
+  Owner confirms no active-battle reinforcement rules are added.
+  33PG +67focused tests, types/lint/architecture, migration up/down/up and native
+  setup/loss/restart/exact retry/terminal/replay PASS. Screenshots committed.
+  CI/full suite/M1 NOT_RUN; no merge or deployment authorized.
+
 ### Record WLC-05 merge and local main update
 
 - 2026-11-07, `codex/wlc-05-merge-receipt`, records MERGED

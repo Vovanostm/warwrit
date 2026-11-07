@@ -1,9 +1,22 @@
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
-import { PLAYGROUND_CONTENT_REVISION, type PlaygroundCommand } from '@warwrit/protocol';
+import {
+  PLAYGROUND_CONTENT_REVISION,
+  isEncounterCommandDto,
+  type PlaygroundCommand,
+} from '@warwrit/protocol';
 import { resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import { exportPlaygroundReplay, isPlaygroundScenario, playgroundTemplate } from './scenario.js';
+import { sql } from 'kysely';
+import { executeEncounterCommand } from '../encounters/executor.js';
+import { sandboxReplay } from './combat.js';
+import {
+  preflightPlayground,
+  playgroundCatalog,
+  playgroundDebugScenarios,
+  isPlaygroundScenario,
+  playgroundTemplate,
+} from './scenario.js';
 import {
   cleanupPlayground,
   executePlayground,
@@ -116,6 +129,8 @@ export function registerPlayground(app: FastifyInstance, settings: PlaygroundSet
       accountId: request.playgroundAccountId,
       contentRevision: PLAYGROUND_CONTENT_REVISION,
       template: playgroundTemplate(),
+      catalog: playgroundCatalog(),
+      debugScenarios: playgroundDebugScenarios(),
       sandboxes: await listPlayground(settings.database, request.playgroundAccountId),
     }));
     scope.get<{ Params: { id: string } }>('/dev/playground/api/:id', async (request, reply) => {
@@ -135,12 +150,55 @@ export function registerPlayground(app: FastifyInstance, settings: PlaygroundSet
           return reply.code(409).send({ code: inspected.validationError });
         if (inspected.sandbox.status !== 'active')
           return reply.code(409).send({ code: 'SANDBOX_NOT_ACTIVE' });
-        return exportPlaygroundReplay(inspected.sandbox.id, inspected.sandbox.scenario);
+        return sandboxReplay(settings.database, inspected.sandbox.id, inspected.sandbox.scenario);
+      },
+    );
+    scope.post(
+      '/dev/playground/api/preflight',
+      { bodyLimit: 64 * 1024 },
+      async (request, reply) => {
+        const errors = preflightPlayground(request.body);
+        return reply.code(errors.length ? 400 : 200).send({ valid: errors.length === 0, errors });
+      },
+    );
+    scope.post(
+      '/dev/playground/api/combat/commands',
+      { bodyLimit: 4096 },
+      async (request, reply) => {
+        if (!isEncounterCommandDto(request.body))
+          return reply.code(400).send({ code: 'INVALID_COMMAND' });
+        const dto = request.body;
+        const response = await executeEncounterCommand(
+          settings.database,
+          request.playgroundAccountId,
+          dto,
+          false,
+          'playground',
+        );
+        if (response.status === 'rejected' && response.code !== 'NOT_FOUND') {
+          // Bounded diagnostics only, never a game mutation or an alternate receipt.
+          await sql`insert into playground.encounter_rejections (encounter_id, command_id, response)
+          select ${dto.encounterId}::uuid, ${dto.commandId}, ${JSON.stringify(response)}::jsonb
+          from playground.encounters as encounter join playground.sandboxes as sandbox on sandbox.id = encounter.sandbox_id
+          where encounter.id = ${dto.encounterId}::uuid and sandbox.owner_id = ${request.playgroundAccountId}
+          and sandbox.status = 'active' and sandbox.expires_at > now()
+          and (select count(*) from playground.encounter_rejections where encounter_id = ${dto.encounterId}::uuid) < 256
+          on conflict do nothing`.execute(settings.database);
+        }
+        return reply
+          .code(response.status === 'accepted' ? 200 : response.code === 'NOT_FOUND' ? 404 : 409)
+          .send(response);
       },
     );
     scope.post('/dev/playground/api/commands', { bodyLimit: 64 * 1024 }, async (request, reply) => {
       if (!isCommand(request.body))
-        return reply.code(400).send({ code: 'SCENARIO_OR_COMMAND_INVALID' });
+        return reply.code(400).send({
+          code: 'SCENARIO_OR_COMMAND_INVALID',
+          errors:
+            request.body && typeof request.body === 'object' && 'scenario' in request.body
+              ? preflightPlayground(request.body.scenario)
+              : [],
+        });
       return executePlayground(settings.database, request.playgroundAccountId, request.body);
     });
   });

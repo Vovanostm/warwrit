@@ -5,8 +5,11 @@ import type {
   PlaygroundInspection,
   PlaygroundOperation,
   PlaygroundResult,
+  PlaygroundScenario,
+  PlaygroundFieldError,
 } from '@warwrit/protocol';
-import { BattleView } from '../combat-lab/BattleView.js';
+import { SandboxSetup, isEditableScenario } from './SandboxSetup.js';
+import { SandboxCombat } from './SandboxCombat.js';
 import './playground.css';
 
 const api = `${import.meta.env['VITE_API_BASE_URL'] ?? '/api'}/dev/playground/api`;
@@ -49,12 +52,13 @@ export function Playground() {
   const [pending, setPending] = useState<PlaygroundCommand | null>(null);
   const [pendingOwner, setPendingOwner] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [preview, setPreview] = useState(false);
+  const [combatPending, setCombatPending] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<PlaygroundFieldError[]>([]);
   const [receipt, setReceipt] = useState<PlaygroundResult['receipt'] | null>(null);
   const [lastCommand, setLastCommand] = useState<PlaygroundCommand | null>(null);
   const controller = useRef<AbortController | null>(null);
   const locked = useRef(false);
-  const mapMode = window.location.pathname.endsWith('/maps');
+  const mapMode = window.location.pathname.replace(/\/$/u, '').endsWith('/maps');
   const sandbox = inspection?.sandbox;
 
   async function refresh(signal: AbortSignal, id?: string) {
@@ -67,7 +71,6 @@ export function Playground() {
     if (!current) {
       setInspection(null);
       setDraft(pretty(next.template));
-      setPreview(false);
       return;
     }
     const detail = await getJson<PlaygroundInspection>(
@@ -109,6 +112,37 @@ export function Playground() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!bootstrap || !sandbox || sandbox.status === 'active') return;
+    const request = new AbortController();
+    const timer = setTimeout(() => {
+      try {
+        const value: unknown = JSON.parse(draft);
+        void fetch(`${api}/preflight`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(value),
+          signal: request.signal,
+        })
+          .then(async (response) => {
+            const result = (await response.json()) as { errors?: PlaygroundFieldError[] };
+            if (!request.signal.aborted && Array.isArray(result.errors))
+              setFieldErrors(result.errors);
+          })
+          .catch(() => {
+            /* Explicit preflight/save still reports transport failure. */
+          });
+      } catch {
+        setFieldErrors([{ field: 'scenario', message: 'Некорректный JSON.' }]);
+      }
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      request.abort();
+    };
+  }, [draft, sandbox?.id, sandbox?.status, bootstrap?.accountId]);
+
   async function open(id?: string) {
     if (locked.current) return;
     controller.current?.abort();
@@ -116,7 +150,6 @@ export function Playground() {
     controller.current = request;
     setBusy(true);
     locked.current = true;
-    setPreview(false);
     setMessage('');
     try {
       await refresh(request.signal, id);
@@ -135,6 +168,7 @@ export function Playground() {
     if (operation !== 'create' && !sandbox && !retry) return;
     if (
       !bootstrap ||
+      combatPending ||
       locked.current ||
       (pending && !retry) ||
       (retry && pendingOwner !== bootstrap.accountId)
@@ -165,7 +199,6 @@ export function Playground() {
     setLastCommand(command);
     setMessage('');
     setReceipt(null);
-    setPreview(false);
     locked.current = true;
     setBusy(true);
     controller.current?.abort();
@@ -179,9 +212,13 @@ export function Playground() {
         body: JSON.stringify(command),
         signal: request.signal,
       });
-      const result = (await response.json()) as PlaygroundResult & { code?: string };
+      const result = (await response.json()) as PlaygroundResult & {
+        code?: string;
+        errors?: PlaygroundFieldError[];
+      };
+      setFieldErrors(result.errors ?? []);
       if (!response.ok) {
-        if (response.status < 500) {
+        if ([400, 404, 409].includes(response.status) && typeof result.code === 'string') {
           sessionStorage.removeItem(pendingKey);
           setPending(null);
         }
@@ -212,32 +249,29 @@ export function Playground() {
     }
   }
 
-  async function downloadReplay() {
-    if (!sandbox || locked.current) return;
-    locked.current = true;
-    setBusy(true);
-    controller.current?.abort();
-    const request = new AbortController();
-    controller.current = request;
+  async function preflight() {
     try {
-      const replay = await getJson<unknown>(`/${sandbox.id}/replay`, request.signal);
-      if (request.signal.aborted) return;
-      const url = URL.createObjectURL(new Blob([pretty(replay)], { type: 'application/json' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `sandbox-${sandbox.id}-initial-replay.json`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const response = await fetch(`${api}/preflight`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(JSON.parse(draft)),
+        signal: controller.current?.signal ?? null,
+      });
+      const result = (await response.json()) as { valid: boolean; errors: PlaygroundFieldError[] };
+      if (!response.ok && !Array.isArray(result.errors)) throw new Error(`HTTP ${response.status}`);
+      setFieldErrors(result.errors ?? []);
+      setMessage(
+        result.valid
+          ? 'Preflight: сценарий допустим. Сохраните draft перед Validate / Start.'
+          : 'Preflight: исправьте указанные поля.',
+      );
     } catch {
-      if (!request.signal.aborted) setMessage('Не удалось скачать replay.');
-    } finally {
-      if (!request.signal.aborted) {
-        locked.current = false;
-        setBusy(false);
-      }
+      setMessage(
+        'Не удалось проверить draft. Проверьте JSON и соединение с сервером, затем повторите.',
+      );
     }
   }
-
   function configure() {
     try {
       JSON.parse(draft);
@@ -247,7 +281,14 @@ export function Playground() {
     }
   }
   const query = sandbox ? `?sandbox=${encodeURIComponent(sandbox.id)}` : '';
-  const blocked = busy || pending !== null;
+  const blocked = busy || pending !== null || combatPending;
+  let parsed: PlaygroundScenario | null = null;
+  try {
+    const candidate = JSON.parse(draft) as PlaygroundScenario;
+    if (isEditableScenario(candidate)) parsed = candidate;
+  } catch {
+    /* JSON editor retains invalid text. */
+  }
   const dirty = sandbox !== undefined && draft !== pretty(sandbox.scenario);
   return (
     <main className="playground">
@@ -257,7 +298,7 @@ export function Playground() {
       </header>
       <div className="playground-title">
         <div>
-          <p className="playground-eyebrow">WLC-05 · Изолированные эксперименты</p>
+          <p className="playground-eyebrow">WLC-06 · Изолированные эксперименты</p>
           <h1>{mapMode ? 'Map Editor' : 'Combat Lab'}</h1>
         </div>
         <nav aria-label="Инструменты">
@@ -276,13 +317,22 @@ export function Playground() {
         Сессия аккаунта: {bootstrap?.accountId ?? '—'} · Sandbox: {sandbox?.id ?? 'не выбран'}
       </p>
       <p>
-        Общий фундамент: сценарии и просмотр. {mapMode ? 'Редактирование карты' : 'Управление боем'}{' '}
-        появится на следующем этапе. Основной мир не изменяется.
+        Сохраните и проверьте расстановку, затем нажмите Start. Каждый приказ подтверждает сервер.
+        Основной мир не изменяется.
       </p>
       {message && (
         <p role="status" className="playground-feedback">
           {message}
         </p>
+      )}
+      {fieldErrors.length > 0 && (
+        <ul role="alert">
+          {fieldErrors.map((error, index) => (
+            <li key={index}>
+              <code>{error.field}</code>: {error.message}
+            </li>
+          ))}
+        </ul>
       )}
       {pending && (
         <div className="playground-feedback" role="alert">
@@ -298,35 +348,38 @@ export function Playground() {
           </button>
         </div>
       )}
-      <div className="playground-layout">
+      <div className={`playground-layout${inspection?.view ? ' playground-layout--fighting' : ''}`}>
         <aside>
-          <h2>Мои sandbox</h2>
-          <button disabled={!bootstrap || blocked} onClick={() => void send('create')}>
-            Создать sandbox
-          </button>
-          <button disabled={busy} onClick={() => void open()}>
-            Перечитать
-          </button>
-          <ul>
-            {bootstrap?.sandboxes.map((item) => (
-              <li key={item.id}>
-                <button
-                  aria-pressed={item.id === sandbox?.id}
-                  disabled={busy}
-                  onClick={() => void open(item.id)}
-                >
-                  {item.scenario.metadata.name}
-                  <small>
-                    {item.status} · rev {item.revision}
-                  </small>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p>
-            TTL: 24 часа с создания. Не более 8 sandbox на аккаунт. Удалённые квитанции сохраняются
-            до TTL.
-          </p>
+          <details open={!inspection?.view}>
+            <summary>Мои sandbox</summary>
+            <h2>Мои sandbox</h2>
+            <button disabled={!bootstrap || blocked} onClick={() => void send('create')}>
+              Создать sandbox
+            </button>
+            <button disabled={busy} onClick={() => void open()}>
+              Перечитать
+            </button>
+            <ul>
+              {bootstrap?.sandboxes.map((item) => (
+                <li key={item.id}>
+                  <button
+                    aria-pressed={item.id === sandbox?.id}
+                    disabled={busy}
+                    onClick={() => void open(item.id)}
+                  >
+                    {item.scenario.metadata.name}
+                    <small>
+                      {item.status} · rev {item.revision}
+                    </small>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p>
+              TTL: 24 часа с создания. Не более 8 sandbox на аккаунт. Удалённые квитанции
+              сохраняются до TTL.
+            </p>
+          </details>
         </aside>
         <section>
           <h2>{sandbox?.scenario.metadata.name ?? 'Выберите или создайте sandbox'}</h2>
@@ -342,6 +395,11 @@ export function Playground() {
                 </p>
               )}
               <div className="playground-controls">
+                {!parsed && bootstrap && sandbox.status !== 'active' && (
+                  <button disabled={blocked} onClick={() => setDraft(pretty(bootstrap.template))}>
+                    Новый шаблон в draft
+                  </button>
+                )}
                 <button disabled={blocked || sandbox.status === 'active'} onClick={configure}>
                   Сохранить draft
                 </button>
@@ -355,7 +413,7 @@ export function Playground() {
                   disabled={blocked || dirty || sandbox.status !== 'validated'}
                   onClick={() => void send('activate')}
                 >
-                  Activate
+                  Start · создать encounter
                 </button>
                 <button disabled={blocked} onClick={() => void send('clone')}>
                   Клонировать
@@ -367,39 +425,51 @@ export function Playground() {
                   Удалить
                 </button>
               </div>
-              <label className="playground-draft">
-                Scenario · schema v1
-                <textarea
-                  spellCheck={false}
-                  value={draft}
-                  readOnly={sandbox.status === 'active' || blocked}
-                  onChange={(event) => setDraft(event.target.value)}
+              {sandbox.status !== 'active' && bootstrap && parsed && (
+                <SandboxSetup
+                  scenario={parsed}
+                  bootstrap={bootstrap}
+                  disabled={blocked}
+                  onChange={(value) => {
+                    setDraft(pretty(value));
+                    setFieldErrors([]);
+                  }}
                 />
-              </label>
-              {inspection?.view && (
-                <>
-                  <button disabled={busy} onClick={() => setPreview(!preview)}>
-                    {preview ? 'Закрыть сцену' : 'Открыть сцену · только просмотр'}
-                  </button>
-                  {preview && (
-                    <div className="playground-scene">
-                      <BattleView
-                        key={sandbox.id}
-                        view={inspection.view}
-                        selectedUnitId={null}
-                        selectedHex={null}
-                        onSelectUnit={() => {}}
-                        onSelectHex={() => {}}
-                        busy={true}
-                      />
-                    </div>
-                  )}
-                </>
               )}
-              {inspection?.view && (
-                <button disabled={blocked} onClick={() => void downloadReplay()}>
-                  Скачать initial replay
-                </button>
+              <button
+                disabled={blocked || sandbox.status === 'active'}
+                onClick={() => void preflight()}
+              >
+                Preflight draft
+              </button>
+              <details>
+                <summary>Scenario JSON · schema {parsed?.schemaRevision ?? '?'}</summary>
+                <label className="playground-draft">
+                  Scenario JSON
+                  <textarea
+                    spellCheck={false}
+                    value={draft}
+                    readOnly={sandbox.status === 'active' || blocked}
+                    onChange={(event) => setDraft(event.target.value)}
+                  />
+                </label>
+              </details>
+              {inspection?.view && bootstrap && !mapMode && (
+                <SandboxCombat
+                  key={sandbox.id}
+                  api={api}
+                  accountId={bootstrap.accountId}
+                  inspection={inspection}
+                  onInspection={setInspection}
+                  onPending={setCombatPending}
+                />
+              )}
+              {mapMode && inspection?.view && (
+                <p>
+                  Бой активен.{' '}
+                  <a href={`/dev/playground/combat${query}`}>Открыть единственный Combat Lab</a> для
+                  команд и инспекции.
+                </p>
               )}
               <details>
                 <summary>Команда, результат и журнал ({inspection?.audit.length ?? 0})</summary>
@@ -409,9 +479,7 @@ export function Playground() {
                     result: receipt,
                     sessionId: sandbox.id,
                     revision: sandbox.revision,
-                    replay: inspection?.view
-                      ? `${sandbox.id}:initial`
-                      : 'Симуляция ещё не запускалась',
+                    encounterId: inspection?.encounterId,
                     audit: inspection?.audit,
                   })}
                 </pre>

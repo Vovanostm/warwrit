@@ -1,4 +1,20 @@
-# PB01 component contract
+# Combat Lab — current WLC-06 entry
+
+The sole supported lab is `/dev/playground/combat`, registered by the protected
+Playground adapter. `COMBAT_LAB=1`, `/combat-lab` and `/dev/combat-lab` are retired.
+Use authenticated allowlisted Playground setup with a disposable migrated database.
+Start creates a schema2 `m1-domain-bridge-v5` encounter; commands use
+`encounters/executor` with the literal isolated `playground` storage scope.
+There is no in-memory session executor or second combat reducer.
+
+This directory retains shared catalogue/setup/projection/presentation helpers,
+M0 fixture inputs and historical replay support. It is consumed by the game
+and Playground; do not delete shared HUD or versioned game-core rules.
+[Current journey, isolation, compatibility and checks](../../../../docs/engineering/COMBAT_LAB_CONSOLIDATION.md).
+The dated sections below are historical contracts, superseded for launch and
+execution by WLC-06; their original rules/version history is retained.
+
+## Historical PB01 component contract
 
 `combat-lab` transport v1 and `m0-3v3-v1` are independent of core/replay versions.
 `originalSetup()` returns a detached replay input; `start()` uses the real V1 initializer.

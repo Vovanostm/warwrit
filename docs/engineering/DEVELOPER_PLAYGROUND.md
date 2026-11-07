@@ -5,6 +5,14 @@ Coordinator/writer: `codex/wlc-05-playground`, `.claude/worktrees/wlc-05`.
 Owner authorizes implementation, standalone PR, merge and local main update.
 No deployment, paid service, game-rule change or retained-save mutation.
 
+## WLC-06 successor — 2026-11-08
+
+[Combat Lab consolidation](COMBAT_LAB_CONSOLIDATION.md) extends this merged
+foundation with the existing visual editor/HUD and durable authoritative encounters.
+The old standalone lab is removed. New scenario schema2/content-v2 explicitly
+selects the game's bridge-v5 rules; v1 metadata remains readable but is not
+reinterpreted. The historical WLC-05 delivery/results below retain their boundary.
+
 ## Journey and scope
 
 An authenticated, allowlisted developer opens `/dev/playground`, sees a conspicuous

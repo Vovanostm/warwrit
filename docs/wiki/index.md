@@ -10,6 +10,8 @@ tags: [meta]
 
 [Developer Playground — WLC-05](../engineering/DEVELOPER_PLAYGROUND.md) — защищённый
 фундамент Combat Lab / Map Editor, lifecycle и изолированные сценарии.
+[Combat Lab — WLC-06](../engineering/COMBAT_LAB_CONSOLIDATION.md) — единый редактор,
+серверный бой, инспекция, восстановление запросов и replay.
 
 [Текущее состояние и план до полной M1 — 2026-11-05](m1-spec.md#state-2026-11-05)
 — что объединено, что остаётся в PR и какой следующий игровой шаг;

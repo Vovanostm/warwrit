@@ -37,15 +37,6 @@ const app = buildApp({
   ...(config.identity === undefined || database === undefined
     ? {}
     : { company: { database, worldId: config.worldId } }),
-  ...(config.combatLabOrigin === undefined
-    ? {}
-    : {
-        combatLab: {
-          host: config.host,
-          port: config.port,
-          origin: config.combatLabOrigin,
-        },
-      }),
   ...(database === undefined || config.identity === undefined
     ? {}
     : {
