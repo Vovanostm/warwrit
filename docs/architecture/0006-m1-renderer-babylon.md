@@ -58,7 +58,8 @@ evidenced). Engine competition is not a prerequisite to implementation or a
 reason to reopen this choice; address a demonstrated Babylon acceptance failure
 within the owner-approved decision process.
 
-Historical PlayCanvas code and measurements remain intact as historical evidence.
+Historical PlayCanvas code remains in Git history; measurements, assets and
+provenance remain as historical evidence. See the WLC-02 amendment below.
 
 ## Sprite combat production amendment — 2026-10-09
 
@@ -99,3 +100,18 @@ acceptance. Opaque study images establish rendering language; sprite alpha,
 view projection, scale, pivots and integrated day/night readability still need
 verification. Existing renderer/camera decisions and the separately owned
 3D-character experiment are not changed by this amendment.
+
+## PlayCanvas pilot removal — 2026-11-07
+
+WLC-02 removes the standalone dual-engine comparison, baker and workspace
+PlayCanvas dependency. Babylon core/loaders 9.28.0 remain pinned in `apps/web`.
+The ordinary encounter and Combat Lab already share the same Babylon battle
+pipeline; maps and places also use Babylon directly. No production engine
+switch, gameplay rule, scene lifecycle or art asset is changed.
+
+Models, baked images, licenses and measured/corrected evidence are retained.
+The removed executable source is available at the
+[pre-removal commit](https://github.com/Vovanostm/warwrit/tree/79a6ba025bba236dfe4be0665aece98d1c8c4353/apps/renderer-spike).
+The [owning removal record](../engineering/LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
+records scoped checks and their acceptance limits. Broader visual/device and
+full-game acceptance do not follow from removing an unused engine.

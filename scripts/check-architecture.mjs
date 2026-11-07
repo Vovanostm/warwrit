@@ -14,7 +14,6 @@ const allowedWorkspaceDependencies = new Map([
   ['@warwrit/testkit', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/server', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/web', new Set(['@warwrit/protocol'])],
-  ['@warwrit/renderer-spike', new Set()],
 ]);
 
 const failures = [];
@@ -135,6 +134,9 @@ for (const workspaceRoot of workspaceRoots) {
     }
 
     const packageRoot = join(directory, entry.name);
+    if (!(await exists(join(packageRoot, 'package.json')))) {
+      continue;
+    }
     const manifest = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'));
     workspaces.push({
       name: manifest.name,

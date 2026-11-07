@@ -1,5 +1,23 @@
 # Warwrit current delivery plan
 
+## WLC-02 — Remove PlayCanvas pilot, 2026-11-07
+
+Coordinator/writer: codex/wlc-02-remove-playcanvas, .claude/worktrees/wlc-02.
+Owner assignment: standalone cleanup PR after merged WLC-01/PR419; base main79a6ba02.
+Remove the executable paired renderer comparison/baker and PlayCanvas dependency;
+retain public source assets/licenses/manifests, Git history and PR129's unmerged
+branch. Production encounters and Combat Lab already share Babylon 9.28.0;
+map/place lifecycle and game rules remain unchanged. No merge/deployment permission.
+[Owning scope and results](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
+LOCAL / implemented, publication pending. Frozen install, workspace builds/types,
+74 focused tests, architecture/content/scoped lint/format/diff PASS. Disposable
+lab manual turn, auto start/stop, day/night, overview/zoom and scene disposal/
+re-entry PASS (engines/scenes1/1 →0/0 →1/1). Ordinary App local login/map/place/
+quest/travel/stop PASS on a disposable DB. Native campaign battle continuation,
+full suite/coverage/performance and independent visual acceptance NOT_RUN.
+CI advisory; full-M1 acceptance not claimed.
+Preserve the gameplay delivery blocks below and original dirty checkout.
+
 ## Existing-item transfer #171 / PR339 — 2026-11-07
 
 Coordinator/writer: codex/item-transfer-339-closeout, .claude/worktrees/item-transfer-339.

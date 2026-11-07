@@ -2,7 +2,7 @@
 
 ```yaml
 status: authoritative-implementation-guidance
-as_of: 2026-10-01
+as_of: 2026-11-07
 scope: M0-M1
 authority: ADR-0003-with-renderer-superseded-by-ADR-0006
 repository: Vovanostm/warwrit
@@ -14,7 +14,7 @@ realtime: colyseus-0.18-planned
 persistence: postgresql
 sql_layer: kysely-pg
 web_shell: react-19-vite-7
-renderer: babylon-js-selected-m1-version-unselected
+renderer: babylon-js-9.28.0
 experimental_runtime: bun-1.4
 ```
 
@@ -38,7 +38,7 @@ Before changing infrastructure or adding a framework dependency:
 - **Persistence — ACCEPTED:** PostgreSQL. It is canonical durable state.
 - **SQL layer — ACCEPTED:** Kysely + `pg`. Prefer explicit SQL-shaped queries and transactions.
 - **Browser shell — ACCEPTED:** React 19 + Vite 7. React owns UI composition, not canonical simulation.
-- **Renderer — SELECTED, ACCEPTANCE OPEN:** Babylon.js is the owner-selected M1 client renderer under [ADR-0006](../architecture/0006-m1-renderer-babylon.md). The exact dependency version remains unselected; inspect the lockfile and local types before implementation. Babylon visual/device/runtime, art-pipeline and ART06 production integration acceptance remain open. This selection is not a benchmark victory; historical PlayCanvas code and measurements remain historical evidence.
+- **Renderer — SELECTED, ACCEPTANCE OPEN:** Babylon.js is the owner-selected M1 client renderer under [ADR-0006](../architecture/0006-m1-renderer-babylon.md). Web core/loaders are pinned to 9.28.0; inspect the lockfile and local types before version-sensitive changes. Ordinary encounters and Combat Lab share the Babylon battle pipeline; maps and places use Babylon directly. WLC-02 removes the PlayCanvas comparison app and dependency. Historical source remains in Git, assets/licenses and measurements stay accessible. Broader visual/device/runtime and art-pipeline acceptance remain separate; this selection is not a benchmark victory.
 - **Alternate runtime — EXPERIMENTAL:** Bun 1.4. Benchmark/compatibility lane only; no Bun-only production APIs.
 - **High-throughput WebSocket — DEFERRED:** uWebSockets.js. Add only after the default transport fails measured budgets.
 - **Redis/distributed topology — DEFERRED:** none for M0/M1. Add only after a multi-process or multi-machine requirement exists.
@@ -105,9 +105,12 @@ visual quality, device/runtime behavior, art pipeline and production web
 integration; historical PlayCanvas measurements do not establish Babylon results.
 
 ART05 separately compares the required art variants and their authoring cost.
-ART06 installs the selected renderer at the web adapter boundary. Neither packet
-is waived by retaining the engine choice; use the ADR and its linked evidence for
-the current acceptance boundary rather than the superseded renderer-spike text.
+The web adapter is implemented in `apps/web/src/renderer` and the shared
+`combat-lab/sprite-battle-scene.ts`; do not reopen PlayCanvas or the retired
+comparison as an integration prerequisite. Use ADR-0006 and the
+[WLC-02 record](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
+for the current boundary. Implementation does not itself accept every scene or
+the broader art/device/performance requirements.
 
 ## LLM/version-safety protocol
 

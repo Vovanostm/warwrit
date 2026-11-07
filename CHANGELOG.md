@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+### Remove the PlayCanvas renderer pilot (WLC-02)
+
+- 2026-11-07, `codex/wlc-02-remove-playcanvas`, LOCAL, owner-requested cleanup
+  after WLC-01/PR419: remove `apps/renderer-spike` executable comparison,
+  PlayCanvas/baker/query switches/package, obsolete lint/coverage/architecture
+  entries and regenerate `pnpm-lock.yaml`. Preserve its public models, baked
+  images, manifests and licenses at existing paths, source in Git history and
+  PR129's unmerged branch. Retain the engine-neutral GLB inspector. Ordinary
+  game/Combat Lab already share Babylon 9.28.0; no game rules, balance, production
+  renderer lifecycle, save or database schema change.
+- The architecture scanner now follows pnpm's package-manifest boundary so
+  retained asset-only directories do not fail its workspace discovery.
+  Update ADR0005 SUPERSEDED status, ADR0006 and current run/technology/handoff
+  pointers. [Scope and actual checks](docs/engineering/LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
+  Frozen install, workspace builds/types, 74 focused tests, architecture/content/
+  scoped lint/format/diff PASS. Chromium1440×900 lab manual/auto/day-night/camera/
+  scene disposal/re-entry PASS; ordinary App login/map/place/quest/travel/stop
+  PASS on a disposable DB. Native campaign battle continuation, independent
+  visual acceptance and broad local CI/full suite NOT_RUN; CI advisory.
+  Publication pending; merge/deployment not performed.
+
 ### Review WLC-01 and authorize its audit merge
 
 - 2026-11-07, `codex/wlc-01-legacy-audit`, PUBLISHED review/authorization

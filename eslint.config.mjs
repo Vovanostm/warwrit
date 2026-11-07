@@ -117,15 +117,6 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/renderer-spike/scripts/**/*.mjs'],
-    languageOptions: {
-      globals: globals.node,
-    },
-    rules: {
-      'no-console': 'off',
-    },
-  },
-  {
     files: ['.agents/skills/playcanvas-inspect-glb/scripts/inspect.mjs'],
     languageOptions: {
       globals: globals.node,
