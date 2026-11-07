@@ -130,3 +130,20 @@ queried a nonexistent table; corrected to the existing `company_receipts` shape.
 Full suite, coverage and hosted CI acceptance NOT_RUN; CI is advisory. Broader
 M1/art/day-night/motion/performance acceptance is not established by this slice.
 No deployment, balance change or retained-player data modification.
+
+## Confirmed merge — 2026-11-07
+
+Implementation [PR424](https://github.com/Vovanostm/warwrit/pull/424) MERGED at
+19:31:27UTC as `56a34b22a6d2e51697391ecdbc9a9cca259bb5ec`, expected head
+`24fce72705db2908442d82ed0797304dd2f8c53e`. Reviewed and merged content match.
+Clean local `main` at `.claude/worktrees/agent-harness-cleanup` fast-forwarded to
+that merge and matched `origin/main`. Original dirty checkout remains untouched.
+This receipt records delivery; it adds no gameplay change or deployment.
+
+Hosted PR-scope run42406591704 FAILED because its issue/contract-link parser did
+not recognize the owning document reference. Source-size report passed as advisory.
+Actual failed-job log was read. Main CI was still running at merge readback; no
+hosted success is claimed and completion was not awaited. CI remains advisory.
+The author-owned browser API/web processes and exclusive disposable database were
+removed after checks; screenshots and SQL readbacks remain in ignored local output.
+Full-suite, broader art and full-M1 limits above remain unchanged.

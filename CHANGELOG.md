@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+### Record WLC-04 merge and local main update
+
+- 2026-11-07, `codex/wlc-04-merge-receipt`, records MERGED
+  [PR424](https://github.com/Vovanostm/warwrit/pull/424) at19:31:27UTC as56a34b22,
+  expected head24fce727, identical reviewed/merged content and clean local-main
+  fast-forward. Update CURRENT_PLAN and the
+  [owning receipt](docs/engineering/SERVER_AUTHORITY.md#confirmed-merge--2026-11-07).
+  PR-scope failed its contract-link parser; actual log read, CI advisory, main CI
+  completion not awaited. Scoped documentation readback/format/diff PASS;
+  repeated game/SQL/browser checks NOT_RUN for this documentation-only receipt.
+  Original WIP and player saves preserved; owned disposable browser resources
+  cleaned up. Full-M1/art limits retained; no deployment.
+
 ### Enforce server authority and retain uncertain commands (WLC-04)
 
 - 2026-11-07, `codex/wlc-04-server-authority`, LOCAL implementation for the owner's
