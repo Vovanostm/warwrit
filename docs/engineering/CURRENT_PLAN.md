@@ -1,5 +1,18 @@
 # Warwrit current delivery plan
 
+## WLC-04 — Server authority, 2026-11-07
+
+Coordinator/writer: codex/wlc-04-server-authority, .claude/worktrees/wlc-04.
+Owner authorizes implementation, PR, merge and clean local-main update.
+Base43a2ff60 includes WLC-01/02/03; preserve other worktrees and saved games.
+[Scope, mutation owners, player journey and checks](SERVER_AUTHORITY.md).
+Equipment/camp exact retry, movement recovery and dependency enforcement implemented.
+57integration-mode +49focused tests PASS/1pre-existingSKIP; web types/scoped lint/architecture PASS.
+Native commit/lost-response/reload/exact-retry and API-restart recovery PASS.
+Independent source review ACCEPT; broader scene-art/full-M1 acceptance NOT_RUN.
+PUBLISHED [PR424](https://github.com/Vovanostm/warwrit/pull/424) owns live merge status; local main update authorized.
+No parallel executor, migration, deployment or retained-save change.
+
 ## WLC-02 — Remove PlayCanvas pilot, 2026-11-07
 
 Coordinator/writer: codex/wlc-02-remove-playcanvas, .claude/worktrees/wlc-02.

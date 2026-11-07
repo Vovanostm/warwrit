@@ -60,6 +60,10 @@ export function GameShell(props: {
   readonly onFreeMovement: (action: FreeMovementAction) => void;
   readonly onRetryFreeMovement: () => void;
   readonly onSignOut: () => void;
+  readonly companyActionPending: boolean;
+  readonly companyActionBusy: boolean;
+  readonly companyActionMessage?: string;
+  readonly onRetryCompanyAction: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
@@ -267,35 +271,51 @@ export function GameShell(props: {
         );
       }}
     >
-      <header className="game-topbar">
-        <a className="wordmark" href="/" aria-label="Warwrit">
-          <span className="sigil" aria-hidden="true">
-            <span>W</span>
-          </span>
-          <span className="wordmark-text">Warwrit</span>
-        </a>
-        <div className="topbar-company">
-          <span className="topbar-name">
-            {props.company.companyPresentation?.name ?? 'Компания без имени'}
-          </span>
-          {props.holdings && (
-            <span className="topbar-money" title="Казна компании">
-              {formatCrowns(props.holdings.cashQ)} кр.
+      <div className="game-header">
+        <header className="game-topbar">
+          <a className="wordmark" href="/" aria-label="Warwrit">
+            <span className="sigil" aria-hidden="true">
+              <span>W</span>
             </span>
-          )}
-        </div>
-        <WorldAmbience
-          region={map.continuous}
-          point={soundPoint}
-          night={light.phase === 'NIGHT'}
-          siteId={currentSite?.siteId ?? null}
-        />
-        <Clocks tick={tick} ticksPerDay={ticksPerDay} light={light} stale={surroundings.stale} />
-        <button className="action action-quiet" type="button" onClick={props.onSignOut}>
-          Выйти
-        </button>
-      </header>
-
+            <span className="wordmark-text">Warwrit</span>
+          </a>
+          <div className="topbar-company">
+            <span className="topbar-name">
+              {props.company.companyPresentation?.name ?? 'Компания без имени'}
+            </span>
+            {props.holdings && (
+              <span className="topbar-money" title="Казна компании">
+                {formatCrowns(props.holdings.cashQ)} кр.
+              </span>
+            )}
+          </div>
+          <WorldAmbience
+            region={map.continuous}
+            point={soundPoint}
+            night={light.phase === 'NIGHT'}
+            siteId={currentSite?.siteId ?? null}
+          />
+          <Clocks tick={tick} ticksPerDay={ticksPerDay} light={light} stale={surroundings.stale} />
+          <button className="action action-quiet" type="button" onClick={props.onSignOut}>
+            Выйти
+          </button>
+        </header>
+        {props.companyActionMessage && (
+          <div className="company-action-recovery" role="status">
+            <span>{props.companyActionMessage}</span>{' '}
+            {props.companyActionPending && (
+              <button
+                type="button"
+                className="action"
+                disabled={props.companyActionBusy}
+                onClick={props.onRetryCompanyAction}
+              >
+                Повторить сохранённый приказ
+              </button>
+            )}
+          </div>
+        )}
+      </div>
       <div className="game-main">
         <div className={`map-frame${visiting ? ' map-frame-visiting' : ''}`}>
           {visiting && (

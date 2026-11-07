@@ -17,6 +17,7 @@ import {
   refreshedCompanyCreatePayload,
 } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
+import { useCompanyAction } from './game/use-company-action.js';
 import {
   clearBrowserCompanyRosterAttempt,
   matchesCompanyRosterScope,
@@ -1446,102 +1447,16 @@ export function App() {
     if (window.location.pathname === '/auth/session') window.history.replaceState(null, '', '/');
   }, []);
 
-  const equipItem = useCallback(
-    async (
-      scope: WorldTravelScope,
-      expectedPublicRevision: string,
-      characterId: string,
-      item: CompanyHoldingsDto['items'][number],
-    ) => {
-      if (item.slot === null) return;
-      setEquipBusy(true);
-      setEquipMessage(undefined);
-      try {
-        const response = await fetch(`${apiBaseUrl}/company/commands`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: {
-            'content-type': 'application/json',
-            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
-          },
-          body: JSON.stringify({
-            schemaVersion: 2,
-            commandId: crypto.randomUUID(),
-            expectedPublicRevision,
-            type: 'EquipItem',
-            payload: { characterId, itemId: item.itemId, slotId: item.slot },
-          }),
-        });
-        if (response.status === 401) {
-          void restoreJourney();
-          return;
-        }
-        if (!response.ok) {
-          let code: unknown;
-          try {
-            const body: unknown = await response.json();
-            if (isObject(body)) code = body['code'];
-          } catch {
-            // A non-JSON failure keeps the generic message.
-          }
-          setEquipMessage(
-            code === 'STALE_REVISION'
-              ? 'Состояние отряда изменилось. Данные обновлены — повторите.'
-              : code === 'UNSUPPORTED_ACTION' || code === 'CONTACT_OR_ACCESS_REQUIRED'
-                ? 'Сейчас снарядиться нельзя: отряд в пути, в бою или вещь недоступна.'
-                : 'Сервер не принял снаряжение.',
-          );
-        }
-        await refreshWorldParty(scope);
-      } catch {
-        setEquipMessage('Нет связи с сервером. Проверьте снаряжение после обновления.');
-      } finally {
-        setEquipBusy(false);
-      }
+  const companyAction = useCompanyAction(
+    apiBaseUrl,
+    journey.status === 'company-ready'
+      ? { accountId: journey.session.accountId, companyId: journey.company.companyId }
+      : undefined,
+    async (scope) => {
+      refreshCompanyForShell();
+      await refreshWorldParty(scope);
     },
-    [refreshWorldParty, restoreJourney],
-  );
-
-  const toggleCamp = useCallback(
-    async (scope: WorldTravelScope, expectedPublicRevision: string, pitch: boolean) => {
-      setEquipBusy(true);
-      setEquipMessage(undefined);
-      try {
-        const response = await fetch(`${apiBaseUrl}/company/commands`, {
-          method: 'POST',
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: {
-            'content-type': 'application/json',
-            [WORLD_EXPECTED_COMPANY_ID_HEADER]: scope.companyId,
-          },
-          body: JSON.stringify({
-            schemaVersion: 2,
-            commandId: crypto.randomUUID(),
-            expectedPublicRevision,
-            type: pitch ? 'BeginFieldCamp' : 'EndFieldCamp',
-            payload: {},
-          }),
-        });
-        if (response.status === 401) {
-          void restoreJourney();
-          return;
-        }
-        if (!response.ok)
-          setEquipMessage(
-            pitch
-              ? 'Лагерь здесь не разбить: отряд в пути, рядом враги или лагерь уже стоит.'
-              : 'Лагерь не удалось свернуть. Данные обновлены — повторите.',
-          );
-        await refreshWorldParty(scope);
-      } catch {
-        setEquipMessage('Нет связи с сервером. Проверьте лагерь после обновления.');
-      } finally {
-        setEquipBusy(false);
-      }
-    },
-    [refreshWorldParty, restoreJourney],
+    () => void restoreJourney(),
   );
 
   const settleJoinAttempt = useCallback(
@@ -1701,10 +1616,23 @@ export function App() {
         onFreeMovement={(action) => startFreeMovement(action, journey.freeMovement, scope)}
         onRetryFreeMovement={() => retryFreeMovement(scope)}
         onSignOut={() => void signOut()}
-        equipBusy={equipBusy}
+        equipBusy={equipBusy || companyAction.busy || companyAction.pending}
+        companyActionPending={companyAction.pending}
+        companyActionBusy={companyAction.busy}
+        {...(companyAction.message === undefined
+          ? {}
+          : { companyActionMessage: companyAction.message })}
+        onRetryCompanyAction={() => void companyAction.retry()}
         {...(equipMessage === undefined ? {} : { equipMessage })}
         onEquip={(characterId, item) =>
-          void equipItem(scope, journey.world.publicRevision, characterId, item)
+          item.slot !== null &&
+          void companyAction.send({
+            schemaVersion: 2,
+            commandId: crypto.randomUUID(),
+            expectedPublicRevision: journey.company.revision,
+            type: 'EquipItem',
+            payload: { characterId, itemId: item.itemId, slotId: item.slot },
+          })
         }
         onJoinFieldParty={(characterId) =>
           void joinFieldParty(scope, journey.company.revision, characterId)
@@ -1714,7 +1642,15 @@ export function App() {
         }
         {...(joinAttemptMessage === undefined ? {} : { joinAttemptMessage })}
         onRetryJoinFieldParty={() => void retryJoinFieldParty(scope)}
-        onToggleCamp={(pitch) => void toggleCamp(scope, journey.world.publicRevision, pitch)}
+        onToggleCamp={(pitch) =>
+          void companyAction.send({
+            schemaVersion: 2,
+            commandId: crypto.randomUUID(),
+            expectedPublicRevision: journey.company.revision,
+            type: pitch ? 'BeginFieldCamp' : 'EndFieldCamp',
+            payload: {},
+          })
+        }
         placeSlot={(contractVisit) => (
           <>
             {contractVisit.visit?.building === 'inn' && contractVisit.visit.siteId && (

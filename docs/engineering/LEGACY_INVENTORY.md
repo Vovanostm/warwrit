@@ -298,6 +298,16 @@ Exact source:
 [old editor profiles](https://github.com/Vovanostm/warwrit/blob/f3c76d8c0974c8457925bc547dbadaada5eabe7f/scripts/world-map/navigation-maps.ts#L1),
 [v5 generation dependency](https://github.com/Vovanostm/warwrit/blob/f3c76d8c0974c8457925bc547dbadaada5eabe7f/assets/art/world/porechye-atlas-v1/road-repair-v6.json#L6).
 
+## WLC-04 authority enforcement — 2026-11-07
+
+[SERVER_AUTHORITY](SERVER_AUTHORITY.md) owns the current operation/owner matrix,
+recovery corrections and actual PostgreSQL/browser checks. WLC-01's source audit
+below remains its dated snapshot. WLC-04 found no production browser synthesis
+of canonical damage, XP, money, death or rewards; it repairs exact retry for
+ordinary equipment/camp and unsafe movement acknowledgement/cleanup, reusing the
+existing command/receipt pipeline. WLC-02/03 and the original dirty worktree remain
+preserved. This is an architecture/recovery slice, not full-M1 acceptance.
+
 ## Client mutations and authoritative outcomes
 
 Static audit covered the non-test ordinary client, sandbox controllers, renderer
