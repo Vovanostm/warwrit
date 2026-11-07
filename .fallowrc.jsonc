@@ -69,7 +69,6 @@
   },
   "health": {
     // Specification files are tables of scenarios inside describe callbacks.
-    // The renderer spike is measurement tooling, not product code (PR #116).
-    "ignore": ["**/*.test.ts", "**/*.test.tsx", "apps/renderer-spike/**"],
+    "ignore": ["**/*.test.ts", "**/*.test.tsx"],
   },
 }

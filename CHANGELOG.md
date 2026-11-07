@@ -9,6 +9,42 @@ requests.
 
 ## Unreleased
 
+### Authorize WLC-02 merge and integrate current main
+
+- 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED integration receipt for
+  [PR420](https://github.com/Vovanostm/warwrit/pull/420): owner requested
+  “merge, update main”. Merge authorization and main93adaef9/WLC-03 integration
+  preserve both deliveries, archive decisions and unrelated WIP; only additive
+  CURRENT_PLAN/CHANGELOG conflicts were resolved. No gameplay/migration change.
+  [Owning integration and evidence limits](docs/engineering/LEGACY_INVENTORY.md#wlc-02-integration-and-merge-authorization--2026-11-07).
+  Earlier CI42391670090 FAILED at unchanged connection.test.ts formatting;
+  actual logs read, scope PASSED, CI advisory. Fresh web types/74tests/architecture/
+  content130/scoped format/diff/link readback PASS; earlier full native campaign
+  battle and broader limits retained.
+  Merge and clean-main update authorized, not yet performed; no deployment.
+
+### Remove the PlayCanvas renderer pilot (WLC-02)
+
+- 2026-11-07, `codex/wlc-02-remove-playcanvas`, PUBLISHED [PR420](https://github.com/Vovanostm/warwrit/pull/420), owner-requested cleanup
+  after WLC-01/PR419: remove `apps/renderer-spike` executable comparison,
+  PlayCanvas/baker/query switches/package, obsolete lint/coverage/architecture
+  entries and regenerate `pnpm-lock.yaml`. Preserve its public models, baked
+  images, manifests and licenses at existing paths, source in Git history and
+  PR129's unmerged branch. Retain the engine-neutral GLB inspector. Ordinary
+  game/Combat Lab already share Babylon 9.28.0; no game rules, balance, production
+  renderer lifecycle, save or database schema change.
+- The architecture scanner now follows pnpm's package-manifest boundary so
+  retained asset-only directories do not fail its workspace discovery.
+  Update ADR0005 SUPERSEDED status, ADR0006 and current run/technology/handoff
+  pointers. [Scope and actual checks](docs/engineering/LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
+  Frozen install, workspace builds/types, 74 focused tests, architecture/content/
+  scoped lint/format/diff PASS. Chromium1440×900 lab manual/auto/day-night/camera/
+  scene disposal/re-entry PASS; ordinary App login/map/place/quest/travel/stop
+  PASS on a disposable DB. Native campaign battle continuation, independent
+  visual acceptance and broad local CI/full suite NOT_RUN; CI advisory.
+  PR420 OPEN / NOT_MERGED; hosted CI completion not awaited. Merge/deployment
+  not performed.
+
 ### Record WLC-03 merge
 
 - 2026-11-07, `codex/wlc-03-merge-receipt`, records MERGED

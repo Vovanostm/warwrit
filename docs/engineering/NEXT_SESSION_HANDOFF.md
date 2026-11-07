@@ -1,5 +1,13 @@
 # Next-session handoff: full Warwrit M1 alpha
 
+**Current renderer correction — 2026-11-07:** Babylon core/loaders 9.28.0 are
+implemented in the ordinary game and shared Combat Lab battle pipeline. WLC-02
+removes the standalone PlayCanvas comparison and dependency; its source stays in
+Git history, assets/licenses and measurements remain retained. Older pending
+migration statements below are historical. See
+[the removal record](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
+and [CURRENT_PLAN](CURRENT_PLAN.md) for current delivery/check limits.
+
 **Renderer decision — 2026-10-01:** use Babylon.js as the owner-selected M1
 client renderer per [ADR-0006](../architecture/0006-m1-renderer-babylon.md).
 Do not reopen engine selection. Its exact version and visual/device/runtime,

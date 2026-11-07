@@ -13,6 +13,125 @@ Registry links pin every path to that SHA. File/line pointers in the tables use
 that edition. Age, `lab` in a directory name, a v1 suffix, a successful build or
 an empty static reference list alone never makes a file safe to delete.
 
+## WLC-02 — Remove PlayCanvas pilot (2026-11-07)
+
+Owner assignment: remove the pilot in a standalone cleanup PR; Babylon.js is the
+only supported production renderer. WLC-01 is merged via PR419. Implementation
+base: main `79a6ba02`; writer: `codex/wlc-02-remove-playcanvas` in
+`.claude/worktrees/wlc-02`. Status: PUBLISHED in [PR420](https://github.com/Vovanostm/warwrit/pull/420),
+OPEN / NOT_MERGED.
+This dated section supersedes the spike retention hold below for executable code
+only; the original per-file registry remains an immutable WLC-01 source snapshot.
+
+Player goal: enter the ordinary encounter or Combat Lab, see the same battlefield,
+select fighters/cells and issue a manual turn or start/stop autobattle. The normal
+journey, camera, day/night, victory/defeat and saved consequences remain those of
+the existing Babylon pipeline. Leaving/re-entering or replacing a battle must
+release its scene; failed construction must retain the existing error feedback,
+abort and cleanup behavior. Ordinary commands and retry remain server-authorized;
+this cleanup changes no balance, rules, saves, routes or campaign outcomes.
+
+Inventory readback: PlayCanvas 2.22.4 has exactly one workspace consumer,
+`apps/renderer-spike`; its `index.html` and engine/art query switches are standalone
+experiment entrypoints. The ordinary App has no engine switch. Both EncounterPanel
+and Combat Lab consume `BattleView` → `battle-hud-scene` → `sprite-battle-scene`
+→ Babylon `canvas-engine`. Map/place scenes also import Babylon directly.
+The shared production HUD, geometry, textures and engine lifecycle stay in place.
+The graph indexes the original dirty checkout, not this worktree; source reads
+and import/literal searches are the fallback, with no rule ownership inferred
+from the graph.
+
+Remove both comparison adapters, shared experiment helpers, React entry, Vite/
+TypeScript/package config and PlayCanvas baker. Retain `public/` models, baked
+images, manifests and licenses at their existing paths, plus the historical README
+pointer and ADR/evidence. They are retained source material, not an app/workspace.
+Retain the engine-neutral `.agents/skills/playcanvas-inspect-glb/` parser and its
+license, independently used by Babylon/character tooling. No shared asset move,
+hex helper cleanup, art rewrite, migration or new renderer abstraction is needed.
+
+PR129 was read live: OPEN/DRAFT at `fe4e783b07ff3b7a80c041b1dbfeb972afcdad26`;
+207 changed files include 192 derived walking PNGs and experiment source. Its
+unmerged code/assets remain on `codex/m1-art-animated-pilot` and in GitHub history.
+The owner's WLC-02 direction supersedes integrating that PlayCanvas experiment;
+this task neither merges/closes/deletes its PR/branch nor copies its animation
+into production. PR337's pending construction-error fix and all other WIP stay
+untouched. Removed main source remains accessible at the WLC-02 base commit.
+
+### WLC-02 results and acceptance limits
+
+- Removed 13 executable/config files (both paired adapters, entry, shared
+  comparison helpers, baker and package). pnpm regenerated the lockfile, removing
+  PlayCanvas and its exclusive WebXR/WebGPU type dependencies. No PlayCanvas
+  import/dependency or engine query switch remains in working application source.
+- `apps/web`, server, domain, protocol and all retained assets have an empty
+  task diff. Construction errors, abort/destroy, engine reuse/delayed dispose and
+  PR337's separately pending fix were preserved. No migration or game rule changed.
+- Initial `pnpm check:architecture` failed because it assumed every `apps/`
+  directory had a package manifest. It now skips non-package directories, matching
+  pnpm workspace discovery; its obsolete spike allowlist entry is removed.
+- Frozen install PASS; remaining workspace builds PASS (web includes typecheck),
+  all workspace typechecks PASS. Existing large-web-chunk warning retained.
+  Seven focused files / 74 tests PASS: BattleView, sprite-battle-scene,
+  battle-framing, sprite-art, encounter battle-presentation, hex-mesh, projection.
+  Architecture (five packages / 525 source files), content (114 assets), scoped
+  ESLint, Prettier, local links and ordinary diff checks PASS.
+- Real Chromium at 1440×900, own loopback lab API3592/UI5392: editor → battle,
+  manual end-turn (archer → commander), auto start/advance/stop, day/night,
+  overview, wheel zoom and editor → new battle PASS. Current day/night/overview/
+  zoom images were inspected. Babylon EngineStore readback: battle1 engine/1
+  scene, returned editor0/0 and0 canvases after disposal, new battle1/1 and1
+  canvas. No game-resource failure or runtime exception observed; favicon404
+  is unrelated. These are author regression checks, not independent visual or
+  broad scene-art acceptance; production rendering code/art is unchanged.
+- Separate disposable PostgreSQL with migrations0001–0020, ordinary App at5393:
+  local-company entry, painted map, settlement/building scene, quest acceptance,
+  ordinary travel and stop PASS. No production save/database was opened or reset.
+  A diagnostic fixture was admitted through the existing nonproduction API but
+  correctly did not attach to the company's canonical active encounter; it is
+  **not** ordinary combat evidence. The shared battle UI was exercised in the lab;
+  the full native company → travel → combat continuation remains NOT_RUN in
+  this cleanup (the ordinary destination alone required about508 seconds).
+- Browser wrapper initially hit a non-executable script and later restricted npm
+  cache; invoking the already installed CLI directly recovered. Initial CLI
+  argument/evaluation errors were corrected; they are not gameplay failures.
+  Local ignored evidence: output/playwright/wlc02/ (not committed).
+- Full campaign loop, every scene/device/target-performance acceptance, injected
+  construction failures, full suite/coverage/stress and broad local CI NOT_RUN;
+  performance/enjoyment NOT_MEASURED. No independent gameplay/visual acceptance
+  is claimed by this deletion-only cycle. CI is advisory; hosted completion is not awaited. Merge and deployment are
+  NOT_AUTHORIZED / NOT_RUN.
+
+Publication readback: PR420 opened from `codex/wlc-02-remove-playcanvas` against
+main `79a6ba02`, initial implementation head `0bb0298f`;27 scoped files,13
+executable/config removals. This receipt only updates delivery documentation.
+Production source/assets remain identical to the checked base. GitHub owns live
+head, mergeability and CI; no completed hosted pass is claimed. Original dirty
+checkout and all other worktrees/player databases remain untouched.
+
+### WLC-02 integration and merge authorization — 2026-11-07
+
+Owner requested “merge, update main” for PR420. Merge of this PR, its delivery
+receipt and clean local-main fast-forward are authorized; deployment is not.
+This supersedes the earlier NOT_AUTHORIZED merge snapshot above.
+Latest main `93adaef9` includes WLC-03/PR421 and its receipt PR422. Integration
+preserves its archived assets, manifest/editor/Vite changes and all WLC-03
+records; the only merge conflicts were added CURRENT_PLAN/CHANGELOG sections,
+resolved by retaining both deliveries. No production renderer/rule/lifecycle
+change is introduced by this integration.
+
+PR420 head `4bb2a743` had no reviews or review threads at readback. Its
+[CI42391670090](https://github.com/Vovanostm/warwrit/actions/runs/42391670090)
+FAILED at Prettier on unchanged `apps/web/src/encounter/connection.test.ts`;
+job128460421825 actual logs read. Scope42391670367 PASSED. CI advisory; no
+unrelated formatting repair, full-suite rerun or polling required. Earlier
+74-test/build/browser evidence belongs to the pre-integration source boundary;
+fresh integration web typecheck,74focused tests, architecture (five packages/
+525source files), content (130assets), scoped format/diff/local-link readback
+PASS. Production web/server/domain/protocol/assets have no task delta against
+main93adaef9. Repeated build/browser/full-suite checks NOT_RUN for this
+integration; previous runtime evidence remains explicitly scoped. The native
+campaign-combat and broader acceptance limits above remain open.
+
 ## Classification and coverage
 
 | Classification  | Paths | Meaning in this audit                                                                                                           |

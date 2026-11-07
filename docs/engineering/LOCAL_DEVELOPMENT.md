@@ -1,5 +1,15 @@
 # Local development and CI
 
+## Supported renderer — WLC-02, 2026-11-07
+
+The ordinary game and Combat Lab share the Babylon.js 9.28.0 battle renderer;
+map/place scenes also use Babylon. Run the ordinary game below or `pnpm dev:combat`
+for the disposable lab. There is no supported engine query switch or
+`@warwrit/renderer-spike` launch/build/bake command. That directory retains only
+historical assets/licenses and a source-history pointer; do not reinstall
+PlayCanvas to run current scenes. See the
+[removal record](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07).
+
 ## Pinned toolchain
 
 - Node.js `24.20.0` LTS line;

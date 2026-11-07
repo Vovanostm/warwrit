@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => ({
         'scripts/world-map/*.ts',
         'scripts/world-map/fog-design/*.ts',
       ],
-      exclude: ['**/*.test.{ts,tsx}', 'apps/renderer-spike/**'],
+      exclude: ['**/*.test.{ts,tsx}'],
       reporter: ['json', 'text-summary'],
       reportsDirectory: 'coverage',
     },
