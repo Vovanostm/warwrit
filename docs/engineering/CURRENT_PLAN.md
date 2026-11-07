@@ -4,16 +4,18 @@
 
 Coordinator/writer: codex/item-transfer-339, .claude/worktrees/item-transfer-339.
 Owner assignment: integrate PR339 with current company UI; base main fbd34b22.
-Allowed implementation, checks and PR update; no merge/deployment permission.
+Owner explicitly requested “merge, update main” on2026-11-07.
+PR339 merge, delivery documentation receipt and clean local-main update authorized; no deployment.
 [Player journey and current results](../wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
 PUBLISHED [PR339](https://github.com/Vovanostm/warwrit/pull/339), implementation0ce317f3 integrates mainfbd34b22/priorc2051f3f.
-GitHub mergeable; NOT_MERGED. Next: owner permission for PR339 merge.
+GitHub mergeable; NOT_MERGED. Next: expected-head merge and local-main fast-forward.
 Preserve care/recovery/payroll/recruitment.
 25focused,4PG executor/13filteredSKIP,2PG routes,builds/types/lint PASS.
 Native sword transfer/equip and split/lost-response/reload/retry PASS;28rations,one receipt.
 Native capacity refusal now shows CAPACITY; atomic PG regression failed before fix,passes after.
 Current screenshots1440/1280 and natural night captured; independent scoped critique ACCEPT (all applicable criteria2–3/3).
-CI/full suite/stress NOT_RUN (advisory). Previous checkpoint follows.
+Local full suite/stress NOT_RUN. Hosted CI42382366905 failed at unchanged connection.test.ts formatting; PR scope PASS.
+CI advisory; no gameplay failure reported by that early formatter stop. Previous checkpoint follows.
 
 ## Repeat unfinished hunt #409 — 2026-11-07
 

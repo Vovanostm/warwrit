@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Authorize item-transfer merge and local main update
+
+- 2026-11-07, `codex/item-transfer-339`, PUBLISHED authorization checkpoint:
+  owner explicitly requested “merge, update main” for PR339. Record permission
+  for its expected-head merge, necessary delivery receipt and clean local-main
+  fast-forward in CURRENT_PLAN and the
+  [owning result](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  CI42382366905 stopped at formatting in unchanged encounter/connection.test.ts;
+  PR scope42382366947 PASS. Existing focused/native checks retained; repeated
+  game checks NOT_RUN. CI advisory, no deployment or data reset authorized.
+
 ### Publish the current-main item-transfer integration
 
 - 2026-11-07, `codex/item-transfer-339`, PUBLISHED implementation `0ce317f3`
