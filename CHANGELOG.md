@@ -28,6 +28,10 @@ requests.
   performance NOT_MEASURED. CI advisory. Inventory/removal order await owner
   acceptance; successor implementation, deletion, merge and deployment not run.
   Preserve the gameplay integrator's CURRENT_PLAN block and original dirty WIP.
+  Hosted scope42388956745 FAILED its restricted issue/contract-link pattern
+  (0 changed source lines); CI42388956750 IN_PROGRESS at a10eb22a readback,
+  no hosted pass claimed. [Baseline](docs/engineering/CONSOLIDATION_BASELINE.md#hosted-publication-readback)
+  records the actual logs and advisory boundary.
 
 ### Record merged item transfer and updated local main
 

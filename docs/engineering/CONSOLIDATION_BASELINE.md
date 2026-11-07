@@ -73,7 +73,7 @@ existing hooks; tracked lockfile/config remained unchanged.
 | `pnpm --filter @warwrit/renderer-spike build`                                                                                                                                                        | PASS, including spike typecheck and both engine chunks. Proves compilation; does not prove external/dynamic models load or historical animation captures are valid. |
 | `pnpm exec vitest run apps/web/src/combat-lab/sprite-art.test.ts apps/web/src/encounter/battle-presentation.test.ts apps/web/src/renderer/hex-mesh.test.ts apps/web/src/renderer/projection.test.ts` | PASS: 4 test files / 29 tests.                                                                                                                                      |
 | Inventory validation, new-doc links/format and `git diff --check`                                                                                                                                    | PASS after scoped formatting; initial format check reported the new files and was corrected.                                                                        |
-| New server/PostgreSQL/browser/visual/full-M1 journeys, full suite, stress/coverage, fresh broad CI                                                                                                   | NOT_RUN: audit-only scope. Capacity/performance/enjoyment NOT_MEASURED. Existing historical evidence is separately qualified in the inventory.                      |
+| New server/PostgreSQL/browser/visual/full-M1 journeys, full suite, stress/coverage, local broad CI                                                                                                   | NOT_RUN: audit-only scope. Capacity/performance/enjoyment NOT_MEASURED. Existing historical evidence is separately qualified in the inventory.                      |
 
 These commands are the fixed small control set for this audit. Later renderer
 removal must repeat affected web/type and remaining workspace builds; sprite/HUD
@@ -81,6 +81,20 @@ changes also need normal encounter input and result checks. Atlas changes need
 production raster/geometry/privacy checks and real map travel/reload on a disposable
 world. Prepared integration cases remain useful state regressions, but do not
 replace the ordinary player journey. No new full-suite gate is introduced.
+
+### Hosted publication readback
+
+PR419 is OPEN / NOT_MERGED. Readback at audit head
+`a10eb22ac9e598b69e06df734496b2ca5bd0772a` confirmed exactly the four
+intended documentation/data paths and an unchanged base f3c76d8c.
+[Scope run42388956745](https://github.com/Vovanostm/warwrit/actions/runs/42388956745)
+FAILED: actual logs say `PASS scope report: 0 changed source lines`, then
+`FAIL issues: link an issue (Closes/Refs #N) or an owning tracked contract.`
+The script's restricted path pattern does not accept this engineering audit page.
+[CI42388956750](https://github.com/Vovanostm/warwrit/actions/runs/42388956750)
+was IN_PROGRESS at that readback; no final hosted pass is claimed. This subsequent
+documentation receipt does not turn that snapshot into evidence for another head.
+No rerun/polling or unrelated gate/issue change was performed; CI remains advisory.
 
 ## Reproduction and coverage limits
 
