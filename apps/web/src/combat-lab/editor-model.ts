@@ -1,5 +1,4 @@
 import type {
-  CombatLabBattleConfig,
   CombatLabCatalog,
   CombatLabHex,
   CombatLabTile,
