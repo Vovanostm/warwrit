@@ -68,7 +68,12 @@ is used as fresh evidence. Checks below are local observations unless named othe
   migration order and rolled back0023→0020 before all existing older data-preservation
   tests. The same empty database then passed full smoke/up/down, including preserved
   legacy encounters and all previous rollback refusals. Playground schema removal
-  additionally preserves public encounters. No migration or saved-data change.
+  additionally preserves public encounters. No migration or saved-data change. A second stale list in the world-clock
+  round-trip integration test also stopped at0019; its retained rollback/order/clock
+  assertions now include0020–0023. Direct single-migration guard probes are valid
+  and retained. A first integration-mode command included unit files without SQL
+  allocations; those setup errors are invalid harness evidence. The corrected
+  invocation selects `.integration.test.ts` files.
 - Ordinary Dex player-one sign-in, new company «Приёмка WLC08», leader «Дозор»,
   Rell/Mora, all9equipment commands, provisions purchase and authentic local mill
   contract PASS. Opening cash800, rations27 after upkeep; purchase40 gives cash760,

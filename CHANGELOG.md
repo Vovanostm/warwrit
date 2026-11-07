@@ -22,6 +22,8 @@ requests.
   Fix reproduced development-env leakage of Playground into the standard web
   build by pinning production for Vite; remove unconsumed retired editor exports
   and stale Fallow paths, and format the previously failing connection test.
+  Also update the second stale migration suffix in the real world-clock
+  round-trip regression, retaining its clock-preservation assertions.
   Frozen install, clean migration up/full smoke and ordinary OIDC/preparation
   PASS; remaining integrated acceptance pending. CI advisory; no merge/deployment
   or full-M1 acceptance. Retained player data and original dirty work untouched.
