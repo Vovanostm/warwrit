@@ -598,3 +598,18 @@ preserves module paths for relative content URLs and external workspace packages
 Development runs source through the existing `dev`/tsx command; standard build/start always use the stripped production distribution.
 No deployment is performed by these instructions. The ordinary production web
 build strips both debug entrypoints even when `VITE_COMBAT_LAB=1` is supplied.
+
+### Opt-in Playground campaign time — WLC-08
+
+On an exclusively owned disposable development database, add
+`PLAYGROUND_CAMPAIGN_WORLD=world.porechye.atlas-v1` alongside the normal
+painted-world/Playground/OIDC/account allowlist settings. It must name this
+stand's configured world. Apply migrations and restart the development API.
+Open `/dev/playground/combat`: **Время изолированного QA-мира** offers fixed
++1/+10/+100/+1000 campaign-tick steps. This changes the test campaign clock;
+normal game reads/commands then settle food, rest and wages. Auth sessions,
+light cycles and combat deadlines retain real time. Active/unsettled encounters
+refuse advancement. Reload/exact retry uses the same saved command and receipt.
+Do not enable on retained player databases. Production refuses this setting.
+Time and receipts survive restart; rollback0024 refuses to discard a used journal.
+This is explicitly accelerated QA evidence, not a real six-hour waiting test.

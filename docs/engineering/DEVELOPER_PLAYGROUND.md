@@ -5,6 +5,18 @@ Coordinator/writer: `codex/wlc-05-playground`, `.claude/worktrees/wlc-05`.
 Owner authorizes implementation, standalone PR, merge and local main update.
 No deployment, paid service, game-rule change or retained-save mutation.
 
+## Opt-in QA campaign time — owner amendment 2026-11-08
+
+[WLC-08](WLC_08_ACCEPTANCE.md#owner-amendment--accelerated-qa-campaign-time-2026-11-08)
+adds fixed forward campaign steps in the Combat Lab shell when an operator names
+`PLAYGROUND_CAMPAIGN_WORLD` matching the configured world. This exceptional tool
+is only for an exclusively owned disposable QA database: it advances that stand's
+campaign clock and lets ordinary domain commands assess elapsed time. Default
+sandbox/map operations retain their no-campaign-write boundary. Production rejects
+the mode and strips its API/UI. Active or unsettled encounters refuse time jumps.
+Exact receipts persist; disabling the feature does not rewind time. See the owning
+report for actual tests, accelerated observations and limitations.
+
 ## WLC-06 successor — 2026-11-08
 
 [Combat Lab consolidation](COMBAT_LAB_CONSOLIDATION.md) extends this merged

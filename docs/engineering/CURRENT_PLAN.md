@@ -8,10 +8,13 @@ merge/deployment are not authorized. Base main fdbb0dc2 includes WLC-02–05.
 PR428/d2d82bc3 and PR429/b58c87ce are OPEN/NOT_MERGED and explicitly combined
 in this candidate; source branches and original dirty checkout/saves retained.
 [Owning journey, versions, actual checks and open criteria](WLC_08_ACCEPTANCE.md).
-Current status LOCAL/IN_PROGRESS; frozen install, clean23migration up and corrected
-full migration smoke PASS. Ordinary OIDC/new company/equipment/supply/contract
-passed; physical travel started. Remaining journey/resilience/Playground/final
-checks pending; payroll needs natural day2. M1 NOT_ACCEPTED. CI advisory.
+Status LOCAL/IN_PROGRESS, M1 NOT_ACCEPTED. Initial a5e15030 full local checks PASS:
+1149unit/103SQL,10kcombat stress,migrations/build/static; native ordinary entry/
+gear/supply/travel/recovery/exact retry and integrated Lab/map editor PASS.
+Owner follow-up permits player-two and requests acceleration: opt-in QA campaign
+steps/receipt journal/migration0024 added;3real SQL checks +18focused/types/lint PASS.
+Both ordinary companies retained; continue native co-op battle/proof/pay/care/restart,
+using labelled accelerated campaign time. Final updated-code checks/publication pending.
 Earlier dated blocks below retain their original delivery/evidence boundaries.
 
 ## WLC-06 — Combat Lab consolidation, 2026-11-08

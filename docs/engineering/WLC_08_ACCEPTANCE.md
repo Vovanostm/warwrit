@@ -24,6 +24,38 @@ are isolated in `playground`; their combat does not establish campaign acceptanc
 Retain versioned replay, saves, archived provenance and dated owner decisions.
 Remove stale operational guidance, preserving local UI acceptance for damaged journeys.
 
+## Owner amendment — accelerated QA campaign time, 2026-11-08
+
+Owner explicitly requested «Ускорь время и добавь возможность ускорения времени
+для playground» and authorized player-two's ordinary login/company/physical PvE.
+This supersedes the natural-payroll wait for this isolated acceptance stand only.
+Accelerated observations must be labelled; they do not prove real six-hour waiting.
+
+Add a development-only campaign-time panel to Playground. An operator must opt in
+with `PLAYGROUND_CAMPAIGN_WORLD` equal to this stand's configured world. Default
+Playground remains sandbox-only; production/unknown environments refuse this mode.
+Use an exclusively owned disposable database, never a retained player stand.
+The panel explicitly names the affected QA world, current campaign tick and fixed
+forward steps1/10/100/1000. This exceptional QA control affects that world, unlike
+ordinary sandbox commands. No arbitrary world input, reverse time, money/item/
+health edits, wall-clock/auth/session/deadline changes or autonomous speed loop.
+
+Existing `readWorldClock` remains the clock owner. Under its world-row lock, advance
+`starting_tick` by the chosen step and atomically retain an account-scoped exact
+request/receipt in new migration0024. Exact retry returns that receipt; a conflicting
+ID refuses. Reject advances while a canonical encounter is active to preserve
+combat admission/effect timing. Ordinary movement, food, wages and rest then assess
+elapsed campaign ticks through their existing server/domain paths; no second
+settlement engine. Time remains advanced after restart or disabling the tool.
+Rollback refuses to discard an existing adjustment journal; it cannot rewind time.
+
+The UI persists the request before sending and offers exact retry after reload or
+lost response; storage failure prevents a new command. Existing OIDC/allowlist/
+origin/loopback/production guards own access. Verify real SQL atomicity/concurrent
+retry/conflict, disabled/wrong-world/production/foreign session and active battle
+refusals, restart readback and no direct finance/item mutation by the clock command.
+Then use the panel in the ordinary journey and record actual lazy settlement.
+
 ## Candidate and dependency boundary
 
 Base `fdbb0dc2764803a28098ad3f85985a02c8122ece` (main at initial live readback).
@@ -81,8 +113,9 @@ is used as fresh evidence. Checks below are local observations unless named othe
 - Fresh battle/proof/payment/care/payroll/next-contract/restart, all resilience,
   integrated Playground checks, static checks, production artifacts and full
   final acceptance remain pending / NOT_RUN until their observed results are added.
-- Payroll requires natural day2/tick0 (six real hours from world genesis).
-  No clock or persisted-state edits substitute for that observation.
+- Payroll originally required natural day2/tick0. The owner then explicitly
+  authorized accelerated QA time; the amendment above supersedes that wait.
+  Real six-hour waiting remains NOT_RUN, never claimed by an accelerated check.
 
 ### Integration defects and corrections
 
@@ -122,3 +155,18 @@ Existing broader M1 requirements (eight authentic contracts and branches, physic
 owner/helper, company service/learning/remaining inventory, privacy, backup/restore,
 device/performance and owner comprehension) retain their owning roadmap issues.
 FPS/capacity/heap/enjoyment NOT_MEASURED; no deployment or owner acceptance inferred.
+
+### QA time implementation checkpoint
+
+Migration0024 applied to this owned stand; no released migration changed. Three
+real SQL tests PASS: concurrent/exact/restart receipt, conflicting body, foreign
+session/origin/disabled/production/invalid steps, active encounter refusal, journal
+rollback refusal and an actual receipt-write constraint failure rolling back the
+clock before a successful identical retry. Server/web types, scoped lint and18
+config/HUD tests PASS. Initial test-only fixture omitted required activation clock
+columns and failed; corrected fixture passes. This was not a production defect.
+
+Native +100 committed at127→227 with command6d5857b1-5f7f-4f20-8b1f-a2048aa5620f;
+the real reply was dropped. Server restart/reload/exact retry is being checked.
+Player-two was created through authorized ordinary OIDC and all9equipment commands;
+its physical route to Bereznyak was accepted. No helper/position/finance fabrication.

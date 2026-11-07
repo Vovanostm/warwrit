@@ -69,7 +69,7 @@ packages/
   protocol/     Versioned transport contracts and shared API types
   testkit/      Test-only generators and helpers
 assets/         Active asset manifest, original art and retained source assets
-content/        Versioned authored game content
+content/        Reserved authoring area; current definitions live in game-core
 scripts/        Repository verification, combat stress, and migration tools
 docs/           Authority, architecture, engineering, and work-package records
 ```

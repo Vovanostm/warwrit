@@ -74,7 +74,7 @@ approval bypass flags or terminal interrupts that can suspend a process/lock DB.
 4. One assigned owner runs `scripts/orca-validate.sh` once for the relevant
    revision. Builder and coordinator do not repeat unchanged checks. Record exact
    commands/environment/results and recheck affected evidence after changes.
-5. Run independent gates below. Fix material findings, then repeat affected gates;
+5. Self-review and optionally use independent review below. Fix material findings, then repeat affected checks;
    code integration can invalidate review even when Git merges cleanly.
 6. Publish within the current assignment; merge only with explicit current permission,
    no blocking findings and expected head. Read back head, merge and issue state.
@@ -88,7 +88,7 @@ approval bypass flags or terminal interrupts that can suspend a process/lock DB.
 ## Independent acceptance
 
 Follow AGENTS and the owning feature specification. The final affected gameplay
-journey needs an independent check; affected visual results use VISUAL_CRITIQUE,
+journey requires a direct check; independent review is optional. Affected visuals use VISUAL_CRITIQUE,
 and player text uses its applicable writing rules. Review concrete code/state
 risks proportionally. Documentation-only edits do not require a mandatory second
 reviewer. No tier matrix adds a universal capture or scoring requirement.

@@ -64,7 +64,17 @@ export interface PlaygroundResult {
   readonly receipt: PlaygroundReceipt;
 }
 
+export interface PlaygroundTimeReceipt {
+  readonly commandId: string;
+  readonly worldId: string;
+  readonly ticks: number;
+  readonly beforeTick: string;
+  readonly afterTick: string;
+}
+
 export interface PlaygroundBootstrap {
+  /** Explicit opt-in QA world, never selected by a client command. */
+  readonly campaignTimeWorldId?: string;
   readonly environment: 'development' | 'test';
   /** Authenticated account identity; never a session token. */
   readonly accountId: string;

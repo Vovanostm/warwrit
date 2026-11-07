@@ -11,6 +11,7 @@ export interface ServerConfig {
   readonly identity?: IdentityConfig;
   readonly playground?: {
     readonly environment: 'development' | 'test';
+    readonly campaignTimeWorldId?: string;
     readonly origin: string;
     readonly accountIds: readonly string[];
   };
@@ -137,6 +138,16 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     environment['NODE_ENV'] !== 'production' || (Boolean(databaseUrl) && identity !== undefined),
     'Production server requires DATABASE_URL and complete OIDC identity configuration',
   );
+  const worldId = gameWorldId(environment['WORLD_MAP']?.trim());
+  const campaignTimeWorldId = environment['PLAYGROUND_CAMPAIGN_WORLD']?.trim();
+  invariant(
+    !campaignTimeWorldId || environment['PLAYGROUND'] === '1',
+    'QA campaign time requires PLAYGROUND=1',
+  );
+  invariant(
+    !campaignTimeWorldId || campaignTimeWorldId === worldId,
+    'QA campaign time must name the configured isolated world',
+  );
   let playground: ServerConfig['playground'];
   if (environment['PLAYGROUND'] === '1') {
     const nodeEnvironment = environment['NODE_ENV'];
@@ -152,11 +163,16 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
         accountIds.length > 0,
       'Playground requires explicit development/test, loopback, OIDC database and developer allowlist',
     );
-    playground = { environment: nodeEnvironment, origin: identity.publicOrigin, accountIds };
+    playground = {
+      environment: nodeEnvironment,
+      origin: identity.publicOrigin,
+      accountIds,
+      ...(campaignTimeWorldId ? { campaignTimeWorldId } : {}),
+    };
   }
   return {
     ...(playground === undefined ? {} : { playground }),
-    worldId: gameWorldId(environment['WORLD_MAP']?.trim()),
+    worldId,
     host,
     port,
     ...(databaseUrl ? { databaseUrl } : {}),

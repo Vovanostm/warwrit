@@ -30,6 +30,30 @@ describe('server configuration', () => {
     ).toBeUndefined();
   });
 
+  it('requires an explicit matching QA world and all Playground guards for campaign time', () => {
+    const local = {
+      NODE_ENV: 'development',
+      HOST: '127.0.0.1',
+      WORLD_MAP: 'painted-atlas',
+      DATABASE_URL: 'postgres://unused:unused@127.0.0.1:54808/qa',
+      OIDC_ISSUER: 'http://127.0.0.1:55808/dex',
+      OIDC_CLIENT_ID: 'test',
+      OIDC_CLIENT_SECRET: 'test',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:53808/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:53808',
+      PLAYGROUND: '1',
+      PLAYGROUND_ACCOUNT_IDS: 'developer',
+      PLAYGROUND_CAMPAIGN_WORLD: 'world.porechye.atlas-v1',
+    };
+    expect(loadServerConfig(local).playground?.campaignTimeWorldId).toBe('world.porechye.atlas-v1');
+    expect(() => loadServerConfig({ ...local, PLAYGROUND: '0' })).toThrow('PLAYGROUND=1');
+    expect(() =>
+      loadServerConfig({ ...local, PLAYGROUND_CAMPAIGN_WORLD: 'another-world' }),
+    ).toThrow('configured isolated world');
+    for (const NODE_ENV of ['production', 'staging', ''])
+      expect(() => loadServerConfig({ ...local, NODE_ENV })).toThrow('Playground');
+  });
+
   it('loads deterministic defaults', () => {
     expect(loadServerConfig({})).toEqual({
       worldId: 'main',

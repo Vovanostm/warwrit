@@ -22,6 +22,11 @@ requests.
   Fix reproduced development-env leakage of Playground into the standard web
   build by pinning production for Vite; remove unconsumed retired editor exports
   and stale Fallow paths, and format the previously failing connection test.
+  Owner follow-up authorizes the second ordinary test account and accelerated
+  QA time. Add opt-in guarded Playground campaign steps with atomic saved
+  receipts, restart/exact retry, active/unsettled-encounter refusal and migration0024.
+  Ordinary rules/auth/light/combat timers retain their owners; accelerated
+  observations are labelled separately.
   Also update the second stale migration suffix in the real world-clock
   round-trip regression, retaining its clock-preservation assertions.
   Frozen install, clean migration up/full smoke and ordinary OIDC/preparation
