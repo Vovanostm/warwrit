@@ -17,6 +17,7 @@ import type { FirstHuntWorldState } from '../contracts/first-hunt-runtime.js';
 import { persistFirstHuntBinding } from '../contracts/repository.js';
 import { updateCompanyAggregateWithReceipt } from '../company/repository.js';
 import { prepareTrustedCompanyCommand, stableCompanyRequestKey } from '../company/executor.js';
+import { readHuntAttempt } from './hunt-attempt.js';
 import { travelAdvanceSourceEventId } from '../company/travel-food.js';
 
 const HUMAN_DEADLINE_MS = 30_000;
@@ -36,6 +37,8 @@ export interface FirstHuntContractForAdmission {
   readonly helper_company_id: string | null;
   readonly owner_join: unknown | null;
   readonly helper_join: unknown | null;
+  readonly owner_join_attempt_no: number | null;
+  readonly helper_join_attempt_no: number | null;
 }
 
 /** Caller owns the sorted company roots, clock, world row and contract row locks. */
@@ -56,19 +59,17 @@ export async function admitFirstHuntInTransaction(input: {
     contract.owner_company_id === null ||
     world.worldId !== worldId ||
     world.instanceId !== profile.instanceId ||
-    world.profileId !== profile.profileId ||
-    world.hostiles.some((hostile) => hostile.currentPools['health'] === 0)
+    world.profileId !== profile.profileId
   )
     return undefined;
 
-  const existingAdmission = await transaction
-    .selectFrom('encounter_admissions')
-    .select('encounter_id')
-    .where('world_id', '=', worldId)
-    .where('instance_id', '=', contract.instance_id)
-    .forUpdate()
-    .executeTakeFirst();
-  if (existingAdmission) return undefined;
+  const attempt = await readHuntAttempt(transaction, world);
+  const attemptNo = attempt.joinAttemptNo;
+  const survivors = world.hostiles.filter((hostile) => hostile.currentPools['health']! > 0);
+  if (!attemptNo || survivors.length === 0 || contract.owner_join_attempt_no !== attemptNo)
+    return undefined;
+  if (contract.helper_company_id !== null && contract.helper_join_attempt_no !== attemptNo)
+    return undefined;
 
   const joinRows: JoinIntent[] = [];
   const ownerJoin = readJoinIntent(contract.owner_join, contract.owner_company_id);
@@ -235,7 +236,7 @@ export async function admitFirstHuntInTransaction(input: {
       ).length
     );
   }, 0);
-  if (totalMembers > profile.alliedSlots.length || totalMembers + world.hostiles.length > 12)
+  if (totalMembers > profile.alliedSlots.length || totalMembers + survivors.length > 12)
     return undefined;
 
   const encounterId = randomUUID();
@@ -263,12 +264,19 @@ export async function admitFirstHuntInTransaction(input: {
       })),
     };
   });
-  const worldParticipants = world.hostiles.map((hostile) => ({
+  if (
+    attemptNo > 1 &&
+    profile.repeatHostileSlots &&
+    profile.repeatHostileSlots.length < survivors.length
+  )
+    return undefined;
+  const worldParticipants = survivors.map((hostile, index) => ({
     entityId: hostile.entityId,
     sourceId: `first-hunt:${worldId}:${hostile.entityId}:genesis`,
     unitId: combat.unitId(hostile.entityId),
     sideId: hostileSideId,
-    position: hostile.position,
+    position:
+      attemptNo > 1 ? (profile.repeatHostileSlots?.[index] ?? hostile.position) : hostile.position,
     weaponId: firstHuntWeaponId(hostile.weaponId),
     attributes: {
       accuracy: hostile.attributes['accuracy']!,
@@ -289,7 +297,7 @@ export async function admitFirstHuntInTransaction(input: {
   }));
   const evidence = {
     id: `first-hunt:${worldId}:${encounterId}`,
-    sourceEventId: `first-hunt:${worldId}:${profile.instanceId}:activation`,
+    sourceEventId: `first-hunt:${worldId}:${profile.instanceId}:${encounterId}:activation`,
     version: combat.FIRST_HUNT_WORLD_BINDING_VERSION,
     bindingId,
     worldId,
@@ -391,7 +399,7 @@ export async function admitFirstHuntInTransaction(input: {
       })
       .execute();
   }
-  for (const hostile of world.hostiles) {
+  for (const hostile of survivors) {
     await transaction
       .insertInto('encounter_ai_controllers')
       .values({
@@ -414,12 +422,20 @@ export async function admitFirstHuntInTransaction(input: {
       })
       .execute();
   }
+  if (attempt.admission)
+    await transaction
+      .updateTable('encounter_admissions')
+      .set({ is_current: false })
+      .where('encounter_id', '=', attempt.admission.encounter_id)
+      .execute();
   await transaction
     .insertInto('encounter_admissions')
     .values({
       encounter_id: encounterId,
       world_id: worldId,
       instance_id: contract.instance_id,
+      attempt_no: attemptNo,
+      is_current: true,
       binding_version: 2,
       binding,
       terminal_revision: null,

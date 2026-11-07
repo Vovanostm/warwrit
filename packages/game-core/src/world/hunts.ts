@@ -36,6 +36,8 @@ export interface HuntProfile {
   readonly proofDefinitionId: string;
   readonly combatMap: { readonly hexes: readonly Hex[]; readonly blocked: readonly Hex[] };
   readonly alliedSlots: readonly Hex[];
+  /** Subsequent attempts intercept survivors inside the field, away from their exits. */
+  readonly repeatHostileSlots?: readonly Hex[];
   readonly retreatHexes: { readonly allied: readonly Hex[]; readonly hostile: readonly Hex[] };
   readonly hostiles: readonly FirstHuntHostileDefinition[];
   /** The threat only shows itself at night: JOIN needs the Light night phase. */
@@ -115,6 +117,11 @@ export const HUNT_PROFILES: readonly HuntProfile[] = freeze([
     combatMap: { hexes: openField, blocked: [{ q: 1, r: 1 }] },
     alliedSlots: FIRST_HUNT_ALLIED_SLOTS,
     retreatHexes: openRetreat,
+    repeatHostileSlots: [
+      { q: 0, r: 0 },
+      { q: 0, r: -1 },
+      { q: 0, r: 1 },
+    ],
     hostiles: [
       wolf('world.wolf.bereznyak.leader.01', { q: 2, r: 0 }),
       wolf('world.wolf.bereznyak.02', { q: 2, r: -1 }),

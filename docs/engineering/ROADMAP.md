@@ -34,13 +34,13 @@ preserved living enemies and no false trophy. Finite result UI is accepted;
 hostile escape was not reproduced in the ordinary native journey.
 [Owning result and limitations](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
 
-Next bounded task [#409](https://github.com/Vovanostm/warwrit/issues/409) adds a new
-attempt of the same unfinished hunt using the same survivors and saved pools.
-Complete its storage/interface specification before code; retain encounter history,
-command receipts and one current attempt. It is planned, not started, and distinct
-from #368's next contract with a recovered company. #368/#370 remain with the
-recovery/payroll owner. Surrender/capture #377 still needs a separate policy.
-Full loop/M1 acceptance remains open.
+[#409](https://github.com/Vovanostm/warwrit/issues/409) is locally implemented on
+current main in `codex/repeat-hunt-409`: historical attempts, fresh JOIN consent,
+exact saved survivors and the ordinary repeat/retry/payout continuation.
+[Current evidence and remaining native criterion](../wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
+distinguish the passing SQL/prepared-save App journey from the unsuccessful new-company
+first-escape run. Publication and full native first-escape acceptance remain open.
+Captivity #377, helper replacement and a player battle archive remain separate scope.
 
 ## Target and authority
 

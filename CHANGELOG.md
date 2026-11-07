@@ -9,6 +9,61 @@ requests.
 
 ## Unreleased
 
+### Integrate repeat hunts with the current ordinary game
+
+- 2026-11-07, `codex/repeat-hunt-409`, LOCAL owner-assigned #409 implementation
+  integrated with main1d0667ce, reusing the retained plan/implementation branch.
+  Preserve current bearer-paid translations, first-loop behavior and all existing
+  history. Migration0020, server admission/effects, protocol and FirstHunt/HuntList
+  provide attempt history, one current battle, fresh consent and exact survivors.
+  [Owning result](docs/wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
+  records21focused PASS, public builds/types/lint PASS and real SQL1PASS/24filtered
+  SKIP, plus current App repeat/reload/helper LEAVE/lost reply/final proof/payout.
+  SQL confirms two attempts, exact10/0/66/20 survivor pools and one redeemed proof.
+  Fresh independent API-process read and scoped playable critique ACCEPT.
+  New-company native first battle lost all3; first hostile escape remains unproved.
+  Preserve that save, keep #409 open. CI/full suite/coverage/stress NOT_RUN.
+  CURRENT_PLAN/ROADMAP record the local result and remaining acceptance boundary.
+
+### Repeat unfinished hunts against their saved survivors
+
+- 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL implementation requested by the
+  owner for [retreat #409](docs/wiki/mechanics/retreat.md#локальная-реализация-и-проверки-409--2026-11-07).
+  Add ordered migration 0020 with admission history, one current row and
+  attempt-scoped JOIN consent. Preserve survivors' exact pools, previous deaths,
+  receipts and replay. Current readers, old terminal replay and the next terminal
+  settlement understand multiple attempts. Reject unsafe down after repeat use.
+- Owner approved central wolf repeat positions after original spawns caused
+  instant repeated flight. Existing combat rules now permit interception.
+  The ordinary card offers repeat, waits for fresh helper consent and supports
+  helper LEAVE/reconfirmation and lost-response recovery. Correct a critic-found
+  stale reward balance using the existing app refresh, and remove internal status
+  jargon from completion feedback.
+- Focused 30 PASS/1 existing skip, server/web types, scoped lint and real
+  PostgreSQL 1 PASS/24 filtered skips. SQL covers rollback/races/history/retry,
+  migration compatibility, final death, one proof and one 80-crown payout.
+  Real App continuation from prepared retreat, helper exit, pickup/payment,
+  reload and independent fresh-server read PASS. Source review ACCEPT and
+  corrected affected UI readability 2/3. Full native first escape with a new
+  company remains NOT_RUN. Existing village scene-art critique stays outside
+  this feature and formally BLOCKED. CI/full suite/coverage/stress NOT_RUN.
+  The owning result records failed checks and corrected setup. No publication.
+
+### Plan repeated hunting against saved survivors
+
+- 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL owner-requested implementation
+  plan for #409 on main600e19a1. The [owning retreat page](docs/wiki/mechanics/retreat.md#повторная-охота--спецификация-и-план-409-2026-11-07)
+  specifies the player path, admission history/current row, attempt-scoped JOIN
+  consent, survivor pools, reader/proof/access boundaries, rollback limit and
+  three cohesive implementation steps. Preserve existing helper enrollment.
+- Source trace found stale consent, single-admission readers, contract-wide
+  activation identity and UI polling/discovery assumptions. Carry the ordinary
+  escape not reproduced in #378 into #409 acceptance. Clarify that retained
+  replay history follows existing active-binding access; archive UI is separate.
+  CURRENT_PLAN records specification ready and implementation not started.
+  Scoped source/docs/whitespace/link checks PASS. Game/SQL/migration tests NOT_RUN
+  for planning. This local plan creates no publication or merge permission.
+
 ### Record the merged first-loop delivery
 
 - 2026-11-07, `codex/m1-full-loop-370-closeout`, documents the MERGED #370 result
