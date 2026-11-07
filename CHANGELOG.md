@@ -9,6 +9,17 @@ requests.
 
 ## Unreleased
 
+### Authorize repeat-hunt delivery and correct its checkpoint label
+
+- 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED PR416 follow-up: owner explicitly
+  requested “merge, update main”, including the documentation receipt. Record
+  authority in CURRENT_PLAN and the [owning page](docs/wiki/mechanics/retreat.md#разрешение-на-слияние-409--2026-11-07).
+  Rename writer to coordinator/writer so the focused plan validator accepts the
+  existing short checkpoint. CI548d0027 failed at that documentation check before
+  gameplay verification; PR scope passed. No game-code change or new gameplay
+  acceptance claim; previous local results retained. Merge remains a separate
+  expected-head operation and deployment is outside this mission.
+
 ### Publish the repeat-hunt implementation for review
 
 - 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED as draft

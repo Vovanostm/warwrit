@@ -2,8 +2,9 @@
 
 ## Repeat unfinished hunt #409 — 2026-11-07
 
-Writer: codex/repeat-hunt-409, .claude/worktrees/repeat-hunt-409; base main1d0667ce.
-Owner assignment: implement #409. Implementation and PR work authorized; no merge/deploy authority.
+Coordinator/writer: codex/repeat-hunt-409, .claude/worktrees/repeat-hunt-409; base main1d0667ce.
+Owner assignment: implement #409; on2026-11-07 the owner explicitly requested “merge, update main”.
+Merge of PR416, its documentation receipt and local main update are authorized. Deployment remains outside this mission.
 Reuse committed specification156e26e4 and implementation39d874a9; preserve the original branch and primary WIP.
 [Specification and current results](../wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07) own the behavior and evidence.
 PUBLISHED draft [PR416](https://github.com/Vovanostm/warwrit/pull/416), implemented head6d1b238e; NOT_MERGED.
@@ -15,7 +16,7 @@ Readback: two attempts, one current, wolf.02 pools10/0/66/20 unchanged at admiss
 Native OIDC new company «Повторный след» was created/equipped/travelled/joined normally; passive combat lost all3 without reproducing hostile retreat. Keep that save intact.
 Full first-escape native acceptance remains open; do not close #409 or claim complete native acceptance.
 Fresh independent API-process read and scoped playable critique ACCEPT (scores2–3/3); full native criterion remains open.
-Publication verified against main1d0667ce/head6d1b238e. Hosted CI NOT_CHECKED (advisory); local full suite/coverage/stress NOT_RUN. Broader scene-art acceptance is outside this slice.
+Publication verified against main1d0667ce/head6d1b238e. CI548d0027 failed only at the coordinator label in CURRENT_PLAN; corrected and focused plan check rerun. CI remains advisory; local full suite/coverage/stress NOT_RUN. Broader scene-art acceptance is outside this slice.
 
 ## Preserved predecessor deliveries
 
