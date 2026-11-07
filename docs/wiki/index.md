@@ -8,6 +8,9 @@ tags: [meta]
 
 # Локальная wiki проекта
 
+[Unified Map Editor — WLC-07](../engineering/UNIFIED_MAP_EDITOR.md) — World/Battle drafts,
+серверные validation/preview и отдельный content delivery без изменения активных миров.
+
 [Developer Playground — WLC-05](../engineering/DEVELOPER_PLAYGROUND.md) — защищённый
 фундамент Combat Lab / Map Editor, lifecycle и изолированные сценарии.
 [Combat Lab — WLC-06](../engineering/COMBAT_LAB_CONSOLIDATION.md) — единый редактор,

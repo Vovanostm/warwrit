@@ -12,6 +12,19 @@ Native setup/manual/auto/Pause/loss/reload/API restart/exact retry/terminal/repl
 Owner confirmed active-battle reinforcements unavailable; game rules unchanged.
 Screenshots and remaining limits are in the owning page. CI advisory; full M1 NOT_RUN.
 
+## WLC-07 — Unified Map Editor, 2026-11-08
+
+Coordinator/writer: codex/wlc-07-map-editor, .claude/worktrees/wlc-07.
+Owner authorizes implementation and standalone PR; no merge/deployment.
+Base fdbb0dc2 includes merged WLC-03/05. Preserve WLC-06's independent PR428.
+[Owning journeys, isolation and acceptance](UNIFIED_MAP_EDITOR.md).
+Status PUBLISHED [PR429](https://github.com/Vovanostm/warwrit/pull/429), implementation82cb5994. 52focused (3real PostgreSQL), native World/
+Battle journeys, artifact delivery/recovery, migration rollback, types/lint/
+architecture and production builds/artifact checks PASS. Current atlas v6 and
+canonical rules remain owners; drafts never change active worlds. CI/full suite/
+M1/deployment NOT_RUN; CI advisory, hosted completion not awaited.
+Owned test stand cleaned up. No merge authorization; PR ready for owner review.
+
 ## WLC-05 — Developer Playground Foundation, 2026-11-07
 
 Coordinator/writer: codex/wlc-05-playground, .claude/worktrees/wlc-05.

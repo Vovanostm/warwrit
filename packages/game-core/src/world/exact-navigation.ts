@@ -257,6 +257,22 @@ function polygon(points: readonly PointFp[]): Polygon {
     ],
   };
 }
+/** Preserve the failing authored object for editor diagnostics without changing the rule. */
+function authoredPolygon(shape: {
+  readonly polygon: readonly PointFp[];
+  readonly shapeId?: string;
+  readonly areaId?: string;
+}): Polygon {
+  try {
+    return polygon(shape.polygon);
+  } catch (error) {
+    if (!(error instanceof RangeError)) throw error;
+    throw Object.assign(new RangeError(error.message, { cause: error }), {
+      objectId: shape.shapeId ?? shape.areaId ?? 'boundary',
+    });
+  }
+}
+
 export function buildExactGeometry(region: NavigationRegion): ExactGeometry {
   const shapes = [
     ...region.terrainShapes,
@@ -268,11 +284,11 @@ export function buildExactGeometry(region: NavigationRegion): ExactGeometry {
     throw new RangeError('ROUTE_TOO_COMPLEX');
   const compiled = {
     region,
-    boundary: polygon(region.boundary),
-    terrain: region.terrainShapes.map((s) => polygon(s.polygon)),
-    overlays: region.overlayShapes.map((s) => polygon(s.polygon)),
-    blockers: region.blockingShapes.map((s) => polygon(s.polygon)),
-    danger: region.dangerAreaShapes.map((s) => polygon(s.polygon)),
+    boundary: authoredPolygon({ polygon: region.boundary }),
+    terrain: region.terrainShapes.map(authoredPolygon),
+    overlays: region.overlayShapes.map(authoredPolygon),
+    blockers: region.blockingShapes.map(authoredPolygon),
+    danger: region.dangerAreaShapes.map(authoredPolygon),
   };
   const buckets: GeometryBucket[] = [];
   for (let row = 0; row < region.rows; row++)

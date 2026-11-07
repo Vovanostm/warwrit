@@ -13,6 +13,15 @@ The old standalone lab is removed. New scenario schema2/content-v2 explicitly
 selects the game's bridge-v5 rules; v1 metadata remains readable but is not
 reinterpreted. The historical WLC-05 delivery/results below retain their boundary.
 
+## WLC-07 map-authoring extension — 2026-11-08
+
+`/dev/playground/maps` now opens the [Unified Map Editor](UNIFIED_MAP_EDITOR.md).
+It shares this authenticated/allowlisted scope but owns separate persistent map
+rows and versioned artifacts; combat sandbox schema/TTL remain unchanged.
+The map route no longer displays or activates a combat sandbox. The historical
+foundation journey below records the pre-editor state. Map content delivery
+registers immutable versions for new worlds only; it never assigns live world refs.
+
 ## Journey and scope
 
 An authenticated, allowlisted developer opens `/dev/playground`, sees a conspicuous
