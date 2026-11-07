@@ -2,12 +2,14 @@
 
 ## Repeat unfinished hunt #409 — 2026-11-07
 
-Coordinator/writer: codex/repeat-hunt-409, .claude/worktrees/repeat-hunt-409; base main1d0667ce.
+Coordinator/writer: codex/repeat-hunt-409-closeout, .claude/worktrees/repeat-hunt-409; implementation base main1d0667ce.
 Owner assignment: implement #409; on2026-11-07 the owner explicitly requested “merge, update main”.
 Merge of PR416, its documentation receipt and local main update are authorized. Deployment remains outside this mission.
 Reuse committed specification156e26e4 and implementation39d874a9; preserve the original branch and primary WIP.
 [Specification and current results](../wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07) own the behavior and evidence.
-PUBLISHED draft [PR416](https://github.com/Vovanostm/warwrit/pull/416), implemented head6d1b238e; NOT_MERGED.
+MERGED [PR416](https://github.com/Vovanostm/warwrit/pull/416) at12:01:02UTC as d19193da, expected head941a505f.
+Clean local main fast-forwarded to d19193da; reviewed head and merge have identical content.
+[Merge receipt](../wiki/mechanics/retreat.md#слияние-409-и-обновление-main--2026-11-07) records actual delivery and retained acceptance limits.
 Migration0020, multiple attempts/one current admission, fresh JOIN consent and exact living-hostile pools.
 Repeat card, helper LEAVE/reconfirmation, saved-request retry and immediate payout refresh are integrated with current main.
 Real PostgreSQL regression1PASS/24filteredSKIP; focused21PASS; public library builds, server/web types, scoped lint PASS.

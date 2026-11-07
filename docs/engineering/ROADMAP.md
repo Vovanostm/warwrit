@@ -34,13 +34,13 @@ preserved living enemies and no false trophy. Finite result UI is accepted;
 hostile escape was not reproduced in the ordinary native journey.
 [Owning result and limitations](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
 
-[#409](https://github.com/Vovanostm/warwrit/issues/409) is locally implemented on
-current main in `codex/repeat-hunt-409`: historical attempts, fresh JOIN consent,
+[#409](https://github.com/Vovanostm/warwrit/issues/409) implementation is merged in
+[PR416](https://github.com/Vovanostm/warwrit/pull/416), main d19193da: historical attempts, fresh JOIN consent,
 exact saved survivors and the ordinary repeat/retry/payout continuation.
 [Current evidence and remaining native criterion](../wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
 distinguish the passing SQL/prepared-save App journey from the unsuccessful new-company
-first-escape run. Draft [PR416](https://github.com/Vovanostm/warwrit/pull/416) publishes the implementation;
-full native first-escape acceptance and merge remain open.
+first-escape run. Full native first-escape acceptance remains open; merging the implementation
+does not close that criterion or issue #409.
 Captivity #377, helper replacement and a player battle archive remain separate scope.
 
 ## Target and authority
