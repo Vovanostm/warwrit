@@ -1,20 +1,17 @@
 # Warwrit current delivery plan
 
-## Same-company next contract #368 — 2026-11-07
+## Complete first ordinary loop #370 — 2026-11-07
 
-The recovery/payroll parent is the coordinator and owns #368 delivery and retained native resources.
-Owner requested “Next issue” after approved payroll PR338 mergedb1c7264e; #169/#167 are integrated.
-Writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrated main668dc68b unchanged.
-#368 native PASS on game sourceb1c7264e. Company2 accepted INVEST-02, recorded stock, inspected by day and reported to Agafya for40crowns.
-Night inspection was visibly unavailable; actual HTTP refusal was NOT_RUN. Cash693.94→733.94; next ordinary ration purchase4 leaves729.94.
-Owned API restart preserves the captured report exactly; paid quest/facts persist in UI and after-restart ordinary quest readback. Four quest receipts, one reward.
-[Owning checklist, actual result and limits](M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07). Independent finite journey ACCEPT; current-main retained-view smoke PASS.
-No product code changes were needed. Docs/plan/diff checks own closeout; full suite NOT_RUN; hosted CI not used as acceptance evidence.
-#368 documentation/result [PR413](https://github.com/Vovanostm/warwrit/pull/413) is PUBLISHED, NOT_MERGED. New-head merge requires separate owner approval.
-Initial HUNT-02 was the previous lost encounter, not a fresh hunt. No reset/respawn/reward was introduced; #380/#409 remain open.
-Retained resources include warwrit_payroll_native_20261105, PostgreSQL32769, Dex5618/API3598/RT3599/UI5398/relay3597; ignored output/playwright/next-contract368-20261107/.
-The next result after #368 closeout is #370 complete ordinary first-hour loop; #369 fresh-entry evidence has its own boundary. Full #177/#161 remain open.
-Preserve original wounded/dead histories, all saves, primary art/combat WIP and other writers. No automation/deploy authorization.
+Coordinator/writer codex/m1-full-loop-370 in .claude/worktrees/m1-full-loop-370, base main4a22a09c.
+Owner explicitly requested implement, review, merge and update main for #370. CI is advisory.
+#368/PR413 and #369 are integrated predecessors. Original #369 company is now GAME_OVER after later combat recovery checks.
+Retain that history. A fresh ordinary OIDC company «Первый круг» uses isolated DB warwrit_full_loop370_20261107.
+Own API3570/RT3571/UI5370, Dex5637 and browser transport proxy3572/Chrome5373. Retain all other worlds and processes.
+Ordinary opening/equips/food/offer PASS. Fixed prepaid-food departure after local hire; native same-company MOVE200/saved route PASS.
+[Owning journey, prerequisite correction and actual limits](M1_LOCAL_PLAYTEST.md#complete-first-ordinary-loop--370-2026-11-07).
+Food21/core+server+testkit types/lint PASS; independent source ACCEPT. Full suite/CI NOT_RUN.
+Current writes own the first-loop source fix only if reproduced, M1_LOCAL_PLAYTEST, m1-spec, CHANGELOG and this checkpoint/history.
+Independent final playable/source review is pending. Full #177/#161 remain open.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

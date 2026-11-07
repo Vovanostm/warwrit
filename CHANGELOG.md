@@ -9,6 +9,26 @@ requests.
 
 ## Unreleased
 
+### Check the complete ordinary first circle
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL owner-requested #370
+  implementation/review/merge/update-main mission from integrated main4a22a09c.
+  [Owning journey and acceptance](docs/engineering/M1_LOCAL_PLAYTEST.md#complete-first-ordinary-loop--370-2026-11-07)
+  records preserved #369 GAME_OVER and a fresh ordinary OIDC company in its own
+  named world. Opening, nine equips, actual food purchase/offer and travel are
+  exercised without state edits. Initial setup and stale-action retries are
+  recorded. Frozen install/shared builds/server+web types PASS. Remaining
+  combat/reward/care/rest/pay/next-contract/restart and independent review are
+  pending. Full suite/CI NOT_RUN. M1 remains open.
+- First blocker fixed in server travel-food/core physical-food. A history-backed
+  ration remainder no longer needs a local container when no new stock is due.
+  Core independently checks zero units, preserving real-source validation for
+  new food and old valid facts. Two fail-before regressions now pass among21
+  food checks; core/server/testkit types and scoped lint/format PASS. Actual
+  same-company native departure200 and saved route PASS, cash710 unchanged.
+  Independent source ACCEPT; playable critique pending. No migration/public API
+  or new stock/provider. [Wiki result](docs/wiki/m1-spec.md#полный-первый-круг--370-2026-11-07).
+
 ### Complete an authentic next contract with the retained company
 
 - 2026-11-07, `codex/m1-next-contract-368`, PUBLISHED #368 result in

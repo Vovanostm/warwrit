@@ -6354,3 +6354,22 @@ Historical PR-specific approvals remain scoped to their owning delivery; no Orca
 ## History
 
 [Prior delivery checkpoints and superseded planning baselines](CURRENT_PLAN_HISTORY.md) retain dated results and authority.
+
+## Same-company next contract #368 — 2026-11-07
+
+The recovery/payroll parent is the coordinator and owns #368 delivery and retained native resources.
+Owner requested “Next issue” after approved payroll PR338 mergedb1c7264e; #169/#167 are integrated.
+Writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrated main668dc68b unchanged.
+#368 native PASS on game sourceb1c7264e. Company2 accepted INVEST-02, recorded stock, inspected by day and reported to Agafya for40crowns.
+Night inspection was visibly unavailable; actual HTTP refusal was NOT_RUN. Cash693.94→733.94; next ordinary ration purchase4 leaves729.94.
+Owned API restart preserves the captured report exactly; paid quest/facts persist in UI and after-restart ordinary quest readback. Four quest receipts, one reward.
+[Owning checklist, actual result and limits](M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07). Independent finite journey ACCEPT; current-main retained-view smoke PASS.
+No product code changes were needed. Docs/plan/diff checks own closeout; full suite NOT_RUN; hosted CI not used as acceptance evidence.
+#368 documentation/result [PR413](https://github.com/Vovanostm/warwrit/pull/413) is PUBLISHED, NOT_MERGED. New-head merge requires separate owner approval.
+Initial HUNT-02 was the previous lost encounter, not a fresh hunt. No reset/respawn/reward was introduced; #380/#409 remain open.
+Retained resources include warwrit_payroll_native_20261105, PostgreSQL32769, Dex5618/API3598/RT3599/UI5398/relay3597; ignored output/playwright/next-contract368-20261107/.
+The next result after #368 closeout is #370 complete ordinary first-hour loop; #369 fresh-entry evidence has its own boundary. Full #177/#161 remain open.
+Preserve original wounded/dead histories, all saves, primary art/combat WIP and other writers. No automation/deploy authorization.
+
+2026-11-07 correction at #370 activation. PR413 is actually merged as4a22a09c,
+and #368 is CLOSED. Its earlier PUBLISHED/NOT_MERGED wording is historical.

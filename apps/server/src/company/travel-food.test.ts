@@ -464,6 +464,45 @@ describe('encounter food preparation', () => {
 });
 
 describe('departure food preparation', () => {
+  it('retains prepaid food when no container is accessible, and refuses its exhaustion', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const funded = advanceCompanySource(fixture.f.sources[0]!, '1001', 'departure-backed-meal');
+    const state = readCompanyCombatAggregateState({
+      economy: {
+        ...funded.root,
+        physical: {
+          ...funded.root.physical,
+          containers: funded.root.physical.containers.map((container) => ({
+            ...container,
+            location: { kind: 'AT', siteId: 'kamenny-brod', areaId: 'remote-food' },
+          })),
+        },
+      },
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    });
+    const party = state.economy.lifecycle.parties[0]!;
+    const boundary = {
+      kind: 'DEPARTURE' as const,
+      partyId: party.partyId,
+      location: party.location,
+      settledThroughTick: '1002',
+    };
+    const result = prepareTravelFoodFacts(state, '1002', 'backed-local-meal', boundary);
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind === 'PREPARED') {
+      expect(result.facts.length).toBeGreaterThan(0);
+      expect(result.facts.every((fact) => fact.containerId === undefined)).toBe(true);
+    }
+    expect(
+      prepareTravelFoodFacts(state, '2001', 'exhausted-local-meal', {
+        ...boundary,
+        settledThroughTick: '2001',
+      }),
+    ).toEqual({ kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' });
+  });
+
   it('lets one co-located current party carrier feed the entire party', () => {
     const initial = withoutFoodStock(departureState());
     const party = initial.economy.lifecycle.parties[0]!;

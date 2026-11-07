@@ -419,3 +419,126 @@ and persistence evidence. All-eight-contract, new-player first-hour, whole-scene
 art/device acceptance, capacity and full backup/restore remain outside #368.
 Scoped formatting, current-plan and whitespace checks PASS. Game suites NOT_RUN
 for this documentation-only closeout; hosted CI is not acceptance evidence here.
+
+## Complete first ordinary loop — #370, 2026-11-07
+
+Owner assignment is implement, review, merge and update main. Writer
+`codex/m1-full-loop-370` owns this continuation and its affected source/docs in
+`.claude/worktrees/m1-full-loop-370`, based on integrated main `4a22a09c`.
+The original dirty checkout and other stands remain independently owned.
+
+### Player result and rules
+
+Continue the ordinary new company prepared in #369 through a real hunt,
+source-bound trophy/reward, care, food-supported rest, lawful pay and a next
+available contract. Re-enter the same company after a real owned API restart.
+#368 supplies independent next-contract/payroll/recovery evidence but does not
+substitute for this company's first loop. Full eight-contract/M1 acceptance
+remains with #177/#161.
+
+- Normal journey uses ordinary sign-in, existing gear/supply/contract controls,
+  actual map travel and encounter commands, trophy pickup and presentation,
+  existing care/rest/payroll and the next offer.
+- Refused actions expose their actual location, capacity, money, condition or
+  time prerequisite. A defeat preserves casualties and the unfinished contract.
+  Missing proof never earns a reward. No manual clock/state/health/money edits.
+- Retry/re-entry must retain company/people, ownership, facts, exact cash and
+  receipts. Restart must not duplicate rewards, care, purchases or pay.
+- Existing company/domain command executor, world movement, durable encounter,
+  proof claim and payroll remain their respective owners. UI renders their
+  public projections. Fix only observed blockers through those boundaries.
+  No new game rule, schema, dependency or alternate persistence is planned.
+
+### Direct acceptance
+
+- [ ] Same #369 company and its accepted offer restored through normal sign-in.
+- [ ] Ordinary preparation/travel and actual combat produce a lawful trophy.
+- [ ] Pickup and presentation pay the existing bounty once.
+- [ ] Actual wounds/costs guide treatment, rest with food and lawful pay.
+- [ ] The company can accept its next available ordinary contract.
+- [ ] Owned API restart/re-entry retains the relevant state and once-only receipts.
+- [ ] Independent read-only review of current journey/images has no material defect.
+
+### Resources and initial limits
+
+Retain #369's original database `warwrit` on PostgreSQL54369. Its original
+API3528/UI5228 now point at a different retained defeat world, so this task uses
+API3570/realtime3571/UI5370. An owned browser transport proxy3572 forwards the
+existing OIDC-registered origin5228 to this UI, retaining the existing Dex5618
+issuer and original account/company identity. This forwards real HTTP/WebSocket
+traffic without game-response stubs. Other stands/Dex are not restarted.
+Local ignored evidence is `output/playwright/full-loop370/`.
+
+Initial frozen installation and game-core/protocol builds PASS. Initial server
+check failed because testkit had not been built in the fresh checkout; testkit
+was then built. Final affected checks and journey results are pending. Full
+suite/CI NOT_RUN under the owner's advisory verification policy.
+
+### Continuation correction before combat
+
+The original #369 company «Серая тропа»,161674f8-d8e7-4218-8396-dca31f7535ec,
+was subsequently used by the battle-recovery check and has already reached
+GAME_OVER. Ordinary OIDC re-entry on current main restored all three actual
+deaths,760crowns and the retained history. Its screenshot is reentry.png.
+This is the first unresolved prerequisite for literal continuation of that save.
+It was not reset or resurrected.
+
+To check the owner's requested complete new-company circle, a separate named
+database warwrit_full_loop370_20261107 and local Dex5637 were created. The
+original public test identity credentials are used through ordinary OIDC, then
+«Первый круг» was opened with «Дозор»,Rell and Mora. All nine existing gear
+actions completed, ten rations cost40crowns (800→760,27→37), and the local
+mill-worker offer was accepted. The circle will use the existing wolf hunt for
+combat/reward, with ordinary local recruitment if needed. No saved world was
+copied or edited. API3570/RT3571/UI5370 and browser proxy3572 remain task-owned.
+The proxy retains registered logical origin5228 and forwards actual traffic.
+
+Initial browser launch was blocked by the local process restriction, then a
+keychain prompt delayed navigation. A separately launched owned Chrome with
+basic password storage recovered. One initial page request preceded API readiness
+and recovered using the visible retry control. Rapid preparation produced two
+STALE_REVISION equipment refusals and one stale movement refusal. Refresh/retry
+through normal controls completed the same intended actions without duplicate
+effects. Server/web typechecks PASS after building the fresh testkit dependency.
+
+### First reproduced blocker and bounded fix
+
+Ordinary hire of Ratko at Kamenny Brod leaves the full three-person field party
+unchanged. He stays available locally with no carried container. Departure then
+returns422 KNOWN_SUPPLY_SHORTAGE with37rations in the party supply. An ordinary
+roster refresh opens one actual ration for him (37→36), but departure still
+refuses. The existing prepaid food remainder is already backed by that debit.
+Independent source review confirms the failure is requiring a local container
+again when the canonical next interval requires zero new stock units.
+
+Use the existing STOCK fulfillment representation with its optional containerId.
+The adapter may omit that container only when the existing canonical stock
+assessment requires zero units and no accessible source exists. Core independently
+validates the zero-unit condition, advances the same food carry/coverage and
+retains subject location, trusted source, replay and atomicity checks. A required
+new ration still needs an actual accessible source. Existing valid facts carrying
+a container retain their existing validation and behavior. No snapshot migration,
+new food grant/provider/container or public command change is needed.
+
+Affected owners are server company/travel-food.ts, core company/physical-food.ts
+and their existing food regressions. Direct checks cover backed remainder without
+a source, rejection at exhaustion, unchanged state on refusal and retained native
+departure after rebuilding the shared core. Long-term stationary provisioning
+remains a separate company/inventory capability. It does not become free food.
+
+### Food correction result
+
+Both affected regressions failed before correction with the expected source
+refusal. After the change all21 tests in the two food files PASS. Core, server
+and testkit typechecks, scoped ESLint/format PASS. Independent four-file source
+review ACCEPT confirms history-backed, membership-specific carry, zero-unit
+recomputation, unchanged existing-source checks and exhaustion refusal.
+
+Native retry on the same company returned200 and persisted MOVING at71, due116,
+without another stock grant or money change (710crowns). Ratko remains at Kamenny
+Brod with his already debited ration. Local before/after records are
+fed-refusal.json, fed-refusal-native.json, departure-after-fix.json/.png and
+moving-after-fix.json. This is an actual browser/API/PostgreSQL check, not an
+additional synthetic SQL scenario. The second ordinary account «Дорожная помощь»
+was opened/equipped through OIDC and travelled independently to Bereznyak for
+one opt-in helper. Primary-company reward/care/pay/restart remain unexecuted.

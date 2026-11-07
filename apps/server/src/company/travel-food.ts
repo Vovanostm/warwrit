@@ -146,8 +146,6 @@ function prepareStockFoodFacts(
           },
         ];
       });
-    if (sources.length === 0) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
-
     const storedCarry = BigInt(
       physical.foodCarry.find((entry) => entry.membershipId === requirement.membershipId)
         ?.tickUnits ?? '0',
@@ -169,11 +167,13 @@ function prepareStockFoodFacts(
         candidate.availableUnits - (reservedUnitsByContainer.get(candidate.containerId) ?? 0n) >=
         requiredUnits,
     );
-    if (!source) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
-    reservedUnitsByContainer.set(
-      source.containerId,
-      (reservedUnitsByContainer.get(source.containerId) ?? 0n) + requiredUnits,
-    );
+    if (!source && requiredUnits > 0n) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
+    if (source) {
+      reservedUnitsByContainer.set(
+        source.containerId,
+        (reservedUnitsByContainer.get(source.containerId) ?? 0n) + requiredUnits,
+      );
+    }
     carryByMembership.set(
       requirement.membershipId,
       (priorCarry + BigInt(requirement.tickUnits)) % BigInt(COMPANY_RULES.ticksPerDay),
@@ -195,7 +195,7 @@ function prepareStockFoodFacts(
       toTick: requirement.toTick,
       channel: 'STOCK',
       location: access.location,
-      containerId: source.containerId,
+      ...(source ? { containerId: source.containerId } : {}),
     });
   }
   return { kind: 'PREPARED', facts };
