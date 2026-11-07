@@ -1,20 +1,22 @@
 # Warwrit current delivery plan
 
-## Same-company next contract #368 — 2026-11-07
+## Complete first ordinary loop #370 — 2026-11-07
 
-The recovery/payroll parent is the coordinator and owns #368 delivery and retained native resources.
-Owner requested “Next issue” after approved payroll PR338 mergedb1c7264e; #169/#167 are integrated.
-Writer codex/m1-next-contract-368 in game-painted-map-client/warwrit/.claude/worktrees/payroll-integration; integrated main668dc68b unchanged.
-#368 native PASS on game sourceb1c7264e. Company2 accepted INVEST-02, recorded stock, inspected by day and reported to Agafya for40crowns.
-Night inspection was visibly unavailable; actual HTTP refusal was NOT_RUN. Cash693.94→733.94; next ordinary ration purchase4 leaves729.94.
-Owned API restart preserves the captured report exactly; paid quest/facts persist in UI and after-restart ordinary quest readback. Four quest receipts, one reward.
-[Owning checklist, actual result and limits](M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07). Independent finite journey ACCEPT; current-main retained-view smoke PASS.
-No product code changes were needed. Docs/plan/diff checks own closeout; full suite NOT_RUN; hosted CI not used as acceptance evidence.
-#368 documentation/result [PR413](https://github.com/Vovanostm/warwrit/pull/413) is PUBLISHED, NOT_MERGED. New-head merge requires separate owner approval.
-Initial HUNT-02 was the previous lost encounter, not a fresh hunt. No reset/respawn/reward was introduced; #380/#409 remain open.
-Retained resources include warwrit_payroll_native_20261105, PostgreSQL32769, Dex5618/API3598/RT3599/UI5398/relay3597; ignored output/playwright/next-contract368-20261107/.
-The next result after #368 closeout is #370 complete ordinary first-hour loop; #369 fresh-entry evidence has its own boundary. Full #177/#161 remain open.
-Preserve original wounded/dead histories, all saves, primary art/combat WIP and other writers. No automation/deploy authorization.
+Coordinator/writer codex/m1-full-loop-370 in .claude/worktrees/m1-full-loop-370, base main4a22a09c.
+Owner explicitly requested implement, review, merge and update main for #370. CI is advisory.
+#368/PR413 and #369 are integrated predecessors. Original #369 company is now GAME_OVER after later combat recovery checks.
+Retain that history. A fresh ordinary OIDC company «Первый круг» uses isolated DB warwrit_full_loop370_20261107.
+Own API3570/RT3571/UI5370, Dex5637 and browser transport proxy3572/Chrome5373. Retain all other worlds and processes.
+Ordinary opening/equips/food/offer/travel, six-allies victory, trophy/PRESENT PASS. Bounty80 once, treasury710→790.
+[Owning journey and actual limits](M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk).
+Food prepaid remainder and terminal evidence fixed. Failed discovery retry is visible; SETTLED feedback is neutral.
+Natural rest HP/stamina100, primary3 FIELD. At natural1001 food36→33, payroll29.65 allocated, CASH9.65 to Ratko,20pending physical handover.
+Company cash780.35/free760.35, original personal wallets remain at Severny Dvor. Existing WP-02.3 limitation retained.
+Next ordinary Следы на дороге accepted. Owned API/RT/web restart and ordinary OIDC re-entry PASS, complete pre-browser report equality.
+People/equipment/custody/health/contracts/proof/money/reservations and original once-only receipts retained after login.
+Food/recovery27PASS/1SKIP + web27PASS, server/web types/lint PASS. Bounded source and affected feedback critique ACCEPT.
+Final bounded source and finite journey/affected-feedback critique ACCEPT. Payroll allocation/target/locality corrected,11focused tests/types/lint PASS. [PR414](https://github.com/Vovanostm/warwrit/pull/414) PUBLISHED from f29e7d86, owner-authorized merge next. PR owns live delivery/merge receipt. Full suite/CI NOT_RUN. Broader art/full #177/#161 remain open.
+Keep task stand and all retained worlds available. Owner authorized merge/update main for this mission.
 
 ## Hostile-retreat result and next work — 2026-11-07
 

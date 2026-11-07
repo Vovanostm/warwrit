@@ -56,7 +56,7 @@ const readback = (
           cashQ: spendableQ,
           reservedQ: '0',
           spendableQ,
-          location: { kind: 'AT', siteId: 'village', areaId: 'square' },
+          location: { kind: 'AT', siteId: 'severny-dvor', areaId: 'square' },
         },
       ],
       services: [],
@@ -272,7 +272,7 @@ it('shows the restored targeted payee, amount, and campaign deadline through con
   });
 
   expect(host.textContent).toContain(
-    'Выплата записана: 9,17 кр. · выбранному получателю Rell. Книга компании обновлена.',
+    'Распределение жалованья записано. 9,17 кр. · выбранному получателю Rell. Книга компании обновлена.',
   );
   expect(sessionStorage.getItem('warwrit:payroll-attempt:account-a:company-a')).toBeNull();
 });
@@ -352,17 +352,22 @@ it('keeps a confirmed payment terminal when its following book readback fails', 
     }),
   );
   const host = await mount('account-a', 'company-a', undefined, 'panel');
+  expect(host.textContent).toContain('Распределить для Rell');
+  expect(host.textContent).toContain('Место кошелька — Северный Двор.');
+  expect(host.textContent).toContain('Для распределения нужен местный кошелёк.');
+  expect(host.textContent).toContain('Иначе принятая сумма резервируется и ждёт выдачи.');
+  expect(host.textContent).not.toContain('Получатель: Rell');
 
   await act(async () => {
     const button = [...host.querySelectorAll('button')].find((item) =>
-      item.textContent?.includes('Выплатить по очереди'),
+      item.textContent?.includes('Распределить по очереди'),
     )!;
     button.dispatchEvent(new dom!.window.MouseEvent('click', { bubbles: true }));
     await new Promise((resolve) => setTimeout(resolve, 0));
   });
 
   expect(host.textContent).toContain(
-    'Выплата записана: 0,000019 кр. · по очереди, но книгу компании не удалось обновить.',
+    'Распределение жалованья записано. 0,000019 кр. · по очереди. Книгу компании не удалось обновить.',
   );
   expect(host.textContent).not.toContain('Повторите эту же выплату');
   expect(host.textContent).toContain('Обновить книгу');

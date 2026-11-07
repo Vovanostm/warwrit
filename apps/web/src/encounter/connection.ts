@@ -1,4 +1,5 @@
 import { Callbacks, Client, CloseCode, type Room, type SeatReservation } from '@colyseus/sdk';
+import { lookup } from '../i18n/index.js';
 import type {
   EncounterControlGrantDto,
   EncounterCommandDto,
@@ -512,7 +513,11 @@ export async function connectEncounter(
     if (!signal.aborted && !closed) {
       terminate(
         lostAccess ? 'lost-access' : 'failed',
-        error instanceof Error ? error.message : 'Не удалось подключиться к бою.',
+        error instanceof TypeError
+          ? lookup('journey.encounter.network-error')
+          : error instanceof Error
+            ? error.message
+            : 'Не удалось подключиться к бою.',
       );
     }
     close();

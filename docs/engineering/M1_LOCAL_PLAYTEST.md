@@ -419,3 +419,356 @@ and persistence evidence. All-eight-contract, new-player first-hour, whole-scene
 art/device acceptance, capacity and full backup/restore remain outside #368.
 Scoped formatting, current-plan and whitespace checks PASS. Game suites NOT_RUN
 for this documentation-only closeout; hosted CI is not acceptance evidence here.
+
+## Complete first ordinary loop — #370, 2026-11-07
+
+Owner assignment is implement, review, merge and update main. Writer
+`codex/m1-full-loop-370` owns this continuation and its affected source/docs in
+`.claude/worktrees/m1-full-loop-370`, based on integrated main `4a22a09c`.
+The original dirty checkout and other stands remain independently owned.
+
+### Player result and rules
+
+Continue the ordinary new company prepared in #369 through a real hunt,
+source-bound trophy/reward, care, food-supported rest, lawful pay and a next
+available contract. Re-enter the same company after a real owned API restart.
+#368 supplies independent next-contract/payroll/recovery evidence but does not
+substitute for this company's first loop. Full eight-contract/M1 acceptance
+remains with #177/#161.
+
+- Normal journey uses ordinary sign-in, existing gear/supply/contract controls,
+  actual map travel and encounter commands, trophy pickup and presentation,
+  existing care/rest/payroll and the next offer.
+- Refused actions expose their actual location, capacity, money, condition or
+  time prerequisite. A defeat preserves casualties and the unfinished contract.
+  Missing proof never earns a reward. No manual clock/state/health/money edits.
+- Retry/re-entry must retain company/people, ownership, facts, exact cash and
+  receipts. Restart must not duplicate rewards, care, purchases or pay.
+- Existing company/domain command executor, world movement, durable encounter,
+  proof claim and payroll remain their respective owners. UI renders their
+  public projections. Fix only observed blockers through those boundaries.
+  No new game rule, schema, dependency or alternate persistence is planned.
+
+### Direct acceptance
+
+- [x] Ordinary sign-in restored #369 GAME_OVER. Preserve that save and use the
+      disclosed fresh ordinary company for this loop, as recorded below.
+- [x] Ordinary preparation/travel and actual combat produce a lawful trophy.
+- [x] Pickup and presentation pay the existing bounty once.
+- [x] Known absence of wounds explains unavailable care. Natural food-backed rest
+      restored100health/stamina. Due payroll allocated29.65, comprising9.65cash
+      and20pending physical handover, under existing payroll rules.
+- [x] The company accepted its next available ordinary contract.
+- [x] Owned API restart/re-entry retains the relevant state and once-only receipts.
+- [x] Independent read-only review of current journey/images has no material defect.
+
+### Resources and initial limits
+
+Retain #369's original database `warwrit` on PostgreSQL54369. Its original
+API3528/UI5228 now point at a different retained defeat world, so this task uses
+API3570/realtime3571/UI5370. An owned browser transport proxy3572 forwards the
+existing OIDC-registered origin5228 to this UI, retaining the existing Dex5618
+issuer and original account/company identity. This forwards real HTTP/WebSocket
+traffic without game-response stubs. Other stands/Dex are not restarted.
+Local ignored evidence is `output/playwright/full-loop370/`.
+
+Initial frozen installation and game-core/protocol builds PASS. Initial server
+check failed because testkit had not been built in the fresh checkout; testkit
+was then built. Final affected checks and journey results are pending. Full
+suite/CI NOT_RUN under the owner's advisory verification policy.
+
+### Continuation correction before combat
+
+The original #369 company «Серая тропа»,161674f8-d8e7-4218-8396-dca31f7535ec,
+was subsequently used by the battle-recovery check and has already reached
+GAME_OVER. Ordinary OIDC re-entry on current main restored all three actual
+deaths,760crowns and the retained history. Its screenshot is reentry.png.
+This is the first unresolved prerequisite for literal continuation of that save.
+It was not reset or resurrected.
+
+To check the owner's requested complete new-company circle, a separate named
+database warwrit_full_loop370_20261107 and local Dex5637 were created. The
+original public test identity credentials are used through ordinary OIDC, then
+«Первый круг» was opened with «Дозор»,Rell and Mora. All nine existing gear
+actions completed, ten rations cost40crowns (800→760,27→37), and the local
+mill-worker offer was accepted. The circle will use the existing wolf hunt for
+combat/reward, with ordinary local recruitment if needed. No saved world was
+copied or edited. API3570/RT3571/UI5370 and browser proxy3572 remain task-owned.
+The proxy retains registered logical origin5228 and forwards actual traffic.
+
+Initial browser launch was blocked by the local process restriction, then a
+keychain prompt delayed navigation. A separately launched owned Chrome with
+basic password storage recovered. One initial page request preceded API readiness
+and recovered using the visible retry control. Rapid preparation produced two
+STALE_REVISION equipment refusals and one stale movement refusal. Refresh/retry
+through normal controls completed the same intended actions without duplicate
+effects. Server/web typechecks PASS after building the fresh testkit dependency.
+
+### First reproduced blocker and bounded fix
+
+Ordinary hire of Ratko at Kamenny Brod leaves the full three-person field party
+unchanged. He stays available locally with no carried container. Departure then
+returns422 KNOWN_SUPPLY_SHORTAGE with37rations in the party supply. An ordinary
+roster refresh opens one actual ration for him (37→36), but departure still
+refuses. The existing prepaid food remainder is already backed by that debit.
+Independent source review confirms the failure is requiring a local container
+again when the canonical next interval requires zero new stock units.
+
+Use the existing STOCK fulfillment representation with its optional containerId.
+The adapter may omit that container only when the existing canonical stock
+assessment requires zero units and no accessible source exists. Core independently
+validates the zero-unit condition, advances the same food carry/coverage and
+retains subject location, trusted source, replay and atomicity checks. A required
+new ration still needs an actual accessible source. Existing valid facts carrying
+a container retain their existing validation and behavior. No snapshot migration,
+new food grant/provider/container or public command change is needed.
+
+Affected owners are server company/travel-food.ts, core company/physical-food.ts
+and their existing food regressions. Direct checks cover backed remainder without
+a source, rejection at exhaustion, unchanged state on refusal and retained native
+departure after rebuilding the shared core. Long-term stationary provisioning
+remains a separate company/inventory capability. It does not become free food.
+
+### Food correction result
+
+Both affected regressions failed before correction with the expected source
+refusal. After the change all21 tests in the two food files PASS. Core, server
+and testkit typechecks, scoped ESLint/format PASS. Independent four-file source
+review ACCEPT confirms history-backed, membership-specific carry, zero-unit
+recomputation, unchanged existing-source checks and exhaustion refusal.
+
+Native retry on the same company returned200 and persisted MOVING at71, due116,
+without another stock grant or money change (710crowns). Ratko remains at Kamenny
+Brod with his already debited ration. Local before/after records are
+fed-refusal.json, fed-refusal-native.json, departure-after-fix.json/.png and
+moving-after-fix.json. This is an actual browser/API/PostgreSQL check, not an
+additional synthetic SQL scenario. The second ordinary account «Дорожная помощь»
+was opened/equipped through OIDC and travelled independently to Bereznyak for
+one opt-in helper. Primary-company reward/care/pay/restart remain unexecuted.
+
+### Second blocker at the saved victory
+
+The same primary company and one physically arrived, consenting helper completed
+the existing wolf encounter through ordinary controls. All six allies survived;
+three wolves died at round4. Terminal application then refused with
+PHYSICAL_CONSEQUENCE_EVIDENCE_MISSING, leaving the real victory saved and no proof.
+The company-wide elapsed finance interval includes Ratko, but encounter food
+preparation filtered out every unbound member. His already backed meal therefore
+had no matching fulfillment fact.
+
+Prepare all actual food requirements for that company interval. Bound combatants
+retain frozen-party stock access. Unbound people may contribute only their own
+already backed zero-new-unit remainder, with their actual location and no stock
+container. A fresh meal still refuses without its real local source. Reuse the
+same core zero-unit validation. The existing retained encounter must settle on
+retry without replaying the battle, granting food, changing money or editing data.
+The regression must include a real financed unbound membership and an exhaustion
+case. This stays in the same food adapter and existing encounter-food test file.
+
+### Recoverable stale battle view after return
+
+Returning while the terminal worker was still pending left a failed battle panel.
+After the food repair, the actual reward was paid (710→790), active discovery
+returned encounterId=null, but that old error stayed visible without a retry.
+Add a connection-check button only to the failed, non-fullscreen panel, using its
+existing connection generation. It re-discovers server state and hides the panel
+when there is no active encounter. Stored commands retain their existing recovery
+path and server authority. Check the mounted failed→retry→no-active transition
+and the ordinary retained view, with no game-command POST required by the retry.
+
+### Completed-contract feedback
+
+The independent playable pass found that a paid hunt kept its travel instructions
+expanded above the settled-state message. Hide the route conversation for SETTLED
+contracts and retain the authoritative paid state, story, reward and trophy
+custody. Remove the exposed internal REDEEMED word from the paid trophy sentence.
+Check the actual paid card after the change through the normal company journal.
+
+### Combat, reward and rest checkpoint — 2026-11-07 03:54 MSK
+
+The retained round4 victory settled after the unbound-member food correction.
+Proof count changed0→1 without replaying combat. Native PICKUP/PRESENT paid
+exactly80crowns, treasury710→790, and marked that one trophy redeemed. The helper
+retained800crowns. Unique lawful bearer terms determine payment independently
+of OWNER/HELPER role. The completed card now uses neutral completion/custody
+feedback and hides obsolete route, reward and readiness conversations.
+
+A mounted failed-panel regression and native retry confirm fresh discovery hides
+the stale panel when the server has no active encounter. Gameplay POST count
+remained60→60. To expose the retry for a screenshot, two discovery GETs were
+intentionally aborted. The retry then used the real backend without response
+stubs or state writes. An early capture had transient map loading errors. Ordinary
+reload completed with tile loads/error-free GETs, retained in map-settled-after-reload.png
+and map-settled-current.png. Use those settled images for map observations.
+
+Known wound conditions are absent. The ordinary care panel explains why bandaging
+is unavailable. No wound or kit consumption was fabricated. All three field
+members were assigned RECOVERY in Kamenny Brod through the actual buttons, and
+native refresh/read-only snapshot already increased health56/60/53→57/61/54.
+Ratko remains healthy100 and local. Food36rations, treasury790 and medical kits2
+remain retained at this checkpoint. The next ordinary refresh will assess further
+recovery. Payroll is not due before natural tick1000, approximately08:27MSK.
+No clock edits are used. Pay, next offer and owned API restart remain pending.
+
+Focused food/recovery/terminal-evidence27PASS/1existingSKIP and web
+connection/retry/hunt27PASS. A first command named three obsolete test paths and
+ran only the actual travel-food file11PASS. The corrected three-file command
+produced the27PASS/1SKIP result above. Server/web types and scoped lint PASS.
+Independent source review ACCEPT covers the current food/UI/text changes, with
+no reviewer runtime tests. The all-bound-combatants-dead early return was not
+exercised and reachability of missing unbound evidence remains unproven. Full
+suite/CI NOT_RUN. Final affected visual/playable review remains pending.
+
+Touched feedback uses journey.ru.ts/journey.en.ts through the existing typed
+catalogue. Literal known keys return strings, dynamic IDs retain optional lookup.
+Transport TypeError now shows authored retry guidance, covered by the failed-fetch
+regression. Formal whole-scene art acceptance remains unassessed.
+
+### Visible retry correction — 2026-11-07 04:01 MSK
+
+The critic rejected the first unscrolled1440×900 retry capture because the error
+and retry button were below the map. The focused image proved wording only.
+Failed nonfullscreen discovery now scrolls its retry control into view. A fresh
+reload with discovery GET deliberately aborted required no manual scrolling.
+retry-localized-auto-visible.png shows the full error and button at y804.03,
+height36.19 within viewport900. Removing the deliberate network failure and
+clicking retry hid the panel, gameplay POST63→63. The panel's existing command
+recovery is preserved. Web connection/retry13PASS, types/lint PASS. Independent
+recheck remains pending. Native rest progress shows71/75/68 versus56/60/53.
+
+### Recovery completed before payroll — 2026-11-07 04:14 MSK
+
+Native refresh and read-only state at294 show all four living members100health.
+All three recovering field members also reached100stamina and were returned to
+FIELD through ordinary controls, one command each, by tick295. No wounds were
+present and both medical kits remain. The existing consumed ration/carry covers
+rest, stock36 unchanged during this fraction of the campaign day. Treasury790,
+proof1 redeemed and prior receipts remain retained. rest-full.png,
+field-restored.png and matching JSON capture that result. Payroll still shows its
+real end-of-day prerequisite and no payable overdue balance at tick295.
+
+Independent affected feedback review ACCEPT now includes the automatically
+visible Russian retry, corrected completed card and observed rest progress.
+Independent source recheck found no defect in the scroll effect. Broader art
+scores remain unassessed. Remaining native steps are pay at natural tick1000,
+next contract and owned API restart/re-entry. Preserve the live stand while waiting.
+
+### Full-circle retained result — 2026-11-07 08:34 MSK
+
+Natural waiting reached campaign1001 at08:28MSK. Native refresh retained
+four living100health/stamina members, the three field assignments, both kits,
+gear/custody and the redeemed trophy. Food36→33 reflects actual elapsed meals.
+No clock, health, money, game-state or response edit was used for the journey.
+
+The ordinary DEFAULT payroll button recorded29.65crowns at1002. Actual CASH
+payment9.65 reached Ratko, company790→780.35 and physician50→59.65. Mora/Rell
+have10each reserved as PENDING_CONFIRMATION, company free balance760.35.
+Their personal wallets remain physically at Severny Dvor, so these20crowns are
+awaiting handover, not cash paid. This is the existing accepted payroll/access
+boundary in [WP-02.3](../work-packages/WP-02.3.md#current-main-payroll-native-result--2026-11-06).
+The UI separates pending sums from issued money and shows no overdue unallocated
+claim. Personal-wallet movement/custody remains the broader-loop limitation.
+
+Next ordinary offer INVEST-01 «Следы на дороге» was read with its existing
+40crown terms and accepted at the Kamenny Brod bazaar. The journal shows the
+actual prerequisite for inspecting the bank at Tikhaya Gat, and its issuer/report
+step. Existing mill-worker and settled wolf records remain. No second contract
+completion or extra reward is claimed.
+
+Both browser pages were moved to about:blank, then the owned dev session stopped
+API3570/realtime3571/Vite5370. The same worktree/.env restarted with ordinary
+pnpm dev. A repeatable-read read-only report before browser return is deeply
+equal to before-restart.json, including the complete root, ordinary contracts,
+hunts, proof/custody, receipts and audit. Ordinary session re-entry then logout,
+Войти and local Dex OIDC login restored «Первый круг» and the same four people.
+The post-login check retains exact wallets/reservations, items/containers/custody,
+conditions, all original command receipts, hunt/proof and ordinary contract rows.
+Four additional maintenance observation receipts advanced time1002→1012 without
+duplicating the bounty, payroll or accepted offer. This is native UI/API/PostgreSQL
+persistence evidence, with no manufactured game responses or database writes.
+
+Ignored local evidence includes payroll-before.png, payroll-recorded.png,
+payroll-after-reentry.png, recovered-after-reentry.png,
+next-contract-accepted.png, next-contract-after-reentry.png and
+reward-after-reentry.png. Read-only records are payroll-matured.json,
+payroll-after.json, next-accepted.json, before-restart.json,
+after-restart-before-browser.json and after-reentry.json. A first ad-hoc key
+inspection looked for an absent economy.inventory property and failed. Corrected
+inspection/assertions used the actual economy.physical representation and passed.
+
+Final finite journey critique remains pending. The reviewed source is unchanged
+since e3adc8e4, with earlier bounded source and affected-feedback ACCEPT. The
+executed checks retain their recorded scope. Full suite/CI NOT_RUN under advisory
+policy. Broader art scoring, human playtest, all eight contracts and full M1
+acceptance remain open. A fresh company was required because the original #369
+save is GAME_OVER, as recorded above. The task publishes these fixes and the
+complete ordinary sequence with explicit care/payroll limits.
+
+### Payroll feedback correction — 2026-11-07
+
+The final critic found that allocation29.65 could read as cash paid although20
+awaits handover. The floating recipient label belongs to the next TARGETED
+button, but its spacing makes the DEFAULT button above look named. Use allocation
+wording for DEFAULT and accepted feedback, explain the wallet-access prerequisite,
+and place each targeted recipient in its own button label. Keep exact request,
+retry, reservation and payment semantics unchanged. Check existing mounted
+accepted/readback-failure cases and the available native helper payroll controls.
+
+The two existing mounted cases failed before correction and now pass among11
+payroll checks. Web types and scoped lint PASS. Native helper payroll shows
+allocation19.24 and separate named9.62 actions with the wallet-access explanation,
+retained in payroll-allocation-before.png. Its ordinary attempted command refused
+LOCATION_MISMATCH because the helper company purse remains at Severny Dvor.
+The expected accepted-status screenshot wait timed out30seconds. Fresh UI and
+read-only wallet/location facts confirmed the real refusal with no payment.
+payroll-allocation-refusal.png preserves that prerequisite. Primary readback
+payroll-allocation-primary.png retains9.65issued/20pending and the explanation.
+New accepted-status wording is covered by the mounted regression, with native
+post-edit accepted status NOT_RUN. Primary payment and restart evidence above
+remain unchanged. No clock/state mutation or extra travel was used to manufacture
+an accepted screenshot. Replacement callbacks preserve literal player names.
+
+The source reviewer found the first note omitted payer-wallet locality before
+promising recipient holds. The final paired note now states that allocation
+requires a local paying wallet, then distinguishes issued cash and an accepted
+allocation awaiting handover. This matches the native helper refusal and the
+accepted primary result. Requests and game state are unchanged.
+
+The critic additionally required the actual paying-wallet destination for a
+location refusal. The panel now renders the known AT payroll-pool site beside
+that pool, using existing place names. The mounted case checks Severny Dvor from
+the payroll snapshot even with no holdings-wallet entry. Native
+payroll-locality-final.png shows the helper purse at Severny Dvor, named actions
+and the final locality/hold note. payroll-primary-final.png shows Kamenny Brod
+with the retained issued/pending split. An earlier note-capture wait timed out
+because hot reload returned the active tab to Path and hid the mounted panel.
+Selecting the ordinary Отряд tab recovered the actual visible captures.
+Independent finite persistence review ACCEPT confirms the equal pre-browser
+reports and unchanged money/reservation/proof/ordinary-contract state after OIDC
+login, with prior command IDs retained. Final source/wording readback is pending.
+
+### Independent closeout — 2026-11-07
+
+Final bounded source review ACCEPT covers both food corrections, encounter retry,
+completed-hunt feedback and payroll allocation/locality wording. Final finite
+playable/affected-feedback critique ACCEPT covers the actual first loop and
+retained restart/login result with the stated fresh-company, no-wound and pending
+handover boundaries. The critic inspected current images and persisted reports,
+and did not operate gameplay controls. The post-edit accepted payroll status
+remains mounted-test evidence only. All confirmed material findings were corrected.
+
+Unique focused checks comprise27food/recovery/terminal tests with1existingSKIP,
+27web connection/retry/hunt tests and11payroll tests, plus affected types/lint.
+No migration, dependency, serialization-version or public protocol change.
+Publication and owner-authorized merge receipts belong to the delivery PR.
+Full suite/CI NOT_RUN. Formal art scoring and full #177/#161 remain open.
+
+### Published delivery — PR414, 2026-11-07
+
+[PR414](https://github.com/Vovanostm/warwrit/pull/414) publishes the reviewed
+source and native result from f29e7d86 on base4a22a09c. The owner explicitly
+authorized merge and updating main for #370. PR414 owns the actual expected-head
+merge receipt, hosted checks and issue closure. This publication closeout changes
+documents only, so game checks are not repeated. Current-plan/diff/readback are
+checked before commit. CI remains advisory. Retained task processes/worlds remain
+available, and the original dirty checkout is untouched.

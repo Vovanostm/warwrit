@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { lookup } from './i18n/index.js';
 
 import type {
   EncounterCommandDto,
@@ -99,6 +100,7 @@ export function EncounterPanel(props: {
   const commandSenderRef = useRef<EncounterCommandSender | undefined>(undefined);
   const pendingCommandRef = useRef<EncounterCommandDto | undefined>(undefined);
   const pendingAttemptRef = useRef<EncounterCommandAttempt | undefined>(undefined);
+  const retryButtonRef = useRef<HTMLButtonElement>(null);
   const commandSending = useRef(false);
   const commandGeneration = useRef(0);
   const selectedRef = useRef<string | null>(null);
@@ -298,6 +300,11 @@ export function EncounterPanel(props: {
       body.style.overflow = bodyOverflow;
     };
   }, [isFullscreen]);
+  useEffect(() => {
+    if (!isFullscreen && scopedState?.status === 'failed')
+      retryButtonRef.current?.scrollIntoView?.({ block: 'center' });
+  }, [isFullscreen, scopedState?.status]);
+
   const pendingCommand = scopedState?.pendingCommand;
   const tactical =
     projection !== undefined &&
@@ -373,6 +380,16 @@ export function EncounterPanel(props: {
         <p className="encounter-message" role="status">
           {scopedState.message}
         </p>
+      )}
+      {!presentation && scopedState?.status === 'failed' && (
+        <button
+          ref={retryButtonRef}
+          type="button"
+          className="quiet-action"
+          onClick={() => setConnectionGeneration((generation) => generation + 1)}
+        >
+          {lookup('journey.encounter.retry')}
+        </button>
       )}
       {isFullscreen && (
         <EncounterLiveLane

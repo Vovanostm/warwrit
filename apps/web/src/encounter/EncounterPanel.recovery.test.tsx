@@ -109,6 +109,34 @@ describe('EncounterPanel command recovery', () => {
     harness.stop.mockClear();
   });
 
+  it('lets a failed battle check rediscover that the company has already left combat', async () => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+    container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () =>
+      root!.render(
+        createElement(EncounterPanel, {
+          scope,
+          hideWhenIdle: true,
+          onUnauthorized: () => undefined,
+        }),
+      ),
+    );
+    await act(async () => harness.observers.at(-1)!['onStatus']!('failed' as never));
+    const retry = [...container.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Повторить проверку боя',
+    );
+    expect(retry).toBeDefined();
+    await act(async () => retry!.click());
+    expect(harness.stop).toHaveBeenCalledTimes(1);
+    expect(harness.observers).toHaveLength(2);
+    await act(async () => harness.observers.at(-1)!['onStatus']!('no-active' as never));
+    expect(container.textContent).toBe('');
+  });
+
   it('retains and restores a pending command when its accepted response arrives after unmount', async () => {
     (
       globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }

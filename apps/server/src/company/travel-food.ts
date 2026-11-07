@@ -146,8 +146,6 @@ function prepareStockFoodFacts(
           },
         ];
       });
-    if (sources.length === 0) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
-
     const storedCarry = BigInt(
       physical.foodCarry.find((entry) => entry.membershipId === requirement.membershipId)
         ?.tickUnits ?? '0',
@@ -169,11 +167,13 @@ function prepareStockFoodFacts(
         candidate.availableUnits - (reservedUnitsByContainer.get(candidate.containerId) ?? 0n) >=
         requiredUnits,
     );
-    if (!source) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
-    reservedUnitsByContainer.set(
-      source.containerId,
-      (reservedUnitsByContainer.get(source.containerId) ?? 0n) + requiredUnits,
-    );
+    if (!source && requiredUnits > 0n) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
+    if (source) {
+      reservedUnitsByContainer.set(
+        source.containerId,
+        (reservedUnitsByContainer.get(source.containerId) ?? 0n) + requiredUnits,
+      );
+    }
     carryByMembership.set(
       requirement.membershipId,
       (priorCarry + BigInt(requirement.tickUnits)) % BigInt(COMPANY_RULES.ticksPerDay),
@@ -195,7 +195,7 @@ function prepareStockFoodFacts(
       toTick: requirement.toTick,
       channel: 'STOCK',
       location: access.location,
-      containerId: source.containerId,
+      ...(source ? { containerId: source.containerId } : {}),
     });
   }
   return { kind: 'PREPARED', facts };
@@ -411,7 +411,7 @@ export function prepareTravelFoodFacts(
   );
 }
 
-/** Prepare only company-owned rations within the still-active encounter's frozen party. */
+/** Settle frozen-party stock and already-backed meals for other company members. */
 export function prepareEncounterFoodFacts(
   state: CompanyCombatAggregateState,
   toTick: string,
@@ -494,8 +494,7 @@ export function prepareEncounterFoodFacts(
       lifecycle,
       toTick as typeof finance.processedTick,
     ).requirements.filter(
-      (requirement): requirement is FoodRequirement =>
-        requirement.kind === 'FOOD_CONSUMPTION' && boundMembershipIds.has(requirement.membershipId),
+      (requirement): requirement is FoodRequirement => requirement.kind === 'FOOD_CONSUMPTION',
     );
   } catch {
     return { kind: 'REJECTED', reason: 'INVALID_STATE' };
@@ -506,9 +505,12 @@ export function prepareEncounterFoodFacts(
     toTick,
     requirements,
     (membership, character) => {
+      if (membership.companyId !== lifecycle.companyId)
+        return { kind: 'REJECT', reason: 'INVALID_STATE' };
+      // Other people retain their own funded remainder, never access to the fighting party's stock.
+      if (!boundMembershipIds.has(membership.membershipId))
+        return { kind: 'ALLOW', location: character.presence.location, containers: [] };
       if (
-        membership.companyId !== lifecycle.companyId ||
-        !boundMembershipIds.has(membership.membershipId) ||
         !participantIds.has(character.identity.characterId) ||
         character.presence.fieldPartyId !== partyId ||
         character.presence.location.kind !== 'AT' ||

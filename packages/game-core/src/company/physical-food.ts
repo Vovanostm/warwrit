@@ -374,20 +374,32 @@ export function settleFoodConsumption(
   let units = 0n;
   if (fact.channel === 'STOCK') {
     requirePhysical(
-      fact.containerId !== undefined &&
-        fact.providerId === undefined &&
+      fact.providerId === undefined &&
         fact.amountQ === undefined &&
         fact.poolId === undefined &&
         fact.providerWalletId === undefined &&
         fact.moneyAccessEvidenceId === undefined,
       'INVALID_SOURCE',
     );
-    const container = physicalContainer(physical, fact.containerId);
-    requirePhysical(sameLocation(container.location, fact.location), 'INVALID_SOURCE');
+    const containerIds: string[] = [];
+    if (fact.containerId !== undefined) {
+      const container = physicalContainer(physical, fact.containerId);
+      requirePhysical(sameLocation(container.location, fact.location), 'INVALID_SOURCE');
+      containerIds.push(container.containerId);
+    } else {
+      // An already opened ration needs no new stock access until its funded time is exhausted.
+      requirePhysical(
+        stockUnitsForRequirement(
+          requirement,
+          foodCarryUnits(physical, requirement.membershipId),
+        ) === 0n,
+        'INVALID_SOURCE',
+      );
+    }
     const settled = settleStockFood(
       requirement,
       physical,
-      [container.containerId],
+      containerIds,
       fact.sourceEventId,
       context.atTick,
     );

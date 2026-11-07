@@ -282,7 +282,53 @@ describe('WP-02.4 — adversarial recovery and fulfillment review', () => {
     expect(first.physical!.foodCarry[0]?.tickUnits).toBe('1');
     const split = advance(JSON.parse(JSON.stringify(first)), 1000).next;
     const whole = advance(initial, 1000).next;
-    for (const state of [split, whole]) {
+    const resumed = JSON.parse(JSON.stringify(first)) as CompanyEconomyState;
+    const cmd = command(
+      resumed,
+      'AdvanceCampaign',
+      { toTick: '1000', authoritativeInputs: [] },
+      'backed-meal-without-container',
+      'SYSTEM',
+    );
+    const fact: PhysicalEvidence = {
+      ...physicalScope(resumed, 'backed-meal', tick(1000)),
+      kind: 'FOOD_FULFILLMENT',
+      membershipId: 'service-leader',
+      fromTick: tick(1),
+      toTick: tick(1000),
+      channel: 'STOCK',
+      location: place,
+    };
+    const withoutContainer = prepared(
+      prepareCompanyEconomy(resumed, cmd, {
+        ...context(resumed, cmd),
+        physicalFacts: [fact],
+      }),
+    ).next;
+    expect(
+      prepared(prepareCompanyEconomy(withoutContainer, cmd, context(withoutContainer, cmd))).next,
+    ).toBe(withoutContainer);
+    const exhausted = command(
+      withoutContainer,
+      'AdvanceCampaign',
+      { toTick: '1001', authoritativeInputs: [] },
+      'exhausted-meal-without-container',
+      'SYSTEM',
+    );
+    const refused = prepareCompanyEconomy(withoutContainer, exhausted, {
+      ...context(withoutContainer, exhausted),
+      physicalFacts: [
+        {
+          ...fact,
+          ...physicalScope(withoutContainer, 'exhausted-meal', tick(1001)),
+          fromTick: tick(1000),
+          toTick: tick(1001),
+        },
+      ],
+    });
+    expect(refused).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(refused.state).toBe(withoutContainer);
+    for (const state of [split, whole, withoutContainer]) {
       expect(state.physical!.food.reduce((n, f) => n + BigInt(f.unitsConsumed), 0n)).toBe(1n);
       expect(state.physical!.foodCarry[0]?.tickUnits).toBe('0');
       expect(health(state, 'leader')).toBe(100);

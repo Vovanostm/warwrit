@@ -35,11 +35,37 @@ function departureState(carrierCharacterId = 'a-leader'): CompanyCombatAggregate
   return readCompanyCombatAggregateState(fixture.state);
 }
 
-function encounterStateWithBackedFractionalCarry(): CompanyCombatAggregateState {
+function encounterStateWithBackedFractionalCarry(
+  stationaryMember = false,
+): CompanyCombatAggregateState {
   const fixture = createCompanyCombatAggregateFixture();
-  const sources = fixture.f.sources.map((source, index) =>
-    advanceCompanySource(source, '1500', `fractional-${index}`),
-  );
+  const sources = fixture.f.sources.map((source, index) => {
+    const preparedSource =
+      stationaryMember && index === 0
+        ? {
+            ...source,
+            root: {
+              ...source.root,
+              lifecycle: {
+                ...source.root.lifecycle,
+                characters: source.root.lifecycle.characters.map((character) =>
+                  character.identity.characterId === 'a-worker-1'
+                    ? {
+                        ...character,
+                        presence: {
+                          ...character.presence,
+                          fieldPartyId: null,
+                          assignment: 'NONE' as const,
+                        },
+                      }
+                    : character,
+                ),
+              },
+            },
+          }
+        : source;
+    return advanceCompanySource(preparedSource, '1500', `fractional-${index}`);
+  });
   const initialRoot = sources[0]!.root;
   const initialState = readCompanyCombatAggregateState({
     economy: initialRoot,
@@ -54,6 +80,15 @@ function encounterStateWithBackedFractionalCarry(): CompanyCombatAggregateState 
       ...party,
       revision: sources.find((source) => source.root.lifecycle.companyId === party.companyId)!.root
         .lifecycle.revision,
+      members: party.members.filter((member) =>
+        sources
+          .find((source) => source.root.lifecycle.companyId === party.companyId)!
+          .root.lifecycle.characters.some(
+            (character) =>
+              character.identity.characterId === member.characterId &&
+              character.presence.fieldPartyId !== null,
+          ),
+      ),
     })),
   };
   const begun = prepareBeginCombatAggregate(initialState, sources, fixture.f.request, position);
@@ -313,6 +348,38 @@ function carried(
 }
 
 describe('encounter food preparation', () => {
+  it('includes an unbound member’s backed meal without borrowing encounter stock', () => {
+    const initial = encounterStateWithBackedFractionalCarry(true);
+    const state = readCompanyCombatAggregateState(
+      appendStock(initial, partySupply(initial, 'bound-party-food'), 10),
+    );
+    const membership = state.economy.lifecycle.memberships.find(
+      (member) => member.characterId === 'a-worker-1',
+    )!;
+    const person = state.economy.lifecycle.characters.find(
+      (character) => character.identity.characterId === membership.characterId,
+    )!;
+    expect(person.presence.fieldPartyId).toBeNull();
+    const result = prepareEncounterFoodFacts(state, '1501', 'unbound-backed-meal');
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind === 'PREPARED') {
+      const fact = result.facts.find((entry) => entry.membershipId === membership.membershipId);
+      expect(fact).toMatchObject({
+        channel: 'STOCK',
+        fromTick: '1500',
+        toTick: '1501',
+        location: person.presence.location,
+      });
+      expect(fact?.containerId).toBeUndefined();
+    }
+    const before = structuredClone(state);
+    expect(prepareEncounterFoodFacts(state, '2001', 'unbound-exhausted-meal')).toEqual({
+      kind: 'REJECTED',
+      reason: 'INSUFFICIENT_ITEMS',
+    });
+    expect(state).toEqual(before);
+  });
+
   it('returns no facts at the current campaign tick and rejects an earlier tick', () => {
     const state = encounterState();
     const currentTick = state.economy.lifecycle.campaignTick;
@@ -464,6 +531,45 @@ describe('encounter food preparation', () => {
 });
 
 describe('departure food preparation', () => {
+  it('retains prepaid food when no container is accessible, and refuses its exhaustion', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const funded = advanceCompanySource(fixture.f.sources[0]!, '1001', 'departure-backed-meal');
+    const state = readCompanyCombatAggregateState({
+      economy: {
+        ...funded.root,
+        physical: {
+          ...funded.root.physical,
+          containers: funded.root.physical.containers.map((container) => ({
+            ...container,
+            location: { kind: 'AT', siteId: 'kamenny-brod', areaId: 'remote-food' },
+          })),
+        },
+      },
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    });
+    const party = state.economy.lifecycle.parties[0]!;
+    const boundary = {
+      kind: 'DEPARTURE' as const,
+      partyId: party.partyId,
+      location: party.location,
+      settledThroughTick: '1002',
+    };
+    const result = prepareTravelFoodFacts(state, '1002', 'backed-local-meal', boundary);
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind === 'PREPARED') {
+      expect(result.facts.length).toBeGreaterThan(0);
+      expect(result.facts.every((fact) => fact.containerId === undefined)).toBe(true);
+    }
+    expect(
+      prepareTravelFoodFacts(state, '2001', 'exhausted-local-meal', {
+        ...boundary,
+        settledThroughTick: '2001',
+      }),
+    ).toEqual({ kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' });
+  });
+
   it('lets one co-located current party carrier feed the entire party', () => {
     const initial = withoutFoodStock(departureState());
     const party = initial.economy.lifecycle.parties[0]!;

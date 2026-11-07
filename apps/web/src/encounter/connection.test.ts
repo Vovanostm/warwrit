@@ -177,6 +177,22 @@ describe('authenticated encounter re-entry', () => {
     connection.close();
   });
 
+  it('localizes a failed network request before offering a new connection check', async () => {
+    const observed = observer();
+    const clientFactory = vi.fn();
+    const connection = await connectEncounter({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      signal: new AbortController().signal,
+      observer: observed,
+      fetcher: async () => { throw new TypeError('Failed to fetch'); },
+      createClient: clientFactory,
+    });
+    expect(observed.statuses).toEqual(['discovering', 'failed']);
+    expect(observed.errors).toEqual(['Не удалось связаться с сервером боя. Повторите проверку.']);
+    expect(clientFactory).not.toHaveBeenCalled();
+    connection.close();
+  });
+
   it('does not connect anonymously and requests session restoration', async () => {
     const clientFactory = vi.fn();
     const observed = observer();

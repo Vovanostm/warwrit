@@ -9,6 +9,94 @@ requests.
 
 ## Unreleased
 
+### Publish the reviewed complete first-loop result
+
+- 2026-11-07, `codex/m1-full-loop-370`, PUBLISHED in
+  [PR414](https://github.com/Vovanostm/warwrit/pull/414), reviewed source f29e7d86
+  on main4a22a09c. Native loop/restart/OIDC retention and finite source/playable
+  review ACCEPT with the documented fresh-company, no-wound and pending-pay
+  limits. [Owning delivery record](docs/engineering/M1_LOCAL_PLAYTEST.md#published-delivery--pr414-2026-11-07)
+  links actual checks and retained resources. Owner explicitly authorized merge
+  and updating main, with the PR owning its actual merge receipt/date. This
+  closeout changes documents only. Repeated game checks NOT_RUN, CI advisory.
+
+### Distinguish payroll allocation from cash handover
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL final critic correction in web
+  PayrollPanel/use-payroll and journey translations. Actions now say allocate,
+  targeted buttons include their recipient, and accepted feedback records the
+  allocation. The visible wallet-access explanation separates cash issue from
+  pending reservation. Requests/payment semantics are unchanged. Two existing
+  mounted cases failed before correction,11payroll checks/types/lint PASS after.
+  [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#payroll-feedback-correction--2026-11-07)
+  records native action/readback/refusal and the missing post-edit accepted-status
+  capture. Known wallet destinations now appear beside the paying pool, and the
+  note explicitly requires payer locality before recipient cash/hold handling. Native primary payroll/restart evidence retains its scope. CI NOT_RUN.
+
+### Retain the complete first ordinary circle across restart
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 completion candidate.
+  Native entry/preparation/travel/combat/trophy80reward/rest100/payroll/next-offer
+  and owned API/realtime/web restart/OIDC re-entry exercised without clock or
+  saved-state edits. Due payroll29.65 comprises9.65cash to Ratko and20pending
+  handover under the existing remote-wallet boundary. Company cash780.35/free760.35,
+  food33, no known wound, both kits retained. The complete pre-browser restart
+  report is equal, and re-entry retains people/items/custody/money/contracts/proof
+  and original receipts without duplicate effects. [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk)
+  records fresh-company provenance, actual checks and remaining broader limits.
+  Final bounded source and finite journey/feedback review ACCEPT; publication pending. Full suite/CI NOT_RUN.
+
+### Complete natural rest before the first payroll
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 native result. The three
+  unwounded fighters recovered to100health/stamina with backed food and returned
+  FIELD at tick295. Treasury790, stock36 and medical kits2 retained. Source and
+  finite changed-feedback critique ACCEPT. [Owning checkpoint](docs/engineering/M1_LOCAL_PLAYTEST.md#recovery-completed-before-payroll--2026-11-07-0414-msk)
+  retains pay/next/restart as pending until natural campaign maturity. No new code
+  or tests in this checkpoint. Full suite/CI NOT_RUN.
+
+### Keep battle recovery visible in the desktop viewport
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 critic correction in
+  EncounterPanel. Failed discovery now scrolls its retry into view after the
+  initial desktop screenshot showed it below the map. Fresh native capture
+  confirms visible message/control without manual scrolling and successful
+  real discovery retry with zero gameplay POSTs. Web13PASS/types/lint PASS.
+  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#visible-retry-correction--2026-11-07-0401-msk)
+  retains provenance and the pending final review. Full suite/CI NOT_RUN.
+
+### Preserve the ordinary victory and make its result readable
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 continuation. Server encounter
+  food preparation now includes a stationary member's already-backed meal while
+  keeping combat-party stock access scoped. The actual retained victory settled,
+  one trophy paid80crowns once. Web failed discovery offers retry, and completed
+  hunts hide stale instructions and use neutral translated bearer feedback.
+  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#combat-reward-and-rest-checkpoint--2026-11-07-0354-msk)
+  records native rest, known absence of wounds and pending natural pay/restart.
+  Food/recovery27PASS/1existingSKIP, web27PASS, server/web types/lint PASS, source
+  review ACCEPT. Full suite/CI NOT_RUN. No schema, dependency or game-rule change.
+
+### Check the complete ordinary first circle
+
+- 2026-11-07, `codex/m1-full-loop-370`, LOCAL owner-requested #370
+  implementation/review/merge/update-main mission from integrated main4a22a09c.
+  [Owning journey and acceptance](docs/engineering/M1_LOCAL_PLAYTEST.md#complete-first-ordinary-loop--370-2026-11-07)
+  records preserved #369 GAME_OVER and a fresh ordinary OIDC company in its own
+  named world. Opening, nine equips, actual food purchase/offer and travel are
+  exercised without state edits. Initial setup and stale-action retries are
+  recorded. Frozen install/shared builds/server+web types PASS. Remaining
+  combat/reward/care/rest/pay/next-contract/restart and independent review are
+  pending. Full suite/CI NOT_RUN. M1 remains open.
+- First blocker fixed in server travel-food/core physical-food. A history-backed
+  ration remainder no longer needs a local container when no new stock is due.
+  Core independently checks zero units, preserving real-source validation for
+  new food and old valid facts. Two fail-before regressions now pass among21
+  food checks; core/server/testkit types and scoped lint/format PASS. Actual
+  same-company native departure200 and saved route PASS, cash710 unchanged.
+  Independent source ACCEPT; playable critique pending. No migration/public API
+  or new stock/provider. [Wiki result](docs/wiki/m1-spec.md#полный-первый-круг--370-2026-11-07).
+
 ### Complete an authentic next contract with the retained company
 
 - 2026-11-07, `codex/m1-next-contract-368`, PUBLISHED #368 result in

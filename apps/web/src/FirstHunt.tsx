@@ -330,38 +330,46 @@ export function FirstHunt(
           </p>
           {huntText.brief && <p className="contract-brief">{huntText.brief}</p>}
           <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
-          <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
-            <summary>Куда идти и что потребуется?</summary>
-            <p>
-              Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-              {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
-              убедитесь, что у отряда есть провизия.
-            </p>
-          </details>
-          <details className="contract-conversation">
-            <summary>Как получить награду?</summary>
-            <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
-            <p>
-              Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
-              второй компании добровольна; выплата не делится. Принятые условия фиксированы.
-            </p>
-          </details>
+          {contract.knownState !== 'SETTLED' && (
+            <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
+              <summary>Куда идти и что потребуется?</summary>
+              <p>
+                Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
+                {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
+                убедитесь, что у отряда есть провизия.
+              </p>
+            </details>
+          )}
+          {contract.knownState !== 'SETTLED' && (
+            <details className="contract-conversation">
+              <summary>Как получить награду?</summary>
+              <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
+              <p>
+                Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
+                второй компании добровольна; выплата не делится. Принятые условия фиксированы.
+              </p>
+            </details>
+          )}
           <dl>
             <dt>Ваша роль</dt>
             <dd>{firstHuntRoleLabel(contract.yourRole)}</dd>
             <dt>Состояние</dt>
             <dd>{firstHuntStateLabel(contract)}</dd>
-            <dt>Слот помощника</dt>
-            <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
-            <dt>Готовность к бою</dt>
-            <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
+            {contract.knownState !== 'SETTLED' && (
+              <>
+                <dt>Слот помощника</dt>
+                <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
+                <dt>Готовность к бою</dt>
+                <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
+              </>
+            )}
           </dl>
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
             <p className="state-note">
               Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
               {contract.yourProof.redemption === 'REDEEMED'
-                ? 'выплата получена, отметка REDEEMED'
+                ? lookup('journey.hunt.redeemed')
                 : 'ещё не предъявлен'}
               .
             </p>
@@ -548,7 +556,7 @@ export function firstHuntStateLabel(
     case 'PROOF_HELD':
       return contract.yourProof ? 'трофей у вашей компании' : 'трофей удерживается участником';
     case 'SETTLED':
-      return 'выплата завершена';
+      return lookup('journey.hunt.settled');
   }
 }
 
@@ -601,7 +609,7 @@ export function firstHuntGuidance(
         ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
         : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
     case 'SETTLED':
-      return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+      return lookup('journey.hunt.settled-guidance');
   }
 }
 

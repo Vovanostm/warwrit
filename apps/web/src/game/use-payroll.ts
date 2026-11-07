@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { lookup } from '../i18n/index.js';
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 import { postPayrollAttempt, readPayrollAttempt } from './payroll-attempt.js';
 import type { PayrollAttempt } from './payroll-attempt.js';
@@ -128,7 +129,7 @@ export function usePayroll(
     setStored(undefined);
     setMessage(
       result.kind === 'ACCEPTED'
-        ? `Выплата записана: ${description}. Сверяем книгу компании.`
+        ? lookup('journey.payroll.recorded-refreshing').replace('{payment}', () => description)
         : `${rejectionMessage(result.code)} Выплата: ${description}.`,
     );
     setFresh(false);
@@ -138,12 +139,14 @@ export function usePayroll(
       if (generation === scopeGeneration.current) {
         setFresh(false);
         if (result.kind === 'ACCEPTED')
-          setMessage(`Выплата записана: ${description}, но книгу компании не удалось обновить.`);
+          setMessage(
+            lookup('journey.payroll.recorded-unavailable').replace('{payment}', () => description),
+          );
       }
       return;
     }
     if (generation === scopeGeneration.current && result.kind === 'ACCEPTED')
-      setMessage(`Выплата записана: ${description}. Книга компании обновлена.`);
+      setMessage(lookup('journey.payroll.recorded').replace('{payment}', () => description));
   }
 
   async function recoverPayrollAttempt(
