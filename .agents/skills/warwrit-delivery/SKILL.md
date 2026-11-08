@@ -82,7 +82,7 @@ operational checkpoint and PR summary short and link that result. Do not create
 parallel evidence inventories or mandatory handoff templates.
 
 For a material correction, record its cause with the affected evidence. For a
-harness evaluation, use [HARNESS_EVAL](../../../docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+harness evaluation, use [HARNESS_EVAL](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
 to include first-submission/eventual acceptance, failed/unfinished attempts and
 available parent/child effort. Keep missing measurements explicit and reuse logs.
 

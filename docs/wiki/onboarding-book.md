@@ -655,8 +655,8 @@ NOT_MEASURED / NOT_RUN. Платежи, запасы, профили и игро
 
 ## B8 — два варианта для выбора владельца — 2026-10-07
 
-Контракт: [B8](../engineering/briefs/2026-10-07/B8-company-book.md) и
-[00-common](../engineering/briefs/2026-10-07/00-common.md). Исходный commit:
+Контракт: [B8](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/B8-company-book.md) и
+[00-common](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/00-common.md). Исходный commit:
 `b7ffefcdfa699d2feb587059eb926480ae891dcb`, ветка `codex/b8-company-book`.
 Это две постановки одного происхождения, не новые backgrounds или общая
 катастрофа мира. Реплики и действия — предложения для личного вступления

@@ -260,7 +260,7 @@ reconstruct the missing archive catalogue. M2 public MMO, PvP, trading and
 listed M1 sources.
 
 The operational scheduling amendment
-([M1_EXECUTION_READINESS.md](M1_EXECUTION_READINESS.md)) selects I02a as a
+([M1_EXECUTION_READINESS.md](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_EXECUTION_READINESS.md)) selects I02a as a
 consumer-readiness checkpoint to avoid the conditional F01 rescue-producer
 cycle. I02a requires completed H01–H08 and I01 and real durable verification of
 the named consumer subset. It does not waive H or ID03 and is not full I02.
@@ -578,4 +578,4 @@ do not add one per helper or replace gameplay proof with structural snapshots.
 | Rami Ismail, [Prototypes and vertical slice](https://ltpf.ramiismail.com/prototypes-and-vertical-slice/) (2022-09-26): repeat a comparable unit and compare its duration.                                                  | Record first and second comparable unit timing. Review, rework, integration and blocked time are local adaptation measures, not attributed to this source. | Same practitioner, not independent empirical research; do not import calendar, budget or throughput estimates. |
 
 The checked Codex workflow sources and their limits are summarized in
-[CODEX_GAME_DEVELOPMENT_2026-09-30.md](research/CODEX_GAME_DEVELOPMENT_2026-09-30.md).
+[CODEX_GAME_DEVELOPMENT_2026-09-30.md](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/CODEX_GAME_DEVELOPMENT_2026-09-30.md).

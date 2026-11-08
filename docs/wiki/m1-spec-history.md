@@ -346,7 +346,7 @@ PvP, торговля и100CCU остаются вне очереди. Оста�
 Срез по проектным документам на 2026-10-01. Это список оставшейся работы и
 приёмки, не новый аудит кода и не подтверждение работоспособности. Источники:
 [производственный план](../engineering/M1_PRODUCTION_PLAN.md),
-[handoff](../engineering/NEXT_SESSION_HANDOFF.md),
+[handoff](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/NEXT_SESSION_HANDOFF.md),
 [актуальный план](../engineering/ROADMAP.md)
 и его
 [FIRST HUNT profile](../content/CONTRACTS_M1_DERIVATIVE.md#bounded-first-hunt-runtime-profile-amendment--2026-10-01).

@@ -96,7 +96,7 @@ record actual effects, deviations and remaining work in that same specification.
 
 - Follow latest owner decision > canonical Airtable decisions/GDD > accepted ADRs >
   active contract > executable specifications > implementation > historical drafts.
-- Start with the current assignment, [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+- Start with the current assignment, [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   status and applicable contract. Load history/research for a named unresolved question.
   GitHub proves live refs, reviews, CI and merge state. Owning source proves behavior.
 - For game-rule/milestone decisions read full Notes and dated Purpose amendments in
@@ -146,7 +146,7 @@ record actual effects, deviations and remaining work in that same specification.
   Keep detailed results once, bulky logs in ignored `output/` or CI artifacts.
 - Keep CURRENT_PLAN's current status within 40 nonempty lines, with coordinator,
   scope, authority, blockers and next action. Preserve superseded dated entries in
-  [history](docs/engineering/CURRENT_PLAN_HISTORY.md), repairing moved links.
+  [history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/CURRENT_PLAN_HISTORY.md), repairing moved links.
   Supporting harness/docs tasks preserve the active game integrator's current block.
   Keep support status in its owning page and hand checkpoint edits to that integrator.
 - After resume/integration read new CHANGELOG entries and changed source/status.

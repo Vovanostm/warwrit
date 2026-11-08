@@ -476,7 +476,7 @@ Use built public packages and `DATABASE_URL` for an exclusively owned disposable
 PostgreSQL. Existing integration setup creates/migrates its isolated test databases.
 Normal unit mode skips this scenario. After an observation, load the current
 persisted aggregate before a fixture edit; restoring an old genesis state can
-mismatch the row's newer revisions. [Observed recovery failure](HARNESS_EVAL.md#fresh-recovery-consumer-check).
+mismatch the row's newer revisions. [Observed recovery failure](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#fresh-recovery-consumer-check).
 
 ## Proportional local validation
 

@@ -13,7 +13,7 @@ main3c55cf35 and PR430d22336a4. The only conflict was additive changelog text;
 executable code is unchanged from PR430. PR428 is merged; PR429/430 remain open,
 and their source branches plus all retained failed WLC08 worlds are untouched.
 November 8 navigation/advisory amendments are retained; the previous roadmap is
-preserved in [dated history](ROADMAP_HISTORY_N01.md).
+preserved in [dated history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/ROADMAP_HISTORY_N01.md).
 
 Fresh normal OIDC/new-company/contract/equipment/supply/restart/re-entry PASS at
 measured1440×1000: Дозор N01, three living people,760crowns,37rations, Rell's

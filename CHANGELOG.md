@@ -1284,7 +1284,7 @@ requests.
   and file-wide V8/source-mode SQL24 PASS; pending-retreat unit1 PASS. Initial
   world-ID type inference failure corrected with an explicit string parameter;
   server types/scoped lint PASS. Owned DB removed. Independent repair source
-  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
+  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
 
 ### Prepare reviewed game skills for publication on current main
 
@@ -1295,7 +1295,7 @@ requests.
   formatting scope and prior pinned research/installation records. Applicable
   hosted checks and final integrated independent review are required before
   the authorized manual merge. Trial evidence retains its original revision and
-  limitations. [Owning result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
+  limitations. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
 
 ### Adopt bounded game skills and remove stale workflow directions
 
@@ -1306,7 +1306,7 @@ requests.
   activation, select current 2D references, preserve transparent sprite alpha,
   scope retained 3D work and replace PlayCanvas-specific inspector guidance.
   Remove stale audit bypass and nested art CLI/model recipe. Preserve parser and
-  existing distinct workflows. [Adoption decisions and trials](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
+  existing distinct workflows. [Adoption decisions and trials](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
   records three independent task attempts, requested clarification and the actual
   eight-battle sample. Manifest, local-link, discovery, format/diff checks PASS and independent sampled
   source/diff review ACCEPT. Two first submissions accepted, third accepted after
@@ -1322,7 +1322,7 @@ requests.
   the finite playable journey and approved dark-fantasy canon/style. Recommend
   bounded Babylon 9 reference and conditional balance-eval use; identify precise
   narrative audits with unresolved licensing and reject incompatible engine,
-  monetization, world-generation and studio defaults. [Survey, ratings and sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
+  monetization, world-generation and studio defaults. [Survey, ratings and sources](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
   Existing Colyseus entry matches pinned upstream. Static API/manifest probes
   retain their limitations; no installation, game tests, product change, merge
   or measured effectiveness claimed. Independent source/sample review ACCEPT;
@@ -1338,7 +1338,7 @@ requests.
   integration claims and severity heuristics. Retain the two existing diagnostic
   skills. Manifest/source/license/reference readback PASS; no new product test
   dependency or game-code change. Behavioral tests NOT_RUN; effectiveness
-  NOT_MEASURED. [Installation result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
+  NOT_MEASURED. [Installation result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
 
 ### Expand diagnostic skill research to 62 rated sources
 
@@ -1350,7 +1350,7 @@ requests.
   downgrade the earlier generic-debugging recommendation to an optional trial.
   Property-testing adoption stays conditional: fast-check already exists, but
   the unchanged upstream manifest fails the local validator on `effort`.
-  [Expanded survey, method, ratings and all sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
+  [Expanded survey, method, ratings and all sources](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
   No new installation, product change, paid evaluation or game tests. Actual
   effectiveness remains NOT_MEASURED. Independent source/sample review ACCEPT;
   source-count/deduplication, score arithmetic, local links, formatting and scoped
@@ -1363,7 +1363,7 @@ requests.
   pinned debugging-strategies and variant-analysis in the user's Codex skill
   directory, retaining upstream licenses/provenance. Reject conflicting repeat-check,
   size-gate and plugin-heavy alternatives; keep Warwrit's domain/browser workflows.
-  [Research and acceptance](docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
+  [Research and acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
   records source evidence, limitations and the next trial. Manifest validation,
   source/license/provenance/local-reference readback PASS; report formatting was
   corrected. Product source, CURRENT_PLAN and existing skills are unchanged;
@@ -1517,14 +1517,14 @@ requests.
   PASS after fixing local fixture setup errors. Product source, scenario deadlines,
   cleanup and default launcher behavior are retained. Local native capture and
   full suites NOT_RUN; independent final review/hosted order and savings remain
-  pending. [Owning specification/result](docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
+  pending. [Owning specification/result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
 
 ### Clarify cancelled-step evidence and focus the recovery SQL consumer
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.
   CI42044643870's browser and launcher printed PASS before GitHub cancelled
   their step; native audit remained NOT_RUN. Preserve that boundary in the
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
   Add one existing recruitment integration scenario to focused checks for changed
   company observation/roster semantics, after PR363's genesis-root fixture mismatch.
   Product source and checks are unchanged; scoped docs format/link/diff PASS.
@@ -1537,7 +1537,7 @@ requests.
   after successful bootstrap/coverage/world checks. Raise only the whole-job
   allowance to35 minutes; keep individual scenario deadlines, assertions,
   phases and native quality gates unchanged. No remaining check is claimed
-  passed from the cancelled job. [Owning evidence](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
+  passed from the cancelled job. [Owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
   records the exact timeout annotation and pending final-head verification.
 
 ### Remove a redundant diagnostic callback branch found by hosted audit
@@ -1549,7 +1549,7 @@ requests.
   an explicit marker-presence diagnostic and all readiness/STOP conditions.
   Source-only structural inspection reports cyclomatic4/cognitive1; current-head
   measured coverage/CRAP remain pending. No counters, gates or suppressions change.
-  Scoped syntax/lint/format/diff PASS. [Owning result](docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
+  Scoped syntax/lint/format/diff PASS. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
   retains the failed head, actual failure-artifact acceptance and final CI limits.
 
 ### Retain failed pursuit preparation and verify reused-agent routes
@@ -1562,7 +1562,7 @@ requests.
   PASS with actual409→200; scoped syntax/lint/format/diff PASS. A reused reviewer
   also exposed an omitted checkout in its follow-up: add the route to the existing
   delegation template and verify it through warwrit-context before discovery.
-  [Owning evaluation](docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
+  [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
   retains the failure, read-only routing correction, attempt-counting limitation
   and pending final-head review/CI. No general speedup or flaky-test fix claimed.
 
@@ -1573,7 +1573,7 @@ requests.
   during support CI42030162311. Preserve both changelog histories and every
   product/checkpoint/coverage-merger byte from main. Independent initial review
   ACCEPT at `93ef169e`; its CI applies to the earlier care baseline. Current
-  integrated-head review and CI remain required. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05)
+  integrated-head review and CI remain required. [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05)
   and issue361 retain final evidence and the repeated-CI observation.
 
 ### Explain introduced quality findings and retain native audit inputs
@@ -1586,7 +1586,7 @@ requests.
   exercise exits0/1/2, one run, attribution and invalid reports. Nine groups and
   scoped syntax/lint/format/diff PASS; saved native-report readback PASS. Hosted
   acceptance/final review remain pending. No product change or measured general
-  throughput gain. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
+  throughput gain. [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
   [issue361](https://github.com/Vovanostm/warwrit/issues/361).
 
 ### Run the coverage CLI regression from a clean checkout
@@ -1774,7 +1774,7 @@ requests.
   Independent integrated review ACCEPT and CI42010314464 PASS in23m21s on product
   main `81e7931b`, including both unit phases, SQL/stress, browsers and audit.
   The earlier17m19s run keeps its older baseline scope. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
   retains attribution limits and the separate real changed-file-formatting trial.
   [Issue357](https://github.com/Vovanostm/warwrit/issues/357) and the closeout PR own
   its final timing and executed/skipped checks. Scoped document format/link/diff
@@ -1788,7 +1788,7 @@ requests.
   during that run with product changes and a changelog conflict. Preserve both
   changelog histories, all main product source and the game integrator's plan.
   The earlier CI retains its frozen-head scope; integrated CI and source review
-  are required. [Owning record](docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
+  are required. [Owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
 
 ### Format changed documents through the existing validator in CI
 
@@ -1800,7 +1800,7 @@ requests.
   base does not create a new stale-base failure. Eight fixture groups verify the
   actual workflow command, detached/advanced-base handling, scoped formatter and
   missing-base rejection. Syntax/format/diff PASS. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
   records the corrected exit-code fixture and a separate PR353 evidence-reuse
   idea with the historical API-field limitation. Final review, full-route CI and
   hosted documentation timing remain pending. Comparative throughput NOT_MEASURED.
@@ -1833,7 +1833,7 @@ requests.
   in21m24s, including both unit-resolution phases, SQL/stress, both browsers and
   quality audit. This dated receipt supersedes pending implementation status
   below. The existing
-  [evaluation](docs/engineering/HARNESS_EVAL.md#implementation-receipt-and-documentation-trial)
+  [evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#implementation-receipt-and-documentation-trial)
   retains audit limits and the separate documentation-only hosted trial.
   [Issue354](https://github.com/Vovanostm/warwrit/issues/354) and the closeout PR
   own its execution timing, explicit skipped product checks and final acceptance.
@@ -1850,7 +1850,7 @@ requests.
   documentation PR CI, with pinned install/format and harness/plan/migration checks.
   Every code/mixed/unknown change and main push keeps full verification. Preserve
   both unit-resolution boundaries. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#scoped-ci-and-rejected-local-preflight--2026-11-05)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#scoped-ci-and-rejected-local-preflight--2026-11-05)
   records independent findings, actual timings, the repaired CI-selector fixture,
   checks and remaining limits. Seven focused fixture groups and four hook tests,
   syntax/format/diff PASS. Full-route CI, a hosted documentation-only trial and
@@ -1866,7 +1866,7 @@ requests.
   format/product commands. Update existing context/delivery skills with targeted
   optional retrieval and feasible timed native scenarios. Clarify fresh local
   coverage aggregation after the observed u32 overflow. The
-  [owning observation](docs/engineering/HARNESS_EVAL.md#care-delivery-bottlenecks-and-earlier-feedback--2026-11-05)
+  [owning observation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#care-delivery-bottlenecks-and-earlier-feedback--2026-11-05)
   preserves evidence, actual checks and limits. Isolated workflow fixtures,
   syntax, two skill validators and scoped formatting PASS. Independent review and
   published-head CI are pending. Comparative agent speed/quality NOT_MEASURED.
@@ -1883,7 +1883,7 @@ requests.
   Scoped syntax/lint/format/diff PASS. Current real browser journey PASS with
   native409→200 cancellation and measured approach execution. Final review
   and CI are pending. The
-  [owning record](docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
   preserves the failed run and unobserved exact transition/rejection body.
 
 ### Share browser observations after the changed-file quality failure
@@ -1898,7 +1898,7 @@ requests.
   real browser journey PASS with native409→200 cancellation. Regenerated
   intentional-failure diagnostics retain shared UI/native STOP200 evidence.
   Independent review and measured CI are pending.
-  The [owning record](docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
+  The [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
   keeps the failed gate, coverage-attribution limit and successful runtime evidence.
 
 ### Wait for the required moving observation within the original budget
@@ -1911,7 +1911,7 @@ requests.
   requirements. Include actual observed group states in that failure diagnostic.
   Current local real journey PASS with successful native cancellation; scoped
   lint/syntax/format/diff PASS. The
-  [owning record](docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
   preserves the failed CI and unobserved NPC transition. Fresh final-head CI is required.
 
 ### Match native map input to the intended current target
@@ -1925,7 +1925,7 @@ requests.
   cancellation. A real overlap probe verified terrain input/no pursuit separately
   from its lawful422 route rejection. The earlier overstrict probe failure and a
   transient local port conflict remain in the
-  [owning record](docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
   Scoped lint/syntax/format/diff PASS. Fresh final-head CI is required.
 
 ### Verify current visible tile recovery and both finite stale outcomes
@@ -1940,7 +1940,7 @@ requests.
   Both real browser branches PASS in separate positive/negative runs. Preserve
   the positive SQL gate. Set command workdirs explicitly after a reviewer used
   the host's unrelated checkout. Root 167 lines / 10,077 bytes. Scoped checks and
-  [owning evidence](docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
+  [owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
   record limitations. Fresh final source review and CI are required.
 
 ### Stabilize initial pursuit setup after the observed CI rejection
@@ -1953,7 +1953,7 @@ requests.
   the initial rejection request/status/body for diagnosis. Combined real browser
   PASS, actual stale-request diagnostic probe PASS, scoped lint/syntax/format and
   artifact path checks PASS. The exact original409 code remains unknown.
-  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
+  [Owning follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
 
 ### Retain evidence for the browser CI STOP failures
 
@@ -1964,7 +1964,7 @@ requests.
   the existing failure/pursuit JSON with map artifacts. The original journey
   assertions and deadlines remain intact. Focused actual browser PASS, deliberate
   failure-capture probe PASS, scoped lint/syntax/format/artifact paths and diff PASS.
-  The owning [CI follow-up](docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
+  The owning [CI follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
   records both failures, local observations and the initial aggregation failure
   due to missing prior migration evidence. Reuse only the finished moving-STOP
   probe delta from the game author's `e57d6e8b` / draft PR350. The combined real
@@ -1977,7 +1977,7 @@ requests.
   Per owner request, update AGENTS.md and the context/review/delivery skills with
   requirement-grounded acceptance, invalid-check diagnosis, repaired-fixture
   review and explicit partial-result boundaries. Keep detailed evaluation telemetry
-  on demand. [Instruction rollout](docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
+  on demand. [Instruction rollout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
   and [issue348](https://github.com/Vovanostm/warwrit/issues/348) own scope,
   permission and delivery. Preserve CURRENT_PLAN and active game worktrees.
   Three skill validators, scoped formatting, added local links/anchors, plan and
@@ -1990,7 +1990,7 @@ requests.
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
   Per owner request, reviewed seven additional primary materials on agent
   evaluation and developer productivity. Updated the existing research and
-  [evaluation method](docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+  [evaluation method](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
   with outcome/evidence/effort separation, evaluator validation, unfinished-attempt
   accounting and qualified historical replay. Recorded an in-progress care
   observation with SQL setup failures, targeted recovery and pending browser
@@ -2181,7 +2181,7 @@ requests.
   [Delivery issue346](https://github.com/Vovanostm/warwrit/issues/346) owns PR/CI/merge
   status. Native session reload, gameplay throughput
   and cost effects NOT_RUN/NOT_MEASURED.
-  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
+  [Owning follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
 
 ### Observed harness effectiveness
 
@@ -2190,7 +2190,7 @@ requests.
   writer source and live PR344/CI. Recorded committed/player-visible map progress,
   verified removal of hidden commit checks, partial harness adoption, parent token
   telemetry, three corrected integration defects and remaining startup diagnostics.
-  [Owning assessment](docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
+  [Owning assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
   Analysis is observational. Controlled efficiency/cost and whole-game acceptance
   remain unmeasured. Source/CI readback, scoped documentation formatting, current
   plan validation and diff checks PASS. Game tests NOT_RUN for this documentation.
@@ -2529,7 +2529,7 @@ requests.
   Correct source interpretation and stale audit-on-commit advice. Preserve the
   prior checkpoint with PR342's actual merge/CI receipt. Affected AGENTS, roles,
   context/domain/delivery skills, local checker/fixture and owning process docs.
-  [Research and application](docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+  [Research and application](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
   Shell routing/stop/scope/failure-feedback fixtures, Node 3/3, syntax/format,
   role TOML, links/anchors and diff PASS. Final independent source review ACCEPT.
   [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) tracks PR/CI/merge.
@@ -3332,7 +3332,7 @@ requests.
   counterexamples and reviewer diff check PASS; unchanged script evidence reused.
   Bounded grades: AGENTS.md 24/24; affected skills/prompts 24/24. These are review
   judgments, not measured savings or certification of untouched skills.
-- [Owning acceptance](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
+- [Owning acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
   names the reviewer-owned local report and preserves first-pass history.
   This docs-only successor changes no implementation. Scoped format/status/diff
   checks PASS; normal documentation-only hook path, no bypass. Unpublished;
@@ -3349,7 +3349,7 @@ requests.
 - Orca skill tier table and evaluator/visual prompts retain independent scored
   critique for substantive visuals in U/T as well as V. Common rules apply to
   every worker; CURRENT_PLAN distinguishes authorized local Codex work from
-  stopped Orca workers. [Owning corrections/checks](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
+  stopped Orca workers. [Owning corrections/checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
 - Counterexample read-through, scoped Markdown format/link/status/diff checks PASS.
   Scripts unchanged; applicable fixture checks reused. Normal docs-only hook path,
   no bypass. Independent re-review pending; game suites/pilot/publication/merge
@@ -3361,7 +3361,7 @@ requests.
   guidance amend the former one-issue/300-line cap, contract/stub rituals,
   unconditional scout/refill and historical merge-on-gates activation. Current
   authority is centralized in AGENTS; editor/branch-owner modes are explicit.
-  [Owning preparation/results](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
+  [Owning preparation/results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
   retains sources, affected contracts and limits. Domain/visual acceptance stays.
 - Tick checks STOPPED_BY_OWNER before side effects and between iterations;
   exit 20 stops looping without removing the marker. Scope reports advisory
@@ -7694,7 +7694,7 @@ requests.
   NOT_RUN (local `.env` database port mismatch, not changed).
 - 2026-10-07, originating branch `main`, local: detailed agent briefs B1–B9 for
   the remaining vision decisions in
-  [briefs/2026-10-07](docs/engineering/briefs/2026-10-07/README.md) (split later the same day).
+  [briefs/2026-10-07](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/README.md) (split later the same day).
   Not dispatched.
 
 ### Game direction: Battle Brothers rules, XCOM presentation, melee always damages

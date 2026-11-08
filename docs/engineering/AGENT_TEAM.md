@@ -80,7 +80,7 @@ with source pointers, base/worktree, write/resource ownership, acceptance and a
 bounded stopping condition. No separate contract agent or shared skeleton is
 required. Existing issues can supply the complete contract. Resolve decisive
 uncertainties by targeted source reading/probes before generating code; see
-[preparation](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
+[preparation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
 
 Every writing assignment names exactly one mode:
 
@@ -145,7 +145,7 @@ Question or changed result to review:
 Acceptance / smallest check / stop condition:
 ```
 
-Use the four-field brief in [the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
+Use the four-field brief in [the preparation plan](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
 Include exact focused checks/resource ownership and a finite scope/stop condition.
 For unattended operation set an explicit budget before dispatch. Reaching a limit
 means reporting partial evidence, never inventing completion.
@@ -406,8 +406,8 @@ Use [operational memory](AGENT_MEMORY.md) for source pointers and refresh rules.
 Children report candidate lessons; the parent reviews a small source-linked edit
 within authorized scope. There is no autonomous memory-writing agent.
 
-[Research and evaluation](research/AGENT_TEAM_RESEARCH.md) explain the choices and limits.
-Before adding concurrency or roles, use [the harness evaluation](HARNESS_EVAL.md) to compare representative serial and parallel tasks
+[Research and evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md) explain the choices and limits.
+Before adding concurrency or roles, use [the harness evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md) to compare representative serial and parallel tasks
 with the same acceptance, model and base: correctness, conflicts, parent rework,
 wall time and actual token/cost telemetry. Use `NOT_MEASURED` for missing metrics.
 Reject a faster run with broken scope or missing proof.
