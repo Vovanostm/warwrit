@@ -1238,7 +1238,7 @@ throughput have not been benchmarked; no separate agent-evaluation project.
 
 Owner request: update the wiki and implement substantially faster roads with trail,
 dirt road and paved road types. The chosen calibration and research rationale are
-owned by [the wiki](../wiki/m1-spec-history.md#скорость-дорог-и-пересечённой-местности--2026-10-03)
+owned by [the wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#скорость-дорог-и-пересечённой-местности--2026-10-03)
 and JSON revision 3.4.0. This is a tested initial calibration, not measured final
 balance or a universal human walking-speed table.
 
@@ -1396,7 +1396,7 @@ PR/main CI are recorded in the supply delivery closeout; this is not full M1 acc
 ## Navigation topology experiment — 2026-10-04
 
 Owner authorized implementation and comparison after the initial hex-map research.
-[Owning result, reproduction and limits](../wiki/m1-spec-history.md#эксперимент-и-реализация--2026-10-04)
+[Owning result, reproduction and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04)
 records the finite matched experiment. Production remains square `polygon-v1`;
 static road-edge costs and surface priority preparation now live in the derived
 field, not each search. Opt-in six-neighbor hex search uses the same polygons,
@@ -1419,7 +1419,7 @@ journey-cost penalty. This supersedes the previous square recommendation for
 new polygon-v1 orders in the local isolated branch. Legacy square navigation
 and accepted V2/V3 schedules remain; geometry, speeds, clocks and storage stay
 unchanged. Compiled sorted neighbors/costs and≤16 exact two-chord detour checks
-improve both search variants. [Owning rationale, matched results and checks](../wiki/m1-spec-history.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05)
+improve both search variants. [Owning rationale, matched results and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05)
 retain failures and limits. Full any-angle optimality/VM capacity remain unproven;
 no merge/deployment. Final bootstrap PASS:633unit/47skip,10000stress,migrations/14DB/auth checks.
 Actual RMB/S/reload/reroute/arrival retained exact points; independent source and
@@ -1618,5 +1618,5 @@ unrelated drafts/player data retained. Existing movement/input/state contracts
 unchanged. Exact-head PR CI attempt2 SUCCESS; first coverage timeouts remain
 failed history. Post-sync web typecheck/diff/readiness/native reload PASS;
 North Yard/850 crowns retained. Main CI IN_PROGRESS; new actual travel/STOP/return
-NOT_RUN, performance/subjective audio NOT_MEASURED. [Owning delivery and recovery](../wiki/m1-spec-history.md#слияние-и-обновление-main--2026-10-05).
+NOT_RUN, performance/subjective audio NOT_MEASURED. [Owning delivery and recovery](../wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
 This appended closeout is local; implementation merged, no deployment.

@@ -13,7 +13,7 @@ requests.
   reduced to current rules (2497 → ~360 lines); stale style, camera, camp, hire
   and second-region statements corrected; owner decisions on combat and movement
   lifted from the journal. Journal moved unchanged to
-  [m1-spec-history](docs/wiki/m1-spec-history.md), 77 inbound links repointed.
+  [m1-spec-history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md), 77 inbound links repointed.
   Added [owner questions](docs/wiki/m1-open-questions.md) for documentation
   cleanup, rule conflicts and open M1 rules.
 - 2026-11-09, `claude/design-references`, LOCAL — Added: player-journey audit
@@ -265,7 +265,7 @@ requests.
   [PR339](https://github.com/Vovanostm/warwrit/pull/339) at15:15:20UTC as
   `c8128c54`, expected head `957087bc`. Owner explicitly requested merge and
   updating main; clean local main fast-forwarded to the merge with identical
-  content to the reviewed head. [Owning receipt](docs/wiki/m1-spec-history.md#слияние-pr339-и-обновление-main--2026-11-07)
+  content to the reviewed head. [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#слияние-pr339-и-обновление-main--2026-11-07)
   preserves focused/native/critic evidence, advisory CI and full-M1 limits.
   Update CURRENT_PLAN/ROADMAP; retain #171 OPEN and all unrelated WIP/data.
   Documentation-only receipt: scoped format/plan/diff/local links PASS,
@@ -277,7 +277,7 @@ requests.
   owner explicitly requested “merge, update main” for PR339. Record permission
   for its expected-head merge, necessary delivery receipt and clean local-main
   fast-forward in CURRENT_PLAN and the
-  [owning result](docs/wiki/m1-spec-history.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
   CI42382366905 stopped at formatting in unchanged encounter/connection.test.ts;
   PR scope42382366947 PASS. Existing focused/native checks retained; repeated
   game checks NOT_RUN. CI advisory, no deployment or data reset authorized.
@@ -289,7 +289,7 @@ requests.
   main `fbd34b22` and prior head `c2051f3f` without rewriting history. GitHub
   confirms the PR is open and conflict-free; NOT_MERGED. Current checks, native
   journey and independent scoped critic ACCEPT are recorded in the
-  [owning wiki](docs/wiki/m1-spec-history.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  [owning wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
   This receipt updates delivery status and ROADMAP only. Repeated game checks
   NOT_RUN; CI remains advisory. No merge/deployment permission or data reset.
 
@@ -303,7 +303,7 @@ requests.
   the server rejection mapper.25focused,4PG executor,2PG routes,builds/types/lint
   PASS; native sword/equip,split/lost-response/reload/retry and capacity refusal PASS.
   Independent scoped critique ACCEPT (criteria2–3/3);
-  CI/full suite/stress NOT_RUN. [Owning journey and results](docs/wiki/m1-spec-history.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  CI/full suite/stress NOT_RUN. [Owning journey and results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
 
 ### Complete the local item-transfer path and repeated splitting
 
@@ -522,7 +522,7 @@ requests.
   food checks; core/server/testkit types and scoped lint/format PASS. Actual
   same-company native departure200 and saved route PASS, cash710 unchanged.
   Independent source ACCEPT; playable critique pending. No migration/public API
-  or new stock/provider. [Wiki result](docs/wiki/m1-spec-history.md#полный-первый-круг--370-2026-11-07).
+  or new stock/provider. [Wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#полный-первый-круг--370-2026-11-07).
 
 ### Complete an authentic next contract with the retained company
 
@@ -576,7 +576,7 @@ requests.
   PR publication. Source and finite visual review ACCEPT on e6e8e7c9.36 focused
   tests, web types and scoped lint PASS; actual presentation replay confirms
   16px separation, wheel access and Return callback on720/480px desktop heights.
-  [Owning evidence and limits](docs/wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  [Owning evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
   preserve failed probes and replay provenance. Full native succession/game-over
   NOT_RUN; #392 remains open. Full gate NOT_RUN under advisory CI policy.
   Merge needs the owner's approval for this slice.
@@ -593,7 +593,7 @@ requests.
 
 - 2026-11-07, `codex/loss-panel-layout392`, LOCAL UI evidence for the scoped
   overlap fix. Preserve current720px and480px scroll states with the owning
-  [measurements and provenance](docs/wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  [measurements and provenance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
   Actual wheel scrolling reaches the complete notice and Return button. Source
   review ACCEPT, current visual review pending. Native succession NOT_RUN.
 
@@ -613,7 +613,7 @@ requests.
   Presentation-replay checks already measure a16px gap on1280×720/480, pointer
   access and actual Return callback. Source review ACCEPT. Recheck integrated
   types/layout and scoped image critique before publication. Existing saved defeat
-  and all world data retained. [Owning result](docs/wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  and all world data retained. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
 
 ### Stack the leader-death notice and battle outcome together
 
@@ -626,7 +626,7 @@ requests.
   first failed, then30 targeted tests/web types/lint PASS. Independent source
   review ACCEPT. Actual retained loss reached revision62 with effects applied;
   layout/pointer checks use a labelled presentation replay of its public data.
-  [Owning result and limits](docs/wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
   Fresh native loss/succession/game-over acceptance NOT_RUN. Full #392 stays open.
   Current-image critic, publication and CI pending.
 
@@ -634,7 +634,7 @@ requests.
 
 - 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
   owner's choice to fix the overlapping leader-death/outcome panels from #392.
-  [Owning scope and checks](docs/wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  [Owning scope and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
   reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
   retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
   stays with #392. Source/native/review/visual checks initially NOT_RUN.
@@ -938,7 +938,7 @@ requests.
   Canonical time preparation is synthetic on owned restored clones. No new
   finance rule or migration; normal commit/PR/CI/merge not yet performed.
   [Owning result](docs/engineering/evidence/payroll-20261028/README.md),
-  [player-facing behavior](docs/wiki/m1-spec-history.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
+  [player-facing behavior](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
 
 - Same-day correction: actual stale-revision browser refusal exposed its
   explanation being cleared during a same-company revision refresh. Preserve
@@ -1496,7 +1496,7 @@ requests.
   navigation and playtest status. Preserve superseded baselines in CURRENT_PLAN_HISTORY.
   Record merged atlas/markers/care/recruitment, candidate recovery/payroll,
   conflicting transfer/retry work and the remaining full-M1 scope.
-  [Assessment and evidence boundary](docs/wiki/m1-spec-history.md#state-2026-11-05)
+  [Assessment and evidence boundary](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#state-2026-11-05)
   distinguishes current source, earlier runtime and unexecuted acceptance.
   Task tracking PUBLISHED: 16 existing GitHub issues updated with preserved criteria/history;
   [outcome task #364](https://github.com/Vovanostm/warwrit/issues/364) created;
@@ -3310,7 +3310,7 @@ requests.
   commands, canonical storage, migrations or UI changes.
 - Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
   `payroll-view.ts` and focused projection/route tests.
-  [Owning wiki result](docs/wiki/m1-spec-history.md#третий-цикл-весь-объём-и-итоговая-приёмка)
+  [Owning wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
   and [current status](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
   Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
   skips), protocol build, protocol/server/web types and scoped lint/format/diff
@@ -7703,7 +7703,7 @@ requests.
   «Да, давай дух Battle Brothers и взял у XCOM только подачу» and set the rule
   «Урон в ближнем бою должен быть всегда (кроме новобранцев или боя с
   призраками) — игра должна быть логичнее xcom в этом плане». Recorded in:
-  - [m1-spec §18](docs/wiki/m1-spec-history.md#18-battle-brothers-направление-и-этапы--2026-10-03);
+  - [m1-spec §18](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03);
   - [combat](docs/wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07),
     with a proposed reading for confirmation: hit quality instead of miss,
     shield/armor damage counts, recruit threshold, incorporeal exception that
@@ -7922,16 +7922,16 @@ requests.
   diff/readiness/native reload PASS. Scoped recovery preserves unrelated drafts,
   company/North Yard/850 crowns and original DB/Dex. Main CI IN_PROGRESS;
   actual new travel NOT_RUN, FPS/RAM/audio quality NOT_MEASURED.
-  [Owning results and recovery](docs/wiki/m1-spec-history.md#слияние-и-обновление-main--2026-10-05).
+  [Owning results and recovery](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
   This dated closeout is local/uncommitted; no deployment.
 
 ### Living-world commit-audit correction
 
-- 2026-10-05, originating branch `codex/living-world-main`, local: the ordinary commit audit rejected eight introduced complexity findings. Extract cohesive habitat/population/animation, sound and background UI functions without changing behavior or any gate. Corrected audit, focused7, typecheck/lint and temporary90-second exact fauna comparison PASS; initial diagnostic path failure retained. Earlier full coverage643/47 and bootstrap remain pre-extraction evidence; final PR CI is pending. [Owning validation](docs/wiki/m1-spec-history.md#проверка-изолированной-поставки--2026-10-05). No canonical state or migration change.
+- 2026-10-05, originating branch `codex/living-world-main`, local: the ordinary commit audit rejected eight introduced complexity findings. Extract cohesive habitat/population/animation, sound and background UI functions without changing behavior or any gate. Corrected audit, focused7, typecheck/lint and temporary90-second exact fauna comparison PASS; initial diagnostic path failure retained. Earlier full coverage643/47 and bootstrap remain pre-extraction evidence; final PR CI is pending. [Owning validation](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151). No canonical state or migration change.
 
 ### Living-world delivery authorized
 
-- 2026-10-05, originating branch `codex/living-world-main`, local: owner requested “merge, update local main”. Isolate the reviewed habitat/reaction/audio/place-activity/lawful-observation slice from unrelated primary drafts. Include its original wildlife assets/provenance and registry; canonical state, migrations and player data unchanged. Prior clean bootstrap PASS and independent capture review retained; exact PR CI and merge pending. [Owning behavior/checks](docs/wiki/m1-spec-history.md#реализация-живой-среды--2026-10-05).
+- 2026-10-05, originating branch `codex/living-world-main`, local: owner requested “merge, update local main”. Isolate the reviewed habitat/reaction/audio/place-activity/lawful-observation slice from unrelated primary drafts. Include its original wildlife assets/provenance and registry; canonical state, migrations and player data unchanged. Prior clean bootstrap PASS and independent capture review retained; exact PR CI and merge pending. [Owning behavior/checks](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
 
 ### Living-world presentation implementation
 
@@ -7940,7 +7940,7 @@ requests.
   species now use actual flowers/trees and react to the company; opt-in local
   synthesized ambience, bounded day/night settlement work, lawful current map
   observations and company-known completed-work notes are integrated. Affected:
-  web renderer/game presentation; owning [implementation and checks](docs/wiki/m1-spec-history.md#реализация-живой-среды--2026-10-05).
+  web renderer/game presentation; owning [implementation and checks](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
   No protocol, canonical state, migration or player-data change. Focused7,
   web typecheck/lint/format/architecture and representative native/component
   desktop/sound checks PASS after documented corrections. Independent affected
@@ -7955,7 +7955,7 @@ requests.
 ### Living-world layers beyond fauna — design follow-up
 
 - 2026-10-05, originating branch `main`, local: owner's follow-up asks whether
-  fauna is sufficient. [Owning recommendation](docs/wiki/m1-spec-history.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
+  fauna is sufficient. [Owning recommendation](docs/wiki/world/biomes.md#следующие-слои--предложение)
   adds priorities for shared environmental motion, place-specific sound,
   settlement work, local reactions, actual world traffic and fact-bound
   consequences. Existing motion remains acknowledged; moving traders/caravans
@@ -7967,7 +7967,7 @@ requests.
 
 - 2026-10-05, originating branch `main` (`f3d214c`), local: owner requested
   distinct biome fauna instead of hares/butterflies everywhere.
-  [Owning matrix and next cycle](docs/wiki/m1-spec-history.md#20-биомы-и-живая-природа--2026-10-05)
+  [Owning matrix and next cycle](docs/wiki/world/biomes.md)
   compare actual geography and four current wildlife forms with live WORLD/lore
   Notes/Purpose and inspected art. Propose habitat-based distribution, quiet
   forest/rock areas, dragonflies/ducks next, and later forest/night/domestic life.
@@ -8087,7 +8087,7 @@ requests.
   No new travel or full integrated gameplay gate was run in this update; retained
   starvation limitation remains. Recovery stash retained; unrelated drafts remain
   uncommitted. No migration, deployment or player reset.
-  [Owning closeout](docs/wiki/m1-spec-history.md#слияние-и-обновление-primary-main--2026-10-05).
+  [Owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, published:
   [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
@@ -8095,7 +8095,7 @@ requests.
   source/playable review and focused checks pass; current-head clean CI and the
   explicitly authorized merge remain pending. Primary main is at PR147 with
   concurrent drafts preserved. GitHub owns subsequent CI/merge facts.
-  [Owning delivery record](docs/wiki/m1-spec-history.md#ревью-и-доставка--2026-10-05).
+  [Owning delivery record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 ### Company origins and illustrated opening — design proposal
 
@@ -8264,7 +8264,7 @@ requests.
   paths/durations, p95 175.96→100.09ms; hex p95 90.96ms but mean/worst travel
   duration +1.32%/+9.32%. Adds the finite reproduction script and measured case
   evidence; extends existing road-detour/thin-bridge specifications.
-  [Owning results and limits](docs/wiki/m1-spec-history.md#эксперимент-и-реализация--2026-10-04).
+  [Owning results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04).
   Final bootstrap PASS (verify 631/47 skipped, stress 10000, migrations/auth 14);
   separate movement PostgreSQL 11 and domain 20 PASS. Move/STOP/reload/reroute
   inspected independently from captures/response evidence; no confirmed new
@@ -8273,7 +8273,7 @@ requests.
   merge; local uncommitted isolated checkout only, primary writers preserved.
 
 - 2026-10-04, originating branch `main` at `bcc30f5`, local: owner-requested
-  [global-map topology research and proposal](docs/wiki/m1-spec-history.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
+  [global-map topology research and proposal](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
   compares hex authoring, exact movement, terrain blending, current weighted
   search and future generation using current source and primary references.
   Recommends keeping continuous movement/exact roads and measuring search before
@@ -8433,7 +8433,7 @@ requests.
   remains reviewed. Combined build/typecheck and normal desktop fixture
   move/STOP/reload/reroute/arrival PASS with exact retained points; current-head
   full PR CI and merge remain pending. No migrations, deployment or player-data reset.
-  [Owning integration results and limits](docs/wiki/m1-spec-history.md#ревью-и-доставка--2026-10-05).
+  [Owning integration results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: final review fixes
   changed-code audit blockers by separating grid preparation and bounded exact
@@ -8442,7 +8442,7 @@ requests.
   202 exact route/outcome/duration comparisons, 22 focused coverage tests and
   unchanged audit PASS. Earlier loaded-host timeouts remain documented failures;
   PR-head CI and integrated browser acceptance are pending.
-  [Owning delivery record](docs/wiki/m1-spec-history.md#ревью-и-доставка--2026-10-05).
+  [Owning delivery record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: owner authorized
   review, publication, merge and local-main update for the measured hex default
@@ -8463,7 +8463,7 @@ requests.
   owner decision with historical topology retained. Final bootstrap: 633 tests,
   47 skipped, 10,000 stress battles and migrations/14 DB checks PASS; normal STOP/reload/reroute/arrival
   and independent supplied-evidence critique pass within inspected scope.
-  [Results, checks and limits](docs/wiki/m1-spec-history.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
+  [Results, checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
 
 - 2026-10-04, branch `codex/supplies-playtest`, local (not committed or merged):
   [AGENTS.md](AGENTS.md#required-changelog-and-change-awareness) requires agents

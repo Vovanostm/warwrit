@@ -5,7 +5,7 @@
 The owner requested a current assessment and an updated path to the intended
 playable game. This section supersedes the September/October dispatch order
 below. [Roadmap](ROADMAP.md) owns milestone scope, [task queue](PARALLEL_WAVES.md)
-owns issue mapping and [assessment](../wiki/m1-spec-history.md#state-2026-11-05) owns
+owns issue mapping and [assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#state-2026-11-05) owns
 the current source/evidence boundary. Historical entries remain historical.
 
 Owner follow-up on 2026-11-05: dispatch one small task from the
@@ -209,7 +209,7 @@ owner. No deployment, paid actions, auto-merge or new merge permission arises
 from creating these issues. Recheck existing scoped permission separately.
 
 Detailed dated audit and evidence boundaries:
-[wiki M1](../wiki/m1-spec-history.md#актуальная-очередь-github--2026-10-17).
+[wiki M1](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#актуальная-очередь-github--2026-10-17).
 Older waves below are historical planning; their live dispatch/status is
 superseded by this queue plus CURRENT_PLAN, not silently reactivated.
 

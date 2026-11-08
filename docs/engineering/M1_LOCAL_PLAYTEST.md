@@ -2,7 +2,7 @@
 
 Current status (2026-11-05): the atlas, hunt markers, treatment and local hire/Join
 are merged. Recovery/payroll candidates and full-loop acceptance are tracked in
-[the current plan](ROADMAP.md) and [M1 assessment](../wiki/m1-spec-history.md#state-2026-11-05).
+[the current plan](ROADMAP.md) and [M1 assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#state-2026-11-05).
 Dated gaps below are historical. This guide is a scenario, not evidence that the
 whole current game or its stated session duration passed a new playtest.
 

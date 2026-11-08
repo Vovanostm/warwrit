@@ -152,6 +152,6 @@ Hosted clean verification remains the publication gate.
 
 The evidence above remains historical for base48d8a2ae. Current main fbd34b22
 integration, native company journey, corrected capacity feedback and actual
-checks are owned by the [current wiki result](../../../wiki/m1-spec-history.md#интеграция-передачи-вещей-pr339--2026-11-07).
+checks are owned by the [current wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
 Four20261107-prefixed captures here show current controls and natural-night refusal.
 No claim of current-main acceptance follows from the old screenshots or hosted CI.
