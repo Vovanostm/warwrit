@@ -2,16 +2,22 @@
 
 ## Current result — 2026-11-09
 
-VERIFIED / LOCAL / COMMITTED; INT-1–6 PASS, publication/authorized merge pending.
-M1 NOT_ACCEPTED. The final PR/merge readback is recorded below after delivery.
-Integration commit `e8784c1c0479c10f1295e07269b99a5c5c454770` merges current main
-`3c55cf35966d2cd119b42d107152b85567c72f4b` into PR430
-`d22336a423eaf96e32197e6252bed9a3820dde0b`, preserving both parents and PR429
-`b58c87ce3f489484a9fd8cdf1eecf2efd8c6203b` ancestry. Live refs rechecked on
-November 9 Moscow time: unchanged. At intake both source PRs were OPEN and their original
-branches/worktrees untouched. The owner continuation below authorizes PR430 update. This is a separate reviewable candidate,
-`.claude/worktrees/n01-integration`, branch `codex/n01-integration`.
-The final closeout changes documentation only after checked `e8784c1c`.
+DONE / MERGED; INT-1–6 PASS under the owner-authorized new-player-save fallback.
+[PR430](https://github.com/Vovanostm/warwrit/pull/430) merged on2026-11-09 at
+00:18:43 Moscow as `9a1bcc4270a63d4ef753a666a52312e3829f9621`, with expected head
+`a5a4ef2ce283fa4a3dcce38449e779469a084855`. GitHub readback confirms CLOSED/MERGED,
+actual merge SHA and main at that merge. Reviewed candidate and merged content
+match (empty diff). GitHub also marked PR429 MERGED; its exact head
+`b58c87ce3f489484a9fd8cdf1eecf2efd8c6203b` is an ancestor of main.
+M1 NOT_ACCEPTED; no deployment or historical-owner-save acceptance is implied.
+
+Worktree `.claude/worktrees/n01-integration`, branch `codex/n01-integration`.
+Original candidate PR430d22336a4 was reconciled with main3c55cf35 by local merge
+e8784c1c, preserving both feature histories. Only documentation followed the
+checked executable tree. Publication fast-forwarded the existing PR430 branch
+without force; original WLC worktree files and dirty primary sprite WIP were
+preserved. This documentation-only receipt records the actual merge, with no
+application/schema/data change and no repeated game checks.
 
 ### Owner continuation and merge authority — 2026-11-09
 
@@ -50,7 +56,7 @@ The [prior roadmap](../../engineering/ROADMAP_HISTORY_N01.md) is preserved verba
 the checkbox index and root amendment retain November 8 navigation/advisory policy.
 The exact supplied COMMON/launch inputs are included, without other N-package work.
 Primary sprite WIP, original WLC source worktree files, retained saves and other
-stands remain untouched. Only the PR430 remote branch is advanced by this mission. No subagents, messages, deployment, auto-merge or paid resources.
+stands remain untouched. PR430 was advanced for integration; the N01 branch publishes this documentation-only receipt. No subagents, messages, deployment, auto-merge or paid resources.
 
 ### Player result and direct acceptance
 
@@ -72,7 +78,7 @@ This proves entry/re-entry, not completion of this contract or a new combat loop
 | INT-3 | PASS   | Fresh web/server production builds with development `.env`; no executable debug browser API/UI or server route modules. Running production artifact:16GET/POST debug requests return404;18ordinary canonical groups unchanged. Production browser `/dev/playground/combat` shows **Инструмент недоступен**.                                                                                                                                              |
 | INT-4 | PASS   | Fresh existing SQL editor/Lab tests cover owner/origin/session, clone/freeze, exact retry, ordinary genesis conservation, current replay MATCH/corruption and old-content refusal. Source uses the same canonical encounter executor with isolated storage; no map or replay code changed. Prior WLC native Lab/editor runs are inherited evidence, not rerun here.                                                                                      |
 | INT-5 | PASS   | Owner-authorized new-save fallback; schema portion PASS: real migration smoke/legacy rollback guards and an owned naturally-created save dump restored into isolated copies;25→22→25 preserves all18canonical groups exactly. The isolated n01_savecopy also passes normal OIDC entry, equipment command and actual restart/re-entry. Historical owner-save proof remains NOT_RUN outside this accepted fallback; no legacy-save failure was reproduced. |
-| INT-6 | PASS   | Scoped diff/self-review, owning WLC record, current N01 and concise changelog updated; local commits and prepared review description/patch, no remote publication or merge claimed.                                                                                                                                                                                                                                                                      |
+| INT-6 | PASS   | Scoped diff/self-review, owning WLC record, current N01 and concise changelog updated; PR430 published and owner-authorized merge confirmed with expected head; receipt records actual delivery and preserves all limitations.                                                                                                                                                                                                                           |
 
 ### Actual checks and limits
 
@@ -122,6 +128,8 @@ public development setup. Restart from this worktree:
 `docker compose -f compose.yaml -f output/compose-network.yaml up -d --wait postgres dex`,
 then `pnpm dev`; open `http://127.0.0.1:53901`, **Войти**, fixture account/password
 from LOCAL_DEVELOPMENT. Use the same issuer/account/world/database.
+To continue the migrated copy, use the same launch with `DATABASE_URL` selecting
+`n01_savecopy` instead of `warwrit`; the same OIDC account restores its company.
 Do not use volume deletion/reset. Own processes/browser sessions are closed;
 Compose containers/network stopped, database/Dex volumes and save dumps retained.
 
@@ -130,7 +138,7 @@ Raw evidence (ignored): `output/integration.log`, `migrations.log`,
 `production-refusal.log`, production build logs and `output/playwright/n01-*.png`.
 The migration/readback helpers remain under `output/.worktree-tools/`.
 Review description and committed candidate patch: `output/n01-pr-description.md`,
-`output/n01-candidate.patch`. The initial candidate was local-only; this authorized continuation updates existing PR430.
+`output/n01-candidate.patch`. The initial candidate was local-only; the authorized continuation published and merged existing PR430. Current evidence is this task record, not the earlier ignored draft description/patch.
 
 Earlier owner response — 2026-11-09: no historical-save source exists; keep that
 player-save check open. The later continuation above permits the new-save
@@ -168,6 +176,16 @@ focused integration-mode run uses properly migrated per-file databases and passe
 CI remains advisory; no unrelated harness/CI edits or reruns. Current reviews and
 review threads were empty at pre-publication readback. Reuse unchanged40integration-
 mode,51unit, build/production/refusal/migration evidence; no fresh full-M1 claim.
+Merge readback: pre-merge PR430 reviews/threads empty, head a5a4ef2c, base3c55cf35,
+mergeable true. New CI42524522161/42524465132 was pending at merge and remains
+advisory; no hosted PASS is claimed or awaited. The owner-authorized merge used
+`merge_method=merge` and the full expected head, never auto/admin merge. Fetch and
+fast-forward changed only this owned N01 checkout to the actual main merge.
+No product blockers remain for N01 under the approved fallback. Old owner-save,
+full-M1/device and performance limits remain separate. The restored stand's own
+browser/API/web/container/network are closed; volumes, original/new saves and
+dumps remain. See `output/restored-cleanup.log`.
+
 One next task after delivery: continue the ordinary accepted mill contract under
 its own package; do not implement that successor during N01.
 Graph fallback: indexed Warwrit is old primary sprite7841632a, not this candidate;
