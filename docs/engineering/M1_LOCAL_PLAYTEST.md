@@ -2,14 +2,14 @@
 
 Current status (2026-11-05): the atlas, hunt markers, treatment and local hire/Join
 are merged. Recovery/payroll candidates and full-loop acceptance are tracked in
-[the current plan](CURRENT_PLAN.md) and [M1 assessment](../wiki/m1-spec-history.md#state-2026-11-05).
+[the current plan](ROADMAP.md) and [M1 assessment](../wiki/m1-spec-history.md#state-2026-11-05).
 Dated gaps below are historical. This guide is a scenario, not evidence that the
 whole current game or its stated session duration passed a new playtest.
 
 How the owner plays the M1 alpha on the Mac in Chrome, what to look at, and what is
 known to be missing. Start the stack per
 [LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes); live status is in
-[CURRENT_PLAN](CURRENT_PLAN.md). The earlier 2026-09-29 company-opening evidence
+[CURRENT_PLAN](ROADMAP.md). The earlier 2026-09-29 company-opening evidence
 that lived in this file is in git history (commit `97d8480`).
 
 ## Reproducible launch contract — #176, 2026-11-06

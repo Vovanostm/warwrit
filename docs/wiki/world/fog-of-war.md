@@ -854,4 +854,4 @@ scoped lint и client/map30 PASS. Настоящий PostgreSQL ordinary-сце�
 отклонил ввод публичного локального fixture-пароля без явного разрешения
 владельца. Один запрос разрешения ожидает ответа; обход не выполняется.
 Статус LOCAL / NOT_ACCEPTED player-facing; полная игра/нагрузка/публикация/
-merge/deployment не заявляются. [Единый checkpoint](../../engineering/CURRENT_PLAN.md).
+merge/deployment не заявляются. [Единый checkpoint](../../engineering/ROADMAP.md).

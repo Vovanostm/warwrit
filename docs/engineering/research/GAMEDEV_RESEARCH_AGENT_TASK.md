@@ -44,7 +44,7 @@ External research informs engineering choices; it never approves a game rule.
 
 Read these entry documents, then only relevant linked detail:
 
-1. [CURRENT_PLAN](../CURRENT_PLAN.md), [ADR-0003](../../architecture/0003-m0-m1-technology-baseline.md)
+1. [CURRENT_PLAN](../ROADMAP.md), [ADR-0003](../../architecture/0003-m0-m1-technology-baseline.md)
    and [technology handoff](../AI_TECHNOLOGY_HANDOFF.md).
 2. [Preparation plan](../AGENT_DEVELOPMENT_PREPARATION.md), [agent team](../AGENT_TEAM.md),
    [memory index](../AGENT_MEMORY.md), [research basis](AGENT_TEAM_RESEARCH.md).

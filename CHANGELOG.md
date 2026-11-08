@@ -2112,7 +2112,7 @@ requests.
   PR347 before care publication, retaining both changelog histories and the game
   coordinator's care checkpoint. Upstream changes affect guidance/harness only.
   Previously executed game checks retain their source scope; hosted care CI is
-  pending. [Current slice](docs/engineering/CURRENT_PLAN.md).
+  pending. [Current slice](docs/engineering/ROADMAP.md).
 
 ### Let the ordinary campaign continue after the battle result
 
@@ -2263,7 +2263,7 @@ requests.
   Pause visual expansion and reuse PR334–339 rather than rebuilding their work.
   Live queue readback found all six conflicting with main5c2b3cd7; their successful
   checks precede that integration. No merge permission is inferred.
-  [Current scope and next action](docs/engineering/CURRENT_PLAN.md).
+  [Current scope and next action](docs/engineering/ROADMAP.md).
   Internal pursuit moves reuse their already locked observation, avoiding a
   second state settlement; submitted revisions and core guards are unchanged.
   Server types/lint, actual PostgreSQL pursuit6/6 and world/ordinary browser
@@ -3311,7 +3311,7 @@ requests.
 - Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
   `payroll-view.ts` and focused projection/route tests.
   [Owning wiki result](docs/wiki/m1-spec-history.md#третий-цикл-весь-объём-и-итоговая-приёмка)
-  and [current status](docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
+  and [current status](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
   Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
   skips), protocol build, protocol/server/web types and scoped lint/format/diff
   PASS. Initial invalid synthetic test fixture corrected before passing aggregate
@@ -3390,7 +3390,7 @@ requests.
 - The next core allocation is accepted #321, safe optional payroll projection and
   retained history (task `task_c3c90d43c45e`, branch `Vovanostm/wages-projection-321`).
   It owns four contract paths and focused checks; no runtime.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and remaining gates.
+  [Current plan](docs/engineering/ROADMAP.md) records allocation and remaining gates.
   Existing blocked slices and #315 retain their holds.
 
 ### Revalidate #319 distinct pool-wallet regression — 2026-10-24, PUBLISHED
@@ -3403,7 +3403,7 @@ requests.
   PASS. Initial formatting check failed, then passed after formatting. Coordinator
   `orca-validate.sh` exits 0 with all nine checks PASS; source scope remains 296/300.
   Logs remain at `.orca/validate-*.log`; local report retains all executed checks.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh round 2 reviewer
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh round 2 reviewer
   and evaluator at the frozen records successor. Prior reviewer REWORK and evaluator
   ACCEPT remain historical; fresh verdicts and PR/merge are pending. Settled builder
   acknowledged/released, direct process cleanup confirmed. #321 waits for checks.
@@ -3419,7 +3419,7 @@ requests.
 - Coordinator allocates rework 1/2 to `apps/server/src/company/payroll-access.test.ts`
   only, plus the local report: reject that remote pool with the purse/operator local
   and prove input nonmutation. Reports remain at `.orca/wages-local-evidence-319/`.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records the gate outcomes and queue.
+  [Current plan](docs/engineering/ROADMAP.md) records the gate outcomes and queue.
 - Both settled reports acknowledged/released; direct process check found no remaining
   worker checks. #321 waits for the sole core slot. New regression, revalidation and
   fresh gates are pending; prior validate 9/9 is not proof of the future change.
@@ -3444,7 +3444,7 @@ requests.
   [ordinary browser/API/PG proof](docs/engineering/evidence/wages-command-seams-318/eval-2.md).
   #318 closed/relabelled done; clean fully pushed worktree removed after retaining
   local evidence. This supersedes its pending publication status below.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh #319 review and
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh #319 review and
   producer/core evaluation next; #321 waits for exclusive checks. Those verdicts,
   #319 PR/merge and #167 integrated payroll/browser/recovery acceptance are pending.
   Full integrated gates NOT_RUN. Inherited blocks and daily-work completion remain.
@@ -3463,7 +3463,7 @@ requests.
   Coordinator validation remains exit 0, 9/9 checks; source scope 184/300.
 - Direct cleanup confirmed all 13 named app/browser PIDs absent, private ports
   unused and profile/pidfile absent. Both disposable Dex/PostgreSQL projects and
-  volumes were removed after settlement. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  volumes were removed after settlement. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #323](https://github.com/Vovanostm/warwrit/pull/323) published and unchanged #167 payroll/lost-response/day-night
   acceptance. No source, schema, finance rule or API change this tick;
   full integrated gates NOT_RUN. Existing blocked labels remain binding.
@@ -3484,7 +3484,7 @@ requests.
   and checked campaign readiness (200), session/company GET (401), command POST
   (403). These probes prove route availability only. All prior evaluator processes,
   ports, profile and pidfile were absent; preflight API/web then stopped cleanly.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns only evaluator recovery;
+- [Current plan](docs/engineering/ROADMAP.md) assigns only evaluator recovery;
   containers remain coordinator-owned until settlement. Existing source validation
   and review are retained; authenticated play, full integrated gates and merge
   remain pending. #167 owns payroll acceptance; inherited blocks stay unchanged.
@@ -3503,7 +3503,7 @@ requests.
   Coordinator validation exit 0, 9/9 PASS; related tests 61 PASS and 55 skipped.
   [Build report](.orca/wages-command-seams-318/report.md) retains the initial
   environment failure, corrected test expectations and initial audit failures.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) records pending independent
+- [Current plan](docs/engineering/ROADMAP.md) records pending independent
   Tier L review/playtesting and the retained #319/#321 queue. This is local
   implementation awaiting publication; no PR, merge or player acceptance claimed.
   Payroll and the integrated #167 journey remain pending. No finance rule,
@@ -3518,7 +3518,7 @@ requests.
   review thread; scope recheck PASS at 197/300, closing only #307.
 - Independent Tier L ACCEPT at `6485ed80`, validation exit 0 and day/night
   playable proof remain valid: later changes contain evidence/shared records only.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) requires final CI and expected-head
+  [Current plan](docs/engineering/ROADMAP.md) requires final CI and expected-head
   merge after this records-only commit. Merge is not yet claimed. Parent #263,
   H1/H2 and all blocked acceptance remain open; game checks NOT_RUN this tick.
 
@@ -3534,7 +3534,7 @@ requests.
   Failed CI stopped before lint/build/typecheck/unit/coverage/audit; none passed
   in that run. Existing coordinator validation and Tier L evidence remain valid
   for unchanged source; final corrected-head CI is still required before merge.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) retains the pending delivery,
+- [Current plan](docs/engineering/ROADMAP.md) retains the pending delivery,
   parent #263/H1/H2 acceptance and all existing blocked holds. No merge claimed.
 
 ### Accept #307 shared-read and polling gates — 2026-10-24, PUBLISHED
@@ -3549,7 +3549,7 @@ requests.
   187 related tests PASS; whole-PR source scope 197/300.
 - Direct coordinator cleanup confirms all 17 named PIDs absent, both private
   ports unused and pidfile/profile absent. Evaluator settled and acknowledged;
-  runtime/checks reservations released. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  runtime/checks reservations released. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #314](https://github.com/Vovanostm/warwrit/pull/314) published;
   final PR CI pending, no merge yet.
 - Full integrated gates and fresh live-main comparison NOT_RUN. Parent #263,
@@ -3570,7 +3570,7 @@ requests.
 - Direct cleanup confirms 37 named PIDs absent (including two failed-launch
   PIDs), private ports unused and pidfile/browser profiles absent. Builder
   settlement acknowledged; release returned retained/no_owned_resource.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) allocates independent source
+  [Current plan](docs/engineering/ROADMAP.md) allocates independent source
   review and evaluation, with exclusive checks/private runtime for the evaluator.
 - Published branch checkpoint, not a PR or merged/player-accepted result.
   Main CI `40067442240` PASS at `99e513f5`. Full integrated gates and fresh
@@ -3583,7 +3583,7 @@ requests.
   after merged #306/PR #313. The [coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
   allocates existing `apps/web/src/combat-lab/CombatLab.mounted.test.tsx` alongside
   CombatLab/controller source and tests, so real timer/unmount wiring can be proved.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns one web builder,
+- [Current plan](docs/engineering/ROADMAP.md) assigns one web builder,
   exclusive sequential focused checks and private ports 23201/25201. Preserve
   initial 750 ms polling, cadence after settlement, shared-read identity/cleanup,
   550 ms autoplay/stop and exact-body retry. Whole-PR source cap remains 300;
@@ -3606,7 +3606,7 @@ requests.
   118 focused tests, two day/night victories and three retry probes. Later commits
   contain only evidence and coordinator records. One playable-proof merge this tick.
 - The existing sequential #307 now has its own worktree and read-only contract
-  task on merged main. [Current plan](docs/engineering/CURRENT_PLAN.md) names the
+  task on merged main. [Current plan](docs/engineering/ROADMAP.md) names the
   next check; no builder/runtime allocation, new game code or acceptance waiver.
   #263/H1/H2, consumed budgets and #179/#209/#310/#297 holds remain unchanged.
   Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
@@ -3624,7 +3624,7 @@ requests.
   Coordinator validation remains exit 0, 9/9 checks, 145 related tests, scope 245/300.
 - Direct cleanup confirms all 17 owned PIDs absent, both private ports unused,
   pidfile/profile absent; evaluator settled and runtime/checks reservations released.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records
+  [Current plan](docs/engineering/ROADMAP.md) records
   [PR #313](https://github.com/Vovanostm/warwrit/pull/313), published with CI pending.
   Full integrated game gates NOT_RUN; fresh live-main comparison NOT_RUN.
   Parent #263, #307, H1/H2 and blocked visual acceptance remain open. No rules,
@@ -3641,7 +3641,7 @@ requests.
   whole-PR scope 245/300. Builder reports 118 focused tests, normal audited
   commits and one ordinary round-7 victory with paired day/night captures;
   800 ms stop/terminal waits issued no further POST. Independent acceptance pending.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh Tier L review
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh Tier L review
   and evaluation. Five recorded PIDs absent, no worktree runtime process matches,
   private ports unused and pidfile absent; initial sandbox `ps` denied, direct
   escalated readback succeeded. Build report: `.orca/qa-action-transport/report.md`.
@@ -3657,7 +3657,7 @@ requests.
   guards in `CombatLab.tsx::refreshLatest` required by late-response AC3.
   `controller.ts` and existing CombatLab/controller tests retain their scope;
   #307 keeps polling extraction. No acceptance or recovery-budget reset.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates builder task
+- [Current plan](docs/engineering/ROADMAP.md) allocates builder task
   `task_a0148fe23e8b`, exclusive private runtime and sequential focused checks.
   [Issue decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728)
   records the boundary; local contract/brief are named in the plan. This is
@@ -3678,7 +3678,7 @@ requests.
 - Existing Tier L ACCEPT, validation 9/9, 115 related tests and independent
   day/night journeys remain the delivery evidence. Final scope check PASS,
   169/300 source lines and one closing issue. No game checks rerun this tick.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates the #306 contract
+- [Current plan](docs/engineering/ROADMAP.md) allocates the #306 contract
   on merged main under the accepted sequential split. No source, rules, API,
   protocol, replay, schema or migration changes; parent and visual limits remain.
   One PR with playable proof merged this tick; #306 implementation is not started.
@@ -3695,7 +3695,7 @@ requests.
   retry probes PASS. Small JPEG captures and the source review accompany it.
   Prior coordinator validation 9/9 PASS, 115 related tests and scope 169/300 remain valid.
 - Direct cleanup confirmed 17 PIDs absent, ports 23685/25685 unused, pidfile and
-  isolated browser profile absent. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  isolated browser profile absent. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #312](https://github.com/Vovanostm/warwrit/pull/312) as published, CI pending. No new source, rules, API, protocol, replay, schema or
   migration changes; full game gates NOT_RUN this tick. Parent #263, #306/#307,
   H1/H2 and blocked visual acceptance remain open.
@@ -3712,7 +3712,7 @@ requests.
   ordinary mill victories; stop intervals 1070/1079 ms had no further POST.
   One favicon 404 remains an author-smoke limitation. Independent Tier L review
   and evaluation are pending; no playable acceptance, PR CI or merge is claimed.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns the independent gates.
+- [Current plan](docs/engineering/ROADMAP.md) assigns the independent gates.
   Direct cleanup confirms all 21 recorded private processes absent and both
   runtime ports unused before transfer. No source recovery, rules, API, protocol,
   replay, schema, migration or setup change; full game gates NOT_RUN.
@@ -3729,7 +3729,7 @@ requests.
   #305 using `CombatLab.mounted.test.tsx`; production source stays frozen at the
   preserved WIP, and consumed recovery budgets remain unchanged. No new source
   recovery, #306/#307 work or acceptance waiver. Independent Tier L still required.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) records the merged prerequisite
+- [Current plan](docs/engineering/ROADMAP.md) records the merged prerequisite
   and next allocation. Documentation conflicts only; no production-source conflict.
   Scoped format/status/diff checks PASS. Integration probe: 83 focused tests and
   combined normal audit PASS, but merge pre-commit refreshed only the newly staged
@@ -3759,7 +3759,7 @@ requests.
 - Daily scout started on main with exclusive private runtime; metrics/digest
   were already posted. No merge this tick. #305 validation, browser acceptance,
   independent Tier L and candidate CI are NOT_RUN. See
-  [current status](docs/engineering/CURRENT_PLAN.md) and
+  [current status](docs/engineering/ROADMAP.md) and
   [#305](https://github.com/Vovanostm/warwrit/issues/305). No setup/API/wiki
   behavior contract changed; setup capability remains proposed in #309.
 
@@ -3778,7 +3778,7 @@ requests.
 - Coordinator verified no listeners on 23685/25685, no play.pid or lane check
   process before resource handover. Validation, independent Tier L, browser
   acceptance and candidate CI are NOT_RUN. Main CI `40015365287` is successful.
-  See [current status](docs/engineering/CURRENT_PLAN.md) and
+  See [current status](docs/engineering/ROADMAP.md) and
   [#305](https://github.com/Vovanostm/warwrit/issues/305).
 
 ### Prepare mounted-submit prerequisite for gated merge — 2026-10-24, PUBLISHED
@@ -3788,7 +3788,7 @@ requests.
   Tier D ACCEPT remains `c50c0c76`; subsequent changes affect only shared records.
   Coordinator validation at source `38d9757c` remains 9/9 PASS; no source changed.
 - Pre-merge scope check PASS: 1/300 source lines and one closing issue (#309).
-  This records-only commit updates the [current plan](docs/engineering/CURRENT_PLAN.md);
+  This records-only commit updates the [current plan](docs/engineering/ROADMAP.md);
   its CI and expected-head merge are pending. The prior CI-pending status is superseded.
   After merge, #305 may complete tests against its frozen source; no recovery budget reset.
   New game tests, browser/playable proof and full game gates NOT_RUN this tick.
@@ -3799,7 +3799,7 @@ requests.
   independent Tier D reviewer 1 ACCEPT at `c50c0c76`, with no blocking findings.
   This supersedes the review-pending status below; coordinator validation remains
   9/9 PASS at source `38d9757c`. PR CI and merge remain pending.
-- Records-only update to this changelog and [current plan](docs/engineering/CURRENT_PLAN.md).
+- Records-only update to this changelog and [current plan](docs/engineering/ROADMAP.md).
   Reviewer did not rerun checks; no new game tests or browser proof in this tick.
   #305 stays frozen until this prerequisite merges; existing visual blocks remain.
 
@@ -3814,7 +3814,7 @@ requests.
   POST/settlement hits, typecheck, lint, format, normal audit, and coordinator
   validation 9/9 PASS at `38d9757c`; source scope 1/300. Review and PR CI pending.
   This is Tier D fixture evidence; playable acceptance and #305 acceptance remain open.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) restores the Orca coordinator
+- [Current plan](docs/engineering/ROADMAP.md) restores the Orca coordinator
   status and routes #310's non-product question to dependency-blocked engineering
   work. Rework 2/2, parent freezes and failed gates remain; no extra round allocated.
   No setup, production, API, rules, protocol, replay, schema or migration changes.
@@ -3924,7 +3924,7 @@ requests.
   typecheck/lint/format, genuine day/night round-8 victories and fresh mounted
   lifecycle/guards/timers PASS. Direct 25-PID/port cleanup verified before handback.
   Normal evidence commit hook PASS; final-head hosted CI remains required.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) reconciles #293's settled
+- [Current plan](docs/engineering/ROADMAP.md) reconciles #293's settled
   `79a5e407` candidate, coordinator validation 9/9 and fresh full Tier V workers;
   author matrix is not acceptance. Short native readability and E1/E2/E3 stay open.
   PR #292 attempts 4–8 now satisfy five consecutive full hosted passes; matched
@@ -3944,7 +3944,7 @@ requests.
 - Coordinator-only CHANGELOG/CURRENT_PLAN follow the gated source. The current
   plan now has one active status block, actual owner delegation and preserved
   history. The rejection guard remains a separate follow-up; final-head hosted
-  CI and merge pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
+  CI and merge pending. [CURRENT_PLAN](docs/engineering/ROADMAP.md).
 - #268 ordinary rework 2 follows a source-grounded pure autoplay/disabled
   allocation repair; staged 170/300 preserved, normal audit/<=300/full Tier U
   still required. Final #269 AND #26220/15, consumed fallback 1 and last ordinary
@@ -3986,7 +3986,7 @@ requests.
   Only coordinator publication audit uses existing coverage alongside source work;
   no coordinator test or runtime is allocated. #214 waits179; final component20/15
   remains on BOTH269 AND262; #263/#231 original gates retained. Native state and
-  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   is rewritten with the current queue. Daily work already complete, no duplicate
   scout/digest. This tick:0 merged PRs with playable proof; no production/rule/API,
   protocol/replay/schema/migration/dependency change. New coordinator game tests,
@@ -4004,7 +4004,7 @@ requests.
   validator exit 0, all 9 checks PASS; related 1 PASS / 18 SKIP without DB is not
   fresh database acceptance. Direct native cleanup confirms 145 recorded PIDs
   absent, six ports clear and empty project-labelled Docker inventories.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh independent Tier L
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh independent Tier L
   round 4 allocation; reviewer source-only, evaluator exclusive runtime. Full
   owning contract/report and earlier evidence remain under the dedicated worktree's
   .orca/core-integration-db-isolation/ (local paths). No new source round granted.
@@ -4036,7 +4036,7 @@ requests.
   unchanged encounter line 4156 remains unexplained. Batch selection, outer guard
   or leadership deferral require the original invocation's branch trace before
   cleanup. Leadership is a lead, not a reproduced cause or authorized fix.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh Tier L round 3
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh Tier L round 3
   reviewer/evaluator allocation, exclusive runtime and preserved #272/#282 proof.
   Original hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain gates.
   Under 2026-10-21 engineering delegation, #179's process-only recovery question
@@ -4069,7 +4069,7 @@ requests.
 - Exact evaluator settlement verified and recorded before acknowledgment.
   Coordinator directly checked all 23 recorded PIDs absent, six ports clear,
   and empty project-labelled Docker container/network/volume inventories.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exclusive runtime
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exclusive runtime
   handoff and queue. Verdict/evidence remain in the dedicated worktree under
   .orca/core-integration-db-isolation/eval-2.md and eval-2-evidence/ (local paths).
 - WIP branch publication only; no PR/merge or acceptance. Matched hosted <=20%
@@ -4096,7 +4096,7 @@ requests.
   at `2824c81f` exit 0, all 9 gates PASS. Related 1 PASS / 12 SKIP without DB
   supplies no fresh database proof. All 44 declared PIDs absent, all 18 ports
   clear and labelled Compose inventories empty before exclusive slot transfer.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh round-2 Tier L
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh round-2 Tier L
   review/evaluation allocation. Preserve historical REWORK/eight-file/60-test
   evidence, #272 accepted proof and #282 assertions; hosted <=20% timing remains
   NOT_MEASURED, five full CI runs NOT_RUN. WIP branch checkpoint publication only;
@@ -4122,7 +4122,7 @@ requests.
   clear and empty labelled Compose inventories. First rework 1/2 is allocated
   inside the existing seven-path ownership, preserving exact-name cleanup,
   original errors/assertions, ordinary audit, <=300 source lines and Tier L.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) holds the operational handoff.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) holds the operational handoff.
   Matched hosted <=20% duration NOT_MEASURED and five full CI runs NOT_RUN remain
   mandatory. Source unchanged `0b0c44eb`; no PR/merge, zero merged PRs with playable
   proof. Coordinator game checks/runtime NOT_RUN; documentation checks only.
@@ -4143,7 +4143,7 @@ requests.
   Evaluator `task_cf926bbb6c7d` / `ctx_c4c26582a636` remains live with exclusive
   checks/DB/browser/runtime; finding forwarded. Combine all gate findings after
   its settlement and positive cleanup before starting the first rework.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records this one-tick handoff.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records this one-tick handoff.
   Source remains `0b0c44eb`, scope 176/300; prior validator exit 0 / 9 gates PASS
   is retained evidence. New coordinator game tests/typecheck/validator/runtime
   NOT_RUN. Original full eight-file cleanup/persistent journey, matched hosted
@@ -4170,7 +4170,7 @@ requests.
   readback found all 16 reported PIDs absent and three ports clear. SQL cleanup
   raw log missing; independently repeat. Lost-CREATE-reply cleanup advisory
   retained for fresh reviewer, not reproduced or accepted.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) schedules fresh Tier L review
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) schedules fresh Tier L review
   and exclusive evaluator checks/runtime. Full eight-file/migration and persistent
   victory/effects proof pending; matched hosted <=20% timing NOT_MEASURED and five
   full CI runs NOT_RUN. #272/#282 proofs retained, PR #287 CI failed; #179 remains
@@ -4195,7 +4195,7 @@ requests.
   state. Original #272 proof and merged #282 rollback regression stay intact.
 - Recorded/acknowledged four mailbox messages; forwarded sampled short-desktop
   day/night readability concerns to the sole #179 builder. No final Tier V
-  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   retains all original criteria, exclusive runtime ownership and deferred slices.
   No new worker, issue, label change or daily repeat; 0 merged PRs with playable
   proof. Local game tests/typecheck/build/DB/browser NOT_RUN, performance
@@ -4209,7 +4209,7 @@ requests.
 - `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
   completes the interrupted documentation correction below. The new OIDC proof
   link points to unmerged PR #287, where that evidence exists; historical records
-  remain intact. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains #285's
+  remain intact. [CURRENT_PLAN](docs/engineering/ROADMAP.md) retains #285's
   live read-only contract and #179's sole builder/checks/runtime allocation.
 - Recorded and acknowledged two #179 advisories before relaying to its existing
   dispatch: possible initial-fit/full-field pan-limit overwrite (sender source
@@ -4240,7 +4240,7 @@ requests.
   decoder through a normal follow-up commit; preserve catalogue fit/upward-step/
   widened-B001/unchanged-height regressions, browser alpha measurements and
   original full Tier V. Existing #214 freeze and #268 queue remain.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records current continuation;
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records current continuation;
   issue comments read back exactly, mailbox advisory recorded before ack,
   #285 dispatch/worktree/liveness verified. Local game tests, typecheck, builds,
   DB/browser and full suites NOT_RUN; performance NOT_MEASURED. Documentation
@@ -4263,7 +4263,7 @@ requests.
   exact W01/80 px and full Tier V acceptance remain unproven. #274/#280 REWORK.
 - Ordinary diff, history readback, local links, Markdown format and PR scope are
   the relevant checks; game tests/typecheck/runtime NOT_RUN for this docs-only
-  correction. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
+  correction. [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation.
 
 ### Publish accepted OIDC test isolation — 2026-10-22, PUBLISHED
 
@@ -4281,7 +4281,7 @@ requests.
   records; both histories retained. Validator exit 0, 9/9 PASS; related OIDC
   skips without DB and does not replace author proof. Positive browser PID/port
   cleanup confirmed. This commit is being published; final CI/merge pending; no waiver.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #179 next sole web
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #179 next sole web
   allocation and frozen #214. Complete ignored native proof is retained in the
   coordinator before cleanup. No setup/API/wiki/rule/replay/schema/migration/
   dependency change; full local integrated suites NOT_RUN, performance NOT_MEASURED.
@@ -4311,14 +4311,14 @@ requests.
   #272 retains mutation/five real parallel-pass/Tier L gates; #214 next web slot.
   #268/#269/#262/#263/#231 remain open; final component 20/15 still required on
   #269 AND #262. Infrastructure #274/#280 unresolved REWORK blocks merge.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
 
 ### Tick prompt is not owner scope — 2026-10-22, PUBLISHED
 
 - `claude/tick-prompt-owner-scope`, #290: the coordinator wrote status blocks in
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) whose scope line quotes the
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) whose scope line quotes the
   tick prompt as the owner's words, against
   [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md). The prompt in
   `scripts/orca-pipeline-tick.sh` now says it is the tick script, never owner
@@ -4365,7 +4365,7 @@ requests.
   reserved #214 and before inactive #201/playback owners. No source start,
   numerical spacing decision, new mechanic, ownership expansion or acceptance
   waiver. Original catalogue-derived spacing, AC/DoD and full Tier V remain.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the queue; the issue
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the queue; the issue
   comment was read back exactly after one write. First comparison incorrectly
   stripped its trailing newline; corrected comparison PASS.
 - #267 evaluator remains live with the exclusive checks/runtime slot; #272
@@ -4388,7 +4388,7 @@ requests.
   `9ccabbd9`: exit 0, all 9 gates PASS, related 49 tests. Fresh Tier U task
   `task_99c8547e4ba0` / `ctx_a1732d6d1a89` is live; no ACCEPT/PR yet. Local proof:
   `.orca/qa-hooks-selection-autoplay/` in its dedicated worktree.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records queue and gates.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records queue and gates.
   Final component 20/15 remains on #269 AND #262; #268 follows #267.
   #272 preserves original mutation/five-pass/Tier L after merged #282.
   No setup/API/wiki/rule/migration change; full local suites NOT_RUN,
@@ -4414,7 +4414,7 @@ requests.
   preserved. No production/tool change or proof waiver; original budgets and
   final #269 AND #262 component 20/15 remain. Full local owning report and
   amendment: `.orca/qa-hooks-selection-autoplay/` in the dedicated worktree.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md): #214 complete contract accepted
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md): #214 complete contract accepted
   and queued behind #267; #282 CI pending, #272 follows it. PR #274 hosted CI
   fails bridge-v5 terminal effects assertion. No setup/API/wiki contract change.
   Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
@@ -4426,7 +4426,7 @@ requests.
   named stash `b2aeabd0` and local binary patch, unapplied until merge finishes.
   First resume stopped on shared-record conflicts only; no checks/runtime.
   Coordinator resolved those conflicts; budgets and accepted scope unchanged.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records merged #271 proof,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records merged #271 proof,
   #284 revalidation/CI, #214 read-only contract and #267 continuation.
   No extraction acceptance/source delivery yet; source checks/browser NOT_RUN
   on this resumed candidate, no setup/API/wiki change, performance NOT_MEASURED.
@@ -4441,7 +4441,7 @@ requests.
   stays read-only. Preserve guards, synchronous refs and 550 ms / 750 ms timers;
   estimate 175–215 source additions plus removals, hard stop 300. Candidate
   scope/complexity NOT_MEASURED; code and runtime acceptance NOT_RUN.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records builder/scout tasks,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records builder/scout tasks,
   current dependencies and daily metrics: 10 rolling-day merges, at least 5 with
   recorded play proof; 0 failed worker runs versus 5 previously, no regression
   trigger. #262 and #231 remain open; #268/#269 and #263–#265 retain sequencing.
@@ -4466,7 +4466,7 @@ requests.
   #214 technical ownership ordering moves before inactive #198/#212; dedicated
   read-only retained-contract refresh `task_cfa9df48704d`, no source/runtime.
   Full original issue proof and visual rubric remain; builder waits #267.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
 ### Readable status block and main-red rule — 2026-10-22, PUBLISHED
@@ -4505,7 +4505,7 @@ requests.
   3 PASS/11 SKIP without DB URLs are not database acceptance.
 - [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
   accompany publication. Later commits only evidence/coordinator records;
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records hosted-CI/merge gates.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records hosted-CI/merge gates.
   No merge or player-feature delivery claimed; 0 merged PRs with playable proof
   this tick. #272 retains separate mutation/Tier L gates after #282; #271 waits
   PR #283 CI; #267 WIP/budgets preserved; no duplicate daily work.
@@ -4546,7 +4546,7 @@ requests.
   source lines. Related tests: 3 PASS / 11 SKIP without DB URLs, explicitly
   separate from the builder's actual database runs. Fresh Tier D reviewer
   `task_3458072eeedf` is live on that frozen head; no verdict or PR yet.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the exact handoff,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the exact handoff,
   pending #283 final CI, preserved #267 WIP and independent #272 mutation/Tier L
   gates. Local contract/report/proof: `.orca/core-world-rollback-isolation/`
   in the dedicated worktree. Source and records published for continuation;
@@ -4574,7 +4574,7 @@ requests.
   Source implementation and all new game/DB/validator checks NOT_RUN.
   #282 remains planning until live #271 evaluator releases the checks/runtime
   slot; #272 retains `37f35c6b`, its five-pass requirement and Tier L gates.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation,
   preserved #267 WIP/budget and broader visual discovery on existing
   #179/#201/#188/#189 without adding #271 conditions. Contract worker settled,
   recorded before acknowledgment and released (no owned resource).
@@ -4592,7 +4592,7 @@ requests.
   nine related tests PASS. Scope remains 36 source lines, excluding tests.
   Tier U ACCEPT and independent played proof remain valid for unchanged code.
   Final hosted CI and expected-head merge remain pending; 0 merges this tick.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #282's clean author
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #282's clean author
   commits and pending independent Tier D review, #272's separate acceptance,
   and retained #267 WIP. Attributed agent scope expansion is recorded locally
   as unverified authority; no new milestone activated. No API/setup/wiki change.
@@ -4619,7 +4619,7 @@ requests.
 - Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
   PASS with five inherited findings retained. No duplicate test rerun this tick.
   Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sole core/check-slot
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records sole core/check-slot
   handoff to #282 and preserved #272/#267 dependencies. Full verify/stress/migrations/
   production build NOT_RUN locally; performance NOT_MEASURED. Full scene/art/M1
   acceptance unclaimed. No API/setup/wiki/rule/protocol/replay/renderer change.
@@ -4638,7 +4638,7 @@ requests.
   before acknowledgment and release (no owned resource). Builder default/preset/
   result-return, actual payload, pending/invalid, keyboard and day/night journeys
   are local author evidence; independent Tier U acceptance remains pending.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records evaluator
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records evaluator
   `task_b9107798fb76`, frozen source and the serial resource handoff: #272 gets
   exclusive checks/DB while #271 evaluator reads source; its browser permit
   follows exact #272 settlement and cleanup. Contract/report/shots remain local
@@ -4662,7 +4662,7 @@ requests.
   remain tracked. Local evidence retained; clean fully-pushed worktree removed.
   This tick delivered 1 merged PR with playable proof; it preserves behavior
   and does not claim a new player feature or full-M1 acceptance.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names #271's bounded sole web
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) names #271's bounded sole web
   builder task and P0 #272's disjoint core contract reservation. #271 starts
   from merged main; #272 source/DB work awaits accepted contract and resource
   handoff. #267 staged WIP/budgets and #269 AND #262 final gate are preserved.
@@ -4694,7 +4694,7 @@ requests.
   before acknowledgment and release (no owned resource).
 - [Owning contract, independent verdict and ten JPEGs](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
   now tracked; later commits change only evidence and coordinator records.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records publication and
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records publication and
   remaining hosted-CI/exact-head/blocked-label gates. Merge NOT_RUN; 0 merged
   PRs with playable proof this tick. #271 remains next after this merge; #267
   staged WIP/budgets preserved. #269 AND #262 final component limits remain;
@@ -4717,7 +4717,7 @@ requests.
   acceptance is pending on task `task_840ad97b96c0`, frozen source `a6b35143`.
   Exact native builder settlement and structured result matched the full local
   contract/report before acknowledgment and release (no owned resource).
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the playable journey,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the playable journey,
   evaluator handoff and sequence. Local contract/report and validator logs stay
   in the dedicated worktree under `.orca/`; source and records are published
   for continuation. PR/merge NOT_RUN; this tick has 0 merged PRs with playable
@@ -4741,7 +4741,7 @@ requests.
   result and full verdict matched, recorded, acknowledged and released.
 - [Owning contract, verdict and JPEG proof](docs/engineering/evidence/qa-hooks-editor/README.md)
   retained on the PR branch; later commits contain only evidence/shared records.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records review → PR and the
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records review → PR and the
   remaining exact-head CI/scope/blocked-label/merge gates. Hosted CI and merge
   pending; this tick has 0 merged PRs with playable proof. #231 stays open and
   #262–#265 preserve sequencing. No duplicate daily scout/digest.
@@ -4762,7 +4762,7 @@ requests.
   release (no owned resource). #261 advances to review; fresh Tier U evaluator
   `task_4e10f35af809` / `ctx_b7066392e440` is live on frozen `4523f609`.
 - Source WIP and coordinator-only records are pushed for continuation; no PR,
-  independent ACCEPT or merge yet. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  independent ACCEPT or merge yet. [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   names the next gate and retains prior dispatch history. #231 remains open;
   #262–#265 preserve sequencing. Daily work already complete, no duplicate scout.
   This tick: 0 merged PRs with playable proof. Full verify/stress/migrations/build
@@ -4779,7 +4779,7 @@ requests.
   matching tests, preserving behavior, feedback priority and normal audit.
 - Exact native contract settlement/result matched, recorded before acknowledgment,
   then released (no owned resource). #231 stays open; #262–#265 retain sequencing.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names the active builder and
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) names the active builder and
   next validation/Tier U gate. Shared records are the only changes on this branch.
 - Contract/clean-base/ownership checks passed; documentation format/link/diff
   checks accompany this commit. Implementation/game tests/audit/typecheck/browser
@@ -4797,7 +4797,7 @@ requests.
   source scope must be measured before widening. Evaluator runner adaptation
   is local only; installed skill and #190 source ownership remain intact.
 - Original worker result/native settlement recorded before acknowledgment and
-  release. This entry and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  release. This entry and [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   are coordinator records only; implementation/gameplay/typecheck/production
   checks NOT_RUN, performance NOT_MEASURED. Documentation format/link/diff
   checks accompany the normal commit. This tick: 0 merged PRs with playable
@@ -4817,7 +4817,7 @@ requests.
   No hook implementation or new gameplay verification yet (NOT_RUN).
   Exact post-gate diff passed after narrowing an overly broad assertion that
   included the incoming-main lab README; accepted source/tests stayed unchanged.
-  [Current queue](docs/engineering/CURRENT_PLAN.md). No migration or deployment.
+  [Current queue](docs/engineering/ROADMAP.md). No migration or deployment.
 
 ### Publish accepted affordability bands — 2026-10-21, PUBLISHED
 
@@ -4837,7 +4837,7 @@ requests.
   PR259/#249 delivered this tick; #249 closed/done and #218 closed with the
   original decision/implementation links. Finished worktree removed after
   native proof retention and clean/no-unpushed checks. One merged PR with
-  playable proof; [live queue](docs/engineering/CURRENT_PLAN.md).
+  playable proof; [live queue](docs/engineering/ROADMAP.md).
   No deployment, new rule, balance/performance measurement or full-M1 claim.
 
 ### Accept affordability evidence and integrate delivered bow — 2026-10-21, LOCAL
@@ -4866,7 +4866,7 @@ requests.
 - #249 is closed/done; decision #218 is closed with the original B decision,
   wiki/CHANGELOG record and separate implementation links. Native evidence is
   retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records one merged PR with
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records one merged PR with
   playable proof this tick and the still-live #184 Tier V gates. Shared records
   are the only changed paths; accepted game source is frozen. #231 and other
   slices keep their prerequisites; no new milestone or deployment.
@@ -4892,7 +4892,7 @@ requests.
   `.orca/scout/2026-10-21/`; no duplicate report added.
 - [PR259](https://github.com/Vovanostm/warwrit/pull/259) remains open at `00c8bbcb`,
   PR scope SUCCESS and final clean-checkout CI running. Merge NOT_RUN;
-  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/ROADMAP.md).
   No migration, deployment, balance or full-M1 acceptance claim.
 
 ### Validate affordability evidence continuation — 2026-10-21, PUBLISHED
@@ -4911,7 +4911,7 @@ requests.
 - [PR259](https://github.com/Vovanostm/warwrit/pull/259) for #249 is open at
   `00c8bbcb`, fresh Tier L ACCEPT retained; final hosted full CI/merge pending.
   Daily scout plays pinned main; performance during local validation overlap
-  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/ROADMAP.md).
   #184 visual acceptance/CI remain pending; #231 waits. No migration/deployment
   or full-M1 claim. This tick: 0 merged PRs with playable proof.
 
@@ -4926,7 +4926,7 @@ requests.
   silhouette/annotation intersection remains unproven. Earlier gate results
   apply only to `06479a47`. Heavy work queues behind the live #249 evaluator and
   daily main scout. This documentation-only update needs no game tests.
-  [Current queue and limits](docs/engineering/CURRENT_PLAN.md).
+  [Current queue and limits](docs/engineering/ROADMAP.md).
 
 ### Preserve final affordability rework and evidence blocker — 2026-10-21, PUBLISHED
 
@@ -4944,7 +4944,7 @@ requests.
   evidence-only evaluator attempt, preserving every acceptance criterion.
   Prior `06479a47` evaluator ACCEPT and visual REWORK are retained history.
   Owning local report: `.orca/uix-affordability-bands/report.md`.
-  [Checkpoint](docs/engineering/CURRENT_PLAN.md). No PR, merge or deployment.
+  [Checkpoint](docs/engineering/ROADMAP.md). No PR, merge or deployment.
 
 ### Integrate accepted JOIN and affordability rework — 2026-10-21, LOCAL
 
@@ -5013,7 +5013,7 @@ requests.
   audits failed because staged incoming-main coverage omitted retained branch
   code; 21 focused tests PASS. Normal incoming-main audit against branch parent
   PASS; normal main-based slice validator is running, with no weakened hook.
-  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/ROADMAP.md).
   No migration, deployment, balance measurement or full-M1 claim.
 
 ### Accept persistent bow journey and integrate pipeline main — 2026-10-21, LOCAL
@@ -5032,7 +5032,7 @@ requests.
 - Publish one PR for #249 next; hosted full clean-checkout gate and merge are
   pending. #184 remains validating after evidence/process delegation; fresh
   Tier V gates required. No migration, deployment, new rule, balance measurement
-  or full-M1 claim. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  or full-M1 claim. [Current checkpoint](docs/engineering/ROADMAP.md).
 
 ### Self-driving Orca backlog — 2026-10-21, PUBLISHED
 
@@ -5064,7 +5064,7 @@ requests.
   scope 239 source lines. Coordinator PG NOT_RUN; fresh independent evaluator
   owns its disposable database and complete persistent rendered/refusal/terminal
   acceptance. Source reviewer and evaluator round 2 are live; no ACCEPT yet.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) and local dispatch
   checkpoint; publish retained commits and records. No new source change in this
   records commit. Full integrated gate/hosted CI/PR/merge remain pending;
   no migration, deployment, balance or full-M1 claim. #184/#231 remain gated.
@@ -5081,7 +5081,7 @@ requests.
   supersede this failure. Allocate ordinary round 2 of 2 to root-cause repair
   and legitimate related current-source coverage with isolated PG available to
   the normal hook; no guard, assertion, audit or scope waiver.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); coordinator commits
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md); coordinator commits
   only shared records, leaving both staged worker files for the sole successor.
   Scoped formatting/diff/readback checks; coordinator game checks NOT_RUN.
   Fresh validate/Tier L/CI/PR/merge remain pending; no new rule or deployment.
@@ -5098,7 +5098,7 @@ requests.
   terminal effects/proof/retry, native 2 AP refusal and complete day/night
   rendered move journeys remain unproven; fresh Tier L gates must finish them.
   Evaluator cleaned its isolated runtime/DB; settlement recorded and released.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) and local dispatch
   checkpoint for the one-tick continuation. Documentation-only commit; scoped
   formatting/diff/readback checked, game checks NOT_RUN by coordinator.
   No source change, acceptance waiver, migration, merge or deployment.
@@ -5115,7 +5115,7 @@ requests.
   Evaluator remains live; collect its verdict before dispatching round 1 rework.
   No source changed or rework budget spent. Earlier validator 9/9 PASS remains
   historical; no game checks rerun by this coordinator tick.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with the exact failure,
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) with the exact failure,
   ownership and pending gates. Source, persistent restart/old-active/terminal
   proof, PR/CI/merge remain unaccepted; no new rule, migration or deployment.
 
@@ -5133,7 +5133,7 @@ requests.
 - Fresh independent Tier L gates are next, including isolated test-schema setup
   with existing migrations only. Hosted CI/publication/merge remain pending;
   no #249/#218 closure, deployment, balance or full-M1 claim.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md); owning builder report
+  [Current checkpoint](docs/engineering/ROADMAP.md); owning builder report
   is tracked at `.orca/core-bow-three-ap/report.md`.
 
 ### Start persistent bow successor integration — 2026-10-21, LOCAL
@@ -5150,7 +5150,7 @@ requests.
   admission/move/shot/save/restart proof. Coordinator validation, fresh Tier L
   gates, publication and merge remain pending. Documentation readback/diff and
   formatting are the only coordinator checks this tick; game checks NOT_RUN.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+  [Current checkpoint](docs/engineering/ROADMAP.md). No migration/deployment.
 
 ### Deliver bow lab and prepare persistent successor — 2026-10-21, PUBLISHED
 
@@ -5163,7 +5163,7 @@ requests.
   Fresh #249 contract must inspect current main before company/binding and
   persistent admission/save/restart work; that acceptance remains NOT_RUN.
   Earlier WIP audit remains NOT_RUN; no new game test executed for these records.
-- [Current checkpoint](docs/engineering/CURRENT_PLAN.md) records #184 needs-owner
+- [Current checkpoint](docs/engineering/ROADMAP.md) records #184 needs-owner
   and its existing evidence-only recovery question. No additional attempt,
   migration, deployment or full-M1 claim.
 
@@ -5175,7 +5175,7 @@ requests.
   coordinator validator 9/9 PASS; source scope 118 lines, Tier L ACCEPT retained
   for unchanged code `1105189d`. Earlier published-head CI `39598354029` SUCCESS;
   final integrated-head CI and expected-head merge remain pending.
-- Correct [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) to the actual #184
+- Correct [CURRENT_PLAN](docs/engineering/ROADMAP.md) to the actual #184
   needs-owner state and existing B1 evidence question after rework 2/2; no new
   attempt or acceptance waiver. #249 waits for #256, #231 for #184.
   [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
@@ -5210,7 +5210,7 @@ requests.
 - #184 evaluator ACCEPT at `06479a47` does not override visual REWORK:
   rendering-language score 1 and missing tight height-step crowd evidence.
   Second bounded rework is live; fresh gates required. Existing reports and
-  earlier failures retained. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  earlier failures retained. [Current checkpoint](docs/engineering/ROADMAP.md).
 
 ### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
 
@@ -5228,7 +5228,7 @@ requests.
 - #184 pushed head `06479a47` integrates actual main with status-only conflicts
   resolved retaining both histories; union validator 9/9 PASS. Fresh evaluator
   and absolute visual critic are live; visual acceptance and CI remain pending.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+  [Current checkpoint](docs/engineering/ROADMAP.md). No migration/deployment.
 
 ### Evidence-based Orca pipeline fixes — 2026-10-21, PUBLISHED
 
@@ -5476,7 +5476,7 @@ requests.
   main6b5b1b03, preserving additive changelog/plan/wiki histories. No production
   conflict or migration; normal correction audit PASS, independent source/test
   and retained-terminal recovery ACCEPT. Final integrated checks pending.
-  [Current plan](docs/engineering/CURRENT_PLAN.md).
+  [Current plan](docs/engineering/ROADMAP.md).
 
 ### Recover valid terminal effects without a lifecycle increment — 2026-10-20
 
@@ -5526,7 +5526,7 @@ requests.
   publication, CI and merge remain pending. Earlier failed checks retain their history.
   Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
   Branch `codex/tactical-bridge-165`; local.
-  [Current record](docs/engineering/CURRENT_PLAN.md).
+  [Current record](docs/engineering/ROADMAP.md).
 
 ### Connect the bounded persistent wolf hunt to tactical combat
 
@@ -5569,7 +5569,7 @@ requests.
   passing checks. Parent subsequently ran integrated validation alone.
   Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
   Branch `codex/actor-integration-186`; local.
-  [Current record](docs/engineering/CURRENT_PLAN.md).
+  [Current record](docs/engineering/ROADMAP.md).
 
 ### Record the reproduced backdrop overlap before actor delivery
 
@@ -5577,7 +5577,7 @@ requests.
   validation8/8 and47related tests pass, but author and fresh independent
   native125 Home images both show the mill obscuring actor name text. Preserve
   the failure and its source ordering lead for a bounded correction; complete
-  reference-sheet framing is repaired. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  reference-sheet framing is repaired. [Current plan](docs/engineering/ROADMAP.md).
   No visual ACCEPT, publication or merge is claimed.
 
 ### Integrate the corrected actor marker with the merged company profile
@@ -5586,7 +5586,7 @@ requests.
   correction bba8d24b while merging actual main137faf88; only additive shared
   records conflicted. Corrected containment has47relatedPASS and author native
   100/125 longer-name proof; independent affected play/absolute visual gates
-  remain pending. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  remain pending. [Current plan](docs/engineering/ROADMAP.md).
 - PR241 is merged with successful PR/main CI and actual-main mixed-company
   PostgreSQL JOIN/retry/reload smoke (1PASS/13filteredSKIP); rescue/transport
   and downstream payment/browser journey remain unresolved. No deployment.
@@ -5598,7 +5598,7 @@ requests.
   actor and representative input proof remain incomplete. Parent's reproduced
   clamp/collision counterexample returns to the original builder. Prior source
   and runtime evidence retained; no live regression, visual ACCEPT or merge
-  claimed. [Current scope](docs/engineering/CURRENT_PLAN.md).
+  claimed. [Current scope](docs/engineering/ROADMAP.md).
 
 ### Retain the actor placement review finding
 
@@ -5607,7 +5607,7 @@ requests.
   public-helper counterexample reproduced; parent live manifestation NOT_RUN.
   Correction and independent affected-play/absolute-visual acceptance remain
   pending. Existing actor checks stay historical evidence, not approval of this
-  defect. [Current delivery boundary](docs/engineering/CURRENT_PLAN.md).
+  defect. [Current delivery boundary](docs/engineering/ROADMAP.md).
 
 ### Validate the integrated actor foundation
 
@@ -5666,7 +5666,7 @@ requests.
   audit PASS after 25 existing initiative-related tests. Initial audit lacked
   current imported HUD coverage; Istanbul combines fresh results with prior
   unchanged-source coverage and discards changed-source entries. No threshold
-  or hook bypass. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  or hook bypass. [Current plan](docs/engineering/ROADMAP.md).
 - Overview delivery is merged: PR244/fe3bcdb4, #227 CLOSED, PR39377607667 and
   main39378757951 CI SUCCESS; actual-main6v5 state/revision3 survives reload.
   [Readback and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
@@ -5690,7 +5690,7 @@ requests.
   foreign-account exclusion, JOIN retry and durable replay proof. No production
   change. Integrated parent validator onfbe225a passed8/8 (784 PASS/48 SKIP);
   correction readback is pending, and critical-bleed policy still blocks merge.
-  [Current plan](docs/engineering/CURRENT_PLAN.md).
+  [Current plan](docs/engineering/ROADMAP.md).
 
 ### Integrate current main into the pending company-profile draft
 
@@ -5725,7 +5725,7 @@ requests.
   wounds/practice, exact retries and unchanged persisted rows after restart.
   Post-reboot isolated 41/41 and coordinator validator 8/8 (775 PASS/48 SKIP,
   audit PASS) supersede earlier incomplete proof/timeouts on unchanged source.
-  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   with payment/terminal-UI NOT_RUN, pending critical-bleed policy and unresolved
   rescue/transport; no source, rule or migration changed. #164 remains open.
   Record independent UI/UX findings for the existing overview rework; no full
@@ -5740,7 +5740,7 @@ requests.
   pending critical-bleed policy. The first terminal failure came from the
   fixture's ineligible STATIC food container; a fresh PARTY_SUPPLY fixture
   completed. No game source or rule changed, no failed gate was waived.
-  [Exact checks and limits](docs/engineering/CURRENT_PLAN.md).
+  [Exact checks and limits](docs/engineering/ROADMAP.md).
 
 ### Preserve leadership evidence from real unarmed attacks
 
@@ -5765,7 +5765,7 @@ requests.
   `company/combat-practice.ts` and the existing public practice specs. The
   earlier helper extraction passed 133 focused tests but is not acceptance of
   this defect. Source repair, normal commit and playable proof remain pending.
-  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  [Current delivery status](docs/engineering/ROADMAP.md).
 
 ### Separate leadership-cycle calculation from practice profile construction
 
@@ -5784,7 +5784,7 @@ requests.
   histories. The five-path compatibility correction matches independent
   review-2 ACCEPT and normal commit audit PASS. Profile integrated/playable
   acceptance remains pending; prior failures and owner-rule gaps stay explicit.
-  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  [Current delivery status](docs/engineering/ROADMAP.md).
   Integrated related coverage: 771 PASS, 48 SKIP, three timeouts; gate FAIL.
   Initial merge audit failed on imported preset coverage; combined coverage
   refreshed without threshold changes or hook bypass. Final acceptance pending.
@@ -5904,7 +5904,7 @@ requests.
   implementation, review and merge of the assessed fix sequence. Start #227
   full-field overview before the preserved actor/desk/outcome integration to
   remove an acceptance prerequisite; one web writer, existing work retained.
-  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with mission scope
+  Updated [CURRENT_PLAN](docs/engineering/ROADMAP.md) with mission scope
   and PR239's verified merge into `b568ee2` (main CI39296247123 successful).
   Camera code, gameplay and new visual acceptance remain NOT_RUN at this entry.
 
@@ -6112,7 +6112,7 @@ requests.
   critic. Full desktop/native125, contrast and applicable layered-scene proof
   remain gate work, not a waived requirement. Captions/terminal naming and
   inherited scene/tooltip findings retain their existing owners and sequencing.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the gate handoff;
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the gate handoff;
   no PR/publication/merge/deployment or full-issue acceptance in this receipt.
   Local contracts/reports remain under each slice's ignored `.orca/` directory;
   wiki behavior is unchanged pending delivery. Today three merged playable
@@ -6135,7 +6135,7 @@ requests.
   worker's existing serial reservation; related-tests/audit did not complete,
   so no validation pass is claimed. Fresh validate and Tier L review/evaluation
   wait for scene settlement. No PR, merge, deployment or full-issue acceptance.
-  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); wiki behavior is
+  Updated [CURRENT_PLAN](docs/engineering/ROADMAP.md); wiki behavior is
   unchanged pending delivery. Local report: `.orca/uix-w1-names/report.md`.
 
 ### Record PR238 merge and release single-issue successors
@@ -8448,7 +8448,7 @@ requests.
   review, publication, merge and local-main update for the measured hex default
   and routing optimization. Preserve current main's renderer improvements and
   concurrent primary drafts; final review/PR CI/merge remain pending.
-  [Delivery checkpoint](docs/engineering/CURRENT_PLAN.md).
+  [Delivery checkpoint](docs/engineering/ROADMAP.md).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: owner chose hex
   search speed after disclosure of measured ≤7.2% longer trips. New polygon-v1
@@ -8494,7 +8494,7 @@ requests.
   implementation and its checks/runtime NOT_RUN. Original Tier U/scope 300 and
   final #269 AND #262 component 20/15 remain. #272 evaluator stays source-only
   until #214 runtime cleanup; #274/#280 unresolved REWORK still blocks merge.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) updates current continuation.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) updates current continuation.
   Exactly one tick: 0 merged PRs, 0 merged with playable proof; daily work already
   complete. Documentation-only normal commit; no game checks required or run.
   No setup/API/wiki/rule/protocol/replay/migration change; performance NOT_MEASURED.
@@ -8518,7 +8518,7 @@ requests.
 - #268 ready → planning in its own checkout from merged main `c62ad2d0`:
   read-only contract `task_a862f659e76e` / `ctx_5c8ffeb5121c`. Coordinator defers
   setup until #214 releases the exclusive checks/runtime slot; no second builder
-  or acceptance waiver. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) is the
+  or acceptance waiver. [CURRENT_PLAN](docs/engineering/ROADMAP.md) is the
   continuation; existing setup/API/wiki contracts unchanged. Docs-only normal
   commit; full local suites/build NOT_RUN, performance NOT_MEASURED.
 
@@ -8538,7 +8538,7 @@ requests.
   validation; sole web source writer, full Tier V unchanged. Its advisory source
   review is not visual acceptance. #267 PR #286 remains on final-head CI;
   #274/#280 retain REWORK; 0 merged PRs with playable proof this tick.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exact continuation.
   Local contract/report/scripts/native logs stay under `.orca/core-oidc-count-isolation/`
   in the dedicated #272 checkout. Only coordinator records change in this commit;
   Markdown hook skips code audit by its existing rule. No production/auth/schema/
@@ -8555,7 +8555,7 @@ requests.
   remain NOT_RUN in this continuation; no proof waiver or budget reset.
 - #267 PR #286 has independent Tier U ACCEPT and published day/night proof;
   final-head hosted CI pending, 0 merged PRs with playable proof this tick.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records next allocation;
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records next allocation;
   #214 keeps full Tier V and #269 AND #262 keep final component 20/15.
   Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
   No production/auth/schema/released migration/setup/API/wiki change.
@@ -8587,7 +8587,7 @@ requests.
   `e4780547` integrates main without changing the affected prompts. Exact native
   settlement/report verified before ack and worker release; tests/runtime NOT_RUN.
   Author fix, coordinator validate and fresh ACCEPT remain; no merge or Tier T activation.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exact continuation.
   Documentation-only closeout: no new game tests; full suites/build NOT_RUN,
   performance NOT_MEASURED. Existing API/setup/wiki contracts unaffected.
 
@@ -8611,7 +8611,7 @@ requests.
   default parallelism and OIDC's ordinary concurrent identity writers.
   Native failed worker settlement recorded before acknowledgment/release;
   private Compose containers/volumes/network directly confirmed absent.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #271's exclusive
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #271's exclusive
   runtime permit for independent Tier U after that cleanup; source review has
   no confirmed defect, complete browser verdict pending. External supervision
   status is attributed context only; one coordinator and existing scope/gates
@@ -8630,7 +8630,7 @@ requests.
   fast-forward integration PASS; the owned auth test is unchanged by integration.
   Source editing is disjoint; checks, DB lifecycle and ordinary commit await
   an explicit coordinator permit after #271 settlement and runtime cleanup.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) distinguishes direct one-tick
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) distinguishes direct one-tick
   authority from the attributed product-scope relay, retains #267 WIP/budgets
   and original #269/#262/#263/#231 acceptance. No new milestone or merge authority.
   Builder must preserve wrong-issuer/session mutation detection and prove five

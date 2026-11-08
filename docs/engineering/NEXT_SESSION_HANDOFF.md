@@ -6,7 +6,7 @@ removes the standalone PlayCanvas comparison and dependency; its source stays in
 Git history, assets/licenses and measurements remain retained. Older pending
 migration statements below are historical. See
 [the removal record](LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
-and [CURRENT_PLAN](CURRENT_PLAN.md) for current delivery/check limits.
+and [CURRENT_PLAN](ROADMAP.md) for current delivery/check limits.
 
 **Renderer decision — 2026-10-01:** use Babylon.js as the owner-selected M1
 client renderer per [ADR-0006](../architecture/0006-m1-renderer-babylon.md).
@@ -24,7 +24,7 @@ visual logout/re-entry is still **NOT_PROVED**. See the exact
 and later [replay/re-entry evidence](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06/output/playwright/m1-w03-restart/replay-reentry-v5/evidence.md).
 The v5 replay supersedes the earlier 403 replay attempt recorded in the first
 report; it does not close the UI gap. Continue from the canonical
-[CURRENT_PLAN](CURRENT_PLAN.md), active c06 checkout's CURRENT_PLAN and
+[CURRENT_PLAN](ROADMAP.md), active c06 checkout's CURRENT_PLAN and
 [parallel queue](/Users/vovanostm/multica_workspaces_local/warwrit-alpha-c06/docs/engineering/PARALLEL_WAVES.md),
 root [AGENTS.md](../../AGENTS.md), and linked canonical M1/source records.
 The original ZIP concordance remains RC-GAP-MACHINE-01 / NOT_RUN; label new

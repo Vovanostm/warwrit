@@ -1,6 +1,6 @@
 # M1 operational checkpoints — preserved 2026-09-29
 
-These are the complete pre-reconciliation operational documents from checkout `ae509850`, including the parent-transferred dirty edits in CURRENT_PLAN and AGENT_TEAM. Historical statements and dispatches below do not override [current assignments](CURRENT_PLAN.md) or the [active queue](PARALLEL_WAVES.md). Each original section is retained verbatim.
+These are the complete pre-reconciliation operational documents from checkout `ae509850`, including the parent-transferred dirty edits in CURRENT_PLAN and AGENT_TEAM. Historical statements and dispatches below do not override [current assignments](ROADMAP.md) or the [active queue](PARALLEL_WAVES.md). Each original section is retained verbatim.
 
 ## Original CURRENT_PLAN.md
 

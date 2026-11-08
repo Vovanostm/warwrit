@@ -1,11 +1,11 @@
 # M1 task queue — AI-sized tasks, 2026-11-05
 
 [Roadmap](ROADMAP.md) owns scope, [production plan](M1_PRODUCTION_PLAN.md#current-execution-plan--2026-11-05)
-owns playable milestones, and [CURRENT_PLAN](CURRENT_PLAN.md) owns the active
+owns playable milestones, and [CURRENT_PLAN](ROADMAP.md) owns the active
 coordinator. The owner's follow-up asks for small AI development tasks. This
 queue contains **33 new leaf issues and 7 existing bounded work entries**; parent
 issues retain full acceptance. Task count is not a completion estimate or a
-mandatory PR count. Prior dispatches remain in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
+mandatory PR count. Prior dispatches remain in [history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
 Game assessment baseline: main `cf973d35`, 2026-11-05; publication includes
 CI-only main `b6a04977` / PR367, with no gameplay change. PR363 and PR338 are still open at readback;

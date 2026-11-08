@@ -2,13 +2,13 @@
 
 Status: 2026-09-30 checkpoint of the Claude Code sessions that delivered PRs
 #125–#132 and opened #133. It covers only agent tooling, quality gates and their evidence. The M1
-product lane (Codex/Luna/Sol) continues from [CURRENT_PLAN](CURRENT_PLAN.md) and
+product lane (Codex/Luna/Sol) continues from [CURRENT_PLAN](ROADMAP.md) and
 Codex's own session handoff; this page does not assign product work or ownership.
 
 ## Historical checkpoint
 
 The September instructions below are retained history. Current work starts in
-[CURRENT_PLAN](CURRENT_PLAN.md). The [2026-11-04 cleanup](AGENT_TEAM.md#harness-cleanup--2026-11-04)
+[CURRENT_PLAN](ROADMAP.md). The [2026-11-04 cleanup](AGENT_TEAM.md#harness-cleanup--2026-11-04)
 supersedes local audit-on-commit, duplicate Claude gates and automatic remote
 inventory at session start. Do not execute the historical H1/H2 briefs as new work.
 

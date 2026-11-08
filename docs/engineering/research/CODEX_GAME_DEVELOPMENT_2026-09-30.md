@@ -18,6 +18,6 @@ canonical M1 sources, or executable contract.
 
 The portable M1 goal and bounded assignments are in
 [NEXT_SESSION_HANDOFF.md](../NEXT_SESSION_HANDOFF.md). Current project status
-and the dependency queue remain in [CURRENT_PLAN.md](../CURRENT_PLAN.md) and
+and the dependency queue remain in [CURRENT_PLAN.md](../ROADMAP.md) and
 the active c06 checkout's plan. No tool, skill, service, dependency, or
 configuration was installed or activated for this note.

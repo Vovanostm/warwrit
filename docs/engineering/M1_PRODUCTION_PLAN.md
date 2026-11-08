@@ -150,7 +150,7 @@ Amendment 2026-10-20: the [owner approved provisional fists](https://github.com/
 Immobile members cannot independently move/retreat; assisted transport remains undefined.
 The current overview and preset branches are implementation in progress, not
 accepted or merged. No new gameplay or full gate ran for this documentation update.
-Live assignments and actual check results belong to [CURRENT_PLAN](CURRENT_PLAN.md).
+Live assignments and actual check results belong to [CURRENT_PLAN](ROADMAP.md).
 
 ## Current GitHub execution queue — 2026-10-17
 

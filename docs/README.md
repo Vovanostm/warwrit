@@ -12,7 +12,7 @@
 - [`architecture/0002-deterministic-combat-kernel.md`](architecture/0002-deterministic-combat-kernel.md) — dependency-free deterministic M0 combat and replay decision.
 - [`architecture/0003-m0-m1-technology-baseline.md`](architecture/0003-m0-m1-technology-baseline.md) — accepted M0/M1 runtime, HTTP, realtime, persistence and renderer-decision baseline with measured revisit gates.
 - [`architecture/0004-company-identity-succession-boundary.md`](architecture/0004-company-identity-succession-boundary.md) — accepted persistent-company, family/household, succession/regency and hard-game-over boundary for WP-02.
-- [`engineering/CURRENT_PLAN.md`](engineering/CURRENT_PLAN.md) — current delivery-state mirror for coding agents: completed milestones, active blockers, next packages and evidence gates.
+- [`engineering/CURRENT_PLAN.md`](engineering/ROADMAP.md) — current delivery-state mirror for coding agents: completed milestones, active blockers, next packages and evidence gates.
 - [`engineering/ROADMAP.md`](engineering/ROADMAP.md) — full-M1 alpha dependency joins, current frontier, optional diagnostic lab and real acceptance route.
 - [`engineering/AI_TECHNOLOGY_HANDOFF.md`](engineering/AI_TECHNOLOGY_HANDOFF.md) — compact implementation contract for coding agents; read before adding or replacing framework/runtime dependencies.
 - [`engineering/LOCAL_DEVELOPMENT.md`](engineering/LOCAL_DEVELOPMENT.md) — bootstrap, infrastructure, CI, combat stress, logging, and migration operations.

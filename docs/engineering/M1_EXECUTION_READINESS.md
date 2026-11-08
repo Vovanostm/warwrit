@@ -55,7 +55,7 @@ No new significance or retraining policy is established here.
 
 ## Dispatch and ownership
 
-Current code ownership and dispatch are maintained in [CURRENT_PLAN](CURRENT_PLAN.md)
+Current code ownership and dispatch are maintained in [CURRENT_PLAN](ROADMAP.md)
 and [PARALLEL_WAVES](PARALLEL_WAVES.md); this amendment defines readiness, not
 live assignments. The parent owns activation, integration and final proof. Sol
 reviews finite readiness requirements and exact code at a frozen handoff. No

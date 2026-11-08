@@ -18,6 +18,6 @@ trigger); docs/engineering/LOCAL_DEVELOPMENT.md; README.md; new ADR drafts in
 docs/architecture/ marked "Status: proposed".
 
 Never edit code, tests, settings, AGENTS.md hard rules, or the parent-owned
-CURRENT_PLAN.md, ROADMAP.md and PARALLEL_WAVES.md: put proposed text for those in
+ROADMAP.md and PARALLEL_WAVES.md: put proposed text for those in
 your reply instead. Run `pnpm exec prettier --write <files>` on what you changed.
 Do not commit or push. Return changed paths, a summary and any proposed text.

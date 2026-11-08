@@ -8,7 +8,7 @@ bounded journeys do not establish complete M1 acceptance.
 
 ## Current development
 
-- [Current delivery plan](docs/engineering/CURRENT_PLAN.md) — live integration status and ownership.
+- [Roadmap](docs/engineering/ROADMAP.md) — progress checkboxes linking each task record.
 - [WLC-08 acceptance](docs/engineering/WLC_08_ACCEPTANCE.md) — exact candidate, fresh results and remaining M1 criteria.
 - [Development roadmap](docs/engineering/ROADMAP.md) — full M1 scope and next playable steps.
 - [Documentation map](docs/README.md) — authority, architecture and owning contracts.
@@ -87,7 +87,7 @@ The kernel still may not import filesystem, network, clock, process, ambient ran
 
 ## Project authority
 
-The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md), the live [delivery plan](docs/engineering/CURRENT_PLAN.md), and the [development roadmap](docs/engineering/ROADMAP.md).
+The source-of-truth hierarchy is defined in [`docs/authority/PROJECT_AUTHORITY.md`](docs/authority/PROJECT_AUTHORITY.md). Engineering agents must also follow [`AGENTS.md`](AGENTS.md), the live [delivery plan](docs/engineering/ROADMAP.md), and the [development roadmap](docs/engineering/ROADMAP.md).
 
 ## Licensing
 

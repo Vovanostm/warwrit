@@ -71,7 +71,7 @@ Pentiment, Kingdom Come, Into the Breach и других, какие прова�
 контракты, отношения, армии, ведущий, кризис, амбиции, летопись.
 
 Это компактная навигация по обзорным страницам. Оперативный статус см. в
-[CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
+[CURRENT_PLAN](../engineering/ROADMAP.md).
 
 - [Спецификация M1 «Серое Поречье»](m1-spec.md) — только действующие правила M1
   (с 2026-11-09 без журнала работ); review draft.
