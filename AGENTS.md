@@ -104,6 +104,9 @@ record actual effects, deviations and remaining work in that same specification.
   staged/unstaged/untracked WIP. Delegate useful independent work with named paths,
   resources, acceptance and integration owner. Load only applicable current guidance
   in [AGENT_TEAM](docs/engineering/AGENT_TEAM.md) when delegation needs it.
+- Subagents, independent reviews and critic scores are optional. If delegating,
+  use only `gpt-6-luna` for bounded roles; use a generic Luna agent when a
+  specialist pins another model. If unavailable, work locally. The parent is unrestricted.
 - The publication-readiness mission permits at most two active writing worktrees.
   Retain parked work. A delegated editor returns a diff. A branch owner commits
   finished steps. Scope/size are advisory except explicit owner boundaries.

@@ -16,6 +16,10 @@ in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05
 WLC-02–05 are merged; WLC-06/PR428 and WLC-07/PR429 are included as explicit
 unmerged candidates in that branch. Preserve their original PRs and historical
 results. Consolidation, the ordinary first loop and full M1 are separate claims.
+The representative first loop now passes on executable0c0aae83, including real
+co-op proof/payment/rest/payroll/re-entry with explicitly accelerated QA time.
+Medical treatment, estate payroll, complete next contract, full content/branch
+coverage and device/owner acceptance remain outside that result.
 Only observed current-build journeys close acceptance criteria. Broad art evidence
 is not a global development prerequisite; a concrete unreadable or unusable
 control blocks its affected journey until fixed and checked.

@@ -5,19 +5,21 @@
 Coordinator/writer: codex/wlc-08-integration, .claude/worktrees/wlc-08.
 Owner authorizes isolated integration/QA, documentation, PR and Airtable sync;
 merge/deployment are not authorized. Base main fdbb0dc2 includes WLC-02–05.
-PR428/d2d82bc3 and PR429/b58c87ce are OPEN/NOT_MERGED and explicitly combined
-in this candidate; source branches and original dirty checkout/saves retained.
-[Owning journey, versions, actual checks and open criteria](WLC_08_ACCEPTANCE.md).
-Status LOCAL/IN_PROGRESS, M1 NOT_ACCEPTED. Initial a5e15030 full local checks PASS:
-1149unit/103SQL,10kcombat stress,migrations/build/static; native ordinary entry/
-gear/supply/travel/recovery/exact retry and integrated Lab/map editor PASS.
-Owner follow-up permits player-two and requests acceleration: opt-in QA campaign
-steps/receipt journal added;0025 corrects tick-only prototype to one persistent
-movement/campaign/light clock;32focusedSQL PASS, final updated-code checks pending.
-Native prototype victory exposed receipt-clock mismatch; fixed shared clock,
-prototype receipts retained; continue final ordinary run in clean wlc08_final.
-Both ordinary companies retained; continue native co-op battle/proof/pay/care/restart,
-using labelled accelerated campaign time. Final updated-code checks/publication pending.
+PR428/d2d82bc3 and PR429/b58c87ce remain OPEN/NOT_MERGED and are explicitly
+combined in this candidate; other branches, original dirty checkout/saves retained.
+[Owning results, failed attempts and remaining M1 scope](WLC_08_ACCEPTANCE.md).
+Status REVIEW_CANDIDATE, full M1 NOT_ACCEPTED; publication/sync in progress.
+Executable0c0aae83: full ordinary two-company hunt/proof/one80crown payout/rest/
+10crown payroll/next contract/restart/OIDC re-entry PASS with labelled QA time.
+Final company830crowns, Rell60,35rations, two survivors100/100, Kest dead.
+All17canonical groups identical across restart and final Playground checks.
+Lab manual/autoplay/replay/cleanup and both map editors/export/refusal PASS.
+Production exclusion/guards PASS. 1150unit/108integration, migrations, build/types,
+format/lint/architecture/dead-code/content and10kstress PASS on executable SHA.
+0024–25 add opt-in atomic QA time/receipts; two clock defects fixed and regressed.
+Two failed native worlds retained. Medical/estate/complete second contract,
+eight-contract matrix/device/performance/owner acceptance remain open, not hidden.
+Next: publish exact integration evidence/PR, read back GitHub/Airtable statuses.
 Earlier dated blocks below retain their original delivery/evidence boundaries.
 
 ## WLC-06 — Combat Lab consolidation, 2026-11-08

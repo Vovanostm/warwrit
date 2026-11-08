@@ -9,36 +9,17 @@ requests.
 
 ## Unreleased
 
-### Integrate consolidation and refresh acceptance guidance (WLC-08)
+### Integrate consolidation and verify the ordinary company loop (WLC-08)
 
-- 2026-11-08, `codex/wlc-08-integration`, LOCAL, owner-assigned integration/QA.
-  Combine main fdbb0dc2/WLC-02–05 with explicit unmerged PR428 and PR429 heads;
-  preserve both histories and other worktrees. Fix reproduced migration-smoke
-  expectations/rollback order through0023 without editing released migrations or
-  weakening older data-preservation checks; failing-before/passing-after on an
-  isolated empty database. Refresh README/docs/roadmap/ADR historical markers,
-  Playground/combat entry guidance and optional-review/scoped visual-gate policy.
-  [Owning evidence and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
-  Fix reproduced development-env leakage of Playground into the standard web
-  build by pinning production for Vite; remove unconsumed retired editor exports
-  and stale Fallow paths, and format the previously failing connection test.
-  Owner follow-up authorizes the second ordinary test account and accelerated
-  QA time. Add opt-in guarded Playground campaign steps with atomic saved
-  receipts, restart/exact retry, active/unsettled-encounter refusal and migration0024.
-  Correct the prototype tick-only jump to a persistent simulation offset in0025:
-  movement/campaign/light advance together; auth/combat deadlines stay real.
-  Preserve existing ticks/journals without rewriting saved routes or companies.
-  32 focused SQL checks pass, including accelerated arrival and next departure.
-  Native accelerated victory exposed a separate combat-receipt clock reader;
-  share world-clock calculation there and retain the failed prototype unchanged.
-  Real wolf JOIN/commands/retry/terminal regression covers zero and nonzero offsets.
-  Ordinary rules retain their owners; accelerated
-  observations are labelled separately.
-  Also update the second stale migration suffix in the real world-clock
-  round-trip regression, retaining its clock-preservation assertions.
-  Frozen install, clean migration up/full smoke and ordinary OIDC/preparation
-  PASS; remaining integrated acceptance pending. CI advisory; no merge/deployment
-  or full-M1 acceptance. Retained player data and original dirty work untouched.
+- 2026-11-08, `codex/wlc-08-integration`, REVIEW_CANDIDATE/NOT_MERGED.
+  Integrate WLC-02–07, remove stale guidance/global visual gating, fix migration
+  expectations and development-env leakage into the production web build.
+  Add owner-requested guarded Playground time steps with atomic receipts and
+  migrations0024–25; correct movement and combat-receipt clock mismatches.
+  Ordinary co-op victory/proof/one reward/rest/payroll/next contract/restart/OIDC
+  re-entry PASS; failed runs and broader M1 gaps remain explicit. Full local checks
+  PASS on executable0c0aae83; no merge/deployment/full-M1 acceptance.
+  [Exact results, versions, failures and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
 
 ### Consolidate Combat Lab (WLC-06)
 

@@ -92,9 +92,112 @@ checkout, other stands and saved companies are untouched. Graph index refers to
 the original old checkout, so discovery here uses owning source and `rg` fallback.
 Raw logs are ignored under `output/wlc08/`; durable summarized evidence lives here.
 
-## Results in progress
+## Integration result — 2026-11-08
 
-Status: LOCAL / IN_PROGRESS, NOT_MERGED, M1 NOT_ACCEPTED. No historical green CI
+**Representative ordinary company loop PASS, with explicitly accelerated QA time.**
+Executable candidate `0c0aae839c884403a2389562808485604acc80bc`;
+tree `98c5ae3cac07fcc5bbc01019a00a0d1a9862cbec`. Later delivery changes are
+documentation/screenshots only. Publication SHA and final-head check results are
+recorded in the integration PR. Status REVIEW_CANDIDATE / NOT_MERGED;
+full M1 remains NOT_ACCEPTED. No old CI result is reused as new integration proof.
+
+### Ordinary journey (all actions through the game UI)
+
+Final empty database `wlc08_final`, migrated0001–0025; ordinary `pnpm dev`.
+Dex player-one owns `1ff758bf-31f7-4fb3-b714-e1b09c71fc50`, «Итоговый дозор WLC08»;
+player-two owns `e58e721d-1987-49d9-8799-fa39ff69515e`, «Итоговая помощь WLC08».
+Neither account, company, route, combat result nor inventory was repaired in SQL.
+
+| Requested steps                             | Actual result                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1–3 OIDC, creation, initial people/property | Both ordinary OIDC accounts created companies with a leader and two selected companions. Main cash800,27rations after opening upkeep. Main chose Rell/Kest; helper Rell/Mora.                                                                                                                                                      |
+| 4–5 Equipment/provisions                    | All9equipment actions accepted for each company; main bought10rations for40crowns:760/37. One prematurely repeated helper click left a shield unequipped; the real JOIN refused. The missing shield was equipped normally and consent renewed, with no code/state bypass.                                                          |
+| 6–8 Contract/travel/arrival                 | Main accepted HUNT-02 at Bereznyak, then physically travelled Bereznyak→Kamenny Brod→Bereznyak before JOIN. Both had initially travelled from Severny Dvor. Fixed QA steps closed the saved routes through the ordinary movement worker.                                                                                           |
+| 9–11 Actual PvE/HUD/outcome                 | Helper HELP/JOIN, then owner JOIN activated both rosters. Encounter `0e8d9b21-03b3-4b1c-b21f-7a65de5cf3c1`, bridge-v5, resolved revision52/round4,52commands/52receipts. Manual attack accepted after API restart; subsequent actions used ordinary HUD's single-action chooser. Victory:5allies standing, Kest dead,3wolves dead. |
+| 12 Consequences                             | Terminal effects committed once; Kest's death and minor-wound/death history persisted. His raider weapon and coat stayed in the company's supply. Two survivors retained reduced health/stamina and damaged armour.                                                                                                                |
+| 13–16 Proof/issuer/presentation/one payout  | Picked the actual unique pelt into the supply container, returned to the elder's interaction and PRESENTed it. Cash760→840; helper stayed800. PRESENT response was dropped after commit; reload/exact retry confirmed the same command without a second80crowns or pelt. One redeemed world proof remains.                         |
+| 17 Rest                                     | Returned to the actual Severny Dvor site, assigned both survivors to RECOVERY, advanced+1000ticks, refreshed: both100/100health/stamina; food37→35. Returned both to FIELD. Medical treatment NOT_RUN: Kest was the only physician and died; the survivors had no treatable condition.                                             |
+| 18 Payroll                                  | Allocated Rell's due10crowns at the local company wallet: treasury840→830, Rell50→60, claim paid10/pending0. No allocation to deceased Kest was attempted; that separate estate/death-payroll path remains unverified.                                                                                                             |
+| 19 Next contract                            | Same company accepted «Когда молчит мельница» from the Severny Dvor elder. Its four ordinary objectives remain in the journal. This is a started next contract, not its completion.                                                                                                                                                |
+| 20–21 Restart/login/persistence             | Restarted the API and repeated normal OIDC login. Same company,830crowns, Rell60,35rations, two living members, Kest dead, retained equipment/pelt and both contract results remained.                                                                                                                                             |
+
+The native browser reported568×853; the attempted viewport override did not change
+that measured size. These captures prove the observed controls, not desktop-wide
+visual acceptance or mobile approval. No critical control prevented this completed
+path. Broad presentation/device/enjoyment acceptance remains separate.
+
+### Resilience and conservation
+
+| Scenario                  | Evidence/result                                                                                                                                                                                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Travel disconnect/restart | Both accepted physical routes recovered after stand restart; ordinary reload showed movement continuing. Accelerated arrival and subsequent departure worked on the same simulation clock.                                                                                     |
+| Lost response/exact ID    | Time and PRESENT replies were actually dropped by a transport-only relay after HTTP200; reload retained the saved requests. Exact retries produced one effect/receipt. PRESENT command `178cd4c8-13c3-4e62-8d39-d2aea50a27b3`, receipt `a07b3214-dd5a-4b5c-9150-9df8bd5e25fe`. |
+| API restart in battle     | Restarted only the owned API at active revision6; the same encounter recovered and accepted a manual attack. No encounter/receipt was re-created.                                                                                                                              |
+| Complete settled recovery | An initial11-group comparison passed. Expanded capture then included proof, ordinary contracts/receipts and QA clock/journal: **all17groups exactly equal across another API restart**, before elapsed-time observations. Normal OIDC re-entry separately checked the UI.      |
+| Invalid action            | Incomplete sword/shield loadout and remote-wallet recovery were refused without a partial command effect. Physical entry at the visible Severny Dvor marker was required; clicking empty space within a marker's overall bounds had legitimately targeted nearby terrain.      |
+| No double reward/items    | One redeemed pelt, one80crown transfer, helper balance unchanged; exact PRESENT retry adds neither. Retained gear,35rations and unique item IDs checked in canonical snapshots. Full17groups also stayed exactly equal across the final Combat Lab/Map Editor scenarios.       |
+
+### Playground and production
+
+Repeated on `0c0aae83`: Combat Lab create→choose «Ранения и смерть»→save→Validate
+→Start→manual Defend→Autoplay→victory→replay MATCH→Delete PASS. Encounter
+`79c54b8a-a436-4436-8cd4-7a1219e270d0`, revision2,2commands/receipts,12events;
+deleted sandbox `c1322f44-0315-417a-b455-d65a96daef9e`. An initial replay click
+paused Autoplay before a new action; the subsequent observed terminal run is the
+evidence cited here. Sandbox outcomes never entered the campaign.
+
+World draft `2cd80d25-390d-4a60-9a4c-fa765bec1ece`: removed required Bereznyak,
+saved/validated→DANGLING_SITE and disabled export; restored the content ID,
+saved/validated/exported. Battle draft `950b853f-a801-4a3e-9583-306e152f708b`:
+painted cell0,0height1, saved/validated, rendered Babylon preview and exported.
+Invalid publication, ownership/origin/session/production refusals and immutable
+publication are covered by the real integration boundary tests; no content was
+published or assigned to an existing world in this journey.
+
+Production web build with the normal development `.env` contains no executable
+Playground/CampaignTime/MapEditor entry chunks. Fresh production-preview navigation
+to `/dev/playground/combat` showed «Инструмент недоступен». Production server
+distribution excludes Playground/campaign-time routes and editor routes; shared
+content/fixture helpers remain legitimate consumers. Production configuration/API
+guards PASS in focused and full tests. No retired renderer/asset dependency was
+introduced; content validation resolves all130active assets.
+
+### Technical checks at the executable SHA
+
+| Check                                                       | Result                                                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Frozen dependency install                                   | PASS, unchanged pinned lockfile                                                                        |
+| Format/lint, architecture, dead code/dependencies, patterns | PASS                                                                                                   |
+| Content validation                                          | PASS,130assets                                                                                         |
+| Production build and all package typechecks                 | PASS; existing chunk-size advisory retained                                                            |
+| Unit mode                                                   | PASS1150 /117SKIP,170passed files                                                                      |
+| PostgreSQL integration mode                                 | PASS108 /17files, per-file migrated clean databases, one worker                                        |
+| Migration up/down                                           | PASS complete smoke through0025, retained legacy checks and used-clock rollback refusal                |
+| Determinism/stress                                          | PASS10000battles,20deterministic reruns,100replays,1302384commands                                     |
+| Focused clock regressions                                   | PASS32 movement/world/time tests and2real wolf JOIN/move/bow/retry/terminal variants (zero/+2160000ms) |
+| CI / deployment / owner acceptance                          | NOT_RUN / NOT_RUN / NOT_ACCEPTED                                                                       |
+
+Raw local logs/captures: ignored `output/wlc08/`, including final-0c0a-checks.json,
+complete-before/after-restart.json and after-final-playground.json. The final-head
+publication check log is reported in the PR. Earlier3364fcb4 full SQL run timed out
+on the wolf terminal test under contention; the unchanged test passed alone. The
+final0c0aae83 run with one worker passed all108. Earlier lint failure came solely
+from temporary diagnostic scripts in output; moving those tools under the ignored
+worktree-tools directory restored lint without changing the rule.
+
+### Screenshots
+
+[Victory](evidence/wlc08/final-victory.jpg),
+[one payment](evidence/wlc08/final-payment.jpg),
+[rest/payroll](evidence/wlc08/final-rest-payroll.jpg),
+[next contract](evidence/wlc08/final-next-contract.jpg),
+[re-entry](evidence/wlc08/final-relogin.jpg),
+[Lab replay](evidence/wlc08/final-lab-replay.jpg),
+[production refusal](evidence/wlc08/final-production-denied.jpg).
+
+## Initial checkpoint — SUPERSEDED by the integration result above
+
+Historical status: LOCAL / IN_PROGRESS, NOT_MERGED, M1 NOT_ACCEPTED. No historical green CI
 is used as fresh evidence. Checks below are local observations unless named otherwise.
 
 - Frozen dependency install PASS; normal launch/readiness PASS.
@@ -149,15 +252,30 @@ advisory CI. No global visual BLOCKED prerequisite was found in executable scrip
 CI; existing BLOCKED_ENV reports describe scoped missing resources, not art gates.
 Concrete critical UI defects still prevent acceptance of their affected journeys.
 
-## Remaining acceptance and M1 gaps
+## Remaining M1 scope and delivery limits
 
-Do not close WLC-08 or claim the consolidation programme complete until the full
-fresh journey, resilience, integrated Playground and required artifact checks have
-actual evidence at the checked revision. WLC-06/07 remain unmerged dependencies.
+The representative first loop and consolidation checks above are proven. WLC-06/07
+remain unmerged dependencies, and this integration needs owner review/merge; no
+programme rollout or full-M1 completion is declared by this report.
 Existing broader M1 requirements (eight authentic contracts and branches, physical
 owner/helper, company service/learning/remaining inventory, privacy, backup/restore,
 device/performance and owner comprehension) retain their owning roadmap issues.
+Medical treatment, deceased-member payroll/estate resolution, the complete second
+contract, backup restore and the complete eight-contract/branch matrix remain
+NOT_RUN here. Generic loadout/remote-wallet refusals and raw trophy IDs could give
+clearer guidance; no broad UX approval is inferred. Desktop-wide layout, performance,
 FPS/capacity/heap/enjoyment NOT_MEASURED; no deployment or owner acceptance inferred.
+
+## Retained failed runs
+
+Database `warwrit`: ordinary owner/helper journey, supply response-loss/exact retry,
+travel, active encounter `040d4db5-c0b6-4c81-bc9e-8c442fa8c20a` restart PASS.
+The agent then missed «Вернуться к управлению»; all six allies died. Final
+revision145 and terminal effects persisted, no proof/reward minted, main cash756.
+This is a failed player run, retained without reset. See
+[defeat](evidence/wlc08/first-run-defeat.jpg); raw first-run-final.json stays local.
+Database `wlc08_success` retains the prototype clock/terminal failure described
+below. Neither failed world supplies success evidence for the final company.
 
 ### QA time implementation checkpoint
 

@@ -607,9 +607,11 @@ painted-world/Playground/OIDC/account allowlist settings. It must name this
 stand's configured world. Apply migrations and restart the development API.
 Open `/dev/playground/combat`: **Время изолированного QA-мира** offers fixed
 +1/+10/+100/+1000 campaign-tick steps. This changes the test campaign clock;
-normal game reads/commands then settle food, rest and wages. Auth sessions,
-light cycles and combat deadlines retain real time. Active/unsettled encounters
+normal game reads/commands then settle food, rest and wages. Movement, world
+light and campaign share a persistent simulation offset (migration0025).
+Auth sessions and combat deadlines retain real time. Active/unsettled encounters
 refuse advancement. Reload/exact retry uses the same saved command and receipt.
 Do not enable on retained player databases. Production refuses this setting.
-Time and receipts survive restart; rollback0024 refuses to discard a used journal.
+Time and receipts survive restart; rollback0025 refuses to discard an advanced
+simulation clock and rollback0024 refuses to discard a used journal.
 This is explicitly accelerated QA evidence, not a real six-hour waiting test.
