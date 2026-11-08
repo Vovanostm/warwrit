@@ -10,7 +10,7 @@ requests.
 ## Unreleased
 
 - 2026-11-09 — Changed: record N02's preserved defeat and owner-authorized separate
-  N01 continuation with co-op victory, unique claw and living worker custody.
+  N01 continuation with co-op victory, rescue, once-only payment and payroll/resupply.
   [N02 result](docs/work-packages/m1-next/02-next-contract.md). LOCAL.
 
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;

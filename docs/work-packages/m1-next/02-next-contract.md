@@ -2,10 +2,13 @@
 
 ## Current result — 2026-11-09
 
-PARTIAL / LOCAL, C07 verified; C08 lost the actual N01 party. NEXT-2/3/5 remain unmet. Owner steering in this
-chat selects retained **Дозор N01** as the N02 target. This continues its actual
-N01 save, not WLC08's separate first-paid-hunt company. No replacement/reset or
-manual gameplay data edit. [N01 provenance](01-integration.md).
+PARTIAL / LOCAL, C07–C09 pass in the owner's explicit separate continuation of
+original **Дозор N01**. Its mill-worker and beast contracts are completed and paid;
+fresh response-loss/exact retry and subsequent payroll/resupply pass. Successful
+continuation restart remains open. First failed save stays GAME_OVER separately.
+Owner steering selects N01, not WLC08's separate first-paid-hunt company; the later
+explicit save-branch permission is recorded below. No manual gameplay data edit.
+[N01 provenance](01-integration.md).
 
 ### Authority, source and reserved paths
 
@@ -18,7 +21,7 @@ Local checks/documentation/commits authorized; publication/merge/deploy NOT_AUTH
 
 Owner also explicitly allowed QA acceleration: «Разрешаю ускорение. В целом сейчас
 для любых тестов можно безопасно использовать ускорение». Only existing guarded
-Playground steps are used in isolated `n01_savecopy`; no SQL clock edits. Label
+Playground steps are used in isolated `n01_savecopy` and `n02_n01_continuation`; no SQL clock edits. Label
 movement/light/upkeep evidence as accelerated; real clock/offline/device acceptance
 is not inferred. Original N01 DB `warwrit` and its baseline dump are untouched.
 
@@ -59,7 +62,41 @@ to Северный Двор; claw requires return to Тихая Гать. Captu
 `output/playwright/n02-{coop-victory,helper-leadership,custody-proof}.png`.
 Earlier failed save remains unchanged; this is only the authorized save branch.
 
-### Player result and current acceptance (first attempt; historical)
+### C09: lawful payment, exact retry and next action — 2026-11-09
+
+Physically return via known roads: mill → Тихая Гать inn → Каменный Брод →
+Северный Двор elder. Authorized Playground advances shorten travel, with actual
+movement POST acceptance awaited before each step. PRESENT claw
+`34426412-18ff-45cd-ba9d-a94bdcf01b0f` pays90 once, receipt
+`873ebd43-62f6-42a9-a686-0e991fbd9d84`; keeper wallet180→90, N01760→850.
+Global proof claim records sole N01 custodian/redeemer and that receipt; the
+physical claw remains present but redeemed, as implemented by current terms.
+
+DELIVER from elder's actual building uses command
+`2f2581b2-9449-4b82-a98d-8880630aa7d8`, expectedRevision4. Forward the actual
+browser request, observe server200 with rewardQ80000000/revision5, then abort only
+its reply. UI reports unknown outcome. Reload: persisted sessionStorage envelope
+and “Повторить” survive; board also reads committed completion. Retry through that
+button returns original success. CLI network23538/24517 request bodies are exactly
+identical, including command/revision; response24517 is original revision5/reward80.
+SQL: exactly one matching ordinary receipt, one delivery source, custody[],
+SUCCESS, revision5, steward wallet160→80, N01850→930. No duplicate payout or
+person consumption. Helper stays800, no automatic reward.
+
+Subsequent ordinary action at local purse: payroll command
+`02c2f23a-2fd8-45af-89e8-990903038cd5` pays actual due40 to living Rell/Kest20 each,
+company930→890; each personal purse50→70; due balance0. Fractional next-day claims
+remain not yet due. Buy10 real rations at Северный Двор barn for40, command
+`9706f606-3d77-4876-a1c3-74d92c5cdb3f`: company890→850, rations31→41,
+shop290→280. Previous37→31 consumption is actual accelerated campaign upkeep.
+Main roster3 living, no known treatable conditions; wound care NOT_RUN. No policy
+for deceased helper payees is invented or exercised. Captures:
+`output/playwright/n02-{claw-payment,deliver-reply-lost,deliver-exact-retry,payroll,resupply}.png`.
+The retry check's final text extraction hit two `aside` elements after the accepted
+response; subsequent network-body readback, screenshot, cleared attempt and SQL
+confirm success. This is a diagnostic-selector failure, not an extra payout attempt.
+
+### Baseline and current acceptance
 
 Normal Dex player-one login restores company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,
 760crowns,37rations, three living people and accepted mill-worker revision1.
@@ -69,14 +106,14 @@ are now equipped. Physically travel via Kamenny Brod and explore toward Tikhaya
 Gat; speak to Frol at the inn; discover and enter the actual ruined mill and INSPECT
 its yard. No acceptance/encounter/custody fact is supplied by the QA clock.
 
-| Acceptance | Result  | Actual evidence on unchanged base executable                                                                                                              |
-| ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NEXT-1     | PASS    | Owner-selected retained N01 company restored by ordinary OIDC; same ID, people, resources, equipment and accepted contract; original source DB untouched. |
-| NEXT-2     | FAIL    | C07 passes; actual C08 defeat kills all three and ends this company run. Hunt, release and delivery have not succeeded.                                   |
-| NEXT-3     | NOT_RUN | Incomplete release/delivery remain blocked; no reward or custody yet.                                                                                     |
-| NEXT-4     | NOT_RUN | Failed-run casualty/resource restart/re-entry PASS (20 groups); successful payout continuation still unproved.                                            |
-| NEXT-5     | NOT_RUN | Game-over refusal is visible after restart; a lawful next action after successful completion is unproved.                                                 |
-| NEXT-6     | NOT_RUN | C07 record/check/self-review complete; overall task record remains open.                                                                                  |
+| Acceptance | Result  | Actual evidence on unchanged base executable                                                                                                      |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NEXT-1     | PASS    | Owner-selected N01 ID/provenance retained in explicitly authorized separate source-save branch; original and failed saves preserved.              |
+| NEXT-2     | PASS    | Current C07 clues → actual co-op kill → unique claw/custody → physical return → both contracts completed. First failed run stays FAIL separately. |
+| NEXT-3     | PASS    | Current real SQL: keeper−90/steward−80/N01+170, sole redeemed proof, custody consumed once; fresh lost200/reload/exact retry, one receipt.        |
+| NEXT-4     | NOT_RUN | Failed-run casualty/resource restart/re-entry PASS (20 groups); successful continuation restart still pending.                                    |
+| NEXT-5     | PASS    | Ordinary local payroll40 and barn resupply10 for40 succeed after payment; no stale battle binding.                                                |
+| NEXT-6     | NOT_RUN | Source/record/checks current; final restart, diff self-review and completion record pending.                                                      |
 
 C07 source event commands: ASK `0484af27-bdfb-4e7e-b0bd-fdeb8aefa054`;
 INSPECT `46e29715-43bd-468d-b320-f50fbe324952`. SQL readback: revision3,
@@ -143,7 +180,7 @@ exploration discovered the mill without a knowledge/state edit. Stale tile409s
 while movement/light revisions changed recovered on normal polling; no product
 repair or blanket performance verdict is claimed.
 
-Next: retain this failed run; obtain the owner-selected separate continuation or independently exercise a naturally created world, without relabelling its result.
+Next: restart the successful continuation and verify canonical equality plus fresh ordinary OIDC re-entry.
 [Common contract](COMMON.md). Launch and subsequent authority supplied in this chat.
 
 ## Player goal and normal journey
