@@ -116,6 +116,8 @@ The migration/readback helpers remain under `output/.worktree-tools/`.
 Review description and committed candidate patch: `output/n01-pr-description.md`,
 `output/n01-candidate.patch`. No existing PR/source branch was updated.
 
+Owner response — 2026-11-09: no historical-save source is available; explicitly
+leave that player-save check open. INT-5 remains NOT_RUN for this evidence.
 Open blocker: authorized pre-existing owner save/dump and company identity are
 not provided. Recommendation: supply a read-only source and scope, restore only
 to a new owned database, then run its ordinary login and0022→25 readback before
