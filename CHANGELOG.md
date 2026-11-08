@@ -9,11 +9,21 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Removed: old documentation per
+  owner answer to section A of [open questions](docs/wiki/m1-open-questions.md):
+  CURRENT_PLAN and its history (with `scripts/check-current-plan.sh` and its CI
+  and orca-validate steps), 24 one-off reports/handoffs, three 2026-09-08 reviews,
+  work journals inside eight rule pages, and 532 unreferenced evidence files
+  (183 → 46 MB). Inbound links point to permalinks at `87e785d5`. Changed: wiki
+  pages carry status `rule` or `draft` ([SCHEMA](docs/wiki/SCHEMA.md));
+  [docs/README.md](docs/README.md) is a reading map; biomes moved to
+  [world/biomes.md](docs/wiki/world/biomes.md); player-start decisions recorded
+  in [world](docs/wiki/world/index.md).
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: [m1-spec](docs/wiki/m1-spec.md)
   reduced to current rules (2497 → ~360 lines); stale style, camera, camp, hire
   and second-region statements corrected; owner decisions on combat and movement
-  lifted from the journal. Journal moved unchanged to
-  [m1-spec-history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md), 77 inbound links repointed.
+  lifted from the journal. Journal later removed; last edition:
+  [m1-spec at 87e785d5](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md), 77 inbound links repointed.
   Added [owner questions](docs/wiki/m1-open-questions.md) for documentation
   cleanup, rule conflicts and open M1 rules.
 - 2026-11-09, `claude/design-references`, LOCAL — Added: player-journey audit
@@ -1178,7 +1188,7 @@ requests.
   #176 spec/review/implement/review/merge/update-main. Reserve private resources,
   reuse PR334 and define clean install, ordinary OIDC/company entry, retained-data
   restart, database readiness and encounter smoke in the
-  [existing playtest contract](docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+  [existing playtest contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
   CURRENT_PLAN records ownership. Initial specification state was NOT_RUN; dated
   implementation results below supersede it for the affected checks.
 
@@ -6820,7 +6830,7 @@ requests.
   current48focused/types/audit PASS. Clean PR gate/publication/merge pending.
 - 2026-10-16, branch `codex/live-combat-ux`, local: owner authorizes raster
   drafts, implementation with subagents, PR/review and merge to default main.
-  Existing [UX research and approved queue behaviour](docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)
+  Existing [UX research and approved queue behaviour](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)
   retained in the owning wiki. Separate worktree starts from integrated
   e87a379 including sprite-outline repair; primary and other active worktrees
   untouched. Parent owns web/shared docs; separate pure-forecast author and

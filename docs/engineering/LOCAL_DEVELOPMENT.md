@@ -358,7 +358,7 @@ Troubleshooting follows the failing boundary.
   `WORLD_MAP`. Atlas and legacy saves are separate. Cookies are host-scoped, so
   separate Chrome profiles are required for concurrent stacks on127.0.0.1.
 
-The [playtest result](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06)
+The [playtest result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06)
 records actual verification and remaining limits. Production requires complete
 DB/OIDC configuration, uses deployment-supplied environment and prohibits local
 fixture/lab modes. This local recipe uses public development credentials.
