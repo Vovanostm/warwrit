@@ -2433,7 +2433,7 @@ requests.
   The world client loads authenticated, byte-masked PNG tiles and lawful sites;
   its Vite origin denies private source/raw artwork. Unknown terrain has an
   opaque non-geographic surface; chart knowledge, exploration and live sight
-  remain distinct. [Owning result](docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+  remain distinct. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
   Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS and the
   one outdated migration-list case fixed and separately PASS. Native privacy,
   movement/visit/input/session and real API recovery PASS. Third full visual

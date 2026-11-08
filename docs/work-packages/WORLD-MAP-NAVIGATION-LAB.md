@@ -354,7 +354,7 @@ records are integrated. The client receives lawful sites and authenticated,
 byte-masked PNG tiles, with no private source/raw atlas on the world-lab origin.
 Known-area fit, soft paper reveal, preserved map controls and session/stale cleanup
 are usable on5338. Three delegated slices and the final quality refactor retain
-one parent integration/validation owner. [Detailed result and checks](../wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+one parent integration/validation owner. [Detailed result and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
 Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS, old migration-list
 case corrected and separately PASS. Third absolute visual ACCEPT, eight criteria2;
 independent input replay NOT_RUN. Final refactor: isolated SQL10, native9 plus
