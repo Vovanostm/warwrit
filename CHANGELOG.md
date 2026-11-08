@@ -2874,7 +2874,7 @@ requests.
   Review added the Claude discovery link; marker/report JSON now replace atomically,
   verified with interrupted writes and recovery. Final review/hosted CI pending. Historical
   full-scene art REJECT remains explicit; no combat integration or deployment.
-  [Contract](docs/work-packages/MILL-3D-INSPECTION.md) ·
+  [Contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/MILL-3D-INSPECTION.md) ·
   [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).
 
 ### Scene refinement skill: review fixes
