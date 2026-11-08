@@ -22,7 +22,44 @@ Playground steps are used in isolated `n01_savecopy`; no SQL clock edits. Label
 movement/light/upkeep evidence as accelerated; real clock/offline/device acceptance
 is not inferred. Original N01 DB `warwrit` and its baseline dump are untouched.
 
-### Player result and current acceptance
+### Owner-authorized separate continuation — 2026-11-09
+
+After the retained failed run was recorded, owner explicitly chose:
+«Продолжить отдельную копию исходного N01; поражение оставить отдельным результатом».
+Created new DB **n02_n01_continuation** from a read-only dump of original N01
+**warwrit**, preserving both original and failed **n01_savecopy**. Restore writes
+only the new allocated DB. Source company ID is unchanged, ACTIVE, canonical13,
+760crowns,37rations, accepted mill-worker. It is an explicit save branch, not a
+claim that the failed party recovered or its casualties vanished. The first failure
+keeps NEXT-2 FAIL for that run; new evidence will name this separate continuation.
+The intermediate empty n02_independent received migrations and ordinary OIDC only;
+no company was created there. No game data from that setup is target evidence.
+
+### Separate continuation: C08 success — 2026-11-09
+
+In **n02_n01_continuation**, repeat C07 through ordinary ASK/INSPECT
+(`a4cb31b8-174f-4342-b710-e5d9fe51a047`, `7b4532a8-d696-4f32-8e63-0835bd254f09`).
+Naturally create **Помощь N02** through player-two OIDC/company UI, read/accept
+the actual helper terms at Frol and physically travel both companies to the mill.
+Helper JOIN precedes owner JOIN; no synthetic participant or remote admission.
+Actual bridge-v3 battle `eb1fd004-f41e-46d6-a4f2-796b6a08e713` ends at revision115,
+round15, first-hunt-companies victory, beast0. No clock steps during combat.
+All three N01 members survive. Helper founder and Mora die; helper Rell survives
+and is chosen as leader through ordinary UI. Both bindings release, terminal
+effects applied. Receipts:62 account,28 system_ai,25 system_timeout.
+
+PICKUP `593d23b3-a770-4b48-b422-5b904476aa02` puts unique claw
+`proof.mill-beast.claw.01` in N01's offered supply container, receipt
+`a0e200cc-5f4f-4cb7-a90e-6d7bbe7778c1`. RELEASE
+`786775bc-0fa0-48b2-8a63-d4f0dd099c6b` commits revision4, both living-release
+facts and sole custody of `person.mill-worker.01` to the same N01 company.
+SQL confirms source encounter/terminal revision and unredeemed sole custodian.
+No payment yet: N01760, helper800. Journal correctly requires physical return
+to Северный Двор; claw requires return to Тихая Гать. Captures:
+`output/playwright/n02-{coop-victory,helper-leadership,custody-proof}.png`.
+Earlier failed save remains unchanged; this is only the authorized save branch.
+
+### Player result and current acceptance (first attempt; historical)
 
 Normal Dex player-one login restores company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,
 760crowns,37rations, three living people and accepted mill-worker revision1.

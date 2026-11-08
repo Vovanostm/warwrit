@@ -2,10 +2,11 @@
 
 ## N02 current continuation — 2026-11-09
 
-The owner-selected retained Дозор N01 obtained both ordinary mill clues, then lost
-all three members in its actual night-beast encounter. C07 is verified; C08 failed
-and this saved run is GAME_OVER. Deaths/resources survive actual restart/re-entry;
-living delivery and payment remain open. [N02](m1-next/02-next-contract.md) owns the exact source, authority, SQL/browser
+The first N01 attempt remains GAME_OVER with restart-verified casualties. In the
+owner-authorized separate copy of original N01, C07/C08 now pass: actual co-op
+victory, unique claw pickup and living Сенька custody. Two helper deaths and its
+surviving new leader are retained; physical return/payment remain open.
+[N02](m1-next/02-next-contract.md) owns the exact source, authority, SQL/browser
 evidence and remaining acceptance. No product code or place rule changed.
 
 Active owner request: make cities, villages and visited landmarks feel alive,
