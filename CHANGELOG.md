@@ -9,6 +9,27 @@ requests.
 
 ## Unreleased
 
+- 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
+  existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
+
+### Consolidate Combat Lab (WLC-06)
+
+- 2026-11-08, `codex/wlc-06-combat-lab`, PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), owner-assigned consolidation.
+  Reuse protected Playground, existing editor/HUD and authoritative encounter
+  executor with isolated durable storage.
+  [Owning contract and actual results](docs/engineering/COMBAT_LAB_CONSOLIDATION.md).
+  Replace volatile standalone routes/entry/session transport with schema2 bridge-v5
+  encounters using the common executor, strict isolated schema and explicit debug clock.
+  Add visual setup, field preflight, equipment/pools, commands/receipts/events,
+  manual/Step/Autoplay/Pause, response-loss/duplicate/reload diagnostics and digest replay.
+  Preserve shared UI/assets and historical replay versions; no game-rule change.
+  Owner confirms no active-battle reinforcement rules are added.
+  33integration-mode (26SQL/7guards) +67focused tests, types/lint/architecture, migration up/down/up and native
+  setup/loss/restart/exact retry/terminal/replay PASS. Screenshots committed.
+  CI/full suite/M1 NOT_RUN; no merge or deployment authorized.
+  [Publication receipt](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#publication--2026-11-08)
+  records implementation6bd10ce0, actual cleanup and the corrected check breakdown.
+
 ### Record WLC-05 merge and local main update
 
 - 2026-11-07, `codex/wlc-05-merge-receipt`, records MERGED

@@ -4,7 +4,7 @@
 
 The ordinary game and Combat Lab share the Babylon.js 9.28.0 battle renderer;
 map/place scenes also use Babylon. Run the ordinary game below or `pnpm dev:combat`
-for the disposable lab. There is no supported engine query switch or
+for the authenticated Playground lab after configuring its database/OIDC/allowlist. There is no supported engine query switch or
 `@warwrit/renderer-spike` launch/build/bake command. That directory retains only
 historical assets/licenses and a source-history pointer; do not reinstall
 PlayCanvas to run current scenes. See the
@@ -363,8 +363,9 @@ fixture/lab modes. This local recipe uses public development credentials.
 
 Orca worktrees run [`scripts/orca-setup.sh`](../../scripts/orca-setup.sh) on
 creation: dependencies, package builds and private combat-lab ports in
-`.worktree-ports`, which `pnpm dev:combat` reads. Several worktrees can serve
-the combat lab at once; the campaign stack above stays shared.
+`.worktree-ports`, which the `pnpm dev:combat` alias reads. WLC-06 retires the
+DB-free lab: each stand also needs explicit Playground identity, developer allowlist
+and a migrated disposable database. It uses `/dev/playground/combat`.
 [Orca setup and limits](AGENT_TEAM.md#orca-parallel-worktrees--2026-10-18).
 
 ## Verification pipeline
@@ -573,10 +574,18 @@ Sign in normally, then open `/dev/playground` (Combat Lab / Map Editor).
 The server rejects missing/unauthorized sessions and foreign mutation origins.
 No wildcard developer grant or company/identity mutation endpoint is added.
 
-Create → save JSON draft → Validate → Activate → inspect the shared Babylon scene.
+WLC-06: create → choose debug preset → visually edit map/participants/equipment/
+initial pools/seed → save → Validate → Start. Preflight also validates edits without
+mutating saved state. Manual commands, Step, Autoplay/Pause and inspection use
+`/dev/playground/combat`; Map Editor links back to this single command entry.
 Clone/reset/delete and exact retry share the shell. TTL is fixed at 24 hours;
-tombstones count toward quotas until cleanup. WLC-05 does not implement editor
-commands. [Contract, isolation and actual checks](DEVELOPER_PLAYGROUND.md).
+tombstones count toward quotas until cleanup. Apply new migration0022 for isolated
+encounter storage. The server-only scope has no public-schema fallback or campaign
+clock/effects. A lost combat response blocks replacement and survives reload/API
+restart; use the exact-retry button. Download/verify replay pins schema2, bridge-v5,
+content revision, seed, accepted commands and final digest. Unknown old content
+remains metadata-only until explicitly reset/reconfigured. `COMBAT_LAB=1` is refused.
+[Foundation](DEVELOPER_PLAYGROUND.md) · [Current lab behavior/checks](COMBAT_LAB_CONSOLIDATION.md).
 
 Production server packaging uses `pnpm --filter @warwrit/server build`
 and `pnpm --filter @warwrit/server start`, with shared packages built

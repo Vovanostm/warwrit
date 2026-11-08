@@ -1,3 +1,4 @@
+import * as combat from '@warwrit/game-core';
 import { createHash, randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { sql } from 'kysely';
@@ -6,8 +7,13 @@ import { createDatabase } from '../db/database.js';
 import { loadServerConfig } from '../config.js';
 import { cleanupPlayground } from './store.js';
 import { projectCombatLabReplay } from '../combat-lab/replay.js';
-import { playgroundTemplate } from './scenario.js';
-import type { PlaygroundCommand, PlaygroundResult } from '@warwrit/protocol';
+import { playgroundTemplate, playgroundDebugScenarios } from './scenario.js';
+import type {
+  PlaygroundCommand,
+  PlaygroundResult,
+  PlaygroundInspection,
+  EncounterCommandDto,
+} from '@warwrit/protocol';
 
 const url = process.env['DATABASE_URL'];
 const origin = 'http://127.0.0.1:53505';
@@ -84,6 +90,7 @@ afterAll(async () => {
 describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lifecycle', () => {
   it('denies absent/revoked sessions, nondevelopers and foreign/missing origins', async () => {
     expect((await app.inject('/dev/playground/api')).statusCode).toBe(401);
+    expect((await app.inject('/dev/combat-lab/catalog')).statusCode).toBe(404);
     expect(
       (
         await app.inject({
@@ -158,12 +165,12 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
     expect((await send({ ...command('configure', current), scenario })).statusCode).toBe(409);
     const inspected = await app.inject({ url: `/dev/playground/api/${id}`, headers });
     expect(inspected.statusCode).toBe(200);
-    expect(inspected.json().view.sessionId).toBe(id);
+    expect(inspected.json().view.sessionId).toBe(inspected.json().encounterId);
     expect(inspected.json().view.viewRevision).toBe(0);
     expect(inspected.json().audit).toHaveLength(4);
     const replay = await app.inject({ url: `/dev/playground/api/${id}/replay`, headers });
     expect(replay.statusCode).toBe(200);
-    expect(projectCombatLabReplay(replay.json())).toEqual(inspected.json().view);
+    expect(projectCombatLabReplay(replay.json().replay)).toEqual(inspected.json().view);
     expect(replay.body).not.toContain('owner-token');
     expect(
       (
@@ -231,6 +238,253 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
     expect(
       (await sql`select * from playground.receipts where owner_id = ${owner}`.execute(db)).rows,
     ).toEqual([]);
+  });
+
+  it('executes the real encounter pipeline, retries exactly, persists terminal replay and isolates reset/owners', async () => {
+    const publicBefore = (await sql`select * from public.encounters`.execute(db)).rows;
+    let current = (await send(command('create'))).json<PlaygroundResult>();
+    const scenario = playgroundDebugScenarios()[0]!;
+    current = (await send({ ...command('configure', current), scenario })).json<PlaygroundResult>();
+    current = (await send(command('validate', current))).json<PlaygroundResult>();
+    current = (await send(command('activate', current))).json<PlaygroundResult>();
+    const read = async () =>
+      (
+        await app.inject({ url: `/dev/playground/api/${current.sandbox.id}`, headers })
+      ).json<PlaygroundInspection>();
+    let inspected = await read();
+    const id = inspected.encounterId!;
+    expect(inspected.view!.rulesetId).toBe('m1-domain-bridge-v5');
+    expect(inspected.view!.attackPreview!.length).toBeGreaterThan(0);
+    const dto = (intent: EncounterCommandDto['intent']): EncounterCommandDto => ({
+      version: 2,
+      encounterId: id,
+      commandId: randomUUID(),
+      expectedRevision: inspected.view!.viewRevision,
+      activationId: inspected.view!.activation!.id,
+      actorId: inspected.view!.activation!.actorId,
+      intent,
+    });
+    const post = (body: EncounterCommandDto, cookie = headers.cookie) =>
+      app.inject({
+        method: 'POST',
+        url: '/dev/playground/api/combat/commands',
+        headers: { ...headers, cookie },
+        payload: body,
+      });
+    const first = dto({ type: 'attack', targetId: inspected.view!.attackPreview![0]!.targetId });
+    const [accepted, duplicate] = await Promise.all([post(first), post(first)]);
+    expect(accepted.statusCode).toBe(200);
+    expect(duplicate.json()).toEqual(accepted.json());
+    expect(accepted.json().receiptId).toBe(`${id}:1`);
+    expect((await post(first, 'warwrit_session=other-token')).statusCode).toBe(404);
+    expect((await post({ ...first, intent: { type: 'wait' } })).json()).toMatchObject({
+      status: 'rejected',
+      code: 'CONFLICT',
+    });
+    expect((await post({ ...first, commandId: randomUUID() })).json()).toMatchObject({
+      status: 'rejected',
+      code: 'CONFLICT',
+    });
+    inspected = await read();
+    expect(inspected.view!.viewRevision).toBe(1);
+    expect(await read()).toEqual(inspected);
+    const reopened = buildApp({ logger: false, identity, playground: settings });
+    try {
+      expect(
+        (
+          await reopened.inject({ url: `/dev/playground/api/${current.sandbox.id}`, headers })
+        ).json(),
+      ).toEqual(inspected);
+      expect(
+        (
+          await reopened.inject({
+            method: 'POST',
+            url: '/dev/playground/api/combat/commands',
+            headers,
+            payload: first,
+          })
+        ).json(),
+      ).toEqual(accepted.json());
+    } finally {
+      await reopened.close();
+    }
+    let steps = 0;
+    while (inspected.view!.status === 'active' && steps++ < 500) {
+      const next = await post(dto({ type: 'autoplay' }));
+      expect(next.statusCode, next.body).toBe(200);
+      inspected = await read();
+    }
+    expect(inspected.view!.status).toBe('resolved');
+    expect(inspected.receipts).toHaveLength(inspected.view!.viewRevision);
+    expect(inspected.rejections!.length).toBeGreaterThan(0);
+    const exported = (
+      await app.inject({ url: `/dev/playground/api/${current.sandbox.id}/replay`, headers })
+    ).json();
+    expect(exported.matches).toBe(true);
+    expect(exported.expectedDigest).toBe(exported.actualDigest);
+    expect(combat.replayCombat(exported.replay).events).toEqual(inspected.events);
+    expect(projectCombatLabReplay(exported.replay)).toEqual(inspected.view);
+    expect((await post(first)).json()).toEqual(accepted.json());
+    // Corrupt only our sandbox's stored state: the UI must report actual divergence.
+    const stored = (
+      await sql<{
+        state: combat.BattleState;
+      }>`select state from playground.encounters where id = ${id}::uuid`.execute(db)
+    ).rows[0]!.state;
+    await sql`update playground.encounters set state = ${JSON.stringify({ ...stored, seed: stored.seed + 1 })}::json where id = ${id}::uuid`.execute(
+      db,
+    );
+    expect(
+      (
+        await app.inject({ url: `/dev/playground/api/${current.sandbox.id}/replay`, headers })
+      ).json().matches,
+    ).toBe(false);
+    await sql`update playground.encounters set state = ${JSON.stringify(stored)}::json where id = ${id}::uuid`.execute(
+      db,
+    );
+    const savedCommand = (
+      await sql<{
+        command: combat.CombatCommand;
+      }>`select command from playground.encounter_commands where encounter_id = ${id}::uuid and revision = 1`.execute(
+        db,
+      )
+    ).rows[0]!.command;
+    await sql`update playground.encounter_commands set command = ${JSON.stringify({ ...savedCommand, activationId: 'corrupt' })}::json where encounter_id = ${id}::uuid and revision = 1`.execute(
+      db,
+    );
+    expect(
+      (
+        await app.inject({ url: `/dev/playground/api/${current.sandbox.id}/replay`, headers })
+      ).json(),
+    ).toMatchObject({ matches: false, actualDigest: null });
+    await sql`update playground.encounter_commands set command = ${JSON.stringify(savedCommand)}::json where encounter_id = ${id}::uuid and revision = 1`.execute(
+      db,
+    );
+    current = (await send(command('reset', current))).json<PlaygroundResult>();
+    expect((await post(first)).statusCode).toBe(404);
+    current = (await send(command('validate', current))).json<PlaygroundResult>();
+    current = (await send(command('activate', current))).json<PlaygroundResult>();
+    expect((await read()).encounterId).not.toBe(id);
+    expect((await read()).view!.viewRevision).toBe(0);
+    expect((await sql`select * from public.encounters`.execute(db)).rows).toEqual(publicBefore);
+    await send(command('delete', current));
+  });
+
+  it('accepts a one-AP move then a three-AP shot and rejects blocked movement atomically', async () => {
+    let current = (await send(command('create'))).json<PlaygroundResult>();
+    const base = playgroundTemplate();
+    const scenario = {
+      ...base,
+      initial: {
+        ...base.initial,
+        units: [
+          {
+            id: 'archer',
+            profileId: 'W05',
+            sideId: 'human' as const,
+            position: { q: 2, r: 5 },
+            skillRanks: {},
+          },
+          {
+            id: 'enemy',
+            profileId: 'W01',
+            sideId: 'opponent' as const,
+            position: { q: 6, r: 5 },
+            skillRanks: {},
+          },
+        ],
+      },
+    };
+    current = (await send({ ...command('configure', current), scenario })).json<PlaygroundResult>();
+    current = (await send(command('validate', current))).json<PlaygroundResult>();
+    current = (await send(command('activate', current))).json<PlaygroundResult>();
+    const read = async () =>
+      (
+        await app.inject({ url: `/dev/playground/api/${current.sandbox.id}`, headers })
+      ).json<PlaygroundInspection>();
+    let detail = await read();
+    const post = (intent: EncounterCommandDto['intent']) =>
+      app.inject({
+        method: 'POST',
+        url: '/dev/playground/api/combat/commands',
+        headers,
+        payload: {
+          version: 2,
+          encounterId: detail.encounterId,
+          commandId: randomUUID(),
+          expectedRevision: detail.view!.viewRevision,
+          activationId: detail.view!.activation!.id,
+          actorId: detail.view!.activation!.actorId,
+          intent,
+        },
+      });
+    const before = detail.view;
+    expect((await post({ type: 'move', to: { q: 7, r: 3 } })).json()).toMatchObject({
+      status: 'rejected',
+      code: 'INVALID_COMMAND',
+    });
+    expect((await read()).view).toEqual(before);
+    expect(
+      detail.view!.movementPreview!.find((move) => move.to.q === 3 && move.to.r === 5)
+        ?.actionPointCost,
+    ).toBe(1);
+    expect((await post({ type: 'move', to: { q: 3, r: 5 } })).statusCode).toBe(200);
+    detail = await read();
+    expect(detail.view!.activation!.actionPoints.current).toBe(3);
+    expect(
+      detail.view!.attackPreview!.find((attack) => attack.targetId === 'enemy')?.actionPointCost,
+    ).toBe(3);
+    expect((await post({ type: 'attack', targetId: 'enemy' })).statusCode).toBe(200);
+    expect((await read()).view!.viewRevision).toBe(2);
+    expect(
+      (
+        await app.inject({ url: `/dev/playground/api/${current.sandbox.id}/replay`, headers })
+      ).json().matches,
+    ).toBe(true);
+    await send(command('delete', current));
+  });
+
+  it('preflights field errors and every fresh debug scenario without allocating a battle', async () => {
+    const before = (await sql`select id from playground.encounters`.execute(db)).rows;
+    const preflight = (scenario: unknown) =>
+      app.inject({
+        method: 'POST',
+        url: '/dev/playground/api/preflight',
+        payload: JSON.stringify(scenario),
+        headers: { ...headers, 'content-type': 'application/json' },
+      });
+    for (const scenario of playgroundDebugScenarios())
+      expect((await preflight(scenario)).json(), scenario.metadata.name).toEqual({
+        valid: true,
+        errors: [],
+      });
+    const scenario = playgroundTemplate();
+    const bad = {
+      ...scenario,
+      initial: {
+        ...scenario.initial,
+        units: scenario.initial.units.map((unit, index) =>
+          index === 1 ? { ...unit, position: scenario.initial.units[0]!.position } : unit,
+        ),
+      },
+    };
+    const response = await preflight(bad);
+    expect(response.statusCode).toBe(400);
+    expect(response.json().errors).toContainEqual(
+      expect.objectContaining({ field: 'initial.units[1].position' }),
+    );
+    expect(
+      (
+        await preflight({
+          ...scenario,
+          resources: [{ unitId: 'missing', health: 1, armor: 0, stamina: 1, morale: 1 }],
+        })
+      ).statusCode,
+    ).toBe(400);
+    expect((await preflight({ ...scenario, rulesetId: 'future' })).json().errors).toContainEqual(
+      expect.objectContaining({ field: 'rulesetId' }),
+    );
+    expect((await sql`select id from playground.encounters`.execute(db)).rows).toEqual(before);
   });
 
   it('returns accepted receipts before clock expiry checks and never recreates after TTL cleanup', async () => {

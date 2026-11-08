@@ -1,5 +1,17 @@
 # Warwrit current delivery plan
 
+## WLC-06 — Combat Lab consolidation, 2026-11-08
+
+Coordinator/writer: codex/wlc-06-combat-lab, .claude/worktrees/wlc-06.
+Owner authorizes implementation and standalone PR; merge/deployment not authorized.
+Base fdbb0dc2 includes WLC-04/05. Preserve original WIP and player saves.
+[Owning journey, architecture and checks](COMBAT_LAB_CONSOLIDATION.md).
+Status: PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), implementation6bd10ce0; OPEN/NOT_MERGED.
+33 integration-mode (26SQL/7guards) +67 focused tests PASS; types/lint/architecture and migration up/down/up PASS.
+Native setup/manual/auto/Pause/loss/reload/API restart/exact retry/terminal/replay PASS.
+Owner confirmed active-battle reinforcements unavailable; game rules unchanged.
+Screenshots and remaining limits are in the owning page. CI advisory; full M1 NOT_RUN.
+
 ## WLC-05 — Developer Playground Foundation, 2026-11-07
 
 Coordinator/writer: codex/wlc-05-playground, .claude/worktrees/wlc-05.

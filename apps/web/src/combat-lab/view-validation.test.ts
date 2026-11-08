@@ -6,7 +6,12 @@ import {
 } from '@warwrit/protocol';
 import { createEmptyTiles } from './editor-model.js';
 import { isCombatLabView } from './view-validation.js';
-import { readSessionView } from './session-transport.js';
+// Historical projection fixtures remain independent of the retired session HTTP transport.
+async function readSessionView(response: Response, sessionId: string) {
+  const value: unknown = await response.json();
+  if (!isCombatLabView(value) || value.sessionId !== sessionId) throw new Error('invalid view');
+  return value;
+}
 
 // Synthetic wire data; real projector/admission integration is tested on the server.
 function viewFixture(): CombatLabView {

@@ -38,7 +38,8 @@ const defaultSkillRanks: Readonly<Record<string, combat.CombatSkillRanks>> = {
   W10: { 'shield-brace': 1, rally: 1 },
 };
 
-export const combatLabProfiles = profileRows.map(([id, name, weaponId]) => ({
+export const combatLabProfiles = profileRows.map(([id, name, weaponId, health, armor]) => ({
+  maximumPools: { health, armor, stamina: 100, morale: id === 'W10' ? 100 : 80 },
   id,
   name,
   weaponId,
@@ -276,6 +277,9 @@ export function createCustomBattleFixture(id: string, config: CombatLabBattleCon
       },
     ],
     units: input.units.map((unit) => {
+      const pools = combatLabProfiles.find(
+        (profile) => profile.id === unit.profileId,
+      )!.maximumPools;
       const row = profileRows.find((row) => row[0] === unit.profileId);
       combat.invariant(row !== undefined, 'Unknown prototype profile');
       return {
@@ -292,13 +296,13 @@ export function createCustomBattleFixture(id: string, config: CombatLabBattleCon
             : 'steady',
         ...(unit.profileId === 'B053' ? { threatProfile: 'mill-slam' as const } : {}),
         attributes: {
-          health: row[3],
-          armor: row[4],
+          health: pools.health,
+          armor: pools.armor,
           defense: row[5],
           initiative: row[6],
           accuracy: unit.profileId === 'W08' ? 38 : unit.profileId === 'W05' ? 30 : 25,
-          stamina: 100,
-          morale: unit.profileId === 'W10' ? 100 : 80,
+          stamina: pools.stamina,
+          morale: pools.morale,
         },
       };
     }),
