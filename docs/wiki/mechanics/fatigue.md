@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-10
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро боя (provisional); связь с бронёй — предложение
 sources:
   - index.md

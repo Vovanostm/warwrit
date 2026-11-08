@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-10-04
 type: specification
 tags: [m1, game-design, review-draft]
-status: review-draft
+status: draft
 authority: owner-requested art specification; production details are proposed
 sources:
   - ../../AGENTS.md

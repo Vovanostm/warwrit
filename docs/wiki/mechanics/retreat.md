@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-11-07
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро боя; связь с моралью и зоной контроля — предложение
 sources:
   - index.md

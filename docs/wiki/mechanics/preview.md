@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-10
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: требование combat.md и battlefield-test-maps.md; урок XCOM 2/JA3
 sources:
   - index.md

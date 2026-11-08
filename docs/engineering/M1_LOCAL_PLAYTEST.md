@@ -5,8 +5,7 @@ Dated launch and loop evidence removed 2026-11-09 ([previous edition](https://gi
 How the owner plays the M1 alpha on the Mac in Chrome, what to look at, and what is
 known to be missing. Start the stack per
 [LOCAL_DEVELOPMENT](LOCAL_DEVELOPMENT.md#development-processes); status is in
-[ROADMAP](ROADMAP.md). The earlier 2026-09-29 company-opening evidence
-that lived in this file is in git history (commit `97d8480`).
+[ROADMAP](ROADMAP.md).
 
 ## Start
 

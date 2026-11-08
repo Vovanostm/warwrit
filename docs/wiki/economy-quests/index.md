@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-10-28
 type: concept
 tags: [game-design, review-draft, economy, quests]
-status: review-draft
+status: draft
 authority: authored design proposal; not canonical approval or implementation
 sources:
   - sources.md

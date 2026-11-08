@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-11-09
 type: concept
 tags: [lore, world-map, art, review-draft]
-status: review-draft
+status: rule
 authority: запрос владельца 2026-10-08 на изображение мира по существующему лору
 sources:
   - index.md

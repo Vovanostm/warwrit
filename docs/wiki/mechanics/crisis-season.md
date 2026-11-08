@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-08
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: кризисы — решение владельца 2026-10-07 (REQ-12); сезон и Собор — предложение
 sources:
   - index.md

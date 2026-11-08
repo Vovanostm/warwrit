@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-11-08
 type: specification
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: source-linked design proposal; not implementation or balance approval
 sources:
   - m1-spec.md

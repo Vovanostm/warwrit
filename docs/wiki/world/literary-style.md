@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-07
 type: concept
 tags: [narrative, lore, review-draft]
-status: review-draft
+status: draft
 authority: авторское предложение по запросу владельца 2026-10-07; образцы не приняты и не встроены в игру
 sources:
   - writing.md

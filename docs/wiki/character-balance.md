@@ -4,7 +4,7 @@ created: 2026-10-06
 updated: 2026-10-06
 type: specification
 tags: [game-design, review-draft]
-status: review-draft
+status: draft
 authority: proposed calibration profile; requires versioned approval and playtest
 sources:
   - character-progression.md

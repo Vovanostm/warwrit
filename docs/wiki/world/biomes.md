@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-11-09
 type: mechanic
 tags: [m1, game-design, lore]
-status: review-draft
+status: draft
 authority: запрос владельца 2026-10-05 и разрешение «Ок, implement»; распределение — авторское предложение, не зоологический канон
 ---
 

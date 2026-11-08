@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-10-04
 type: concept
 tags: [game-design, review-draft, quests, narrative]
-status: review-draft
+status: draft
 authority: independent document review and authored revision record; not gameplay acceptance
 sources:
   - sources.md

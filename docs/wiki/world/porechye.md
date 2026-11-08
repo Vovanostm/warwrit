@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-07
 type: concept
 tags: [lore, quests, narrative, m1, review-draft]
-status: review-draft
+status: draft
 authority: авторское предложение на основе решения владельца 2026-10-07; тексты в игре пока не заменены
 sources:
   - index.md

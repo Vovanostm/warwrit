@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-30
 type: concept
 tags: [game-design, lore, m1, review-draft]
-status: review-draft
+status: rule
 authority: решение владельца 2026-10-07 о жанре и ориентирах; сводка ранее принятых ответов; анализ и рекомендации автора
 sources:
   - m1-spec.md

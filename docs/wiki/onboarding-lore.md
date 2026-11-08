@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-07
 type: comparison
 tags: [game-design, narrative, quests, review-draft]
-status: review-draft
+status: draft
 authority: authored proposal requested by owner; not approved lore or implementation
 sources:
   - m1-spec.md

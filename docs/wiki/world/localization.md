@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-07
 type: concept
 tags: [localization, narrative, review-draft]
-status: review-draft
+status: draft
 authority: авторское предложение по запросу владельца 2026-10-07; в коде не реализовано
 sources:
   - writing.md

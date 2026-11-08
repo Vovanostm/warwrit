@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-07
 type: concept
 tags: [game-design, narrative, review-draft]
-status: review-draft
+status: draft
 authority: authored storyboard; not accepted biography, art or implemented onboarding
 sources:
   - onboarding-lore.md

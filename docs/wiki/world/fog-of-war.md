@@ -4,6 +4,7 @@ created: 2026-10-27
 updated: 2026-11-09
 type: specification
 tags: [world, visibility, exploration, design]
+status: rule
 ---
 
 # Туман войны и знание карты

@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-09
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: приоритет — решение владельца 2026-10-08; правило — предложение автора
 sources:
   - index.md

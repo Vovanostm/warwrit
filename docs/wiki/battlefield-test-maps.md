@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-11-09
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
-status: review-draft
+status: rule
 authority: owner decisions 2026-10-09; camera/grid/height presentation 2026-10-30; provisional balance; local prototype 2026-10-10
 sources:
   - m1-spec.md

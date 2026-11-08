@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-11-05
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро (раны, смерть); модель тела — character-progression; плен — предложение
 sources:
   - index.md

@@ -4,7 +4,7 @@ created: 2026-10-01
 updated: 2026-11-09
 type: specification
 tags: [m1, game-design, review-draft]
-status: review-draft
+status: rule
 authority: source-linked working derivative; not canonical approval
 sources:
   - vision.md (REQ-01…23)
