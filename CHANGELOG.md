@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decisions B2–B4
+  in [m1-spec](docs/wiki/m1-spec.md). Each company brings up to six fighters and
+  a helper adds its own (replaces "6×6 total" and the FIRST HUNT limit of 12; the
+  enemy and total limits are now open questions). The §11 asset counts are a
+  minimum. Road lengths come from the current map, not the rules.
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision B1 —
   M1 battles use full static sprites; 3D characters on the 2.5D field (REQ-15)
   follow M1. Recorded in [m1-spec](docs/wiki/m1-spec.md) and

@@ -13,8 +13,8 @@ Follow [the isolated ordinary-game runbook](LOCAL_DEVELOPMENT.md); then sign in 
 
 ## Time
 
-- Campaign: 1000 ticks per day, one tick = 21.6 s. Roads take 8–16 ticks
-  (≈3–6 minutes); the city to the mill is ≈9 minutes.
+- Campaign: 1000 ticks per day, one tick = 21.6 s. Road lengths come from the
+  current map; a FIRST HUNT trip takes minutes, not hours.
 - Light: 10 minutes of day, 5 minutes of night (top bar). The mill beast shows
   itself only at night.
 
