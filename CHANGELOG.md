@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Added: player-journey audit
+  against M1 design with 10 new UI references for uncovered screens, open owner
+  questions and a dated correction of the stale second-region line.
+  [Details](docs/references/audit-2026-11-09.md).
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision — the
   cross is the sign of the faith; crosses on churches and graves are allowed,
   church structure and rites stay open. [Details](docs/wiki/world/index.md).

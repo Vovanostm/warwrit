@@ -126,13 +126,14 @@ differently · presented to the XCOM bar (≤1.5 s action, skippable).
 
 ## 7. Where the details live
 
-| Topic                                  | Page                                                                         |
-| -------------------------------------- | ---------------------------------------------------------------------------- |
-| Every mechanic, status and cross-links | [mechanics index](../wiki/mechanics/index.md)                                |
-| Evidence, per-game analysis, sources   | [benchmarks](../wiki/benchmarks.md)                                          |
-| Vision and requirements                | [vision](../wiki/vision.md)                                                  |
-| World, duchies, Porechye               | [world](../wiki/world/index.md), [Porechye](../wiki/world/porechye.md)       |
-| Writing                                | [writing](../wiki/world/writing.md), [TEXT_CRITIQUE](TEXT_CRITIQUE.md)       |
-| Combat rules and presentation          | [combat](../wiki/combat.md), [battlefield](../wiki/battlefield-test-maps.md) |
-| Progression research (20 games)        | [progression-research](../wiki/progression-research.md)                      |
-| Visual acceptance                      | [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md)                                        |
+| Topic                                               | Page                                                                              |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Every mechanic, status and cross-links              | [mechanics index](../wiki/mechanics/index.md)                                     |
+| Evidence, per-game analysis, sources                | [benchmarks](../wiki/benchmarks.md)                                               |
+| Vision and requirements                             | [vision](../wiki/vision.md)                                                       |
+| World, duchies, Porechye                            | [world](../wiki/world/index.md), [Porechye](../wiki/world/porechye.md)            |
+| Writing                                             | [writing](../wiki/world/writing.md), [TEXT_CRITIQUE](TEXT_CRITIQUE.md)            |
+| Combat rules and presentation                       | [combat](../wiki/combat.md), [battlefield](../wiki/battlefield-test-maps.md)      |
+| Progression research (20 games)                     | [progression-research](../wiki/progression-research.md)                           |
+| Visual acceptance                                   | [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md)                                             |
+| Reference library (non-canon), player-journey audit | [references](../references/README.md), [audit](../references/audit-2026-11-09.md) |
