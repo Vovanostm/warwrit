@@ -1,3 +1,5 @@
+# Warwrit agent contract
+
 <!-- N01 preserves the owner amendments supplied on 2026-11-08. -->
 
 ## Current navigation and delivery amendment — 2026-11-08
@@ -12,8 +14,6 @@ not replace direct player checks. Follow the [N01 common contract](docs/work-pac
 for this candidate's exact ownership, authorization and evidence boundaries.
 Implementation/local commits are authorized; N01 grants no merge or deployment.
 Use only Luna if delegation is explicitly requested; no default subagents.
-
-# Warwrit agent contract
 
 Applies repository-wide. Read stricter directory instructions before editing.
 Owner workflow amendments through 2026-11-07 are consolidated here.

@@ -5,16 +5,25 @@ Owner assignment, 2026-11-08, P0; dependencies WLC-02–07. Writer/coordinator:
 isolated QA, documentation, GitHub PR and Airtable synchronization authorized.
 Merge, deployment, auto-merge and paid provisioning are not authorized.
 
-## N01 reconciliation — 2026-11-08
+## N01 reconciliation — 2026-11-09
 
-[N01](../work-packages/m1-next/01-integration.md) owns the fresh main/candidate
-reconciliation, normal entry/re-entry and production/SQL checks. Historical
-WLC08 runs and failed saved worlds below remain unchanged. PR428 is now merged
-in main3c55cf35; PR429 and PR430 remain open. N01 uses a separate persistent
-candidate; it does not write either original branch or retained database.
-November 8 owner amendments use ROADMAP → owning task, short changelog records,
-advisory CI and optional independent review. Current local status/checks and
-remaining blockers live in N01; no fresh gameplay PASS is inferred here.
+[N01](../work-packages/m1-next/01-integration.md) records the separate local
+`codex/n01-integration` candidate, integration commit e8784c1c, based on current
+main3c55cf35 and PR430d22336a4. The only conflict was additive changelog text;
+executable code is unchanged from PR430. PR428 is merged; PR429/430 remain open,
+and their source branches plus all retained failed WLC08 worlds are untouched.
+November 8 navigation/advisory amendments are retained; the previous roadmap is
+preserved in [dated history](ROADMAP_HISTORY_N01.md).
+
+Fresh normal OIDC/new-company/contract/equipment/supply/restart/re-entry PASS at
+measured1440×1000: Дозор N01, three living people,760crowns,37rations, Rell's
+sword/shield, accepted mill contract.18canonical groups match across restart.
+Production builds/debug refusals,40integration-mode checks,51focused unit checks,
+migration smoke and isolated owned-save restore25→22→25/readback PASS.
+Historical-player-save proof remains NOT_RUN pending a scoped read-only source;
+N01 is PARTIAL/LOCAL, not published, merged or full M1 accepted. Detailed commands,
+actual probe failures, remaining limits and reproduction are recorded once in N01.
+All previous WLC08 evidence below remains historical and unmodified.
 
 ## Scope and player result
 
