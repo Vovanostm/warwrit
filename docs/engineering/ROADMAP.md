@@ -10,5 +10,5 @@
   - [ ] [Story missions](../work-packages/M1-STORY-MISSIONS.md)
   - [ ] [Characters and animation](../work-packages/M1-CHARACTERS-3D.md)
   - [ ] [Full player journey, launch and acceptance](WLC_08_ACCEPTANCE.md)
-  - [ ] [N01 integrated candidate](../work-packages/m1-next/01-integration.md)
+  - [x] [N01 integrated candidate](../work-packages/m1-next/01-integration.md)
 - [ ] [Diagnostic battle and editor](COMBAT_LAB_CONSOLIDATION.md)

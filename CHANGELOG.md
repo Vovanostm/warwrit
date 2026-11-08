@@ -9,9 +9,9 @@ requests.
 
 ## Unreleased
 
-- 2026-11-09 — Changed: reconcile N01 with current main; verify ordinary re-entry,
-  production debug refusal and isolated save/schema readback while preserving
-  WLC histories; [remaining save proof](docs/work-packages/m1-next/01-integration.md). LOCAL.
+- 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
+  migrated restore, ordinary entry/command/restart and production isolation pass.
+  [Result and merge authority](docs/work-packages/m1-next/01-integration.md). LOCAL.
 
 ### Integrate consolidation and verify the ordinary company loop (WLC-08)
 

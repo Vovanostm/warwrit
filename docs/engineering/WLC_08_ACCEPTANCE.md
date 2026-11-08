@@ -20,8 +20,11 @@ measured1440×1000: Дозор N01, three living people,760crowns,37rations, Rel
 sword/shield, accepted mill contract.18canonical groups match across restart.
 Production builds/debug refusals,40integration-mode checks,51focused unit checks,
 migration smoke and isolated owned-save restore25→22→25/readback PASS.
-Historical-player-save proof remains NOT_RUN pending a scoped read-only source;
-N01 is PARTIAL/LOCAL, not published, merged or full M1 accepted. Detailed commands,
+Owner continuation on November9 authorizes finishing N01 and merge, permitting
+a new player save. The migrated isolated N01 save now also passes ordinary OIDC
+entry, an equipment command and restart/readback; all INT-1–6 pass under that
+accepted fallback. Historical-player-save proof remains NOT_RUN. Publication and
+merge readback are owned by N01/PR430; full M1 remains unaccepted. Detailed commands,
 actual probe failures, remaining limits and reproduction are recorded once in N01.
 All previous WLC08 evidence below remains historical and unmodified.
 

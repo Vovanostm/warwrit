@@ -2,15 +2,31 @@
 
 ## Current result — 2026-11-09
 
-PARTIAL / LOCAL / COMMITTED candidate; NOT_PUBLISHED, NOT_MERGED, M1 NOT_ACCEPTED.
+VERIFIED / LOCAL / COMMITTED; INT-1–6 PASS, publication/authorized merge pending.
+M1 NOT_ACCEPTED. The final PR/merge readback is recorded below after delivery.
 Integration commit `e8784c1c0479c10f1295e07269b99a5c5c454770` merges current main
 `3c55cf35966d2cd119b42d107152b85567c72f4b` into PR430
 `d22336a423eaf96e32197e6252bed9a3820dde0b`, preserving both parents and PR429
 `b58c87ce3f489484a9fd8cdf1eecf2efd8c6203b` ancestry. Live refs rechecked on
-November 9 Moscow time: unchanged. Both source PRs remain OPEN; their original
-branches/worktrees are untouched. This is a separate reviewable candidate,
+November 9 Moscow time: unchanged. At intake both source PRs were OPEN and their original
+branches/worktrees untouched. The owner continuation below authorizes PR430 update. This is a separate reviewable candidate,
 `.claude/worktrees/n01-integration`, branch `codex/n01-integration`.
 The final closeout changes documentation only after checked `e8784c1c`.
+
+### Owner continuation and merge authority — 2026-11-09
+
+The owner explicitly requested: «Доведи задачу до конца + merge. если надо — сделай
+новый player save». This supersedes the initial launch's no-merge boundary for
+this N01 mission and authorizes publication/merge through existing PR430, plus
+its necessary documentation-only delivery receipt. It grants no deployment,
+auto-merge, paid provisioning or retained-player-data edits.
+
+Use the naturally created N01 player save and its isolated migrated copy as the
+accepted fallback. The unavailable older owner-save check remains NOT_RUN; it
+no longer blocks this scoped N01 completion. No historical failure is erased or
+relabelled. Merge must pass the current exact PR head to GitHub, with reviews and
+unresolved threads read immediately before the operation. Preserve both histories
+with a merge commit, and update the actual result after GitHub readback.
 
 ### Selected scope, ownership and compatibility
 
@@ -33,8 +49,8 @@ Owned exact paths: `AGENTS.md`, `CHANGELOG.md`, `docs/engineering/ROADMAP.md`,
 The [prior roadmap](../../engineering/ROADMAP_HISTORY_N01.md) is preserved verbatim;
 the checkbox index and root amendment retain November 8 navigation/advisory policy.
 The exact supplied COMMON/launch inputs are included, without other N-package work.
-Primary sprite WIP, original WLC source worktrees, retained saves and other stands
-remain untouched. No subagents, messages, deployment, auto-merge or paid resources.
+Primary sprite WIP, original WLC source worktree files, retained saves and other
+stands remain untouched. Only the PR430 remote branch is advanced by this mission. No subagents, messages, deployment, auto-merge or paid resources.
 
 ### Player result and direct acceptance
 
@@ -49,14 +65,14 @@ No quick fixture login, forged session, gameplay SQL edits or accelerated time.
 Chromium viewport measured1440×1000; Place/Map/Company controls were exercised.
 This proves entry/re-entry, not completion of this contract or a new combat loop.
 
-| AC    | Result  | Actual evidence on checked e8784c1c executable tree                                                                                                                                                                                                                                                                                                                 |
-| ----- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| INT-1 | PASS    | main and PR429 are ancestors; no unresolved index entries; both additive records retained; executable diff against PR430 empty.                                                                                                                                                                                                                                     |
-| INT-2 | PASS    | New ordinary company/contract/equipment/purchase above;18canonical table groups exactly equal across actual process restart before new login observations. Native re-entry retains company and resources; normal later observations accrue time normally.                                                                                                           |
-| INT-3 | PASS    | Fresh web/server production builds with development `.env`; no executable debug browser API/UI or server route modules. Running production artifact:16GET/POST debug requests return404;18ordinary canonical groups unchanged. Production browser `/dev/playground/combat` shows **Инструмент недоступен**.                                                         |
-| INT-4 | PASS    | Fresh existing SQL editor/Lab tests cover owner/origin/session, clone/freeze, exact retry, ordinary genesis conservation, current replay MATCH/corruption and old-content refusal. Source uses the same canonical encounter executor with isolated storage; no map or replay code changed. Prior WLC native Lab/editor runs are inherited evidence, not rerun here. |
-| INT-5 | NOT_RUN | Schema portion PASS: real migration smoke/legacy rollback guards and an owned naturally-created save dump restored into isolated copies;25→22→25 preserves all18canonical groups exactly. A pre-existing owner save has no identified authorized source; its save-specific migration/login proof remains open. No legacy-save failure was reproduced.               |
-| INT-6 | PASS    | Scoped diff/self-review, owning WLC record, current N01 and concise changelog updated; local commits and prepared review description/patch, no remote publication or merge claimed.                                                                                                                                                                                 |
+| AC    | Result | Actual evidence on checked e8784c1c executable tree                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| INT-1 | PASS   | main and PR429 are ancestors; no unresolved index entries; both additive records retained; executable diff against PR430 empty.                                                                                                                                                                                                                                                                                                                          |
+| INT-2 | PASS   | New ordinary company/contract/equipment/purchase above;18canonical table groups exactly equal across actual process restart before new login observations. Native re-entry retains company and resources; normal later observations accrue time normally.                                                                                                                                                                                                |
+| INT-3 | PASS   | Fresh web/server production builds with development `.env`; no executable debug browser API/UI or server route modules. Running production artifact:16GET/POST debug requests return404;18ordinary canonical groups unchanged. Production browser `/dev/playground/combat` shows **Инструмент недоступен**.                                                                                                                                              |
+| INT-4 | PASS   | Fresh existing SQL editor/Lab tests cover owner/origin/session, clone/freeze, exact retry, ordinary genesis conservation, current replay MATCH/corruption and old-content refusal. Source uses the same canonical encounter executor with isolated storage; no map or replay code changed. Prior WLC native Lab/editor runs are inherited evidence, not rerun here.                                                                                      |
+| INT-5 | PASS   | Owner-authorized new-save fallback; schema portion PASS: real migration smoke/legacy rollback guards and an owned naturally-created save dump restored into isolated copies;25→22→25 preserves all18canonical groups exactly. The isolated n01_savecopy also passes normal OIDC entry, equipment command and actual restart/re-entry. Historical owner-save proof remains NOT_RUN outside this accepted fallback; no legacy-save failure was reproduced. |
+| INT-6 | PASS   | Scoped diff/self-review, owning WLC record, current N01 and concise changelog updated; local commits and prepared review description/patch, no remote publication or merge claimed.                                                                                                                                                                                                                                                                      |
 
 ### Actual checks and limits
 
@@ -114,16 +130,46 @@ Raw evidence (ignored): `output/integration.log`, `migrations.log`,
 `production-refusal.log`, production build logs and `output/playwright/n01-*.png`.
 The migration/readback helpers remain under `output/.worktree-tools/`.
 Review description and committed candidate patch: `output/n01-pr-description.md`,
-`output/n01-candidate.patch`. No existing PR/source branch was updated.
+`output/n01-candidate.patch`. The initial candidate was local-only; this authorized continuation updates existing PR430.
 
-Owner response — 2026-11-09: no historical-save source is available; explicitly
-leave that player-save check open. INT-5 remains NOT_RUN for this evidence.
-Open blocker: authorized pre-existing owner save/dump and company identity are
-not provided. Recommendation: supply a read-only source and scope, restore only
-to a new owned database, then run its ordinary login and0022→25 readback before
-closing INT-5. The newly created N01 company and schema evidence remain valid.
-No pending CI result is a gameplay blocker; no merge/deployment permission sought.
-One next task: finish that isolated historical-save compatibility evidence.
+Earlier owner response — 2026-11-09: no historical-save source exists; keep that
+player-save check open. The later continuation above permits the new-save
+fallback and explicitly requests merge, closing the N01 blocker without claiming
+historical-save coverage.
+
+### Restored player-save check — 2026-11-09
+
+Reused the naturally created **Дозор N01** save and isolated `n01_savecopy` from
+the already checked dump/restore and0025→0022→0025 round trip. A fresh readback
+again matched all18canonical table groups against the independent dump baseline.
+Start the ordinary API against **only n01_savecopy**, not the source `warwrit` DB.
+At readiness200, normal Dex player-one login restored company
+`eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,760crowns,37rations, three living people,
+Rell's sword/shield and the accepted mill contract. Place/Map/Company controls
+worked at measured1440×1000. Equip Rell's coat through the ordinary UI: accepted,
+then actual API/web stop/start retains all18canonical table groups exactly before
+new observations; ordinary browser re-entry shows coat equipped,37rations and
+760crowns. Company schema1/ruleset unchanged; migration status0001–0025, no pending.
+No debug login, clock acceleration, money/item/health SQL edits or source-save reset.
+This is new-player-save proof, not a recreated historical owner-save result.
+
+Fresh raw evidence: `output/restored-restart.log`, `restored-restart-before.json`,
+`restored-restart-after.json`, `restored-dev*.log`, `restored-equipped-snapshot.txt`,
+`output/playwright/n01-restored-{contract,equipped,restart}.png`.
+Initial browser startup preceded API readiness; normal **Повторить проверку**
+recovered after readiness200. A text probe expected feminine «надета»; actual UI
+uses «надето», subsequently checked true. A diagnostic SQL ledger query used a
+nonexistent `version` column; the supported migration-status CLI confirmed the
+actual ledger without mutation. These were probe failures, not product repairs.
+
+Prior PR430 CI logs were read:42433134357 failed unit-mode integration files on
+missing SQL tables;42433679748 failed owning-contract-link recognition. The prior
+focused integration-mode run uses properly migrated per-file databases and passed.
+CI remains advisory; no unrelated harness/CI edits or reruns. Current reviews and
+review threads were empty at pre-publication readback. Reuse unchanged40integration-
+mode,51unit, build/production/refusal/migration evidence; no fresh full-M1 claim.
+One next task after delivery: continue the ordinary accepted mill contract under
+its own package; do not implement that successor during N01.
 Graph fallback: indexed Warwrit is old primary sprite7841632a, not this candidate;
 no fresh matching index was available, so bounded source reads were used.
 [Common contract](COMMON.md). [Launch](prompts/01-integration.md).
@@ -196,7 +242,7 @@ accepting candidate migrations `0023`–`0025`. Never renumber/edit a migration 
       direct debug API requests refuse, with no ordinary-world mutation.
 - [x] INT-4 Editor/Lab checks stay sandbox-scoped; no content reassignment to
       existing worlds, reinterpretation of old replay, or duplicate canonical writer.
-- [ ] INT-5 Relevant real DB migration/readback evidence covers actual schema
+- [x] INT-5 Relevant real DB migration/readback evidence covers actual schema
       changes; a legacy-save failure is fixed or explicitly keeps this row open.
 - [x] INT-6 Scoped diff, owning docs and CHANGELOG are reviewed/recorded;
       publication/merge state is truthful. A candidate ready for review is not merged M1.
