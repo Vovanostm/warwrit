@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision B1 —
+  M1 battles use full static sprites; 3D characters on the 2.5D field (REQ-15)
+  follow M1. Recorded in [m1-spec](docs/wiki/m1-spec.md) and
+  [vision](docs/wiki/vision.md); [M1-CHARACTERS-3D](docs/work-packages/M1-CHARACTERS-3D.md)
+  moved out of the M1 group in the [ROADMAP](docs/engineering/ROADMAP.md).
 - 2026-11-09, `claude/design-references`, LOCAL — Removed: old documentation per
   owner answer to section A of [open questions](docs/wiki/m1-open-questions.md):
   CURRENT_PLAN and its history (with `scripts/check-current-plan.sh` and its CI

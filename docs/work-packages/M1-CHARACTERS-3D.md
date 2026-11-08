@@ -1,6 +1,8 @@
 # M1 characters — real-time 3D with swappable equipment (2026-10-06)
 
-Status: **proposed plan, not active.** Step 0 is an owner gate. Written by the
+Status: **after M1** (owner decision 2026-11-09: M1 battles use full static
+sprites; 3D characters follow M1, probes may continue but are not M1 acceptance).
+Step 0 is an owner gate. Written by the
 Claude Code session on primary `main 47c60e0` after reviewing Codex thread
 `01a10c2a-67d4-75e3-84a3-8cc54891823e` (worktree `skeletal-characters`).
 

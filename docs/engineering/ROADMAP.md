@@ -8,7 +8,7 @@
   - [x] [Ten-day provisioning and supply purchases — PR144](../work-packages/M1-SUPPLIES.md)
   - [ ] [Living places](../work-packages/M1-LIVING-PLACES.md)
   - [ ] [Story missions](../work-packages/M1-STORY-MISSIONS.md)
-  - [ ] [Characters and animation](../work-packages/M1-CHARACTERS-3D.md)
   - [ ] [Full player journey, launch and acceptance](WLC_08_ACCEPTANCE.md)
   - [x] [N01 integrated candidate](../work-packages/m1-next/01-integration.md)
+- [ ] [After M1: 3D characters and animation](../work-packages/M1-CHARACTERS-3D.md)
 - [ ] [Diagnostic battle and editor](COMBAT_LAB_CONSOLIDATION.md)
