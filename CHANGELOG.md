@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09 — Changed: verify the retained N01 company's two mill clues through
+  ordinary issuer/yard visits; night hunt and delivery remain open.
+  [N02 result](docs/work-packages/m1-next/02-next-contract.md). LOCAL.
+
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
   [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
