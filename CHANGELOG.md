@@ -29,6 +29,9 @@ requests.
   movement/campaign/light advance together; auth/combat deadlines stay real.
   Preserve existing ticks/journals without rewriting saved routes or companies.
   32 focused SQL checks pass, including accelerated arrival and next departure.
+  Native accelerated victory exposed a separate combat-receipt clock reader;
+  share world-clock calculation there and retain the failed prototype unchanged.
+  Real wolf JOIN/commands/retry/terminal regression covers zero and nonzero offsets.
   Ordinary rules retain their owners; accelerated
   observations are labelled separately.
   Also update the second stale migration suffix in the real world-clock

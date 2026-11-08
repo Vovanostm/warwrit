@@ -187,3 +187,13 @@ uses the simulation offset consistently, including routes started after a jump.
 32 focused real PostgreSQL checks PASS (campaign-time, continuous movement,
 world routes), including arrival after an offset, stable repeated settlement and
 next departure on that same clock. Final native journey and final-SHA checks pending.
+
+The retained `wlc08_success` prototype then won an ordinary two-company wolf
+encounter (round11, three enemies dead, four allies standing/one dead/one fled).
+Terminal settlement correctly refused RECEIPT_TIME_EVIDENCE_MISSING: the encounter
+adapter had independently calculated receipt ticks without the QA offset. No proof,
+reward or saved casualty acceptance is claimed for that run. The shared `worldClockAt`
+now owns both world reads and combat receipt timestamps. The real wolf JOIN/move/
+bow/retry/terminal regression is exercised at zero and +2160000ms offsets; the
+offset case failed before the correction. Never rewrite the prototype's receipts.
+Final native acceptance restarts from empty `wlc08_final`; both earlier worlds remain.

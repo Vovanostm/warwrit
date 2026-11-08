@@ -14,6 +14,8 @@ gear/supply/travel/recovery/exact retry and integrated Lab/map editor PASS.
 Owner follow-up permits player-two and requests acceleration: opt-in QA campaign
 steps/receipt journal added;0025 corrects tick-only prototype to one persistent
 movement/campaign/light clock;32focusedSQL PASS, final updated-code checks pending.
+Native prototype victory exposed receipt-clock mismatch; fixed shared clock,
+prototype receipts retained; continue final ordinary run in clean wlc08_final.
 Both ordinary companies retained; continue native co-op battle/proof/pay/care/restart,
 using labelled accelerated campaign time. Final updated-code checks/publication pending.
 Earlier dated blocks below retain their original delivery/evidence boundaries.

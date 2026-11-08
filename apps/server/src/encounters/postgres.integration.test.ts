@@ -3943,9 +3943,9 @@ it.skipIf(connectionString === undefined)(
   15000,
 );
 
-it.skipIf(connectionString === undefined)(
-  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects',
-  async () => {
+it.skipIf(connectionString === undefined).each([0, 2160000])(
+  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects (QA offset %i)',
+  async (qaOffsetMs) => {
     const database = databases[0]!;
     // The world selects battle RNG, and participant IDs break tactical ties.
     // This settlement scenario needs a reproducible supported terminal outcome.
@@ -3964,6 +3964,11 @@ it.skipIf(connectionString === undefined)(
     );
     const restoreClock = freezeCampaignClock();
     try {
+      await database
+        .updateTable('world_campaign_clocks')
+        .set({ qa_offset_ms: String(qaOffsetMs) })
+        .where('world_id', '=', worldId)
+        .execute();
       for (const actor of [owner, helper]) {
         const read = await app.inject({
           method: 'GET',

@@ -14,6 +14,20 @@ export interface WorldClockReading {
   readonly tick: string;
 }
 
+/** Shared by Kysely world reads and the encounter receipt adapter. */
+export function worldClockAt(
+  row: { readonly epoch_ms: string; readonly starting_tick: string; readonly qa_offset_ms: string },
+  nowMs: number,
+): WorldClockReading {
+  if (!Number.isSafeInteger(nowMs) || nowMs < 0) throw new TypeError('Invalid trusted server time');
+  const simulationNowMs = (BigInt(nowMs) + BigInt(row.qa_offset_ms)).toString();
+  const tick = campaignTickAt(
+    createCampaignClock(row.epoch_ms, row.starting_tick),
+    simulationNowMs,
+  );
+  return { epochMs: row.epoch_ms, startingTick: row.starting_tick, nowMs: simulationNowMs, tick };
+}
+
 export async function readWorldClock(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
@@ -34,12 +48,7 @@ export async function readWorldClock(
   if (lock) query = query.forUpdate();
   const row = await query.executeTakeFirst();
   if (!row) throw new Error('World campaign clock is unavailable');
-  const simulationNowMs = (BigInt(nowMs) + BigInt(row.qa_offset_ms)).toString();
-  const tick = campaignTickAt(
-    createCampaignClock(row.epoch_ms, row.starting_tick),
-    simulationNowMs,
-  );
-  return { epochMs: row.epoch_ms, startingTick: row.starting_tick, nowMs: simulationNowMs, tick };
+  return worldClockAt(row, nowMs);
 }
 
 const LIGHT_DAY_MS = 600_000n;
