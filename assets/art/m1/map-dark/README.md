@@ -35,4 +35,4 @@ measurements live in `provenance/tree-parts/`. Runtime opaque-overlap pivots
 mask cut caps without rewriting producer metadata. Earlier standalone
 prototype approval is historical; current integrated review and actual
 journey evidence belong to
-[the owning work package](../../../../docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04).
+[the owning work package](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04).

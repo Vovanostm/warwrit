@@ -8131,7 +8131,7 @@ requests.
   day/night motion inspected; retained company stayed stationary with 850 crowns.
   FPS/memory/enjoyment NOT_MEASURED; wildlife travel/STOP/reload NOT_RUN by this chat.
   Not committed/published/merged; no migration, player reset or deployment.
-  [Owning results and limits](docs/work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
+  [Owning results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
 
 ### Forest main/runtime closeout
 
@@ -8149,7 +8149,7 @@ requests.
   Final independent forest critic PASS, including fully rendered settled reload
   at1365×900; old-company starvation recovery remains outside
   accepted rules. No deployment, player reset, new migration or full-M1 claim.
-  [Actual result and limits](docs/work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
+  [Actual result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
 
 ### Tree diversity on current main
 
@@ -8168,7 +8168,7 @@ requests.
   with current focused coverage.
   Active primary location-depth writer prevents overlapping shared-file writes;
   no deployment or new migration.
-  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+  [Owning scope/results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
 
 ### Desktop target
 
@@ -8322,7 +8322,7 @@ requests.
   conflicts resolved and recovery retained. Main push CI37235532971 IN_PROGRESS.
   Bounded critic approval; combined-route recapture/post-merge browser refresh
   NOT_RUN after URL-policy rejection. Local drafts remain outside PR art acceptance.
-  [Owning result/limits](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
+  [Owning result/limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
   Primary typecheck/content92/format/diff PASS; Airtable checkpoint read back.
   Empirical event FAILED (storage limit), recorded in owning closeout.
   No migration, player-data reset, deployment or full-M1/performance claim.
@@ -8340,7 +8340,7 @@ requests.
   alpha-aware targets and measured labels preserve a shared isometry and natural
   contacts. Scope: web map renderer/labels, original map-dark assets/provenance
   and manifest; roads, supplies, visits and canonical movement retain current main.
-  [Owning integration](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
+  [Owning integration](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
   records actual checks and limits; exact-head PR CI/merge pending.
 
   Independent source/playable critique and native journey/input pass; original
@@ -8364,14 +8364,14 @@ requests.
   origin/main; scoped documentation restore retained both histories and all
   unrelated terrain/art/wiki/skill work. Main push CI37233985843 is in progress;
   dev5293 and player data retained. Actual merge/results are recorded in
-  [the owning closeout](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
+  [the owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
 
 - 2026-10-04, branch `codex/route-visibility-fix`, local: owner authorized
   publication and merge of the reviewed route visibility correction. Isolated
   delivery includes only the three map files and owning movement/checkpoint/
   changelog records, preserving unrelated terrain/art/docs and retained player
   data. Clean PR CI/publication/merge pending; scoped source and playable results
-  are recorded in [the owning contract](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
+  are recorded in [the owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
 
 - 2026-10-04, branch `main`, local: owner-authorized normal-UI testing now
   supersedes the permission-pending route correction status below. Town/village
@@ -8381,7 +8381,7 @@ requests.
   no material defect, including the corrected settled-reload capture. Final return
   arrived in Kamenny Brod with overlay cleared; retained company has 800 crowns.
   Existing focused source checks apply to unchanged code; full gate NOT_RUN.
-  [Actual journey and limits](docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+  [Actual journey and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
 
 - 2026-10-04, branch `main`, local (not committed or published): owner screenshots
   exposed cropped destination markers and missing route sections near settlements.
@@ -8394,7 +8394,7 @@ requests.
   Moving visual acceptance is pending permission to move the retained company;
   independent source critique confirmed the fix's cause/scope; no current moving
   visual verdict, new full gate, publication or merge. See
-  [route visibility correction](docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+  [route visibility correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
 
 - 2026-10-04, `codex/supplies-delivery`, merged: [PR144](https://github.com/Vovanostm/warwrit/pull/144)
   merged as `bcc30f5`; this supersedes the published status below. Final-head
