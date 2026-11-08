@@ -1,5 +1,6 @@
 # Documentation map
 
+- [`references/README.md`](references/README.md) — non-canon reference library: benchmark games, UI, quests, combat, world, company, text and 34 images.
 - [`engineering/WLC_08_ACCEPTANCE.md`](engineering/WLC_08_ACCEPTANCE.md) — current consolidation integration candidate, fresh acceptance results and remaining M1 gaps.
 - [`engineering/DEVELOPER_PLAYGROUND.md`](engineering/DEVELOPER_PLAYGROUND.md) — protected development-only shell and links to current Combat Lab / Map Editor contracts.
 - [`architecture/0006-m1-renderer-babylon.md`](architecture/0006-m1-renderer-babylon.md) — accepted renderer; prior engine-selection requirements are superseded.

@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Added: non-canon reference library:
+  14 benchmark games, UI, quest, combat, world, company and text references and
+  34 generated graphic-novel images. [Details](docs/references/README.md).
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
   [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
