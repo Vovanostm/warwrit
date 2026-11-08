@@ -5,6 +5,23 @@ Owner assignment, 2026-11-08. Base `fdbb0dc2`, branch
 Implementation and a standalone PR with screenshots/server-path checks authorized;
 merge and deployment are not authorized. WLC-04/424 and WLC-05/426 are merged.
 
+## Owner-authorized integration — 2026-11-08
+
+The owner explicitly requested “merge” for [PR428](https://github.com/Vovanostm/warwrit/pull/428).
+This supersedes only the earlier no-merge permission statements; deployment and
+other PRs, including WLC-08/PR430, are outside this authorization.
+The reviewed implementation remains6bd10ce0; d2d82bc3 added documentation only.
+This integration amendment also changes documentation only. GitHub PR428 owns
+live merge status and the actual merge SHA; the dated publication status below
+is historical, not a claim that the PR remains open after owner-authorized merge.
+
+Live review readback: MERGEABLE, no reviews or unresolved threads. CI42417562588
+failed at unchanged `apps/web/src/encounter/connection.test.ts` formatting;
+scope42417562538 rejected its owning-contract link pattern. Actual logs were read.
+CI is advisory; no reruns or unrelated formatting changes. Reuse the unchanged
+33 integration-mode and67 focused checks plus native journey/build evidence below;
+repeat game tests NOT_RUN for this documentation-only integration amendment.
+
 ## Developer journey
 
 An authenticated allowlisted developer enters `/dev/playground/combat`, creates

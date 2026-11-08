@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
+  existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
+
 ### Consolidate Combat Lab (WLC-06)
 
 - 2026-11-08, `codex/wlc-06-combat-lab`, PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), owner-assigned consolidation.
