@@ -9,6 +9,13 @@ Follow [AGENTS.md](../../../AGENTS.md) and the active contract. Reuse the same
 PR for corrections. One writer owns the source tree; do not launch overlapping
 writers or regenerate already approved source catalogues.
 
+Owner policy — 2026-11-08: current AGENTS.md supersedes older mandatory
+CI, independent-review and critic gates below. CI/audits/full suites and
+independent reviewers are advisory/optional. Self-review is required. A concrete
+UI defect blocks its affected journey, not unrelated development; missing broad
+visual evidence is not a global BLOCKED state. Merge still requires explicit
+current permission and expected-head protection.
+
 ## Step commits
 
 Run the smallest relevant checks explicitly and keep failures visible. The Git
@@ -50,8 +57,8 @@ readiness audit for unchanged evidence.
 2. Record `git rev-parse HEAD HEAD^{tree}` and base. Use the repository-pinned
    toolchain and frozen lockfile. The existing clean-checkout gate is owned by
    AGENTS.md / `scripts/bootstrap.sh`; do not copy it into another workflow.
-3. Publish once to trigger the applicable PR pipeline, not duplicate push and PR
-   full gates. Read actual logs and conclusion. A synthetic PR merge ref is not
+3. Publish once; CI is advisory and may be skipped. If citing it, read actual logs
+   and conclusion. A synthetic PR merge ref is not
    an executed merge. Verify its tree equals the reviewed tree. Reuse exact
    evidence on an unchanged tree; new code invalidates prior-tree evidence.
 
@@ -62,7 +69,7 @@ CI evidence, including the `PR scope` check. Require no unresolved blocking
 defect and current explicit permission under
 [AGENTS permission policy](../../../AGENTS.md#permission-policy--current-as-of-2026-10-25).
 Historical merge-on-gates permission never restarts a cancelled mission.
-Infrastructure requires independent reviewer ACCEPT for the affected head. Pass the expected head SHA to the merge operation. Do not dismiss a
+Independent review is optional. Pass the expected head SHA to the merge operation. Do not dismiss a
 review or force a ref to bypass a failure. Read back merged status, actual merge
 SHA/tree, default-branch ref and linked issue state. A failed tool call is not a
 merge. Auto-merge, deployment and purchases are separate operations.

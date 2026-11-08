@@ -1,3 +1,8 @@
+> 2026-11-08, WLC-07: standalone Navigation Lab is retired. Use
+> [Unified Map Editor](../engineering/UNIFIED_MAP_EDITOR.md) and `pnpm dev:map`
+> on the authenticated Playground stand. Historical commands/results below
+> describe the former tool; atlas v6 and navigation rules are preserved.
+
 # Painted world-map navigation stand
 
 Status: owner-approved local prototype, PR delivery 2026-10-26.

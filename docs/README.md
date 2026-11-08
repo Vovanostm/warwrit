@@ -1,5 +1,9 @@
 # Documentation map
 
+- [`engineering/WLC_08_ACCEPTANCE.md`](engineering/WLC_08_ACCEPTANCE.md) — current consolidation integration candidate, fresh acceptance results and remaining M1 gaps.
+- [`engineering/DEVELOPER_PLAYGROUND.md`](engineering/DEVELOPER_PLAYGROUND.md) — protected development-only shell and links to current Combat Lab / Map Editor contracts.
+- [`architecture/0006-m1-renderer-babylon.md`](architecture/0006-m1-renderer-babylon.md) — accepted renderer; prior engine-selection requirements are superseded.
+
 - [`wiki/index.md`](wiki/index.md) — локальная wiki; вход к единой обзорной
   спецификации M1.
 - [`authority/PROJECT_AUTHORITY.md`](authority/PROJECT_AUTHORITY.md) — source-of-truth hierarchy and change control.

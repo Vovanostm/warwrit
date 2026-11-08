@@ -9,6 +9,21 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
+  migrated restore, ordinary entry/command/restart and production isolation pass.
+  [Result and merge authority](docs/work-packages/m1-next/01-integration.md). LOCAL.
+
+### Integrate consolidation and verify the ordinary company loop (WLC-08)
+
+- 2026-11-08, `codex/wlc-08-integration`, PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), NOT_MERGED.
+  Integrate WLC-02–07, remove stale guidance/global visual gating, fix migration
+  expectations and development-env leakage into the production web build.
+  Add owner-requested guarded Playground time steps with atomic receipts and
+  migrations0024–25; correct movement and combat-receipt clock mismatches.
+  Ordinary co-op victory/proof/one reward/rest/payroll/next contract/restart/OIDC
+  re-entry PASS; failed runs and broader M1 gaps remain explicit. Full local checks
+  PASS on executable0c0aae83; no merge/deployment/full-M1 acceptance.
+  [Exact results, versions, failures and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
 - 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
   existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
 
@@ -29,6 +44,25 @@ requests.
   CI/full suite/M1 NOT_RUN; no merge or deployment authorized.
   [Publication receipt](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#publication--2026-11-08)
   records implementation6bd10ce0, actual cleanup and the corrected check breakdown.
+
+### Unified Map Editor (WLC-07)
+
+- 2026-11-08, `codex/wlc-07-map-editor`, PUBLISHED [PR429](https://github.com/Vovanostm/warwrit/pull/429), owner-assigned work: protected
+  World/Battle authoring, server drafts/validation, versioned artifacts and
+  current renderer preview. [Owning scope and checks](docs/engineering/UNIFIED_MAP_EDITOR.md).
+  Reuse BattleEditor/Babylon and game-core navigation; extract existing road
+  diagnostics without changing rules. Retire standalone Navigation Lab execution
+  and old map-file controls; retain battle presets/saves and World Lab.
+  Migration0023 adds persistent isolated map documents/receipts. Separate content
+  delivery freezes an exact exported artifact for new worlds only, with explicit
+  acknowledgement; no automatic world assignment.
+- 52focused tests (3real PostgreSQL), native World/Battle journeys, import/export,
+  day/night/cameras, explicit artifact publication, lost-response/reload/exact
+  retry, migration up/down/up, types/lint/architecture, production builds/artifact
+  guards PASS. Fix object-linked corridor errors, wheel scrolling and zoomed SVG
+  input overlap found during self-review. CI/full suite/M1/art/deployment NOT_RUN;
+  CI advisory; hosted completion not awaited. Existing worlds, saves and revision
+  references unchanged. Own test stand cleaned up; no merge or deployment.
 
 ### Record WLC-05 merge and local main update
 

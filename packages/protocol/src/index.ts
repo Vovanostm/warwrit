@@ -91,3 +91,5 @@ export type { WorldLabCartographyDto, WorldLabKnownSiteDto } from './world-carto
 export { isRecord, isTransportId } from './value-guards.js';
 
 export * from './playground.js';
+
+export * from './map-editor.js';

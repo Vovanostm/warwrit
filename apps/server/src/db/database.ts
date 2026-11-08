@@ -150,6 +150,7 @@ interface CompanyOpeningOptionTable {
 }
 
 interface WorldCampaignClockTable {
+  readonly qa_offset_ms: Generated<string>;
   readonly world_id: string;
   readonly epoch_ms: string;
   readonly starting_tick: string;
@@ -453,7 +454,7 @@ export function createDatabaseReadinessProbe(
     }
     if (worldStorageEnabled) {
       await sql`
-        select world_id, epoch_ms, starting_tick from world_campaign_clocks limit 0
+        select world_id, epoch_ms, starting_tick, qa_offset_ms from world_campaign_clocks limit 0
       `.execute(database);
       await sql`
         select world_id, company_id, party_id, route_epoch, segment_id, profile_id,

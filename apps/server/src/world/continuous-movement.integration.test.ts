@@ -417,6 +417,59 @@ describe('continuous movement executor (PostgreSQL)', () => {
   );
 
   it.skipIf(database === undefined)(
+    'settles physical arrival after a QA clock jump and starts the next trip on the same simulation clock',
+    async () => {
+      const db = requireDatabase();
+      const scenario = createScenario();
+      await seedScenario(db, [scenario]);
+      try {
+        const started = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          moveRequest(scenario, 'qa-clock-depart', { xFp: 1600, zFp: -2661 }),
+        );
+        await db
+          .updateTable('world_campaign_clocks')
+          .set({ qa_offset_ms: '2160000' })
+          .where('world_id', '=', scenario.worldId)
+          .execute();
+        const candidate = {
+          companyId: scenario.companyId,
+          partyId: scenario.state.economy.lifecycle.parties[0]!.partyId,
+          acceptedByAccountId: scenario.accountId,
+        };
+        await processContinuousMovementCandidate(db, scenario.worldId, candidate);
+        const arrived = await readSnapshot(db, scenario);
+        expect(arrived.economy.lifecycle.parties[0]!.location.kind).toBe('TERRAIN');
+        expect(BigInt(arrived.economy.lifecycle.campaignTick)).toBeGreaterThanOrEqual(
+          BigInt(scenario.state.economy.lifecycle.campaignTick) + 100n,
+        );
+        await processContinuousMovementCandidate(db, scenario.worldId, candidate);
+        expect(await readSnapshot(db, scenario)).toEqual(arrived);
+        const next = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          {
+            ...moveRequest(scenario, 'qa-clock-next', { xFp: 1664, zFp: -2661 }),
+            expectedPublicRevision: arrived.economy.lifecycle.knowledge.revision,
+            expectedMovementEpoch: (BigInt(started.movementEpoch) + 1n).toString(),
+          },
+        );
+        expect(BigInt(next.plan!.startedAtMs)).toBeGreaterThanOrEqual(
+          BigInt(started.plan!.startedAtMs) + 2160000n,
+        );
+        expect(next.plan).not.toBeNull();
+      } finally {
+        await cleanupScenario(db, [scenario]);
+      }
+    },
+  );
+
+  it.skipIf(database === undefined)(
     'settles a due STOP once and preserves site-anchor presence classification',
     async () => {
       const db = requireDatabase();

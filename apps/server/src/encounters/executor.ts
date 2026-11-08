@@ -11,6 +11,7 @@ import { sql, type Kysely, type RawBuilder, type Transaction } from 'kysely';
 import type { FirstHuntTerminalEvidence } from '../contracts/terminal-evidence-types.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { loadCompanyAggregate } from '../company/repository.js';
+import { worldClockAt } from '../world/clock.js';
 import { createCombatLabFixture } from '../combat-lab/scenario.js';
 import { firstHuntTimeoutCommandId } from './admission.js';
 import { prepareFirstHuntTerminalEvidence } from './terminal-evidence.js';
@@ -517,15 +518,12 @@ async function campaignTickAtRequest(
 ): Promise<string | null> {
   const result = await transaction
     .selectFrom('world_campaign_clocks')
-    .select(['epoch_ms', 'starting_tick'])
+    .select(['epoch_ms', 'starting_tick', 'qa_offset_ms'])
     .where('world_id', '=', worldId)
     .executeTakeFirst();
   if (!result) return null;
   try {
-    const tick = combat.campaignTickAt(
-      combat.createCampaignClock(result.epoch_ms, result.starting_tick),
-      String(nowMs),
-    );
+    const tick = worldClockAt(result, nowMs).tick;
     return /^(0|[1-9][0-9]*)$/u.test(tick) ? tick : null;
   } catch {
     return null;

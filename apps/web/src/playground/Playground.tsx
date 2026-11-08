@@ -1,3 +1,4 @@
+import { CampaignTime } from './CampaignTime.js';
 import { useEffect, useRef, useState } from 'react';
 import type {
   PlaygroundBootstrap,
@@ -316,9 +317,12 @@ export function Playground() {
         <br />
         Сессия аккаунта: {bootstrap?.accountId ?? '—'} · Sandbox: {sandbox?.id ?? 'не выбран'}
       </p>
+      {bootstrap?.campaignTimeWorldId && (
+        <CampaignTime accountId={bootstrap.accountId} worldId={bootstrap.campaignTimeWorldId} />
+      )}
       <p>
         Сохраните и проверьте расстановку, затем нажмите Start. Каждый приказ подтверждает сервер.
-        Основной мир не изменяется.
+        Команды sandbox не изменяют мир кампании.
       </p>
       {message && (
         <p role="status" className="playground-feedback">

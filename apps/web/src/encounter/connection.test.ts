@@ -184,7 +184,9 @@ describe('authenticated encounter re-entry', () => {
       scope: { accountId: 'account-a', companyId: 'company-a' },
       signal: new AbortController().signal,
       observer: observed,
-      fetcher: async () => { throw new TypeError('Failed to fetch'); },
+      fetcher: async () => {
+        throw new TypeError('Failed to fetch');
+      },
       createClient: clientFactory,
     });
     expect(observed.statuses).toEqual(['discovering', 'failed']);

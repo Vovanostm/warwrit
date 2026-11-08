@@ -550,17 +550,11 @@ async function legacyControls() {
   await legacy.coverage.startJSCoverage({ resetOnNavigation: false });
   try {
     await legacy.goto('http://127.0.0.1:5326/scripts/world-map/navigation-lab.html?map=atlas');
-    await legacy.locator('#night').waitFor();
-    await legacy.mouse.move(700, 420);
-    await legacy.mouse.wheel(0, -500);
-    await legacy.waitForTimeout(800);
-    const before = await legacy.locator('#map').getAttribute('viewBox');
-    await legacy.locator('#night').check();
-    await legacy.keyboard.down('KeyD');
-    await legacy.waitForTimeout(150);
-    await legacy.keyboard.up('KeyD');
-    assert.notEqual(await legacy.locator('#map').getAttribute('viewBox'), before);
-    results.push('legacy atlas checkbox-focused WASD');
+    await legacy
+      .getByRole('heading', { name: 'Standalone Navigation Lab выведен из использования' })
+      .waitFor();
+    assert.equal(await legacy.locator('#map').count(), 0);
+    results.push('retired standalone navigation editor has no canvas or movement controls');
     // Preserve the existing documented examples as an authoring UI only.
     await legacy.goto('http://127.0.0.1:5326/scripts/world-map/fog-design/index.html');
     const examples = legacy.locator('#examples button');

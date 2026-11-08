@@ -93,6 +93,11 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     ) {
       throw new Error('Playground requires matching authenticated identity and database');
     }
+    if (
+      options.playground.campaignTimeWorldId &&
+      options.playground.campaignTimeWorldId !== options.company?.worldId
+    )
+      throw new Error('QA campaign time requires the matching configured company world');
     registerPlayground(app, options.playground);
   }
   app.get('/health/ready', async (request, reply) => {

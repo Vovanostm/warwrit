@@ -1,3 +1,5 @@
+import { registerCampaignTime } from './campaign-time.js';
+import { registerMapEditor } from '../map-editor/routes.js';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 import {
@@ -26,6 +28,7 @@ import {
 } from './store.js';
 
 export interface PlaygroundSettings {
+  readonly campaignTimeWorldId?: string;
   readonly environment: 'development' | 'test';
   readonly host: string;
   readonly origin: string;
@@ -124,8 +127,14 @@ export function registerPlayground(app: FastifyInstance, settings: PlaygroundSet
       request.log.error({ event: 'playground.request.failed' }, 'Playground request failed');
       return reply.code(503).send({ code: 'PLAYGROUND_UNAVAILABLE' });
     });
+    registerMapEditor(scope, settings.database);
+    if (settings.campaignTimeWorldId)
+      registerCampaignTime(scope, settings.database, settings.campaignTimeWorldId);
     scope.get('/dev/playground/api', async (request) => ({
       environment: settings.environment,
+      ...(settings.campaignTimeWorldId
+        ? { campaignTimeWorldId: settings.campaignTimeWorldId }
+        : {}),
       accountId: request.playgroundAccountId,
       contentRevision: PLAYGROUND_CONTENT_REVISION,
       template: playgroundTemplate(),

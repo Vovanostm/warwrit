@@ -1,5 +1,28 @@
 # Warwrit current delivery plan
 
+## WLC-08 — Integration acceptance, 2026-11-08
+
+Coordinator/writer: codex/wlc-08-integration, .claude/worktrees/wlc-08.
+Owner authorizes isolated integration/QA, documentation, PR and Airtable sync;
+merge/deployment are not authorized. Base main fdbb0dc2 includes WLC-02–05.
+PR428/d2d82bc3 and PR429/b58c87ce remain OPEN/NOT_MERGED and are explicitly
+combined in this candidate; other branches, original dirty checkout/saves retained.
+[Owning results, failed attempts and remaining M1 scope](WLC_08_ACCEPTANCE.md).
+Status PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), OPEN/NOT_MERGED; M1 NOT_ACCEPTED.
+Executable0c0aae83: full ordinary two-company hunt/proof/one80crown payout/rest/
+10crown payroll/next contract/restart/OIDC re-entry PASS with labelled QA time.
+Final company830crowns, Rell60,35rations, two survivors100/100, Kest dead.
+All17canonical groups identical across restart and final Playground checks.
+Lab manual/autoplay/replay/cleanup and both map editors/export/refusal PASS.
+Production exclusion/guards PASS. 1150unit/108integration, migrations, build/types,
+format/lint/architecture/dead-code/content and10kstress PASS on executable SHA.
+0024–25 add opt-in atomic QA time/receipts; two clock defects fixed and regressed.
+Two failed native worlds retained. Medical/estate/complete second contract,
+eight-contract matrix/device/performance/owner acceptance remain open, not hidden.
+GitHub/Airtable readback agrees: WLC-02–05 Done,06–08 Review; history preserved.
+Next: final publication-head checks in PR430, then owner review; no merge authority.
+Earlier dated blocks below retain their original delivery/evidence boundaries.
+
 ## WLC-06 — Combat Lab consolidation, 2026-11-08
 
 Coordinator/writer: codex/wlc-06-combat-lab, .claude/worktrees/wlc-06.
@@ -11,6 +34,19 @@ Status: PUBLISHED [PR428](https://github.com/Vovanostm/warwrit/pull/428), implem
 Native setup/manual/auto/Pause/loss/reload/API restart/exact retry/terminal/replay PASS.
 Owner confirmed active-battle reinforcements unavailable; game rules unchanged.
 Screenshots and remaining limits are in the owning page. CI advisory; full M1 NOT_RUN.
+
+## WLC-07 — Unified Map Editor, 2026-11-08
+
+Coordinator/writer: codex/wlc-07-map-editor, .claude/worktrees/wlc-07.
+Owner authorizes implementation and standalone PR; no merge/deployment.
+Base fdbb0dc2 includes merged WLC-03/05. Preserve WLC-06's independent PR428.
+[Owning journeys, isolation and acceptance](UNIFIED_MAP_EDITOR.md).
+Status PUBLISHED [PR429](https://github.com/Vovanostm/warwrit/pull/429), implementation82cb5994. 52focused (3real PostgreSQL), native World/
+Battle journeys, artifact delivery/recovery, migration rollback, types/lint/
+architecture and production builds/artifact checks PASS. Current atlas v6 and
+canonical rules remain owners; drafts never change active worlds. CI/full suite/
+M1/deployment NOT_RUN; CI advisory, hosted completion not awaited.
+Owned test stand cleaned up. No merge authorization; PR ready for owner review.
 
 ## WLC-05 — Developer Playground Foundation, 2026-11-07
 

@@ -1,3 +1,5 @@
+import { boundedMapView, zoomMapView } from '../../../../scripts/world-map/map-camera.js';
+import type { MapView } from '../../../../scripts/world-map/map-camera.js';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, KeyboardEvent, PointerEvent } from 'react';
 import type {
@@ -7,12 +9,7 @@ import type {
   CombatLabTile,
   CombatLabCustomUnit,
 } from '@warwrit/protocol';
-import {
-  createEmptyTiles,
-  removeBattleUnit,
-  toMapDraft,
-  validateBattleDraft,
-} from './editor-model.js';
+import { createEmptyTiles, removeBattleUnit, validateBattleDraft } from './editor-model.js';
 import {
   applyEditorBrush,
   canDragPaint,
@@ -31,6 +28,13 @@ export interface BattleEditorProps {
   readonly value: CombatLabBattleConfig;
   readonly onChange: (value: CombatLabBattleConfig) => void;
   readonly disabled?: boolean;
+  /** Server Map Editor owns draft persistence and versioned import/export. */
+  readonly managed?: boolean;
+  readonly focusHex?: CombatLabHex | null;
+  readonly cellMarkers?: readonly (CombatLabHex & {
+    readonly label: string;
+    readonly error: boolean;
+  })[];
 }
 
 const storageKey = 'warwrit.combat-lab.drafts.v1';
@@ -229,8 +233,26 @@ function PresetPicker({
 }
 
 /** Local battle and map draft editor; all imports are validated before onChange. */
-export function BattleEditor({ catalog, value, onChange, disabled = false }: BattleEditorProps) {
+export function BattleEditor({
+  catalog,
+  value,
+  onChange,
+  disabled = false,
+  managed = false,
+  focusHex,
+  cellMarkers = [],
+}: BattleEditorProps) {
   const [inspectedHex, setInspectedHex] = useState<CombatLabHex | null>(null);
+  const board = useRef<SVGSVGElement>(null);
+  const [camera, setCamera] = useState<MapView | null>(null);
+  const pan = useRef<{ x: number; y: number; view: MapView } | null>(null);
+
+  useEffect(() => {
+    if (focusHex) {
+      setInspectedHex(focusHex);
+      setCamera(null);
+    }
+  }, [focusHex]);
   const [tool, setTool] = useState(initialEditorTool(catalog));
   const { brush, sideId, profileId } = tool;
   const setBrush = (brush: EditorBrush) => setTool((current) => ({ ...current, brush }));
@@ -243,9 +265,9 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   const [notice, setNotice] = useState('');
   const [importErrors, setImportErrors] = useState<string[]>([]);
   const battleInput = useRef<HTMLInputElement>(null);
-  const mapInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (managed) return;
     try {
       const drafts = readSavedDrafts();
       const valid = validSavedDrafts(drafts, catalog);
@@ -256,7 +278,7 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
     } catch (error) {
       setNotice(`Не удалось прочитать локальные черновики: ${errorMessage(error)}`);
     }
-  }, [catalog]);
+  }, [catalog, managed]);
 
   const errors = validateBattleDraft(value, catalog);
   const sortedTiles = [...value.map.tiles].sort((a, b) => a.r - b.r || a.q - b.q);
@@ -265,6 +287,25 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   const top = Math.min(0, ...points.map(([, y]) => y)) - 25;
   const width = Math.max(0, ...points.map(([x]) => x)) + 25 - left;
   const height = Math.max(0, ...points.map(([, y]) => y)) + 25 - top;
+  useEffect(() => {
+    const canvas = board.current;
+    if (!canvas || !managed) return;
+    const wheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const box = canvas.getBoundingClientRect();
+      setCamera((v) =>
+        zoomMapView(
+          v ?? { x: 0, y: 0, width, height },
+          [(event.clientX - box.left) / box.width, (event.clientY - box.top) / box.height],
+          event.deltaY,
+          { width, height },
+        ),
+      );
+    };
+    canvas.addEventListener('wheel', wheel, { passive: false });
+    return () => canvas.removeEventListener('wheel', wheel);
+  }, [managed, width, height]);
+
   const unitsAt = new Map(value.units.map((unit) => [hexKey(unit.position), unit]));
 
   function change(patch: Partial<CombatLabBattleConfig>): void {
@@ -281,6 +322,18 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   }
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>): void {
+    if (managed && (event.button === 1 || (event.button === 0 && event.altKey))) {
+      pan.current = {
+        x: event.clientX,
+        y: event.clientY,
+        view: camera ?? { x: 0, y: 0, width, height },
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.preventDefault();
+      return;
+    }
+    if (event.button !== 0) return;
+
     const hex = cellFromEvent(event);
     if (hex === null || disabled) return;
     event.preventDefault();
@@ -288,6 +341,22 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>): void {
+    const drag = pan.current;
+    if (drag) {
+      const box = event.currentTarget.getBoundingClientRect();
+      setCamera(
+        boundedMapView(
+          {
+            ...drag.view,
+            x: drag.view.x - ((event.clientX - drag.x) * drag.view.width) / box.width,
+            y: drag.view.y - ((event.clientY - drag.y) * drag.view.height) / box.height,
+          },
+          { width, height },
+        ),
+      );
+      return;
+    }
+
     if (!canDragPaint(event.buttons, brush, disabled)) return;
     const hex = cellFromEvent(event);
     if (hex !== null) setTile(hex);
@@ -403,42 +472,28 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
           <h2>Черновик боя</h2>
           <p>Измените состав и карту перед запуском.</p>
         </div>
-        <div className="battle-editor-files">
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => downloadJson('warwrit-battle.json', value)}
-          >
-            Экспорт боя
-          </button>
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => downloadJson('warwrit-map.json', toMapDraft(value))}
-          >
-            Экспорт карты
-          </button>
-          <button type="button" disabled={disabled} onClick={() => battleInput.current?.click()}>
-            Импорт боя
-          </button>
-          <button type="button" disabled={disabled} onClick={() => mapInput.current?.click()}>
-            Импорт карты
-          </button>
-          <input
-            ref={battleInput}
-            type="file"
-            accept="application/json,.json"
-            hidden
-            onChange={(event) => void importFile(event, 'battle')}
-          />
-          <input
-            ref={mapInput}
-            type="file"
-            accept="application/json,.json"
-            hidden
-            onChange={(event) => void importFile(event, 'map')}
-          />
-        </div>
+        {!managed && (
+          <div className="battle-editor-files">
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => downloadJson('warwrit-battle.json', value)}
+            >
+              Экспорт боя
+            </button>
+            <button type="button" disabled={disabled} onClick={() => battleInput.current?.click()}>
+              Импорт боя
+            </button>
+            <a href="/dev/playground/maps">Карты: Map Editor</a>
+            <input
+              ref={battleInput}
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={(event) => void importFile(event, 'battle')}
+            />
+          </div>
+        )}
       </header>
 
       <PresetPicker
@@ -462,10 +517,23 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
               />
             </label>
             <span>15 × 11 · нажмите или ведите кистью</span>
+            {managed && (
+              <>
+                <span>Колесо — масштаб · Alt + перетаскивание — панорама</span>
+                <button onClick={() => setCamera(null)}>Всё поле</button>
+              </>
+            )}
           </div>
           <svg
+            ref={board}
             className="battle-editor-board"
-            viewBox={`${left} ${top} ${width} ${height}`}
+            viewBox={`${left + (camera?.x ?? 0)} ${top + (camera?.y ?? 0)} ${camera?.width ?? width} ${camera?.height ?? height}`}
+            onPointerUp={() => {
+              pan.current = null;
+            }}
+            onPointerCancel={() => {
+              pan.current = null;
+            }}
             role="group"
             aria-label="Поле для рисования и размещения бойцов"
             onPointerDown={handlePointerDown}
@@ -484,6 +552,19 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
                 onCellKey={handleCellKey}
               />
             ))}
+            {cellMarkers.map((marker, index) => {
+              const [x, y] = center(marker);
+              return (
+                <polygon
+                  key={`marker-${index}`}
+                  className={`map-cell-marker${marker.error ? ' error' : ''}`}
+                  points={corners}
+                  transform={`translate(${x} ${y})`}
+                >
+                  <title>{marker.label}</title>
+                </polygon>
+              );
+            })}
           </svg>
           {inspectedHex && (
             <p className="battle-editor-inspector" role="status">
@@ -646,36 +727,40 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
             onChange={(event) => change({ seed: Number(event.target.value) })}
           />
         </label>
-        <button type="button" disabled={disabled} onClick={saveDraft}>
-          Сохранить локально
-        </button>
-        <label>
-          Мои черновики
-          <select
-            disabled={disabled || Object.keys(savedDrafts).length === 0}
-            value={savedName}
-            onChange={(event) => loadDraft(event.target.value)}
-          >
-            <option value="">Выберите сохранение</option>
-            {Object.keys(savedDrafts)
-              .sort()
-              .map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-          </select>
-        </label>
-        <button
-          type="button"
-          disabled={disabled || !savedName}
-          onClick={() => loadDraft(savedName)}
-        >
-          Загрузить черновик
-        </button>
-        <button type="button" disabled={disabled || !savedName} onClick={deleteDraft}>
-          Удалить сохранение
-        </button>
+        {!managed && (
+          <>
+            <button type="button" disabled={disabled} onClick={saveDraft}>
+              Сохранить локально
+            </button>
+            <label>
+              Мои черновики
+              <select
+                disabled={disabled || Object.keys(savedDrafts).length === 0}
+                value={savedName}
+                onChange={(event) => loadDraft(event.target.value)}
+              >
+                <option value="">Выберите сохранение</option>
+                {Object.keys(savedDrafts)
+                  .sort()
+                  .map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              disabled={disabled || !savedName}
+              onClick={() => loadDraft(savedName)}
+            >
+              Загрузить черновик
+            </button>
+            <button type="button" disabled={disabled || !savedName} onClick={deleteDraft}>
+              Удалить сохранение
+            </button>
+          </>
+        )}
         <button type="button" disabled={disabled} onClick={clearMap}>
           Очистить карту
         </button>
@@ -683,9 +768,11 @@ export function BattleEditor({ catalog, value, onChange, disabled = false }: Bat
           Сбросить на сценарий мельницы
         </button>
       </section>
-      <p className="battle-editor-local-note">
-        Сохранения остаются в этом браузере и на этом устройстве; в кампанию они не попадают.
-      </p>
+      {!managed && (
+        <p className="battle-editor-local-note">
+          Сохранения остаются в этом браузере и на этом устройстве; в кампанию они не попадают.
+        </p>
+      )}
       <EditorMessages errors={errors} importErrors={importErrors} notice={notice} />
     </section>
   );

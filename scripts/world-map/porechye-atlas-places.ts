@@ -1,8 +1,6 @@
 // Retained center-tile annotations for atlas v6; geometry lives in game-core.
 // A local geography proposal, not a canonical world edition. Physical distances
-// describe the drawing only. Walking pace is a local stand parameter, not balance.
-export const metresPerPixel = 2400 / 1536;
-export const walkingMetresPerSecond = 1;
+// describe the drawing only; canonical movement lives in game-core.
 // Five place identities: places.csv/porechye.md. Additional atlas proposals:
 // war-13, war-14, nature-08 in stozhar-v3/places.json. All positions are retained drafts.
 export const places = [

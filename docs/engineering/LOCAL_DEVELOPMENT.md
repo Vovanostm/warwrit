@@ -134,10 +134,12 @@ the normal migration command unchanged. The CI-only helper
 API/Vite child processes in a fresh `output/world-lab-ci/runtime-*` directory.
 It stops/waits only its own children and removes only its own Compose project.
 The persistent laboratory database is never reset. Private UI5338 keeps its
-file allowlist; legacy atlas controls run on a separate loopback authoring
-origin5326, without an API proxy. Both Vite processes and actual browser pages
-supply source-checked measurements. `pnpm dev:map` uses that authoring config;
-the private ordinary-game configuration intentionally denies the full atlas.
+file allowlist; retired Navigation Lab notice and fog-design references run on a separate loopback
+origin5326. The full atlas is denied there. `pnpm dev:map` now opens
+`/dev/playground/maps` on the ordinary development web stand; it requires the
+[Playground setup](DEVELOPER_PLAYGROUND.md) and an allowlisted authenticated
+account. Atlas bytes and draft API are served only through that protected scope.
+See [Map Editor journeys and lifecycle](UNIFIED_MAP_EDITOR.md).
 Its same-run browser/server/SQL reports supplement unit coverage through the
 source-checking merger before the unchanged audit. Missing/stale reports fail;
 previous local evidence is not uploaded as CI proof. The job budget is35 minutes
@@ -596,3 +598,20 @@ preserves module paths for relative content URLs and external workspace packages
 Development runs source through the existing `dev`/tsx command; standard build/start always use the stripped production distribution.
 No deployment is performed by these instructions. The ordinary production web
 build strips both debug entrypoints even when `VITE_COMBAT_LAB=1` is supplied.
+
+### Opt-in Playground campaign time — WLC-08
+
+On an exclusively owned disposable development database, add
+`PLAYGROUND_CAMPAIGN_WORLD=world.porechye.atlas-v1` alongside the normal
+painted-world/Playground/OIDC/account allowlist settings. It must name this
+stand's configured world. Apply migrations and restart the development API.
+Open `/dev/playground/combat`: **Время изолированного QA-мира** offers fixed
++1/+10/+100/+1000 campaign-tick steps. This changes the test campaign clock;
+normal game reads/commands then settle food, rest and wages. Movement, world
+light and campaign share a persistent simulation offset (migration0025).
+Auth sessions and combat deadlines retain real time. Active/unsettled encounters
+refuse advancement. Reload/exact retry uses the same saved command and receipt.
+Do not enable on retained player databases. Production refuses this setting.
+Time and receipts survive restart; rollback0025 refuses to discard an advanced
+simulation clock and rollback0024 refuses to discard a used journal.
+This is explicitly accelerated QA evidence, not a real six-hour waiting test.

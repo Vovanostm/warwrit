@@ -5,6 +5,20 @@ Coordinator/writer: `codex/wlc-05-playground`, `.claude/worktrees/wlc-05`.
 Owner authorizes implementation, standalone PR, merge and local main update.
 No deployment, paid service, game-rule change or retained-save mutation.
 
+## Opt-in QA campaign time — owner amendment 2026-11-08
+
+[WLC-08](WLC_08_ACCEPTANCE.md#owner-amendment--accelerated-qa-campaign-time-2026-11-08)
+adds fixed forward campaign steps in the Combat Lab shell when an operator names
+`PLAYGROUND_CAMPAIGN_WORLD` matching the configured world. This exceptional tool
+is only for an exclusively owned disposable QA database: it advances that stand's
+world simulation clock (movement, campaign and light together) and lets ordinary
+domain commands assess elapsed time. Authentication and combat deadlines retain
+real time. Default
+sandbox/map operations retain their no-campaign-write boundary. Production rejects
+the mode and strips its API/UI. Active or unsettled encounters refuse time jumps.
+Exact receipts persist; disabling the feature does not rewind time. See the owning
+report for actual tests, accelerated observations and limitations.
+
 ## WLC-06 successor — 2026-11-08
 
 [Combat Lab consolidation](COMBAT_LAB_CONSOLIDATION.md) extends this merged
@@ -13,7 +27,16 @@ The old standalone lab is removed. New scenario schema2/content-v2 explicitly
 selects the game's bridge-v5 rules; v1 metadata remains readable but is not
 reinterpreted. The historical WLC-05 delivery/results below retain their boundary.
 
-## Journey and scope
+## WLC-07 map-authoring extension — 2026-11-08
+
+`/dev/playground/maps` now opens the [Unified Map Editor](UNIFIED_MAP_EDITOR.md).
+It shares this authenticated/allowlisted scope but owns separate persistent map
+rows and versioned artifacts; combat sandbox schema/TTL remain unchanged.
+The map route no longer displays or activates a combat sandbox. The historical
+foundation journey below records the pre-editor state. Map content delivery
+registers immutable versions for new worlds only; it never assigns live world refs.
+
+## Historical foundation journey and scope — SUPERSEDED by WLC-06/07
 
 An authenticated, allowlisted developer opens `/dev/playground`, sees a conspicuous
 DEBUG environment label, account/session identity and server content revision,

@@ -9,6 +9,12 @@ const Playground = import.meta.env.DEV
       import('./playground/Playground.js').then((module) => ({ default: module.Playground })),
     )
   : null;
+const MapEditor = import.meta.env.DEV
+  ? lazy(() =>
+      import('./map-editor/MapEditor.js').then((module) => ({ default: module.MapEditor })),
+    )
+  : null;
+const isMapEditor = window.location.pathname.replace(/\/$/u, '') === '/dev/playground/maps';
 const isPlayground = /^\/dev\/playground(?:\/(?:combat|maps))?\/?$/u.test(window.location.pathname);
 
 if (import.meta.env.DEV && /^\/dev\/playground\/?$/u.test(window.location.pathname)) {
@@ -30,7 +36,7 @@ createRoot(rootElement).render(
       </main>
     ) : isPlayground && Playground ? (
       <Suspense fallback={<p>Проверка доступа…</p>}>
-        <Playground />
+        {isMapEditor && MapEditor ? <MapEditor /> : <Playground />}
       </Suspense>
     ) : (
       <App />
