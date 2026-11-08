@@ -5,6 +5,17 @@ Owner assignment, 2026-11-08, P0; dependencies WLC-02–07. Writer/coordinator:
 isolated QA, documentation, GitHub PR and Airtable synchronization authorized.
 Merge, deployment, auto-merge and paid provisioning are not authorized.
 
+## N01 reconciliation — 2026-11-08
+
+[N01](../work-packages/m1-next/01-integration.md) owns the fresh main/candidate
+reconciliation, normal entry/re-entry and production/SQL checks. Historical
+WLC08 runs and failed saved worlds below remain unchanged. PR428 is now merged
+in main3c55cf35; PR429 and PR430 remain open. N01 uses a separate persistent
+candidate; it does not write either original branch or retained database.
+November 8 owner amendments use ROADMAP → owning task, short changelog records,
+advisory CI and optional independent review. Current local status/checks and
+remaining blockers live in N01; no fresh gameplay PASS is inferred here.
+
 ## Scope and player result
 
 Prove the ordinary persistent company loop on the integrated candidate, without

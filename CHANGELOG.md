@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-08 — Changed: reconcile the N01 candidate with current main while
+  preserving both WLC histories and the released migration baseline;
+  [checks and limits](docs/work-packages/m1-next/01-integration.md). LOCAL.
+
 ### Integrate consolidation and verify the ordinary company loop (WLC-08)
 
 - 2026-11-08, `codex/wlc-08-integration`, PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), NOT_MERGED.
@@ -20,6 +24,8 @@ requests.
   re-entry PASS; failed runs and broader M1 gaps remain explicit. Full local checks
   PASS on executable0c0aae83; no merge/deployment/full-M1 acceptance.
   [Exact results, versions, failures and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
+- 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
+  existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
 
 ### Consolidate Combat Lab (WLC-06)
 

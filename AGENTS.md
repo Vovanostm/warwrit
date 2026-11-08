@@ -1,3 +1,18 @@
+<!-- N01 preserves the owner amendments supplied on 2026-11-08. -->
+
+## Current navigation and delivery amendment — 2026-11-08
+
+These owner decisions supersede older conflicting instructions below and in skills:
+ROADMAP is the project-state entry; read only the requested task and active contract.
+CURRENT_PLAN and its history are not startup reads or update targets. Read at most
+50 recent CHANGELOG lines; search older entries with bounded regexps. Keep task
+details in the owning task, the roadmap as checkbox links, and changelog entries
+short. CI/full suites/audits/stress are advisory; optional independent review does
+not replace direct player checks. Follow the [N01 common contract](docs/work-packages/m1-next/COMMON.md)
+for this candidate's exact ownership, authorization and evidence boundaries.
+Implementation/local commits are authorized; N01 grants no merge or deployment.
+Use only Luna if delegation is explicitly requested; no default subagents.
+
 # Warwrit agent contract
 
 Applies repository-wide. Read stricter directory instructions before editing.
