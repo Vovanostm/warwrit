@@ -2380,7 +2380,7 @@ requests.
   trophy,80crown payment and reload880 with3survivors. Fresh combat art/captures
   await full visual acceptance; required height/largecreature cases pending.
   [Map result](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-map-acceptance-and-ordinary-combat-handoff--2026-10-29)
-  and [battle result/limits](docs/wiki/battlefield-test-maps.md#ordinary-battle-integration-checkpoint--2026-10-29).
+  and [battle result/limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#ordinary-battle-integration-checkpoint--2026-10-29).
   Prior failed/blocked passes and QA losses preserved. Normal audit/commit/PR,
   final current clean gate pending; no main merge/deploy/paid/Orca activation.
 
@@ -4999,7 +4999,7 @@ requests.
   the first audit found introduced complexity. Final focused coverage20/20,
   web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
   gameplay/visual review and publication remain pending.
-  [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+  [Owning behavior](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
 
 ### Publish persistent bow successor — 2026-10-21, PUBLISHED
 
@@ -5341,7 +5341,7 @@ requests.
   ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
   ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
   Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
-  [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
+  [Behavior and check history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
 
 ### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
 
@@ -5616,7 +5616,7 @@ requests.
   and full badge bounds in overview/actor fit. Author 21 focused/46 related tests,
   types/lint/format/normal audit PASS; parent validator EXIT0, 8/8 PASS. Native
   100/125 day/night smoke, passive 0 POST and actual final-AP transition passed.
-  [Behavior and limits](docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
+  [Behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
   Independent played/absolute visual acceptance and publication remain pending;
   Refs186, #190 still owns enemy/frame agreement. No rules or migrations changed.
 - Delivery correction: overview main CI39378757951 SUCCESS after PR244 merge;
@@ -5878,7 +5878,7 @@ requests.
   or migrations changed. Author 33 focused tests, types/lint/format and normal
   audit PASS; four ordinary browser fit/hit samples and manual/passive commands
   recorded. Fresh independent gameplay/absolute visual gates remain pending.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
 - Delivery readback: profile [PR241](https://github.com/Vovanostm/warwrit/pull/241)
   is a published draft at795c842; CI39351771449 PASS (880/48 skipped,10000 stress,
   15 DB,audit). Its policy decision still blocks merge; #164 is needs-owner.
@@ -5893,7 +5893,7 @@ requests.
   focused tests, web types, scoped lint/format and normal audit passed.
   Initial evidence used cache-busting source interception; ordinary-runtime
   independent evaluation and absolute visual acceptance remain pending.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
 - Delivery correction: [PR240](https://github.com/Vovanostm/warwrit/pull/240)
   is merged as `eb98dd2`; PR CI39334291071 and main CI39335721903 succeeded.
   #228 remains open for its picker. Earlier pending receipts are historical.
@@ -5952,7 +5952,7 @@ requests.
   PR240 is merged at eb98dd2. Five component tests, web types, scoped lint/format
   and diff PASS; initial test-selector/lint failures were corrected. Normal
   commit audit and independent browser acceptance remain pending at this entry.
-  [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+  [Behavior and proof limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
 
 ### Accept canonical persistent HP through reconnect and restart
 
@@ -5994,7 +5994,7 @@ requests.
   and real DB/reconnect/browser/independent gates remain pending (runtime
   NOT_RUN). Rules,
   replay history, migrations and combat-lab are unchanged. No merge claimed.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
 
 ### Add the human-opponent preset producer and playable evidence
 
@@ -6424,7 +6424,7 @@ requests.
   move/endturn/autobattleR9rev163/terminal/restart PASS. Primary dirty WIP and
   other stand preserved. This receipt changes only Markdown; game tests NOT_RUN
   for it. Retain failures/history, nonblocking rut/fire polish and finite limits.
-  [Merged result and provenance](docs/wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
+  [Merged result and provenance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local follow-up after
   73a4d40 CI39048861412 FAIL at boundaryCRAP30: build the common emphasized-ID
@@ -6434,7 +6434,7 @@ requests.
   Fresh local coverage820PASS/47SKIP and pinned-main66-file audit PASS
   (8inherited excluded); first upstream-only1fileaudit was repeated with main.
   No gate/test limits or visual changes. Current visual ACCEPT retained;
-  new-head CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  new-head CI/merge pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after published
   ee3103a CI39046615446 FAIL: factor the same active/night/emphasis condition
@@ -6444,7 +6444,7 @@ requests.
   Record full ee3103a absolute visual ACCEPT (21images+2references, game all2,
   close3/3/2/2/2/2/2), normal66-file audit PASS, clean reload and remaining polish
   in the existing wiki/index/log/current plan. New-head CI/merge pending.
-  [Result and CI boundary](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  [Result and CI boundary](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local technique correction
   after d185b71 full visual REJECT: replace fine uniform earth with original
@@ -6458,7 +6458,7 @@ requests.
   Independent source review DONE; types/lint/content114/geometry5 and fresh
   all-profile/generated-map/day-night/desktop/geometry/navigation/combat/terminal/
   restart browser checks PASS. Full absolute visual review PENDING; no current
-  publication/CI/merge claimed. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  publication/CI/merge claimed. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: record completed d185b71 full visual REJECT (all21images and
@@ -6470,7 +6470,7 @@ requests.
   793ebd3/maina934355 and unexecuted current-head CI/publication/merge.
   Documentation-only diff/format/local-link readback; game tests NOT_RUN for
   this edit. Earlier results retained.
-  [Current result](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+  [Current result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   793ebd3 visual REJECT (game2/2/1/1/2/2/1,close3/3/1/1/2/2/1) despite clean
@@ -6490,7 +6490,7 @@ requests.
   unchanged. Full visual review was running at this commit (completed REJECT
   in the dated correction above); CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
   actual CI and scored rejection; preserve earlier failures and asset limits.
-  [Result and technique](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+  [Result and technique](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local courtyard correction and
   owner-requested wiki refresh: quiet fine earth replaces recognizable rut
@@ -6505,7 +6505,7 @@ requests.
   plan and wiki log distinguish the local stand from published1b47872/PR160
   and actual main. Mandatory main-based56-file commit audit PASS,8 inherited
   findings excluded; no audit bypass.
-  [Current result and asset limits](docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
+  [Current result and asset limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   1b47872 visual REJECT despite successfulCI39024500756: extract true-alpha
@@ -6517,7 +6517,7 @@ requests.
   clean-browser launch/reload PASS. Full critique REJECT game rendering/integration1,
   closeall2; nextsite-wide composition/currentCI pending. Original assets
   preserved; no migrations/deployment.
-  [Owning correction](docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
+  [Owning correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local terrain correction:
   add a dedicated seamless3-source ink-earth shader,2original ground variants
@@ -6528,7 +6528,7 @@ requests.
   scene/material wiring and asset manifest; rules/picking/foot geometry retained.
   Source review/types/lint/content107 and actual maps/desktop/layers/geometry/
   movement/pools/terminal/restart PASS. Full visual/currentCI/merge pending.
-  [Result and limits](docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
+  [Result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: refresh wiki landing/index and current plan for published game
@@ -6544,7 +6544,7 @@ requests.
   NOT_RUN (closed session); reopened shader/maps/desktop/day-night/bars/picks/
   extreme bounds and actual move/pools/terminal/restart PASS. Full critic/CI
   pending. Local stand differs from published head.
-  [Current wiki](docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+  [Current wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local visual technique revision:
   full b5a193c/08c2800 critique REJECT(2/2/1/1/2/2/1) exposed a rectangular
@@ -6553,7 +6553,7 @@ requests.
   an original rutted earth asset/provenance with preserved directional ink, and
   coordinated near/far night values. Canonical terrain/picking/rules unchanged.
   Types/lint/content105/main-based audit and fresh shader/browser captures PASS;
-  current full critic/CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+  current full critic/CI/merge pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local final bound correction:
   source review confirmed projected physical bounds could exceed the finite
@@ -6561,7 +6561,7 @@ requests.
   generated15×11 edge cells remain reachable. Four extreme drag corners/
   full-viewport apron/0POST and23camera/types PASS. Previous b5a193c cleanCI SUCCESS
   (820/47SKIP,10kstress,14DB,41-file audit); new-head verification pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local integration of main
   a934355/PR159 into PR160: retain perspective/bounds and connected surfaces;
@@ -6572,7 +6572,7 @@ requests.
   820coverage/47SKIPPED,27camera/geometry/types and main-based52audit PASS before
   final shader delta; actual12bar32×16/4px and0ground-pick errors PASS.
   Initial import/shader/audit failures corrected, recorded in the
-  [owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
   Fresh absolute critique/currentCI/merge pending.
 
 ### Combat readability and reusable terrain
@@ -6584,7 +6584,7 @@ requests.
   provenance. Addresses c50ba37 absolute visual REJECT while retaining its
   accepted native sprite detail. Source readback DONE; framing5/content104/
   types/lint/main-based44-file audit PASS. Full visual/current-head CI/merge
-  pending. [Owning result](docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
+  pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction to
   [PR160](https://github.com/Vovanostm/warwrit/pull/160): full-resolution unit
@@ -6633,7 +6633,7 @@ requests.
   PASS after correcting a failed key-handler complexity check, without gate
   suppression. Source readback DONE; navigation/keyboard0POST and29focused/
   types/lint/format PASS; combined visual/clean CI/merge pending.
-  [Current integration](docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+  [Current integration](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
 
 - 2026-10-17, branch `codex/compact-foot-bars`, local: owner rejects connector
   arms and requires narrow tracks directly under battlefield figures. Preserve
@@ -6656,7 +6656,7 @@ requests.
   No gate/config suppression is introduced. Second absolute visual review REJECT
   on dense-creature occlusion (scene integration1; remaining criteria2, motionN/A);
   the common owner must validate the larger shared spacing before acceptance.
-  [Owner correction and shared delivery](docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
+  [Owner correction and shared delivery](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
 
 - 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
   local integration: give every portrait a4CSSpx art inset while preserving
@@ -6673,7 +6673,7 @@ requests.
   a deliberate pan uses the same5px threshold as the camera, zero wheel delta
   does not suppress reframing. Actual click-jitter/resize and pan/resize with
   0actionPOST,17focused tests, web types/lint PASS. Final integration acceptance,
-  clean CI and merge pending; [owning result](docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
+  clean CI and merge pending; [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
 
 - 2026-10-16, branch `codex/combat-readability`, local implementation under review:
   measured 20-profile portrait bounds/B037 pivot; selective high-resolution
@@ -6715,7 +6715,7 @@ requests.
   no game code, migrations or other writers' WIP changed. Scoped Markdown
   formatting, relative-link/readback and diff checks PASS; gameplay/full gate/
   new visual critique NOT_RUN for this documentation-only amendment.
-  [Owning dated checkpoint](docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+  [Owning dated checkpoint](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
 
 ### Match battle grid and figures to painted perspective
 
@@ -6728,7 +6728,7 @@ requests.
   Actual main5344:12figures/day-night/keys-drag-wheel/no void/ratio1.421176/
   stablepositions/0navigationPOST; real defence200/1POST/nextactor PASS.
   No canonical rules/protocol/migrations/deploy change; this closeout Markdown only.
-  [Merged result](docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
+  [Merged result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local connected terrain:
   full5b88278 visual review rejected separate hex plinths (integration1).
@@ -6738,7 +6738,7 @@ requests.
   extraction. Real editor0/1/2/crowded/day-night/4widths/165picks/hover-pin/0POST
   PASS. Initial matrix/winding/audit failures fixed; strict15-file audit PASS.
   Full same-critic absolute visual ACCEPT(all7game/close2/2); new CI/merge pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local height correction:
   top UV now lifts its ground footprint; continuous earth-side UV/vertex shade
@@ -6747,7 +6747,7 @@ requests.
   lint/format/coverage811+47SKIPPED/audit14files PASS. Real editor0/1/2 archers,
   165ground hits/body hover-pin/0POST PASS. Earlier numeric expectation failed,
   corrected. Full current visual/new-head CI/merge pending; prior874dc2f CI SUCCESS.
-  [Owning result](docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local technique correction:
   repeat visual integration1 rejected the wire lip. Real non-pickable earth
@@ -6775,7 +6775,7 @@ requests.
   Actual4sizes/day-night/pan-zoom registration/165ground hits/body inspection
   with0POST PASS; independent visual/current-head clean CI/merge pending.
   Prior PR159 bb55f5b CI SUCCESS covers only the superseded bounds candidate.
-  [Owning research/result](docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+  [Owning research/result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
 
 ### Confine the battle camera to the painted map
 
@@ -6789,7 +6789,7 @@ requests.
   4desktop sizes/day-night/keys-drag-wheel-resize/0POST/stableunits PASS.
   Author source review no concrete findings; independent visual/clean PR CI/merge
   pending. No domain, protocol or migration changes.
-  [Owning result](docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
 
 ### Live initiative queue and reduced combat HUD
 
@@ -6900,7 +6900,7 @@ requests.
   with previews, invalid skill refused, no repeated movement destination within
   activation. Strategy comparison/fun NOT_MEASURED. Final absolute visual review
   and clean PR/DB/stress/main journey pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
 
 ### Keep the combat delivery scoped
 
@@ -6940,7 +6940,7 @@ requests.
   Primary WIP preserved; no deployment/migration/campaign XP. Wiki/index/current
   plan reconciled with actual merge and measured limits; doc-only closeout
   does not change reviewed game code. Full gate not rerun for documentation.
-  [Owning receipt](docs/wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
+  [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
 
 ### Battle camera menu helper
 
@@ -6956,7 +6956,7 @@ requests.
   camera appearance now scoped ACCEPT after supplied missinginputs;7criteria2/3,
   own critic input NOT_RUN. Separate module PR/main delivery completed as
   confirmed in the merge receipt below; sprite integration remains local.
-  [Owning helper](docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13),
+  [Owning helper](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13),
   CURRENT_PLAN/web README updated; quick-use text reconciles short LMB
   inspection with held WASD/arrows, LMB/MMB drag and wheel zoom. A follow-up
   documentation correction replaces superseded stacked-border/AP-only-shot
@@ -6983,7 +6983,7 @@ requests.
   and explicit tooltip input mode stabilize selection/focus; rank/shortcut costs
   and public view authority retained. BattleView/CombatLab/test assertion,
   battle-view/combat-lab/combat-icons CSS affected; README/CURRENT_PLAN and
-  [owning result](docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13)
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13)
   updated, wiki top current pointer reconciled without erasing dated rejects.
   Web noEmit/lint/format/UI16 PASS; three desktop layouts/0POST inspection,
   stable aim/overflow/Esc/menu and real auto stop PASS. Follow-up UI17 PASS;
@@ -7019,7 +7019,7 @@ requests.
   oldAPI journey does not prove live corrected preview. Owning wiki/preview/
   CURRENT_PLAN updated; wiki top/frontmatter now point to the scoped current
   field/HUD/terminal acceptance with remaining main runtime limits,
-  preserving historical PENDING/reject sections; [finite result](docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+  preserving historical PENDING/reject sections; [finite result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
   Full/DB gates NOT_RUN here, balance NOT_MEASURED; inherited audit/WIP open,
   no bypass/commit/publication/merge/deploy.
 
@@ -7029,7 +7029,7 @@ requests.
   parallel owner review reports lower-grid lines showing through +1 terrain.
   Recorded translucent-top/depth hypothesis and bounded opaque tile/continuous
   UV/exposed cliff proposal, not accepted asset production or rule change.
-  [Owning defect](docs/wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13)
+  [Owning defect](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13)
   and CURRENT_PLAN updated; renderer author owns repair. Current fix/terrain
   visual PENDING, reproduction and code fix NOT_RUN by this shared-doc writer.
   Historical captures remain history; no broad visual approval inferred.
@@ -7042,7 +7042,7 @@ requests.
   legacy/inset contours. Canonical previews/inspection/input and entity outlines
   retained, ground remains below figures. Its HUD intersection legend transferred
   to this shared writer. Renderer/battle-cell-grid/geometry tests/HUD CSS affected;
-  [owning result](docs/wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13),
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13),
   web README and CURRENT_PLAN updated. Author reports geometry+UI20/20/noEmit/
   lint/format PASS after corrected initial TS/Float32 checks; root noEmit PASS.
   Private 6v6 stable identities/canonical cells/0POST unchanged revision PASS.
@@ -7057,7 +7057,7 @@ requests.
   CC BY 3.0 Game Icons, preserving input/tooltips and adding shortcut/rank
   readability plus author/source/adaptation credit. CombatIcon, icon CSS/assets,
   CombatLab/BattleView and combat-lab README affected.
-  [Icon result](docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13):
+  [Icon result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13):
   scoped lint/16 UI tests/browser hover-keyboard-disabled guard PASS;
   web noEmit PASS before/after shared-grid fix; available aim/selected/Esc/rally
   tooltip PASS with unchanged revision. Scoped icon visual ACCEPT (all applicable scores 2/3); critic pointer/revision
@@ -7068,7 +7068,7 @@ requests.
   attackPreview admission, selected-unit caption/legend. Core/protocol/projection
   and HUD present; 46 focused tests/builds/checks reported PASS on that version;
   actual bow45/halberd18/shield6/LOS/resource refresh/halberd2 attack PASS.
-  [Owning result](docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13),
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13),
   melee/ranged, both README and CURRENT_PLAN updated. Saved visual captures
   ACCEPT >=2; the parallel new grid supersedes current integration acceptance,
   now PENDING. Full game/DB gate NOT_RUN for this narrow closeout; inherited
@@ -7081,7 +7081,7 @@ requests.
   fill/ink-backed outer boundary; overlapping cells now use one fill with an
   inner cyan movement cue. Kept full grid/input geometry, server range/attack
   admission, targets and ground-before-figure layers. Scene/README and
-  [owning result](docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13),
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13),
   CURRENT_PLAN affected. Web noEmit/lint/format and 16 UI tests PASS; actual
   45 canonical cells / 38 overlaps/target forecast/unchanged revision PASS, 6v6
   day/night/close/grid/reference captures. Independent scoped visual ACCEPT (all applicable scores >=2); critic
@@ -7096,7 +7096,7 @@ requests.
   opaque-sprite priority; hover/inspection/canonical action targeting now agree.
   Added uniform muted silhouette/ground-ring hover emphasis and empty-cell
   clearing without promoting ground effects over figures. Scene and combat-lab
-  README affected; [owning fix/evidence](docs/wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13),
+  README affected; [owning fix/evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13),
   CURRENT_PLAN updated. Actual wolf body/cell mismatch reproduced and corrected
   after reload;90occupied-cell points across11figures PASS, hover0POST and
   unchanged actor/revision, day/night/grid captures. Web typecheck/scoped
@@ -7112,7 +7112,7 @@ requests.
   Uniformly resized the existing art and aligned its measured visible centre
   to the owning hex; added persistent non-pickable ochre/ink ground borders
   and blocked hover/pin explanation. Scene/BattleView/UI regression, README,
-  [owning wiki result](docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13)
+  [owning wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13)
   and CURRENT_PLAN updated; canonical geometry/rules/replay unchanged.
   Web noEmit/scoped lint/format, UI 14/14 and actual blocked-cell no-order journey
   PASS; 12,575 visible-art samples stayed inside projected hex. Current day/night/
@@ -7135,7 +7135,7 @@ requests.
   guard percentage; server owns connectivity admission with draft-preserving
   visible rejection. Added public boundary/regression checks, updated combat
   READMEs/ability/opponent pages and CURRENT_PLAN.
-  [Owning result and proof limits](docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+  [Owning result and proof limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
   UI skills/autoplay/full mill/editor/reload/invalid-import/closed-map retry PASS;
   terrain identity74points and alpha/HUD input PASS. V3 matrix12battles/2085commands
   resolved R8–11 without unlawful commands/cycles/replay divergence. Isolated
@@ -7185,7 +7185,7 @@ requests.
   foreground active markers, correct defeat text and no command tooltip over
   terminal controls. Core/replay, lab server/protocol, editors/renderer/HUD,
   their READMEs, mechanic pages/wiki index and CURRENT_PLAN affected.
-  [Owning loop/parameters/checks](docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+  [Owning loop/parameters/checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
   Actual UI/replay: rush R8/147 victory, safety-fixed hold R14/187 defeat,
   human surrender R5/89 with two surrenders; finite independent source/playable
   ACCEPT. Absolute day/night visual and final hold/surrender readback ACCEPT
@@ -7205,7 +7205,7 @@ requests.
   movement cells blending into terrain. Separate slate-teal fill, pale borders
   and ink backing make canonical movement destinations visible; hover/pin remain
   on top, shot-area style unchanged. Updated combat-lab renderer and README.
-  [Owning amendment](docs/wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
+  [Owning amendment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
   Web typecheck/scoped lint PASS; browser 39 destinations with matching borders,
   day/night/grid on-off, pin-hover and actual 4AP move/AP0 removal PASS.
   Absolute visual ACCEPT, all applicable scores ≥2; critic input NOT_RUN.
@@ -7219,7 +7219,7 @@ requests.
   Shared pointy-top radius/centres and mesh helpers align grid, movement/shot
   zones, hover/selection and hex unit bases. Honeycomb GitHub sources inspected
   at pinned commit; no new dependency, gameplay, protocol or server change.
-  [Owning amendment/research](docs/wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
+  [Owning amendment/research](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
   11 focused tests/web typecheck/scoped lint PASS; browser165 cells/444 shared
   edges/45shot borders aligned,150edge+180corner probes without dead zones,
   pinned/hover/near-edge rightclick3AP PASS. Source review cleared;
@@ -7235,7 +7235,7 @@ requests.
   cover full hexes; cube-rounded fallback fills internal height seams and rejects
   missing/perimeter cells. Shared inverse in web renderer preserves old scene
   math. Hover and pinned selection have distinct persistent markers.
-  [Owning amendment](docs/wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
+  [Owning amendment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
   Ten scoped tests/web typecheck/lint and 140 edge/180 corner browser points,
   border right-click/persistent selection PASS. Source findings fixed;
   240 height-edge points/perimeter rejection/pan/zoom PASS. Absolute visual
@@ -7254,7 +7254,7 @@ requests.
   Selected movement wins over pinned-target forecast, with pinned inspection
   retained; selecting a unit clears the path. Muted shot grid, AP spend/remaining
   segments, side shapes and upper-left forecast preserve field readability.
-  [Owning decision](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
+  [Owning decision](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
   Web typecheck/scoped lint/nine UI tests and actual shot/AP0/pending/move/
   round/restart/hover/target-path-target/menu/editor journeys PASS, three viewport fills PASS.
   Final absolute integrated visual ACCEPT for inspected 2v2/6v6 day/night
@@ -7274,7 +7274,7 @@ requests.
   later owner amendment adds Olden Era-like TOP round-separated initiative,
   portrait effects and four demonstration ability slots from skill progression.
   Effects/abilities are proposals, not engine semantics. Gamedev GPT-6.1 Sol
-  taxonomy reviewed. [Owning comparison and boundaries](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10)
+  taxonomy reviewed. [Owning comparison and boundaries](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10)
   and CURRENT_PLAN updated. Later owner rejection of crude UI led to shared
   component refinement: typography/numeric hierarchy, resource bars, chance
   ring, damage channels, AP infographic, distinct ability icons/states.
@@ -7310,7 +7310,7 @@ requests.
   replay/dependency/migration changes. Gamedev GPT-6.1 Sol advised; visual
   GPT-6.1 Sol found C initiative cropping and A night label, corrected.
   Final historical four-concept re-review ACCEPT (all applicable scores ≥2);
-  later owner five-fullscreen brief supersedes this choice. [Owning comparison](docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10)
+  later owner five-fullscreen brief supersedes this choice. [Owning comparison](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10)
   and CURRENT_PLAN updated; A recommended, owner selection OPEN. Browser
   four-tab/actions-fit/inspect/mode/grid/day-night/fullscreen checks, syntax,
   format/scoped links/diff PASS. Production game/full/integrated acceptance
@@ -7329,7 +7329,7 @@ requests.
   After full mill visual REJECT for overlapping diagonal, server default
   new drafts use two columns/three spaced ranks; accepted/imported setups,
   rules and old replays unchanged. Earlier rush/hold evidence uses former start.
-  [Owning result](docs/wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10),
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10),
   lab README and CURRENT_PLAN updated. Web/server typecheck/scoped ESLint,
   five UI/four custom-battle tests, actual shot/end-turn/target checks and
   four-tab reference PASS. Independent source review found no concrete defect;
@@ -7349,7 +7349,7 @@ requests.
   without retreat; heavy AI never attacks the kiting actor. Disconnected wall
   repeats120 defends to round60. ID-driven targeting and spear step-to100%
   reproduced. Gamedev and independent gameplay critic GPT-6.1 Sol found
-  current depth insufficient. [Owning assessment](docs/wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10),
+  current depth insufficient. [Owning assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10),
   opponents/fatigue wiki and CURRENT_PLAN record priorities and evidence
   boundaries. No gameplay source, rules, dependency or migration changed.
   Documentation format/diff and added local links PASS; whole-document link
@@ -7367,7 +7367,7 @@ requests.
   Additive optional lab projection fields feed rust shot cells and an overhead
   forecast; geometry avoids figures/results and a connector identifies the
   target. No hover RNG, command, dependency, migration or replay change.
-  [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
   ranged/preview wiki, lab README and CURRENT_PLAN updated. Focused parent
   tests 7 files/44 PASS; build/typechecks/scoped ESLint PASS. Browser forecast
   2–4 health/12–18 armor, miss25%; actual shot3/16; blocked target and AP0
@@ -7386,7 +7386,7 @@ requests.
   actor origin even for one-step moves. Shared field/button dispatch checks
   latest view and retains fire confirmation. Invalid/friendly targets do
   not submit commands; navigation/revision/leave clears old hover and native
-  context menus are suppressed. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  context menus are suppressed. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
   preview wiki, lab README and CURRENT_PLAN updated. Browser command/AP,
   hover-only, fire cancel/accept and navigation checks PASS; web typecheck,
   scoped ESLint and 12 focused tests PASS. Independent GPT-6.1 Sol source
@@ -7408,7 +7408,7 @@ requests.
   old M0/M1 replay behavior remains separate. Protocol/server validate custom
   drafts before allocation, advance opponent commands within accepted receipts
   and export capability-protected replay. No campaign database, migration or
-  runtime dependency added. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
+  runtime dependency added. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
   records actual verification, scope and remaining preset mechanics;
   CURRENT_PLAN and combat-lab setup docs updated. Integrated core/server/editor
   focused tests: 62 PASS. Browser editor/play/terminal/replay journeys PASS;
@@ -7431,7 +7431,7 @@ requests.
 ### Combat reuse deeper recheck
 
 - 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
-  deeper verification and better reuse choices. [The revised combat contract](docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
+  deeper verification and better reuse choices. [The revised combat contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
   supersedes mandatory ngraph adaptation with one bounded Dijkstra field
   inspired by Athena Crisis; keeps existing hex/AI/initiative/RNG/replay and
   starts with a linear frontier, TinyQueue only if integration measurements
@@ -7453,7 +7453,7 @@ requests.
 
 - 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
   ready GitHub modules/algorithms in the combat specification. Added
-  [the reuse matrix and adaptation contract](docs/wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09),
+  [the reuse matrix and adaptation contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09),
   linked it into S2–S4 and the mind map, and updated CURRENT_PLAN. Inspected
   pinned ngraph.path, ROT.js and boardgame.io sources/licenses/tests/issues;
   recommends MIT/ISC weighted-search source adaptation with blocked-goal,

@@ -30,7 +30,7 @@ authority: правила боя — combat.md и mechanics/; здесь спр�
 | Смещение / толчок          | Into the Breach          | Толкнуть врага под удар своего — полноценный ход             | [displacement](../wiki/mechanics/displacement.md)                               | кандидат                 |
 | Строй                      | Battle Brothers          | Копья через плечо щитоносца, стена щитов                     | [formations](../wiki/mechanics/formations.md)                                   | кандидат                 |
 | Предпросмотр               | XCOM 2 / Into the Breach | Игрок видит исход до подтверждения                           | [preview](../wiki/mechanics/preview.md)                                         | правило: превью = расчёт |
-| Подача: камера, темп       | XCOM 2                   | Короткие кадры удара, быстрые ходы врага                     | [battlefield §шесть опор](../wiki/battlefield-test-maps.md#шесть-опор-качества) | ≤1,5 с, пропускаемо      |
+| Подача: камера, темп       | XCOM 2                   | Короткие кадры удара, быстрые ходы врага                     | [battlefield §шесть опор](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#шесть-опор-качества) | ≤1,5 с, пропускаемо      |
 | Характер наёмника          | Jagged Alliance 3        | Личные таланты меняют решение в бою                          | [talents](../wiki/mechanics/talents.md)                                         | кандидат                 |
 | Раны после боя             | BB, Darkest Dungeon      | Цена боя живёт дольше боя                                    | [wounds](../wiki/mechanics/wounds.md)                                           | в работе                 |
 
