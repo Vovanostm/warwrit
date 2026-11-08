@@ -11,7 +11,7 @@ requests.
 
 ### Integrate consolidation and verify the ordinary company loop (WLC-08)
 
-- 2026-11-08, `codex/wlc-08-integration`, REVIEW_CANDIDATE/NOT_MERGED.
+- 2026-11-08, `codex/wlc-08-integration`, PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), NOT_MERGED.
   Integrate WLC-02–07, remove stale guidance/global visual gating, fix migration
   expectations and development-env leakage into the production web build.
   Add owner-requested guarded Playground time steps with atomic receipts and

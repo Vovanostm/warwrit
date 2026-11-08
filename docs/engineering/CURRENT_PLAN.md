@@ -8,7 +8,7 @@ merge/deployment are not authorized. Base main fdbb0dc2 includes WLC-02–05.
 PR428/d2d82bc3 and PR429/b58c87ce remain OPEN/NOT_MERGED and are explicitly
 combined in this candidate; other branches, original dirty checkout/saves retained.
 [Owning results, failed attempts and remaining M1 scope](WLC_08_ACCEPTANCE.md).
-Status REVIEW_CANDIDATE, full M1 NOT_ACCEPTED; publication/sync in progress.
+Status PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), OPEN/NOT_MERGED; M1 NOT_ACCEPTED.
 Executable0c0aae83: full ordinary two-company hunt/proof/one80crown payout/rest/
 10crown payroll/next contract/restart/OIDC re-entry PASS with labelled QA time.
 Final company830crowns, Rell60,35rations, two survivors100/100, Kest dead.
@@ -19,7 +19,8 @@ format/lint/architecture/dead-code/content and10kstress PASS on executable SHA.
 0024–25 add opt-in atomic QA time/receipts; two clock defects fixed and regressed.
 Two failed native worlds retained. Medical/estate/complete second contract,
 eight-contract matrix/device/performance/owner acceptance remain open, not hidden.
-Next: publish exact integration evidence/PR, read back GitHub/Airtable statuses.
+GitHub/Airtable readback agrees: WLC-02–05 Done,06–08 Review; history preserved.
+Next: final publication-head checks in PR430, then owner review; no merge authority.
 Earlier dated blocks below retain their original delivery/evidence boundaries.
 
 ## WLC-06 — Combat Lab consolidation, 2026-11-08

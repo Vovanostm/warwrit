@@ -98,7 +98,7 @@ Raw logs are ignored under `output/wlc08/`; durable summarized evidence lives he
 Executable candidate `0c0aae839c884403a2389562808485604acc80bc`;
 tree `98c5ae3cac07fcc5bbc01019a00a0d1a9862cbec`. Later delivery changes are
 documentation/screenshots only. Publication SHA and final-head check results are
-recorded in the integration PR. Status REVIEW_CANDIDATE / NOT_MERGED;
+recorded in the integration PR. Status PUBLISHED / REVIEW / NOT_MERGED;
 full M1 remains NOT_ACCEPTED. No old CI result is reused as new integration proof.
 
 ### Ordinary journey (all actions through the game UI)
@@ -194,6 +194,25 @@ worktree-tools directory restored lint without changing the rule.
 [re-entry](evidence/wlc08/final-relogin.jpg),
 [Lab replay](evidence/wlc08/final-lab-replay.jpg),
 [production refusal](evidence/wlc08/final-production-denied.jpg).
+
+## Publication and canonical synchronization
+
+Published [PR430](https://github.com/Vovanostm/warwrit/pull/430), open/non-draft,
+NOT_MERGED. GitHub readback confirms the dependency heads and mergeability.
+PR428/429 received links to these actual integrated results; PR430's matrix also
+links all four merged dependency PRs. Final delivery SHA/check readback lives in
+that PR; no merge, deployment or auto-merge was requested or executed.
+
+Canonical Airtable Work Packages contained no WLC records at the fresh search.
+Created WLC-02–08 under the existing M1 milestone, with source PR/evidence links:
+02–05 **Done** (their merged scope only),06–08 **Review**. [WLC-08 record](https://airtable.com/apph3bj1NyVrfJeLM/tbl9QMeAY4gJKUlHy/recaaz0pdrXUCjWuZ)
+links its six dependencies and the existing delivery/execution artifacts.
+Readback confirms all seven statuses. Appended dated operational corrections to
+artifact Purpose fields `recqHVaV1d5ZLbGeM` and `recZhUoTiwT7kIc8s`; readback
+matches. Historical Purpose/Notes and owner decisions were preserved. Earlier
+renderer/global-gate/standalone-entry instructions are explicitly superseded;
+full M1 remains incomplete. Empirical event NOT_WRITTEN: previously reported
+storage quota is still exhausted; no repeated write or paid provisioning.
 
 ## Initial checkpoint — SUPERSEDED by the integration result above
 
