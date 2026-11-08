@@ -6,8 +6,10 @@ The first N01 attempt remains GAME_OVER with restart-verified casualties. In the
 owner-authorized separate copy of original N01, C07/C08 now pass: actual co-op
 victory, unique claw pickup and living Сенька custody. C09 physical return pays
 90+80 once, including fresh lost-response/reload/exact retry. Ordinary payroll
-and resupply succeed; successful continuation restart remains open. Two helper
-deaths and its surviving new leader are retained.
+and resupply succeed; actual restart preserves20 canonical groups exactly, fresh
+OIDC restores both companies, and a post-restart recovery order persists. Two
+helper deaths and its surviving new leader are retained. Scoped NEXT-1–6 PASS;
+full M1 and aggregate coverage remain open.
 [N02](m1-next/02-next-contract.md) owns the exact source, authority, SQL/browser
 evidence and remaining acceptance. No product code or place rule changed.
 

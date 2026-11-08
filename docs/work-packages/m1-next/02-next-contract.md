@@ -2,10 +2,10 @@
 
 ## Current result — 2026-11-09
 
-PARTIAL / LOCAL, C07–C09 pass in the owner's explicit separate continuation of
+DONE / LOCAL, NEXT-1–NEXT-6 pass in the owner's explicit separate continuation of
 original **Дозор N01**. Its mill-worker and beast contracts are completed and paid;
-fresh response-loss/exact retry and subsequent payroll/resupply pass. Successful
-continuation restart remains open. First failed save stays GAME_OVER separately.
+fresh response-loss/exact retry, payroll/resupply, actual restart, fresh OIDC and
+post-restart recovery action pass. First failed save stays GAME_OVER separately.
 Owner steering selects N01, not WLC08's separate first-paid-hunt company; the later
 explicit save-branch permission is recorded below. No manual gameplay data edit.
 [N01 provenance](01-integration.md).
@@ -32,9 +32,9 @@ After the retained failed run was recorded, owner explicitly chose:
 Created new DB **n02_n01_continuation** from a read-only dump of original N01
 **warwrit**, preserving both original and failed **n01_savecopy**. Restore writes
 only the new allocated DB. Source company ID is unchanged, ACTIVE, canonical13,
-760crowns,37rations, accepted mill-worker. It is an explicit save branch, not a
+760 crowns,37 rations, accepted mill-worker. It is an explicit save branch, not a
 claim that the failed party recovered or its casualties vanished. The first failure
-keeps NEXT-2 FAIL for that run; new evidence will name this separate continuation.
+keeps NEXT-2 FAIL for that run; successful evidence below names this separate continuation.
 The intermediate empty n02_independent received migrations and ordinary OIDC only;
 no company was created there. No game data from that setup is target evidence.
 
@@ -57,7 +57,7 @@ PICKUP `593d23b3-a770-4b48-b422-5b904476aa02` puts unique claw
 `786775bc-0fa0-48b2-8a63-d4f0dd099c6b` commits revision4, both living-release
 facts and sole custody of `person.mill-worker.01` to the same N01 company.
 SQL confirms source encounter/terminal revision and unredeemed sole custodian.
-No payment yet: N01760, helper800. Journal correctly requires physical return
+At that step no payment yet: N01 760, helper800. Journal correctly requires physical return
 to Северный Двор; claw requires return to Тихая Гать. Captures:
 `output/playwright/n02-{coop-victory,helper-leadership,custody-proof}.png`.
 Earlier failed save remains unchanged; this is only the authorized save branch.
@@ -68,7 +68,7 @@ Physically return via known roads: mill → Тихая Гать inn → Каме
 Северный Двор elder. Authorized Playground advances shorten travel, with actual
 movement POST acceptance awaited before each step. PRESENT claw
 `34426412-18ff-45cd-ba9d-a94bdcf01b0f` pays90 once, receipt
-`873ebd43-62f6-42a9-a686-0e991fbd9d84`; keeper wallet180→90, N01760→850.
+`873ebd43-62f6-42a9-a686-0e991fbd9d84`; keeper wallet180→90, N01 760→850.
 Global proof claim records sole N01 custodian/redeemer and that receipt; the
 physical claw remains present but redeemed, as implemented by current terms.
 
@@ -80,7 +80,7 @@ and “Повторить” survive; board also reads committed completion. Ret
 button returns original success. CLI network23538/24517 request bodies are exactly
 identical, including command/revision; response24517 is original revision5/reward80.
 SQL: exactly one matching ordinary receipt, one delivery source, custody[],
-SUCCESS, revision5, steward wallet160→80, N01850→930. No duplicate payout or
+SUCCESS, revision5, steward wallet160→80, N01 850→930. No duplicate payout or
 person consumption. Helper stays800, no automatic reward.
 
 Subsequent ordinary action at local purse: payroll command
@@ -96,9 +96,38 @@ The retry check's final text extraction hit two `aside` elements after the accep
 response; subsequent network-body readback, screenshot, cleared attempt and SQL
 confirm success. This is a diagnostic-selector failure, not an extra payout attempt.
 
+### Restart and post-restart continuation — 2026-11-09
+
+Close both browser contexts and stop own API/web. Capture20 canonical table groups,
+restart both processes with unchanged source/config/DB, wait for readiness, and
+capture again before any browser observation: deep equality PASS for all20 groups.
+`output/n02-continuation-{before,after}-restart.json` and
+`output/n02-continuation-complete.dump` preserve that checkpoint. A first readiness
+probe preceded the listener and failed; ready log plus next probe confirm startup.
+
+Fresh ordinary Dex logins for both accounts restore: N01 ACTIVE,3 living,
+850 crowns,41 rations, Rell/Kest purses70 each, due0, next-day obligations retained;
+both contracts completed/paid, custody[], redeemed unique claw. Helper ACTIVE,
+Rell leader, founder/Mora DEAD,800 crowns,24 rations and outstanding obligations
+retained without invented deceased-payee settlement. Both active encounter bindings
+are null, resolved battle115 and admission.effects_applied_at remain committed.
+Main's post-restart ordinary SetAssignment command
+`9b09924e-ef42-48eb-87b0-de020bcc7e25` assigns Rell RECOVERY; reload retains it and
+shows health60→61 under ordinary time, with “Вернуть в строй” available. No QA
+steps after restart. Final N01 tick2232: due0, not-yet-due4.64crowns. Helper's
+last observation tick2225: due32.87, not-yet-due2.25; no payout was attempted.
+Final capture/dump `output/n02-continuation-final.{json,dump}` retained.
+
+Screenshots `output/playwright/n02-restart-{roster,completed,helper}.png` and
+`n02-post-restart-rest.png`; actual1440×1000 desktop controls/readability reviewed.
+The late recovery probe first used visible text instead of the control's full
+accessible name and timed out without a request; observed “Назначить отдых: Rell”
+then succeeded. No gameplay fix needed. No human enjoyment/owner-device verdict
+is inferred from automated local Chromium evidence.
+
 ### Baseline and current acceptance
 
-Normal Dex player-one login restores company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,
+At the source baseline, normal Dex player-one login restores company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,
 760crowns,37rations, three living people and accepted mill-worker revision1.
 Rell's sword/shield/coat are inherited N01 state. Equip the leader's four items
 and Kest's two items through the ordinary UI; all nine carried equipment items
@@ -106,16 +135,16 @@ are now equipped. Physically travel via Kamenny Brod and explore toward Tikhaya
 Gat; speak to Frol at the inn; discover and enter the actual ruined mill and INSPECT
 its yard. No acceptance/encounter/custody fact is supplied by the QA clock.
 
-| Acceptance | Result  | Actual evidence on unchanged base executable                                                                                                      |
-| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NEXT-1     | PASS    | Owner-selected N01 ID/provenance retained in explicitly authorized separate source-save branch; original and failed saves preserved.              |
-| NEXT-2     | PASS    | Current C07 clues → actual co-op kill → unique claw/custody → physical return → both contracts completed. First failed run stays FAIL separately. |
-| NEXT-3     | PASS    | Current real SQL: keeper−90/steward−80/N01+170, sole redeemed proof, custody consumed once; fresh lost200/reload/exact retry, one receipt.        |
-| NEXT-4     | NOT_RUN | Failed-run casualty/resource restart/re-entry PASS (20 groups); successful continuation restart still pending.                                    |
-| NEXT-5     | PASS    | Ordinary local payroll40 and barn resupply10 for40 succeed after payment; no stale battle binding.                                                |
-| NEXT-6     | NOT_RUN | Source/record/checks current; final restart, diff self-review and completion record pending.                                                      |
+| Acceptance | Result | Actual evidence on unchanged base executable                                                                                                                                          |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NEXT-1     | PASS   | Owner-selected N01 ID/provenance retained in explicitly authorized separate source-save branch; original and failed saves preserved.                                                  |
+| NEXT-2     | PASS   | Current C07 clues → actual co-op kill → unique claw/custody → physical return → both contracts completed. First failed run stays FAIL separately.                                     |
+| NEXT-3     | PASS   | Current real SQL: keeper−90/steward−80/N01+170, sole redeemed proof, custody consumed once; fresh lost200/reload/exact retry, one receipt.                                            |
+| NEXT-4     | PASS   | Successful API/web restart:20 groups exactly equal before new observations; fresh two-account OIDC confirms casualties, balances, food, obligations, completion and no stale binding. |
+| NEXT-5     | PASS   | Ordinary local payroll40 and barn resupply10 for40 succeed after payment; no stale battle binding.                                                                                    |
+| NEXT-6     | PASS   | Unchanged executable87e785d5; source/authority, new vs inherited evidence, failures, focused checks and scoped self-review recorded; local commits only.                              |
 
-C07 source event commands: ASK `0484af27-bdfb-4e7e-b0bd-fdeb8aefa054`;
+First failed run's C07 source event commands: ASK `0484af27-bdfb-4e7e-b0bd-fdeb8aefa054`;
 INSPECT `46e29715-43bd-468d-b320-f50fbe324952`. SQL readback: revision3,
 owner same company, three facts including inherited acceptance, custody[],outcome null.
 `output/playwright/n02-n01-{equipped,frol,mill-clues}.png` retain native captures.
@@ -140,9 +169,8 @@ is explicitly selected for non-wolf hunts; no unsupported ruleset upgrade is mad
 The earlier blanket candidate-v5 description does not override actual stored versions.
 
 Keep this actual failed world and `output/n01-defeat-retained.dump` unchanged.
-Original N01 `warwrit` remains intact; owner was asked whether to continue a
-separate copy from that source or use an independent naturally created company.
-No rollback of n01_savecopy or replacement-labelled-as-retained is authorized.
+Original N01 `warwrit` remains intact. Owner subsequently authorized the separate
+source-save copy recorded above. No rollback of n01_savecopy occurred.
 Native failed result `output/playwright/n02-n01-defeat.png`. Actual API/web
 stop/start followed by deep equality of all20canonical groups PASS before new
 observations (`output/n01-defeat-{before,after}-restart.json`). Ordinary fresh Dex
@@ -156,12 +184,16 @@ casualty persistence is checked separately from required successful payout conti
 Pinned Node24.20.0/pnpm11.25.0; frozen install and shared core/protocol builds PASS.
 `pnpm exec vitest run packages/game-core/src/contracts/ordinary.test.ts`:2PASS,
 1file, unchanged source. Chromium1440×1000; controls, journal and actual travel
-refusals checked. CI/full suites/coverage/stress NOT_RUN. FPS/heap/capacity and
-enjoyment NOT_MEASURED. No application/schema/replay/content version change.
+refusals checked. Final scoped Prettier, relative links, diff whitespace and
+self-review PASS. No filler code or tests added: no product defect reproduced.
+Read-only final assertions PASS after correcting the probe's numeric wallet-column
+expectation; its first number-vs-string assertion was a diagnostic error.
+CI/full suites/coverage/stress and human/device acceptance NOT_RUN. FPS/heap/capacity
+and enjoyment NOT_MEASURED. No application/schema/replay/content version change.
 
 Borrowed N01 project `warwrit-n01-20261108`, PostgreSQL54901/Dex55901; own
 API33901/realtime33902/web53901. Run from this worktree with ignored `.env`,
-`output/dex.dev.yaml`, `output/compose-network.yaml`; DB is **n01_savecopy**.
+`output/dex.dev.yaml`, `output/compose-network.yaml`; current DB is **n02_n01_continuation**.
 Pre-N02 dump `output/n01-before-n02.dump`; read-only canonical capture helper
 `output/.tools/capture.mjs`; starting20groups `output/n01-n02-initial.json`.
 Normal UI `http://127.0.0.1:53901`; same public fixture player-one OIDC login.
@@ -180,7 +212,16 @@ exploration discovered the mill without a knowledge/state edit. Stale tile409s
 while movement/light revisions changed recovered on normal polling; no product
 repair or blanket performance verdict is claimed.
 
-Next: restart the successful continuation and verify canonical equality plus fresh ordinary OIDC re-entry.
+Own browsers/API/web are closed; borrowed PostgreSQL/Dex and all saves/dumps stay
+retained. To try: from this worktree use ignored `.env` for the continuation DB,
+run `pnpm exec tsx --env-file-if-exists=.env apps/server/src/index.ts` and, in another
+terminal, `pnpm --filter @warwrit/web dev`; open `http://127.0.0.1:53901`, ordinary
+player-one Dex login → Место/Отряд. Rell rests; return him to duty when ready.
+No open blocker to scoped NEXT acceptance. Helper deceased-payee disposition is
+outside this task and remains untested; preserve claims and resolve policy before
+any settlement. N05 owns aggregate C07/#385, C08/#386, C09/#387 coverage.
+Next task: N05 incorporates these scoped results and checks the next uncovered
+authored contract; this does not dispatch an agent or claim full M1.
 [Common contract](COMMON.md). Launch and subsequent authority supplied in this chat.
 
 ## Player goal and normal journey
@@ -248,17 +289,17 @@ their owner. Preserve receipts and historical content/replay definitions.
 
 ## Acceptance / DoD
 
-- [ ] NEXT-1 The identified retained company is continued without state edits,
+- [x] NEXT-1 The identified retained company is continued without state edits,
       reset, replacement company or fabricated prerequisites.
-- [ ] NEXT-2 All objectives of its next contract finish from normal entry with
+- [x] NEXT-2 All objectives of its next contract finish from normal entry with
       actual observations, combat/custody and return where required.
-- [ ] NEXT-3 Proof/claim/reward are lawful and once-only; helper terms and unique
+- [x] NEXT-3 Proof/claim/reward are lawful and once-only; helper terms and unique
       ownership hold, including the relevant refusal or retry.
-- [ ] NEXT-4 Actual casualties, food, money, payroll/obligations and task outcome
+- [x] NEXT-4 Actual casualties, food, money, payroll/obligations and task outcome
       persist after API restart and ordinary login; no stale encounter lock.
-- [ ] NEXT-5 The player can perform a lawful subsequent action and understands
+- [x] NEXT-5 The player can perform a lawful subsequent action and understands
       whether the next available choice is work, recovery, resupply or a refusal.
-- [ ] NEXT-6 Scoped fixes, source ownership, checks and inherited-vs-new evidence
+- [x] NEXT-6 Scoped fixes, source ownership, checks and inherited-vs-new evidence
       are recorded. A successful next contract does not close all eight M1 instances.
 
 ## Verification and unresolved inputs
