@@ -21,6 +21,9 @@ Anything marked _candidate_ needs an owner decision before it becomes a rule.
   decide skirmishes, ambushes and sieges of small places. Bands work around the war:
   scouting, escorting or raiding supply trains, foragers, deserters, battlefields,
   service for one side.
+- **Faith:** the cross is the sign of the faith (owner 2026-11-09); crosses on
+  churches, chapels and graves are allowed. Church structure, name, clergy and
+  rites are undecided; no miracles or acting gods.
 - Scale: test with 10–20 players; target 200–1000 bands. Capacity NOT_MEASURED.
 - **Focus now:** make the current world deep and interesting and make combat
   deep, readable and rich in mechanics. New worlds or regions are out of scope

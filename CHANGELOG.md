@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision — the
+  cross is the sign of the faith; crosses on churches and graves are allowed,
+  church structure and rites stay open. [Details](docs/wiki/world/index.md).
 - 2026-11-09, `claude/design-references`, LOCAL — Added: non-canon reference library:
   14 benchmark games, UI, quest, combat, world, company and text references,
   60 generated graphic-novel images; add moral-choice analysis (Bloody Baron),
