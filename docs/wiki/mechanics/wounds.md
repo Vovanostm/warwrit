@@ -80,9 +80,9 @@ sources:
 проверка ветки с main149fa8e6 и восстановлением37→54HP завершена2026-11-06.
 Независимая проверка кода и конечного игрового интерфейса принята. Обновление
 опубликовано в PR363; актуальные CI и статус слияния находятся в PR.
-[Результаты восстановления](../../work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+[Результаты восстановления](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
 Источник параметров и актуальные границы находятся в
-[контракте ухода](../../work-packages/WP-02.4.md#company-doctor-activation--2026-10-29).
+[контракте ухода](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#company-doctor-activation--2026-10-29).
 
 ## Связи
 

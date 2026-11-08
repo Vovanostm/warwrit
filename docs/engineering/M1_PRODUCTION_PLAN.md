@@ -79,7 +79,7 @@ scenes, including the mill chain. Record an actual result for each of:
 
 [#364](https://github.com/Vovanostm/warwrit/issues/364) owns remaining terminal
 outcomes. Hostile-retreat policy is accepted in #376; #378 settlement/result UI
-is implemented and accepted in PR408. The [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+is implemented and accepted in PR408. The [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
 separates real encounter/SQL and finite UI acceptance from the native escape that
 did not reproduce. #409 adds repeat admission/history for the same unfinished
 hunt. Surrender/captivity #377 still needs a finite accepted source contract;

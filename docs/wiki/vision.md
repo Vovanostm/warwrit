@@ -562,7 +562,7 @@ Alpha/pivots, игровая интеграция и дневная/ночная
 
 Текущий обычный экран карты показан ниже: это частное знание компании,
 а не открытый целиком атлас. Датированные проверки и оставшиеся ограничения
-принадлежат [контракту карты](../work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
+принадлежат [контракту карты](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
 
 ![Рисованный атлас в обычной игре](../engineering/evidence/visual-direction-20261029/map-game-day.png)
 

@@ -31,7 +31,7 @@ button. Normal native movement/retreat, lost accepted reply, reload/exact receip
 retry and three living withdrawals passed. The first run's two deaths are retained;
 Retry now waits for its sender. Finite control critique3/3/2/3/2 has no material
 finding; overall scene visual acceptance remains BLOCKED. Hosted CI/integration
-pending. [Owning result](../wiki/mechanics/retreat.md#нативный-результат-401).
+pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#нативный-результат-401).
 
 2026-11-06 integration correction for #401. Owner-approved
 [PR405](https://github.com/Vovanostm/warwrit/pull/405) merged as149fa8e6 from95de47b6;
@@ -159,7 +159,7 @@ before any ordinary human V5 rollout; do not infer one from Capture consumers.
 Delivery update, 2026-11-06: #376 source triage/policy and #378 implementation are
 implemented and accepted in [PR408](https://github.com/Vovanostm/warwrit/pull/408). Real encounter/SQL settlement, rollback, survivor preservation, no false
 proof, retry/reopened connection and ordinary helper LEAVE PASS. Finite result UI
-ACCEPT; native hostile escape not reproduced. [Owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+ACCEPT; native hostile escape not reproduced. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06).
 The preparation-only statuses above are history. #409 owns repeat admission of the
 same unfinished hunt; #368 remains the recovered company's next contract and keeps
 its existing owner. #377 remains blocked on a capture policy.

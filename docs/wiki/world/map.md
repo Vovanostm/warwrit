@@ -712,7 +712,7 @@ Wiki update only; runtime и прежние карточки квестов не
 фрагменты рисунка. Обычный вход, открытие компании, выбор места, движение,
 остановка и восстановление после перезагрузки проверены в браузере через CI.
 Подробная приёмка и оставшиеся ограничения принадлежат существующему
-[контракту интеграции](../../work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
+[контракту интеграции](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
 Эта запись об итоговом слиянии пока локальная.
 
 Поправка ввода 2026-11-05 в рабочем [PR350](https://github.com/Vovanostm/warwrit/pull/350).
