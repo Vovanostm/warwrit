@@ -9,8 +9,8 @@ requests.
 
 ## Unreleased
 
-- 2026-11-09 — Changed: verify the retained N01 company's two mill clues through
-  ordinary issuer/yard visits; night hunt and delivery remain open.
+- 2026-11-09 — Changed: record the retained N01 company's real mill clues and
+  failed night hunt; preserve casualties and restart evidence without claiming payment.
   [N02 result](docs/work-packages/m1-next/02-next-contract.md). LOCAL.
 
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;

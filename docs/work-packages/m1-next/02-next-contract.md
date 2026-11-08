@@ -2,7 +2,7 @@
 
 ## Current result — 2026-11-09
 
-PARTIAL / LOCAL, C07 verified; NEXT-2–6 remain in progress. Owner steering in this
+PARTIAL / LOCAL, C07 verified; C08 lost the actual N01 party. NEXT-2/3/5 remain unmet. Owner steering in this
 chat selects retained **Дозор N01** as the N02 target. This continues its actual
 N01 save, not WLC08's separate first-paid-hunt company. No replacement/reset or
 manual gameplay data edit. [N01 provenance](01-integration.md).
@@ -32,14 +32,14 @@ are now equipped. Physically travel via Kamenny Brod and explore toward Tikhaya
 Gat; speak to Frol at the inn; discover and enter the actual ruined mill and INSPECT
 its yard. No acceptance/encounter/custody fact is supplied by the QA clock.
 
-| Acceptance | Result  | Actual evidence on unchanged base executable                                                                                                                            |
-| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| NEXT-1     | PASS    | Owner-selected retained N01 company restored by ordinary OIDC; same ID, people, resources, equipment and accepted contract; original source DB untouched.               |
-| NEXT-2     | NOT_RUN | C07/#385 substep PASS: ordinary ASK at328 and INSPECT at684; mill-worker revision3 contains both company-bound facts. Worker release, hunt and delivery still required. |
-| NEXT-3     | NOT_RUN | Incomplete release/delivery remain blocked; no reward or custody yet.                                                                                                   |
-| NEXT-4     | NOT_RUN | Restart after payment still required; initial N01 re-entry is fresh, earlier N01 durability checks are inherited only.                                                  |
-| NEXT-5     | NOT_RUN | Post-contract subsequent action still required.                                                                                                                         |
-| NEXT-6     | NOT_RUN | C07 record/check/self-review complete; overall task record remains open.                                                                                                |
+| Acceptance | Result  | Actual evidence on unchanged base executable                                                                                                              |
+| ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NEXT-1     | PASS    | Owner-selected retained N01 company restored by ordinary OIDC; same ID, people, resources, equipment and accepted contract; original source DB untouched. |
+| NEXT-2     | FAIL    | C07 passes; actual C08 defeat kills all three and ends this company run. Hunt, release and delivery have not succeeded.                                   |
+| NEXT-3     | NOT_RUN | Incomplete release/delivery remain blocked; no reward or custody yet.                                                                                     |
+| NEXT-4     | NOT_RUN | Failed-run casualty/resource restart/re-entry PASS (20 groups); successful payout continuation still unproved.                                            |
+| NEXT-5     | NOT_RUN | Game-over refusal is visible after restart; a lawful next action after successful completion is unproved.                                                 |
+| NEXT-6     | NOT_RUN | C07 record/check/self-review complete; overall task record remains open.                                                                                  |
 
 C07 source event commands: ASK `0484af27-bdfb-4e7e-b0bd-fdeb8aefa054`;
 INSPECT `46e29715-43bd-468d-b320-f50fbe324952`. SQL readback: revision3,
@@ -47,6 +47,35 @@ owner same company, three facts including inherited acceptance, custody[],outcom
 `output/playwright/n02-n01-{equipped,frol,mill-clues}.png` retain native captures.
 N05 owns aggregate coverage; matching leaves are C07/#385 → C08/#386 → C09/#387.
 Neither these substeps nor this task close all eight M1 instances.
+
+### Preserved failed night hunt — 2026-11-09
+
+After C07, the same company physically returned to Frol, accepted HUNT-01 for90,
+returned to the mill and JOINed at night. Actual encounter
+`7266c461-6090-460c-86e0-ad16970659db`, bridge-v3, revision48/round12,
+resolved with first-hunt-hostiles winning. All three company members DEAD;
+beast still alive150. Terminal effects applied; runStatus GAME_OVER, no living
+successor, no active bindings. Cash760; no proof/custody/reward was fabricated.
+
+Author check failure: the implementer expected the v5 single-action chooser,
+but it is unavailable in this v3 hunt. Manual commands existed at admission;
+the author spent too long investigating instead of maintaining manual control.
+The server set AFK and the party died. This failure is not player success or
+proof of a product defect. Inspection of `encounters/admission.ts` confirms v3
+is explicitly selected for non-wolf hunts; no unsupported ruleset upgrade is made.
+The earlier blanket candidate-v5 description does not override actual stored versions.
+
+Keep this actual failed world and `output/n01-defeat-retained.dump` unchanged.
+Original N01 `warwrit` remains intact; owner was asked whether to continue a
+separate copy from that source or use an independent naturally created company.
+No rollback of n01_savecopy or replacement-labelled-as-retained is authorized.
+Native failed result `output/playwright/n02-n01-defeat.png`. Actual API/web
+stop/start followed by deep equality of all20canonical groups PASS before new
+observations (`output/n01-defeat-{before,after}-restart.json`). Ordinary fresh Dex
+login → roster confirms all three dead, run ended/new orders closed,760crowns,
+37rations,18.24crowns not-yet-due claims, equipment moved to company supply.
+Re-entry capture `output/playwright/n02-n01-defeat-reentry.png`. NEXT-2 FAIL for this run; NEXT-3 payout NOT_RUN; NEXT-4
+casualty persistence is checked separately from required successful payout continuity.
 
 ### Checks, probes and retained resources
 
@@ -77,8 +106,7 @@ exploration discovered the mill without a knowledge/state edit. Stale tile409s
 while movement/light revisions changed recovered on normal polling; no product
 repair or blanket performance verdict is claimed.
 
-Next ready row: C08 — return to the real keeper, accept fixed night-beast terms,
-physically join at night and retain the real terminal/proof result; then C09.
+Next: retain this failed run; obtain the owner-selected separate continuation or independently exercise a naturally created world, without relabelling its result.
 [Common contract](COMMON.md). Launch and subsequent authority supplied in this chat.
 
 ## Player goal and normal journey

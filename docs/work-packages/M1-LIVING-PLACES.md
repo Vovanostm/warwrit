@@ -2,9 +2,10 @@
 
 ## N02 current continuation — 2026-11-09
 
-The owner-selected retained Дозор N01 now has both ordinary mill clues from actual
-issuer/yard visits. C07 is verified; night hunt, living delivery and payment remain
-open. [N02](m1-next/02-next-contract.md) owns the exact source, authority, SQL/browser
+The owner-selected retained Дозор N01 obtained both ordinary mill clues, then lost
+all three members in its actual night-beast encounter. C07 is verified; C08 failed
+and this saved run is GAME_OVER. Deaths/resources survive actual restart/re-entry;
+living delivery and payment remain open. [N02](m1-next/02-next-contract.md) owns the exact source, authority, SQL/browser
 evidence and remaining acceptance. No product code or place rule changed.
 
 Active owner request: make cities, villages and visited landmarks feel alive,
