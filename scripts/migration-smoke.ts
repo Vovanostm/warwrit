@@ -39,6 +39,7 @@ async function downToFirstHunt(): Promise<void> {
 /** Remove only newer migrations before testing the retained older rollback guards. */
 async function downAfterRecruitPool(): Promise<void> {
   for (const name of [
+    '0025_qa_world_clock',
     '0024_playground_campaign_time',
     '0023_map_editor',
     '0022_playground_encounters',
@@ -82,6 +83,7 @@ try {
     '0022_playground_encounters',
     '0023_map_editor',
     '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -110,6 +112,7 @@ try {
     '0022_playground_encounters',
     '0023_map_editor',
     '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
 
   await downAfterRecruitPool();
@@ -174,6 +177,7 @@ try {
     '0022_playground_encounters',
     '0023_map_editor',
     '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
   assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
@@ -280,6 +284,7 @@ try {
     '0022_playground_encounters',
     '0023_map_editor',
     '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -607,6 +612,7 @@ try {
     '0022_playground_encounters',
     '0023_map_editor',
     '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

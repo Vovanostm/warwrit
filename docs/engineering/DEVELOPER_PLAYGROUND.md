@@ -11,7 +11,9 @@ No deployment, paid service, game-rule change or retained-save mutation.
 adds fixed forward campaign steps in the Combat Lab shell when an operator names
 `PLAYGROUND_CAMPAIGN_WORLD` matching the configured world. This exceptional tool
 is only for an exclusively owned disposable QA database: it advances that stand's
-campaign clock and lets ordinary domain commands assess elapsed time. Default
+world simulation clock (movement, campaign and light together) and lets ordinary
+domain commands assess elapsed time. Authentication and combat deadlines retain
+real time. Default
 sandbox/map operations retain their no-campaign-write boundary. Production rejects
 the mode and strips its API/UI. Active or unsettled encounters refuse time jumps.
 Exact receipts persist; disabling the feature does not rewind time. See the owning

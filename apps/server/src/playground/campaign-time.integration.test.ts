@@ -1,3 +1,4 @@
+import { readWorldClock } from '../world/clock.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { Client } from 'pg';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -70,27 +71,35 @@ afterAll(async () => {
 
 describe.skipIf(!url)('opt-in QA campaign time through the real authenticated boundary', () => {
   it('advances once, retains exact receipt across concurrency/reconstruction and refuses conflicts without touching another clock', async () => {
+    const trustedNow = new Date();
+    const before = await db.transaction().execute((tx) => readWorldClock(tx, worldId, trustedNow));
     const body = { commandId: randomUUID(), ticks: 100 };
     const [a, b] = await Promise.all([send(body), send(body)]);
     expect(a.statusCode, a.body).toBe(200);
     expect(b.json()).toEqual(a.json());
     const receipt = a.json<PlaygroundTimeReceipt>();
+    const after = await db.transaction().execute((tx) => readWorldClock(tx, worldId, trustedNow));
+    expect(BigInt(after.nowMs) - BigInt(before.nowMs)).toBe(2160000n);
+    expect(BigInt(after.tick) - BigInt(before.tick)).toBe(100n);
+    expect(after.startingTick).toBe('15');
     expect(BigInt(receipt.afterTick) - BigInt(receipt.beforeTick)).toBe(100n);
     expect(
       (
         await sql<{
-          starting_tick: string;
-        }>`select starting_tick from world_campaign_clocks where world_id=${worldId}`.execute(db)
-      ).rows[0]?.starting_tick,
-    ).toBe('115');
+          value: string;
+        }>`select qa_offset_ms::text as value from world_campaign_clocks where world_id=${worldId}`.execute(
+          db,
+        )
+      ).rows[0]?.value,
+    ).toBe('2160000');
     expect(
       (
         await sql<{
-          starting_tick: string;
-        }>`select starting_tick from world_campaign_clocks where world_id='retained-time-world'`.execute(
+          value: string;
+        }>`select starting_tick as value from world_campaign_clocks where world_id='retained-time-world'`.execute(
           db,
         )
-      ).rows[0]?.starting_tick,
+      ).rows[0]?.value,
     ).toBe('8');
     expect((await send({ ...body, ticks: 10 })).statusCode).toBe(409);
     const restarted = makeApp();
@@ -114,7 +123,7 @@ describe.skipIf(!url)('opt-in QA campaign time through the real authenticated bo
     await rollback.connect();
     try {
       await expect(runMigrations(rollback, 'down')).rejects.toThrow(
-        'retain its idempotency journal',
+        'retain the simulation clock schema',
       );
     } finally {
       await rollback.end();
@@ -141,10 +150,12 @@ describe.skipIf(!url)('opt-in QA campaign time through the real authenticated bo
     expect(
       (
         await sql<{
-          starting_tick: string;
-        }>`select starting_tick from world_campaign_clocks where world_id=${worldId}`.execute(db)
-      ).rows[0]?.starting_tick,
-    ).toBe('115');
+          value: string;
+        }>`select qa_offset_ms::text as value from world_campaign_clocks where world_id=${worldId}`.execute(
+          db,
+        )
+      ).rows[0]?.value,
+    ).toBe('2160000');
     await sql`delete from encounters where id=${encounter}`.execute(db);
     vi.stubEnv('NODE_ENV', 'production');
     expect((await send(command)).statusCode).toBe(404);
@@ -160,10 +171,12 @@ describe.skipIf(!url)('opt-in QA campaign time through the real authenticated bo
       expect(
         (
           await sql<{
-            starting_tick: string;
-          }>`select starting_tick from world_campaign_clocks where world_id=${worldId}`.execute(db)
-        ).rows[0]?.starting_tick,
-      ).toBe('115');
+            value: string;
+          }>`select qa_offset_ms::text as value from world_campaign_clocks where world_id=${worldId}`.execute(
+            db,
+          )
+        ).rows[0]?.value,
+      ).toBe('2160000');
     } finally {
       await sql`alter table playground.campaign_time_receipts drop constraint qa_receipt_failure`.execute(
         db,
@@ -175,9 +188,11 @@ describe.skipIf(!url)('opt-in QA campaign time through the real authenticated bo
     expect(
       (
         await sql<{
-          starting_tick: string;
-        }>`select starting_tick from world_campaign_clocks where world_id=${worldId}`.execute(db)
-      ).rows[0]?.starting_tick,
-    ).toBe('125');
+          value: string;
+        }>`select qa_offset_ms::text as value from world_campaign_clocks where world_id=${worldId}`.execute(
+          db,
+        )
+      ).rows[0]?.value,
+    ).toBe('2376000');
   });
 });

@@ -41,8 +41,11 @@ ordinary sandbox commands. No arbitrary world input, reverse time, money/item/
 health edits, wall-clock/auth/session/deadline changes or autonomous speed loop.
 
 Existing `readWorldClock` remains the clock owner. Under its world-row lock, advance
-`starting_tick` by the chosen step and atomically retain an account-scoped exact
-request/receipt in new migration0024. Exact retry returns that receipt; a conflicting
+simulation offset `qa_offset_ms` by the duration of the chosen campaign step and
+atomically retain an account-scoped exact request/receipt in migration0024.
+Migration0025 owns the offset; ordinary worlds retain zero. Millisecond movement,
+campaign ticks and world light share that adjusted clock; authentication/session
+expiry and combat deadlines retain real time. Exact retry returns its receipt; a conflicting
 ID refuses. Reject advances while a canonical encounter is active to preserve
 combat admission/effect timing. Ordinary movement, food, wages and rest then assess
 elapsed campaign ticks through their existing server/domain paths; no second
@@ -75,7 +78,7 @@ Version pointers (read directly from this candidate):
 - Playground schema2, `playground-v2:m1-domain-bridge-v5`.
 - Map artifact schema1, `map-v1:atlas-v6:sprite-prototype-v4`; published content
   applies to new worlds only and is never assigned to existing saves by the editor.
-- Ordered migrations0001–0023; no released migration changed.
+- Ordered migrations0001–0025; no released migration changed.
 - Pinned Node24.20.0 / pnpm11.25.0, frozen existing lockfile; Babylon is the renderer.
 
 ## Owned resources and reproducibility
@@ -167,6 +170,20 @@ config/HUD tests PASS. Initial test-only fixture omitted required activation clo
 columns and failed; corrected fixture passes. This was not a production defect.
 
 Native +100 committed at127→227 with command6d5857b1-5f7f-4f20-8b1f-a2048aa5620f;
-the real reply was dropped. Server restart/reload/exact retry is being checked.
+the real reply was dropped. Server restart/reload/exact retry PASS with one receipt.
 Player-two was created through authorized ordinary OIDC and all9equipment commands;
 its physical route to Bereznyak was accepted. No helper/position/finance fabrication.
+
+### Corrected simulation-clock semantics
+
+The first QA implementation advanced campaign ticks while movement milliseconds
+remained real. The prototype world reproduced temporary TRUSTED_TIME_UNAVAILABLE
+while a route accepted after that adjustment had a future arrival tick. Preserve
+this failed attempt: it does not establish successful accelerated travel.
+Migration0025 converts only the opt-in journal's advances to milliseconds while
+preserving current tick; no saved company/route is rewritten. Both ordinary
+prototype companies subsequently arrived and remain retained. New acceleration
+uses the simulation offset consistently, including routes started after a jump.
+32 focused real PostgreSQL checks PASS (campaign-time, continuous movement,
+world routes), including arrival after an offset, stable repeated settlement and
+next departure on that same clock. Final native journey and final-SHA checks pending.

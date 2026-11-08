@@ -29,13 +29,17 @@ export async function readWorldClock(
     .execute();
   let query = transaction
     .selectFrom('world_campaign_clocks')
-    .select(['epoch_ms', 'starting_tick'])
+    .select(['epoch_ms', 'starting_tick', 'qa_offset_ms'])
     .where('world_id', '=', worldId);
   if (lock) query = query.forUpdate();
   const row = await query.executeTakeFirst();
   if (!row) throw new Error('World campaign clock is unavailable');
-  const tick = campaignTickAt(createCampaignClock(row.epoch_ms, row.starting_tick), String(nowMs));
-  return { epochMs: row.epoch_ms, startingTick: row.starting_tick, nowMs: String(nowMs), tick };
+  const simulationNowMs = (BigInt(nowMs) + BigInt(row.qa_offset_ms)).toString();
+  const tick = campaignTickAt(
+    createCampaignClock(row.epoch_ms, row.starting_tick),
+    simulationNowMs,
+  );
+  return { epochMs: row.epoch_ms, startingTick: row.starting_tick, nowMs: simulationNowMs, tick };
 }
 
 const LIGHT_DAY_MS = 600_000n;

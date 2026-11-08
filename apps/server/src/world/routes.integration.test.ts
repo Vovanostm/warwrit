@@ -2934,6 +2934,7 @@ async function assertClockMigrationRoundTrip(rollback: Client): Promise<void> {
       '0022_playground_encounters',
       '0023_map_editor',
       '0024_playground_campaign_time',
+      '0025_qa_world_clock',
     ] as const;
     const beforeDown = await runMigrations(rollback, 'status');
     expect(beforeDown.applied.slice(-migrationSuffix.length)).toEqual(migrationSuffix);

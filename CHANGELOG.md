@@ -25,7 +25,11 @@ requests.
   Owner follow-up authorizes the second ordinary test account and accelerated
   QA time. Add opt-in guarded Playground campaign steps with atomic saved
   receipts, restart/exact retry, active/unsettled-encounter refusal and migration0024.
-  Ordinary rules/auth/light/combat timers retain their owners; accelerated
+  Correct the prototype tick-only jump to a persistent simulation offset in0025:
+  movement/campaign/light advance together; auth/combat deadlines stay real.
+  Preserve existing ticks/journals without rewriting saved routes or companies.
+  32 focused SQL checks pass, including accelerated arrival and next departure.
+  Ordinary rules retain their owners; accelerated
   observations are labelled separately.
   Also update the second stale migration suffix in the real world-clock
   round-trip regression, retaining its clock-preservation assertions.

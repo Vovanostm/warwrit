@@ -12,7 +12,8 @@ Status LOCAL/IN_PROGRESS, M1 NOT_ACCEPTED. Initial a5e15030 full local checks PA
 1149unit/103SQL,10kcombat stress,migrations/build/static; native ordinary entry/
 gear/supply/travel/recovery/exact retry and integrated Lab/map editor PASS.
 Owner follow-up permits player-two and requests acceleration: opt-in QA campaign
-steps/receipt journal/migration0024 added;3real SQL checks +18focused/types/lint PASS.
+steps/receipt journal added;0025 corrects tick-only prototype to one persistent
+movement/campaign/light clock;32focusedSQL PASS, final updated-code checks pending.
 Both ordinary companies retained; continue native co-op battle/proof/pay/care/restart,
 using labelled accelerated campaign time. Final updated-code checks/publication pending.
 Earlier dated blocks below retain their original delivery/evidence boundaries.

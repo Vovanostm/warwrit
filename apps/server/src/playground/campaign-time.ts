@@ -1,3 +1,4 @@
+import { createCampaignClock } from '@warwrit/game-core';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
@@ -57,9 +58,17 @@ export function registerCampaignTime(
         .where('effects_applied_at', 'is', null)
         .executeTakeFirst();
       if (active || unsettled) throw new PlaygroundRefusal('ACTIVE_ENCOUNTER', 409);
+      const rate = createCampaignClock(clock.epochMs, clock.startingTick).rateSegments[0]!
+        .ticksPerMs;
+      const numerator = BigInt(ticks) * BigInt(rate.denominator);
+      if (BigInt(rate.numerator) === 0n || numerator % BigInt(rate.numerator) !== 0n)
+        throw new PlaygroundRefusal('UNSUPPORTED_CLOCK_RATE', 409);
+      const elapsedMs = numerator / BigInt(rate.numerator);
+      if (BigInt(clock.nowMs) + elapsedMs > BigInt(Number.MAX_SAFE_INTEGER))
+        throw new PlaygroundRefusal('TIME_LIMIT', 409);
       await tx
         .updateTable('world_campaign_clocks')
-        .set({ starting_tick: (BigInt(clock.startingTick) + BigInt(ticks)).toString() })
+        .set({ qa_offset_ms: sql<string>`qa_offset_ms + ${elapsedMs.toString()}::bigint` })
         .where('world_id', '=', worldId)
         .execute();
       const response: PlaygroundTimeReceipt = {
