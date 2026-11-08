@@ -465,7 +465,7 @@ and may run beside `core` and `web` without raising the five-worker ceiling.
 2. Next core slice: [melee always connects](../work-packages/M1-MELEE-CONNECT.md),
    owner-decided 2026-10-07 and still not implemented.
 3. Art lane with the region-compositing technique proven on the
-   [Porechye sheet](../wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09).
+   [Porechye sheet](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09).
 4. QA hooks (`render_game_to_text`, `advanceTime`) for regression journeys with
    the installed [develop-web-game](GAMEDEV_SKILLS.md) skill.
 5. Retro and metrics after each wave.

@@ -62,14 +62,14 @@ RMB orders immediate travel; LMB previews/pans; Space pauses/resumes only with
 map focus. Invalid water orders preserve a paused journey; arrival cannot replay
 it. The initial map has no preselected example route. Nearby Enter and the short
 controls hint sit outside the canvas. Existing Visit/preset continuity remains.
-The [dated result](../wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26)
+The [dated result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26)
 owns current checks/review/publication status. No core rules or migration impact.
 
 Controls UX delivered in [PR #328](https://github.com/Vovanostm/warwrit/pull/328),
 MERGED as `6dbdc00f` from expected head `b24016f7`. CI40294682426 and latest
 scope40296349349 SUCCESS; source/visual ACCEPT, focused checks and author native
 journeys PASS. Local main and origin/main read back at the merge; primary WIP
-preserved. [Detailed readback](../wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+preserved. [Detailed readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
 This post-merge documentation update is local; runtime is merged.
 
 ## Proposed networked successor — 2026-10-26
@@ -129,7 +129,7 @@ the normal audit thresholds; final normal hook/audit PASS without bypass.
 Additional stationary-company/retained-trip regression PASS; latest ordinary-runtime
 restart and seven native smoke checks PASS. Code committed locally as `114028e3`;
 no publication, merge or production acceptance.
-Detailed results and limits belong to the [map page](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+Detailed results and limits belong to the [map page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
 
 ## Pursuit amendment — 2026-10-27
 
@@ -552,7 +552,7 @@ beside the asset. Trace through-roads across the whole affected field/forest/til
 join at native/game scale, overview/close, day/night. Fields and hedges must end
 at the shoulders; no unexplained road stub. Independent visual critique required.
 No movement cost/terrain/server/schema change or deployment authorization.
-[Current results and delivery](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+[Current results and delivery](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ## Road navigation amendment — 2026-10-28
 

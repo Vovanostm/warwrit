@@ -2517,7 +2517,7 @@ requests.
   SQL/browser measurements without changing thresholds; first failed run retained
   below. Earlier local/pending source statuses are superseded by this delivery.
   This documentation readback is local; no deployment/automation.
-  [Owning result](docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
 
 ### Gameplay-focused agent harness
 
@@ -2618,7 +2618,7 @@ requests.
   the owner's screenshot route using approximate landmark coordinates. Actual
   plan comparison gives929m/797s vs1264m/830s via the northern road/trail.
   Record current speed/classification assumptions and coordinate limits in the
-  [owning map result](docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+  [owning map result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
   No pathfinding/balance change or new runtime acceptance; game/browser/SQL NOT_RUN.
 
 ### Inspect declared road continuity on the atlas
@@ -2637,14 +2637,14 @@ requests.
   Initial test exposed an alternate-road bypass
   and led to corridor-scoped checks; detached DOM fixture corrected before PASS.
   Independent native replay/full game/SQL gates NOT_RUN; local lab-only delivery.
-  [Owning result](docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
 
 ### Map improvement source research
 
 - 2026-10-28, branch `codex/map-road-navigation`, local proposal: owner asks
   for more useful web/GitHub examples. Record pinned Tiled, Azgaar and
   PathFinding.js source comparisons plus Red Blob guidance in the
-  [owning map research](docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+  [owning map research](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
   Recommend road-subgraph checks and extending existing geometry overlays;
   retain current cost-aware routing. No code, skill or dependency changes;
   foreign tests/runtime/benchmarks NOT_RUN/NOT_MEASURED. No publication.
@@ -2709,7 +2709,7 @@ requests.
   scope40665746964 PASS; expected-head merge/main readback confirmed. This
   post-merge status correction is local in the clean worktree; the app blocks
   primary-checkout archival. Test server stopped and evidence preserved.
-  [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+  [Result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements
 
@@ -2725,7 +2725,7 @@ requests.
   session on reconnect. Unique runtime directories and waited child cleanup retain
   prior evidence without reusing it. Source concerns closed; provisional independent
   infrastructure ACCEPT, exact-head/hosted CI pending.
-  [Owning delivery](docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
+  [Owning delivery](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
 
 ### Networked atlas PR integration
 
@@ -2808,7 +2808,7 @@ requests.
   migration0015 adds lab slots/NPCs. Existing stand5326 and campaign defaults
   remain usable. Fixed atlas plan readback, exact outskirts STOP, trusted clock
   sampling, stale-response ordering and independent lab cookies during real
-  integration. [Owning implementation and checks](docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+  integration. [Owning implementation and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
   Two-context/native, no-viewer, server restart and night-creature probes PASS;
   four real-PostgreSQL cases PASS. Independent source/visual ACCEPT; clean
   verify1200/stress10000 PASS; migration smoke and all69 SQL scenarios PASS
@@ -2850,7 +2850,7 @@ requests.
   local main and this worktree read back at the merge. Primary checkout WIP
   preserved. Earlier local/pending entries retain their dated context;
   this post-merge documentation amendment is local.
-  [Owning closeout](docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+  [Owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
 
 ### Mill delivery: asset URL compatibility
 
@@ -2975,7 +2975,7 @@ requests.
   Source review ACCEPT at `3d854e93`; visual critic ACCEPT (six criteria2),
   author native journeys; independent native replay NOT_RUN. Normal hook/audit PASS;
   hosted CI pending.
-  [Owning result](docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
 
 ### Map controls hint outside the canvas
 
@@ -2984,7 +2984,7 @@ requests.
   the concise footer hint now also explains Walk and supplies the map's ARIA
   description. Browser hover/DOM, hint placement and wheel/WASD/RMB checks PASS;
   handlers unchanged, game tests NOT_RUN for this HTML-only fix.
-  [Owning result](docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
 
 ### World-map stand merged
 
@@ -2994,7 +2994,7 @@ requests.
   preset continuity fix checked in browser; CI40249250063 (full clean-checkout
   bootstrap, coverage/audit) and latest scope40250278331 SUCCESS. Checked/merged
   trees matched; remote main read back, this worktree fast-forwarded.
-  [Owning result and limits](docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
   Earlier local entries retain their dated context. This closeout amendment is
   local metadata after merge; it adds no gameplay, deployment or operations.
 
@@ -3005,7 +3005,7 @@ requests.
   party to its authored origin. Examples now choose only the destination and
   route from the current party; UI explains this distinction. Twenty map
   checks/types, scoped lint/format and native pause/rest/moving reroute PASS.
-  [Owning review record](docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
+  [Owning review record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
   Initial spawn/manual start placement remain diagnostic setup. Independent
   source/tooling/cohesion re-review ACCEPT at `e2eb5135`; normal audit PASS.
   Hosted CI pending.
@@ -3022,7 +3022,7 @@ requests.
 ### Settlement areas and intentional visits
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
-  [area UX proposal](docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
+  [area UX proposal](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
   Bereznyak/Brod now use one dry outskirts polygon each instead of three road
   circles. Boundary candidate plans are trimmed and compared by travel time;
   passive nearby Enter works without prior selection and never interrupts
@@ -3068,7 +3068,7 @@ requests.
   Selected-only contours/approaches and an arrival action accompany travel.
   Nineteen focused scenarios/types and scoped lint/format PASS; native browser
   journeys and remaining acceptance limits are in the
-  [owning result](docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
   Independent visual ACCEPT (six applicable criteria2); source `88114965`,
   normal commit hook/audit PASS after shared-entry-eligibility cleanup. Existing
   attribution/CSS advisories retained. No core/server/save, dependencies or art
@@ -3078,7 +3078,7 @@ requests.
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested
   outskirts-based visits and comparison with other games. The
-  [owning map record](docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
+  [owning map record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
   distinguishes Heroes III gate visits, Bannerlord entrance coordinates and
   Battle Brothers' historical pass-through entry bug from a proposed local
   approach-area/explicit-entry flow. No runtime, access rule, radius or art
@@ -3094,7 +3094,7 @@ requests.
 - Fifteen focused scenarios/types, scoped lint/format and native key/release/
   input-focus/wheel checks PASS; independent visual ACCEPT. Real tab/window
   blur NOT_MEASURED in this runner; explicit blur-handler exercise is separate.
-  [Owning result and evidence](docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+  [Owning result and evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
   Source saved locally as `71f099df`; normal commit hook/audit PASS.
   No art, domain rules, dependencies, server/save or external operations changed.
 
@@ -3109,7 +3109,7 @@ requests.
   artwork or game rules changed. Fourteen focused scenarios/types and scoped
   lint/format PASS; native mouse-wheel/RMB/pan/reset/water/paused-start checks
   and independent visual ACCEPT in the
-  [owning record](docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
   Source saved locally as `b9353990`; normal commit hook/audit PASS.
 
 ### Porechye: nine-tile atlas and 24 contract proposals
@@ -3126,7 +3126,7 @@ requests.
   are not implemented. Text critic ACCEPT; owner canon approval is not inferred.
 - Twelve focused scenarios/types, scoped lint/format and architecture PASS;
   far route, localization and water checks are recorded with their actual limits
-  in the [owning map record](docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+  in the [owning map record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
   Initial river-copying artwork was rejected and regenerated from layout plus a
   land-texture crop. Vertical joins rejected in v3 were repainted locally; final
   v5 visual critic ACCEPT (six applicable scores2), far browser trip and onward
@@ -3154,7 +3154,7 @@ requests.
   checked. Change audit PASS after sharing road geometry and simplifying UI functions;
   final integrated v4 critic ACCEPT (all applicable scores2). Local code/art
   commit `defbe8da` passed the normal hook/change audit without bypass. Historical research,
-  iteration failures, checks and limits: [owning map page](docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+  iteration failures, checks and limits: [owning map page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
 
 ### Painted Porechye navigation stand
 
@@ -3165,7 +3165,7 @@ requests.
   corridors. Toggleable layers, start/goal, travel time, moving token,
   stop/resume/arrival, zoom/pan and a night preview are available via `pnpm dev:map`.
   Existing V3 speeds remain authoritative; no new runtime dependency, canonical
-  map edition, migration or game-save change. [Owning map page](docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
+  map edition, migration or game-save change. [Owning map page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
   records GitHub alternatives, checks, corrections and acceptance limits.
   Five focused scenarios and Chrome interaction PASS; third independent
   diagnostic-stand visual pass ACCEPT (all applicable scores≥2), change audit
@@ -7517,7 +7517,7 @@ requests.
 - 2026-10-09, branch `claude/world-review-porechye-detail`, merged: owner asked
   to analyse the map and world, use Codex for images and find gamedev skills.
   Added the second map/world analysis and an improvement plan to
-  [map](docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09) (lore
+  [map](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09) (lore
   mismatches at close view: stone Karaulny bridge, castle-like Kamenny Brod,
   missing Tikhaya Gat platforms; no visible war, lairs or wilderness).
   Generated a Porechye close-view sheet with Codex built-in `image_gen`
