@@ -324,7 +324,7 @@ requests.
   related checks and audit PASS without bypass; hosted gate remains.
   No migration, new
   custody rule, stationary stash, merge or deployment.
-  [Owning evidence](docs/engineering/evidence/item-transfer-20261028/README.md).
+  [Owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/item-transfer-20261028/README.md).
 
 ### Activate owner-preserving player item transfer
 
@@ -937,7 +937,7 @@ requests.
   seven applicable scores2; whole-scene visual/stability remains separate.
   Canonical time preparation is synthetic on owned restored clones. No new
   finance rule or migration; normal commit/PR/CI/merge not yet performed.
-  [Owning result](docs/engineering/evidence/payroll-20261028/README.md),
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/payroll-20261028/README.md),
   [player-facing behavior](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
 
 - Same-day correction: actual stale-revision browser refusal exposed its
@@ -993,7 +993,7 @@ requests.
   money edits. Fresh unit coverage1220 PASS/84 skipped; normal audit FAILED new
   complexity/guard clone/selectors and quality rework is active without bypass.
   TARGETED browser, final-source acceptance/commit/PR/CI and full game remain
-  pending. [Journey and actual limits](docs/engineering/evidence/payroll-20261028/README.md).
+  pending. [Journey and actual limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/payroll-20261028/README.md).
 
 ### Close the merged blank-database startup correction
 
@@ -3271,10 +3271,10 @@ requests.
   defect identified. Focused real-core producer tests (30), protocol build,
   server types and scoped lint/format/diff PASS. Fresh integrated reviewer ACCEPT
   at `8c073ad9550664ae0eb3f7f0d574bc1f7eef4a23`, no material findings;
-  [retained report](docs/engineering/evidence/wages-local-evidence-319/review-integration.md).
+  [retained report](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/review-integration.md).
   This final records-only successor changes no accepted code;
   normal merge commit `0308738d` audit PASS without bypass (zero new findings;
-  syntactic-attribution warning retained). [Integration result](docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
+  syntactic-attribution warning retained). [Integration result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
 - Dated correction to prior #321/workflow LOCAL/PENDING entries: PR #325 merged
   normally at `e216b0e1f44fd91b899227f7135d00ba7903e14a` on 2026-10-25;
   #321 closed completed. Parent readback: CI `40145187358` and scope
@@ -3292,8 +3292,8 @@ requests.
   then completion and merge of the next worktree. Current mission covers this
   #321/workflow branch and existing #319 / PR #324 after independent acceptance
   and applicable CI; no automation, deployment or wider backlog activation.
-- Retained local [#321 review](docs/engineering/evidence/wages-projection-321/review.md)
-  and [actual HTTP/PG result](docs/engineering/evidence/wages-projection-321/http-readback.json)
+- Retained local [#321 review](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-projection-321/review.md)
+  and [actual HTTP/PG result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-projection-321/http-readback.json)
   alongside the change. Source accepted at `b1194a94`; workflow at `a3ba1e8c`.
   This documentation-only publication preparation changes no game behavior.
   Status-block check initially rejected the missing coordinator label; corrected
@@ -3380,7 +3380,7 @@ requests.
 - Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
   fresh reviewer and evaluator ACCEPT at `42a4f583`; the evaluator independently
   passed 30 real producer/core tests, including distinct remote pool-wallet refusal
-  without input mutation. [Evaluation](docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
+  without input mutation. [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
   and adjacent review preserve the exact boundary. Coordinator validation remains
   exit 0, nine checks PASS; whole-PR source scope 296/300.
 - Both gate workers settled, acknowledged and released; direct process readback
@@ -3441,7 +3441,7 @@ requests.
   and pinned the audit to origin/main; PASS, no threshold/hook bypass.
 - [PR #323](https://github.com/Vovanostm/warwrit/pull/323) is MERGED at `1c793e16`,
   with both checks green at expected head `ed5bd53f`, Tier L ACCEPT, and
-  [ordinary browser/API/PG proof](docs/engineering/evidence/wages-command-seams-318/eval-2.md).
+  [ordinary browser/API/PG proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-command-seams-318/eval-2.md).
   #318 closed/relabelled done; clean fully pushed worktree removed after retaining
   local evidence. This supersedes its pending publication status below.
 - [Current plan](docs/engineering/ROADMAP.md) allocates fresh #319 review and
@@ -3454,7 +3454,7 @@ requests.
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
   Tier L reviewer ACCEPT at `771fcb07` and evaluator ACCEPT at `36b6aa5e`;
   subsequent source diff is empty. The earlier environment blocker is resolved.
-  [Evaluation](docs/engineering/evidence/wages-command-seams-318/eval-2.md),
+  [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-command-seams-318/eval-2.md),
   adjacent review and seven JPEGs retain the independent proof.
 - Actual authenticated company opening, equipment, begin/end camp, atomic stale
   refusal, ordinary retry and reload passed against private PostgreSQL. Evaluator
@@ -3542,7 +3542,7 @@ requests.
 - Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
   independent Tier L reviewer and evaluator ACCEPT at `6485ed80`, superseding
   the pending gates below. Source remains `67f49bf2`; no source correction.
-- [Evaluation](docs/engineering/evidence/qa-action-polling/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-polling/eval-1.md) records
   160 focused tests PASS and two ordinary day/night round-7 victories, with
   no further POST after stop or terminal waits. Adjacent review and 23 JPEGs
   retain the gate evidence. Coordinator validation: exit 0, 9/9 checks,
@@ -3602,7 +3602,7 @@ requests.
   entries below. Expected head `7c07db71`, PR CI/scope and pre-merge main CI passed;
   final whole-PR scope 245/300. No post-merge main CI run observed yet.
 - Prior validation 9/9, 145 related tests and Tier L ACCEPT `090843b5` retained.
-  [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-transport/eval-1.md) records
   118 focused tests, two day/night victories and three retry probes. Later commits
   contain only evidence and coordinator records. One playable-proof merge this tick.
 - The existing sequential #307 now has its own worktree and read-only contract
@@ -3618,7 +3618,7 @@ requests.
 - Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
   independent Tier L reviewer and evaluator ACCEPT at `090843b5`, superseding
   the pending gates below. Source remains validated `804d5983`; no source changes.
-- [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-transport/eval-1.md) records
   118 focused tests PASS, two ordinary day/night round-7 victories and three
   browser retry probes PASS. Adjacent review and JPEGs preserve the gate evidence.
   Coordinator validation remains exit 0, 9/9 checks, 145 related tests, scope 245/300.
@@ -3690,7 +3690,7 @@ requests.
 - Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
   independent reviewer and evaluator ACCEPT at `a54b65c6`. This supersedes the
   pending independent gates below; source remains the validated `31d6fa5f`.
-- [Evaluation](docs/engineering/evidence/qa-action-admission/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-admission/eval-1.md) records
   88 focused tests PASS, ordinary day/night round-7 victories and three browser
   retry probes PASS. Small JPEG captures and the source review accompany it.
   Prior coordinator validation 9/9 PASS, 115 related tests and scope 169/300 remain valid.
@@ -3919,7 +3919,7 @@ requests.
 - `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction
   and issue-recorded pure autoplay/disabled allocation preserve the existing
   player journey. Source `973e036a`, independent Tier U ACCEPT at `46514ddb`,
-  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](docs/engineering/evidence/qa-hooks-session-editor/README.md).
+  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-editor/README.md).
 - Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests,
   typecheck/lint/format, genuine day/night round-8 victories and fresh mounted
   lifecycle/guards/timers PASS. Direct 25-PID/port cleanup verified before handback.
@@ -3961,7 +3961,7 @@ requests.
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
   fresh independent reviewer4 and local evaluator4 ACCEPT at `0ffa146d`;
-  source `b4d033ca`, 219/300. [Tracked evidence](docs/engineering/evidence/core-integration-db-isolation/README.md)
+  source `b4d033ca`, 219/300. [Tracked evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-integration-db-isolation/README.md)
   includes complete contract, both verdicts and genuine day/night/victory JPEGs.
   Independent 19 lifecycle PASS, global-only child exits 0/1/7; one complete
   native smoke/eight-file 60/60 PASS with distinct migrated clones, default
@@ -4271,7 +4271,7 @@ requests.
   counts with one finite test-owned issuer query, including the attempted
   wrong issuer and sessions joined to owned accounts; original assertions and
   ordinary parallelism remain. No production authentication change.
-- [Contract, author history, independent verdicts and day/night proof](docs/engineering/evidence/core-oidc-count-isolation/README.md):
+- [Contract, author history, independent verdicts and day/night proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-oidc-count-isolation/README.md):
   reviewer ACCEPT `72b6e4eb`, evaluator ACCEPT `6db7dd20`; source `37f35c6b`
   unchanged. Author account/session mutations fail the preserved equality and
   restore; five consecutive real PostgreSQL parallel runs PASS 60/60 each.
@@ -4295,7 +4295,7 @@ requests.
   #267: independent Tier U ACCEPT at `de77fa3d`, source frozen `9ccabbd9`.
   Extraction `b2520b1b` and callback regression relocation `cc98765f` preserve
   controls, refs, 550/750 ms timers, guards and transport. Scope 159/300.
-- [Contract, complete author history, independent verdict and eleven JPEG captures](docs/engineering/evidence/qa-hooks-selection-autoplay/README.md)
+- [Contract, complete author history, independent verdict and eleven JPEG captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-selection-autoplay/README.md)
   accompany publication. Coordinator validate exit 0, 9/9 PASS; 49 related tests,
   callback hits 10/17 after ordinary refresh. Evaluator independently passed
   49 focused tests and genuine day/night mill victories, real mounted
@@ -4455,7 +4455,7 @@ requests.
 - `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)
   merged as `df540c2c` at expected `3a97b679`; #271 closed/done. Final-head CI,
   scope and independent Tier U proof PASS; 1 merged PR with playable proof this tick.
-  [Contract/verdict/captures](docs/engineering/evidence/uix-editor-primary-start/README.md)
+  [Contract/verdict/captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-editor-primary-start/README.md)
   remain tracked; local proof retained and fully-pushed clean worktree removed.
 - Ordinary merge of that main into [PR #284](https://github.com/Vovanostm/warwrit/pull/284)
   preserves both record histories; only CHANGELOG/CURRENT_PLAN conflicted.
@@ -4503,7 +4503,7 @@ requests.
   PASS 60/60, zero skips; two deliberate lifecycle failures clean up. Normal
   commits/audits PASS. Coordinator validate exit 0, 9/9 PASS; related tests
   3 PASS/11 SKIP without DB URLs are not database acceptance.
-- [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
+- [Contract, author report and independent verdict](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-world-rollback-isolation/README.md)
   accompany publication. Later commits only evidence/coordinator records;
   [CURRENT_PLAN](docs/engineering/ROADMAP.md) records hosted-CI/merge gates.
   No merge or player-feature delivery claimed; 0 merged PRs with playable proof
@@ -4615,7 +4615,7 @@ requests.
   first viewport/default/preset/result return, actual draft/request equality,
   keyboard focus/Enter, invalid and duplicate-pending guards; 1440 × 900 day/night,
   bounded 1366 × 768 fit. Runtime/browser cleanup positively confirmed.
-  [Contract, full verdict and evaluator captures](docs/engineering/evidence/uix-editor-primary-start/README.md).
+  [Contract, full verdict and evaluator captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-editor-primary-start/README.md).
 - Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
   PASS with five inherited findings retained. No duplicate test rerun this tick.
   Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
@@ -4658,7 +4658,7 @@ requests.
   Tier U ACCEPT, coordinator validate exit 0 (9/9 PASS), source scope 137,
   final-head clean-checkout CI and PR scope PASS; later commits were evidence
   and shared records only. No unresolved review or blocked label at merge.
-- [Owning contract, verdict and played day/night proof](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+- [Owning contract, verdict and played day/night proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
   remain tracked. Local evidence retained; clean fully-pushed worktree removed.
   This tick delivered 1 merged PR with playable proof; it preserves behavior
   and does not claim a new player feature or full-M1 acceptance.
@@ -4692,7 +4692,7 @@ requests.
   Normal changed-code audit PASS with five inherited findings retained.
   Exact native evaluator task/dispatch/result/full verdict matched, recorded
   before acknowledgment and release (no owned resource).
-- [Owning contract, independent verdict and ten JPEGs](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+- [Owning contract, independent verdict and ten JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
   now tracked; later commits change only evidence and coordinator records.
   [CURRENT_PLAN](docs/engineering/ROADMAP.md) records publication and
   remaining hosted-CI/exact-head/blocked-label gates. Merge NOT_RUN; 0 merged
@@ -4739,7 +4739,7 @@ requests.
   no introduced console/page error or visual regression found. Coordinator
   validator exit 0, 9/9 PASS, 64 related tests PASS. Exact native settlement,
   result and full verdict matched, recorded, acknowledged and released.
-- [Owning contract, verdict and JPEG proof](docs/engineering/evidence/qa-hooks-editor/README.md)
+- [Owning contract, verdict and JPEG proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-editor/README.md)
   retained on the PR branch; later commits contain only evidence/shared records.
   [CURRENT_PLAN](docs/engineering/ROADMAP.md) records review → PR and the
   remaining exact-head CI/scope/blocked-label/merge gates. Hosted CI and merge
@@ -4811,7 +4811,7 @@ requests.
   every applicable score 2; integrated validator 9/9, 48 tests, scope 272;
   hosted CI `39633442903` and scope `39633442871` SUCCESS. Issue closed/done;
   native evidence retained before worktree removal. Earlier pending entries
-  are superseded. [Proof and limits](docs/engineering/evidence/uix-affordability-bands/README.md).
+  are superseded. [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - `Vovanostm/qa-game-hooks`, PUBLISHED: coordinator records delivery and starts
   the dedicated read-only #231 contract from actual merged main, following owner priority.
   No hook implementation or new gameplay verification yet (NOT_RUN).
@@ -4832,7 +4832,7 @@ requests.
   coordinator integrated validator exit 0, 9/9 PASS, 48 related tests,
   source scope 272. Accepted web game source/tests unchanged after the gates.
   Evidence commits `39f8c0b2`/`dacbb47b` and this shared-record receipt add no
-  game code. [Proof, scored review and JPEGs](docs/engineering/evidence/uix-affordability-bands/README.md).
+  game code. [Proof, scored review and JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - Publish one PR closing only #184; final hosted CI and merge remain pending.
   PR259/#249 delivered this tick; #249 closed/done and #218 closed with the
   original decision/implementation links. Finished worktree removed after
@@ -4847,7 +4847,7 @@ requests.
   is 2. Supported level/0→1→2 crowds establish actual B1 silhouette/annotation
   intersections with eight verified on/off pairs. Actual mill manual input and
   round 11 victory, viewport/native125/CVD proof and limits are retained in
-  [evidence](docs/engineering/evidence/uix-affordability-bands/README.md).
+  [evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - Evidence-only commit `39f8c0b2` follows shared-record receipts. Integrate merged
   PR259 main `19d2c296` by ordinary merge; only CHANGELOG/CURRENT_PLAN conflicted,
   both histories retained. Incoming main contains the delivered persistent bow;
@@ -5027,7 +5027,7 @@ requests.
 - Integrate actual main `46fe0c33` as `16cedf56`; only CHANGELOG conflicted,
   both histories retained, accepted game source/tests unchanged. Integrated
   coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP; source scope 239.
-  Normal merge audit PASS. [Proof](docs/engineering/evidence/core-bow-three-ap/README.md)
+  Normal merge audit PASS. [Proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-three-ap/README.md)
   is being retained with review/evaluation and small day/night JPEGs.
 - Publish one PR for #249 next; hosted full clean-checkout gate and merge are
   pending. #184 remains validating after evidence/process delegation; fresh
@@ -5178,7 +5178,7 @@ requests.
 - Correct [CURRENT_PLAN](docs/engineering/ROADMAP.md) to the actual #184
   needs-owner state and existing B1 evidence question after rework 2/2; no new
   attempt or acceptance waiver. #249 waits for #256, #231 for #184.
-  [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  [Bow proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-lab/README.md).
   No migration/deployment; persistent activation remains #249, NOT_RUN here.
 
 ### Independent bow lab acceptance and publication — 2026-10-21, PUBLISHED
@@ -5192,7 +5192,7 @@ requests.
   remain actual executed results; no test rerun for this evidence/docs update.
   [PR257](https://github.com/Vovanostm/warwrit/pull/257) is open; hosted CI
   and merge remain pending. Persistent acceptance remains #249; balance NOT_MEASURED. No migration or deployment.
-  [Proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-lab/README.md).
 
 ### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
 
@@ -5324,7 +5324,7 @@ requests.
   10000stress,16PG/auth,migrations,coverage/audit. The first coverage timeout
   in unchanged world movement passed isolated and one unchanged-head retry;
   no test or gate weakened. #184 consumer follows with server-owned bands.
-  [Evidence](docs/engineering/evidence/range-187/README.md).
+  [Evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/range-187/README.md).
 
 ### Separate movement fill and reach boundary — 2026-10-20, LOCAL
 
@@ -5340,7 +5340,7 @@ requests.
   lint and source formatting PASS. Normal audit and parent validator8/8PASS (51related tests); independent browser
   ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
   ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
-  Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
+  Hosted CI and merge remain pending. [Current evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/range-187/README.md).
   [Behavior and check history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
 
 ### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
@@ -5500,7 +5500,7 @@ requests.
 - `codex/actor-integration-186`, MERGED PR245/6b5b1b03: played/visual ACCEPT,
   CI39399738137 SUCCESS (899PASS/48SKIP,10000stress,15realDB/auth). Actual-main
   marker/inspection/turn/day-night smoke PASS; reload observer failure retained.
-  [Readback](docs/engineering/evidence/uix-actor-foundation/main-readback.md).
+  [Readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-actor-foundation/main-readback.md).
   Enemy frames remain190; no deployment/full-M1 claim.
 
 ### Reaction correction independently reviewed — 2026-10-20, LOCAL
@@ -5563,7 +5563,7 @@ requests.
   attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
   Prior independent input/geometry ACCEPT47178752 remains attributable to its
   unchanged boundaries; absolute visual ACCEPT6eb5263, all applicable criteria2.
-  [Proof and limits](docs/engineering/evidence/uix-actor-foundation/README.md). The builder
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-actor-foundation/README.md). The builder
   reported a scheduling breach: its passing commit hook ran while the check
   window was WAIT. This is retained as a failed worker obligation, not erased by
   passing checks. Parent subsequently ran integrated validation alone.
@@ -5620,7 +5620,7 @@ requests.
   Independent played/absolute visual acceptance and publication remain pending;
   Refs186, #190 still owns enemy/frame agreement. No rules or migrations changed.
 - Delivery correction: overview main CI39378757951 SUCCESS after PR244 merge;
-  [actual-main readback](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [actual-main readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
 
 ### Integrate the acting-fighter cue with the delivered overview
 
@@ -5635,7 +5635,7 @@ requests.
   mergedfe3bcdb4, #227 CLOSED/agent:done, exact-head CI39377607667 SUCCESS.
   Candidate/merged trees match; normal human6v5 end-turn/reload and actual-main
   reload retained full state/revision3 with0passivePOST and11targets.
-  [Evidence and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [Evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
   Main CI pending; no full UI/M1, campaign-payment or deployment acceptance.
 
 ### Accept the approved company profile on current main
@@ -5669,7 +5669,7 @@ requests.
   or hook bypass. [Current plan](docs/engineering/ROADMAP.md).
 - Overview delivery is merged: PR244/fe3bcdb4, #227 CLOSED, PR39377607667 and
   main39378757951 CI SUCCESS; actual-main6v5 state/revision3 survives reload.
-  [Readback and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [Readback and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
 
 ### Accept the profile integration test correction
 
@@ -5707,7 +5707,7 @@ requests.
 - Delivery correction: [PR243](https://github.com/Vovanostm/warwrit/pull/243)
   merged3c934c16; #228 CLOSED, corrected PR/main CI SUCCESS. Actual-main normal
   load/start/end-turn/reload retains the same6v5 session/revision3 with no alerts.
-  [Readback and instrumentation limits](docs/engineering/evidence/uix-preset-picker/main-readback.md).
+  [Readback and instrumentation limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/main-readback.md).
   Earlier CI failure/probe limitations remain; no full-scene or M1 acceptance.
 
 ### Preserve the profile reviews and played evidence for publication
@@ -5829,7 +5829,7 @@ requests.
 - 2026-10-20, branch `codex/battle-overview-227`, local: retain played eval5 and
   full absolute visual6 ACCEPTff40f304, eleven controlled layer pairs, earlier
   REWORK and runtime-coordination correction in the
-  [evidence packet](docs/engineering/evidence/uix-overview-zoom/README.md).
+  [evidence packet](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/README.md).
   Main3c934c16 integrated throughbbbc91d without overview source changes;
   parent validator8/8,33relatedPASS,auditPASS; combined223PASS/47SKIP.
   Owning battlefield wiki/CURRENT_PLAN updated; publication/CI/merge pending.
@@ -5913,7 +5913,7 @@ requests.
 - 2026-10-20, branch `codex/preset-picker-228`, published PR243 with local
   correction38c57915: independent correction review ACCEPT; production journey
   acceptance retained, validator8/8 and5tests PASS, no server/core files in web
-  compilation inputs. [Review](docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
+  compilation inputs. [Review](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
   CI39369463852 remains FAILED; correction publication/new CI and merge pending.
 
 ### Remove the picker test dependency on server implementation
@@ -5934,12 +5934,12 @@ requests.
   battles demonstrate2/1surrenders and an actual withdrawal reaction. Integrate
   main434d4a1a through403193f, preserving both document histories and unchanged
   editor code. Parent validator8/8,5relatedPASS,normal auditPASS. Publication/CI/
-  merge pending. [Evidence](docs/engineering/evidence/uix-preset-picker/README.md).
+  merge pending. [Evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/README.md).
   Update owning battlefield wiki/CURRENT_PLAN; no rules, migrations or dependencies.
 - Delivery correction: [PR242](https://github.com/Vovanostm/warwrit/pull/242)
   is merged434d4a1a; #163 CLOSED, PR/main CI SUCCESS. Actual clean-main HP smoke
   ACCEPT/EXIT0; damaged53/60 and38/60 survive fresh/reloaded views with HTTP/bar
-  agreement. [Readback](docs/engineering/evidence/core-pools/main-readback.md).
+  agreement. [Readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-pools/main-readback.md).
   Earlier FAIL13 is retained. Overview visual5 still needs layer proof; profile
   policy and #165 scope remain pending. No full-M1 or deployment claim.
 
@@ -5963,7 +5963,7 @@ requests.
   Parent validator8/8 PASS,208 tests PASS/47 SKIP,audit PASS. Final evaluator
   assertions passed before deadline; its runner later exited13 during obsolete
   SDK cleanup, retained as FAIL. Hosted CI/publication/merge pending.
-  [Evidence, compatibility and limits](docs/engineering/evidence/core-pools/README.md).
+  [Evidence, compatibility and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-pools/README.md).
   Updated the existing battlefield wiki/CURRENT_PLAN; no migrations, rules,
   replay or dependencies changed. New reader/producer rollout must be coordinated.
 
@@ -6005,7 +6005,7 @@ requests.
   review and played evaluation ACCEPT9534bf7;17focused tests and prior
   coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
   withdrawal reaction and3downloaded replay checks passed; default reset and
-  restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
+  restoration passed. [Evidence and remaining picker](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-preset-deserters/README.md).
   Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
   Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
 - Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
@@ -6068,7 +6068,7 @@ requests.
   labels or unresolved review threads observed. This record needs exact-head
   CI before expected-head merge; it does not claim that merge has happened.
   #207 stays OPEN for visible captions, terminal cards and inherited layout
-  limits; [producer proof](docs/engineering/evidence/uix-w1-names/README.md).
+  limits; [producer proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-names/README.md).
   #186 visual1 now settled REWORK/BLOCKED on `c60fd5e`: missing native125,
   loaded layering/input, marker comparison and contrast proof, plus inherited
   overview scene-integration score1. Combined proof rework1 is next; inherited
@@ -6089,7 +6089,7 @@ requests.
   captures across three desktop sizes and genuine125%, day/night; real manual
   first death then autobattle to R10/rev171 and downloaded-only reconstruction
   match live/baseline canonical results. Evidence-only commit `a40d901` retains
-  reports and28 small JPEGs. [Proof and limits](docs/engineering/evidence/uix-w1-names/README.md).
+  reports and28 small JPEGs. [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-names/README.md).
   #207 remains OPEN: field captions, terminal inspection and inherited HUD/log
   clipping belong to sequenced consumer/layout owners. Actor foundation #186
   evaluator1 REWORK: missing native125/matched crowd, full layering/input,
@@ -6148,7 +6148,7 @@ requests.
   #187 remains OPEN for its rendered contour. Names #207 may plan on merged
   main; the former scene #186/#187 scope is split before its next start under
   workflow v3, preserving its old plan and all assigned integration findings.
-  [Existing proof](docs/engineering/evidence/uix-w1-skill-reach/README.md) is
+  [Existing proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-skill-reach/README.md) is
   reused; new main playtest/game gates/deployment NOT_RUN.
 
 ### Supply current learned-skill geometry for the scene consumer
@@ -6163,7 +6163,7 @@ requests.
   8/8,732PASS/47SKIP,auditPASS; evaluator69 focusedPASS and actual baseline/candidate
   mill victory/replay checks. Fresh15 baseline-saved streams match canonical
   state, complete events and accepted counts across schemas1/2 and five rulesets.
-  [Evidence and limits](docs/engineering/evidence/uix-w1-skill-reach/README.md).
+  [Evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-skill-reach/README.md).
   Updated CURRENT_PLAN; wiki mechanics unchanged. #187 remains open for rendered
   outline/legend/CVD and integrated scene findings. Hosted full gate pending;
   no merge/deploy or performance/balance measurement claimed.
@@ -6177,7 +6177,7 @@ requests.
   later source unchanged, merged-tree diff empty, no blocking labels/threads.
   #184 remains open for scene bands/legend/CVD/legacy rendering. Starts only
   the dependent #187 skillReach producer contract; scene/names remain sequenced.
-  [Proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
   New game checks/main playtest NOT_RUN; no deployment. Local reports retained
   before removing the completed worktree with archive hooks.
 
@@ -6193,7 +6193,7 @@ requests.
   Evidence-only and shared-record path checks PASS. New-head hosted CI must pass
   before expected-head merge; no deployment or new playtest claimed.
   #184 stays open for the downstream bands/legend/CVD/legacy scene consumer.
-  [Proof and limits](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
 
 ### Restore the post-movement attack affordability producer
 
@@ -6216,7 +6216,7 @@ requests.
   pending before merge.
   #184 stays open for bands/legend/CVD/rendered legacy fallback in uix-w2-scene;
   baseline-only zoom-readback anomaly retained in evaluator provenance.
-  [Independent proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Independent proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
   No deployment; performance/balance/capacity NOT_MEASURED.
 
 ### Record PR229 merge and start the affordability producer contract
