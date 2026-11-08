@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner set the M1
+  battle enemy limit to 12, at most 24 figures in total; the helper adds no
+  enemies ([m1-spec §7](docs/wiki/m1-spec.md#7-компания-люди-лагерь-и-содержание)).
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decisions B2–B4
   in [m1-spec](docs/wiki/m1-spec.md). Each company brings up to six fighters and
   a helper adds its own (replaces "6×6 total" and the FIRST HUNT limit of 12; the
