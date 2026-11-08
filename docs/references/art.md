@@ -8,7 +8,7 @@ authority: стиль — assets/art/styles/graphic-novel.json (решение �
 
 # Изображения-референсы
 
-34 изображения сгенерированы 2026-11-09 встроенным `image_gen` Codex
+60 изображений сгенерированы 2026-11-09 (34 в первой партии, 26 во второй) встроенным `image_gen` Codex
 (`codex exec`, по одному вызову на изображение) по точным промптам из
 [manifest.json](images/manifest.json). Каждому вызову приложены три
 эталона стиля «Сдержанный графический роман»: персонаж, город, мельница из
@@ -56,6 +56,14 @@ authority: стиль — assets/art/styles/graphic-novel.json (решение �
 | [w-01-region-map](images/world/w-01-region-map.jpg)                  | Карта-предмет региона                    | [world](world.md)                                                  |
 | [w-02-front-line](images/world/w-02-front-line.jpg)                  | Лагерь армии за рекой                    | [world](world.md)                                                  |
 | [w-03-wolves-snow](images/world/w-03-wolves-snow.jpg)                | Волки у деревни                          | [world](world.md)                                                  |
+
+## Вторая партия — карта, города, таверны, выборы
+
+Список и разбор — [places-and-map.md](places-and-map.md) и
+[moral-choices.md](moral-choices.md). Для m-01…m-03 базой служил уменьшенный
+атлас v6, для m-04…m-06 — его вырезка вокруг Каменного Брода, для tw-01…tw-05 —
+утверждённая картина Каменного Брода `assets/art/m1/places/settlements-v2/kamenny-brod-painting.png`
+как образец. Поле `inputs` в манифесте называет базу.
 
 ## Известные ограничения
 
