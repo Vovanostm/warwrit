@@ -19,7 +19,8 @@ sources:
 проверках: статус — [ROADMAP](../engineering/ROADMAP.md) и связанные задачи,
 приёмка пути игрока — [WLC-08](../engineering/WLC_08_ACCEPTANCE.md).
 Журнал до 2026-11-09 (срезы, интервью 2026-10-03, исследования гексов) удалён;
-прежняя редакция — [в истории git](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md) и правилом не является. Биомы — [отдельная страница](world/biomes.md).
+прежняя редакция — [в истории git](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md) и правилом не является.
+Биомы и живая природа — [отдельная страница](world/biomes.md).
 
 Приоритет источников задаёт [AGENTS.md](../../AGENTS.md): последнее явное решение
 владельца выше этой страницы. Замысел и сводка требований — [vision](vision.md#требования--сводка).
