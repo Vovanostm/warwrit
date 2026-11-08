@@ -9,7 +9,7 @@ session on primary `main` (`47c60e0`) at the owner's request: «Подготов
 ## Owner decisions (authority)
 
 Quoted 2026-10-07, recorded in
-[m1-spec §18](../wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03)
+[m1-spec §18](../wiki/m1-spec-history.md#18-battle-brothers-направление-и-этапы--2026-10-03)
 and [combat](../wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07):
 
 1. «Урон в ближнем бою должен быть всегда (кроме новобранцев или боя с

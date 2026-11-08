@@ -6,7 +6,7 @@ Updated 2026-11-05 at the owner's request. M1 is **in progress**, not accepted.
 owns the next playable steps; [task queue](PARALLEL_WAVES.md) maps them to GitHub.
 The owner's small-task follow-up is recorded in the [AI task contract](PARALLEL_WAVES.md#ai-task-contract):
 33 new leaf issues plus 7 reused bounded entries, with explicit dependencies and acceptance.
-[Current assessment](../wiki/m1-spec.md#state-2026-11-05) records implementation
+[Current assessment](../wiki/m1-spec-history.md#state-2026-11-05) records implementation
 and evidence separately. The superseded September roadmap and queue are retained
 in [history](CURRENT_PLAN_HISTORY.md#planning-baselines-superseded-on-2026-11-05).
 
@@ -106,7 +106,7 @@ integration. Local art/novel laboratories retain their own boundaries.
 [PR339](https://github.com/Vovanostm/warwrit/pull/339) is integrated with current
 main and MERGED as `c8128c54` after explicit owner permission; native sword/equip,
 split/reload/retry, capacity refusal and scoped critique passed. Clean local main
-was fast-forwarded to the merge. [Current result and limits](../wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07)
+was fast-forwarded to the merge. [Current result and limits](../wiki/m1-spec-history.md#интеграция-передачи-вещей-pr339--2026-11-07)
 supersede only that transfer status; full M1 acceptance remains open.
 
 The player-facing target uses Babylon.js under ADR-0006 and the selected

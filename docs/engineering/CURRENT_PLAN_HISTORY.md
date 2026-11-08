@@ -38,7 +38,7 @@ V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#3
 F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
 World knowledge/offline behavior and two-company participation require the full #177 scenarios.
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
-[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec-history.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/335/402/405/334/406/363/407/410 merged; launch #176 complete, volumes retained. Current #368 assignment authorizes implementation/checks/PR update; new-head merge remains separate.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
@@ -88,7 +88,7 @@ V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#3
 F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
 World knowledge/offline behavior and two-company participation require the full #177 scenarios.
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
-[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec-history.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/PR335/PR402/PR405 merges are complete. Owner approved PR405 on2026-11-06; expected-head merge149fa8e6 and identical reviewed tree confirmed.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
@@ -852,7 +852,7 @@ Settled/ended-service claims, exact q, pending holds and old optional responses 
 Checks PASS: focused projector/economy/privacy (10); real-PG route integration (2, no skips).
 Protocol build; protocol/server/web types; scoped ESLint/Prettier/diff PASS.
 Normal commit hook PASS, no bypass; syntactic-attribution warning retained in local author report.
-[Owning wiki amendment](../wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка).
+[Owning wiki amendment](../wiki/m1-spec-history.md#третий-цикл-весь-объём-и-итоговая-приёмка).
 Parent real loopback HTTP/PG PASS: exact q, owner200/anonymous401/other empty, repeat/root/revision coherence.
 One author + one reviewer; first submitted code ACCEPT, no material code rework.
 Inherited test fixture and parent probe setup fixes occurred; savings NOT_MEASURED.
@@ -4247,10 +4247,10 @@ were found stopped; native reload restores North Yard/850 crowns with no console
 errors. Web typecheck/diff/readiness PASS. Main push CI37350909372 IN_PROGRESS;
 new actual travel/STOP/return NOT_RUN, FPS/RAM/subjective sound NOT_MEASURED.
 Empirical NOT_WRITTEN (existing storage541/100); no deployment.
-[Actual merged closeout](../wiki/m1-spec.md#слияние-и-обновление-main--2026-10-05)
+[Actual merged closeout](../wiki/m1-spec-history.md#слияние-и-обновление-main--2026-10-05)
 supersedes pending/local delivery status below; this dated record is local.
 
-**Living-world delivery authorized — 2026-10-05:** owner requested “merge, update local main”. Parent owns isolated `codex/living-world-main`, base `f3d214c`; scoped web presentation, original wildlife assets/registry and owning docs only. Pre-extraction clean bootstrap and source/capture review remain historical evidence. Eight introduced audit findings were fixed by cohesive extraction; final audit/focused7/typecheck/lint/exact fauna comparison and repeated desktop component checks PASS. Current affected critic/audio and exact PR CI remain pending. Preserve concurrent primary drafts and player data; no deployment or auto-merge. [Scope/checks](../wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+**Living-world delivery authorized — 2026-10-05:** owner requested “merge, update local main”. Parent owns isolated `codex/living-world-main`, base `f3d214c`; scoped web presentation, original wildlife assets/registry and owning docs only. Pre-extraction clean bootstrap and source/capture review remain historical evidence. Eight introduced audit findings were fixed by cohesive extraction; final audit/focused7/typecheck/lint/exact fauna comparison and repeated desktop component checks PASS. Current affected critic/audio and exact PR CI remain pending. Preserve concurrent primary drafts and player data; no deployment or auto-merge. [Scope/checks](../wiki/m1-spec-history.md#реализация-живой-среды--2026-10-05).
 
 **Living-world first cycle delivered locally — 2026-10-05:** owner authorized “Ок, implement”.
 Parent owns primary `main f3d214c`: habitat/reaction rendering, local ambience,
@@ -4258,7 +4258,7 @@ bounded place activity and existing lawful observations/consequences. Preserve a
 unrelated dirty work and player data. First playable: meadow → woodland → wet edge,
 then Bereznyak day/night; keep paths, doors, STOP/reload and sound controls usable.
 No invented patrol routes, unseen actors, new canon, moving traders or deployment.
-[Owning implementation record](../wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+[Owning implementation record](../wiki/m1-spec-history.md#реализация-живой-среды--2026-10-05).
 Habitat/reaction, local synthesized sound controls, bounded place activities,
 lawful current map observations and known completed-work notes implemented.
 Focused7, typecheck/lint/format/architecture and native/component browser checks
@@ -4270,7 +4270,7 @@ travel, audible quality, FPS/RAM and full-M1 acceptance NOT_RUN/NOT_MEASURED.
 No new species or autonomous patrol routes; local/uncommitted/unpublished.
 
 **Living-world design follow-up — 2026-10-05:** owner asks what fauna alone
-cannot provide. [Owning recommendation](../wiki/m1-spec.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
+cannot provide. [Owning recommendation](../wiki/m1-spec-history.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
 prioritizes habitat distribution, sound and bounded settlement activities,
 then actual world actors and observable consequences over more species.
 Documentation-only review-draft, local `main`; no implementation activation
@@ -4279,7 +4279,7 @@ acceptance NOT_RUN, appeal/production cost NOT_MEASURED.
 
 **Biome fauna design — 2026-10-05:** owner requested more distinct habitats.
 Local documentation-only review-draft on `main f3d214c` records
-[current source findings, habitat matrix and next cycle](../wiki/m1-spec.md#20-биомы-и-живая-природа--2026-10-05).
+[current source findings, habitat matrix and next cycle](../wiki/m1-spec-history.md#20-биомы-и-живая-природа--2026-10-05).
 Current dry-ground selection does not distinguish meadow/forest/hills; frogs
 already use wet habitats. First proposed cycle redistributes existing forms;
 dragonflies/ducks follow after integrated acceptance. No runtime/art/state
@@ -4370,7 +4370,7 @@ unrelated drafts remain uncommitted. Core build, core/web typecheck, diff and
 original stationary company and850 crowns. New travel/full integrated gameplay
 NOT_RUN for this update; existing starvation limitation remains. Location writer
 receives primary ownership back for its separately authorized isolated delivery.
-[Actual integration and limits](../wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
+[Actual integration and limits](../wiki/m1-spec-history.md#слияние-и-обновление-primary-main--2026-10-05).
 No new migration, reset or deployment.
 
 **Hex navigation delivery authorized — 2026-10-05:** owner requested
@@ -4408,7 +4408,7 @@ normal RMB/S/reload/reroute/arrival preserves exact origins/goals. Independent
 supplied-evidence critic found no material new defect. Current movement SQL-suite
 NOT_RERUN; earlier 11 checks are historical. Fresh overview/close/FPS/VM acceptance
 remain unproven. Failures and unchanged thresholds are retained in the
-[owning result](../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
+[owning result](../wiki/m1-spec-history.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
 Local/uncommitted, NOT_PUBLISHED/NOT_MERGED; no deployment authorization.
 
 **Map topology experiment delivered locally — 2026-10-05 (activated 2026-10-04):**
@@ -4416,7 +4416,7 @@ Historical stage; the hex-default decision above supersedes its square recommend
 Owner requested “Проведи эксперименты, реализуй, сравни”. Sole writer in isolated
 `/private/tmp/warwrit-map-topology-research`, branch
 `codex/map-topology-experiments`, base `bcc30f5`.
-[Owning result and reproduction](../wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04):
+[Owning result and reproduction](../wiki/m1-spec-history.md#эксперимент-и-реализация--2026-10-04):
 101 cases ×3 interleaved repeats. Static road costs/surface priority preparation
 reduce square-search p95 175.96→100.09ms with all 297 successful paths and schedules
 unchanged. Opt-in hidden hex search p95 90.96ms, but average/worst travel duration
@@ -4436,7 +4436,7 @@ no merge/deployment authorization. Generator and macrohex authoring remain propo
 
 **Global-map topology research — 2026-10-04:** owner asks whether hex cells
 would simplify transitions, movement costs, pathfinding and generation.
-[Owning wiki proposal](../wiki/m1-spec.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
+[Owning wiki proposal](../wiki/m1-spec-history.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
 compares current exact polygon/grid/road navigation with hex regions, Voronoi
 generation and navmeshes. Recommendation: retain continuous movement and exact
 roads; profile the current search first, then try derived macrohex authoring on
@@ -5497,7 +5497,7 @@ point, travel, stop/reroute and retain the authoritative position after re-entry
 This is a planning checkpoint, not implementation activation or runtime evidence;
 read the reconciled work-package/source contract before code changes.
 No deployment, provisioning or merge permission is added by these product answers.
-See [wiki §18](../wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03).
+See [wiki §18](../wiki/m1-spec-history.md#18-battle-brothers-направление-и-этапы--2026-10-03).
 Live readback: main `4ec0be6`; open PR135 head `65c5e39290b0a28923ee365ef18096246d30cf7c`,
 clean worktree `/Users/vovanostm/learn/warwrit-m1`. Its code uses site/road travel,
 not arbitrary terrain destinations. PR135 describes all eight runtime contracts
@@ -6222,7 +6222,7 @@ V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#3
 F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
 World knowledge/offline behavior and two-company participation require the full #177 scenarios.
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
-[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec-history.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/335/402/405/334/406 merged; launch #176 complete, volumes retained. New recovery-head merge remains separately governed by AGENTS.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
@@ -6345,7 +6345,7 @@ V4/V5 surrender/hostile-retreat terminal evidence is still unsupported; keep [#3
 F1, learning/retraining, authentic nickname, remaining #8 coverage and all eight-contract acceptance remain open.
 World knowledge/offline behavior and two-company participation require the full #177 scenarios.
 Current visual/device/owner acceptance and full backup/restore remain open; FPS/capacity NOT_MEASURED here.
-[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec.md#state-2026-11-05) separate implementation from evidence.
+[Task queue](PARALLEL_WAVES.md) and [source assessment](../wiki/m1-spec-history.md#state-2026-11-05) separate implementation from evidence.
 At most two active game-writing worktrees; preserve parked combat/novel/art work and existing resources.
 PR366/335/402/405/334/406/363/407/410 merged; launch #176 complete, volumes retained. Current #167 assignment authorizes implementation/checks/PR update.
 Historical PR-specific approvals remain scoped to their owning delivery; no Orca/automation restart.
@@ -6432,4 +6432,4 @@ Preserve primary combat/art WIP, other writers' resources and all retained world
 Writer codex/loss-panel-layout392 in .claude/worktrees/repro-launch176 owns EncounterPanel/BattleView/props/game.css and focused tests.
 Owner selected only the overlap fix. Main600e19a1 integrated;36 tests/types/lint PASS. Source/finite visual ACCEPT at e6e8e7c9.
 Presentation replay PASS at1280×720/480:16px gap, actual wheel scroll and Return callback. Full gate NOT_RUN under advisory policy. [PR412](https://github.com/Vovanostm/warwrit/pull/412) PUBLISHED; owner explicitly approved merge on2026-11-07. PR owns live merge receipt; CI advisory.
-[Scope/results](../wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06). Actual retained defeat applied at62; no new native succession acceptance. Full #392 open.
+[Scope/results](../wiki/m1-spec-history.md#перекрытие-панелей-после-поражения--392-2026-11-06). Actual retained defeat applied at62; no new native succession acceptance. Full #392 open.
