@@ -100,7 +100,7 @@ sides' survivors, deaths, retreats and surrenders, with restart/editor controls.
 Command/skill tooltips are suppressed on terminal results so these controls remain clear.
 Current ability slots remain reserved; twenty distinct skill sets are not
 represented by twenty statistical fixture profiles.
-[Current checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+[Current checks and limits](../../../../docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
 
 ## Sprite v3 — 2026-10-13
 
@@ -129,7 +129,7 @@ Static event labels include skill effects and actual HP lost on v3 overkill.
 A declared-damage label sits above the victim while it occupies the announced
 cell; live matching preparation/retarget captions suppress duplicate event labels.
 
-[Integrated results and exact limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+[Integrated results and exact limits](../../../../docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
 The dated v2 statements above are historical; v3 supersedes foreground ground
 rings and reserved-only skill slots. Twenty visual profiles do not mean twenty
 unique ability sets; no XP awards, captive campaign or poison/burn status engine.
@@ -162,7 +162,7 @@ Pin/left-click/initiative selection inspects that unit's public weapon reach;
 transient hover does not replace its footprint. The caption/legend distinguishes
 inspection/resources from ordinary attack admission; skill mode uses its own
 preview. Sword/shield 1, spear/W09 1–2, bow 1–4 cells in this finite prototype.
-[Owning range result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
+[Owning range result](../../../../docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
 
 Commands and skills use a local ten-icon Game Icons subset through decorative
 CSS masks. Button names, tooltip costs/refusal reasons and keyboard behaviour

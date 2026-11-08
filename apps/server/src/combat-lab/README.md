@@ -96,7 +96,7 @@ round-60 outcome; the earlier 128-command continuation would strand creation.
 Static terrain must connect all starting figures; temporary occupancy is ignored.
 This deliberately rejects isolated ranged-only arenas in this local editor.
 No production encounter, campaign storage, migration or captive custody is added.
-[Parameters and actual acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+[Parameters and actual acceptance](../../../../docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
 
 ## Sprite v3 — 2026-10-13
 
@@ -118,7 +118,7 @@ fields, not replay state. Web has no game-core dependency. Static connectivity
 is admitted by server validation; the editor validates structure locally and
 retains the draft when server creation rejects it, with a visible explanation.
 No migrations, campaign writes or new runtime dependency.
-[Current implementation, checks and limitations](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+[Current implementation, checks and limitations](../../../../docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
 
 ## Selected weapon inspection — 2026-10-13
 
@@ -127,7 +127,7 @@ The pure `previewCombatWeaponReach(state, id)` supplies detached optional
 independent of turn ownership/AP/stamina. Blocked cells are excluded and bows
 retain canonical LOS. This is inspection, not attack admission: only
 `attackPreview` permits an ordinary current target. No RNG/state/replay change.
-[Journey and current integration limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
+[Journey and current integration limits](../../../../docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13).
 
 ## Sprite v4 ordinary bow — 2026-10-21
 
