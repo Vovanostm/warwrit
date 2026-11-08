@@ -24,7 +24,9 @@ Owner continuation on November9 authorizes finishing N01 and merge, permitting
 a new player save. The migrated isolated N01 save now also passes ordinary OIDC
 entry, an equipment command and restart/readback; all INT-1–6 pass under that
 accepted fallback. Historical-player-save proof remains NOT_RUN. Publication and
-merge readback are owned by N01/PR430; full M1 remains unaccepted. Detailed commands,
+merge readback: PR430 MERGED at00:18:43 Moscow on November9 as9a1bcc42, expected
+heada5a4ef2c. GitHub also marked PR429 merged. N01 is DONE/MERGED under the
+approved fallback; full M1 remains unaccepted. Detailed commands,
 actual probe failures, remaining limits and reproduction are recorded once in N01.
 All previous WLC08 evidence below remains historical and unmodified.
 

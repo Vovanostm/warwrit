@@ -11,7 +11,7 @@ requests.
 
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
-  [Result and merge authority](docs/work-packages/m1-next/01-integration.md). LOCAL.
+  [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
 
 ### Integrate consolidation and verify the ordinary company loop (WLC-08)
 
