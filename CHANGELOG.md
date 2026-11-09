@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Added: five proposed M1 tasks in
+  the [ROADMAP](docs/engineering/ROADMAP.md) for the 2026-11-09 owner decisions:
+  campaign battle on S4 rules, ordinary contract terms, loot sale, return report,
+  and twenty quests with four moral choices.
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: owner answers to the
   open game rules (section V of [open questions](docs/wiki/m1-open-questions.md)),
   recorded in [m1-spec](docs/wiki/m1-spec.md). The whole reward goes to the presenter,
