@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-08
 type: concept
 tags: [game-design, lore, review-draft]
-status: review-draft
+status: draft
 authority: решения владельца 2026-10-08 (цитаты ниже); остальное — анализ рецензий и рекомендации автора
 sources:
   - vision.md

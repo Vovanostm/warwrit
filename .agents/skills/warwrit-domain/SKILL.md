@@ -7,7 +7,7 @@ description: Implement a bounded Warwrit game-core slice using existing commands
 
 ## Start
 
-Use the active contract from [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md).
+Use the active contract from [CURRENT_PLAN.md](../../../docs/engineering/ROADMAP.md).
 Apply [AGENTS.md](../../../AGENTS.md); use `warwrit-context` when resuming.
 For items/care/outcomes read [physical-state.md](references/physical-state.md).
 

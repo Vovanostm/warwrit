@@ -2,8 +2,8 @@
 
 ## Authority and current boundary
 
-Contract: [B4](../engineering/briefs/2026-10-07/B4-story-missions.md),
-[00-common](../engineering/briefs/2026-10-07/00-common.md) and AGENTS.md.
+Contract: [B4](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/B4-story-missions.md),
+[00-common](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/00-common.md) and AGENTS.md.
 Owner decision, 2026-10-07, verbatim **«Одобряю»**: revision 6 of
 [«Кто выдал тайник»](../wiki/world/porechye.md#кто-выдал-тайник--2026-10-07)
 at `874b8fc` is approved. **AC-1 PASS**; approval covers that story, not

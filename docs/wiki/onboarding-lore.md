@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-07
 type: comparison
 tags: [game-design, narrative, quests, review-draft]
-status: review-draft
+status: draft
 authority: authored proposal requested by owner; not approved lore or implementation
 sources:
   - m1-spec.md
@@ -59,8 +59,8 @@ sources:
 
 ## B8 — три раунда текстовой критики — 2026-10-07
 
-Контракт: [B8](../engineering/briefs/2026-10-07/B8-company-book.md) и
-[00-common §§5, 8](../engineering/briefs/2026-10-07/00-common.md).
+Контракт: [B8](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/B8-company-book.md) и
+[00-common §§5, 8](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/00-common.md).
 [Полные A/B RU/EN](onboarding-book.md#b8--два-варианта-для-выбора-владельца--2026-10-07)
 проверял read-only `warwrit_text_critic` (Linnaeus); оба состава на каждом
 проходе, новая абсолютная оценка, не приёмка отдельных исправлений.
@@ -786,7 +786,7 @@ PASS. Prettier трёх страниц и scoped diff-check общих доку�
 - Принят приватный постоянный общий мир для 10–20 приглашённых игроков,
   авторская карта и полевая группа до шести бойцов. Сотни игроков здесь —
   проверка будущего замысла, не расширение принятого M1 и не измеренная ёмкость.
-  Источник: [направление M1](m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03).
+  Источник: [направление M1](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03).
 - Существуют Серое Поречье, Каменный Брод, Березняк, Тихая Гать, Северный Двор
   и опасная разрушенная Старая мельница. Не менять их назначение ради пролога.
   Источник: [рабочий лор v1.2](https://airtable.com/apph3bj1NyVrfJeLM/tblwAxG5Ek1FyWpiW/recQNKqYfwoJpCXVu),
@@ -1063,8 +1063,8 @@ Scoped diff-check не вывел замечаний; для новых файл
 Игра, UI-прототип, CI и независимая игровая критика — **NOT_RUN**;
 темп чтения, интерес игроков и ёмкость сотен компаний — **NOT_MEASURED**.
 После завершения параллельных писателей внесены только записи этой задачи в
-[навигацию](index.md), [журнал wiki](log.md),
-[CHANGELOG](../../CHANGELOG.md) и [CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
+[навигацию](index.md), [журнал wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/log.md),
+[CHANGELOG](../../CHANGELOG.md) и [CURRENT_PLAN](../engineering/ROADMAP.md).
 Их существующие изменения сохранены. Новый лор остаётся предложением;
 документационный результат не утверждает готовую MMO или принятую игровую постановку.
 

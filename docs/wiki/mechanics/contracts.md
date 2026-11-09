@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-08
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: направление владельца 2026-10-07 (контракты из причин мира); формула — предложение
 sources:
   - index.md

@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-11-05
 type: concept
 tags: [game-design, review-draft, quests]
-status: review-draft
+status: draft
 authority: authored design proposal; location-clue amendment accepted by owner 2026-10-28; not implementation
 sources:
   - sources.md

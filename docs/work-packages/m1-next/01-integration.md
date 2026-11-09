@@ -52,7 +52,7 @@ Owned exact paths: `AGENTS.md`, `CHANGELOG.md`, `docs/engineering/ROADMAP.md`,
 `docs/engineering/ROADMAP_HISTORY_N01.md`, `docs/engineering/WLC_08_ACCEPTANCE.md`,
 `docs/work-packages/m1-next/COMMON.md`, this file and `prompts/01-integration.md`.
 `COMBAT_LAB_CONSOLIDATION.md` is inherited from main without an author rewrite.
-The [prior roadmap](../../engineering/ROADMAP_HISTORY_N01.md) is preserved verbatim;
+The [prior roadmap](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/ROADMAP_HISTORY_N01.md) is preserved verbatim;
 the checkbox index and root amendment retain November 8 navigation/advisory policy.
 The exact supplied COMMON/launch inputs are included, without other N-package work.
 Primary sprite WIP, original WLC source worktree files, retained saves and other

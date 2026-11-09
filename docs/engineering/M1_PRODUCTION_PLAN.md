@@ -5,7 +5,7 @@
 The owner requested a current assessment and an updated path to the intended
 playable game. This section supersedes the September/October dispatch order
 below. [Roadmap](ROADMAP.md) owns milestone scope, [task queue](PARALLEL_WAVES.md)
-owns issue mapping and [assessment](../wiki/m1-spec.md#state-2026-11-05) owns
+owns issue mapping and [assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#state-2026-11-05) owns
 the current source/evidence boundary. Historical entries remain historical.
 
 Owner follow-up on 2026-11-05: dispatch one small task from the
@@ -79,7 +79,7 @@ scenes, including the mill chain. Record an actual result for each of:
 
 [#364](https://github.com/Vovanostm/warwrit/issues/364) owns remaining terminal
 outcomes. Hostile-retreat policy is accepted in #376; #378 settlement/result UI
-is implemented and accepted in PR408. The [owning result](../wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+is implemented and accepted in PR408. The [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
 separates real encounter/SQL and finite UI acceptance from the native escape that
 did not reproduce. #409 adds repeat admission/history for the same unfinished
 hunt. Surrender/captivity #377 still needs a finite accepted source contract;
@@ -150,7 +150,7 @@ Amendment 2026-10-20: the [owner approved provisional fists](https://github.com/
 Immobile members cannot independently move/retreat; assisted transport remains undefined.
 The current overview and preset branches are implementation in progress, not
 accepted or merged. No new gameplay or full gate ran for this documentation update.
-Live assignments and actual check results belong to [CURRENT_PLAN](CURRENT_PLAN.md).
+Live assignments and actual check results belong to [CURRENT_PLAN](ROADMAP.md).
 
 ## Current GitHub execution queue — 2026-10-17
 
@@ -209,7 +209,7 @@ owner. No deployment, paid actions, auto-merge or new merge permission arises
 from creating these issues. Recheck existing scoped permission separately.
 
 Detailed dated audit and evidence boundaries:
-[wiki M1](../wiki/m1-spec.md#актуальная-очередь-github--2026-10-17).
+[wiki M1](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#актуальная-очередь-github--2026-10-17).
 Older waves below are historical planning; their live dispatch/status is
 superseded by this queue plus CURRENT_PLAN, not silently reactivated.
 
@@ -260,7 +260,7 @@ reconstruct the missing archive catalogue. M2 public MMO, PvP, trading and
 listed M1 sources.
 
 The operational scheduling amendment
-([M1_EXECUTION_READINESS.md](M1_EXECUTION_READINESS.md)) selects I02a as a
+([M1_EXECUTION_READINESS.md](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_EXECUTION_READINESS.md)) selects I02a as a
 consumer-readiness checkpoint to avoid the conditional F01 rescue-producer
 cycle. I02a requires completed H01–H08 and I01 and real durable verification of
 the named consumer subset. It does not waive H or ID03 and is not full I02.
@@ -578,4 +578,4 @@ do not add one per helper or replace gameplay proof with structural snapshots.
 | Rami Ismail, [Prototypes and vertical slice](https://ltpf.ramiismail.com/prototypes-and-vertical-slice/) (2022-09-26): repeat a comparable unit and compare its duration.                                                  | Record first and second comparable unit timing. Review, rework, integration and blocked time are local adaptation measures, not attributed to this source. | Same practitioner, not independent empirical research; do not import calendar, budget or throughput estimates. |
 
 The checked Codex workflow sources and their limits are summarized in
-[CODEX_GAME_DEVELOPMENT_2026-09-30.md](research/CODEX_GAME_DEVELOPMENT_2026-09-30.md).
+[CODEX_GAME_DEVELOPMENT_2026-09-30.md](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/CODEX_GAME_DEVELOPMENT_2026-09-30.md).

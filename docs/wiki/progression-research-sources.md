@@ -4,7 +4,7 @@ created: 2026-10-06
 updated: 2026-10-06
 type: reference
 tags: [game-design, review-draft]
-status: review-draft
+status: draft
 confidence: medium
 authority: source register for external research; no Warwrit approval
 sources:

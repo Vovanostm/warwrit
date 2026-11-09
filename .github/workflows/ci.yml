@@ -26,9 +26,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check current plan before expensive verification
-        run: bash scripts/check-current-plan.sh
-
       - name: Select verification scope
         id: scope
         if: github.event_name == 'pull_request'

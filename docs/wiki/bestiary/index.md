@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-07
 type: index
 tags: [bestiary, game-design, review-draft]
-status: review-draft
+status: draft
 authority: authored design proposal; not canonical approval or implementation
 sources:
   - sources.md
@@ -84,4 +84,4 @@ sources:
 
 Новые виды и механики не реализованы; игровой баланс и интерес не измерены.
 Материал локальный. [Вернуться в общую wiki](../index.md) ·
-[Оперативный план](../../engineering/CURRENT_PLAN.md).
+[Оперативный план](../../engineering/ROADMAP.md).

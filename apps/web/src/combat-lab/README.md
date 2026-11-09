@@ -84,7 +84,7 @@ Replay export contains both sides' accepted commands and no capability.
 Sessions are volatile: restarting the API loses them. An uncertain create is
 not automatically retried. Action retries preserve the original body/request ID.
 This local stand does not modify campaign state or accept the full M1 journey.
-See [the owning contract](../../../../docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
+See [the owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
 for actual verification and remaining mechanics.
 
 ## Sprite v2 UX — 2026-10-12
@@ -142,7 +142,7 @@ impassable cells even with the full grid off; borders remain below figures and
 non-pickable. Hover/pin inspection names the blocked cell and explains that it
 is impassable. Rubble never submits a move or steals body picking; canonical
 map/range/LOS rules are unchanged.
-[Current defect, journey and acceptance](../../../../docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13).
+[Current defect, journey and acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13).
 
 ## Weapon reach contrast — 2026-10-13
 
@@ -154,7 +154,7 @@ a smaller cyan movement contour; this is a capability cue, not a smaller hex
 or input gap. Every ground cue stays below figures. Public weaponReach remains
 inspection range, while attackPreview alone admits an attack; no rule/LOS/cost
 is inferred from colour. Legal enemy targets retain their orange emphasis.
-[Current visual result and checks](../../../../docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13).
+[Current visual result and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13).
 
 ## Selected weapon inspection and command icons — 2026-10-13
 
@@ -170,7 +170,7 @@ remain owned by the existing buttons. Commands show their key; learned skills
 retain rank and distinguish available, unavailable and selected states.
 CC BY 3.0 author/source/adaptation credit is visible in the expanded battle log.
 Provenance: `assets/art/combat/ui-icons/README.md` and `license.txt`.
-[Owning icon result](../../../../docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13).
+[Owning icon result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13).
 
 ## Single colour grid — 2026-10-13
 
@@ -184,7 +184,7 @@ field ACCEPT;21 geometry+UI checks PASS by renderer author after HUD freeze.
 The same field critic confirmed no material regression in final integrated
 day/night images after that freeze; own critic browser NOT_RUN.
 This does not accept terminal HUD or the complete combat DoD.
-[Current finite result and limits](../../../../docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+[Current finite result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
 
 ## Unified desktop HUD — 2026-10-13
 
@@ -201,13 +201,13 @@ ResizeObserver rather than over battlefield figures. Active stance badges requir
 an active unit; resolved combat hides the unknown-next-round placeholder.
 Actor/target resources, forecast and range
 admission remain server-derived.
-[Current measured result and visual limits](../../../../docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13).
+[Current measured result and visual limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13).
 
 Resolved-state HUD also received scoped appearance ACCEPT at1366/1440;
 fresh isolated auto match R8/revision151 passed terminal inspection with
 zero action POSTs and unchanged revision. This is separate from original
 manual R9 and was captured before the subsequent camera integration cycle.
-[Terminal result and limits](../../../../docs/wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13).
+[Terminal result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#итоговый-hud-завершённого-боя--2026-10-13).
 
 ## Battle camera adapter and menu hint — 2026-10-13
 
@@ -227,7 +227,7 @@ merged; this scene/helper/sprite integration remains local/unpublished.
 The existing menu helper now explains LMB inspection, RMB orders, LMB drag,
 WASD/arrows and wheel zoom. Root lint/format and actual menu copy/fit PASS;
 no new panel, control geometry or gameplay rule was added.
-[Owning adapter/helper result](../../../../docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13).
+[Owning adapter/helper result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13).
 
 First camera module/test publication: [PR156](https://github.com/Vovanostm/warwrit/pull/156),
 verified head64b49ee3 with matching successful CI38404171166. Its scope excludes

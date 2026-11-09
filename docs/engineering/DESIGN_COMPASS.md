@@ -21,6 +21,9 @@ Anything marked _candidate_ needs an owner decision before it becomes a rule.
   decide skirmishes, ambushes and sieges of small places. Bands work around the war:
   scouting, escorting or raiding supply trains, foragers, deserters, battlefields,
   service for one side.
+- **Faith:** the cross is the sign of the faith (owner 2026-11-09); crosses on
+  churches, chapels and graves are allowed. Church structure, name, clergy and
+  rites are undecided; no miracles or acting gods.
 - Scale: test with 10–20 players; target 200–1000 bands. Capacity NOT_MEASURED.
 - **Focus now:** make the current world deep and interesting and make combat
   deep, readable and rich in mechanics. New worlds or regions are out of scope
@@ -123,13 +126,14 @@ differently · presented to the XCOM bar (≤1.5 s action, skippable).
 
 ## 7. Where the details live
 
-| Topic                                  | Page                                                                         |
-| -------------------------------------- | ---------------------------------------------------------------------------- |
-| Every mechanic, status and cross-links | [mechanics index](../wiki/mechanics/index.md)                                |
-| Evidence, per-game analysis, sources   | [benchmarks](../wiki/benchmarks.md)                                          |
-| Vision and requirements                | [vision](../wiki/vision.md)                                                  |
-| World, duchies, Porechye               | [world](../wiki/world/index.md), [Porechye](../wiki/world/porechye.md)       |
-| Writing                                | [writing](../wiki/world/writing.md), [TEXT_CRITIQUE](TEXT_CRITIQUE.md)       |
-| Combat rules and presentation          | [combat](../wiki/combat.md), [battlefield](../wiki/battlefield-test-maps.md) |
-| Progression research (20 games)        | [progression-research](../wiki/progression-research.md)                      |
-| Visual acceptance                      | [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md)                                        |
+| Topic                                               | Page                                                                              |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Every mechanic, status and cross-links              | [mechanics index](../wiki/mechanics/index.md)                                     |
+| Evidence, per-game analysis, sources                | [benchmarks](../wiki/benchmarks.md)                                               |
+| Vision and requirements                             | [vision](../wiki/vision.md)                                                       |
+| World, duchies, Porechye                            | [world](../wiki/world/index.md), [Porechye](../wiki/world/porechye.md)            |
+| Writing                                             | [writing](../wiki/world/writing.md), [TEXT_CRITIQUE](TEXT_CRITIQUE.md)            |
+| Combat rules and presentation                       | [combat](../wiki/combat.md), [battlefield](../wiki/battlefield-test-maps.md)      |
+| Progression research (20 games)                     | [progression-research](../wiki/progression-research.md)                           |
+| Visual acceptance                                   | [VISUAL_CRITIQUE](VISUAL_CRITIQUE.md)                                             |
+| Reference library (non-canon), player-journey audit | [references](../references/README.md), [audit](../references/audit-2026-11-09.md) |

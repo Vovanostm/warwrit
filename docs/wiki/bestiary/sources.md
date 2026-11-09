@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-05
 type: concept
 tags: [bestiary, game-design, review-draft]
-status: review-draft
+status: draft
 authority: authored design proposal; not canonical approval or implementation
 sources:
   - ../../../AGENTS.md
@@ -49,7 +49,7 @@ M1-профиле берутся из
 [правилами договоров](../economy-quests/quest-rules.md).
 Эти экономические страницы сами остаются авторскими proposals.
 Оперативный статус берётся из
-[CURRENT_PLAN](../../engineering/CURRENT_PLAN.md); старые записи памяти
+[CURRENT_PLAN](../../engineering/ROADMAP.md); старые записи памяти
 не используются как подтверждение текущей игры.
 
 Недоступный оригинальный ZIP/narrative manifest не восстановлен; исходная

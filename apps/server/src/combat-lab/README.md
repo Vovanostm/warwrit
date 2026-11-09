@@ -79,7 +79,7 @@ limitations above describe that delivery, not the current sprite scenario.
 No database, migration, runtime dependency or campaign mutation is introduced.
 Special creature powers, tether, panic/surrender and announced intent/retargeting
 remain outside this prototype. Verification is recorded in
-[the owning page](../../../../docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09).
+[the owning page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09).
 
 ## Sprite v2 improvement — 2026-10-12
 

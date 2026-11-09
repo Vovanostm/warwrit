@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-10-28
 type: concept
 tags: [game-design, review-draft, economy, quests]
-status: review-draft
+status: draft
 authority: authored design proposal; not canonical approval or implementation
 sources:
   - sources.md
@@ -42,4 +42,4 @@ sources:
 
 Код, интерфейс, новые NPC и события, миграции, публикация или deployment этим документом не создаются. После выбора малого внедряемого набора нужен доступный игроку путь и независимая игровая критика по договору проекта. Проверка ссылок wiki не заменяет приёмку игры.
 
-[Главная wiki](../index.md) · [ТЗ и принятые решения](../m1-spec.md) · [Оперативный план](../../engineering/CURRENT_PLAN.md).
+[Главная wiki](../index.md) · [ТЗ и принятые решения](../m1-spec.md) · [Оперативный план](../../engineering/ROADMAP.md).

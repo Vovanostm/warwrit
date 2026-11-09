@@ -4,7 +4,7 @@ created: 2026-10-06
 updated: 2026-10-06
 type: comparison
 tags: [game-design, review-draft]
-status: review-draft
+status: draft
 confidence: medium
 authority: external research and author synthesis; not approved Warwrit rules
 sources:

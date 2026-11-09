@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-08
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: draft
 authority: предложение; ориентир — attached locations Battle Brothers
 sources:
   - index.md

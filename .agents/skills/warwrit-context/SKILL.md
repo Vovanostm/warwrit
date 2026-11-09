@@ -8,7 +8,7 @@ description: Restore current Warwrit task, authority, source scope and repositor
 ## Inputs
 
 The owner request and repository access. Start with [AGENTS.md](../../../AGENTS.md)
-and the status block in [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md).
+and the status block in [CURRENT_PLAN.md](../../../docs/engineering/ROADMAP.md).
 Read its linked history only for a named unresolved question. Do not use a
 remembered PR, old attachment or cache as the current head.
 

@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-10
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: требование combat.md и battlefield-test-maps.md; урок XCOM 2/JA3
 sources:
   - index.md
@@ -44,7 +44,7 @@ sources:
 
 ## Уточнение спрайтового стенда — 2026-10-09
 
-[Перепроверка готового кода](../battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
+[Перепроверка готового кода](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
 рекомендует одно поле доступных позиций: граница хода и путь используют общую
 чистую подготовку с исполнением и AI, включая независимые расходы ОД/сил,
 грязь и подъём. Готовый movement/attack preview в проверенных исходниках
@@ -104,4 +104,4 @@ PASS по отчёту владельца core. Отдельный API3023/web53
 UI/HTTP маршрут при10 HP: fire5 до reaction5, прогноз реакции5 совпал с
 receipt revision31, без подмены state. Main3022 не перезапускался и его
 runtime поправки ещё PENDING.
-[Owning status](../battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+[Owning status](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).

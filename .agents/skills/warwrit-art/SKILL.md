@@ -8,7 +8,7 @@ description: Produce or fix a Warwrit raster asset (map sheet, place scene, conc
 Follow [ART_LORE_POLICY](../../../docs/engineering/ART_LORE_POLICY.md),
 [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md) and current AGENTS.
 Historical worked example with five passes:
-[Porechye close view](../../../docs/wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09)
+[Porechye close view](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#крупный-план-поречья-через-codex--2026-10-09)
 and its [provenance](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/world/porechye-v1/provenance.json).
 
 ## Inputs before the first prompt

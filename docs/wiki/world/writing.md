@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-07
 type: concept
 tags: [narrative, lore, review-draft]
-status: review-draft
+status: rule
 authority: авторское редакционное правило по запросу владельца 2026-10-07
 sources:
   - index.md

@@ -4,7 +4,7 @@ created: 2026-10-07
 updated: 2026-10-07
 type: concept
 tags: [lore, quests, narrative, m1, review-draft]
-status: review-draft
+status: draft
 authority: авторское предложение на основе решения владельца 2026-10-07; тексты в игре пока не заменены
 sources:
   - index.md
@@ -178,8 +178,8 @@ sources:
 дословно: **«Одобряю»** — редакция 6 в коммите `874b8fc` принята
 как сюжетное согласование **AC-1: PASS**. Это не работающая миссия
 и не утверждение размера награды. Основание —
-[B4](../../engineering/briefs/2026-10-07/B4-story-missions.md) и
-[общий контракт](../../engineering/briefs/2026-10-07/00-common.md).
+[B4](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/B4-story-missions.md) и
+[общий контракт](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/00-common.md).
 Модель и границы реализации — в
 [M1-STORY-MISSIONS](../../work-packages/M1-STORY-MISSIONS.md).
 Продолжение «Когда молчит мельница»: Сенька уже вернулся в Северный Двор.

@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-05
 type: comparison
 tags: [narrative, quests, game-design, review-draft]
-status: review-draft
+status: draft
 authority: source-grounded creative analysis; new plots are proposals, not canon
 sources:
   - onboarding-lore.md

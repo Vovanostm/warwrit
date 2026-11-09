@@ -1,21 +1,17 @@
 # Documentation map
 
-- [`engineering/WLC_08_ACCEPTANCE.md`](engineering/WLC_08_ACCEPTANCE.md) — current consolidation integration candidate, fresh acceptance results and remaining M1 gaps.
-- [`engineering/DEVELOPER_PLAYGROUND.md`](engineering/DEVELOPER_PLAYGROUND.md) — protected development-only shell and links to current Combat Lab / Map Editor contracts.
-- [`architecture/0006-m1-renderer-babylon.md`](architecture/0006-m1-renderer-babylon.md) — accepted renderer; prior engine-selection requirements are superseded.
+Read in this order; open only what the task needs.
 
-- [`wiki/index.md`](wiki/index.md) — локальная wiki; вход к единой обзорной
-  спецификации M1.
-- [`authority/PROJECT_AUTHORITY.md`](authority/PROJECT_AUTHORITY.md) — source-of-truth hierarchy and change control.
-- [`architecture/0001-modular-monolith.md`](architecture/0001-modular-monolith.md) — typed modular-monolith boundary.
-- [`architecture/0002-deterministic-combat-kernel.md`](architecture/0002-deterministic-combat-kernel.md) — dependency-free deterministic M0 combat and replay decision.
-- [`architecture/0003-m0-m1-technology-baseline.md`](architecture/0003-m0-m1-technology-baseline.md) — accepted M0/M1 runtime, HTTP, realtime, persistence and renderer-decision baseline with measured revisit gates.
-- [`architecture/0004-company-identity-succession-boundary.md`](architecture/0004-company-identity-succession-boundary.md) — accepted persistent-company, family/household, succession/regency and hard-game-over boundary for WP-02.
-- [`engineering/CURRENT_PLAN.md`](engineering/CURRENT_PLAN.md) — current delivery-state mirror for coding agents: completed milestones, active blockers, next packages and evidence gates.
-- [`engineering/ROADMAP.md`](engineering/ROADMAP.md) — full-M1 alpha dependency joins, current frontier, optional diagnostic lab and real acceptance route.
-- [`engineering/AI_TECHNOLOGY_HANDOFF.md`](engineering/AI_TECHNOLOGY_HANDOFF.md) — compact implementation contract for coding agents; read before adding or replacing framework/runtime dependencies.
-- [`engineering/LOCAL_DEVELOPMENT.md`](engineering/LOCAL_DEVELOPMENT.md) — bootstrap, infrastructure, CI, combat stress, logging, and migration operations.
-- [`work-packages/WP-00.md`](work-packages/WP-00.md) — repository foundation implementation contract and evidence.
-- [`work-packages/WP-01.md`](work-packages/WP-01.md) — deterministic combat-kernel implementation contract and evidence.
+1. [AGENTS.md](../AGENTS.md) — engineering contract and source priority.
+2. [ROADMAP](engineering/ROADMAP.md) — progress checkboxes; each links its task record.
+3. [Vision](wiki/vision.md) — the idea and the owner's requirement register (REQ-01…23).
+4. [M1 specification](wiki/m1-spec.md) — current M1 rules only.
+5. [Wiki](wiki/index.md) — mechanics, world, combat, map; pages marked `status: rule` are decided, `draft` are proposals ([schema](wiki/SCHEMA.md)).
+6. [Architecture decisions](architecture/) — accepted ADRs; [AI technology handoff](engineering/AI_TECHNOLOGY_HANDOFF.md) before adding technology.
+7. [Local development](engineering/LOCAL_DEVELOPMENT.md) — setup, launch and focused checks.
+8. [Design compass](engineering/DESIGN_COMPASS.md) — short game-design summary for agents.
+9. [References](references/README.md) — images and design references; not canon.
+10. [Open owner questions](wiki/m1-open-questions.md).
 
-Canonical product decisions and work-package status live in the Warwrit Airtable planning ledger, including dated owner amendments. `engineering/CURRENT_PLAN.md` is the repository-side operational mirror for live status; `engineering/ROADMAP.md` is the compact dependency/continuation view for the full persistent M1 alpha. Update them together when sequencing, blockers or milestone eligibility materially change. Historical issue bodies and old planning-package copies remain evidence/history when newer owner decisions or canonical records supersede them.
+Work journals, check reports and session handoffs are not kept in `docs/`;
+results go to the task record and [CHANGELOG](../CHANGELOG.md), details to git history.

@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-13
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро боя (provisional); предложения помечены
 sources:
   - index.md

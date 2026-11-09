@@ -4,7 +4,7 @@ created: 2026-10-06
 updated: 2026-10-06
 type: specification
 tags: [game-design, review-draft]
-status: review-draft
+status: draft
 authority: owner-requested design proposal; not approved balance or implementation
 sources:
   - combat.md
@@ -50,7 +50,7 @@ Definitions v0.1 и P2 approval snapshot. Принято: независимое
 Исходный архив не восстановлен. Полный отдельный R leaf, указанный snapshot,
 не получен при адресном чтении Artifacts/Design Sessions; использована его
 каноническая редакция Learning/Social v1. Нового аудита кода не выполнялось.
-Оперативный статус принадлежит [CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
+Оперативный статус принадлежит [CURRENT_PLAN](../engineering/ROADMAP.md).
 
 ## Как устроено дерево
 

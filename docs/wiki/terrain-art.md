@@ -4,7 +4,7 @@ created: 2026-10-04
 updated: 2026-10-04
 type: specification
 tags: [m1, game-design, review-draft]
-status: review-draft
+status: draft
 authority: owner-requested art specification; production details are proposed
 sources:
   - ../../AGENTS.md
@@ -29,7 +29,7 @@ dark fantasy закреплены в [AGENTS.md](../../AGENTS.md).
 этого ТЗ. Подготовка документа не означает принятие каждого параметра,
 создание новых текстур или завершение игровой проверки.
 
-Оперативный статус хранится в [CURRENT_PLAN](../engineering/CURRENT_PLAN.md).
+Оперативный статус хранится в [CURRENT_PLAN](../engineering/ROADMAP.md).
 Связанные геометрия, рельеф, перемещение и прежние результаты принадлежат
 [M1-FREE-MOVEMENT](../work-packages/M1-FREE-MOVEMENT.md).
 Общий источник географии и лора — [спецификация M1](m1-spec.md), а не рисунки.

@@ -4,7 +4,7 @@ created: 2026-10-05
 updated: 2026-10-09
 type: index
 tags: [bestiary, game-design, review-draft]
-status: review-draft
+status: draft
 authority: authored design proposal; not canonical approval or implementation
 sources:
   - sources.md

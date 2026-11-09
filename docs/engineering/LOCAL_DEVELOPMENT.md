@@ -169,7 +169,7 @@ retains the companies, accepted routes and NPC identities. The single-player
 stand remains at5326. Ports are fixed and fail on conflict; stop the owning
 launcher before starting another copy. Never delete the volume to fix a route.
 The development fixture login is loopback-only and unavailable in production.
-See the [current implementation boundaries](../wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+See the [current implementation boundaries](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
 
 For optional measured Node coverage, stop the owning launcher first and choose
 an unused absolute JSON path:
@@ -358,7 +358,7 @@ Troubleshooting follows the failing boundary.
   `WORLD_MAP`. Atlas and legacy saves are separate. Cookies are host-scoped, so
   separate Chrome profiles are required for concurrent stacks on127.0.0.1.
 
-The [playtest result](M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06)
+The [playtest result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06)
 records actual verification and remaining limits. Production requires complete
 DB/OIDC configuration, uses deployment-supplied environment and prohibits local
 fixture/lab modes. This local recipe uses public development credentials.
@@ -476,7 +476,7 @@ Use built public packages and `DATABASE_URL` for an exclusively owned disposable
 PostgreSQL. Existing integration setup creates/migrates its isolated test databases.
 Normal unit mode skips this scenario. After an observation, load the current
 persisted aggregate before a fixture edit; restoring an old genesis state can
-mismatch the row's newer revisions. [Observed recovery failure](HARNESS_EVAL.md#fresh-recovery-consumer-check).
+mismatch the row's newer revisions. [Observed recovery failure](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#fresh-recovery-consumer-check).
 
 ## Proportional local validation
 

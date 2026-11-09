@@ -49,7 +49,7 @@ configuration while omitting database-backed routes and reporting health-only
 readiness200. Production already refused that configuration at its later guard.
 Valid padded URLs still normalize to their trimmed value. Regression and actual
 entry-process results are recorded in the
-[launch follow-up](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+[launch follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
 
 When identity is enabled, `/health/ready` checks the required identity tables and
 columns without reading account data or applying migrations. Missing schema

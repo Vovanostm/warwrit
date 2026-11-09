@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-09
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро (blocked); высота и свойства местности — кандидаты
 sources:
   - index.md
@@ -46,7 +46,7 @@ sources:
 ## Связи
 
 [Дальний бой](ranged.md), [смещение](displacement.md), [ход](turn.md),
-[строй](formations.md), [биомы](../m1-spec.md#20-биомы-и-живая-природа--2026-10-05).
+[строй](formations.md), [биомы](../world/biomes.md).
 
 ## Ориентир и ошибка
 

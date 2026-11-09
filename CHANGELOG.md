@@ -9,6 +9,62 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Added: five proposed M1 tasks in
+  the [ROADMAP](docs/engineering/ROADMAP.md) for the 2026-11-09 owner decisions:
+  campaign battle on S4 rules, ordinary contract terms, loot sale, return report,
+  and twenty quests with four moral choices.
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner answers to the
+  open game rules (section V of [open questions](docs/wiki/m1-open-questions.md)),
+  recorded in [m1-spec](docs/wiki/m1-spec.md). The whole reward goes to the presenter,
+  with no helper share. Contracts can be dropped freely before the battle starts.
+  Outside FIRST HUNT the issuer keeps the trophy. A returning player gets an
+  offline report. The camp has only "camp/strike camp". Loot is sold to the town
+  trader in M1. Incapacitated fighters skip turns (this replaces wait/retreat).
+  There is no local map in M1. Campaign battles use all S4 rules. M1 needs at
+  least 20 quests, four of them with a moral choice. The faith of the cross
+  stands beside the old folk faith ([world](docs/wiki/world/index.md)).
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner set the M1
+  battle enemy limit to 12, at most 24 figures in total; the helper adds no
+  enemies ([m1-spec §7](docs/wiki/m1-spec.md#7-компания-люди-лагерь-и-содержание)).
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decisions B2–B4
+  in [m1-spec](docs/wiki/m1-spec.md). Each company brings up to six fighters and
+  a helper adds its own (replaces "6×6 total" and the FIRST HUNT limit of 12; the
+  enemy and total limits are now open questions). The §11 asset counts are a
+  minimum. Road lengths come from the current map, not the rules.
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision B1 —
+  M1 battles use full static sprites; 3D characters on the 2.5D field (REQ-15)
+  follow M1. Recorded in [m1-spec](docs/wiki/m1-spec.md) and
+  [vision](docs/wiki/vision.md); [M1-CHARACTERS-3D](docs/work-packages/M1-CHARACTERS-3D.md)
+  moved out of the M1 group in the [ROADMAP](docs/engineering/ROADMAP.md).
+- 2026-11-09, `claude/design-references`, LOCAL — Removed: old documentation per
+  owner answer to section A of [open questions](docs/wiki/m1-open-questions.md):
+  CURRENT_PLAN and its history (with `scripts/check-current-plan.sh` and its CI
+  and orca-validate steps), 24 one-off reports/handoffs, three 2026-09-08 reviews,
+  work journals inside eight rule pages, and 532 unreferenced evidence files
+  (183 → 46 MB). Inbound links point to permalinks at `87e785d5`. Changed: wiki
+  pages carry status `rule` or `draft` ([SCHEMA](docs/wiki/SCHEMA.md));
+  [docs/README.md](docs/README.md) is a reading map; biomes moved to
+  [world/biomes.md](docs/wiki/world/biomes.md); player-start decisions recorded
+  in [world](docs/wiki/world/index.md).
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: [m1-spec](docs/wiki/m1-spec.md)
+  reduced to current rules (2497 → ~360 lines); stale style, camera, camp, hire
+  and second-region statements corrected; owner decisions on combat and movement
+  lifted from the journal. Journal later removed; last edition:
+  [m1-spec at 87e785d5](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md), 77 inbound links repointed.
+  Added [owner questions](docs/wiki/m1-open-questions.md) for documentation
+  cleanup, rule conflicts and open M1 rules.
+- 2026-11-09, `claude/design-references`, LOCAL — Added: player-journey audit
+  against M1 design with 10 new UI references for uncovered screens, open owner
+  questions and a dated correction of the stale second-region line.
+  [Details](docs/references/audit-2026-11-09.md).
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner decision — the
+  cross is the sign of the faith; crosses on churches and graves are allowed,
+  church structure and rites stay open. [Details](docs/wiki/world/index.md).
+- 2026-11-09, `claude/design-references`, LOCAL — Added: non-canon reference library:
+  14 benchmark games, UI, quest, combat, world, company and text references,
+  60 generated graphic-novel images; add moral-choice analysis (Bloody Baron),
+  27 rated books and short detectives, a two-level map on atlas v6, towns and
+  taverns. [Details](docs/references/README.md).
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
   [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
@@ -246,7 +302,7 @@ requests.
   [PR339](https://github.com/Vovanostm/warwrit/pull/339) at15:15:20UTC as
   `c8128c54`, expected head `957087bc`. Owner explicitly requested merge and
   updating main; clean local main fast-forwarded to the merge with identical
-  content to the reviewed head. [Owning receipt](docs/wiki/m1-spec.md#слияние-pr339-и-обновление-main--2026-11-07)
+  content to the reviewed head. [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#слияние-pr339-и-обновление-main--2026-11-07)
   preserves focused/native/critic evidence, advisory CI and full-M1 limits.
   Update CURRENT_PLAN/ROADMAP; retain #171 OPEN and all unrelated WIP/data.
   Documentation-only receipt: scoped format/plan/diff/local links PASS,
@@ -258,7 +314,7 @@ requests.
   owner explicitly requested “merge, update main” for PR339. Record permission
   for its expected-head merge, necessary delivery receipt and clean local-main
   fast-forward in CURRENT_PLAN and the
-  [owning result](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
   CI42382366905 stopped at formatting in unchanged encounter/connection.test.ts;
   PR scope42382366947 PASS. Existing focused/native checks retained; repeated
   game checks NOT_RUN. CI advisory, no deployment or data reset authorized.
@@ -270,7 +326,7 @@ requests.
   main `fbd34b22` and prior head `c2051f3f` without rewriting history. GitHub
   confirms the PR is open and conflict-free; NOT_MERGED. Current checks, native
   journey and independent scoped critic ACCEPT are recorded in the
-  [owning wiki](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  [owning wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
   This receipt updates delivery status and ROADMAP only. Repeated game checks
   NOT_RUN; CI remains advisory. No merge/deployment permission or data reset.
 
@@ -284,7 +340,7 @@ requests.
   the server rejection mapper.25focused,4PG executor,2PG routes,builds/types/lint
   PASS; native sword/equip,split/lost-response/reload/retry and capacity refusal PASS.
   Independent scoped critique ACCEPT (criteria2–3/3);
-  CI/full suite/stress NOT_RUN. [Owning journey and results](docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
+  CI/full suite/stress NOT_RUN. [Owning journey and results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#интеграция-передачи-вещей-pr339--2026-11-07).
 
 ### Complete the local item-transfer path and repeated splitting
 
@@ -305,7 +361,7 @@ requests.
   related checks and audit PASS without bypass; hosted gate remains.
   No migration, new
   custody rule, stationary stash, merge or deployment.
-  [Owning evidence](docs/engineering/evidence/item-transfer-20261028/README.md).
+  [Owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/item-transfer-20261028/README.md).
 
 ### Activate owner-preserving player item transfer
 
@@ -323,7 +379,7 @@ requests.
   from `codex/repeat-hunt-409`: [PR416](https://github.com/Vovanostm/warwrit/pull/416)
   merged at12:01:02UTC as d19193da with expected head941a505f. Clean local main
   fast-forwarded to that merge; reviewed head and merge have identical content.
-  [Owning receipt](docs/wiki/mechanics/retreat.md#слияние-409-и-обновление-main--2026-11-07)
+  [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#слияние-409-и-обновление-main--2026-11-07)
   preserves actual checks and the unproved first-native-escape criterion; #409
   remains OPEN. CURRENT_PLAN and ROADMAP now distinguish merged implementation
   from incomplete full native acceptance. Documentation-only receipt: focused
@@ -333,7 +389,7 @@ requests.
 
 - 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED PR416 follow-up: owner explicitly
   requested “merge, update main”, including the documentation receipt. Record
-  authority in CURRENT_PLAN and the [owning page](docs/wiki/mechanics/retreat.md#разрешение-на-слияние-409--2026-11-07).
+  authority in CURRENT_PLAN and the [owning page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#разрешение-на-слияние-409--2026-11-07).
   Rename writer to coordinator/writer so the focused plan validator accepts the
   existing short checkpoint. CI548d0027 failed at that documentation check before
   gameplay verification; PR scope passed. No game-code change or new gameplay
@@ -344,7 +400,7 @@ requests.
 
 - 2026-11-07, `codex/repeat-hunt-409`, PUBLISHED as draft
   [PR416](https://github.com/Vovanostm/warwrit/pull/416), implementation head6d1b238e
-  against main1d0667ce. [Receipt and limits](docs/wiki/mechanics/retreat.md#публикация-409--pr416-2026-11-07)
+  against main1d0667ce. [Receipt and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#публикация-409--pr416-2026-11-07)
   preserve the passing SQL/current App continuation and scoped critic acceptance.
   Full native first hostile escape is still unproved; #409 OPEN, NOT_MERGED.
   Temporary browser fixture/databases and owned preview processes were cleaned up;
@@ -358,7 +414,7 @@ requests.
   Preserve current bearer-paid translations, first-loop behavior and all existing
   history. Migration0020, server admission/effects, protocol and FirstHunt/HuntList
   provide attempt history, one current battle, fresh consent and exact survivors.
-  [Owning result](docs/wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#интеграция-409-с-текущим-main--2026-11-07)
   records21focused PASS, public builds/types/lint PASS and real SQL1PASS/24filtered
   SKIP, plus current App repeat/reload/helper LEAVE/lost reply/final proof/payout.
   SQL confirms two attempts, exact10/0/66/20 survivor pools and one redeemed proof.
@@ -370,7 +426,7 @@ requests.
 ### Repeat unfinished hunts against their saved survivors
 
 - 2026-11-07, `codex/repeat-hunt-409-plan`, LOCAL implementation requested by the
-  owner for [retreat #409](docs/wiki/mechanics/retreat.md#локальная-реализация-и-проверки-409--2026-11-07).
+  owner for [retreat #409](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#локальная-реализация-и-проверки-409--2026-11-07).
   Add ordered migration 0020 with admission history, one current row and
   attempt-scoped JOIN consent. Preserve survivors' exact pools, previous deaths,
   receipts and replay. Current readers, old terminal replay and the next terminal
@@ -412,7 +468,7 @@ requests.
   from `codex/m1-full-loop-370`. [PR414](https://github.com/Vovanostm/warwrit/pull/414)
   merged at05:47:45UTC asf5709c8c with expected head0e0c5df0. #370 CLOSED.
   Clean local main, origin/main and GitHub main matched that merge, with no
-  content diff from the reviewed head. [Owning receipt](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-first-loop-receipt--2026-11-07)
+  content diff from the reviewed head. [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#merged-first-loop-receipt--2026-11-07)
   retains actual player/check results and the fresh-company/no-wound/held-pay
   limitations. This correction updates delivery documents only. Scoped plan,
   format and diff checks PASS; game checks reused, full suite NOT_RUN, CI advisory.
@@ -423,7 +479,7 @@ requests.
   [PR414](https://github.com/Vovanostm/warwrit/pull/414), reviewed source f29e7d86
   on main4a22a09c. Native loop/restart/OIDC retention and finite source/playable
   review ACCEPT with the documented fresh-company, no-wound and pending-pay
-  limits. [Owning delivery record](docs/engineering/M1_LOCAL_PLAYTEST.md#published-delivery--pr414-2026-11-07)
+  limits. [Owning delivery record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#published-delivery--pr414-2026-11-07)
   links actual checks and retained resources. Owner explicitly authorized merge
   and updating main, with the PR owning its actual merge receipt/date. This
   closeout changes documents only. Repeated game checks NOT_RUN, CI advisory.
@@ -436,7 +492,7 @@ requests.
   allocation. The visible wallet-access explanation separates cash issue from
   pending reservation. Requests/payment semantics are unchanged. Two existing
   mounted cases failed before correction,11payroll checks/types/lint PASS after.
-  [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#payroll-feedback-correction--2026-11-07)
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#payroll-feedback-correction--2026-11-07)
   records native action/readback/refusal and the missing post-edit accepted-status
   capture. Known wallet destinations now appear beside the paying pool, and the
   note explicitly requires payer locality before recipient cash/hold handling. Native primary payroll/restart evidence retains its scope. CI NOT_RUN.
@@ -450,7 +506,7 @@ requests.
   handover under the existing remote-wallet boundary. Company cash780.35/free760.35,
   food33, no known wound, both kits retained. The complete pre-browser restart
   report is equal, and re-entry retains people/items/custody/money/contracts/proof
-  and original receipts without duplicate effects. [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk)
+  and original receipts without duplicate effects. [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#full-circle-retained-result--2026-11-07-0834-msk)
   records fresh-company provenance, actual checks and remaining broader limits.
   Final bounded source and finite journey/feedback review ACCEPT; publication pending. Full suite/CI NOT_RUN.
 
@@ -459,7 +515,7 @@ requests.
 - 2026-11-07, `codex/m1-full-loop-370`, LOCAL #370 native result. The three
   unwounded fighters recovered to100health/stamina with backed food and returned
   FIELD at tick295. Treasury790, stock36 and medical kits2 retained. Source and
-  finite changed-feedback critique ACCEPT. [Owning checkpoint](docs/engineering/M1_LOCAL_PLAYTEST.md#recovery-completed-before-payroll--2026-11-07-0414-msk)
+  finite changed-feedback critique ACCEPT. [Owning checkpoint](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#recovery-completed-before-payroll--2026-11-07-0414-msk)
   retains pay/next/restart as pending until natural campaign maturity. No new code
   or tests in this checkpoint. Full suite/CI NOT_RUN.
 
@@ -470,7 +526,7 @@ requests.
   initial desktop screenshot showed it below the map. Fresh native capture
   confirms visible message/control without manual scrolling and successful
   real discovery retry with zero gameplay POSTs. Web13PASS/types/lint PASS.
-  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#visible-retry-correction--2026-11-07-0401-msk)
+  [Owning correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#visible-retry-correction--2026-11-07-0401-msk)
   retains provenance and the pending final review. Full suite/CI NOT_RUN.
 
 ### Preserve the ordinary victory and make its result readable
@@ -480,7 +536,7 @@ requests.
   keeping combat-party stock access scoped. The actual retained victory settled,
   one trophy paid80crowns once. Web failed discovery offers retry, and completed
   hunts hide stale instructions and use neutral translated bearer feedback.
-  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#combat-reward-and-rest-checkpoint--2026-11-07-0354-msk)
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#combat-reward-and-rest-checkpoint--2026-11-07-0354-msk)
   records native rest, known absence of wounds and pending natural pay/restart.
   Food/recovery27PASS/1existingSKIP, web27PASS, server/web types/lint PASS, source
   review ACCEPT. Full suite/CI NOT_RUN. No schema, dependency or game-rule change.
@@ -503,7 +559,7 @@ requests.
   food checks; core/server/testkit types and scoped lint/format PASS. Actual
   same-company native departure200 and saved route PASS, cash710 unchanged.
   Independent source ACCEPT; playable critique pending. No migration/public API
-  or new stock/provider. [Wiki result](docs/wiki/m1-spec.md#полный-первый-круг--370-2026-11-07).
+  or new stock/provider. [Wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#полный-первый-круг--370-2026-11-07).
 
 ### Complete an authentic next contract with the retained company
 
@@ -515,7 +571,7 @@ requests.
   Night inspection was visibly unavailable. Reward40 raised cash693.94→733.94;
   the next ration purchase4 left729.94. Four quest receipts and captured saved
   state persisted across the owned API restart; paid UI/facts survived re-entry.
-  [Owning result and limits](docs/engineering/M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07)
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#actual-result--368-2026-11-07)
   distinguishes the report equality from ordinary quest readback. Independent
   finite journey and current-main retained-view ACCEPT. Integrate main668dc68b / PR408/412 unchanged and recheck
   retained UI after protocol build/API restart. No new product code, migration,
@@ -528,7 +584,7 @@ requests.
   approved2b1e834c. CI42286898832/scope42291895718 PASS and clean-main readback
   retain that payroll boundary; #167/#320/#322 CLOSED. Same Company2 now resumes
   its already accepted HUNT-02 through ordinary travel/combat/pelt/reward and
-  retained-data restart. [Owning checklist](docs/engineering/M1_LOCAL_PLAYTEST.md#same-company-next-contract--368-2026-11-07)
+  retained-data restart. [Owning checklist](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#same-company-next-contract--368-2026-11-07)
   names current resources, exact source and remaining limits. No code change or
   fresh game test yet; native continuation and independent critique are pending.
   Integrate merged main35b0e7f3 / PR411 workflow amendment while travelling;
@@ -557,7 +613,7 @@ requests.
   PR publication. Source and finite visual review ACCEPT on e6e8e7c9.36 focused
   tests, web types and scoped lint PASS; actual presentation replay confirms
   16px separation, wheel access and Return callback on720/480px desktop heights.
-  [Owning evidence and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  [Owning evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
   preserve failed probes and replay provenance. Full native succession/game-over
   NOT_RUN; #392 remains open. Full gate NOT_RUN under advisory CI policy.
   Merge needs the owner's approval for this slice.
@@ -574,7 +630,7 @@ requests.
 
 - 2026-11-07, `codex/loss-panel-layout392`, LOCAL UI evidence for the scoped
   overlap fix. Preserve current720px and480px scroll states with the owning
-  [measurements and provenance](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  [measurements and provenance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
   Actual wheel scrolling reaches the complete notice and Return button. Source
   review ACCEPT, current visual review pending. Native succession NOT_RUN.
 
@@ -594,7 +650,7 @@ requests.
   Presentation-replay checks already measure a16px gap on1280×720/480, pointer
   access and actual Return callback. Source review ACCEPT. Recheck integrated
   types/layout and scoped image critique before publication. Existing saved defeat
-  and all world data retained. [Owning result](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  and all world data retained. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
 
 ### Stack the leader-death notice and battle outcome together
 
@@ -607,7 +663,7 @@ requests.
   first failed, then30 targeted tests/web types/lint PASS. Independent source
   review ACCEPT. Actual retained loss reached revision62 with effects applied;
   layout/pointer checks use a labelled presentation replay of its public data.
-  [Owning result and limits](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06).
   Fresh native loss/succession/game-over acceptance NOT_RUN. Full #392 stays open.
   Current-image critic, publication and CI pending.
 
@@ -615,7 +671,7 @@ requests.
 
 - 2026-11-06, `codex/loss-panel-layout392`, LOCAL specification following the
   owner's choice to fix the overlapping leader-death/outcome panels from #392.
-  [Owning scope and checks](docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
+  [Owning scope and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#перекрытие-панелей-после-поражения--392-2026-11-06)
   reserve disjoint EncounterPanel/BattleView/props/game.css paths while PR408
   retains BattleOutcome/battle-view.css. Full succession/game-over acceptance
   stays with #392. Source/native/review/visual checks initially NOT_RUN.
@@ -658,13 +714,13 @@ requests.
   and scoped lint PASS. Fresh focused coverage plus scoped health diagnostic no
   longer reports either guidance function; this is not a full PR audit verdict.
   Independent source review ACCEPT; final published-head CI remains pending.
-  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06).
 
 ### Verify hostile-retreat settlement and clarify its player feedback
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, PUBLISHED
   [PR408](https://github.com/Vovanostm/warwrit/pull/408); local feedback corrections
-  follow independent critique. [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
+  follow independent critique. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06)
   records clean integrated gate PASS (1264 unit/100 skipped,10000 stress,90 SQL,
   migrations), source/infrastructure ACCEPT on d199895f and actual limitations.
 - The native new-company route reached the wolf fight after server restart, but
@@ -704,7 +760,7 @@ requests.
 
 - 2026-11-06, `codex/m1-hostile-retreat-378`, LOCAL implementation of the accepted
   #376 policy under the owner's implement/review/PR/review/merge/update-main mission.
-  [Owning result](docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06): V4/V5
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#реализация-378--2026-11-06): V4/V5
   hostile retreat now prepares atomic release; living targets do not create proof.
   Persist terminal policy version in audit/request evidence, preserve old replay
   and V2/V3 behavior, retain surrender residual. No migration or retry-admission change.
@@ -918,8 +974,8 @@ requests.
   seven applicable scores2; whole-scene visual/stability remains separate.
   Canonical time preparation is synthetic on owned restored clones. No new
   finance rule or migration; normal commit/PR/CI/merge not yet performed.
-  [Owning result](docs/engineering/evidence/payroll-20261028/README.md),
-  [player-facing behavior](docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/payroll-20261028/README.md),
+  [player-facing behavior](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#выплата-заработанного-жалованья--локальный-цикл-2026-10-28).
 
 - Same-day correction: actual stale-revision browser refusal exposed its
   explanation being cleared during a same-company revision refresh. Preserve
@@ -974,7 +1030,7 @@ requests.
   money edits. Fresh unit coverage1220 PASS/84 skipped; normal audit FAILED new
   complexity/guard clone/selectors and quality rework is active without bypass.
   TARGETED browser, final-source acceptance/commit/PR/CI and full game remain
-  pending. [Journey and actual limits](docs/engineering/evidence/payroll-20261028/README.md).
+  pending. [Journey and actual limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/payroll-20261028/README.md).
 
 ### Close the merged blank-database startup correction
 
@@ -986,7 +1042,7 @@ requests.
   full logs read. 1264 tests/99 skipped, 10000 stress battles, migration smoke/89
   real SQL scenarios, both browser journeys, coverage/aggregation/native audit
   PASS. Clean main checkout updated, reviewed/merged contents equal.
-  [Owning correction](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06)
+  [Owning correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06)
   and wiki/checkpoint record the actual result. Author's invalid-config process
   and19 focused checks retain their stated scope. Full M1/hosted/visual/device
   acceptance remains open. Retained player worlds were not used by the regression.
@@ -999,7 +1055,7 @@ requests.
   retained. Blank-DB source/tests remain unchanged. Update the owning launch
   result and retain source review ACCEPT. Integrated protocol build, server types
   and19 focused tests PASS. New integrated CI pending.
-  [Follow-up](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  [Follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
   No saved-world operation or new gameplay change in this integration.
 
 ### Reject blank database settings before local identity startup
@@ -1011,7 +1067,7 @@ requests.
   already refused it at a later guard. Valid padded URLs retain trimmed values.
   New cross-environment regression first failed. Corrected entry process exits1
   before listening. Config/tests, identity docs, playtest/wiki and CURRENT_PLAN
-  record the boundary and checks. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+  record the boundary and checks. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
   Focused19 tests, server types, lint/format and independent source review ACCEPT.
   CI/publication/merge pending. Fresh valid-config browser/SQL NOT_RUN. No migration
   or game-rule change. Existing world volumes retained.
@@ -1028,7 +1084,7 @@ requests.
   Move the completed launch checkpoint to history and retain recovery as current.
   Recovery product source/native proof is unchanged; startup/database12 tests
   and server types PASS. Integrated CI and separate
-  new-head merge permission remain required. [Owning result](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+  new-head merge permission remain required. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
 
 ### Resume explicit company recovery on current integrated main
 
@@ -1043,7 +1099,7 @@ requests.
   ticks, lost-response/reload/exact retry with one receipt, identical restart
   readback and same-party FIELD return. Real PostgreSQL18/18 PASS. Current
   independent source/finite UI review ACCEPT; the linked PR owns required
-  new-head hosted CI and live delivery state. New-head merge permission is pending. [Owning contract](docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
+  new-head hosted CI and live delivery state. New-head merge permission is pending. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#recovery-delivery-resume--2026-11-06).
 
 ### Integrate merged quality feedback into recovery verification
 
@@ -1052,7 +1108,7 @@ requests.
   changelog histories, the native audit reporter/artifacts, inherited35-minute
   whole-job allowance and unchanged individual scenario/quality gates. Recovery
   product source is unchanged from7b90194f; source/SQL18 and finite UI acceptance
-  retain their stated scope. [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  retain their stated scope. [Recovery owner](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
   records integration review ACCEPT; new-head CI remains pending.
 
 ### Separate local observation preparation from persistence
@@ -1066,7 +1122,7 @@ requests.
   Server types and real executor/routes/recruitment SQL18/18 PASS. Local
   structural diagnostic no longer flags either function; stale local coverage
   is not used as CRAP acceptance. Independent affected review ACCEPT; new-head CI pending.
-  [Owning result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
 
 ### Select the company tab by its exact name in the painted journey
 
@@ -1078,7 +1134,7 @@ requests.
   clicks, selected-tab assertions and journey steps. Native UI confirms two
   substring matches, one exact match and selected tab=true. Syntax/lint/format
   and independent affected readback PASS; new-head CI remains required.
-  [Recovery owner](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
+  [Recovery owner](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05).
 
 ### Preserve current fixture revisions after company observation
 
@@ -1089,7 +1145,7 @@ requests.
   observation advanced its persisted revision. Retain the current aggregate and
   known revision when preparing hidden variants and later hire requests; preserve
   repository scope guards and all privacy/payment/replay assertions. Gameplay
-  source is unchanged. [Owning recovery result](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  source is unchanged. [Owning recovery result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
   records the exact result. Original failure reproduced; corrected recruitment SQL1,
   server types and scoped lint/format PASS. Independent affected readback ACCEPT; new-head CI remains pending.
 
@@ -1098,7 +1154,7 @@ requests.
 - 2026-11-05, `codex/company-recovery`, LOCAL work on main1121665c. Expose the
   existing FIELD↔RECOVERY assignment and lawful future fed refresh in the Company
   screen; retain exact saved retries and party membership. No implicit settlement
-  healing or retroactive recovery. [Owning acceptance](docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
+  healing or retroactive recovery. [Owning acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#explicit-recovery-assignment--2026-11-05)
   records native saved-game PASS: no historical healing,17→20→31HP on future fed
   ticks, lost-reply/reload/exact retry, unchanged restart and same-slot FIELD return.
   Focused web9/SQL17/projection5 and types/lint PASS. First UI critique REWORK
@@ -1119,7 +1175,7 @@ requests.
   logs read. 1259 unit tests/98 skipped, 10000 stress battles, migration smoke/88 real SQL
   checks, both browser journeys, measured coverage/aggregation and quality audit.
   Owning playtest/wiki/checkpoint now record actual integration and limits.
-  [Closeout](docs/engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06).
+  [Closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#merged-launch-closeout--2026-11-06).
   Local stack stopped with volumes/active encounter retained; external-provider,
   full-M1/visual/device, hosted/backup/restore/deployment NOT_RUN; FPS NOT_MEASURED.
 
@@ -1135,7 +1191,7 @@ requests.
   executable-source review ACCEPT. Install/migrate19/OIDC/company/equip9/supplies/
   contract/full-stop-restart/re-entry and16focused tests/server types/lint PASS.
   Runbook, playtest, identity contract, wiki and checkpoint record actual checks,
-  initial failures and limits. [Owning result](docs/engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06).
+  initial failures and limits. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#launch-implementation-and-verification--2026-11-06).
   Ordinary travel/HUNT-02/JOIN and established realtime3577 smoke PASS; server
   stopped with the active encounter retained. Hosted CI pending; no full-M1/hosted/
   deployment acceptance.
@@ -1159,7 +1215,7 @@ requests.
   #176 spec/review/implement/review/merge/update-main. Reserve private resources,
   reuse PR334 and define clean install, ordinary OIDC/company entry, retained-data
   restart, database readiness and encounter smoke in the
-  [existing playtest contract](docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
+  [existing playtest contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#reproducible-launch-contract--176-2026-11-06).
   CURRENT_PLAN records ownership. Initial specification state was NOT_RUN; dated
   implementation results below supersede it for the affected checks.
 
@@ -1173,7 +1229,7 @@ requests.
   web/server types PASS. Initial merged CHANGELOG formatting failed and was
   corrected; scoped format/diff/current-plan checks then PASS. Current clean
   hosted CI is required on the integrated head; no new native battle/full local
-  gate for this integration. [Owning result](docs/wiki/mechanics/retreat.md#нативный-результат-401).
+  gate for this integration. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/mechanics/retreat.md#нативный-результат-401).
 
 ### Simplify the retreat feedback row after the first PR audit
 
@@ -1265,7 +1321,7 @@ requests.
   and file-wide V8/source-mode SQL24 PASS; pending-retreat unit1 PASS. Initial
   world-ID type inference failure corrected with an explicit string parameter;
   server types/scoped lint PASS. Owned DB removed. Independent repair source
-  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
+  review ACCEPT; fresh hosted checks and final-head review remain required. [Cause and verification](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#publication-ci-fixture-repair--2026-11-06).
 
 ### Prepare reviewed game skills for publication on current main
 
@@ -1276,7 +1332,7 @@ requests.
   formatting scope and prior pinned research/installation records. Applicable
   hosted checks and final integrated independent review are required before
   the authorized manual merge. Trial evidence retains its original revision and
-  limitations. [Owning result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
+  limitations. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06).
 
 ### Adopt bounded game skills and remove stale workflow directions
 
@@ -1287,7 +1343,7 @@ requests.
   activation, select current 2D references, preserve transparent sprite alpha,
   scope retained 3D work and replace PlayCanvas-specific inspector guidance.
   Remove stale audit bypass and nested art CLI/model recipe. Preserve parser and
-  existing distinct workflows. [Adoption decisions and trials](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
+  existing distinct workflows. [Adoption decisions and trials](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-skill-adoption-and-forward-trials--2026-11-06)
   records three independent task attempts, requested clarification and the actual
   eight-battle sample. Manifest, local-link, discovery, format/diff checks PASS and independent sampled
   source/diff review ACCEPT. Two first submissions accepted, third accepted after
@@ -1303,7 +1359,7 @@ requests.
   the finite playable journey and approved dark-fantasy canon/style. Recommend
   bounded Babylon 9 reference and conditional balance-eval use; identify precise
   narrative audits with unresolved licensing and reject incompatible engine,
-  monetization, world-generation and studio defaults. [Survey, ratings and sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
+  monetization, world-generation and studio defaults. [Survey, ratings and sources](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#game-development-skills-for-warwrit--2026-11-06).
   Existing Colyseus entry matches pinned upstream. Static API/manifest probes
   retain their limitations; no installation, game tests, product change, merge
   or measured effectiveness claimed. Independent source/sample review ACCEPT;
@@ -1319,7 +1375,7 @@ requests.
   integration claims and severity heuristics. Retain the two existing diagnostic
   skills. Manifest/source/license/reference readback PASS; no new product test
   dependency or game-code change. Behavioral tests NOT_RUN; effectiveness
-  NOT_MEASURED. [Installation result](docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
+  NOT_MEASURED. [Installation result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#diagnostic-skill-installation-after-survey--2026-11-06).
 
 ### Expand diagnostic skill research to 62 rated sources
 
@@ -1331,7 +1387,7 @@ requests.
   downgrade the earlier generic-debugging recommendation to an optional trial.
   Property-testing adoption stays conditional: fast-check already exists, but
   the unchanged upstream manifest fails the local validator on `effort`.
-  [Expanded survey, method, ratings and all sources](docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
+  [Expanded survey, method, ratings and all sources](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#expanded-diagnostic-skill-survey--2026-11-06).
   No new installation, product change, paid evaluation or game tests. Actual
   effectiveness remains NOT_MEASURED. Independent source/sample review ACCEPT;
   source-count/deduplication, score arithmetic, local links, formatting and scoped
@@ -1344,7 +1400,7 @@ requests.
   pinned debugging-strategies and variant-analysis in the user's Codex skill
   directory, retaining upstream licenses/provenance. Reject conflicting repeat-check,
   size-gate and plugin-heavy alternatives; keep Warwrit's domain/browser workflows.
-  [Research and acceptance](docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
+  [Research and acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#github-diagnostic-skills--2026-11-06)
   records source evidence, limitations and the next trial. Manifest validation,
   source/license/provenance/local-reference readback PASS; report formatting was
   corrected. Product source, CURRENT_PLAN and existing skills are unchanged;
@@ -1441,7 +1497,7 @@ requests.
   local Dex OIDC→one company/two companions→nine equips→ten rations for40crowns→
   authentic mill-worker ACCEPT→logout/re-entry with unchanged ownership/items/costs.
   Real SQL readback: one account/company,11company receipts,one ordinary ACCEPT.
-  [Playtest result](docs/engineering/M1_LOCAL_PLAYTEST.md#ordinary-entry-checked--2026-11-06)
+  [Playtest result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/M1_LOCAL_PLAYTEST.md#ordinary-entry-checked--2026-11-06)
   records invalid-selection/quantity checks, isolated resources, startup/tooling
   limitations and unexecuted full-game acceptance. Update CURRENT_PLAN and owning
   M1 wiki; keep recovery/payroll with their current owner. Next #371/PR335.
@@ -1477,7 +1533,7 @@ requests.
   navigation and playtest status. Preserve superseded baselines in CURRENT_PLAN_HISTORY.
   Record merged atlas/markers/care/recruitment, candidate recovery/payroll,
   conflicting transfer/retry work and the remaining full-M1 scope.
-  [Assessment and evidence boundary](docs/wiki/m1-spec.md#state-2026-11-05)
+  [Assessment and evidence boundary](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#state-2026-11-05)
   distinguishes current source, earlier runtime and unexecuted acceptance.
   Task tracking PUBLISHED: 16 existing GitHub issues updated with preserved criteria/history;
   [outcome task #364](https://github.com/Vovanostm/warwrit/issues/364) created;
@@ -1498,14 +1554,14 @@ requests.
   PASS after fixing local fixture setup errors. Product source, scenario deadlines,
   cleanup and default launcher behavior are retained. Local native capture and
   full suites NOT_RUN; independent final review/hosted order and savings remain
-  pending. [Owning specification/result](docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
+  pending. [Owning specification/result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#earlier-browser-failure-feedback--2026-11-05).
 
 ### Clarify cancelled-step evidence and focus the recovery SQL consumer
 
 - 2026-11-05, `codex/harness-quality-feedback`, LOCAL documentation correction.
   CI42044643870's browser and launcher printed PASS before GitHub cancelled
   their step; native audit remained NOT_RUN. Preserve that boundary in the
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation).
   Add one existing recruitment integration scenario to focused checks for changed
   company observation/roster semantics, after PR363's genesis-root fixture mismatch.
   Product source and checks are unchanged; scoped docs format/link/diff PASS.
@@ -1518,7 +1574,7 @@ requests.
   after successful bootstrap/coverage/world checks. Raise only the whole-job
   allowance to35 minutes; keep individual scenario deadlines, assertions,
   phases and native quality gates unchanged. No remaining check is claimed
-  passed from the cancelled job. [Owning evidence](docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
+  passed from the cancelled job. [Owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#whole-job-budget-cancellation)
   records the exact timeout annotation and pending final-head verification.
 
 ### Remove a redundant diagnostic callback branch found by hosted audit
@@ -1530,7 +1586,7 @@ requests.
   an explicit marker-presence diagnostic and all readiness/STOP conditions.
   Source-only structural inspection reports cyclomatic4/cognitive1; current-head
   measured coverage/CRAP remain pending. No counters, gates or suppressions change.
-  Scoped syntax/lint/format/diff PASS. [Owning result](docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
+  Scoped syntax/lint/format/diff PASS. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#hosted-failure-artifact-and-source-only-complexity-correction)
   retains the failed head, actual failure-artifact acceptance and final CI limits.
 
 ### Retain failed pursuit preparation and verify reused-agent routes
@@ -1543,7 +1599,7 @@ requests.
   PASS with actual409→200; scoped syntax/lint/format/diff PASS. A reused reviewer
   also exposed an omitted checkout in its follow-up: add the route to the existing
   delegation template and verify it through warwrit-context before discovery.
-  [Owning evaluation](docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
+  [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#integrated-browser-failure-and-retained-preparation-evidence)
   retains the failure, read-only routing correction, attempt-counting limitation
   and pending final-head review/CI. No general speedup or flaky-test fix claimed.
 
@@ -1554,7 +1610,7 @@ requests.
   during support CI42030162311. Preserve both changelog histories and every
   product/checkpoint/coverage-merger byte from main. Independent initial review
   ACCEPT at `93ef169e`; its CI applies to the earlier care baseline. Current
-  integrated-head review and CI remain required. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05)
+  integrated-head review and CI remain required. [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05)
   and issue361 retain final evidence and the repeated-CI observation.
 
 ### Explain introduced quality findings and retain native audit inputs
@@ -1567,7 +1623,7 @@ requests.
   exercise exits0/1/2, one run, attribution and invalid reports. Nine groups and
   scoped syntax/lint/format/diff PASS; saved native-report readback PASS. Hosted
   acceptance/final review remain pending. No product change or measured general
-  throughput gain. [Owning evaluation](docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
+  throughput gain. [Owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#actionable-quality-audit-diagnostics--2026-11-05),
   [issue361](https://github.com/Vovanostm/warwrit/issues/361).
 
 ### Run the coverage CLI regression from a clean checkout
@@ -1585,7 +1641,7 @@ requests.
   [PR350](https://github.com/Vovanostm/warwrit/pull/350) as `f0461180` after
   explicit owner approval for `319b901e`, full CI42020812490 and scope42024966505
   PASS. Live PR/main and clean detached local-main readback agree; its tree
-  matches the checked candidate. [Care closeout](docs/work-packages/WP-02.4.md#merged-care-delivery--2026-11-05)
+  matches the checked candidate. [Care closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#merged-care-delivery--2026-11-05)
   retains native treatment/retry/restart evidence and partial visual limits.
   Recruitment remains a separate unmerged prerequisite for the retained save.
 
@@ -1709,7 +1765,7 @@ requests.
   format/diff and frozen real-browser journey PASS, including actual409→200.
   Independent affected source review ACCEPT after tying UI readiness to a
   post-acceptance sequence. Current-head hosted verification remains required.
-  [Owning result](docs/work-packages/WP-02.4.md#expired-pursuit-preparation-correction--2026-11-05).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#expired-pursuit-preparation-correction--2026-11-05).
 
 ### Integrate care with changed-document validation
 
@@ -1717,7 +1773,7 @@ requests.
   / merged PR358–359. Preserve both changelog histories and main's focused
   documentation validator; care gameplay source is unchanged. Existing native
   treatment/retry/restart and independent source acceptance retain their scope.
-  [Care contract](docs/work-packages/WP-02.4.md#main-validation-integration--2026-11-05)
+  [Care contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#main-validation-integration--2026-11-05)
   records the current checks. CI and merge permission for the integrated head
   remain pending; the owner's earlier permission names only `6967f234`.
 
@@ -1730,7 +1786,7 @@ requests.
   Preserve both branches' history and the accepted CI harness. Native copied-save
   travel/hire/Join/care, deliberately lost replies, exact retries and server restart
   PASS on recruitment3583d002, with one50-crown payment, one medical unit and40 XP.
-  [Care result](docs/work-packages/WP-02.4.md#native-treatment-completion--2026-11-05)
+  [Care result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#native-treatment-completion--2026-11-05)
   records unchanged care source, evidence and trial limits. Current integration
   CI remains pending; independent finite playable critique ACCEPT after actual
   captures/receipt readback. Care/recruitment are unmerged.
@@ -1746,7 +1802,7 @@ requests.
   Integrated world browser/aggregation, syntax/lint/format and independent
   source/infra ACCEPT. Unchanged care unit1240/SQL86/ordinary browser results remain
   applicable. Repeated local aggregation overflowed the audit reader's counter;
-  integrated quality requires clean hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  integrated quality requires clean hosted CI. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Record changed-document CI acceptance on the current product baseline
 
@@ -1755,7 +1811,7 @@ requests.
   Independent integrated review ACCEPT and CI42010314464 PASS in23m21s on product
   main `81e7931b`, including both unit phases, SQL/stress, browsers and audit.
   The earlier17m19s run keeps its older baseline scope. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#changed-format-implementation-receipt-and-documentation-trial)
   retains attribution limits and the separate real changed-file-formatting trial.
   [Issue357](https://github.com/Vovanostm/warwrit/issues/357) and the closeout PR own
   its final timing and executed/skipped checks. Scoped document format/link/diff
@@ -1769,7 +1825,7 @@ requests.
   during that run with product changes and a changelog conflict. Preserve both
   changelog histories, all main product source and the game integrator's plan.
   The earlier CI retains its frozen-head scope; integrated CI and source review
-  are required. [Owning record](docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
+  are required. [Owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#product-baseline-advance-during-verification).
 
 ### Format changed documents through the existing validator in CI
 
@@ -1781,7 +1837,7 @@ requests.
   base does not create a new stale-base failure. Eight fixture groups verify the
   actual workflow command, detached/advanced-base handling, scoped formatter and
   missing-base rejection. Syntax/format/diff PASS. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#changed-document-formatting-and-historical-ci-evidence--2026-11-05)
   records the corrected exit-code fixture and a separate PR353 evidence-reuse
   idea with the historical API-field limitation. Final review, full-route CI and
   hosted documentation timing remain pending. Comparative throughput NOT_MEASURED.
@@ -1814,7 +1870,7 @@ requests.
   in21m24s, including both unit-resolution phases, SQL/stress, both browsers and
   quality audit. This dated receipt supersedes pending implementation status
   below. The existing
-  [evaluation](docs/engineering/HARNESS_EVAL.md#implementation-receipt-and-documentation-trial)
+  [evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#implementation-receipt-and-documentation-trial)
   retains audit limits and the separate documentation-only hosted trial.
   [Issue354](https://github.com/Vovanostm/warwrit/issues/354) and the closeout PR
   own its execution timing, explicit skipped product checks and final acceptance.
@@ -1831,7 +1887,7 @@ requests.
   documentation PR CI, with pinned install/format and harness/plan/migration checks.
   Every code/mixed/unknown change and main push keeps full verification. Preserve
   both unit-resolution boundaries. The
-  [owning evaluation](docs/engineering/HARNESS_EVAL.md#scoped-ci-and-rejected-local-preflight--2026-11-05)
+  [owning evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#scoped-ci-and-rejected-local-preflight--2026-11-05)
   records independent findings, actual timings, the repaired CI-selector fixture,
   checks and remaining limits. Seven focused fixture groups and four hook tests,
   syntax/format/diff PASS. Full-route CI, a hosted documentation-only trial and
@@ -1847,7 +1903,7 @@ requests.
   format/product commands. Update existing context/delivery skills with targeted
   optional retrieval and feasible timed native scenarios. Clarify fresh local
   coverage aggregation after the observed u32 overflow. The
-  [owning observation](docs/engineering/HARNESS_EVAL.md#care-delivery-bottlenecks-and-earlier-feedback--2026-11-05)
+  [owning observation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#care-delivery-bottlenecks-and-earlier-feedback--2026-11-05)
   preserves evidence, actual checks and limits. Isolated workflow fixtures,
   syntax, two skill validators and scoped formatting PASS. Independent review and
   published-head CI are pending. Comparative agent speed/quality NOT_MEASURED.
@@ -1864,7 +1920,7 @@ requests.
   Scoped syntax/lint/format/diff PASS. Current real browser journey PASS with
   native409→200 cancellation and measured approach execution. Final review
   and CI are pending. The
-  [owning record](docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#finite-approach-arrival-before-pursuit)
   preserves the failed run and unobserved exact transition/rejection body.
 
 ### Share browser observations after the changed-file quality failure
@@ -1879,7 +1935,7 @@ requests.
   real browser journey PASS with native409→200 cancellation. Regenerated
   intentional-failure diagnostics retain shared UI/native STOP200 evidence.
   Independent review and measured CI are pending.
-  The [owning record](docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
+  The [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#shared-browser-observations-and-quality-audit-follow-up)
   keeps the failed gate, coverage-attribution limit and successful runtime evidence.
 
 ### Wait for the required moving observation within the original budget
@@ -1892,7 +1948,7 @@ requests.
   requirements. Include actual observed group states in that failure diagnostic.
   Current local real journey PASS with successful native cancellation; scoped
   lint/syntax/format/diff PASS. The
-  [owning record](docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#moving-target-readiness-within-the-existing-preparation-budget)
   preserves the failed CI and unobserved NPC transition. Fresh final-head CI is required.
 
 ### Match native map input to the intended current target
@@ -1906,7 +1962,7 @@ requests.
   cancellation. A real overlap probe verified terrain input/no pursuit separately
   from its lawful422 route rejection. The earlier overstrict probe failure and a
   transient local port conflict remain in the
-  [owning record](docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#native-click-target-readiness).
   Scoped lint/syntax/format/diff PASS. Fresh final-head CI is required.
 
 ### Verify current visible tile recovery and both finite stale outcomes
@@ -1921,7 +1977,7 @@ requests.
   Both real browser branches PASS in separate positive/negative runs. Preserve
   the positive SQL gate. Set command workdirs explicitly after a reviewer used
   the host's unrelated checkout. Root 167 lines / 10,077 bytes. Scoped checks and
-  [owning evidence](docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
+  [owning evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#current-tile-recovery-and-finite-stale-outcomes)
   record limitations. Fresh final source review and CI are required.
 
 ### Stabilize initial pursuit setup after the observed CI rejection
@@ -1934,7 +1990,7 @@ requests.
   the initial rejection request/status/body for diagnosis. Combined real browser
   PASS, actual stale-request diagnostic probe PASS, scoped lint/syntax/format and
   artifact path checks PASS. The exact original409 code remains unknown.
-  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
+  [Owning follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#initial-pursuit-preparation-follow-up).
 
 ### Retain evidence for the browser CI STOP failures
 
@@ -1945,7 +2001,7 @@ requests.
   the existing failure/pursuit JSON with map artifacts. The original journey
   assertions and deadlines remain intact. Focused actual browser PASS, deliberate
   failure-capture probe PASS, scoped lint/syntax/format/artifact paths and diff PASS.
-  The owning [CI follow-up](docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
+  The owning [CI follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#browser-ci-diagnostic-follow-up)
   records both failures, local observations and the initial aggregation failure
   due to missing prior migration evidence. Reuse only the finished moving-STOP
   probe delta from the game author's `e57d6e8b` / draft PR350. The combined real
@@ -1958,7 +2014,7 @@ requests.
   Per owner request, update AGENTS.md and the context/review/delivery skills with
   requirement-grounded acceptance, invalid-check diagnosis, repaired-fixture
   review and explicit partial-result boundaries. Keep detailed evaluation telemetry
-  on demand. [Instruction rollout](docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
+  on demand. [Instruction rollout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#instruction-rollout--2026-11-05)
   and [issue348](https://github.com/Vovanostm/warwrit/issues/348) own scope,
   permission and delivery. Preserve CURRENT_PLAN and active game worktrees.
   Three skill validators, scoped formatting, added local links/anchors, plan and
@@ -1971,7 +2027,7 @@ requests.
 - 2026-11-05, originating branch `codex/harness-task-quality`, LOCAL.
   Per owner request, reviewed seven additional primary materials on agent
   evaluation and developer productivity. Updated the existing research and
-  [evaluation method](docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
+  [evaluation method](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
   with outcome/evidence/effort separation, evaluator validation, unfinished-attempt
   accounting and qualified historical replay. Recorded an in-progress care
   observation with SQL setup failures, targeted recovery and pending browser
@@ -1993,7 +2049,7 @@ requests.
   Fresh local measured unit1240/SQL86/migration smoke, both browser journeys,
   runtime aggregation, scoped lint/types/format and quality audit PASS. Introduced
   code/duplicate findings0, CSS advisory retained. Independent source ACCEPT.
-  PR350 owns live hosted CI. Native care remains open. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  PR350 owns live hosted CI. Native care remains open. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Settle actual scouting before the pursuit probe
 
@@ -2004,7 +2060,7 @@ requests.
   retain required pursuit200 and report any future initial rejection code.
   Local browser checkpoints PASS before the conditional refinement; later coverage
   aggregation still rejects stale prior SQL. Source ACCEPT, final lint/format/diff PASS; new-head
-  hosted verification pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  hosted verification pending. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 - 2026-11-05 correction, same branch, local. CI41961030529 captured the actual
   initial422 TARGET_NOT_VISIBLE. Reacquire lawful moving targets after missing
@@ -2036,7 +2092,7 @@ requests.
   the identical account-row lock across three company routes and the STOP reply
   predicate across two browser probes. Actual PostgreSQL16checks, server types,
   scoped lint/format and observation health PASS; independent source ACCEPT.
-  New-head hosted verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  New-head hosted verification remains pending. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Verify the finite outcome when a refreshed pursuit STOP is stale again
 
@@ -2049,7 +2105,7 @@ requests.
   stale prior SQL coverage, hosted CI pending. The single
   revised native HUNT02 trial retained a heavy wound but lost its sole physician,
   so care/retry remain unexecuted. Succession/return and untreated save restart
-  PASS. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  PASS. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Select a named atlas place when its label is clicked
 
@@ -2060,7 +2116,7 @@ requests.
   passed. The existing browser probe now chooses a visible label and retains
   SITE/movement/STOP checks. Scoped lint/format/diff PASS; source review has no
   remaining finding. Native care and current-head hosted verification remain open.
-  [Owning map correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#actionable-site-label-input-correction--2026-11-05).
+  [Owning map correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#actionable-site-label-input-correction--2026-11-05).
 
 ### Send the stale-pursuit STOP while the target is still being chased
 
@@ -2073,7 +2129,7 @@ requests.
   its measurement merger still rejects the recorded stale prior SQL report.
   Retain existing sanitized browser diagnostics in CI artifacts. Scoped lint,
   format/diff PASS; independent source review found no defect, with runtime
-  acceptance reserved for hosted CI. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  acceptance reserved for hosted CI. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Keep the browser STOP probe moving until its keyboard action
 
@@ -2085,7 +2141,7 @@ requests.
   keyboard STOP and stale-retry assertions. The local browser journey PASS after
   both corrections. Its later measurement aggregation
   FAIL on stale prior SQL coverage, preserved as a separate limit. New hosted
-  verification remains pending. [Owning results](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  verification remains pending. [Owning results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Integrate current main into the care candidate
 
@@ -2093,7 +2149,7 @@ requests.
   PR347 before care publication, retaining both changelog histories and the game
   coordinator's care checkpoint. Upstream changes affect guidance/harness only.
   Previously executed game checks retain their source scope; hosted care CI is
-  pending. [Current slice](docs/engineering/CURRENT_PLAN.md).
+  pending. [Current slice](docs/engineering/ROADMAP.md).
 
 ### Let the ordinary campaign continue after the battle result
 
@@ -2104,7 +2160,7 @@ requests.
   27 presentation checks and scoped lint PASS; independent source review ACCEPT.
   The authoring refresh unmounted the first result before the click could be
   verified. That navigation check remains pending on the next native battle.
-  [Journey and limits](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  [Journey and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Disclose actual local wounds before company care
 
@@ -2116,7 +2172,7 @@ requests.
   PostgreSQL executor/routes16PASS, payroll/core41PASS, types/lint/format PASS.
   A reviewer-found recovery-boundary defect was reproduced in SQL and corrected
   by reselecting subjects after time advance. Native journey and final acceptance
-  remain pending. [Contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05),
+  remain pending. [Contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05),
   [wiki](docs/wiki/mechanics/wounds.md#уход-компании--локальная-реализация-2026-11-05).
 
 ### Respect personal property and container access during care
@@ -2126,7 +2182,7 @@ requests.
   company-owned medical units in COMPANY-accessible local containers. A member's
   personal stock or OWNER-only pack cannot fund this company command. Both care
   SQL scenarios, server types and scoped lint/format PASS.
-  [Care contract and remaining acceptance](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  [Care contract and remaining acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Bring company medicine into ordinary commands and roster
 
@@ -2135,7 +2191,7 @@ requests.
   main`ee03f4ee`, with the owner-approved5/10practice challenges. Care uses actual
   local provider/material facts and the existing atomic economy executor.
   Types,7client/shell checks and2actual PostgreSQL care scenarios PASS. Native
-  care/retry/restart and final acceptance are pending. [Owning contract](docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
+  care/retry/restart and final acceptance are pending. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WP-02.4.md#ordinary-care-delivery-resume--2026-11-05).
 
 ### Painted campaign atlas delivered to main
 
@@ -2144,7 +2200,7 @@ requests.
   owner-approved head `dcaf84a6`. Current-head CI41922441689, scope and post-merge
   main CI41925505728 PASS. Actual main/tree match the checked head. Ordinary
   company-private atlas, movement/STOP/reload and shared-world journeys passed.
-  [Acceptance and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
+  [Acceptance and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-ordinary-atlas-merged--2026-11-05).
   This post-merge wiki/checkpoint receipt is local. Further campaign care and
   combat presentation remain active. Original saves are retained.
 
@@ -2162,7 +2218,7 @@ requests.
   [Delivery issue346](https://github.com/Vovanostm/warwrit/issues/346) owns PR/CI/merge
   status. Native session reload, gameplay throughput
   and cost effects NOT_RUN/NOT_MEASURED.
-  [Owning follow-up](docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
+  [Owning follow-up](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#rollout-and-checkpoint-ownership-follow-up--2026-11-05).
 
 ### Observed harness effectiveness
 
@@ -2171,7 +2227,7 @@ requests.
   writer source and live PR344/CI. Recorded committed/player-visible map progress,
   verified removal of hidden commit checks, partial harness adoption, parent token
   telemetry, three corrected integration defects and remaining startup diagnostics.
-  [Owning assessment](docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
+  [Owning assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/HARNESS_EVAL.md#observed-delivery-follow-up--2026-11-05).
   Analysis is observational. Controlled efficiency/cost and whole-game acceptance
   remain unmeasured. Source/CI readback, scoped documentation formatting, current
   plan validation and diff checks PASS. Game tests NOT_RUN for this documentation.
@@ -2183,7 +2239,7 @@ requests.
   Prior head`2a63e830` passed CI41918700198, scope and both browser journeys;
   screenshots and journey summaries are retained in CI. Resolve documentation
   conflicts, keep both histories and retain main's harness checks. Game source
-  is unchanged. [Acceptance and current limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  is unchanged. [Acceptance and current limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
 
 ### Give isolated Dex storage its pinned process owner
 
@@ -2192,7 +2248,7 @@ requests.
   the ordinary browser launcher, where root-owned tmpfs prevented Dex SQLite
   startup. Set that private mount's UID/GID1001 and mode0700. Matched Docker
   failure/readiness probes, shell syntax and source review PASS.
-  [Current checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  [Current checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
 
 ### Keep camera types independent of authored navigation
 
@@ -2201,7 +2257,7 @@ requests.
   a clean-build race through the camera's Pixel type. Move that unchanged type
   to the shared camera and retain the navigation re-export. Source review ACCEPT.
   Web types/compiler inputs,3camera checks and scoped lint/format PASS.
-  [Checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  [Checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
 
 ### Resolve Vite URL assets in architecture checks
 
@@ -2209,7 +2265,7 @@ requests.
   [PR344](https://github.com/Vovanostm/warwrit/pull/344). Resolve trailing `?url`
   before normal asset lookup after CI41912100206 stopped on the paper import.
   Positive and missing-asset probes, scoped lint/format and source review PASS.
-  [Current gate limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  [Current gate limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
 
 ### Close the paused painted-map integration
 
@@ -2234,7 +2290,7 @@ requests.
   failure remains recorded. Current-head hosted CI is pending.
   A separate retained preview on5228 opens a company on the painted atlas in
   the owner's browser, using a new database and preserving prior campaigns.
-  The original campaign databases are preserved. [Delivery contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  The original campaign databases are preserved. [Delivery contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
 
 ### Focus delivery on one campaign journey
 
@@ -2244,7 +2300,7 @@ requests.
   Pause visual expansion and reuse PR334–339 rather than rebuilding their work.
   Live queue readback found all six conflicting with main5c2b3cd7; their successful
   checks precede that integration. No merge permission is inferred.
-  [Current scope and next action](docs/engineering/CURRENT_PLAN.md).
+  [Current scope and next action](docs/engineering/ROADMAP.md).
   Internal pursuit moves reuse their already locked observation, avoiding a
   second state settlement; submitted revisions and core guards are unchanged.
   Server types/lint, actual PostgreSQL pursuit6/6 and world/ordinary browser
@@ -2266,7 +2322,7 @@ requests.
   joins owned cleanup/readiness and actual coverage. Full world journey now
   PASS, including real pursuit/STOP409→200 and legacy controls, zero pageerrors;
   347+2current runtime scripts merged with currentSQL82/migration evidence.
-  Infrastructure/driver source ACCEPT; syntax/lint PASS. [Result and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#full-world-journey-and-authoring-origin-separation--2026-10-30).
+  Infrastructure/driver source ACCEPT; syntax/lint PASS. [Result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#full-world-journey-and-authoring-origin-separation--2026-10-30).
   Current ordinary browser8checkpoints/zero pageerrors/313actual scripts also PASS.
   Normal audit/commit/PR and new main5c2b3cd7 integration pending.
   No main merge/deploy/paid/Orca.
@@ -2279,7 +2335,7 @@ requests.
   remain. Independent source ACCEPT; actual exact-arrival regression PASS,
   current measured SQL82PASS and migration smoke PASS; types/lint PASS.
   Driver fresh-marker/STOP synchronization and actual response diagnostics
-  source ACCEPT; latest browser/audit/commit/PR pending. [Owning result](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#stop-arrival-boundary-correction--2026-10-30).
+  source ACCEPT; latest browser/audit/commit/PR pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#stop-arrival-boundary-correction--2026-10-30).
   This source delta remains in delivery candidate; parent transfer pending.
   No main merge, deployment, paid provisioning or Orca.
 
@@ -2303,7 +2359,7 @@ requests.
   and fixed-past rejection. Independent source ACCEPT, actual separate-pool
   regression1PASS, complete measured SQL81PASS and migration smoke PASS; server
   types/scoped lint PASS after removing the unused wage-rule import. Retain earlier failed wrapper and browser attempts;
-  current browser/normal audit/commit/PR pending. [Owning correction](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
+  current browser/normal audit/commit/PR pending. [Owning correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#shared-observation-clock-correction--2026-10-30).
   Source correction mirrored into the unfinished parent combat tree; original
   databases preserved. No main merge, deployment, paid provisioning or Orca.
 
@@ -2315,7 +2371,7 @@ requests.
   cached. Restore the same startup call without the unused binding, retaining
   the shared field owner and all command/coordinate rules. Same6previously timed
   out SQL cases now V8PASS with the unchanged5000ms deadline; complete80rerun
-  active, previous full wrapper remainsFAIL. [Correction/evidence](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
+  active, previous full wrapper remainsFAIL. [Correction/evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
   No quality baseline/timeout change, commit/main merge/deployment yet.
 
 ### Validate the painted-map candidate and isolate measured SQL files
@@ -2327,7 +2383,7 @@ requests.
   connections; independent source ACCEPT, full80case rerun active. Browser
   driver belongs to root tools (`scripts/world-map/painted-game.browser.mjs`),
   with existing root dev dependency. No new dependency or audit/timeout weakening.
-  [Actual checks and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
+  [Actual checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#integrated-gate-and-measurement-resource-correction--2026-10-30).
   Current runtime/quality closeout and normal commit/PR pending. No main merge,
   deploy, paid provisioning or Orca activation.
 
@@ -2343,7 +2399,7 @@ requests.
   scripts merged, pageerrors0. Infrastructure source ACCEPT; retained failed
   setup/script attempts recorded. Normal audit/commit/current clean gate pending;
   no audit suppression or threshold change.
-  [Delivery boundary and checks](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
+  [Delivery boundary and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#map-only-delivery-candidate--2026-10-29).
   Combat remains locally REJECT/BLOCKED, documented in its existing owner page;
   earlier combined-branch entries below describe that separate source history.
   No main merge, deployment, paid provisioning or Orca activation.
@@ -2360,8 +2416,8 @@ requests.
   checks/types PASS. One ordinary HUNT02 now reaches round5victory, physical
   trophy,80crown payment and reload880 with3survivors. Fresh combat art/captures
   await full visual acceptance; required height/largecreature cases pending.
-  [Map result](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-map-acceptance-and-ordinary-combat-handoff--2026-10-29)
-  and [battle result/limits](docs/wiki/battlefield-test-maps.md#ordinary-battle-integration-checkpoint--2026-10-29).
+  [Map result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#painted-map-acceptance-and-ordinary-combat-handoff--2026-10-29)
+  and [battle result/limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#ordinary-battle-integration-checkpoint--2026-10-29).
   Prior failed/blocked passes and QA losses preserved. Normal audit/commit/PR,
   final current clean gate pending; no main merge/deploy/paid/Orca activation.
 
@@ -2375,7 +2431,7 @@ requests.
   cached reveal and privacy invariant added, current visual acceptance pending.
   Corrected clean bootstrap1228/stress10000/actualPG80 PASS predates the later
   UI refinements. Extra instrumented runs have retained timeouts, quality audit
-  still FAIL, no bypass/commit/PR. [Detailed result and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#native-ordinary-journey-and-refinement--2026-10-29).
+  still FAIL, no bypass/commit/PR. [Detailed result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#native-ordinary-journey-and-refinement--2026-10-29).
   M1§17 and local playtest now distinguish current gaps, separate open PRs and
   actual ordinary controls from historical claims/reset instructions. No main
   merge/deployment/paid/Orca activation.
@@ -2388,7 +2444,7 @@ requests.
   Private scoped raster/knowledge, exact retry and mill alias authority tested
   with actual PostgreSQL1 PASS; source reviews ACCEPT after six client fixes
   and one backend bypass fix. Types/lint and relevant9/30 checks PASS.
-  [Results, failures and limits](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-integration-checkpoint--2026-10-29).
+  [Results, failures and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-integration-checkpoint--2026-10-29).
   Unified existing vision/map/fog/combat/quest wiki owners. Native login awaits
   explicit fixture permission after auto-review rejection; no visual/game
   completion, PR/main merge/deployment.
@@ -2398,7 +2454,7 @@ requests.
 - 2026-10-29, branch `codex/game-painted-map`, local integration under owner's
   map/combat/wiki request. Reuse current main's v6/roads and existing local fog
   implementation, preserving both branch histories.
-  [Active result boundary](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-game-painted-map-activation--2026-10-29):
+  [Active result boundary](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#ordinary-game-painted-map-activation--2026-10-29):
   ordinary login/company/map/move/reload, one region/cartography owner, old
   coordinates/routes retained. Implementation and acceptance pending; no main
   merge, publication or deployment yet.
@@ -2414,7 +2470,7 @@ requests.
   The world client loads authenticated, byte-masked PNG tiles and lawful sites;
   its Vite origin denies private source/raw artwork. Unknown terrain has an
   opaque non-geographic surface; chart knowledge, exploration and live sight
-  remain distinct. [Owning result](docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+  remain distinct. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
   Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS and the
   one outdated migration-list case fixed and separately PASS. Native privacy,
   movement/visit/input/session and real API recovery PASS. Third full visual
@@ -2498,7 +2554,7 @@ requests.
   SQL/browser measurements without changing thresholds; first failed run retained
   below. Earlier local/pending source statuses are superseded by this delivery.
   This documentation readback is local; no deployment/automation.
-  [Owning result](docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-сетевого-атласа--2026-10-27).
 
 ### Gameplay-focused agent harness
 
@@ -2510,7 +2566,7 @@ requests.
   Correct source interpretation and stale audit-on-commit advice. Preserve the
   prior checkpoint with PR342's actual merge/CI receipt. Affected AGENTS, roles,
   context/domain/delivery skills, local checker/fixture and owning process docs.
-  [Research and application](docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
+  [Research and application](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/research/AGENT_TEAM_RESEARCH.md#research-correction-and-application--2026-11-04).
   Shell routing/stop/scope/failure-feedback fixtures, Node 3/3, syntax/format,
   role TOML, links/anchors and diff PASS. Final independent source review ACCEPT.
   [Delivery issue343](https://github.com/Vovanostm/warwrit/issues/343) tracks PR/CI/merge.
@@ -2591,7 +2647,7 @@ requests.
   new CI required before merge.
   Field/road speed values and pathfinding behavior remain unchanged. Retain worktree;
   no deployment. This publication-status readback is local.
-  [Publication contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
+  [Publication contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-diagnostics-pr-activation--2026-10-28).
 
 ### Explain the Bereznyak field shortcut
 
@@ -2599,7 +2655,7 @@ requests.
   the owner's screenshot route using approximate landmark coordinates. Actual
   plan comparison gives929m/797s vs1264m/830s via the northern road/trail.
   Record current speed/classification assumptions and coordinate limits in the
-  [owning map result](docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
+  [owning map result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#срез-через-поле-от-березняка--проверка-2026-10-28).
   No pathfinding/balance change or new runtime acceptance; game/browser/SQL NOT_RUN.
 
 ### Inspect declared road continuity on the atlas
@@ -2618,14 +2674,14 @@ requests.
   Initial test exposed an alternate-road bypass
   and led to corridor-scoped checks; detached DOM fixture corrected before PASS.
   Independent native replay/full game/SQL gates NOT_RUN; local lab-only delivery.
-  [Owning result](docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#диагностика-дорожных-соединений--2026-10-28).
 
 ### Map improvement source research
 
 - 2026-10-28, branch `codex/map-road-navigation`, local proposal: owner asks
   for more useful web/GitHub examples. Record pinned Tiled, Azgaar and
   PathFinding.js source comparisons plus Red Blob guidance in the
-  [owning map research](docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
+  [owning map research](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#примеры-из-github-и-веба-для-следующего-улучшения-карты--2026-10-28).
   Recommend road-subgraph checks and extending existing geometry overlays;
   retain current cost-aware routing. No code, skill or dependency changes;
   foreign tests/runtime/benchmarks NOT_RUN/NOT_MEASURED. No publication.
@@ -2669,7 +2725,7 @@ requests.
   `52bd7825` merged normally; live PR/main read back and merge tree matches the
   tested tree. Combat production rules and gate thresholds remain unchanged.
   This post-merge documentation readback is local; worktree retained by owner.
-  [Owning contract](docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
+  [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/WORLD-MAP-NAVIGATION-LAB.md#road-navigation-amendment--2026-10-28).
 
 ### Painted atlas road continuity
 
@@ -2690,7 +2746,7 @@ requests.
   scope40665746964 PASS; expected-head merge/main readback confirmed. This
   post-merge status correction is local in the clean worktree; the app blocks
   primary-checkout archival. Test server stopped and evidence preserved.
-  [Result](docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+  [Result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
 
 ### Networked atlas CI measurements
 
@@ -2706,7 +2762,7 @@ requests.
   session on reconnect. Unique runtime directories and waited child cleanup retain
   prior evidence without reusing it. Source concerns closed; provisional independent
   infrastructure ACCEPT, exact-head/hosted CI pending.
-  [Owning delivery](docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
+  [Owning delivery](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#поставка-сетевого-атласа--2026-10-27).
 
 ### Networked atlas PR integration
 
@@ -2789,7 +2845,7 @@ requests.
   migration0015 adds lab slots/NPCs. Existing stand5326 and campaign defaults
   remain usable. Fixed atlas plan readback, exact outskirts STOP, trusted clock
   sampling, stale-response ordering and independent lab cookies during real
-  integration. [Owning implementation and checks](docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
+  integration. [Owning implementation and checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#сетевая-лаборатория--реализация-2026-10-26).
   Two-context/native, no-viewer, server restart and night-creature probes PASS;
   four real-PostgreSQL cases PASS. Independent source/visual ACCEPT; clean
   verify1200/stress10000 PASS; migration smoke and all69 SQL scenarios PASS
@@ -2831,7 +2887,7 @@ requests.
   local main and this worktree read back at the merge. Primary checkout WIP
   preserved. Earlier local/pending entries retain their dated context;
   this post-merge documentation amendment is local.
-  [Owning closeout](docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
+  [Owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-улучшений-управления--2026-10-26).
 
 ### Mill delivery: asset URL compatibility
 
@@ -2855,7 +2911,7 @@ requests.
   Review added the Claude discovery link; marker/report JSON now replace atomically,
   verified with interrupted writes and recovery. Final review/hosted CI pending. Historical
   full-scene art REJECT remains explicit; no combat integration or deployment.
-  [Contract](docs/work-packages/MILL-3D-INSPECTION.md) ·
+  [Contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/MILL-3D-INSPECTION.md) ·
   [Owning result](docs/wiki/mill-3d-scene.md#поставка-отдельной-пробы--2026-10-27).
 
 ### Scene refinement skill: review fixes
@@ -2956,7 +3012,7 @@ requests.
   Source review ACCEPT at `3d854e93`; visual critic ACCEPT (six criteria2),
   author native journeys; independent native replay NOT_RUN. Normal hook/audit PASS;
   hosted CI pending.
-  [Owning result](docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#управление-без-перекрытия-карты--2026-10-26).
 
 ### Map controls hint outside the canvas
 
@@ -2965,7 +3021,7 @@ requests.
   the concise footer hint now also explains Walk and supplies the map's ARIA
   description. Browser hover/DOM, hint placement and wheel/WASD/RMB checks PASS;
   handlers unchanged, game tests NOT_RUN for this HTML-only fix.
-  [Owning result](docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#подсказка-управления-вне-карты--2026-10-26).
 
 ### World-map stand merged
 
@@ -2975,7 +3031,7 @@ requests.
   preset continuity fix checked in browser; CI40249250063 (full clean-checkout
   bootstrap, coverage/audit) and latest scope40250278331 SUCCESS. Checked/merged
   trees matched; remote main read back, this worktree fast-forwarded.
-  [Owning result and limits](docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
+  [Owning result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#слияние-стенда-карты--2026-10-26).
   Earlier local entries retain their dated context. This closeout amendment is
   local metadata after merge; it adds no gameplay, deployment or operations.
 
@@ -2986,7 +3042,7 @@ requests.
   party to its authored origin. Examples now choose only the destination and
   route from the current party; UI explains this distinction. Twenty map
   checks/types, scoped lint/format and native pause/rest/moving reroute PASS.
-  [Owning review record](docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
+  [Owning review record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#подготовка-pr-и-ревью-ветки--2026-10-26).
   Initial spawn/manual start placement remain diagnostic setup. Independent
   source/tooling/cohesion re-review ACCEPT at `e2eb5135`; normal audit PASS.
   Hosted CI pending.
@@ -3003,7 +3059,7 @@ requests.
 ### Settlement areas and intentional visits
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner approved the
-  [area UX proposal](docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
+  [area UX proposal](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#общие-зоны-и-намерение-посетить--реализация-2026-10-26).
   Bereznyak/Brod now use one dry outskirts polygon each instead of three road
   circles. Boundary candidate plans are trimmed and compared by travel time;
   passive nearby Enter works without prior selection and never interrupts
@@ -3049,7 +3105,7 @@ requests.
   Selected-only contours/approaches and an arrival action accompany travel.
   Nineteen focused scenarios/types and scoped lint/format PASS; native browser
   journeys and remaining acceptance limits are in the
-  [owning result](docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#вход-с-окраины--рабочий-пилот-2026-10-26).
   Independent visual ACCEPT (six applicable criteria2); source `88114965`,
   normal commit hook/audit PASS after shared-entry-eligibility cleanup. Existing
   attribution/CSS advisories retained. No core/server/save, dependencies or art
@@ -3059,7 +3115,7 @@ requests.
 
 - 2026-10-26, branch `codex/world-map-painted`, local: owner requested
   outskirts-based visits and comparison with other games. The
-  [owning map record](docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
+  [owning map record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#окрестности-и-входы-в-места--исследование-2026-10-26)
   distinguishes Heroes III gate visits, Bannerlord entrance coordinates and
   Battle Brothers' historical pass-through entry bug from a proposed local
   approach-area/explicit-entry flow. No runtime, access rule, radius or art
@@ -3075,7 +3131,7 @@ requests.
 - Fifteen focused scenarios/types, scoped lint/format and native key/release/
   input-focus/wheel checks PASS; independent visual ACCEPT. Real tab/window
   blur NOT_MEASURED in this runner; explicit blur-handler exercise is separate.
-  [Owning result and evidence](docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
+  [Owning result and evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#обзор-карты-на-wasd--2026-10-26).
   Source saved locally as `71f099df`; normal commit hook/audit PASS.
   No art, domain rules, dependencies, server/save or external operations changed.
 
@@ -3090,7 +3146,7 @@ requests.
   artwork or game rules changed. Fourteen focused scenarios/types and scoped
   lint/format PASS; native mouse-wheel/RMB/pan/reset/water/paused-start checks
   and independent visual ACCEPT in the
-  [owning record](docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
+  [owning record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#плавный-зум-и-цель-по-пкм--2026-10-26).
   Source saved locally as `b9353990`; normal commit hook/audit PASS.
 
 ### Porechye: nine-tile atlas and 24 contract proposals
@@ -3107,7 +3163,7 @@ requests.
   are not implemented. Text critic ACCEPT; owner canon approval is not inferred.
 - Twelve focused scenarios/types, scoped lint/format and architecture PASS;
   far route, localization and water checks are recorded with their actual limits
-  in the [owning map record](docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
+  in the [owning map record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#атлас-33-и-24-проекта-контрактов--2026-10-25).
   Initial river-copying artwork was rejected and regenerated from layout plus a
   land-texture crop. Vertical joins rejected in v3 were repainted locally; final
   v5 visual critic ACCEPT (six applicable scores2), far browser trip and onward
@@ -3135,7 +3191,7 @@ requests.
   checked. Change audit PASS after sharing road geometry and simplifying UI functions;
   final integrated v4 critic ACCEPT (all applicable scores2). Local code/art
   commit `defbe8da` passed the normal hook/change audit without bypass. Historical research,
-  iteration failures, checks and limits: [owning map page](docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
+  iteration failures, checks and limits: [owning map page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#реалистичный-округ-планы-масштаб-и-работающая-v2--2026-10-25).
 
 ### Painted Porechye navigation stand
 
@@ -3146,7 +3202,7 @@ requests.
   corridors. Toggleable layers, start/goal, travel time, moving token,
   stop/resume/arrival, zoom/pan and a night preview are available via `pnpm dev:map`.
   Existing V3 speeds remain authoritative; no new runtime dependency, canonical
-  map edition, migration or game-save change. [Owning map page](docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
+  map edition, migration or game-save change. [Owning map page](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#стенд-проходимости-поречья--2026-10-25)
   records GitHub alternatives, checks, corrections and acceptance limits.
   Five focused scenarios and Chrome interaction PASS; third independent
   diagnostic-stand visual pass ACCEPT (all applicable scores≥2), change audit
@@ -3252,10 +3308,10 @@ requests.
   defect identified. Focused real-core producer tests (30), protocol build,
   server types and scoped lint/format/diff PASS. Fresh integrated reviewer ACCEPT
   at `8c073ad9550664ae0eb3f7f0d574bc1f7eef4a23`, no material findings;
-  [retained report](docs/engineering/evidence/wages-local-evidence-319/review-integration.md).
+  [retained report](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/review-integration.md).
   This final records-only successor changes no accepted code;
   normal merge commit `0308738d` audit PASS without bypass (zero new findings;
-  syntactic-attribution warning retained). [Integration result](docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
+  syntactic-attribution warning retained). [Integration result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/integration-2026-10-25.md).
 - Dated correction to prior #321/workflow LOCAL/PENDING entries: PR #325 merged
   normally at `e216b0e1f44fd91b899227f7135d00ba7903e14a` on 2026-10-25;
   #321 closed completed. Parent readback: CI `40145187358` and scope
@@ -3273,8 +3329,8 @@ requests.
   then completion and merge of the next worktree. Current mission covers this
   #321/workflow branch and existing #319 / PR #324 after independent acceptance
   and applicable CI; no automation, deployment or wider backlog activation.
-- Retained local [#321 review](docs/engineering/evidence/wages-projection-321/review.md)
-  and [actual HTTP/PG result](docs/engineering/evidence/wages-projection-321/http-readback.json)
+- Retained local [#321 review](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-projection-321/review.md)
+  and [actual HTTP/PG result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-projection-321/http-readback.json)
   alongside the change. Source accepted at `b1194a94`; workflow at `a3ba1e8c`.
   This documentation-only publication preparation changes no game behavior.
   Status-block check initially rejected the missing coordinator label; corrected
@@ -3291,8 +3347,8 @@ requests.
   commands, canonical storage, migrations or UI changes.
 - Affected: `packages/protocol/src/company.ts`, server `company/holdings.ts`,
   `payroll-view.ts` and focused projection/route tests.
-  [Owning wiki result](docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
-  and [current status](docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
+  [Owning wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#третий-цикл-весь-объём-и-итоговая-приёмка)
+  and [current status](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/CURRENT_PLAN_HISTORY.md#local-completion-of-321--2026-10-25).
   Projector/economy/privacy tests (10), authenticated real-PG route tests (2, no
   skips), protocol build, protocol/server/web types and scoped lint/format/diff
   PASS. Initial invalid synthetic test fixture corrected before passing aggregate
@@ -3313,7 +3369,7 @@ requests.
   counterexamples and reviewer diff check PASS; unchanged script evidence reused.
   Bounded grades: AGENTS.md 24/24; affected skills/prompts 24/24. These are review
   judgments, not measured savings or certification of untouched skills.
-- [Owning acceptance](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
+- [Owning acceptance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-acceptance--2026-10-25)
   names the reviewer-owned local report and preserves first-pass history.
   This docs-only successor changes no implementation. Scoped format/status/diff
   checks PASS; normal documentation-only hook path, no bypass. Unpublished;
@@ -3330,7 +3386,7 @@ requests.
 - Orca skill tier table and evaluator/visual prompts retain independent scored
   critique for substantive visuals in U/T as well as V. Common rules apply to
   every worker; CURRENT_PLAN distinguishes authorized local Codex work from
-  stopped Orca workers. [Owning corrections/checks](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
+  stopped Orca workers. [Owning corrections/checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#independent-review-corrections--2026-10-25).
 - Counterexample read-through, scoped Markdown format/link/status/diff checks PASS.
   Scripts unchanged; applicable fixture checks reused. Normal docs-only hook path,
   no bypass. Independent re-review pending; game suites/pilot/publication/merge
@@ -3342,7 +3398,7 @@ requests.
   guidance amend the former one-issue/300-line cap, contract/stub rituals,
   unconditional scout/refill and historical merge-on-gates activation. Current
   authority is centralized in AGENTS; editor/branch-owner modes are explicit.
-  [Owning preparation/results](docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
+  [Owning preparation/results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25)
   retains sources, affected contracts and limits. Domain/visual acceptance stays.
 - Tick checks STOPPED_BY_OWNER before side effects and between iterations;
   exit 20 stops looping without removing the marker. Scope reports advisory
@@ -3361,7 +3417,7 @@ requests.
 - Branch `Vovanostm/wages-local-evidence-319`, [#319](https://github.com/Vovanostm/warwrit/issues/319):
   fresh reviewer and evaluator ACCEPT at `42a4f583`; the evaluator independently
   passed 30 real producer/core tests, including distinct remote pool-wallet refusal
-  without input mutation. [Evaluation](docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
+  without input mutation. [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-local-evidence-319/eval-2.md)
   and adjacent review preserve the exact boundary. Coordinator validation remains
   exit 0, nine checks PASS; whole-PR source scope 296/300.
 - Both gate workers settled, acknowledged and released; direct process readback
@@ -3371,7 +3427,7 @@ requests.
 - The next core allocation is accepted #321, safe optional payroll projection and
   retained history (task `task_c3c90d43c45e`, branch `Vovanostm/wages-projection-321`).
   It owns four contract paths and focused checks; no runtime.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records allocation and remaining gates.
+  [Current plan](docs/engineering/ROADMAP.md) records allocation and remaining gates.
   Existing blocked slices and #315 retain their holds.
 
 ### Revalidate #319 distinct pool-wallet regression — 2026-10-24, PUBLISHED
@@ -3384,7 +3440,7 @@ requests.
   PASS. Initial formatting check failed, then passed after formatting. Coordinator
   `orca-validate.sh` exits 0 with all nine checks PASS; source scope remains 296/300.
   Logs remain at `.orca/validate-*.log`; local report retains all executed checks.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh round 2 reviewer
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh round 2 reviewer
   and evaluator at the frozen records successor. Prior reviewer REWORK and evaluator
   ACCEPT remain historical; fresh verdicts and PR/merge are pending. Settled builder
   acknowledged/released, direct process cleanup confirmed. #321 waits for checks.
@@ -3400,7 +3456,7 @@ requests.
 - Coordinator allocates rework 1/2 to `apps/server/src/company/payroll-access.test.ts`
   only, plus the local report: reject that remote pool with the purse/operator local
   and prove input nonmutation. Reports remain at `.orca/wages-local-evidence-319/`.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records the gate outcomes and queue.
+  [Current plan](docs/engineering/ROADMAP.md) records the gate outcomes and queue.
 - Both settled reports acknowledged/released; direct process check found no remaining
   worker checks. #321 waits for the sole core slot. New regression, revalidation and
   fresh gates are pending; prior validate 9/9 is not proof of the future change.
@@ -3422,10 +3478,10 @@ requests.
   and pinned the audit to origin/main; PASS, no threshold/hook bypass.
 - [PR #323](https://github.com/Vovanostm/warwrit/pull/323) is MERGED at `1c793e16`,
   with both checks green at expected head `ed5bd53f`, Tier L ACCEPT, and
-  [ordinary browser/API/PG proof](docs/engineering/evidence/wages-command-seams-318/eval-2.md).
+  [ordinary browser/API/PG proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-command-seams-318/eval-2.md).
   #318 closed/relabelled done; clean fully pushed worktree removed after retaining
   local evidence. This supersedes its pending publication status below.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh #319 review and
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh #319 review and
   producer/core evaluation next; #321 waits for exclusive checks. Those verdicts,
   #319 PR/merge and #167 integrated payroll/browser/recovery acceptance are pending.
   Full integrated gates NOT_RUN. Inherited blocks and daily-work completion remain.
@@ -3435,7 +3491,7 @@ requests.
 - Branch `Vovanostm/wages-command-seams-318`, [#318](https://github.com/Vovanostm/warwrit/issues/318):
   Tier L reviewer ACCEPT at `771fcb07` and evaluator ACCEPT at `36b6aa5e`;
   subsequent source diff is empty. The earlier environment blocker is resolved.
-  [Evaluation](docs/engineering/evidence/wages-command-seams-318/eval-2.md),
+  [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/wages-command-seams-318/eval-2.md),
   adjacent review and seven JPEGs retain the independent proof.
 - Actual authenticated company opening, equipment, begin/end camp, atomic stale
   refusal, ordinary retry and reload passed against private PostgreSQL. Evaluator
@@ -3444,7 +3500,7 @@ requests.
   Coordinator validation remains exit 0, 9/9 checks; source scope 184/300.
 - Direct cleanup confirmed all 13 named app/browser PIDs absent, private ports
   unused and profile/pidfile absent. Both disposable Dex/PostgreSQL projects and
-  volumes were removed after settlement. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  volumes were removed after settlement. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #323](https://github.com/Vovanostm/warwrit/pull/323) published and unchanged #167 payroll/lost-response/day-night
   acceptance. No source, schema, finance rule or API change this tick;
   full integrated gates NOT_RUN. Existing blocked labels remain binding.
@@ -3465,7 +3521,7 @@ requests.
   and checked campaign readiness (200), session/company GET (401), command POST
   (403). These probes prove route availability only. All prior evaluator processes,
   ports, profile and pidfile were absent; preflight API/web then stopped cleanly.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns only evaluator recovery;
+- [Current plan](docs/engineering/ROADMAP.md) assigns only evaluator recovery;
   containers remain coordinator-owned until settlement. Existing source validation
   and review are retained; authenticated play, full integrated gates and merge
   remain pending. #167 owns payroll acceptance; inherited blocks stay unchanged.
@@ -3484,7 +3540,7 @@ requests.
   Coordinator validation exit 0, 9/9 PASS; related tests 61 PASS and 55 skipped.
   [Build report](.orca/wages-command-seams-318/report.md) retains the initial
   environment failure, corrected test expectations and initial audit failures.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) records pending independent
+- [Current plan](docs/engineering/ROADMAP.md) records pending independent
   Tier L review/playtesting and the retained #319/#321 queue. This is local
   implementation awaiting publication; no PR, merge or player acceptance claimed.
   Payroll and the integrated #167 journey remain pending. No finance rule,
@@ -3499,7 +3555,7 @@ requests.
   review thread; scope recheck PASS at 197/300, closing only #307.
 - Independent Tier L ACCEPT at `6485ed80`, validation exit 0 and day/night
   playable proof remain valid: later changes contain evidence/shared records only.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) requires final CI and expected-head
+  [Current plan](docs/engineering/ROADMAP.md) requires final CI and expected-head
   merge after this records-only commit. Merge is not yet claimed. Parent #263,
   H1/H2 and all blocked acceptance remain open; game checks NOT_RUN this tick.
 
@@ -3515,7 +3571,7 @@ requests.
   Failed CI stopped before lint/build/typecheck/unit/coverage/audit; none passed
   in that run. Existing coordinator validation and Tier L evidence remain valid
   for unchanged source; final corrected-head CI is still required before merge.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) retains the pending delivery,
+- [Current plan](docs/engineering/ROADMAP.md) retains the pending delivery,
   parent #263/H1/H2 acceptance and all existing blocked holds. No merge claimed.
 
 ### Accept #307 shared-read and polling gates — 2026-10-24, PUBLISHED
@@ -3523,14 +3579,14 @@ requests.
 - Branch `Vovanostm/qa-action-polling`, [#307](https://github.com/Vovanostm/warwrit/issues/307):
   independent Tier L reviewer and evaluator ACCEPT at `6485ed80`, superseding
   the pending gates below. Source remains `67f49bf2`; no source correction.
-- [Evaluation](docs/engineering/evidence/qa-action-polling/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-polling/eval-1.md) records
   160 focused tests PASS and two ordinary day/night round-7 victories, with
   no further POST after stop or terminal waits. Adjacent review and 23 JPEGs
   retain the gate evidence. Coordinator validation: exit 0, 9/9 checks,
   187 related tests PASS; whole-PR source scope 197/300.
 - Direct coordinator cleanup confirms all 17 named PIDs absent, both private
   ports unused and pidfile/profile absent. Evaluator settled and acknowledged;
-  runtime/checks reservations released. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  runtime/checks reservations released. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #314](https://github.com/Vovanostm/warwrit/pull/314) published;
   final PR CI pending, no merge yet.
 - Full integrated gates and fresh live-main comparison NOT_RUN. Parent #263,
@@ -3551,7 +3607,7 @@ requests.
 - Direct cleanup confirms 37 named PIDs absent (including two failed-launch
   PIDs), private ports unused and pidfile/browser profiles absent. Builder
   settlement acknowledged; release returned retained/no_owned_resource.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) allocates independent source
+  [Current plan](docs/engineering/ROADMAP.md) allocates independent source
   review and evaluation, with exclusive checks/private runtime for the evaluator.
 - Published branch checkpoint, not a PR or merged/player-accepted result.
   Main CI `40067442240` PASS at `99e513f5`. Full integrated gates and fresh
@@ -3564,7 +3620,7 @@ requests.
   after merged #306/PR #313. The [coordinator decision](https://github.com/Vovanostm/warwrit/issues/307#issuecomment-6380577929)
   allocates existing `apps/web/src/combat-lab/CombatLab.mounted.test.tsx` alongside
   CombatLab/controller source and tests, so real timer/unmount wiring can be proved.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns one web builder,
+- [Current plan](docs/engineering/ROADMAP.md) assigns one web builder,
   exclusive sequential focused checks and private ports 23201/25201. Preserve
   initial 750 ms polling, cadence after settlement, shared-read identity/cleanup,
   550 ms autoplay/stop and exact-body retry. Whole-PR source cap remains 300;
@@ -3583,11 +3639,11 @@ requests.
   entries below. Expected head `7c07db71`, PR CI/scope and pre-merge main CI passed;
   final whole-PR scope 245/300. No post-merge main CI run observed yet.
 - Prior validation 9/9, 145 related tests and Tier L ACCEPT `090843b5` retained.
-  [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+  [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-transport/eval-1.md) records
   118 focused tests, two day/night victories and three retry probes. Later commits
   contain only evidence and coordinator records. One playable-proof merge this tick.
 - The existing sequential #307 now has its own worktree and read-only contract
-  task on merged main. [Current plan](docs/engineering/CURRENT_PLAN.md) names the
+  task on merged main. [Current plan](docs/engineering/ROADMAP.md) names the
   next check; no builder/runtime allocation, new game code or acceptance waiver.
   #263/H1/H2, consumed budgets and #179/#209/#310/#297 holds remain unchanged.
   Full integrated game gates and fresh live-main comparison NOT_RUN this tick.
@@ -3599,13 +3655,13 @@ requests.
 - Branch `Vovanostm/qa-action-transport`, [#306](https://github.com/Vovanostm/warwrit/issues/306):
   independent Tier L reviewer and evaluator ACCEPT at `090843b5`, superseding
   the pending gates below. Source remains validated `804d5983`; no source changes.
-- [Evaluation](docs/engineering/evidence/qa-action-transport/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-transport/eval-1.md) records
   118 focused tests PASS, two ordinary day/night round-7 victories and three
   browser retry probes PASS. Adjacent review and JPEGs preserve the gate evidence.
   Coordinator validation remains exit 0, 9/9 checks, 145 related tests, scope 245/300.
 - Direct cleanup confirms all 17 owned PIDs absent, both private ports unused,
   pidfile/profile absent; evaluator settled and runtime/checks reservations released.
-  [Current plan](docs/engineering/CURRENT_PLAN.md) records
+  [Current plan](docs/engineering/ROADMAP.md) records
   [PR #313](https://github.com/Vovanostm/warwrit/pull/313), published with CI pending.
   Full integrated game gates NOT_RUN; fresh live-main comparison NOT_RUN.
   Parent #263, #307, H1/H2 and blocked visual acceptance remain open. No rules,
@@ -3622,7 +3678,7 @@ requests.
   whole-PR scope 245/300. Builder reports 118 focused tests, normal audited
   commits and one ordinary round-7 victory with paired day/night captures;
   800 ms stop/terminal waits issued no further POST. Independent acceptance pending.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates fresh Tier L review
+- [Current plan](docs/engineering/ROADMAP.md) allocates fresh Tier L review
   and evaluation. Five recorded PIDs absent, no worktree runtime process matches,
   private ports unused and pidfile absent; initial sandbox `ps` denied, direct
   escalated readback succeeded. Build report: `.orca/qa-action-transport/report.md`.
@@ -3638,7 +3694,7 @@ requests.
   guards in `CombatLab.tsx::refreshLatest` required by late-response AC3.
   `controller.ts` and existing CombatLab/controller tests retain their scope;
   #307 keeps polling extraction. No acceptance or recovery-budget reset.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates builder task
+- [Current plan](docs/engineering/ROADMAP.md) allocates builder task
   `task_a0148fe23e8b`, exclusive private runtime and sequential focused checks.
   [Issue decision](https://github.com/Vovanostm/warwrit/issues/306#issuecomment-6379966728)
   records the boundary; local contract/brief are named in the plan. This is
@@ -3659,7 +3715,7 @@ requests.
 - Existing Tier L ACCEPT, validation 9/9, 115 related tests and independent
   day/night journeys remain the delivery evidence. Final scope check PASS,
   169/300 source lines and one closing issue. No game checks rerun this tick.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) allocates the #306 contract
+- [Current plan](docs/engineering/ROADMAP.md) allocates the #306 contract
   on merged main under the accepted sequential split. No source, rules, API,
   protocol, replay, schema or migration changes; parent and visual limits remain.
   One PR with playable proof merged this tick; #306 implementation is not started.
@@ -3671,12 +3727,12 @@ requests.
 - Branch `Vovanostm/qa-action-admission`, [#305](https://github.com/Vovanostm/warwrit/issues/305):
   independent reviewer and evaluator ACCEPT at `a54b65c6`. This supersedes the
   pending independent gates below; source remains the validated `31d6fa5f`.
-- [Evaluation](docs/engineering/evidence/qa-action-admission/eval-1.md) records
+- [Evaluation](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-action-admission/eval-1.md) records
   88 focused tests PASS, ordinary day/night round-7 victories and three browser
   retry probes PASS. Small JPEG captures and the source review accompany it.
   Prior coordinator validation 9/9 PASS, 115 related tests and scope 169/300 remain valid.
 - Direct cleanup confirmed 17 PIDs absent, ports 23685/25685 unused, pidfile and
-  isolated browser profile absent. [Current plan](docs/engineering/CURRENT_PLAN.md)
+  isolated browser profile absent. [Current plan](docs/engineering/ROADMAP.md)
   records [PR #312](https://github.com/Vovanostm/warwrit/pull/312) as published, CI pending. No new source, rules, API, protocol, replay, schema or
   migration changes; full game gates NOT_RUN this tick. Parent #263, #306/#307,
   H1/H2 and blocked visual acceptance remain open.
@@ -3693,7 +3749,7 @@ requests.
   ordinary mill victories; stop intervals 1070/1079 ms had no further POST.
   One favicon 404 remains an author-smoke limitation. Independent Tier L review
   and evaluation are pending; no playable acceptance, PR CI or merge is claimed.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) assigns the independent gates.
+- [Current plan](docs/engineering/ROADMAP.md) assigns the independent gates.
   Direct cleanup confirms all 21 recorded private processes absent and both
   runtime ports unused before transfer. No source recovery, rules, API, protocol,
   replay, schema, migration or setup change; full game gates NOT_RUN.
@@ -3710,7 +3766,7 @@ requests.
   #305 using `CombatLab.mounted.test.tsx`; production source stays frozen at the
   preserved WIP, and consumed recovery budgets remain unchanged. No new source
   recovery, #306/#307 work or acceptance waiver. Independent Tier L still required.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) records the merged prerequisite
+- [Current plan](docs/engineering/ROADMAP.md) records the merged prerequisite
   and next allocation. Documentation conflicts only; no production-source conflict.
   Scoped format/status/diff checks PASS. Integration probe: 83 focused tests and
   combined normal audit PASS, but merge pre-commit refreshed only the newly staged
@@ -3740,7 +3796,7 @@ requests.
 - Daily scout started on main with exclusive private runtime; metrics/digest
   were already posted. No merge this tick. #305 validation, browser acceptance,
   independent Tier L and candidate CI are NOT_RUN. See
-  [current status](docs/engineering/CURRENT_PLAN.md) and
+  [current status](docs/engineering/ROADMAP.md) and
   [#305](https://github.com/Vovanostm/warwrit/issues/305). No setup/API/wiki
   behavior contract changed; setup capability remains proposed in #309.
 
@@ -3759,7 +3815,7 @@ requests.
 - Coordinator verified no listeners on 23685/25685, no play.pid or lane check
   process before resource handover. Validation, independent Tier L, browser
   acceptance and candidate CI are NOT_RUN. Main CI `40015365287` is successful.
-  See [current status](docs/engineering/CURRENT_PLAN.md) and
+  See [current status](docs/engineering/ROADMAP.md) and
   [#305](https://github.com/Vovanostm/warwrit/issues/305).
 
 ### Prepare mounted-submit prerequisite for gated merge — 2026-10-24, PUBLISHED
@@ -3769,7 +3825,7 @@ requests.
   Tier D ACCEPT remains `c50c0c76`; subsequent changes affect only shared records.
   Coordinator validation at source `38d9757c` remains 9/9 PASS; no source changed.
 - Pre-merge scope check PASS: 1/300 source lines and one closing issue (#309).
-  This records-only commit updates the [current plan](docs/engineering/CURRENT_PLAN.md);
+  This records-only commit updates the [current plan](docs/engineering/ROADMAP.md);
   its CI and expected-head merge are pending. The prior CI-pending status is superseded.
   After merge, #305 may complete tests against its frozen source; no recovery budget reset.
   New game tests, browser/playable proof and full game gates NOT_RUN this tick.
@@ -3780,7 +3836,7 @@ requests.
   independent Tier D reviewer 1 ACCEPT at `c50c0c76`, with no blocking findings.
   This supersedes the review-pending status below; coordinator validation remains
   9/9 PASS at source `38d9757c`. PR CI and merge remain pending.
-- Records-only update to this changelog and [current plan](docs/engineering/CURRENT_PLAN.md).
+- Records-only update to this changelog and [current plan](docs/engineering/ROADMAP.md).
   Reviewer did not rerun checks; no new game tests or browser proof in this tick.
   #305 stays frozen until this prerequisite merges; existing visual blocks remain.
 
@@ -3795,7 +3851,7 @@ requests.
   POST/settlement hits, typecheck, lint, format, normal audit, and coordinator
   validation 9/9 PASS at `38d9757c`; source scope 1/300. Review and PR CI pending.
   This is Tier D fixture evidence; playable acceptance and #305 acceptance remain open.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) restores the Orca coordinator
+- [Current plan](docs/engineering/ROADMAP.md) restores the Orca coordinator
   status and routes #310's non-product question to dependency-blocked engineering
   work. Rework 2/2, parent freezes and failed gates remain; no extra round allocated.
   No setup, production, API, rules, protocol, replay, schema or migration changes.
@@ -3900,12 +3956,12 @@ requests.
 - `Vovanostm/qa-hooks-session-editor`, [PR #294](https://github.com/Vovanostm/warwrit/pull/294), #268: owner-requested #262/#231 extraction
   and issue-recorded pure autoplay/disabled allocation preserve the existing
   player journey. Source `973e036a`, independent Tier U ACCEPT at `46514ddb`,
-  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](docs/engineering/evidence/qa-hooks-session-editor/README.md).
+  source scope 256/300; [contract, full retained proof, verdict and 20 JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-editor/README.md).
 - Coordinator validator exit 0, all nine gates PASS; evaluator 62 focused tests,
   typecheck/lint/format, genuine day/night round-8 victories and fresh mounted
   lifecycle/guards/timers PASS. Direct 25-PID/port cleanup verified before handback.
   Normal evidence commit hook PASS; final-head hosted CI remains required.
-- [Current plan](docs/engineering/CURRENT_PLAN.md) reconciles #293's settled
+- [Current plan](docs/engineering/ROADMAP.md) reconciles #293's settled
   `79a5e407` candidate, coordinator validation 9/9 and fresh full Tier V workers;
   author matrix is not acceptance. Short native readability and E1/E2/E3 stay open.
   PR #292 attempts 4–8 now satisfy five consecutive full hosted passes; matched
@@ -3925,7 +3981,7 @@ requests.
 - Coordinator-only CHANGELOG/CURRENT_PLAN follow the gated source. The current
   plan now has one active status block, actual owner delegation and preserved
   history. The rejection guard remains a separate follow-up; final-head hosted
-  CI and merge pending. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md).
+  CI and merge pending. [CURRENT_PLAN](docs/engineering/ROADMAP.md).
 - #268 ordinary rework 2 follows a source-grounded pure autoplay/disabled
   allocation repair; staged 170/300 preserved, normal audit/<=300/full Tier U
   still required. Final #269 AND #26220/15, consumed fallback 1 and last ordinary
@@ -3942,7 +3998,7 @@ requests.
 
 - `Vovanostm/core-integration-db-isolation`, #285, owner-requested single tick:
   fresh independent reviewer4 and local evaluator4 ACCEPT at `0ffa146d`;
-  source `b4d033ca`, 219/300. [Tracked evidence](docs/engineering/evidence/core-integration-db-isolation/README.md)
+  source `b4d033ca`, 219/300. [Tracked evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-integration-db-isolation/README.md)
   includes complete contract, both verdicts and genuine day/night/victory JPEGs.
   Independent 19 lifecycle PASS, global-only child exits 0/1/7; one complete
   native smoke/eight-file 60/60 PASS with distinct migrated clones, default
@@ -3967,7 +4023,7 @@ requests.
   Only coordinator publication audit uses existing coverage alongside source work;
   no coordinator test or runtime is allocated. #214 waits179; final component20/15
   remains on BOTH269 AND262; #263/#231 original gates retained. Native state and
-  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  five-line issue handoffs are read back; [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   is rewritten with the current queue. Daily work already complete, no duplicate
   scout/digest. This tick:0 merged PRs with playable proof; no production/rule/API,
   protocol/replay/schema/migration/dependency change. New coordinator game tests,
@@ -3985,7 +4041,7 @@ requests.
   validator exit 0, all 9 checks PASS; related 1 PASS / 18 SKIP without DB is not
   fresh database acceptance. Direct native cleanup confirms 145 recorded PIDs
   absent, six ports clear and empty project-labelled Docker inventories.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh independent Tier L
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh independent Tier L
   round 4 allocation; reviewer source-only, evaluator exclusive runtime. Full
   owning contract/report and earlier evidence remain under the dedicated worktree's
   .orca/core-integration-db-isolation/ (local paths). No new source round granted.
@@ -4017,7 +4073,7 @@ requests.
   unchanged encounter line 4156 remains unexplained. Batch selection, outer guard
   or leadership deferral require the original invocation's branch trace before
   cleanup. Leadership is a lead, not a reproduced cause or authorized fix.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh Tier L round 3
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh Tier L round 3
   reviewer/evaluator allocation, exclusive runtime and preserved #272/#282 proof.
   Original hosted <=20% timing NOT_MEASURED and five full CI NOT_RUN remain gates.
   Under 2026-10-21 engineering delegation, #179's process-only recovery question
@@ -4050,7 +4106,7 @@ requests.
 - Exact evaluator settlement verified and recorded before acknowledgment.
   Coordinator directly checked all 23 recorded PIDs absent, six ports clear,
   and empty project-labelled Docker container/network/volume inventories.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exclusive runtime
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exclusive runtime
   handoff and queue. Verdict/evidence remain in the dedicated worktree under
   .orca/core-integration-db-isolation/eval-2.md and eval-2-evidence/ (local paths).
 - WIP branch publication only; no PR/merge or acceptance. Matched hosted <=20%
@@ -4077,7 +4133,7 @@ requests.
   at `2824c81f` exit 0, all 9 gates PASS. Related 1 PASS / 12 SKIP without DB
   supplies no fresh database proof. All 44 declared PIDs absent, all 18 ports
   clear and labelled Compose inventories empty before exclusive slot transfer.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records fresh round-2 Tier L
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records fresh round-2 Tier L
   review/evaluation allocation. Preserve historical REWORK/eight-file/60-test
   evidence, #272 accepted proof and #282 assertions; hosted <=20% timing remains
   NOT_MEASURED, five full CI runs NOT_RUN. WIP branch checkpoint publication only;
@@ -4103,7 +4159,7 @@ requests.
   clear and empty labelled Compose inventories. First rework 1/2 is allocated
   inside the existing seven-path ownership, preserving exact-name cleanup,
   original errors/assertions, ordinary audit, <=300 source lines and Tier L.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) holds the operational handoff.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) holds the operational handoff.
   Matched hosted <=20% duration NOT_MEASURED and five full CI runs NOT_RUN remain
   mandatory. Source unchanged `0b0c44eb`; no PR/merge, zero merged PRs with playable
   proof. Coordinator game checks/runtime NOT_RUN; documentation checks only.
@@ -4124,7 +4180,7 @@ requests.
   Evaluator `task_cf926bbb6c7d` / `ctx_c4c26582a636` remains live with exclusive
   checks/DB/browser/runtime; finding forwarded. Combine all gate findings after
   its settlement and positive cleanup before starting the first rework.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records this one-tick handoff.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records this one-tick handoff.
   Source remains `0b0c44eb`, scope 176/300; prior validator exit 0 / 9 gates PASS
   is retained evidence. New coordinator game tests/typecheck/validator/runtime
   NOT_RUN. Original full eight-file cleanup/persistent journey, matched hosted
@@ -4151,7 +4207,7 @@ requests.
   readback found all 16 reported PIDs absent and three ports clear. SQL cleanup
   raw log missing; independently repeat. Lost-CREATE-reply cleanup advisory
   retained for fresh reviewer, not reproduced or accepted.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) schedules fresh Tier L review
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) schedules fresh Tier L review
   and exclusive evaluator checks/runtime. Full eight-file/migration and persistent
   victory/effects proof pending; matched hosted <=20% timing NOT_MEASURED and five
   full CI runs NOT_RUN. #272/#282 proofs retained, PR #287 CI failed; #179 remains
@@ -4176,7 +4232,7 @@ requests.
   state. Original #272 proof and merged #282 rollback regression stay intact.
 - Recorded/acknowledged four mailbox messages; forwarded sampled short-desktop
   day/night readability concerns to the sole #179 builder. No final Tier V
-  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  verdict or repeated measurement is claimed. [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   retains all original criteria, exclusive runtime ownership and deferred slices.
   No new worker, issue, label change or daily repeat; 0 merged PRs with playable
   proof. Local game tests/typecheck/build/DB/browser NOT_RUN, performance
@@ -4190,7 +4246,7 @@ requests.
 - `Vovanostm/core-integration-db-isolation`: owner-requested single pipeline tick
   completes the interrupted documentation correction below. The new OIDC proof
   link points to unmerged PR #287, where that evidence exists; historical records
-  remain intact. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) retains #285's
+  remain intact. [CURRENT_PLAN](docs/engineering/ROADMAP.md) retains #285's
   live read-only contract and #179's sole builder/checks/runtime allocation.
 - Recorded and acknowledged two #179 advisories before relaying to its existing
   dispatch: possible initial-fit/full-field pan-limit overwrite (sender source
@@ -4221,7 +4277,7 @@ requests.
   decoder through a normal follow-up commit; preserve catalogue fit/upward-step/
   widened-B001/unchanged-height regressions, browser alpha measurements and
   original full Tier V. Existing #214 freeze and #268 queue remain.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records current continuation;
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records current continuation;
   issue comments read back exactly, mailbox advisory recorded before ack,
   #285 dispatch/worktree/liveness verified. Local game tests, typecheck, builds,
   DB/browser and full suites NOT_RUN; performance NOT_MEASURED. Documentation
@@ -4244,7 +4300,7 @@ requests.
   exact W01/80 px and full Tier V acceptance remain unproven. #274/#280 REWORK.
 - Ordinary diff, history readback, local links, Markdown format and PR scope are
   the relevant checks; game tests/typecheck/runtime NOT_RUN for this docs-only
-  correction. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
+  correction. [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation.
 
 ### Publish accepted OIDC test isolation — 2026-10-22, PUBLISHED
 
@@ -4252,7 +4308,7 @@ requests.
   counts with one finite test-owned issuer query, including the attempted
   wrong issuer and sessions joined to owned accounts; original assertions and
   ordinary parallelism remain. No production authentication change.
-- [Contract, author history, independent verdicts and day/night proof](docs/engineering/evidence/core-oidc-count-isolation/README.md):
+- [Contract, author history, independent verdicts and day/night proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-oidc-count-isolation/README.md):
   reviewer ACCEPT `72b6e4eb`, evaluator ACCEPT `6db7dd20`; source `37f35c6b`
   unchanged. Author account/session mutations fail the preserved equality and
   restore; five consecutive real PostgreSQL parallel runs PASS 60/60 each.
@@ -4262,7 +4318,7 @@ requests.
   records; both histories retained. Validator exit 0, 9/9 PASS; related OIDC
   skips without DB and does not replace author proof. Positive browser PID/port
   cleanup confirmed. This commit is being published; final CI/merge pending; no waiver.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #179 next sole web
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #179 next sole web
   allocation and frozen #214. Complete ignored native proof is retained in the
   coordinator before cleanup. No setup/API/wiki/rule/replay/schema/migration/
   dependency change; full local integrated suites NOT_RUN, performance NOT_MEASURED.
@@ -4276,7 +4332,7 @@ requests.
   #267: independent Tier U ACCEPT at `de77fa3d`, source frozen `9ccabbd9`.
   Extraction `b2520b1b` and callback regression relocation `cc98765f` preserve
   controls, refs, 550/750 ms timers, guards and transport. Scope 159/300.
-- [Contract, complete author history, independent verdict and eleven JPEG captures](docs/engineering/evidence/qa-hooks-selection-autoplay/README.md)
+- [Contract, complete author history, independent verdict and eleven JPEG captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-selection-autoplay/README.md)
   accompany publication. Coordinator validate exit 0, 9/9 PASS; 49 related tests,
   callback hits 10/17 after ordinary refresh. Evaluator independently passed
   49 focused tests and genuine day/night mill victories, real mounted
@@ -4292,14 +4348,14 @@ requests.
   #272 retains mutation/five real parallel-pass/Tier L gates; #214 next web slot.
   #268/#269/#262/#263/#231 remain open; final component 20/15 still required on
   #269 AND #262. Infrastructure #274/#280 unresolved REWORK blocks merge.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation.
   No setup/API/wiki/rule/replay/schema/migration/dependency change; full local
   verify/stress/migrations/build NOT_RUN, performance NOT_MEASURED.
 
 ### Tick prompt is not owner scope — 2026-10-22, PUBLISHED
 
 - `claude/tick-prompt-owner-scope`, #290: the coordinator wrote status blocks in
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) whose scope line quotes the
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) whose scope line quotes the
   tick prompt as the owner's words, against
   [warwrit-orca](.agents/skills/warwrit-orca/SKILL.md). The prompt in
   `scripts/orca-pipeline-tick.sh` now says it is the tick script, never owner
@@ -4346,7 +4402,7 @@ requests.
   reserved #214 and before inactive #201/playback owners. No source start,
   numerical spacing decision, new mechanic, ownership expansion or acceptance
   waiver. Original catalogue-derived spacing, AC/DoD and full Tier V remain.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the queue; the issue
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the queue; the issue
   comment was read back exactly after one write. First comparison incorrectly
   stripped its trailing newline; corrected comparison PASS.
 - #267 evaluator remains live with the exclusive checks/runtime slot; #272
@@ -4369,7 +4425,7 @@ requests.
   `9ccabbd9`: exit 0, all 9 gates PASS, related 49 tests. Fresh Tier U task
   `task_99c8547e4ba0` / `ctx_a1732d6d1a89` is live; no ACCEPT/PR yet. Local proof:
   `.orca/qa-hooks-selection-autoplay/` in its dedicated worktree.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records queue and gates.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records queue and gates.
   Final component 20/15 remains on #269 AND #262; #268 follows #267.
   #272 preserves original mutation/five-pass/Tier L after merged #282.
   No setup/API/wiki/rule/migration change; full local suites NOT_RUN,
@@ -4395,7 +4451,7 @@ requests.
   preserved. No production/tool change or proof waiver; original budgets and
   final #269 AND #262 component 20/15 remain. Full local owning report and
   amendment: `.orca/qa-hooks-selection-autoplay/` in the dedicated worktree.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md): #214 complete contract accepted
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md): #214 complete contract accepted
   and queued behind #267; #282 CI pending, #272 follows it. PR #274 hosted CI
   fails bridge-v5 terminal effects assertion. No setup/API/wiki contract change.
   Full verify/stress/migrations/build NOT_RUN locally; performance NOT_MEASURED.
@@ -4407,7 +4463,7 @@ requests.
   named stash `b2aeabd0` and local binary patch, unapplied until merge finishes.
   First resume stopped on shared-record conflicts only; no checks/runtime.
   Coordinator resolved those conflicts; budgets and accepted scope unchanged.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records merged #271 proof,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records merged #271 proof,
   #284 revalidation/CI, #214 read-only contract and #267 continuation.
   No extraction acceptance/source delivery yet; source checks/browser NOT_RUN
   on this resumed candidate, no setup/API/wiki change, performance NOT_MEASURED.
@@ -4422,7 +4478,7 @@ requests.
   stays read-only. Preserve guards, synchronous refs and 550 ms / 750 ms timers;
   estimate 175–215 source additions plus removals, hard stop 300. Candidate
   scope/complexity NOT_MEASURED; code and runtime acceptance NOT_RUN.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records builder/scout tasks,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records builder/scout tasks,
   current dependencies and daily metrics: 10 rolling-day merges, at least 5 with
   recorded play proof; 0 failed worker runs versus 5 previously, no regression
   trigger. #262 and #231 remain open; #268/#269 and #263–#265 retain sequencing.
@@ -4436,7 +4492,7 @@ requests.
 - `Vovanostm/core-world-rollback-isolation`: [PR #283](https://github.com/Vovanostm/warwrit/pull/283)
   merged as `df540c2c` at expected `3a97b679`; #271 closed/done. Final-head CI,
   scope and independent Tier U proof PASS; 1 merged PR with playable proof this tick.
-  [Contract/verdict/captures](docs/engineering/evidence/uix-editor-primary-start/README.md)
+  [Contract/verdict/captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-editor-primary-start/README.md)
   remain tracked; local proof retained and fully-pushed clean worktree removed.
 - Ordinary merge of that main into [PR #284](https://github.com/Vovanostm/warwrit/pull/284)
   preserves both record histories; only CHANGELOG/CURRENT_PLAN conflicted.
@@ -4447,7 +4503,7 @@ requests.
   #214 technical ownership ordering moves before inactive #198/#212; dedicated
   read-only retained-contract refresh `task_cfa9df48704d`, no source/runtime.
   Full original issue proof and visual rubric remain; builder waits #267.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the continuation.
   No setup/API/wiki change; full suites NOT_RUN locally, performance NOT_MEASURED.
 
 ### Readable status block and main-red rule — 2026-10-22, PUBLISHED
@@ -4484,9 +4540,9 @@ requests.
   PASS 60/60, zero skips; two deliberate lifecycle failures clean up. Normal
   commits/audits PASS. Coordinator validate exit 0, 9/9 PASS; related tests
   3 PASS/11 SKIP without DB URLs are not database acceptance.
-- [Contract, author report and independent verdict](docs/engineering/evidence/core-world-rollback-isolation/README.md)
+- [Contract, author report and independent verdict](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-world-rollback-isolation/README.md)
   accompany publication. Later commits only evidence/coordinator records;
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records hosted-CI/merge gates.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records hosted-CI/merge gates.
   No merge or player-feature delivery claimed; 0 merged PRs with playable proof
   this tick. #272 retains separate mutation/Tier L gates after #282; #271 waits
   PR #283 CI; #267 WIP/budgets preserved; no duplicate daily work.
@@ -4527,7 +4583,7 @@ requests.
   source lines. Related tests: 3 PASS / 11 SKIP without DB URLs, explicitly
   separate from the builder's actual database runs. Fresh Tier D reviewer
   `task_3458072eeedf` is live on that frozen head; no verdict or PR yet.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the exact handoff,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the exact handoff,
   pending #283 final CI, preserved #267 WIP and independent #272 mutation/Tier L
   gates. Local contract/report/proof: `.orca/core-world-rollback-isolation/`
   in the dedicated worktree. Source and records published for continuation;
@@ -4555,7 +4611,7 @@ requests.
   Source implementation and all new game/DB/validator checks NOT_RUN.
   #282 remains planning until live #271 evaluator releases the checks/runtime
   slot; #272 retains `37f35c6b`, its five-pass requirement and Tier L gates.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records continuation,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records continuation,
   preserved #267 WIP/budget and broader visual discovery on existing
   #179/#201/#188/#189 without adding #271 conditions. Contract worker settled,
   recorded before acknowledgment and released (no owned resource).
@@ -4573,7 +4629,7 @@ requests.
   nine related tests PASS. Scope remains 36 source lines, excluding tests.
   Tier U ACCEPT and independent played proof remain valid for unchanged code.
   Final hosted CI and expected-head merge remain pending; 0 merges this tick.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #282's clean author
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #282's clean author
   commits and pending independent Tier D review, #272's separate acceptance,
   and retained #267 WIP. Attributed agent scope expansion is recorded locally
   as unverified authority; no new milestone activated. No API/setup/wiki change.
@@ -4596,11 +4652,11 @@ requests.
   first viewport/default/preset/result return, actual draft/request equality,
   keyboard focus/Enter, invalid and duplicate-pending guards; 1440 × 900 day/night,
   bounded 1366 × 768 fit. Runtime/browser cleanup positively confirmed.
-  [Contract, full verdict and evaluator captures](docs/engineering/evidence/uix-editor-primary-start/README.md).
+  [Contract, full verdict and evaluator captures](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-editor-primary-start/README.md).
 - Coordinator validator exit 0, 9/9 PASS, nine related tests PASS; normal audit
   PASS with five inherited findings retained. No duplicate test rerun this tick.
   Hosted CI and merge pending after publication; 0 merged PRs with playable proof so far.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records sole core/check-slot
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records sole core/check-slot
   handoff to #282 and preserved #272/#267 dependencies. Full verify/stress/migrations/
   production build NOT_RUN locally; performance NOT_MEASURED. Full scene/art/M1
   acceptance unclaimed. No API/setup/wiki/rule/protocol/replay/renderer change.
@@ -4619,7 +4675,7 @@ requests.
   before acknowledgment and release (no owned resource). Builder default/preset/
   result-return, actual payload, pending/invalid, keyboard and day/night journeys
   are local author evidence; independent Tier U acceptance remains pending.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records evaluator
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records evaluator
   `task_b9107798fb76`, frozen source and the serial resource handoff: #272 gets
   exclusive checks/DB while #271 evaluator reads source; its browser permit
   follows exact #272 settlement and cleanup. Contract/report/shots remain local
@@ -4639,11 +4695,11 @@ requests.
   Tier U ACCEPT, coordinator validate exit 0 (9/9 PASS), source scope 137,
   final-head clean-checkout CI and PR scope PASS; later commits were evidence
   and shared records only. No unresolved review or blocked label at merge.
-- [Owning contract, verdict and played day/night proof](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+- [Owning contract, verdict and played day/night proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
   remain tracked. Local evidence retained; clean fully-pushed worktree removed.
   This tick delivered 1 merged PR with playable proof; it preserves behavior
   and does not claim a new player feature or full-M1 acceptance.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names #271's bounded sole web
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) names #271's bounded sole web
   builder task and P0 #272's disjoint core contract reservation. #271 starts
   from merged main; #272 source/DB work awaits accepted contract and resource
   handoff. #267 staged WIP/budgets and #269 AND #262 final gate are preserved.
@@ -4673,9 +4729,9 @@ requests.
   Normal changed-code audit PASS with five inherited findings retained.
   Exact native evaluator task/dispatch/result/full verdict matched, recorded
   before acknowledgment and release (no owned resource).
-- [Owning contract, independent verdict and ten JPEGs](docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
+- [Owning contract, independent verdict and ten JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-session-callbacks/README.md)
   now tracked; later commits change only evidence and coordinator records.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records publication and
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records publication and
   remaining hosted-CI/exact-head/blocked-label gates. Merge NOT_RUN; 0 merged
   PRs with playable proof this tick. #271 remains next after this merge; #267
   staged WIP/budgets preserved. #269 AND #262 final component limits remain;
@@ -4698,7 +4754,7 @@ requests.
   acceptance is pending on task `task_840ad97b96c0`, frozen source `a6b35143`.
   Exact native builder settlement and structured result matched the full local
   contract/report before acknowledgment and release (no owned resource).
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the playable journey,
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the playable journey,
   evaluator handoff and sequence. Local contract/report and validator logs stay
   in the dedicated worktree under `.orca/`; source and records are published
   for continuation. PR/merge NOT_RUN; this tick has 0 merged PRs with playable
@@ -4720,9 +4776,9 @@ requests.
   no introduced console/page error or visual regression found. Coordinator
   validator exit 0, 9/9 PASS, 64 related tests PASS. Exact native settlement,
   result and full verdict matched, recorded, acknowledged and released.
-- [Owning contract, verdict and JPEG proof](docs/engineering/evidence/qa-hooks-editor/README.md)
+- [Owning contract, verdict and JPEG proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/qa-hooks-editor/README.md)
   retained on the PR branch; later commits contain only evidence/shared records.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records review → PR and the
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records review → PR and the
   remaining exact-head CI/scope/blocked-label/merge gates. Hosted CI and merge
   pending; this tick has 0 merged PRs with playable proof. #231 stays open and
   #262–#265 preserve sequencing. No duplicate daily scout/digest.
@@ -4743,7 +4799,7 @@ requests.
   release (no owned resource). #261 advances to review; fresh Tier U evaluator
   `task_4e10f35af809` / `ctx_b7066392e440` is live on frozen `4523f609`.
 - Source WIP and coordinator-only records are pushed for continuation; no PR,
-  independent ACCEPT or merge yet. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  independent ACCEPT or merge yet. [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   names the next gate and retains prior dispatch history. #231 remains open;
   #262–#265 preserve sequencing. Daily work already complete, no duplicate scout.
   This tick: 0 merged PRs with playable proof. Full verify/stress/migrations/build
@@ -4760,7 +4816,7 @@ requests.
   matching tests, preserving behavior, feedback priority and normal audit.
 - Exact native contract settlement/result matched, recorded before acknowledgment,
   then released (no owned resource). #231 stays open; #262–#265 retain sequencing.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) names the active builder and
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) names the active builder and
   next validation/Tier U gate. Shared records are the only changes on this branch.
 - Contract/clean-base/ownership checks passed; documentation format/link/diff
   checks accompany this commit. Implementation/game tests/audit/typecheck/browser
@@ -4778,7 +4834,7 @@ requests.
   source scope must be measured before widening. Evaluator runner adaptation
   is local only; installed skill and #190 source ownership remain intact.
 - Original worker result/native settlement recorded before acknowledgment and
-  release. This entry and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  release. This entry and [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   are coordinator records only; implementation/gameplay/typecheck/production
   checks NOT_RUN, performance NOT_MEASURED. Documentation format/link/diff
   checks accompany the normal commit. This tick: 0 merged PRs with playable
@@ -4792,13 +4848,13 @@ requests.
   every applicable score 2; integrated validator 9/9, 48 tests, scope 272;
   hosted CI `39633442903` and scope `39633442871` SUCCESS. Issue closed/done;
   native evidence retained before worktree removal. Earlier pending entries
-  are superseded. [Proof and limits](docs/engineering/evidence/uix-affordability-bands/README.md).
+  are superseded. [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - `Vovanostm/qa-game-hooks`, PUBLISHED: coordinator records delivery and starts
   the dedicated read-only #231 contract from actual merged main, following owner priority.
   No hook implementation or new gameplay verification yet (NOT_RUN).
   Exact post-gate diff passed after narrowing an overly broad assertion that
   included the incoming-main lab README; accepted source/tests stayed unchanged.
-  [Current queue](docs/engineering/CURRENT_PLAN.md). No migration or deployment.
+  [Current queue](docs/engineering/ROADMAP.md). No migration or deployment.
 
 ### Publish accepted affordability bands — 2026-10-21, PUBLISHED
 
@@ -4813,12 +4869,12 @@ requests.
   coordinator integrated validator exit 0, 9/9 PASS, 48 related tests,
   source scope 272. Accepted web game source/tests unchanged after the gates.
   Evidence commits `39f8c0b2`/`dacbb47b` and this shared-record receipt add no
-  game code. [Proof, scored review and JPEGs](docs/engineering/evidence/uix-affordability-bands/README.md).
+  game code. [Proof, scored review and JPEGs](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - Publish one PR closing only #184; final hosted CI and merge remain pending.
   PR259/#249 delivered this tick; #249 closed/done and #218 closed with the
   original decision/implementation links. Finished worktree removed after
   native proof retention and clean/no-unpushed checks. One merged PR with
-  playable proof; [live queue](docs/engineering/CURRENT_PLAN.md).
+  playable proof; [live queue](docs/engineering/ROADMAP.md).
   No deployment, new rule, balance/performance measurement or full-M1 claim.
 
 ### Accept affordability evidence and integrate delivered bow — 2026-10-21, LOCAL
@@ -4828,7 +4884,7 @@ requests.
   is 2. Supported level/0→1→2 crowds establish actual B1 silhouette/annotation
   intersections with eight verified on/off pairs. Actual mill manual input and
   round 11 victory, viewport/native125/CVD proof and limits are retained in
-  [evidence](docs/engineering/evidence/uix-affordability-bands/README.md).
+  [evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-affordability-bands/README.md).
 - Evidence-only commit `39f8c0b2` follows shared-record receipts. Integrate merged
   PR259 main `19d2c296` by ordinary merge; only CHANGELOG/CURRENT_PLAN conflicted,
   both histories retained. Incoming main contains the delivered persistent bow;
@@ -4847,7 +4903,7 @@ requests.
 - #249 is closed/done; decision #218 is closed with the original B decision,
   wiki/CHANGELOG record and separate implementation links. Native evidence is
   retained in coordinator `.orca/pipeline/retained/core-bow-three-ap/`.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records one merged PR with
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records one merged PR with
   playable proof this tick and the still-live #184 Tier V gates. Shared records
   are the only changed paths; accepted game source is frozen. #231 and other
   slices keep their prerequisites; no new milestone or deployment.
@@ -4873,7 +4929,7 @@ requests.
   `.orca/scout/2026-10-21/`; no duplicate report added.
 - [PR259](https://github.com/Vovanostm/warwrit/pull/259) remains open at `00c8bbcb`,
   PR scope SUCCESS and final clean-checkout CI running. Merge NOT_RUN;
-  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  0 merged PRs with playable proof this tick. [Current checkpoint](docs/engineering/ROADMAP.md).
   No migration, deployment, balance or full-M1 acceptance claim.
 
 ### Validate affordability evidence continuation — 2026-10-21, PUBLISHED
@@ -4892,7 +4948,7 @@ requests.
 - [PR259](https://github.com/Vovanostm/warwrit/pull/259) for #249 is open at
   `00c8bbcb`, fresh Tier L ACCEPT retained; final hosted full CI/merge pending.
   Daily scout plays pinned main; performance during local validation overlap
-  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  is NOT_MEASURED for acceptance. [Current checkpoint](docs/engineering/ROADMAP.md).
   #184 visual acceptance/CI remain pending; #231 waits. No migration/deployment
   or full-M1 claim. This tick: 0 merged PRs with playable proof.
 
@@ -4907,7 +4963,7 @@ requests.
   silhouette/annotation intersection remains unproven. Earlier gate results
   apply only to `06479a47`. Heavy work queues behind the live #249 evaluator and
   daily main scout. This documentation-only update needs no game tests.
-  [Current queue and limits](docs/engineering/CURRENT_PLAN.md).
+  [Current queue and limits](docs/engineering/ROADMAP.md).
 
 ### Preserve final affordability rework and evidence blocker — 2026-10-21, PUBLISHED
 
@@ -4925,7 +4981,7 @@ requests.
   evidence-only evaluator attempt, preserving every acceptance criterion.
   Prior `06479a47` evaluator ACCEPT and visual REWORK are retained history.
   Owning local report: `.orca/uix-affordability-bands/report.md`.
-  [Checkpoint](docs/engineering/CURRENT_PLAN.md). No PR, merge or deployment.
+  [Checkpoint](docs/engineering/ROADMAP.md). No PR, merge or deployment.
 
 ### Integrate accepted JOIN and affordability rework — 2026-10-21, LOCAL
 
@@ -4980,7 +5036,7 @@ requests.
   the first audit found introduced complexity. Final focused coverage20/20,
   web typecheck, format, scoped TS/TSX lint and `check:changes` pass. Independent
   gameplay/visual review and publication remain pending.
-  [Owning behavior](docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
+  [Owning behavior](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#movement-affordability-bands--2026-10-21-local).
 
 ### Publish persistent bow successor — 2026-10-21, PUBLISHED
 
@@ -4994,7 +5050,7 @@ requests.
   audits failed because staged incoming-main coverage omitted retained branch
   code; 21 focused tests PASS. Normal incoming-main audit against branch parent
   PASS; normal main-based slice validator is running, with no weakened hook.
-  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  Fresh Tier V proof remains pending. [Current checkpoint](docs/engineering/ROADMAP.md).
   No migration, deployment, balance measurement or full-M1 claim.
 
 ### Accept persistent bow journey and integrate pipeline main — 2026-10-21, LOCAL
@@ -5008,12 +5064,12 @@ requests.
 - Integrate actual main `46fe0c33` as `16cedf56`; only CHANGELOG conflicted,
   both histories retained, accepted game source/tests unchanged. Integrated
   coordinator validator exit 0, 9/9 PASS, 671 PASS / 52 SKIP; source scope 239.
-  Normal merge audit PASS. [Proof](docs/engineering/evidence/core-bow-three-ap/README.md)
+  Normal merge audit PASS. [Proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-three-ap/README.md)
   is being retained with review/evaluation and small day/night JPEGs.
 - Publish one PR for #249 next; hosted full clean-checkout gate and merge are
   pending. #184 remains validating after evidence/process delegation; fresh
   Tier V gates required. No migration, deployment, new rule, balance measurement
-  or full-M1 claim. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  or full-M1 claim. [Current checkpoint](docs/engineering/ROADMAP.md).
 
 ### Self-driving Orca backlog — 2026-10-21, PUBLISHED
 
@@ -5045,7 +5101,7 @@ requests.
   scope 239 source lines. Coordinator PG NOT_RUN; fresh independent evaluator
   owns its disposable database and complete persistent rendered/refusal/terminal
   acceptance. Source reviewer and evaluator round 2 are live; no ACCEPT yet.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) and local dispatch
   checkpoint; publish retained commits and records. No new source change in this
   records commit. Full integrated gate/hosted CI/PR/merge remain pending;
   no migration, deployment, balance or full-M1 claim. #184/#231 remain gated.
@@ -5062,7 +5118,7 @@ requests.
   supersede this failure. Allocate ordinary round 2 of 2 to root-cause repair
   and legitimate related current-source coverage with isolated PG available to
   the normal hook; no guard, assertion, audit or scope waiver.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); coordinator commits
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md); coordinator commits
   only shared records, leaving both staged worker files for the sole successor.
   Scoped formatting/diff/readback checks; coordinator game checks NOT_RUN.
   Fresh validate/Tier L/CI/PR/merge remain pending; no new rule or deployment.
@@ -5079,7 +5135,7 @@ requests.
   terminal effects/proof/retry, native 2 AP refusal and complete day/night
   rendered move journeys remain unproven; fresh Tier L gates must finish them.
   Evaluator cleaned its isolated runtime/DB; settlement recorded and released.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) and local dispatch
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) and local dispatch
   checkpoint for the one-tick continuation. Documentation-only commit; scoped
   formatting/diff/readback checked, game checks NOT_RUN by coordinator.
   No source change, acceptance waiver, migration, merge or deployment.
@@ -5096,7 +5152,7 @@ requests.
   Evaluator remains live; collect its verdict before dispatching round 1 rework.
   No source changed or rework budget spent. Earlier validator 9/9 PASS remains
   historical; no game checks rerun by this coordinator tick.
-- Update [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with the exact failure,
+- Update [CURRENT_PLAN](docs/engineering/ROADMAP.md) with the exact failure,
   ownership and pending gates. Source, persistent restart/old-active/terminal
   proof, PR/CI/merge remain unaccepted; no new rule, migration or deployment.
 
@@ -5114,7 +5170,7 @@ requests.
 - Fresh independent Tier L gates are next, including isolated test-schema setup
   with existing migrations only. Hosted CI/publication/merge remain pending;
   no #249/#218 closure, deployment, balance or full-M1 claim.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md); owning builder report
+  [Current checkpoint](docs/engineering/ROADMAP.md); owning builder report
   is tracked at `.orca/core-bow-three-ap/report.md`.
 
 ### Start persistent bow successor integration — 2026-10-21, LOCAL
@@ -5131,7 +5187,7 @@ requests.
   admission/move/shot/save/restart proof. Coordinator validation, fresh Tier L
   gates, publication and merge remain pending. Documentation readback/diff and
   formatting are the only coordinator checks this tick; game checks NOT_RUN.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+  [Current checkpoint](docs/engineering/ROADMAP.md). No migration/deployment.
 
 ### Deliver bow lab and prepare persistent successor — 2026-10-21, PUBLISHED
 
@@ -5144,7 +5200,7 @@ requests.
   Fresh #249 contract must inspect current main before company/binding and
   persistent admission/save/restart work; that acceptance remains NOT_RUN.
   Earlier WIP audit remains NOT_RUN; no new game test executed for these records.
-- [Current checkpoint](docs/engineering/CURRENT_PLAN.md) records #184 needs-owner
+- [Current checkpoint](docs/engineering/ROADMAP.md) records #184 needs-owner
   and its existing evidence-only recovery question. No additional attempt,
   migration, deployment or full-M1 claim.
 
@@ -5156,10 +5212,10 @@ requests.
   coordinator validator 9/9 PASS; source scope 118 lines, Tier L ACCEPT retained
   for unchanged code `1105189d`. Earlier published-head CI `39598354029` SUCCESS;
   final integrated-head CI and expected-head merge remain pending.
-- Correct [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) to the actual #184
+- Correct [CURRENT_PLAN](docs/engineering/ROADMAP.md) to the actual #184
   needs-owner state and existing B1 evidence question after rework 2/2; no new
   attempt or acceptance waiver. #249 waits for #256, #231 for #184.
-  [Bow proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  [Bow proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-lab/README.md).
   No migration/deployment; persistent activation remains #249, NOT_RUN here.
 
 ### Independent bow lab acceptance and publication — 2026-10-21, PUBLISHED
@@ -5173,7 +5229,7 @@ requests.
   remain actual executed results; no test rerun for this evidence/docs update.
   [PR257](https://github.com/Vovanostm/warwrit/pull/257) is open; hosted CI
   and merge remain pending. Persistent acceptance remains #249; balance NOT_MEASURED. No migration or deployment.
-  [Proof and limits](docs/engineering/evidence/core-bow-lab/README.md).
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-bow-lab/README.md).
 
 ### Compatible bow core/lab and refreshed gates — 2026-10-21, LOCAL
 
@@ -5191,7 +5247,7 @@ requests.
 - #184 evaluator ACCEPT at `06479a47` does not override visual REWORK:
   rendering-language score 1 and missing tight height-step crowd evidence.
   Second bounded rework is live; fresh gates required. Existing reports and
-  earlier failures retained. [Current checkpoint](docs/engineering/CURRENT_PLAN.md).
+  earlier failures retained. [Current checkpoint](docs/engineering/ROADMAP.md).
 
 ### Split the bow delivery and checkpoint the tick — 2026-10-21, LOCAL
 
@@ -5209,7 +5265,7 @@ requests.
 - #184 pushed head `06479a47` integrates actual main with status-only conflicts
   resolved retaining both histories; union validator 9/9 PASS. Fresh evaluator
   and absolute visual critic are live; visual acceptance and CI remain pending.
-  [Current checkpoint](docs/engineering/CURRENT_PLAN.md). No migration/deployment.
+  [Current checkpoint](docs/engineering/ROADMAP.md). No migration/deployment.
 
 ### Evidence-based Orca pipeline fixes — 2026-10-21, PUBLISHED
 
@@ -5305,7 +5361,7 @@ requests.
   10000stress,16PG/auth,migrations,coverage/audit. The first coverage timeout
   in unchanged world movement passed isolated and one unchanged-head retry;
   no test or gate weakened. #184 consumer follows with server-owned bands.
-  [Evidence](docs/engineering/evidence/range-187/README.md).
+  [Evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/range-187/README.md).
 
 ### Separate movement fill and reach boundary — 2026-10-20, LOCAL
 
@@ -5321,8 +5377,8 @@ requests.
   lint and source formatting PASS. Normal audit and parent validator8/8PASS (51related tests); independent browser
   ACCEPT, including actual aimed-shot selection and passive0POST. Absolute visual
   ACCEPT on2026-10-21: all applicable criteria2, motion N/A,62images inspected.
-  Hosted CI and merge remain pending. [Current evidence](docs/engineering/evidence/range-187/README.md).
-  [Behavior and check history](docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
+  Hosted CI and merge remain pending. [Current evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/range-187/README.md).
+  [Behavior and check history](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#range-boundary-consumer--2026-10-20).
 
 ### Accept the pickup projection on the recovered save — 2026-10-21, LOCAL
 
@@ -5457,7 +5513,7 @@ requests.
   main6b5b1b03, preserving additive changelog/plan/wiki histories. No production
   conflict or migration; normal correction audit PASS, independent source/test
   and retained-terminal recovery ACCEPT. Final integrated checks pending.
-  [Current plan](docs/engineering/CURRENT_PLAN.md).
+  [Current plan](docs/engineering/ROADMAP.md).
 
 ### Recover valid terminal effects without a lifecycle increment — 2026-10-20
 
@@ -5481,7 +5537,7 @@ requests.
 - `codex/actor-integration-186`, MERGED PR245/6b5b1b03: played/visual ACCEPT,
   CI39399738137 SUCCESS (899PASS/48SKIP,10000stress,15realDB/auth). Actual-main
   marker/inspection/turn/day-night smoke PASS; reload observer failure retained.
-  [Readback](docs/engineering/evidence/uix-actor-foundation/main-readback.md).
+  [Readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-actor-foundation/main-readback.md).
   Enemy frames remain190; no deployment/full-M1 claim.
 
 ### Reaction correction independently reviewed — 2026-10-20, LOCAL
@@ -5507,7 +5563,7 @@ requests.
   publication, CI and merge remain pending. Earlier failed checks retain their history.
   Owner decisions are settled; no new skills, custody, rescue or6v6 rules.
   Branch `codex/tactical-bridge-165`; local.
-  [Current record](docs/engineering/CURRENT_PLAN.md).
+  [Current record](docs/engineering/ROADMAP.md).
 
 ### Connect the bounded persistent wolf hunt to tactical combat
 
@@ -5544,13 +5600,13 @@ requests.
   attributed. Coordinator validation EXIT0/8of8,47relatedPASS and auditPASS.
   Prior independent input/geometry ACCEPT47178752 remains attributable to its
   unchanged boundaries; absolute visual ACCEPT6eb5263, all applicable criteria2.
-  [Proof and limits](docs/engineering/evidence/uix-actor-foundation/README.md). The builder
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-actor-foundation/README.md). The builder
   reported a scheduling breach: its passing commit hook ran while the check
   window was WAIT. This is retained as a failed worker obligation, not erased by
   passing checks. Parent subsequently ran integrated validation alone.
   Refs186 only; enemy intermediate-frame agreement remains190. No PR/merge yet.
   Branch `codex/actor-integration-186`; local.
-  [Current record](docs/engineering/CURRENT_PLAN.md).
+  [Current record](docs/engineering/ROADMAP.md).
 
 ### Record the reproduced backdrop overlap before actor delivery
 
@@ -5558,7 +5614,7 @@ requests.
   validation8/8 and47related tests pass, but author and fresh independent
   native125 Home images both show the mill obscuring actor name text. Preserve
   the failure and its source ordering lead for a bounded correction; complete
-  reference-sheet framing is repaired. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  reference-sheet framing is repaired. [Current plan](docs/engineering/ROADMAP.md).
   No visual ACCEPT, publication or merge is claimed.
 
 ### Integrate the corrected actor marker with the merged company profile
@@ -5567,7 +5623,7 @@ requests.
   correction bba8d24b while merging actual main137faf88; only additive shared
   records conflicted. Corrected containment has47relatedPASS and author native
   100/125 longer-name proof; independent affected play/absolute visual gates
-  remain pending. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  remain pending. [Current plan](docs/engineering/ROADMAP.md).
 - PR241 is merged with successful PR/main CI and actual-main mixed-company
   PostgreSQL JOIN/retry/reload smoke (1PASS/13filteredSKIP); rescue/transport
   and downstream payment/browser journey remain unresolved. No deployment.
@@ -5579,7 +5635,7 @@ requests.
   actor and representative input proof remain incomplete. Parent's reproduced
   clamp/collision counterexample returns to the original builder. Prior source
   and runtime evidence retained; no live regression, visual ACCEPT or merge
-  claimed. [Current scope](docs/engineering/CURRENT_PLAN.md).
+  claimed. [Current scope](docs/engineering/ROADMAP.md).
 
 ### Retain the actor placement review finding
 
@@ -5588,7 +5644,7 @@ requests.
   public-helper counterexample reproduced; parent live manifestation NOT_RUN.
   Correction and independent affected-play/absolute-visual acceptance remain
   pending. Existing actor checks stay historical evidence, not approval of this
-  defect. [Current delivery boundary](docs/engineering/CURRENT_PLAN.md).
+  defect. [Current delivery boundary](docs/engineering/ROADMAP.md).
 
 ### Validate the integrated actor foundation
 
@@ -5597,11 +5653,11 @@ requests.
   and full badge bounds in overview/actor fit. Author 21 focused/46 related tests,
   types/lint/format/normal audit PASS; parent validator EXIT0, 8/8 PASS. Native
   100/125 day/night smoke, passive 0 POST and actual final-AP transition passed.
-  [Behavior and limits](docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
+  [Behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#маркер-действующего-бойца--2026-10-20).
   Independent played/absolute visual acceptance and publication remain pending;
   Refs186, #190 still owns enemy/frame agreement. No rules or migrations changed.
 - Delivery correction: overview main CI39378757951 SUCCESS after PR244 merge;
-  [actual-main readback](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [actual-main readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
 
 ### Integrate the acting-fighter cue with the delivered overview
 
@@ -5616,7 +5672,7 @@ requests.
   mergedfe3bcdb4, #227 CLOSED/agent:done, exact-head CI39377607667 SUCCESS.
   Candidate/merged trees match; normal human6v5 end-turn/reload and actual-main
   reload retained full state/revision3 with0passivePOST and11targets.
-  [Evidence and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [Evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
   Main CI pending; no full UI/M1, campaign-payment or deployment acceptance.
 
 ### Accept the approved company profile on current main
@@ -5647,10 +5703,10 @@ requests.
   audit PASS after 25 existing initiative-related tests. Initial audit lacked
   current imported HUD coverage; Istanbul combines fresh results with prior
   unchanged-source coverage and discards changed-source entries. No threshold
-  or hook bypass. [Current plan](docs/engineering/CURRENT_PLAN.md).
+  or hook bypass. [Current plan](docs/engineering/ROADMAP.md).
 - Overview delivery is merged: PR244/fe3bcdb4, #227 CLOSED, PR39377607667 and
   main39378757951 CI SUCCESS; actual-main6v5 state/revision3 survives reload.
-  [Readback and limits](docs/engineering/evidence/uix-overview-zoom/main-readback.md).
+  [Readback and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/main-readback.md).
 
 ### Accept the profile integration test correction
 
@@ -5671,7 +5727,7 @@ requests.
   foreign-account exclusion, JOIN retry and durable replay proof. No production
   change. Integrated parent validator onfbe225a passed8/8 (784 PASS/48 SKIP);
   correction readback is pending, and critical-bleed policy still blocks merge.
-  [Current plan](docs/engineering/CURRENT_PLAN.md).
+  [Current plan](docs/engineering/ROADMAP.md).
 
 ### Integrate current main into the pending company-profile draft
 
@@ -5688,7 +5744,7 @@ requests.
 - Delivery correction: [PR243](https://github.com/Vovanostm/warwrit/pull/243)
   merged3c934c16; #228 CLOSED, corrected PR/main CI SUCCESS. Actual-main normal
   load/start/end-turn/reload retains the same6v5 session/revision3 with no alerts.
-  [Readback and instrumentation limits](docs/engineering/evidence/uix-preset-picker/main-readback.md).
+  [Readback and instrumentation limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/main-readback.md).
   Earlier CI failure/probe limitations remain; no full-scene or M1 acceptance.
 
 ### Preserve the profile reviews and played evidence for publication
@@ -5706,7 +5762,7 @@ requests.
   wounds/practice, exact retries and unchanged persisted rows after restart.
   Post-reboot isolated 41/41 and coordinator validator 8/8 (775 PASS/48 SKIP,
   audit PASS) supersede earlier incomplete proof/timeouts on unchanged source.
-  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md)
+  Updated combat/weapons wiki and [CURRENT_PLAN](docs/engineering/ROADMAP.md)
   with payment/terminal-UI NOT_RUN, pending critical-bleed policy and unresolved
   rescue/transport; no source, rule or migration changed. #164 remains open.
   Record independent UI/UX findings for the existing overview rework; no full
@@ -5721,7 +5777,7 @@ requests.
   pending critical-bleed policy. The first terminal failure came from the
   fixture's ineligible STATIC food container; a fresh PARTY_SUPPLY fixture
   completed. No game source or rule changed, no failed gate was waived.
-  [Exact checks and limits](docs/engineering/CURRENT_PLAN.md).
+  [Exact checks and limits](docs/engineering/ROADMAP.md).
 
 ### Preserve leadership evidence from real unarmed attacks
 
@@ -5746,7 +5802,7 @@ requests.
   `company/combat-practice.ts` and the existing public practice specs. The
   earlier helper extraction passed 133 focused tests but is not acceptance of
   this defect. Source repair, normal commit and playable proof remain pending.
-  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  [Current delivery status](docs/engineering/ROADMAP.md).
 
 ### Separate leadership-cycle calculation from practice profile construction
 
@@ -5765,7 +5821,7 @@ requests.
   histories. The five-path compatibility correction matches independent
   review-2 ACCEPT and normal commit audit PASS. Profile integrated/playable
   acceptance remains pending; prior failures and owner-rule gaps stay explicit.
-  [Current delivery status](docs/engineering/CURRENT_PLAN.md).
+  [Current delivery status](docs/engineering/ROADMAP.md).
   Integrated related coverage: 771 PASS, 48 SKIP, three timeouts; gate FAIL.
   Initial merge audit failed on imported preset coverage; combined coverage
   refreshed without threshold changes or hook bypass. Final acceptance pending.
@@ -5810,7 +5866,7 @@ requests.
 - 2026-10-20, branch `codex/battle-overview-227`, local: retain played eval5 and
   full absolute visual6 ACCEPTff40f304, eleven controlled layer pairs, earlier
   REWORK and runtime-coordination correction in the
-  [evidence packet](docs/engineering/evidence/uix-overview-zoom/README.md).
+  [evidence packet](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-overview-zoom/README.md).
   Main3c934c16 integrated throughbbbc91d without overview source changes;
   parent validator8/8,33relatedPASS,auditPASS; combined223PASS/47SKIP.
   Owning battlefield wiki/CURRENT_PLAN updated; publication/CI/merge pending.
@@ -5859,7 +5915,7 @@ requests.
   or migrations changed. Author 33 focused tests, types/lint/format and normal
   audit PASS; four ordinary browser fit/hit samples and manual/passive commands
   recorded. Fresh independent gameplay/absolute visual gates remain pending.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
 - Delivery readback: profile [PR241](https://github.com/Vovanostm/warwrit/pull/241)
   is a published draft at795c842; CI39351771449 PASS (880/48 skipped,10000 stress,
   15 DB,audit). Its policy decision still blocks merge; #164 is needs-owner.
@@ -5874,7 +5930,7 @@ requests.
   focused tests, web types, scoped lint/format and normal audit passed.
   Initial evidence used cache-busting source interception; ordinary-runtime
   independent evaluation and absolute visual acceptance remain pending.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#обзор-и-разделение-пульта--2026-10-20).
 - Delivery correction: [PR240](https://github.com/Vovanostm/warwrit/pull/240)
   is merged as `eb98dd2`; PR CI39334291071 and main CI39335721903 succeeded.
   #228 remains open for its picker. Earlier pending receipts are historical.
@@ -5885,7 +5941,7 @@ requests.
   implementation, review and merge of the assessed fix sequence. Start #227
   full-field overview before the preserved actor/desk/outcome integration to
   remove an acceptance prerequisite; one web writer, existing work retained.
-  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) with mission scope
+  Updated [CURRENT_PLAN](docs/engineering/ROADMAP.md) with mission scope
   and PR239's verified merge into `b568ee2` (main CI39296247123 successful).
   Camera code, gameplay and new visual acceptance remain NOT_RUN at this entry.
 
@@ -5894,7 +5950,7 @@ requests.
 - 2026-10-20, branch `codex/preset-picker-228`, published PR243 with local
   correction38c57915: independent correction review ACCEPT; production journey
   acceptance retained, validator8/8 and5tests PASS, no server/core files in web
-  compilation inputs. [Review](docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
+  compilation inputs. [Review](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/review-ci-1.md).
   CI39369463852 remains FAILED; correction publication/new CI and merge pending.
 
 ### Remove the picker test dependency on server implementation
@@ -5915,12 +5971,12 @@ requests.
   battles demonstrate2/1surrenders and an actual withdrawal reaction. Integrate
   main434d4a1a through403193f, preserving both document histories and unchanged
   editor code. Parent validator8/8,5relatedPASS,normal auditPASS. Publication/CI/
-  merge pending. [Evidence](docs/engineering/evidence/uix-preset-picker/README.md).
+  merge pending. [Evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-preset-picker/README.md).
   Update owning battlefield wiki/CURRENT_PLAN; no rules, migrations or dependencies.
 - Delivery correction: [PR242](https://github.com/Vovanostm/warwrit/pull/242)
   is merged434d4a1a; #163 CLOSED, PR/main CI SUCCESS. Actual clean-main HP smoke
   ACCEPT/EXIT0; damaged53/60 and38/60 survive fresh/reloaded views with HTTP/bar
-  agreement. [Readback](docs/engineering/evidence/core-pools/main-readback.md).
+  agreement. [Readback](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-pools/main-readback.md).
   Earlier FAIL13 is retained. Overview visual5 still needs layer proof; profile
   policy and #165 scope remain pending. No full-M1 or deployment claim.
 
@@ -5933,7 +5989,7 @@ requests.
   PR240 is merged at eb98dd2. Five component tests, web types, scoped lint/format
   and diff PASS; initial test-selector/lint failures were corrected. Normal
   commit audit and independent browser acceptance remain pending at this entry.
-  [Behavior and proof limits](docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
+  [Behavior and proof limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пресет-боя-с-людьми--2026-10-20).
 
 ### Accept canonical persistent HP through reconnect and restart
 
@@ -5944,7 +6000,7 @@ requests.
   Parent validator8/8 PASS,208 tests PASS/47 SKIP,audit PASS. Final evaluator
   assertions passed before deadline; its runner later exited13 during obsolete
   SDK cleanup, retained as FAIL. Hosted CI/publication/merge pending.
-  [Evidence, compatibility and limits](docs/engineering/evidence/core-pools/README.md).
+  [Evidence, compatibility and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-pools/README.md).
   Updated the existing battlefield wiki/CURRENT_PLAN; no migrations, rules,
   replay or dependencies changed. New reader/producer rollout must be coordinated.
 
@@ -5975,7 +6031,7 @@ requests.
   and real DB/reconnect/browser/independent gates remain pending (runtime
   NOT_RUN). Rules,
   replay history, migrations and combat-lab are unchanged. No merge claimed.
-  [Owning behavior and limits](docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
+  [Owning behavior and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#максимум-здоровья-в-постоянном-бою--2026-10-20).
 
 ### Add the human-opponent preset producer and playable evidence
 
@@ -5986,7 +6042,7 @@ requests.
   review and played evaluation ACCEPT9534bf7;17focused tests and prior
   coordinator validate8/8PASS. Two UI seeds surrendered2/1 opponents, manual
   withdrawal reaction and3downloaded replay checks passed; default reset and
-  restoration passed. [Evidence and remaining picker](docs/engineering/evidence/core-preset-deserters/README.md).
+  restoration passed. [Evidence and remaining picker](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/core-preset-deserters/README.md).
   Integrated validator 8/8 PASS at ce45df4 (179 tests passed, 47 skipped); hosted CI pending; no whole#228/scene acceptance.
   Updated battlefield wiki and CURRENT_PLAN; no migrations or dependencies.
 - Dated correction: documentation PR178 is MERGED at1b1e088; PR CI39324349645
@@ -6049,7 +6105,7 @@ requests.
   labels or unresolved review threads observed. This record needs exact-head
   CI before expected-head merge; it does not claim that merge has happened.
   #207 stays OPEN for visible captions, terminal cards and inherited layout
-  limits; [producer proof](docs/engineering/evidence/uix-w1-names/README.md).
+  limits; [producer proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-names/README.md).
   #186 visual1 now settled REWORK/BLOCKED on `c60fd5e`: missing native125,
   loaded layering/input, marker comparison and contrast proof, plus inherited
   overview scene-integration score1. Combined proof rework1 is next; inherited
@@ -6070,7 +6126,7 @@ requests.
   captures across three desktop sizes and genuine125%, day/night; real manual
   first death then autobattle to R10/rev171 and downloaded-only reconstruction
   match live/baseline canonical results. Evidence-only commit `a40d901` retains
-  reports and28 small JPEGs. [Proof and limits](docs/engineering/evidence/uix-w1-names/README.md).
+  reports and28 small JPEGs. [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-names/README.md).
   #207 remains OPEN: field captions, terminal inspection and inherited HUD/log
   clipping belong to sequenced consumer/layout owners. Actor foundation #186
   evaluator1 REWORK: missing native125/matched crowd, full layering/input,
@@ -6093,7 +6149,7 @@ requests.
   critic. Full desktop/native125, contrast and applicable layered-scene proof
   remain gate work, not a waived requirement. Captions/terminal naming and
   inherited scene/tooltip findings retain their existing owners and sequencing.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records the gate handoff;
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records the gate handoff;
   no PR/publication/merge/deployment or full-issue acceptance in this receipt.
   Local contracts/reports remain under each slice's ignored `.orca/` directory;
   wiki behavior is unchanged pending delivery. Today three merged playable
@@ -6116,7 +6172,7 @@ requests.
   worker's existing serial reservation; related-tests/audit did not complete,
   so no validation pass is claimed. Fresh validate and Tier L review/evaluation
   wait for scene settlement. No PR, merge, deployment or full-issue acceptance.
-  Updated [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md); wiki behavior is
+  Updated [CURRENT_PLAN](docs/engineering/ROADMAP.md); wiki behavior is
   unchanged pending delivery. Local report: `.orca/uix-w1-names/report.md`.
 
 ### Record PR238 merge and release single-issue successors
@@ -6129,7 +6185,7 @@ requests.
   #187 remains OPEN for its rendered contour. Names #207 may plan on merged
   main; the former scene #186/#187 scope is split before its next start under
   workflow v3, preserving its old plan and all assigned integration findings.
-  [Existing proof](docs/engineering/evidence/uix-w1-skill-reach/README.md) is
+  [Existing proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-skill-reach/README.md) is
   reused; new main playtest/game gates/deployment NOT_RUN.
 
 ### Supply current learned-skill geometry for the scene consumer
@@ -6144,7 +6200,7 @@ requests.
   8/8,732PASS/47SKIP,auditPASS; evaluator69 focusedPASS and actual baseline/candidate
   mill victory/replay checks. Fresh15 baseline-saved streams match canonical
   state, complete events and accepted counts across schemas1/2 and five rulesets.
-  [Evidence and limits](docs/engineering/evidence/uix-w1-skill-reach/README.md).
+  [Evidence and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-skill-reach/README.md).
   Updated CURRENT_PLAN; wiki mechanics unchanged. #187 remains open for rendered
   outline/legend/CVD and integrated scene findings. Hosted full gate pending;
   no merge/deploy or performance/balance measurement claimed.
@@ -6158,7 +6214,7 @@ requests.
   later source unchanged, merged-tree diff empty, no blocking labels/threads.
   #184 remains open for scene bands/legend/CVD/legacy rendering. Starts only
   the dependent #187 skillReach producer contract; scene/names remain sequenced.
-  [Proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
   New game checks/main playtest NOT_RUN; no deployment. Local reports retained
   before removing the completed worktree with archive hooks.
 
@@ -6174,7 +6230,7 @@ requests.
   Evidence-only and shared-record path checks PASS. New-head hosted CI must pass
   before expected-head merge; no deployment or new playtest claimed.
   #184 stays open for the downstream bands/legend/CVD/legacy scene consumer.
-  [Proof and limits](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Proof and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
 
 ### Restore the post-movement attack affordability producer
 
@@ -6197,7 +6253,7 @@ requests.
   pending before merge.
   #184 stays open for bands/legend/CVD/rendered legacy fallback in uix-w2-scene;
   baseline-only zoom-readback anomaly retained in evaluator provenance.
-  [Independent proof](docs/engineering/evidence/uix-w1-affordability/README.md).
+  [Independent proof](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/evidence/uix-w1-affordability/README.md).
   No deployment; performance/balance/capacity NOT_MEASURED.
 
 ### Record PR229 merge and start the affordability producer contract
@@ -6405,7 +6461,7 @@ requests.
   move/endturn/autobattleR9rev163/terminal/restart PASS. Primary dirty WIP and
   other stand preserved. This receipt changes only Markdown; game tests NOT_RUN
   for it. Retain failures/history, nonblocking rut/fire polish and finite limits.
-  [Merged result and provenance](docs/wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
+  [Merged result and provenance](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-pr160-в-main--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local follow-up after
   73a4d40 CI39048861412 FAIL at boundaryCRAP30: build the common emphasized-ID
@@ -6415,7 +6471,7 @@ requests.
   Fresh local coverage820PASS/47SKIP and pinned-main66-file audit PASS
   (8inherited excluded); first upstream-only1fileaudit was repeated with main.
   No gate/test limits or visual changes. Current visual ACCEPT retained;
-  new-head CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  new-head CI/merge pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after published
   ee3103a CI39046615446 FAIL: factor the same active/night/emphasis condition
@@ -6425,7 +6481,7 @@ requests.
   Record full ee3103a absolute visual ACCEPT (21images+2references, game all2,
   close3/3/2/2/2/2/2), normal66-file audit PASS, clean reload and remaining polish
   in the existing wiki/index/log/current plan. New-head CI/merge pending.
-  [Result and CI boundary](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  [Result and CI boundary](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local technique correction
   after d185b71 full visual REJECT: replace fine uniform earth with original
@@ -6439,7 +6495,7 @@ requests.
   Independent source review DONE; types/lint/content114/geometry5 and fresh
   all-profile/generated-map/day-night/desktop/geometry/navigation/combat/terminal/
   restart browser checks PASS. Full absolute visual review PENDING; no current
-  publication/CI/merge claimed. [Owning result](docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
+  publication/CI/merge claimed. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#авторские-материалы-и-узкий-связный-уступ--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: record completed d185b71 full visual REJECT (all21images and
@@ -6451,7 +6507,7 @@ requests.
   793ebd3/maina934355 and unexecuted current-head CI/publication/merge.
   Documentation-only diff/format/local-link readback; game tests NOT_RUN for
   this edit. Earlier results retained.
-  [Current result](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+  [Current result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   793ebd3 visual REJECT (game2/2/1/1/2/2/1,close3/3/1/1/2/2/1) despite clean
@@ -6471,7 +6527,7 @@ requests.
   unchanged. Full visual review was running at this commit (completed REJECT
   in the dated correction above); CI/publication/merge pending. Refresh owner-requested wiki/index/log/current plan with
   actual CI and scored rejection; preserve earlier failures and asset limits.
-  [Result and technique](docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
+  [Result and technique](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#цельный-рисунок-поля-и-светотень-высот--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local courtyard correction and
   owner-requested wiki refresh: quiet fine earth replaces recognizable rut
@@ -6486,7 +6542,7 @@ requests.
   plan and wiki log distinguish the local stand from published1b47872/PR160
   and actual main. Mandatory main-based56-file commit audit PASS,8 inherited
   findings excluded; no audit bypass.
-  [Current result and asset limits](docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
+  [Current result and asset limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#композиция-двора-и-мелкий-грунт--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction after full
   1b47872 visual REJECT despite successfulCI39024500756: extract true-alpha
@@ -6498,7 +6554,7 @@ requests.
   clean-browser launch/reload PASS. Full critique REJECT game rendering/integration1,
   closeall2; nextsite-wide composition/currentCI pending. Original assets
   preserved; no migrations/deployment.
-  [Owning correction](docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
+  [Owning correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#scenery-cutout-and-shared-projected-ground--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local terrain correction:
   add a dedicated seamless3-source ink-earth shader,2original ground variants
@@ -6509,7 +6565,7 @@ requests.
   scene/material wiring and asset manifest; rules/picking/foot geometry retained.
   Source review/types/lint/content107 and actual maps/desktop/layers/geometry/
   movement/pools/terminal/restart PASS. Full visual/currentCI/merge pending.
-  [Result and limits](docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
+  [Result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#layered-ink-earth-correction--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local documentation update at
   owner request: refresh wiki landing/index and current plan for published game
@@ -6525,7 +6581,7 @@ requests.
   NOT_RUN (closed session); reopened shader/maps/desktop/day-night/bars/picks/
   extreme bounds and actual move/pools/terminal/restart PASS. Full critic/CI
   pending. Local stand differs from published head.
-  [Current wiki](docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
+  [Current wiki](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#текущее-состояние--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local visual technique revision:
   full b5a193c/08c2800 critique REJECT(2/2/1/1/2/2/1) exposed a rectangular
@@ -6534,7 +6590,7 @@ requests.
   an original rutted earth asset/provenance with preserved directional ink, and
   coordinated near/far night values. Canonical terrain/picking/rules unchanged.
   Types/lint/content105/main-based audit and fresh shader/browser captures PASS;
-  current full critic/CI/merge pending. [Owning result](docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
+  current full critic/CI/merge pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#authored-ground-composition--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local final bound correction:
   source review confirmed projected physical bounds could exceed the finite
@@ -6542,7 +6598,7 @@ requests.
   generated15×11 edge cells remain reachable. Four extreme drag corners/
   full-viewport apron/0POST and23camera/types PASS. Previous b5a193c cleanCI SUCCESS
   (820/47SKIP,10kstress,14DB,41-file audit); new-head verification pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local integration of main
   a934355/PR159 into PR160: retain perspective/bounds and connected surfaces;
@@ -6553,7 +6609,7 @@ requests.
   820coverage/47SKIPPED,27camera/geometry/types and main-based52audit PASS before
   final shader delta; actual12bar32×16/4px and0ground-pick errors PASS.
   Initial import/shader/audit failures corrected, recorded in the
-  [owning result](docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#combined-perspective-and-readability--2026-10-17).
   Fresh absolute critique/currentCI/merge pending.
 
 ### Combat readability and reusable terrain
@@ -6565,7 +6621,7 @@ requests.
   provenance. Addresses c50ba37 absolute visual REJECT while retaining its
   accepted native sprite detail. Source readback DONE; framing5/content104/
   types/lint/main-based44-file audit PASS. Full visual/current-head CI/merge
-  pending. [Owning result](docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
+  pending. [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#forces-overview-and-distance-sampling--2026-10-17).
 
 - 2026-10-17, branch `codex/combat-readability`, local correction to
   [PR160](https://github.com/Vovanostm/warwrit/pull/160): full-resolution unit
@@ -6614,7 +6670,7 @@ requests.
   PASS after correcting a failed key-handler complexity check, without gate
   suppression. Source readback DONE; navigation/keyboard0POST and29focused/
   types/lint/format PASS; combined visual/clean CI/merge pending.
-  [Current integration](docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
+  [Current integration](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#shared-spacing-and-action-camera--2026-10-17).
 
 - 2026-10-17, branch `codex/compact-foot-bars`, local: owner rejects connector
   arms and requires narrow tracks directly under battlefield figures. Preserve
@@ -6637,7 +6693,7 @@ requests.
   No gate/config suppression is introduced. Second absolute visual review REJECT
   on dense-creature occlusion (scene integration1; remaining criteria2, motionN/A);
   the common owner must validate the larger shared spacing before acceptance.
-  [Owner correction and shared delivery](docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
+  [Owner correction and shared delivery](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#owner-correction-compact-foot-strips-no-callouts).
 
 - 2026-10-17, branches `codex/combat-portrait-fit` → `codex/combat-readability`,
   local integration: give every portrait a4CSSpx art inset while preserving
@@ -6654,7 +6710,7 @@ requests.
   a deliberate pan uses the same5px threshold as the camera, zero wheel delta
   does not suppress reframing. Actual click-jitter/resize and pan/resize with
   0actionPOST,17focused tests, web types/lint PASS. Final integration acceptance,
-  clean CI and merge pending; [owning result](docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
+  clean CI and merge pending; [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#общая-интеграция--2026-10-17-local--acceptance-pending).
 
 - 2026-10-16, branch `codex/combat-readability`, local implementation under review:
   measured 20-profile portrait bounds/B037 pivot; selective high-resolution
@@ -6696,7 +6752,7 @@ requests.
   no game code, migrations or other writers' WIP changed. Scoped Markdown
   formatting, relative-link/readback and diff checks PASS; gameplay/full gate/
   new visual critique NOT_RUN for this documentation-only amendment.
-  [Owning dated checkpoint](docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
+  [Owning dated checkpoint](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#сверка-поставки--2026-10-17).
 
 ### Match battle grid and figures to painted perspective
 
@@ -6709,7 +6765,7 @@ requests.
   Actual main5344:12figures/day-night/keys-drag-wheel/no void/ratio1.421176/
   stablepositions/0navigationPOST; real defence200/1POST/nextactor PASS.
   No canonical rules/protocol/migrations/deploy change; this closeout Markdown only.
-  [Merged result](docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
+  [Merged result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-перспективы-и-границ-камеры-в-main--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local connected terrain:
   full5b88278 visual review rejected separate hex plinths (integration1).
@@ -6719,7 +6775,7 @@ requests.
   extraction. Real editor0/1/2/crowded/day-night/4widths/165picks/hover-pin/0POST
   PASS. Initial matrix/winding/audit failures fixed; strict15-file audit PASS.
   Full same-critic absolute visual ACCEPT(all7game/close2/2); new CI/merge pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#связная-поверхность-вместо-отдельных-тумб--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local height correction:
   top UV now lifts its ground footprint; continuous earth-side UV/vertex shade
@@ -6728,7 +6784,7 @@ requests.
   lint/format/coverage811+47SKIPPED/audit14files PASS. Real editor0/1/2 archers,
   165ground hits/body hover-pin/0POST PASS. Earlier numeric expectation failed,
   corrected. Full current visual/new-head CI/merge pending; prior874dc2f CI SUCCESS.
-  [Owning result](docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#читаемая-высота-и-непрерывная-земля--2026-10-17).
 
 - 2026-10-17, branch `codex/battle-camera-bounds`, local technique correction:
   repeat visual integration1 rejected the wire lip. Real non-pickable earth
@@ -6756,7 +6812,7 @@ requests.
   Actual4sizes/day-night/pan-zoom registration/165ground hits/body inspection
   with0POST PASS; independent visual/current-head clean CI/merge pending.
   Prior PR159 bb55f5b CI SUCCESS covers only the superseded bounds candidate.
-  [Owning research/result](docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
+  [Owning research/result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#перспектива-сетки-и-фигур--2026-10-17).
 
 ### Confine the battle camera to the painted map
 
@@ -6770,7 +6826,7 @@ requests.
   4desktop sizes/day-night/keys-drag-wheel-resize/0POST/stableunits PASS.
   Author source review no concrete findings; independent visual/clean PR CI/merge
   pending. No domain, protocol or migration changes.
-  [Owning result](docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#ограничение-камеры-областью-карты--2026-10-16).
 
 ### Live initiative queue and reduced combat HUD
 
@@ -6801,7 +6857,7 @@ requests.
   current48focused/types/audit PASS. Clean PR gate/publication/merge pending.
 - 2026-10-16, branch `codex/live-combat-ux`, local: owner authorizes raster
   drafts, implementation with subagents, PR/review and merge to default main.
-  Existing [UX research and approved queue behaviour](docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)
+  Existing [UX research and approved queue behaviour](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#проверка-текстов-и-избыточности-ux--2026-10-16)
   retained in the owning wiki. Separate worktree starts from integrated
   e87a379 including sprite-outline repair; primary and other active worktrees
   untouched. Parent owns web/shared docs; separate pure-forecast author and
@@ -6881,7 +6937,7 @@ requests.
   with previews, invalid skill refused, no repeated movement destination within
   activation. Strategy comparison/fun NOT_MEASURED. Final absolute visual review
   and clean PR/DB/stress/main journey pending.
-  [Owning result](docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#результат-интеграции-и-игровые-проверки--2026-10-16).
 
 ### Keep the combat delivery scoped
 
@@ -6921,7 +6977,7 @@ requests.
   Primary WIP preserved; no deployment/migration/campaign XP. Wiki/index/current
   plan reconciled with actual merge and measured limits; doc-only closeout
   does not change reviewed game code. Full gate not rerun for documentation.
-  [Owning receipt](docs/wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
+  [Owning receipt](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#поставка-в-main-и-проверка-после-слияния--2026-10-16).
 
 ### Battle camera menu helper
 
@@ -6937,7 +6993,7 @@ requests.
   camera appearance now scoped ACCEPT after supplied missinginputs;7criteria2/3,
   own critic input NOT_RUN. Separate module PR/main delivery completed as
   confirmed in the merge receipt below; sprite integration remains local.
-  [Owning helper](docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13),
+  [Owning helper](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#подсказка-управления-камерой--2026-10-13),
   CURRENT_PLAN/web README updated; quick-use text reconciles short LMB
   inspection with held WASD/arrows, LMB/MMB drag and wheel zoom. A follow-up
   documentation correction replaces superseded stacked-border/AP-only-shot
@@ -6964,7 +7020,7 @@ requests.
   and explicit tooltip input mode stabilize selection/focus; rank/shortcut costs
   and public view authority retained. BattleView/CombatLab/test assertion,
   battle-view/combat-lab/combat-icons CSS affected; README/CURRENT_PLAN and
-  [owning result](docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13)
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#единый-боевой-интерфейс--2026-10-13)
   updated, wiki top current pointer reconciled without erasing dated rejects.
   Web noEmit/lint/format/UI16 PASS; three desktop layouts/0POST inspection,
   stable aim/overflow/Esc/menu and real auto stop PASS. Follow-up UI17 PASS;
@@ -7000,7 +7056,7 @@ requests.
   oldAPI journey does not prove live corrected preview. Owning wiki/preview/
   CURRENT_PLAN updated; wiki top/frontmatter now point to the scoped current
   field/HUD/terminal acceptance with remaining main runtime limits,
-  preserving historical PENDING/reject sections; [finite result](docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
+  preserving historical PENDING/reject sections; [finite result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#согласованное-поле-и-проверка-прогноза--2026-10-13).
   Full/DB gates NOT_RUN here, balance NOT_MEASURED; inherited audit/WIP open,
   no bypass/commit/publication/merge/deploy.
 
@@ -7010,7 +7066,7 @@ requests.
   parallel owner review reports lower-grid lines showing through +1 terrain.
   Recorded translucent-top/depth hypothesis and bounded opaque tile/continuous
   UV/exposed cliff proposal, not accepted asset production or rule change.
-  [Owning defect](docs/wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13)
+  [Owning defect](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#перекрытие-нижней-сетки-высотой--новый-defect-2026-10-13)
   and CURRENT_PLAN updated; renderer author owns repair. Current fix/terrain
   visual PENDING, reproduction and code fix NOT_RUN by this shared-doc writer.
   Historical captures remain history; no broad visual approval inferred.
@@ -7023,7 +7079,7 @@ requests.
   legacy/inset contours. Canonical previews/inspection/input and entity outlines
   retained, ground remains below figures. Its HUD intersection legend transferred
   to this shared writer. Renderer/battle-cell-grid/geometry tests/HUD CSS affected;
-  [owning result](docs/wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13),
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#единая-цветовая-сетка--2026-10-13),
   web README and CURRENT_PLAN updated. Author reports geometry+UI20/20/noEmit/
   lint/format PASS after corrected initial TS/Float32 checks; root noEmit PASS.
   Private 6v6 stable identities/canonical cells/0POST unchanged revision PASS.
@@ -7038,7 +7094,7 @@ requests.
   CC BY 3.0 Game Icons, preserving input/tooltips and adding shortcut/rank
   readability plus author/source/adaptation credit. CombatIcon, icon CSS/assets,
   CombatLab/BattleView and combat-lab README affected.
-  [Icon result](docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13):
+  [Icon result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#иконки-команд-и-приёмов--2026-10-13):
   scoped lint/16 UI tests/browser hover-keyboard-disabled guard PASS;
   web noEmit PASS before/after shared-grid fix; available aim/selected/Esc/rally
   tooltip PASS with unchanged revision. Scoped icon visual ACCEPT (all applicable scores 2/3); critic pointer/revision
@@ -7049,7 +7105,7 @@ requests.
   attackPreview admission, selected-unit caption/legend. Core/protocol/projection
   and HUD present; 46 focused tests/builds/checks reported PASS on that version;
   actual bow45/halberd18/shield6/LOS/resource refresh/halberd2 attack PASS.
-  [Owning result](docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13),
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#дальность-выбранного-оружия--2026-10-13),
   melee/ranged, both README and CURRENT_PLAN updated. Saved visual captures
   ACCEPT >=2; the parallel new grid supersedes current integration acceptance,
   now PENDING. Full game/DB gate NOT_RUN for this narrow closeout; inherited
@@ -7062,7 +7118,7 @@ requests.
   fill/ink-backed outer boundary; overlapping cells now use one fill with an
   inner cyan movement cue. Kept full grid/input geometry, server range/attack
   admission, targets and ground-before-figure layers. Scene/README and
-  [owning result](docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13),
+  [owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#контраст-области-оружия--исправление-2026-10-13),
   CURRENT_PLAN affected. Web noEmit/lint/format and 16 UI tests PASS; actual
   45 canonical cells / 38 overlaps/target forecast/unchanged revision PASS, 6v6
   day/night/close/grid/reference captures. Independent scoped visual ACCEPT (all applicable scores >=2); critic
@@ -7077,7 +7133,7 @@ requests.
   opaque-sprite priority; hover/inspection/canonical action targeting now agree.
   Added uniform muted silhouette/ground-ring hover emphasis and empty-cell
   clearing without promoting ground effects over figures. Scene and combat-lab
-  README affected; [owning fix/evidence](docs/wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13),
+  README affected; [owning fix/evidence](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#наведение-на-занятую-клетку--исправление-2026-10-13),
   CURRENT_PLAN updated. Actual wolf body/cell mismatch reproduced and corrected
   after reload;90occupied-cell points across11figures PASS, hover0POST and
   unchanged actor/revision, day/night/grid captures. Web typecheck/scoped
@@ -7093,7 +7149,7 @@ requests.
   Uniformly resized the existing art and aligned its measured visible centre
   to the owning hex; added persistent non-pickable ochre/ink ground borders
   and blocked hover/pin explanation. Scene/BattleView/UI regression, README,
-  [owning wiki result](docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13)
+  [owning wiki result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#завалы-принадлежат-одному-гексу--2026-10-13)
   and CURRENT_PLAN updated; canonical geometry/rules/replay unchanged.
   Web noEmit/scoped lint/format, UI 14/14 and actual blocked-cell no-order journey
   PASS; 12,575 visible-art samples stayed inside projected hex. Current day/night/
@@ -7116,7 +7172,7 @@ requests.
   guard percentage; server owns connectivity admission with draft-preserving
   visible rejection. Added public boundary/regression checks, updated combat
   READMEs/ability/opponent pages and CURRENT_PLAN.
-  [Owning result and proof limits](docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
+  [Owning result and proof limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#реализация-тз-sprite-v3--2026-10-13).
   UI skills/autoplay/full mill/editor/reload/invalid-import/closed-map retry PASS;
   terrain identity74points and alpha/HUD input PASS. V3 matrix12battles/2085commands
   resolved R8–11 without unlawful commands/cycles/replay divergence. Isolated
@@ -7166,7 +7222,7 @@ requests.
   foreground active markers, correct defeat text and no command tooltip over
   terminal controls. Core/replay, lab server/protocol, editors/renderer/HUD,
   their READMEs, mechanic pages/wiki index and CURRENT_PLAN affected.
-  [Owning loop/parameters/checks](docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
+  [Owning loop/parameters/checks](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#алгоритм-доведения-боёвки--2026-10-12).
   Actual UI/replay: rush R8/147 victory, safety-fixed hold R14/187 defeat,
   human surrender R5/89 with two surrenders; finite independent source/playable
   ACCEPT. Absolute day/night visual and final hold/surrender readback ACCEPT
@@ -7186,7 +7242,7 @@ requests.
   movement cells blending into terrain. Separate slate-teal fill, pale borders
   and ink backing make canonical movement destinations visible; hover/pin remain
   on top, shot-area style unchanged. Updated combat-lab renderer and README.
-  [Owning amendment](docs/wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
+  [Owning amendment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#контраст-доступной-зоны-движения--исправление-2026-10-11).
   Web typecheck/scoped lint PASS; browser 39 destinations with matching borders,
   day/night/grid on-off, pin-hover and actual 4AP move/AP0 removal PASS.
   Absolute visual ACCEPT, all applicable scores ≥2; critic input NOT_RUN.
@@ -7200,7 +7256,7 @@ requests.
   Shared pointy-top radius/centres and mesh helpers align grid, movement/shot
   zones, hover/selection and hex unit bases. Honeycomb GitHub sources inspected
   at pinned commit; no new dependency, gameplay, protocol or server change.
-  [Owning amendment/research](docs/wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
+  [Owning amendment/research](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#геометрия-сетки-и-совпадение-маркеров--исправление-2026-10-11).
   11 focused tests/web typecheck/scoped lint PASS; browser165 cells/444 shared
   edges/45shot borders aligned,150edge+180corner probes without dead zones,
   pinned/hover/near-edge rightclick3AP PASS. Source review cleared;
@@ -7216,7 +7272,7 @@ requests.
   cover full hexes; cube-rounded fallback fills internal height seams and rejects
   missing/perimeter cells. Shared inverse in web renderer preserves old scene
   math. Hover and pinned selection have distinct persistent markers.
-  [Owning amendment](docs/wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
+  [Owning amendment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#непрерывный-выбор-гекса--исправление-2026-10-11).
   Ten scoped tests/web typecheck/lint and 140 edge/180 corner browser points,
   border right-click/persistent selection PASS. Source findings fixed;
   240 height-edge points/perimeter rejection/pan/zoom PASS. Absolute visual
@@ -7235,7 +7291,7 @@ requests.
   Selected movement wins over pinned-target forecast, with pinned inspection
   retained; selecting a unit clears the path. Muted shot grid, AP spend/remaining
   segments, side shapes and upper-left forecast preserve field readability.
-  [Owning decision](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
+  [Owning decision](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10).
   Web typecheck/scoped lint/nine UI tests and actual shot/AP0/pending/move/
   round/restart/hover/target-path-target/menu/editor journeys PASS, three viewport fills PASS.
   Final absolute integrated visual ACCEPT for inspected 2v2/6v6 day/night
@@ -7255,7 +7311,7 @@ requests.
   later owner amendment adds Olden Era-like TOP round-separated initiative,
   portrait effects and four demonstration ability slots from skill progression.
   Effects/abilities are proposals, not engine semantics. Gamedev GPT-6.1 Sol
-  taxonomy reviewed. [Owning comparison and boundaries](docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10)
+  taxonomy reviewed. [Owning comparison and boundaries](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#пять-концептов-полноэкранного-боя--2026-10-10)
   and CURRENT_PLAN updated. Later owner rejection of crude UI led to shared
   component refinement: typography/numeric hierarchy, resource bars, chance
   ring, damage channels, AP infographic, distinct ability icons/states.
@@ -7291,7 +7347,7 @@ requests.
   replay/dependency/migration changes. Gamedev GPT-6.1 Sol advised; visual
   GPT-6.1 Sol found C initiative cropping and A night label, corrected.
   Final historical four-concept re-review ACCEPT (all applicable scores ≥2);
-  later owner five-fullscreen brief supersedes this choice. [Owning comparison](docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10)
+  later owner five-fullscreen brief supersedes this choice. [Owning comparison](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#четыре-концепта-боевого-интерфейса--2026-10-10)
   and CURRENT_PLAN updated; A recommended, owner selection OPEN. Browser
   four-tab/actions-fit/inspect/mode/grid/day-night/fullscreen checks, syntax,
   format/scoped links/diff PASS. Production game/full/integrated acceptance
@@ -7310,7 +7366,7 @@ requests.
   After full mill visual REJECT for overlapping diagonal, server default
   new drafts use two columns/three spaced ranks; accepted/imported setups,
   rules and old replays unchanged. Earlier rush/hold evidence uses former start.
-  [Owning result](docs/wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10),
+  [Owning result](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#читаемость-целей-и-панель-действий--2026-10-10),
   lab README and CURRENT_PLAN updated. Web/server typecheck/scoped ESLint,
   five UI/four custom-battle tests, actual shot/end-turn/target checks and
   four-tab reference PASS. Independent source review found no concrete defect;
@@ -7330,7 +7386,7 @@ requests.
   without retreat; heavy AI never attacks the kiting actor. Disconnected wall
   repeats120 defends to round60. ID-driven targeting and spear step-to100%
   reproduced. Gamedev and independent gameplay critic GPT-6.1 Sol found
-  current depth insufficient. [Owning assessment](docs/wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10),
+  current depth insufficient. [Owning assessment](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#игровая-проверка-ai-и-тактической-глубины--2026-10-10),
   opponents/fatigue wiki and CURRENT_PLAN record priorities and evidence
   boundaries. No gameplay source, rules, dependency or migration changed.
   Documentation format/diff and added local links PASS; whole-document link
@@ -7348,7 +7404,7 @@ requests.
   Additive optional lab projection fields feed rust shot cells and an overhead
   forecast; geometry avoids figures/results and a connector identifies the
   target. No hover RNG, command, dependency, migration or replay change.
-  [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
   ranged/preview wiki, lab README and CURRENT_PLAN updated. Focused parent
   tests 7 files/44 PASS; build/typechecks/scoped ESLint PASS. Browser forecast
   2–4 health/12–18 armor, miss25%; actual shot3/16; blocked target and AP0
@@ -7367,7 +7423,7 @@ requests.
   actor origin even for one-step moves. Shared field/button dispatch checks
   latest view and retains fire confirmation. Invalid/friendly targets do
   not submit commands; navigation/revision/leave clears old hover and native
-  context menus are suppressed. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
+  context menus are suppressed. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09),
   preview wiki, lab README and CURRENT_PLAN updated. Browser command/AP,
   hover-only, fire cancel/accept and navigation checks PASS; web typecheck,
   scoped ESLint and 12 focused tests PASS. Independent GPT-6.1 Sol source
@@ -7389,7 +7445,7 @@ requests.
   old M0/M1 replay behavior remains separate. Protocol/server validate custom
   drafts before allocation, advance opponent commands within accepted receipts
   and export capability-protected replay. No campaign database, migration or
-  runtime dependency added. [Owning contract](docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
+  runtime dependency added. [Owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#рабочий-прототип-и-редакторы--2026-10-09)
   records actual verification, scope and remaining preset mechanics;
   CURRENT_PLAN and combat-lab setup docs updated. Integrated core/server/editor
   focused tests: 62 PASS. Browser editor/play/terminal/replay journeys PASS;
@@ -7412,7 +7468,7 @@ requests.
 ### Combat reuse deeper recheck
 
 - 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
-  deeper verification and better reuse choices. [The revised combat contract](docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
+  deeper verification and better reuse choices. [The revised combat contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#углублённая-перепроверка-и-более-простой-поиск--2026-10-09)
   supersedes mandatory ngraph adaptation with one bounded Dijkstra field
   inspired by Athena Crisis; keeps existing hex/AI/initiative/RNG/replay and
   starts with a linear frontier, TinyQueue only if integration measurements
@@ -7434,7 +7490,7 @@ requests.
 
 - 2026-10-09, branch `codex/sprite-combat-stage1`, local: owner requested
   ready GitHub modules/algorithms in the combat specification. Added
-  [the reuse matrix and adaptation contract](docs/wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09),
+  [the reuse matrix and adaptation contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/battlefield-test-maps.md#повторное-использование-готового-кода--2026-10-09),
   linked it into S2–S4 and the mind map, and updated CURRENT_PLAN. Inspected
   pinned ngraph.path, ROT.js and boardgame.io sources/licenses/tests/issues;
   recommends MIT/ISC weighted-search source adaptation with blocked-goal,
@@ -7498,7 +7554,7 @@ requests.
 - 2026-10-09, branch `claude/world-review-porechye-detail`, merged: owner asked
   to analyse the map and world, use Codex for images and find gamedev skills.
   Added the second map/world analysis and an improvement plan to
-  [map](docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09) (lore
+  [map](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/world/map.md#второй-анализ-карты-и-мира--2026-10-09) (lore
   mismatches at close view: stone Karaulny bridge, castle-like Kamenny Brod,
   missing Tikhaya Gat platforms; no visible war, lairs or wilderness).
   Generated a Porechye close-view sheet with Codex built-in `image_gen`
@@ -7675,7 +7731,7 @@ requests.
   NOT_RUN (local `.env` database port mismatch, not changed).
 - 2026-10-07, originating branch `main`, local: detailed agent briefs B1–B9 for
   the remaining vision decisions in
-  [briefs/2026-10-07](docs/engineering/briefs/2026-10-07/README.md) (split later the same day).
+  [briefs/2026-10-07](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/engineering/briefs/2026-10-07/README.md) (split later the same day).
   Not dispatched.
 
 ### Game direction: Battle Brothers rules, XCOM presentation, melee always damages
@@ -7684,7 +7740,7 @@ requests.
   «Да, давай дух Battle Brothers и взял у XCOM только подачу» and set the rule
   «Урон в ближнем бою должен быть всегда (кроме новобранцев или боя с
   призраками) — игра должна быть логичнее xcom в этом плане». Recorded in:
-  - [m1-spec §18](docs/wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03);
+  - [m1-spec §18](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03);
   - [combat](docs/wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07),
     with a proposed reading for confirmation: hit quality instead of miss,
     shield/armor damage counts, recruit threshold, incorporeal exception that
@@ -7903,16 +7959,16 @@ requests.
   diff/readiness/native reload PASS. Scoped recovery preserves unrelated drafts,
   company/North Yard/850 crowns and original DB/Dex. Main CI IN_PROGRESS;
   actual new travel NOT_RUN, FPS/RAM/audio quality NOT_MEASURED.
-  [Owning results and recovery](docs/wiki/m1-spec.md#слияние-и-обновление-main--2026-10-05).
+  [Owning results and recovery](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
   This dated closeout is local/uncommitted; no deployment.
 
 ### Living-world commit-audit correction
 
-- 2026-10-05, originating branch `codex/living-world-main`, local: the ordinary commit audit rejected eight introduced complexity findings. Extract cohesive habitat/population/animation, sound and background UI functions without changing behavior or any gate. Corrected audit, focused7, typecheck/lint and temporary90-second exact fauna comparison PASS; initial diagnostic path failure retained. Earlier full coverage643/47 and bootstrap remain pre-extraction evidence; final PR CI is pending. [Owning validation](docs/wiki/m1-spec.md#проверка-изолированной-поставки--2026-10-05). No canonical state or migration change.
+- 2026-10-05, originating branch `codex/living-world-main`, local: the ordinary commit audit rejected eight introduced complexity findings. Extract cohesive habitat/population/animation, sound and background UI functions without changing behavior or any gate. Corrected audit, focused7, typecheck/lint and temporary90-second exact fauna comparison PASS; initial diagnostic path failure retained. Earlier full coverage643/47 and bootstrap remain pre-extraction evidence; final PR CI is pending. [Owning validation](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151). No canonical state or migration change.
 
 ### Living-world delivery authorized
 
-- 2026-10-05, originating branch `codex/living-world-main`, local: owner requested “merge, update local main”. Isolate the reviewed habitat/reaction/audio/place-activity/lawful-observation slice from unrelated primary drafts. Include its original wildlife assets/provenance and registry; canonical state, migrations and player data unchanged. Prior clean bootstrap PASS and independent capture review retained; exact PR CI and merge pending. [Owning behavior/checks](docs/wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+- 2026-10-05, originating branch `codex/living-world-main`, local: owner requested “merge, update local main”. Isolate the reviewed habitat/reaction/audio/place-activity/lawful-observation slice from unrelated primary drafts. Include its original wildlife assets/provenance and registry; canonical state, migrations and player data unchanged. Prior clean bootstrap PASS and independent capture review retained; exact PR CI and merge pending. [Owning behavior/checks](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
 
 ### Living-world presentation implementation
 
@@ -7921,7 +7977,7 @@ requests.
   species now use actual flowers/trees and react to the company; opt-in local
   synthesized ambience, bounded day/night settlement work, lawful current map
   observations and company-known completed-work notes are integrated. Affected:
-  web renderer/game presentation; owning [implementation and checks](docs/wiki/m1-spec.md#реализация-живой-среды--2026-10-05).
+  web renderer/game presentation; owning [implementation and checks](docs/wiki/world/biomes.md#что-реализовано-2026-10-05-pr151).
   No protocol, canonical state, migration or player-data change. Focused7,
   web typecheck/lint/format/architecture and representative native/component
   desktop/sound checks PASS after documented corrections. Independent affected
@@ -7936,7 +7992,7 @@ requests.
 ### Living-world layers beyond fauna — design follow-up
 
 - 2026-10-05, originating branch `main`, local: owner's follow-up asks whether
-  fauna is sufficient. [Owning recommendation](docs/wiki/m1-spec.md#достаточно-ли-фауны-для-живого-мира--2026-10-05)
+  fauna is sufficient. [Owning recommendation](docs/wiki/world/biomes.md#следующие-слои--предложение)
   adds priorities for shared environmental motion, place-specific sound,
   settlement work, local reactions, actual world traffic and fact-bound
   consequences. Existing motion remains acknowledged; moving traders/caravans
@@ -7948,7 +8004,7 @@ requests.
 
 - 2026-10-05, originating branch `main` (`f3d214c`), local: owner requested
   distinct biome fauna instead of hares/butterflies everywhere.
-  [Owning matrix and next cycle](docs/wiki/m1-spec.md#20-биомы-и-живая-природа--2026-10-05)
+  [Owning matrix and next cycle](docs/wiki/world/biomes.md)
   compare actual geography and four current wildlife forms with live WORLD/lore
   Notes/Purpose and inspected art. Propose habitat-based distribution, quiet
   forest/rock areas, dragonflies/ducks next, and later forest/night/domestic life.
@@ -8068,7 +8124,7 @@ requests.
   No new travel or full integrated gameplay gate was run in this update; retained
   starvation limitation remains. Recovery stash retained; unrelated drafts remain
   uncommitted. No migration, deployment or player reset.
-  [Owning closeout](docs/wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
+  [Owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#слияние-и-обновление-primary-main--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, published:
   [PR148](https://github.com/Vovanostm/warwrit/pull/148) delivers the owner-selected
@@ -8076,7 +8132,7 @@ requests.
   source/playable review and focused checks pass; current-head clean CI and the
   explicitly authorized merge remain pending. Primary main is at PR147 with
   concurrent drafts preserved. GitHub owns subsequent CI/merge facts.
-  [Owning delivery record](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+  [Owning delivery record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 ### Company origins and illustrated opening — design proposal
 
@@ -8112,7 +8168,7 @@ requests.
   day/night motion inspected; retained company stayed stationary with 850 crowns.
   FPS/memory/enjoyment NOT_MEASURED; wildlife travel/STOP/reload NOT_RUN by this chat.
   Not committed/published/merged; no migration, player reset or deployment.
-  [Owning results and limits](docs/work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
+  [Owning results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#ambient-map-wildlife--2026-10-05).
 
 ### Forest main/runtime closeout
 
@@ -8130,7 +8186,7 @@ requests.
   Final independent forest critic PASS, including fully rendered settled reload
   at1365×900; old-company starvation recovery remains outside
   accepted rules. No deployment, player reset, new migration or full-M1 claim.
-  [Actual result and limits](docs/work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
+  [Actual result and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#primary-main-integration-and-actual-journey--2026-10-05).
 
 ### Tree diversity on current main
 
@@ -8149,7 +8205,7 @@ requests.
   with current focused coverage.
   Active primary location-depth writer prevents overlapping shared-file writes;
   no deployment or new migration.
-  [Owning scope/results](docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
+  [Owning scope/results](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#tree-diversity-on-current-main--2026-10-05).
 
 ### Desktop target
 
@@ -8245,7 +8301,7 @@ requests.
   paths/durations, p95 175.96→100.09ms; hex p95 90.96ms but mean/worst travel
   duration +1.32%/+9.32%. Adds the finite reproduction script and measured case
   evidence; extends existing road-detour/thin-bridge specifications.
-  [Owning results and limits](docs/wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04).
+  [Owning results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#эксперимент-и-реализация--2026-10-04).
   Final bootstrap PASS (verify 631/47 skipped, stress 10000, migrations/auth 14);
   separate movement PostgreSQL 11 and domain 20 PASS. Move/STOP/reload/reroute
   inspected independently from captures/response evidence; no confirmed new
@@ -8254,7 +8310,7 @@ requests.
   merge; local uncommitted isolated checkout only, primary writers preserved.
 
 - 2026-10-04, originating branch `main` at `bcc30f5`, local: owner-requested
-  [global-map topology research and proposal](docs/wiki/m1-spec.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
+  [global-map topology research and proposal](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#19-гексы-устройство-глобальной-карты-и-генерация--2026-10-04)
   compares hex authoring, exact movement, terrain blending, current weighted
   search and future generation using current source and primary references.
   Recommends keeping continuous movement/exact roads and measuring search before
@@ -8303,7 +8359,7 @@ requests.
   conflicts resolved and recovery retained. Main push CI37235532971 IN_PROGRESS.
   Bounded critic approval; combined-route recapture/post-merge browser refresh
   NOT_RUN after URL-policy rejection. Local drafts remain outside PR art acceptance.
-  [Owning result/limits](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
+  [Owning result/limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-merged-closeout--2026-10-05).
   Primary typecheck/content92/format/diff PASS; Airtable checkpoint read back.
   Empirical event FAILED (storage limit), recorded in owning closeout.
   No migration, player-data reset, deployment or full-M1/performance claim.
@@ -8321,7 +8377,7 @@ requests.
   alpha-aware targets and measured labels preserve a shared isometry and natural
   contacts. Scope: web map renderer/labels, original map-dark assets/provenance
   and manifest; roads, supplies, visits and canonical movement retain current main.
-  [Owning integration](docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
+  [Owning integration](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#component-forest-integration--2026-10-04)
   records actual checks and limits; exact-head PR CI/merge pending.
 
   Independent source/playable critique and native journey/input pass; original
@@ -8345,14 +8401,14 @@ requests.
   origin/main; scoped documentation restore retained both histories and all
   unrelated terrain/art/wiki/skill work. Main push CI37233985843 is in progress;
   dev5293 and player data retained. Actual merge/results are recorded in
-  [the owning closeout](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
+  [the owning closeout](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-merged-closeout--2026-10-04).
 
 - 2026-10-04, branch `codex/route-visibility-fix`, local: owner authorized
   publication and merge of the reviewed route visibility correction. Isolated
   delivery includes only the three map files and owning movement/checkpoint/
   changelog records, preserving unrelated terrain/art/docs and retained player
   data. Clean PR CI/publication/merge pending; scoped source and playable results
-  are recorded in [the owning contract](docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
+  are recorded in [the owning contract](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#route-visibility-delivery--2026-10-04).
 
 - 2026-10-04, branch `main`, local: owner-authorized normal-UI testing now
   supersedes the permission-pending route correction status below. Town/village
@@ -8362,7 +8418,7 @@ requests.
   no material defect, including the corrected settled-reload capture. Final return
   arrived in Kamenny Brod with overlay cleared; retained company has 800 crowns.
   Existing focused source checks apply to unchanged code; full gate NOT_RUN.
-  [Actual journey and limits](docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
+  [Actual journey and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#playable-verification-after-owner-authorization--2026-10-04).
 
 - 2026-10-04, branch `main`, local (not committed or published): owner screenshots
   exposed cropped destination markers and missing route sections near settlements.
@@ -8375,7 +8431,7 @@ requests.
   Moving visual acceptance is pending permission to move the retained company;
   independent source critique confirmed the fix's cause/scope; no current moving
   visual verdict, new full gate, publication or merge. See
-  [route visibility correction](docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
+  [route visibility correction](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/work-packages/M1-FREE-MOVEMENT.md#settlement-route-visibility-correction--2026-10-04).
 
 - 2026-10-04, `codex/supplies-delivery`, merged: [PR144](https://github.com/Vovanostm/warwrit/pull/144)
   merged as `bcc30f5`; this supersedes the published status below. Final-head
@@ -8414,7 +8470,7 @@ requests.
   remains reviewed. Combined build/typecheck and normal desktop fixture
   move/STOP/reload/reroute/arrival PASS with exact retained points; current-head
   full PR CI and merge remain pending. No migrations, deployment or player-data reset.
-  [Owning integration results and limits](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+  [Owning integration results and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: final review fixes
   changed-code audit blockers by separating grid preparation and bounded exact
@@ -8423,13 +8479,13 @@ requests.
   202 exact route/outcome/duration comparisons, 22 focused coverage tests and
   unchanged audit PASS. Earlier loaded-host timeouts remain documented failures;
   PR-head CI and integrated browser acceptance are pending.
-  [Owning delivery record](docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
+  [Owning delivery record](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#ревью-и-доставка--2026-10-05).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: owner authorized
   review, publication, merge and local-main update for the measured hex default
   and routing optimization. Preserve current main's renderer improvements and
   concurrent primary drafts; final review/PR CI/merge remain pending.
-  [Delivery checkpoint](docs/engineering/CURRENT_PLAN.md).
+  [Delivery checkpoint](docs/engineering/ROADMAP.md).
 
 - 2026-10-05, branch `codex/map-topology-experiments`, local: owner chose hex
   search speed after disclosure of measured ≤7.2% longer trips. New polygon-v1
@@ -8444,7 +8500,7 @@ requests.
   owner decision with historical topology retained. Final bootstrap: 633 tests,
   47 skipped, 10,000 stress battles and migrations/14 DB checks PASS; normal STOP/reload/reroute/arrival
   and independent supplied-evidence critique pass within inspected scope.
-  [Results, checks and limits](docs/wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
+  [Results, checks and limits](https://github.com/Vovanostm/warwrit/blob/87e785d537fc4bf4bbb6856456391015350d235b/docs/wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05).
 
 - 2026-10-04, branch `codex/supplies-playtest`, local (not committed or merged):
   [AGENTS.md](AGENTS.md#required-changelog-and-change-awareness) requires agents
@@ -8475,7 +8531,7 @@ requests.
   implementation and its checks/runtime NOT_RUN. Original Tier U/scope 300 and
   final #269 AND #262 component 20/15 remain. #272 evaluator stays source-only
   until #214 runtime cleanup; #274/#280 unresolved REWORK still blocks merge.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) updates current continuation.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) updates current continuation.
   Exactly one tick: 0 merged PRs, 0 merged with playable proof; daily work already
   complete. Documentation-only normal commit; no game checks required or run.
   No setup/API/wiki/rule/protocol/replay/migration change; performance NOT_MEASURED.
@@ -8499,7 +8555,7 @@ requests.
 - #268 ready → planning in its own checkout from merged main `c62ad2d0`:
   read-only contract `task_a862f659e76e` / `ctx_5c8ffeb5121c`. Coordinator defers
   setup until #214 releases the exclusive checks/runtime slot; no second builder
-  or acceptance waiver. [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) is the
+  or acceptance waiver. [CURRENT_PLAN](docs/engineering/ROADMAP.md) is the
   continuation; existing setup/API/wiki contracts unchanged. Docs-only normal
   commit; full local suites/build NOT_RUN, performance NOT_MEASURED.
 
@@ -8519,7 +8575,7 @@ requests.
   validation; sole web source writer, full Tier V unchanged. Its advisory source
   review is not visual acceptance. #267 PR #286 remains on final-head CI;
   #274/#280 retain REWORK; 0 merged PRs with playable proof this tick.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exact continuation.
   Local contract/report/scripts/native logs stay under `.orca/core-oidc-count-isolation/`
   in the dedicated #272 checkout. Only coordinator records change in this commit;
   Markdown hook skips code audit by its existing rule. No production/auth/schema/
@@ -8536,7 +8592,7 @@ requests.
   remain NOT_RUN in this continuation; no proof waiver or budget reset.
 - #267 PR #286 has independent Tier U ACCEPT and published day/night proof;
   final-head hosted CI pending, 0 merged PRs with playable proof this tick.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records next allocation;
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records next allocation;
   #214 keeps full Tier V and #269 AND #262 keep final component 20/15.
   Full local verify/stress/migrations/build NOT_RUN; performance NOT_MEASURED.
   No production/auth/schema/released migration/setup/API/wiki change.
@@ -8568,7 +8624,7 @@ requests.
   `e4780547` integrates main without changing the affected prompts. Exact native
   settlement/report verified before ack and worker release; tests/runtime NOT_RUN.
   Author fix, coordinator validate and fresh ACCEPT remain; no merge or Tier T activation.
-  [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records exact continuation.
+  [CURRENT_PLAN](docs/engineering/ROADMAP.md) records exact continuation.
   Documentation-only closeout: no new game tests; full suites/build NOT_RUN,
   performance NOT_MEASURED. Existing API/setup/wiki contracts unaffected.
 
@@ -8592,7 +8648,7 @@ requests.
   default parallelism and OIDC's ordinary concurrent identity writers.
   Native failed worker settlement recorded before acknowledgment/release;
   private Compose containers/volumes/network directly confirmed absent.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) records #271's exclusive
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) records #271's exclusive
   runtime permit for independent Tier U after that cleanup; source review has
   no confirmed defect, complete browser verdict pending. External supervision
   status is attributed context only; one coordinator and existing scope/gates
@@ -8611,7 +8667,7 @@ requests.
   fast-forward integration PASS; the owned auth test is unchanged by integration.
   Source editing is disjoint; checks, DB lifecycle and ordinary commit await
   an explicit coordinator permit after #271 settlement and runtime cleanup.
-- [CURRENT_PLAN](docs/engineering/CURRENT_PLAN.md) distinguishes direct one-tick
+- [CURRENT_PLAN](docs/engineering/ROADMAP.md) distinguishes direct one-tick
   authority from the attributed product-scope relay, retains #267 WIP/budgets
   and original #269/#262/#263/#231 acceptance. No new milestone or merge authority.
   Builder must preserve wrong-issuer/session mutation detection and prove five

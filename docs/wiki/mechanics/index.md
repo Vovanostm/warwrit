@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-11-08
 type: index
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: решения владельца 2026-10-07/08; текущее ядро боя; остальное — предложение автора
 sources:
   - ../benchmarks.md

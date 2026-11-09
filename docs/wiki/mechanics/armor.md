@@ -4,7 +4,7 @@ created: 2026-10-08
 updated: 2026-10-08
 type: concept
 tags: [game-design, review-draft]
-status: review-draft
+status: rule
 authority: текущее ядро боя; прочтение правила урона 2026-10-07; остальное — предложение
 sources:
   - index.md

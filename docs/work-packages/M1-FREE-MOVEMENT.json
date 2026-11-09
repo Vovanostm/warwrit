@@ -1128,7 +1128,7 @@
     "supersededTopology": "Hidden square search/index buckets plus published road-station chains. Exact positions and polygon segments own movement; no hex conversion.",
     "supersededAlgorithm": "Deterministic A* on the finite eight-neighbour grid plus shared authored station nodes, exact local endpoint projections/connectors, reopening and maximum-speed lower-bound heuristic.",
     "implementation": "Compile sorted exact grid-neighbor IDs/durations once per field; retain exact dynamic road approaches. Compare bounded smoothed candidates without changing terrain speed, roads, clearance, clocks or accepted-plan serialization.",
-    "evidence": "../wiki/m1-spec.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05",
+    "evidence": "../wiki/m1-spec-history.md#почему-гексы-и-оптимизация-маршрутов--2026-10-05",
     "limits": "Current search p95 remains above 50ms; target VM capacity, memory, FPS and full-M1 acceptance are NOT_MEASURED/NOT_RUN. No publication, merge or deployment.",
     "verification": "Final bootstrap passed 633 unit tests, 47 skipped, 10,000 stress battles, migration smoke/up and 14 PostgreSQL/auth checks. Normal RMB/S/reload/reroute/arrival preserved exact points; independent supplied-evidence/source critic found no material defect. Early focused 3 failures and their fixes/unchanged limits retained in owning wiki. Separate movement SQL suite NOT_RERUN."
   },
