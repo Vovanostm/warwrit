@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+- 2026-11-09, `claude/design-references`, LOCAL — Changed: owner answers to the
+  open game rules (section V of [open questions](docs/wiki/m1-open-questions.md)),
+  recorded in [m1-spec](docs/wiki/m1-spec.md). The whole reward goes to the presenter,
+  with no helper share. Contracts can be dropped freely before the battle starts.
+  Outside FIRST HUNT the issuer keeps the trophy. A returning player gets an
+  offline report. The camp has only "camp/strike camp". Loot is sold to the town
+  trader in M1. Incapacitated fighters skip turns (this replaces wait/retreat).
+  There is no local map in M1. Campaign battles use all S4 rules. M1 needs at
+  least 20 quests, four of them with a moral choice. The faith of the cross
+  stands beside the old folk faith ([world](docs/wiki/world/index.md)).
 - 2026-11-09, `claude/design-references`, LOCAL — Changed: owner set the M1
   battle enemy limit to 12, at most 24 figures in total; the helper adds no
   enemies ([m1-spec §7](docs/wiki/m1-spec.md#7-компания-люди-лагерь-и-содержание)).
