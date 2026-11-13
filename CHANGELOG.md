@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+- 2026-11-14, `claude/m1-quest-texts` — Added: eleven M1 quest texts in Russian,
+  approved by the owner 2026-11-13 ([texts](docs/wiki/economy-quests/m1-quest-texts.md),
+  [task](docs/work-packages/M1-QUESTS.md)); the `warwrit-writer` skill with quest
+  spec, quality rubric, plain-Russian dictionary, ten common mistakes, owner-remark
+  regressions and a checker whose test keeps approved texts at 0 issues. Plain-word
+  fixes in the onboarding book; one unnamed church; new quest people as `proposal`.
+  Docs/text only; game tests NOT_RUN.
+
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
   [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
