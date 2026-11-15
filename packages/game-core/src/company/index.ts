@@ -16,7 +16,8 @@ export { fieldPartyStatus } from './membership.js';
 export type * from './economy-types.js';
 export { ECONOMY_SCHEMA_VERSION, ECONOMY_POLICY_VERSION } from './economy-types.js';
 export { createCompanyEconomyState } from './economy-state.js';
-export { receiveExternalPayment } from './economy-payments.js';
+export { reservedQ } from './economy-state.js';
+export { receiveExternalPayment, payExternalProvider } from './economy-payments.js';
 export { accrueFinance } from './economy-accrual.js';
 export {
   prepareCompanyEconomy,
@@ -100,7 +101,9 @@ export {
   supplySpendableCashQ,
   SUPPLY_SHOPS,
   SUPPLY_PRICE_Q,
+  MEDICAL_UNIT_PRICE_Q,
   SUPPLY_INITIAL_RATIONS,
+  HERBALIST_INITIAL_MEDICAL_UNITS,
 } from './supplies.js';
 export type { SettlementSupplies } from './supplies.js';
 export { prepareEquipmentSale, equipmentSaleQuote } from './equipment-sale.js';

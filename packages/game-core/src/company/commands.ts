@@ -95,7 +95,12 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     name: text,
     bannerId: id,
   }),
-  BuySupplies: command('PLAYER', { siteId: id, quantity: natural(1, 100), shopRevision: unsigned }),
+  BuySupplies: command('PLAYER', {
+    siteId: id,
+    quantity: natural(1, 100),
+    shopRevision: unsigned,
+    goodId: optional(choice('RATION', 'MEDICAL_UNIT')),
+  }),
   Recruit: command('PLAYER', {
     offerId: id,
     characterId: id,

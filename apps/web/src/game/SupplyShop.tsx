@@ -19,8 +19,8 @@ const rejectionText: Record<string, string> = {
   STALE_REVISION:
     'Запас или состояние отряда изменились. Данные обновлены — выберите покупку снова.',
   INSUFFICIENT_FUNDS: 'Недостаточно свободного золота.',
-  CAPACITY: 'Обоз перегружен. Купите меньше рационов.',
-  OUT_OF_STOCK: 'У торговца не хватает рационов. Выберите меньше.',
+  CAPACITY: 'Обоз перегружен. Купите меньше товара.',
+  OUT_OF_STOCK: 'У торговца не хватает выбранного товара. Выберите меньше.',
   CONTACT_OR_ACCESS_REQUIRED: 'Отряд должен находиться в этом поселении.',
   INSUFFICIENT_ITEMS: 'Не хватает еды для уже прошедшего времени. Покупка не выполнена.',
 };
@@ -35,6 +35,7 @@ type SupplyShopProps = {
 export function SupplyShop(props: SupplyShopProps) {
   const [shop, setShop] = useState<SupplyShopDto>();
   const [quantity, setQuantity] = useState(10);
+  const [goodId, setGoodId] = useState<'RATION' | 'MEDICAL_UNIT'>('RATION');
   const [message, setMessage] = useState<string>();
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -57,6 +58,8 @@ export function SupplyShop(props: SupplyShopProps) {
   }
   useEffect(() => {
     let active = true;
+    setGoodId('RATION');
+    setQuantity(10);
     void fetch(`${apiBaseUrl}/company/supplies/${encodeURIComponent(props.siteId)}`, {
       credentials: 'same-origin',
       cache: 'no-store',
@@ -80,6 +83,7 @@ export function SupplyShop(props: SupplyShopProps) {
     pending,
     busy,
     props.company.runStatus === 'ACTIVE',
+    goodId,
   );
   async function purchase() {
     if (lock.current) return;
@@ -87,7 +91,13 @@ export function SupplyShop(props: SupplyShopProps) {
     lock.current = true;
     setBusy(true);
     setMessage(undefined);
-    const attempt = purchaseAttempt(pending, props, shop!, quantity); /* exact retained retry */
+    const attempt = purchaseAttempt(
+      pending,
+      props,
+      shop!,
+      quantity,
+      goodId,
+    ); /* exact retained retry */
     try {
       // Persist before sending. An uncertain result must repeat the same identity and body.
       sessionStorage.setItem(key, JSON.stringify(attempt));
@@ -112,6 +122,8 @@ export function SupplyShop(props: SupplyShopProps) {
       quote={quote}
       quantity={quantity}
       setQuantity={setQuantity}
+      goodId={goodId}
+      setGoodId={setGoodId}
       pending={pending}
       message={message}
       purchase={() => void purchase()}
@@ -124,6 +136,7 @@ function purchaseAttempt(
   props: SupplyShopProps,
   shop: SupplyShopDto,
   quantity: number,
+  goodId: 'RATION' | 'MEDICAL_UNIT',
 ): Purchase {
   return (
     pending ?? {
@@ -131,7 +144,12 @@ function purchaseAttempt(
       commandId: crypto.randomUUID(),
       expectedPublicRevision: props.company.revision,
       type: 'BuySupplies',
-      payload: { siteId: props.siteId, quantity, shopRevision: shop.revision },
+      payload: {
+        siteId: props.siteId,
+        quantity,
+        shopRevision: shop.revision,
+        ...(goodId === 'MEDICAL_UNIT' ? { goodId } : {}),
+      },
     }
   );
 }
@@ -140,7 +158,9 @@ function supplyError(error: unknown): string {
 }
 function purchaseMessage(result: SupplyPurchaseResult, attempt: Purchase): string {
   if (result.ok)
-    return `Покупка завершена. ${formatRations(attempt.payload.quantity)} теперь в обозе.`;
+    return attempt.payload.goodId === 'MEDICAL_UNIT'
+      ? `Покупка завершена. ${attempt.payload.quantity} медицинских наборов теперь в обозе.`
+      : `Покупка завершена. ${formatRations(attempt.payload.quantity)} теперь в обозе.`;
   return rejectionText[result.code] ?? 'Покупка отклонена. Данные отряда обновлены.';
 }
 type ShopDetailsProps = {
@@ -149,6 +169,8 @@ type ShopDetailsProps = {
   readonly quote: SupplyQuote;
   readonly quantity: number;
   readonly setQuantity: (quantity: number) => void;
+  readonly goodId: 'RATION' | 'MEDICAL_UNIT';
+  readonly setGoodId: (goodId: 'RATION' | 'MEDICAL_UNIT') => void;
 };
 type ShopPanelProps = ShopDetailsProps & {
   readonly pending: Purchase | undefined;
@@ -159,9 +181,10 @@ function SupplyShopPanel(panel: ShopPanelProps) {
   return (
     <section className="panel supply-shop" aria-label="Купить припасы">
       <p className="eyebrow">{panel.props.venueName} · припасы в дорогу</p>
-      <h2 className="panel-title">Походные рационы</h2>
+      <h2 className="panel-title">Припасы в дорогу</h2>
       <p className="state-note">
-        Один рацион кормит одного человека один игровой день. Покупка сразу попадает в обоз.
+        Один рацион кормит одного человека один игровой день. Медицинский набор позволяет перевязать
+        раненого. Покупка сразу попадает в обоз.
       </p>
       <SupplyShopDetails {...panel} />
       <PendingPurchase attempt={panel.pending} />
@@ -184,19 +207,42 @@ function SupplyShopPanel(panel: ShopPanelProps) {
 function SupplyShopDetails(panel: ShopDetailsProps) {
   const shop = panel.shop;
   if (!shop) return null;
+  const medicalStock = shop.herbalistMedicalUnits;
   return (
     <>
+      {panel.props.siteId === 'bereznyak' && (
+        <label>
+          Товар
+          <select
+            value={panel.goodId}
+            disabled={panel.quote.inputDisabled}
+            onChange={(event) => {
+              panel.setGoodId(event.target.value as 'RATION' | 'MEDICAL_UNIT');
+              panel.setQuantity(1);
+            }}
+          >
+            <option value="RATION">
+              Рацион · {formatCrowns(shop.rationPriceQ)} кр. · {shop.rations} шт.
+            </option>
+            <option value="MEDICAL_UNIT" disabled={medicalStock < 1}>
+              Медицинский набор · {formatCrowns(shop.medicalUnitPriceQ)} кр. · {medicalStock} шт.
+            </option>
+          </select>
+        </label>
+      )}
       <p>
-        {formatCrowns(shop.rationPriceQ)} кр. за рацион · в наличии {shop.rations}
+        {panel.goodId === 'RATION'
+          ? `${formatCrowns(shop.rationPriceQ)} кр. за рацион · в наличии ${shop.rations}`
+          : `${formatCrowns(shop.medicalUnitPriceQ)} кр. за набор · в наличии ${medicalStock}`}
       </p>
       <p>Доступное золото: {formatCrowns(shop.availableCashQ ?? '0')} кр.</p>
       <CurrentSupplies supplies={panel.props.holdings?.supplies} />
       <label className="supply-quantity">
-        Количество рационов
+        Количество {panel.goodId === 'RATION' ? 'рационов' : 'медицинских наборов'}
         <input
           type="number"
           min="1"
-          max={Math.min(100, shop.rations)}
+          max={Math.min(100, panel.quote.stock)}
           step="1"
           value={panel.quantity}
           disabled={panel.quote.inputDisabled}
@@ -220,10 +266,16 @@ function PurchaseTotals(props: { readonly quote: SupplyQuote }) {
   if (props.quote.hideTotals) return null;
   return (
     <>
-      <p>
-        Итого {formatCrowns(props.quote.costQ)} кр. · {props.quote.weight} кг · ещё{' '}
-        {props.quote.days.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} игровых дней.
-      </p>
+      {props.quote.goodId === 'RATION' ? (
+        <p>
+          Итого {formatCrowns(props.quote.costQ)} кр. · {props.quote.weight} кг · ещё{' '}
+          {props.quote.days.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} игровых дней.
+        </p>
+      ) : (
+        <p>
+          Итого {formatCrowns(props.quote.costQ)} кр. · {props.quote.weight} кг.
+        </p>
+      )}
       {!props.quote.affordable && (
         <p className="travel-error">Недостаточно золота — уменьшите количество.</p>
       )}

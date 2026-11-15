@@ -41,6 +41,8 @@ it('quotes only shop-accessible money and validates quantity while allowing an e
     siteId: 'kamenny-brod',
     revision: '0',
     rations: 300,
+    herbalistMedicalUnits: 12,
+    medicalUnitPriceQ: '5000000',
     rationPriceQ: '4000000',
     availableCashQ: '800000000',
   };
@@ -67,6 +69,8 @@ it('quotes only shop-accessible money and validates quantity while allowing an e
         siteId: shop.siteId,
         revision: shop.revision,
         rations: shop.rations,
+        herbalistMedicalUnits: shop.herbalistMedicalUnits,
+        medicalUnitPriceQ: shop.medicalUnitPriceQ,
         rationPriceQ: shop.rationPriceQ,
       },
       undefined,

@@ -4,13 +4,65 @@ import {
   PHYSICAL_POLICY_VERSION,
   campaignTick,
   canPerform,
+  moneyQ,
   skillLevel,
 } from '@warwrit/game-core';
 import type { CareFulfillmentEvidence, CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto, OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
+import { reservedQ } from '@warwrit/game-core';
+import type { LocalMoneyAccess } from '@warwrit/game-core';
 
 type CareOptions = NonNullable<CompanyHoldingsDto['care']>;
 type CareRequest = Extract<OrdinaryPlayerCompanyCommandV2Dto, { type: 'ApplyCare' }>['payload'];
+export const CHAPEL_CARE_WALLET_ID = 'wallet.chapel.kamenny-brod.01';
+
+export function chapelCareMoneyAccess(
+  state: CompanyCombatAggregateState,
+  providerId: string,
+  atTick: string,
+): LocalMoneyAccess | undefined {
+  const lifecycle = state.economy.lifecycle;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  const provider = lifecycle.characters.find((entry) => entry.identity.characterId === providerId);
+  const pool = state.economy.finance.pools.find((entry) => entry.poolId === 'local');
+  const wallet =
+    pool && state.economy.finance.wallets.find((entry) => entry.walletId === pool.walletId);
+  if (
+    !party ||
+    party.location.kind !== 'AT' ||
+    party.location.siteId !== 'kamenny-brod' ||
+    party.location.areaId !== 'kamenny-brod-market' ||
+    !provider ||
+    provider.presence.availability !== 'AVAILABLE' ||
+    provider.presence.encounterBindingId !== null ||
+    provider.presence.location.kind !== 'AT' ||
+    provider.presence.location.siteId !== 'kamenny-brod' ||
+    provider.presence.location.areaId !== 'kamenny-brod-market' ||
+    !lifecycle.memberships.some(
+      (entry) =>
+        entry.characterId === providerId &&
+        entry.companyId === lifecycle.companyId &&
+        entry.endedAt === null,
+    ) ||
+    !wallet ||
+    wallet.location.siteId !== 'kamenny-brod' ||
+    wallet.location.areaId !== 'kamenny-brod-market'
+  )
+    return undefined;
+  return {
+    id: randomUUID(),
+    sourceEventId: randomUUID(),
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    revision: lifecycle.revision,
+    atTick: campaignTick(atTick),
+    kind: 'LOCAL_MONEY_ACCESS',
+    operatorId: providerId,
+    location: { ...party.location },
+    poolIds: ['local'],
+    recipientWalletIds: [CHAPEL_CARE_WALLET_ID],
+  };
+}
 
 function sameAtPlace(
   a: { readonly kind: string; readonly siteId?: string; readonly areaId?: string },
@@ -20,7 +72,10 @@ function sameAtPlace(
 }
 
 /** Derive care only from owner-known untreated instances and material at the patient's place. */
-export function companyCareOptions(state: CompanyCombatAggregateState): CareOptions {
+export function companyCareOptions(
+  state: CompanyCombatAggregateState,
+  chapelPriceQ?: string,
+): CareOptions {
   const root = state.economy;
   const physical = root.physical;
   if (!physical || state.encounter.active) return { treatments: [] };
@@ -121,7 +176,7 @@ export function companyCareOptions(state: CompanyCombatAggregateState): CareOpti
         return [];
       return [{ itemId: item.itemId, definitionId: item.definitionId, quantity: item.quantity }];
     });
-    if (materials.length === 0) return [];
+    if (materials.length === 0 && chapelPriceQ === undefined) return [];
     return [
       {
         characterId: condition.characterId,
@@ -134,7 +189,29 @@ export function companyCareOptions(state: CompanyCombatAggregateState): CareOpti
     ];
   });
 
-  return { treatments };
+  const party = root.lifecycle.parties.length === 1 ? root.lifecycle.parties[0] : undefined;
+  const chapelService =
+    chapelPriceQ !== undefined &&
+    party?.location.kind === 'AT' &&
+    party.location.siteId === 'kamenny-brod' &&
+    party.location.areaId === 'kamenny-brod-market' &&
+    treatments.length > 0
+      ? (() => {
+          const pool = root.finance.pools.find((entry) => entry.poolId === 'local');
+          const wallet =
+            pool && root.finance.wallets.find((entry) => entry.walletId === pool.walletId);
+          return wallet
+            ? {
+                priceQ: chapelPriceQ,
+                availableCashQ: (
+                  BigInt(wallet.cashQ) - reservedQ(root.finance, wallet.walletId)
+                ).toString(),
+                payee: 'father-nikon' as const,
+              }
+            : undefined;
+        })()
+      : undefined;
+  return { treatments, ...(chapelService ? { chapelService } : {}) };
 }
 
 /** The server authors the material fulfillment from the same finite local options. */
@@ -143,15 +220,17 @@ export function prepareCompanyCareFulfillment(
   request: CareRequest,
   worldId: string,
   atTick: string,
+  options?: { readonly chapelPriceQ: string; readonly moneyAccessEvidenceId: string },
 ): CareFulfillmentEvidence | undefined {
-  const treatment = companyCareOptions(state).treatments.find(
+  const treatment = companyCareOptions(state, options?.chapelPriceQ).treatments.find(
     (entry) =>
       entry.characterId === request.characterId && entry.conditionId === request.conditionId,
   );
   if (
     !treatment ||
     !treatment.providers.some((provider) => provider.characterId === request.providerId) ||
-    !treatment.materials.some((material) => material.itemId === request.resourceItemId)
+    (request.mode === 'MATERIAL' &&
+      !treatment.materials.some((material) => material.itemId === request.resourceItemId))
   )
     return undefined;
   const condition = state.economy.physical?.conditions.find(
@@ -167,6 +246,49 @@ export function prepareCompanyCareFulfillment(
     (condition.deadlineTick !== null && BigInt(atTick) > BigInt(condition.deadlineTick))
   )
     return undefined;
+  if (request.mode === 'CHAPEL') {
+    const party =
+      state.economy.lifecycle.parties.length === 1 ? state.economy.lifecycle.parties[0] : undefined;
+    const pool = state.economy.finance.pools.find((entry) => entry.poolId === 'local');
+    const wallet =
+      pool && state.economy.finance.wallets.find((entry) => entry.walletId === pool.walletId);
+    if (
+      !options ||
+      !party ||
+      party.location.kind !== 'AT' ||
+      party.location.siteId !== 'kamenny-brod' ||
+      party.location.areaId !== 'kamenny-brod-market' ||
+      patient.presence.location.siteId !== 'kamenny-brod' ||
+      patient.presence.location.areaId !== 'kamenny-brod-market' ||
+      !wallet ||
+      wallet.location.siteId !== 'kamenny-brod' ||
+      wallet.location.areaId !== 'kamenny-brod-market'
+    )
+      return undefined;
+    return {
+      kind: 'CARE_FULFILLMENT',
+      id: randomUUID(),
+      worldId,
+      companyId: state.economy.lifecycle.companyId,
+      revision: state.economy.lifecycle.revision,
+      sourceEventId: randomUUID(),
+      atTick: campaignTick(atTick),
+      ordinal: 0,
+      version: PHYSICAL_POLICY_VERSION,
+      characterId: treatment.characterId,
+      conditionId: treatment.conditionId,
+      careDefinitionId: treatment.careDefinitionId,
+      providerId: request.providerId,
+      location: patient.presence.location,
+      channel: 'CHAPEL',
+      poolId: 'local',
+      providerWalletId: CHAPEL_CARE_WALLET_ID,
+      moneyAccessEvidenceId: options.moneyAccessEvidenceId,
+      amountQ: moneyQ(options.chapelPriceQ),
+      supportsCareCostDiscount: false,
+      practiceChallengeLevel: treatment.careDefinitionId === 'wound-care' ? 5 : 10,
+    };
+  }
   return {
     kind: 'CARE_FULFILLMENT',
     id: randomUUID(),
@@ -183,7 +305,7 @@ export function prepareCompanyCareFulfillment(
     providerId: request.providerId,
     location: patient.presence.location,
     channel: 'MATERIAL',
-    resourceItemId: request.resourceItemId,
+    resourceItemId: request.resourceItemId!,
     resourceContainerId: state.economy.physical!.items.find(
       (entry) => entry.itemId === request.resourceItemId,
     )!.containerId!,

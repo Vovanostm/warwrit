@@ -11,6 +11,9 @@ import {
   canonicalRevision,
   createCompanyPhysicalState,
   initialSkillProgress,
+  ordinaryContractGenesis,
+  ordinaryContractProfile,
+  ordinaryContractTerms,
   parseCompanyCommand,
   preparePartyTravelArrival,
   preparePartyTravelDeparture,
@@ -30,6 +33,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { createDatabase } from '../db/database.js';
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
+import { readSupplyShop } from './supplies.js';
 import type { DatabaseSchema } from '../db/database.js';
 import {
   executeOrdinaryPlayerCompanyCommand,
@@ -747,6 +751,7 @@ describe('ordinary company command executor (PostgreSQL)', () => {
                   characterId: treatment.characterId,
                   conditionId: treatment.conditionId,
                   providerId: scenario.priorState.economy.lifecycle.company!.currentLeaderId!,
+                  mode: 'MATERIAL',
                   resourceItemId: 'care-medical-unit',
                 },
               },
@@ -867,6 +872,7 @@ describe('ordinary company command executor (PostgreSQL)', () => {
               characterId: patientId,
               conditionId: 'care-instance',
               providerId,
+              mode: 'MATERIAL',
               resourceItemId: 'care-medical-unit',
             },
           });
@@ -919,6 +925,7 @@ describe('ordinary company command executor (PostgreSQL)', () => {
             characterId: patientId,
             conditionId: 'care-instance',
             providerId,
+            mode: 'MATERIAL',
             resourceItemId: 'care-medical-unit',
           },
         });
@@ -989,6 +996,7 @@ describe('ordinary company command executor (PostgreSQL)', () => {
               characterId: patientId,
               conditionId: 'care-instance',
               providerId: scenario.priorState.economy.lifecycle.company!.currentLeaderId!,
+              mode: 'MATERIAL',
               resourceItemId: 'care-medical-unit',
             },
           });
@@ -996,6 +1004,247 @@ describe('ordinary company command executor (PostgreSQL)', () => {
         },
         (state) => withCareState(state, 'EXPIRED'),
       );
+    },
+  );
+
+  it.skipIf(database === undefined)(
+    'charges chapel care to the right company, credits its shared ledger, replays once and rolls back atomically',
+    async () => {
+      for (const outcomeBelongsToCompany of [true, false]) {
+        await withOrdinaryScenario(async (scenario) => {
+          const outcomeCompanyId = outcomeBelongsToCompany ? scenario.companyId : 'another-company';
+          await seedFoulWellOutcome(scenario.worldId, outcomeCompanyId, 'foul-well-truth-reported');
+          const before = await readOrdinaryPersistence(scenario);
+          const pool = before.state.economy.finance.pools.find(
+            (entry) => entry.poolId === 'local',
+          )!;
+          const purse = before.state.economy.finance.wallets.find(
+            (entry) => entry.walletId === pool.walletId,
+          )!;
+          const priceQ = outcomeBelongsToCompany ? '10000000' : '5000000';
+          const request = ordinaryRequest(scenario, {
+            type: 'ApplyCare',
+            payload: {
+              characterId: before.state.economy.physical!.conditions.find(
+                (entry) => entry.conditionId === 'care-instance',
+              )!.characterId,
+              conditionId: 'care-instance',
+              providerId: before.state.economy.lifecycle.company!.currentLeaderId!,
+              mode: 'CHAPEL',
+            },
+          });
+
+          await expect(
+            database!.transaction().execute(async (transaction) => {
+              const result = await executeOrdinaryPlayerCompanyCommand({
+                transaction,
+                accountId: scenario.ownerAccountId,
+                expectedCompanyId: scenario.companyId,
+                worldId: scenario.worldId,
+                request,
+                requestKey: canonicalJson(request),
+                now: new Date(0),
+              });
+              expect(result.kind, JSON.stringify(result)).toBe('COMMITTED');
+              throw new Error('chapel-rollback-sentinel');
+            }),
+          ).rejects.toThrow('chapel-rollback-sentinel');
+          expect(await readOrdinaryPersistence(scenario)).toEqual(before);
+          expect(
+            await database!
+              .selectFrom('settlement_supplies')
+              .selectAll()
+              .where('world_id', '=', scenario.worldId)
+              .where('site_id', '=', 'kamenny-brod')
+              .executeTakeFirst(),
+          ).toBeUndefined();
+
+          const committed = await executeOrdinary(scenario, request, scenario.ownerAccountId);
+          expect(committed.kind).toBe('COMMITTED');
+          const after = await readOrdinaryPersistence(scenario);
+          expect(
+            after.state.economy.finance.wallets.find((entry) => entry.walletId === purse.walletId)!
+              .cashQ,
+          ).toBe((BigInt(purse.cashQ) - BigInt(priceQ)).toString());
+          expect(after.state.economy.finance.movements).toContainEqual(
+            expect.objectContaining({
+              from: purse.walletId,
+              to: 'wallet.chapel.kamenny-brod.01',
+              amountQ: priceQ,
+              purpose: 'CARE',
+            }),
+          );
+          expect(
+            after.state.economy.physical!.conditions.find(
+              (entry) => entry.conditionId === 'care-instance',
+            )!.care,
+          ).toMatchObject({ channel: 'CHAPEL' });
+          expect(
+            await database!
+              .selectFrom('settlement_supplies')
+              .select(['chapel_cash_q', 'revision'])
+              .where('world_id', '=', scenario.worldId)
+              .where('site_id', '=', 'kamenny-brod')
+              .executeTakeFirstOrThrow(),
+          ).toMatchObject({ chapel_cash_q: priceQ, revision: '1' });
+          expect(await executeOrdinary(scenario, request, scenario.ownerAccountId)).toEqual(
+            committed,
+          );
+          expect(await readOrdinaryPersistence(scenario)).toEqual(after);
+          expect(
+            await database!
+              .selectFrom('settlement_supplies')
+              .select('chapel_cash_q')
+              .where('world_id', '=', scenario.worldId)
+              .where('site_id', '=', 'kamenny-brod')
+              .executeTakeFirstOrThrow(),
+          ).toEqual({ chapel_cash_q: priceQ });
+        }, withCareAtChapel);
+      }
+    },
+  );
+
+  it.skipIf(database === undefined)(
+    'sells finite herbalist stock, preserves exact retries and removes the remaining stock after exile',
+    async () => {
+      await withOrdinaryScenario(async (scenario) => {
+        await seedFoulWellOutcome(
+          scenario.worldId,
+          scenario.companyId,
+          'foul-well-aghafya-accused',
+        );
+        const before = await readOrdinaryPersistence(scenario);
+        const localPool = before.state.economy.finance.pools.find(
+          (entry) => entry.poolId === 'local',
+        )!;
+        const localWallet = before.state.economy.finance.wallets.find(
+          (entry) => entry.walletId === localPool.walletId,
+        )!;
+        const request = ordinaryRequest(scenario, {
+          type: 'BuySupplies',
+          payload: {
+            siteId: 'bereznyak',
+            quantity: 2,
+            shopRevision: '0',
+            goodId: 'MEDICAL_UNIT',
+          },
+        });
+
+        await expect(
+          database!.transaction().execute(async (transaction) => {
+            const result = await executeOrdinaryPlayerCompanyCommand({
+              transaction,
+              accountId: scenario.ownerAccountId,
+              expectedCompanyId: scenario.companyId,
+              worldId: scenario.worldId,
+              request,
+              requestKey: canonicalJson(request),
+              now: new Date(0),
+            });
+            expect(result.kind, JSON.stringify(result)).toBe('COMMITTED');
+            throw new Error('herbalist-rollback-sentinel');
+          }),
+        ).rejects.toThrow('herbalist-rollback-sentinel');
+        expect(await readOrdinaryPersistence(scenario)).toEqual(before);
+        expect(
+          await database!
+            .selectFrom('settlement_supplies')
+            .selectAll()
+            .where('world_id', '=', scenario.worldId)
+            .where('site_id', '=', 'bereznyak')
+            .executeTakeFirst(),
+        ).toBeUndefined();
+
+        const committed = await executeOrdinary(scenario, request, scenario.ownerAccountId);
+        expect(committed.kind).toBe('COMMITTED');
+        const after = await readOrdinaryPersistence(scenario);
+        const purchased = after.state.economy.physical!.items.find(
+          (entry) => entry.itemId === request.commandId,
+        );
+        expect(purchased).toMatchObject({
+          definitionId: 'medical-unit',
+          owner: { kind: 'COMPANY', id: scenario.companyId },
+          quantity: 2,
+          tombstone: null,
+        });
+        const purchasedContainer = after.state.economy.physical!.containers.find(
+          (entry) => entry.containerId === purchased!.containerId,
+        );
+        expect(purchasedContainer).toMatchObject({
+          kind: 'PARTY_SUPPLY',
+          carrier: { kind: 'PARTY', id: after.state.economy.lifecycle.parties[0]!.partyId },
+          access: 'COMPANY',
+        });
+        expect(
+          after.state.economy.finance.wallets.find(
+            (entry) => entry.walletId === localWallet.walletId,
+          )!.cashQ,
+        ).toBe((BigInt(localWallet.cashQ) - 10000000n).toString());
+        expect(
+          after.state.economy
+            .physical!.items.filter(
+              (entry) => entry.definitionId === 'medical-unit' && !entry.tombstone,
+            )
+            .reduce((sum, entry) => sum + entry.quantity, 0),
+        ).toBe(
+          before.state.economy
+            .physical!.items.filter(
+              (entry) => entry.definitionId === 'medical-unit' && !entry.tombstone,
+            )
+            .reduce((sum, entry) => sum + entry.quantity, 0) + 2,
+        );
+        const shop = await database!
+          .selectFrom('settlement_supplies')
+          .selectAll()
+          .where('world_id', '=', scenario.worldId)
+          .where('site_id', '=', 'bereznyak')
+          .executeTakeFirstOrThrow();
+        expect(shop).toMatchObject({
+          revision: '1',
+          herbalist_medical_units: 10,
+          cash_q: '10000000',
+        });
+        expect(await executeOrdinary(scenario, request, scenario.ownerAccountId)).toEqual(
+          committed,
+        );
+        expect(await readOrdinaryPersistence(scenario)).toEqual(after);
+        expect(
+          await database!
+            .selectFrom('settlement_supplies')
+            .selectAll()
+            .where('world_id', '=', scenario.worldId)
+            .where('site_id', '=', 'bereznyak')
+            .executeTakeFirstOrThrow(),
+        ).toEqual(shop);
+
+        await database!
+          .updateTable('world_campaign_clocks')
+          .set({ starting_tick: '8000', epoch_ms: '0' })
+          .where('world_id', '=', scenario.worldId)
+          .execute();
+        const publicShop = await readSupplyShop(
+          database!,
+          scenario.worldId,
+          'bereznyak',
+          scenario.companyId,
+          scenario.ownerAccountId,
+        );
+        expect(publicShop?.herbalistMedicalUnits).toBe(0);
+        const late = ordinaryRequest(
+          scenario,
+          {
+            type: 'BuySupplies',
+            payload: {
+              siteId: 'bereznyak',
+              quantity: 1,
+              shopRevision: shop.revision,
+              goodId: 'MEDICAL_UNIT',
+            },
+          },
+          after.state,
+        );
+        await rejectOrdinaryUnchanged(scenario, late, 'OUT_OF_STOCK');
+      }, withCompanyAtHerbalist);
     },
   );
 
@@ -1577,6 +1826,122 @@ function withCareState(
       },
     },
   });
+}
+
+function withCareAtChapel(state: CompanyCombatAggregateState): CompanyCombatAggregateState {
+  return withCompanyAtPlace(withCareState(state), 'kamenny-brod', 'kamenny-brod-market');
+}
+
+function withCompanyAtHerbalist(state: CompanyCombatAggregateState): CompanyCombatAggregateState {
+  const root = state.economy;
+  const physical = root.physical!;
+  const reducedRations = physical.items.map((entry) =>
+    entry.definitionId === 'ration' ? { ...entry, quantity: Math.min(entry.quantity, 10) } : entry,
+  );
+  const byId = new Map(reducedRations.map((entry) => [entry.itemId, entry]));
+  const lighter = readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...root,
+      physical: {
+        ...physical,
+        items: reducedRations,
+        knowledge: {
+          ...physical.knowledge,
+          itemSnapshots: physical.knowledge.itemSnapshots.map(
+            (entry) => byId.get(entry.itemId) ?? entry,
+          ),
+        },
+      },
+    },
+  });
+  return withCompanyAtPlace(lighter, 'bereznyak', 'bereznyak-green');
+}
+
+function withCompanyAtPlace(
+  cared: CompanyCombatAggregateState,
+  siteId: string,
+  areaId: string,
+): CompanyCombatAggregateState {
+  const root = cared.economy;
+  const party = root.lifecycle.parties[0]!;
+  const location = { kind: 'AT' as const, siteId, areaId };
+  const localPool = root.finance.pools.find((entry) => entry.poolId === 'local')!;
+  const physical = root.physical!;
+  const containerIds = new Set(
+    physical.containers
+      .filter((entry) => entry.carrier?.kind === 'PARTY' && entry.carrier.id === party.partyId)
+      .map((entry) => entry.containerId),
+  );
+  return readCompanyCombatAggregateState({
+    ...cared,
+    economy: {
+      ...root,
+      lifecycle: {
+        ...root.lifecycle,
+        parties: root.lifecycle.parties.map((entry) =>
+          entry.partyId === party.partyId ? { ...entry, location } : entry,
+        ),
+        characters: root.lifecycle.characters.map((entry) =>
+          entry.presence.fieldPartyId === party.partyId
+            ? { ...entry, presence: { ...entry.presence, location } }
+            : entry,
+        ),
+      },
+      finance: {
+        ...root.finance,
+        wallets: root.finance.wallets.map((entry) =>
+          entry.walletId === localPool.walletId
+            ? { ...entry, location, cashQ: '100000000' }
+            : entry,
+        ),
+      },
+      physical: {
+        ...physical,
+        containers: physical.containers.map((entry) =>
+          containerIds.has(entry.containerId) ? { ...entry, location } : entry,
+        ),
+        knowledge: {
+          ...physical.knowledge,
+          containerSnapshots: physical.knowledge.containerSnapshots.map((entry) =>
+            containerIds.has(entry.containerId) ? { ...entry, location } : entry,
+          ),
+        },
+      },
+    },
+  });
+}
+
+async function seedFoulWellOutcome(
+  worldId: string,
+  companyId: string,
+  slotId: 'foul-well-truth-reported' | 'foul-well-aghafya-accused',
+) {
+  if (!database) throw new Error('company test database missing');
+  const profile = ordinaryContractProfile('ci.m1.foul-well.01');
+  if (!profile) throw new Error('foul-well profile missing');
+  const sourceEventId = randomUUID();
+  const atTick = '1000';
+  const fact = { slotId, companyId, sourceEventId, atTick };
+  await database
+    .insertInto('ordinary_contracts')
+    .values({
+      world_id: worldId,
+      instance_id: profile.instanceId,
+      profile_id: profile.definitionId,
+      revision: '1',
+      wallet_id: profile.walletId,
+      wallet_q: profile.genesisWalletQ,
+      state: {
+        ...ordinaryContractGenesis(profile),
+        revision: '1',
+        ownerCompanyId: companyId,
+        acceptedTerms: ordinaryContractTerms(profile),
+        facts: [fact],
+        outcome: { kind: 'SUCCESS', companyId, sourceEventId, atTick },
+      },
+    })
+    .execute();
 }
 
 async function executeOrdinary(

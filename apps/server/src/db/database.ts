@@ -325,6 +325,8 @@ export interface DatabaseSchema {
     readonly site_id: string;
     readonly revision: string;
     readonly rations: number;
+    readonly herbalist_medical_units: Generated<number>;
+    readonly chapel_cash_q: Generated<string>;
     readonly cash_q: string;
   };
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
@@ -483,7 +485,7 @@ export function createDatabaseReadinessProbe(
       `.execute(database);
     }
     if (companyStorageEnabled) {
-      await sql`select world_id, site_id, revision, rations, cash_q from settlement_supplies limit 0`.execute(
+      await sql`select world_id, site_id, revision, rations, herbalist_medical_units, chapel_cash_q, cash_q from settlement_supplies limit 0`.execute(
         database,
       );
       await sql`

@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Verified: chapel billing, finite herbalist stock, replay/rollback,
+  and delayed exile on disposable PostgreSQL clones; migration 0030 up/down passed.
+  Browser journey and player acceptance remain NOT_RUN. [Quest verification](docs/work-packages/M1-QUESTS.md#verification-update--2026-11-16).
+  Branch `codex/m1-quest-well-20261115`. LOCAL.
+- 2026-11-15 — Added: implement both «Грязный колодец» investigation endings and save their
+  trial consequences, charge chapel care at the ending-specific price, and sell finite
+  medical-unit stock from Агафья's trader until her delayed exile.
+  [Quest checkpoint](docs/work-packages/M1-QUESTS.md#грязный-колодец-implementation-checkpoint--2026-11-15).
+  Branch `codex/m1-quest-well-20261115`. LOCAL.
 - 2026-11-15 — Fixed: show a no-payout contract ending without implying a
   reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement «Обход, которого не было» with a paid

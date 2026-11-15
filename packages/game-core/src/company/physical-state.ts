@@ -807,7 +807,9 @@ function careShape(care: unknown): boolean {
       isEntityId(care['careDefinitionId']) &&
       isEntityId(care['sourceId']) &&
       isExactInteger(care['fulfilledAt']) &&
-      ['MATERIAL', 'PROVIDER', 'INHERITED_STABILIZATION'].includes(care['channel'] as string) &&
+      ['MATERIAL', 'PROVIDER', 'CHAPEL', 'INHERITED_STABILIZATION'].includes(
+        care['channel'] as string,
+      ) &&
       (!Object.hasOwn(care, 'providerId') || isEntityId(care['providerId'])) &&
       (!Object.hasOwn(care, 'recoveryTicksRequired') ||
         isExactInteger(care['recoveryTicksRequired'])))

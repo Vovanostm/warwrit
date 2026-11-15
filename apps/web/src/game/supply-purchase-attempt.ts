@@ -24,8 +24,14 @@ export function readSupplyPurchaseAttempt(stored: string | null): Purchase | und
       return undefined;
     const payload = value['payload'];
     if (
+      !['quantity,shopRevision,siteId', 'goodId,quantity,shopRevision,siteId'].includes(
+        Object.keys(payload).sort().join(','),
+      ) ||
       !id(payload['siteId']) ||
       !revision(payload['shopRevision']) ||
+      (Object.hasOwn(payload, 'goodId') &&
+        payload['goodId'] !== 'RATION' &&
+        payload['goodId'] !== 'MEDICAL_UNIT') ||
       typeof payload['quantity'] !== 'number' ||
       !Number.isInteger(payload['quantity']) ||
       payload['quantity'] < 1 ||

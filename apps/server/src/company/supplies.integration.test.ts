@@ -100,6 +100,8 @@ it.skipIf(!db)(
         siteId: 'severny-dvor',
         revision: '0',
         rations: 300,
+        herbalistMedicalUnits: 0,
+        medicalUnitPriceQ: '5000000',
         rationPriceQ: '4000000',
       };
       const commandHeaders = { ...headers, [WORLD_EXPECTED_COMPANY_ID_HEADER]: opening.companyId };

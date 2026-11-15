@@ -55,19 +55,31 @@ export function supplyPurchaseQuote(
   pending: SupplyPurchaseAttempt | undefined,
   busy: boolean,
   active: boolean,
+  goodId: 'RATION' | 'MEDICAL_UNIT' = 'RATION',
 ) {
-  const { valid, costQ, affordable, days } = supplyQuantityQuote(shop, holdings, quantity);
+  const { valid, costQ, affordable, days, stock } = supplyQuantityQuote(
+    shop,
+    holdings,
+    quantity,
+    goodId,
+  );
   const canPurchase =
-    Boolean(pending) || Boolean(active && shop && valid && quantity <= shop.rations && affordable);
-  let buttonText = `Купить ${valid ? formatRations(quantity) : 'рационы'} · ${formatCrowns(costQ)} кр.`;
+    Boolean(pending) || Boolean(active && shop && valid && quantity <= stock && affordable);
+  const quantityLabel =
+    goodId === 'RATION' && valid
+      ? formatRations(quantity)
+      : `${valid ? quantity : 'медицинские наборы'} шт.`;
+  let buttonText = `Купить ${quantityLabel} · ${formatCrowns(costQ)} кр.`;
   if (pending) buttonText = 'Повторить эту же покупку';
   if (!active && !pending) buttonText = 'Компания завершила свой путь';
   if (busy) buttonText = 'Покупаем…';
   return {
+    goodId,
+    stock,
     costQ,
     affordable,
     days,
-    weight: valid ? quantity / 2 : 0,
+    weight: valid ? (goodId === 'RATION' ? quantity / 2 : quantity / 5) : 0,
     canPurchase,
     disabled: busy || !canPurchase,
     inputDisabled: busy || Boolean(pending) || !active,
@@ -81,12 +93,16 @@ function supplyQuantityQuote(
   shop: SupplyShopDto | undefined,
   holdings: CompanyHoldingsDto | undefined,
   quantity: number,
+  goodId: 'RATION' | 'MEDICAL_UNIT',
 ) {
   const valid = Number.isInteger(quantity) && quantity >= 1 && quantity <= 100;
-  const costQ = shop && valid ? (BigInt(shop.rationPriceQ) * BigInt(quantity)).toString() : '0';
+  const unitPrice = goodId === 'RATION' ? shop?.rationPriceQ : shop?.medicalUnitPriceQ;
+  const stock = goodId === 'RATION' ? (shop?.rations ?? 0) : (shop?.herbalistMedicalUnits ?? 0);
+  const costQ =
+    shop && valid && unitPrice ? (BigInt(unitPrice) * BigInt(quantity)).toString() : '0';
   const affordable =
     shop?.availableCashQ !== undefined && BigInt(shop.availableCashQ) >= BigInt(costQ);
   const people = holdings?.supplies?.people ?? 0;
   const days = valid && people > 0 ? quantity / people : 0;
-  return { valid, costQ, affordable, days };
+  return { valid, costQ, affordable, days, stock };
 }

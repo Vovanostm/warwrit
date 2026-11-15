@@ -14,12 +14,16 @@ export const SUPPLY_SHOPS = Object.freeze([
   'tikhaya-gat',
 ]);
 export const SUPPLY_PRICE_Q = '4000000';
+export const MEDICAL_UNIT_PRICE_Q = '5000000';
 export const SUPPLY_INITIAL_RATIONS = 300;
+export const HERBALIST_INITIAL_MEDICAL_UNITS = 12;
 export interface SettlementSupplies {
   readonly worldId: string;
   readonly siteId: string;
   readonly revision: string;
   readonly rations: number;
+  readonly herbalistMedicalUnits: number;
+  readonly chapelCashQ: string;
   readonly cashQ: string;
 }
 export type SupplyPurchase =
@@ -76,6 +80,8 @@ export function prepareSupplyPurchase(
   carriedPurse?: { readonly walletId: string; readonly partyId: string },
 ): SupplyPurchase {
   const { siteId, quantity, shopRevision } = command.payload;
+  const good = command.payload.goodId ?? 'RATION';
+  const medical = good === 'MEDICAL_UNIT';
   const reject = (code: Extract<SupplyPurchase, { kind: 'REJECTED' }>['code']): SupplyPurchase => ({
     kind: 'REJECTED',
     code,
@@ -85,10 +91,16 @@ export function prepareSupplyPurchase(
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100)
     return reject('INVALID_COMMAND');
   if (shopRevision !== shop.revision) return reject('STALE_REVISION');
-  if (!Number.isSafeInteger(shop.rations) || shop.rations < quantity) return reject('OUT_OF_STOCK');
+  const stock = medical ? shop.herbalistMedicalUnits : shop.rations;
+  if (!Number.isSafeInteger(stock) || stock < quantity) return reject('OUT_OF_STOCK');
   const location = party.location;
   const wallet = findSupplyWallet(root, siteId, carriedPurse);
-  const cost = BigInt(SUPPLY_PRICE_Q) * BigInt(quantity);
+  if (medical && (siteId !== 'bereznyak' || good !== 'MEDICAL_UNIT'))
+    return reject('INVALID_COMMAND');
+  const unit = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === (medical ? 'medical-unit' : 'ration'),
+  )!;
+  const cost = BigInt(medical ? MEDICAL_UNIT_PRICE_Q : SUPPLY_PRICE_Q) * BigInt(quantity);
   if (!wallet || BigInt(wallet.cashQ) - reservedQ(root.finance, wallet.walletId) < cost)
     return reject('INSUFFICIENT_FUNDS');
   const container = root.physical.containers.find(
@@ -98,10 +110,9 @@ export function prepareSupplyPurchase(
       entry.carrier?.kind === 'PARTY' &&
       entry.carrier.id === party.partyId,
   );
-  const ration = COMPANY_CATALOGUE.items.find((entry) => entry.id === 'ration')!;
   if (
     !container ||
-    availableContainerG(root.physical, container.containerId) < quantity * ration.weightG
+    availableContainerG(root.physical, container.containerId) < quantity * unit.weightG
   )
     return reject('CAPACITY');
   if (root.physical.items.some((item) => item.itemId === command.commandId))
@@ -112,7 +123,7 @@ export function prepareSupplyPurchase(
       ...root.physical.items,
       {
         itemId: command.commandId,
-        definitionId: 'ration',
+        definitionId: medical ? 'medical-unit' : 'ration',
         owner: { kind: 'COMPANY' as const, id: root.lifecycle.companyId },
         containerId: container.containerId,
         quantity,
@@ -120,7 +131,9 @@ export function prepareSupplyPurchase(
         maximumCondition: 100,
         contentRevision: '1',
         provenance: {
-          sourceId: `supplies:${shop.worldId}:${siteId}`,
+          sourceId: medical
+            ? `herbalist:${shop.worldId}:${siteId}`
+            : `supplies:${shop.worldId}:${siteId}`,
           parentItemId: null,
           ordinal: 0,
         },
@@ -141,7 +154,9 @@ export function prepareSupplyPurchase(
     shop: {
       ...shop,
       revision: (BigInt(shop.revision) + 1n).toString(),
-      rations: shop.rations - quantity,
+      ...(medical
+        ? { herbalistMedicalUnits: shop.herbalistMedicalUnits - quantity }
+        : { rations: shop.rations - quantity }),
       cashQ: (BigInt(shop.cashQ) + cost).toString(),
     },
     next: {
@@ -169,7 +184,7 @@ export function prepareSupplyPurchase(
             from: wallet.walletId,
             to: `supplies:${shop.worldId}:${siteId}`,
             amountQ: moneyQ(cost.toString()),
-            purpose: 'FOOD' as const,
+            purpose: medical ? ('CARE' as const) : ('FOOD' as const),
             atTick: root.lifecycle.campaignTick,
           },
         ],

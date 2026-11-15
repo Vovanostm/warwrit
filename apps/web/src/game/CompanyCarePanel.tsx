@@ -4,7 +4,7 @@ import {
   type CompanyHoldingsDto,
   type CompanySummaryDto,
 } from '@warwrit/protocol';
-import { conditionLabel, itemLabel } from './format.js';
+import { conditionLabel, formatCrowns, itemLabel } from './format.js';
 import {
   classifyCompanyCarePost,
   readCompanyCareAttempt,
@@ -69,10 +69,10 @@ export function CompanyCarePanel(props: {
     }
   }, [storageKey, props.accountId, props.company.companyId]);
 
-  async function applyCare(retry = false) {
+  async function applyCare(retry = false, payment: 'MATERIAL' | 'CHAPEL' = 'MATERIAL') {
     if (lock.current || (!pending && props.company.runStatus !== 'ACTIVE')) return;
     let request = pending;
-    if (!request && !retry && treatment && provider && material) {
+    if (!request && !retry && treatment && provider && (material || payment === 'CHAPEL')) {
       request = {
         schemaVersion: 2,
         commandId: crypto.randomUUID(),
@@ -82,7 +82,8 @@ export function CompanyCarePanel(props: {
           characterId: treatment.characterId,
           conditionId: treatment.conditionId,
           providerId: provider.characterId,
-          resourceItemId: material.itemId,
+          mode: payment,
+          ...(payment === 'MATERIAL' ? { resourceItemId: material!.itemId } : {}),
         },
       };
     }
@@ -129,7 +130,7 @@ export function CompanyCarePanel(props: {
       setMessage(
         result === 'ACCEPTED'
           ? 'Уход проведён. Рана сможет восстанавливаться со временем.'
-          : 'Уход не выполнен. Проверьте состояние отряда и доступность перевязочного набора.',
+          : 'Уход не выполнен. Проверьте состояние отряда, наличие набора и оплату часовни.',
       );
       props.onRefresh();
     } catch {
@@ -162,7 +163,7 @@ export function CompanyCarePanel(props: {
         </button>
       </div>
     );
-  } else if (treatment && provider && material) {
+  } else if (treatment && provider) {
     controls = (
       <div className="company-care-fields">
         <label>
@@ -197,27 +198,52 @@ export function CompanyCarePanel(props: {
             ))}
           </select>
         </label>
-        <label>
-          <span>Материал</span>
-          <select
-            aria-label="Медицинский набор"
-            value={material.itemId}
-            onChange={(event) => setResourceItemId(event.target.value)}
-          >
-            {treatment.materials.map((entry) => (
-              <option key={entry.itemId} value={entry.itemId}>
-                {itemLabel(entry.definitionId)} · {entry.quantity} шт.
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          className="action"
-          disabled={busy || props.company.runStatus !== 'ACTIVE'}
-          onClick={() => void applyCare()}
-        >
-          Провести уход
-        </button>
+        {material && (
+          <>
+            <label>
+              <span>Материал</span>
+              <select
+                aria-label="Медицинский набор"
+                value={material.itemId}
+                onChange={(event) => setResourceItemId(event.target.value)}
+              >
+                {treatment.materials.map((entry) => (
+                  <option key={entry.itemId} value={entry.itemId}>
+                    {itemLabel(entry.definitionId)} · {entry.quantity} шт.
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              className="action"
+              disabled={busy || props.company.runStatus !== 'ACTIVE'}
+              onClick={() => void applyCare()}
+            >
+              Перевязать своим набором
+            </button>
+          </>
+        )}
+        {props.holdings.care?.chapelService && (
+          <>
+            <p>
+              Часовня: {formatCrowns(props.holdings.care.chapelService.priceQ)} кр. за перевязку. В
+              кассе отряда свободно {formatCrowns(props.holdings.care.chapelService.availableCashQ)}{' '}
+              кр.
+            </p>
+            <button
+              className="action"
+              disabled={
+                busy ||
+                props.company.runStatus !== 'ACTIVE' ||
+                BigInt(props.holdings.care.chapelService.availableCashQ) <
+                  BigInt(props.holdings.care.chapelService.priceQ)
+              }
+              onClick={() => void applyCare(false, 'CHAPEL')}
+            >
+              Заплатить часовне и перевязать
+            </button>
+          </>
+        )}
       </div>
     );
   }

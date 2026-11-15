@@ -153,6 +153,12 @@ export interface CompanyHoldingsDto {
   };
   /** Owner-known wound instances and locally available material-care choices. */
   readonly care?: {
+    /** Offered only while the company stands at the chapel in Kamenny Brod. */
+    readonly chapelService?: {
+      readonly priceQ: string;
+      readonly availableCashQ: string;
+      readonly payee: 'father-nikon';
+    };
     readonly treatments: readonly {
       readonly characterId: string;
       readonly conditionId: string;
@@ -293,6 +299,7 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly siteId: string;
     readonly quantity: number;
     readonly shopRevision: string;
+    readonly goodId?: 'RATION' | 'MEDICAL_UNIT';
   };
   readonly RenameCompany: {
     readonly name: string;
@@ -325,7 +332,8 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly conditionId: string;
     readonly providerId: string;
-    readonly resourceItemId: string;
+    readonly mode: 'MATERIAL' | 'CHAPEL';
+    readonly resourceItemId?: string;
   };
   /** Rest locally or return to field duty; location, funding and eligibility are server-derived. */
   readonly SetAssignment: {
@@ -375,4 +383,6 @@ export interface SupplyShopDto {
   /** Owner-private cash accessible at this shop, after current reservations. */
   readonly availableCashQ?: string;
   readonly rations: number;
+  readonly herbalistMedicalUnits: number;
+  readonly medicalUnitPriceQ: string;
 }

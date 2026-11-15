@@ -19,6 +19,7 @@ export function ordinaryCommandIntent(
     readonly accessEvidenceId: string | undefined;
     readonly careEvidenceId: string | undefined;
     readonly careDefinitionId: string | undefined;
+    readonly carePoolId: string | undefined;
     readonly assignmentEvidenceId: string | undefined;
     readonly assignmentLocationId: string | undefined;
     readonly assignmentFundingPoolId: string | undefined;
@@ -91,6 +92,7 @@ export function ordinaryCommandIntent(
           conditionId: request.payload.conditionId,
           careDefinitionId: ids.careDefinitionId,
           resourceOrProviderReceiptId: ids.careEvidenceId,
+          ...(ids.carePoolId === undefined ? {} : { budgetPoolId: ids.carePoolId }),
         },
       };
     case 'SetAssignment':
@@ -183,7 +185,7 @@ function requestedEffectPresent(
             condition.conditionId === request.payload.conditionId &&
             condition.characterId === request.payload.characterId &&
             condition.care?.providerId === request.payload.providerId &&
-            condition.care?.channel === 'MATERIAL',
+            condition.care?.channel === (request.payload.mode === 'CHAPEL' ? 'CHAPEL' : 'MATERIAL'),
         ) ?? false
       );
     case 'SetAssignment': {

@@ -14,6 +14,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.mill-beast.01': 'inn',
   'ci.m1.light-sack.01': 'market',
   'ci.m1.empty-watch-record.01': 'market',
+  'ci.m1.foul-well.01': 'chapel',
 };
 
 export interface ContractVisit {
@@ -71,6 +72,30 @@ export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): C
           text: watchmanText,
         });
     }
+    if (contract.publicConsequences?.kind === 'FOUL_WELL') {
+      const { herbalist, chapelCarePriceMultiplier, herbsAtTrader } = contract.publicConsequences;
+      const factsToShow = [
+        ['herbalist', herbalist === 'IN_VILLAGE' ? 'herbalist-stays' : 'herbalist-exiled'],
+        ...(chapelCarePriceMultiplier === undefined
+          ? []
+          : [
+              [
+                'chapel-care',
+                chapelCarePriceMultiplier === 2 ? 'care-price-doubled' : 'care-price-normal',
+              ] as const,
+            ]),
+        ['trader-herbs', herbsAtTrader === 'AVAILABLE' ? 'herbs-available' : 'herbs-removed'],
+      ] as const;
+      for (const [suffix, textKey] of factsToShow) {
+        const text = lookup(`contract.ci.m1.foul-well.01.world.${textKey}`);
+        if (text !== undefined)
+          facts.push({
+            instanceId: `${contract.instanceId}:${suffix}`,
+            siteId: 'bereznyak',
+            text,
+          });
+      }
+    }
     return facts;
   });
 }
@@ -108,6 +133,13 @@ export function oldMillVisit(visit: ContractVisit, objectiveSiteId: string) {
 /** Conversations and hand-ins use a meeting point; field work stays at its real site. */
 export function ordinaryStepVenue(instanceId: string, action: string, stepId: string) {
   if (stepId === 'ask-keeper') return 'inn';
+  if (instanceId === 'ci.m1.foul-well.01' && stepId === 'ask-aghafya') return 'herbalist';
+  if (instanceId === 'ci.m1.foul-well.01' && stepId === 'ask-frol') return 'elder';
+  if (
+    instanceId === 'ci.m1.foul-well.01' &&
+    ['tell-nikon-about-ravine', 'name-aghafya'].includes(stepId)
+  )
+    return 'chapel';
   if (
     instanceId === 'ci.m1.empty-watch-record.01' &&
     [

@@ -11,7 +11,12 @@ import { observeLocalPayees } from './payroll-observation.js';
 import { payrollCommandIntent } from './payroll-intent.js';
 import type { PayrollRequest } from './payroll-intent.js';
 import { itemTransferAccess } from './item-transfer.js';
-import { prepareCompanyCareFulfillment } from './care.js';
+import { chapelCareMoneyAccess, prepareCompanyCareFulfillment } from './care.js';
+import {
+  foulWellCarePriceQ,
+  foulWellHerbalistRemoved,
+  readFoulWellOutcome,
+} from '../contracts/foul-well-state.js';
 import { observeLocalRecruit } from './observation.js';
 import {
   RECRUIT_DAILY_WAGE_MILLI,
@@ -25,6 +30,7 @@ import {
 import {
   prepareSupplyPurchase,
   SUPPLY_INITIAL_RATIONS,
+  HERBALIST_INITIAL_MEDICAL_UNITS,
   campaignTick,
   canonicalJson,
   canonicalRevision,
@@ -300,12 +306,51 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   )
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
 
-  const careFulfillment =
-    input.request.type === 'ApplyCare'
-      ? prepareCompanyCareFulfillment(state, input.request.payload, input.worldId, clock.tick)
+  let chapelCareAccess: ReturnType<typeof chapelCareMoneyAccess>;
+  let preparedCareFulfillment: ReturnType<typeof prepareCompanyCareFulfillment>;
+  if (input.request.type === 'ApplyCare' && input.request.payload.mode === 'CHAPEL') {
+    const outcome = await readFoulWellOutcome(input.transaction, input.worldId);
+    const priceQ = foulWellCarePriceQ(outcome, companyId);
+    chapelCareAccess = chapelCareMoneyAccess(state, input.request.payload.providerId, clock.tick);
+    preparedCareFulfillment = chapelCareAccess
+      ? prepareCompanyCareFulfillment(state, input.request.payload, input.worldId, clock.tick, {
+          chapelPriceQ: priceQ,
+          moneyAccessEvidenceId: chapelCareAccess.id,
+        })
       : undefined;
-  if (input.request.type === 'ApplyCare' && careFulfillment === undefined)
+  } else if (input.request.type === 'ApplyCare') {
+    preparedCareFulfillment = prepareCompanyCareFulfillment(
+      state,
+      input.request.payload,
+      input.worldId,
+      clock.tick,
+    );
+  }
+  if (input.request.type === 'ApplyCare' && preparedCareFulfillment === undefined)
     return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+  let chapelCashRow: { readonly revision: string; readonly chapel_cash_q: string } | undefined;
+  if (preparedCareFulfillment?.channel === 'CHAPEL') {
+    await input.transaction
+      .insertInto('settlement_supplies')
+      .values({
+        world_id: input.worldId,
+        site_id: 'kamenny-brod',
+        revision: '0',
+        rations: SUPPLY_INITIAL_RATIONS,
+        herbalist_medical_units: 0,
+        chapel_cash_q: '0',
+        cash_q: '0',
+      })
+      .onConflict((conflict) => conflict.columns(['world_id', 'site_id']).doNothing())
+      .execute();
+    chapelCashRow = await input.transaction
+      .selectFrom('settlement_supplies')
+      .select(['revision', 'chapel_cash_q'])
+      .where('world_id', '=', input.worldId)
+      .where('site_id', '=', 'kamenny-brod')
+      .forUpdate()
+      .executeTakeFirstOrThrow();
+  }
 
   const assignmentEvidence =
     input.request.type === 'SetAssignment'
@@ -445,6 +490,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       companyId,
       input.accountId,
     );
+    const foulOutcome =
+      input.request.payload.goodId === 'MEDICAL_UNIT'
+        ? await readFoulWellOutcome(input.transaction, input.worldId)
+        : undefined;
+    const herbalistRemoved = foulWellHerbalistRemoved(foulOutcome, clock.tick);
     const purchase = prepareSupplyPurchase(
       { ...timed.next, physical: timed.next.physical },
       parsed.command,
@@ -453,6 +503,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         siteId,
         revision: row ? String(row.revision) : '0',
         rations: row?.rations ?? SUPPLY_INITIAL_RATIONS,
+        herbalistMedicalUnits: herbalistRemoved
+          ? 0
+          : (row?.herbalist_medical_units ??
+            (siteId === 'bereznyak' ? HERBALIST_INITIAL_MEDICAL_UNITS : 0)),
+        chapelCashQ: row ? String(row.chapel_cash_q) : '0',
         cashQ: row ? String(row.cash_q) : '0',
       },
       carriedPurse,
@@ -494,6 +549,9 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
               commandId: input.request.commandId,
               siteId,
               quantity: input.request.payload.quantity,
+              ...(input.request.payload.goodId === 'MEDICAL_UNIT'
+                ? { goodId: 'MEDICAL_UNIT' }
+                : {}),
               costQ: purchase.costQ,
               shopRevision: purchase.shop.revision,
             },
@@ -508,12 +566,16 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         site_id: siteId,
         revision: purchase.shop.revision,
         rations: purchase.shop.rations,
+        herbalist_medical_units: purchase.shop.herbalistMedicalUnits,
+        chapel_cash_q: purchase.shop.chapelCashQ,
         cash_q: purchase.shop.cashQ,
       })
       .onConflict((conflict) =>
         conflict.columns(['world_id', 'site_id']).doUpdateSet({
           revision: purchase.shop.revision,
           rations: purchase.shop.rations,
+          herbalist_medical_units: purchase.shop.herbalistMedicalUnits,
+          chapel_cash_q: purchase.shop.chapelCashQ,
           cash_q: purchase.shop.cashQ,
         }),
       )
@@ -576,8 +638,10 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       offerRevision: recruitOffer?.offer_revision,
       siteEligibilityId: campSite?.id,
       accessEvidenceId: equipAccess?.id,
-      careEvidenceId: careFulfillment?.id,
-      careDefinitionId: careFulfillment?.careDefinitionId,
+      careEvidenceId: preparedCareFulfillment?.id,
+      careDefinitionId: preparedCareFulfillment?.careDefinitionId,
+      carePoolId:
+        preparedCareFulfillment?.channel === 'CHAPEL' ? preparedCareFulfillment.poolId : undefined,
       assignmentEvidenceId: assignmentEvidence?.duty.id,
       assignmentLocationId: assignmentEvidence?.duty.location.siteId,
       assignmentFundingPoolId: assignmentEvidence?.duty.fundingPoolId,
@@ -671,8 +735,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         ? [input.request.payload.characterId]
         : equipAccess
           ? [equipAccess.operatorId]
-          : careFulfillment
-            ? [careFulfillment.providerId]
+          : preparedCareFulfillment
+            ? [preparedCareFulfillment.providerId]
             : assignmentEvidence
               ? assignmentEvidence.contactIds
               : (input.request.type === 'BeginFieldCamp' ||
@@ -692,11 +756,12 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       ...(serviceTerms ? [serviceTerms] : []),
       ...(localMoneyAccess ? [localMoneyAccess] : []),
       ...(assignmentEvidence?.moneyAccess ? [assignmentEvidence.moneyAccess] : []),
+      ...(chapelCareAccess ? [chapelCareAccess] : []),
     ],
     physicalFacts: [
       ...foodFacts,
       ...(equipAccess ? [equipAccess] : []),
-      ...(careFulfillment ? [careFulfillment] : []),
+      ...(preparedCareFulfillment ? [preparedCareFulfillment] : []),
     ],
     practiceFacts: [],
   };
@@ -786,6 +851,22 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       ],
     },
   );
+  if (preparedCareFulfillment?.channel === 'CHAPEL' && chapelCashRow) {
+    const updated = await input.transaction
+      .updateTable('settlement_supplies')
+      .set({
+        revision: (BigInt(chapelCashRow.revision) + 1n).toString(),
+        chapel_cash_q: (
+          BigInt(chapelCashRow.chapel_cash_q) + BigInt(preparedCareFulfillment.amountQ!)
+        ).toString(),
+      })
+      .where('world_id', '=', input.worldId)
+      .where('site_id', '=', 'kamenny-brod')
+      .where('revision', '=', chapelCashRow.revision)
+      .executeTakeFirst();
+    if (Number(updated.numUpdatedRows) !== 1)
+      throw new Error('Chapel care treasury update lost its transaction lock');
+  }
   if (input.request.type === 'Recruit' && recruitOffer) {
     const consumed = await input.transaction
       .updateTable('world_recruit_offers')
