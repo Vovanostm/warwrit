@@ -1720,12 +1720,18 @@ export function assertBattleState(state: BattleState): void {
     }
     invariant(state.units.length <= 36, 'V3 battle state cannot exceed 36 units');
     for (const side of state.sides)
-      invariant((unitsPerSide.get(side.id) ?? 0) <= 12, `V3 side ${side.id} exceeds twelve units`);
-    for (const party of state.parties)
       invariant(
-        party.kind !== 'player' || (unitsPerParty.get(party.id) ?? 0) <= 6,
+        (unitsPerSide.get(side.id) ?? 0) > 0 && (unitsPerSide.get(side.id) ?? 0) <= 12,
+        `V3 side ${side.id} must retain 1-12 units`,
+      );
+    for (const party of state.parties) {
+      const partyUnitCount = unitsPerParty.get(party.id) ?? 0;
+      invariant(partyUnitCount > 0, `V3 party ${party.id} must retain units`);
+      invariant(
+        party.kind !== 'player' || partyUnitCount <= 6,
         `V3 player party ${party.id} exceeds six units`,
       );
+    }
   }
   for (const unit of state.units) {
     invariant(sideIds.has(unit.sideId), `Unit ${unit.id} references an unknown battle side`);
