@@ -32,7 +32,7 @@ function saleState(): CompanyEconomyState {
     },
   };
   state = addContainer(state, {
-    ...container('market-stash', { kind: 'CHARACTER', id: 'leader' }, 30000, {
+    ...container('market-stash', { kind: 'COMPANY', id: 'company' }, 30000, {
       kind: 'CHARACTER',
       id: 'leader',
     }),
@@ -107,6 +107,68 @@ describe('M1 loot sale preparation', () => {
       ),
     ).toMatchObject({ kind: 'REJECTED', code: 'IDEMPOTENCY_CONFLICT' });
     expect(canonicalJson(state)).toBe(before);
+  });
+
+  it('refuses company gear stored in a foreign custodial container without changing input state', () => {
+    const state = saleState();
+    const before = canonicalJson(state);
+    const materialized = materializeCompanyPhysicalState(state);
+    const root = {
+      ...materialized,
+      physical: {
+        ...materialized.physical,
+        items: materialized.physical.items.map((entry) =>
+          entry.itemId === 'loot-sword' ? { ...entry, equipped: null } : entry,
+        ),
+        containers: materialized.physical.containers.map((entry) =>
+          entry.containerId === 'market-stash'
+            ? {
+                ...entry,
+                custodian: { kind: 'COMPANY' as const, id: 'other-company' },
+                carrier: null,
+                access: 'CUSTODIAN' as const,
+              }
+            : entry,
+        ),
+      },
+    };
+    const result = prepareEquipmentSale(
+      root,
+      command(
+        state,
+        'SellItem',
+        { siteId: 'kamenny-brod', itemId: 'loot-sword', shopRevision: '4' },
+        'sell-foreign-container',
+      ) as Extract<CompanyCommand, { type: 'SellItem' }>,
+      shop,
+    );
+    expect(result).toMatchObject({ kind: 'REJECTED', code: 'CONTACT_OR_ACCESS_REQUIRED' });
+    expect(canonicalJson(state)).toBe(before);
+  });
+
+  it('rejects inherited price-table keys', () => {
+    const state = saleState();
+    const materialized = materializeCompanyPhysicalState(state);
+    const root = {
+      ...materialized,
+      physical: {
+        ...materialized.physical,
+        items: materialized.physical.items.map((entry) =>
+          entry.itemId === 'loot-sword' ? { ...entry, definitionId: 'toString' } : entry,
+        ),
+      },
+    };
+    const result = prepareEquipmentSale(
+      root,
+      command(
+        state,
+        'SellItem',
+        { siteId: 'kamenny-brod', itemId: 'loot-sword', shopRevision: '4' },
+        'sell-inherited-price-key',
+      ) as Extract<CompanyCommand, { type: 'SellItem' }>,
+      shop,
+    );
+    expect(result).toMatchObject({ kind: 'REJECTED', code: 'UNSALEABLE_ITEM' });
   });
 
   it.each([
