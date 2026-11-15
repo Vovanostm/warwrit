@@ -17,6 +17,7 @@ import type {
 
 import type { WorldTravelAction } from '../world-travel-attempt.js';
 import { SupplyShop } from './SupplyShop.js';
+import { EquipmentTrader } from './EquipmentTrader.js';
 import { CompanyPanel } from './CompanyPanel.js';
 import { formatCrowns, itemLabel, siteKindLabel } from './format.js';
 import {
@@ -658,6 +659,13 @@ export function GameShell(props: {
                   siteId={contractVisit.siteId}
                   venueName={supplyVenueName}
                   onPurchased={props.onRefreshWorld}
+                />
+              )}
+              {contractVisit?.building === 'market' && contractVisit.siteId === 'kamenny-brod' && (
+                <EquipmentTrader
+                  key={`${props.freeMovementScope.accountId}:${props.freeMovementScope.companyId}:kamenny-brod`}
+                  scope={props.freeMovementScope}
+                  onRefreshCompany={props.onRefreshCompany}
                 />
               )}
               {props.placeSlot({
