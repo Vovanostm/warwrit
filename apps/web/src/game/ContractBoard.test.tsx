@@ -19,6 +19,7 @@ const herbs: OrdinaryContractDto = {
   completedByYou: false,
   canAccept: false,
   canHelp: false,
+  canWithdraw: true,
   yourCustody: [],
   steps: [
     {
@@ -90,6 +91,11 @@ describe('contract conversation and journal boundaries', () => {
     expect(render(ready, { siteId: 'bereznyak', building: 'herbalist' })).toContain(
       'Передать результат заказчику',
     );
+  });
+
+  it('shows the accepted pre-battle withdrawal choice', () => {
+    const html = render(herbs, null);
+    expect(html).toContain('Отказаться от поручения');
   });
 
   it('keeps green inspection out of village mills and issuer meetings, while allowing real mill field work', () => {

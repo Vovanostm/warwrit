@@ -308,6 +308,7 @@ export interface OrdinaryContractDto {
   readonly completedByYou: boolean;
   readonly canAccept: boolean;
   readonly canHelp: boolean;
+  readonly canWithdraw: boolean;
   readonly steps: readonly {
     readonly stepId: string;
     readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
@@ -338,7 +339,7 @@ export interface OrdinaryContractCommandDto {
   readonly commandId: string;
   readonly instanceId: string;
   readonly expectedRevision: string;
-  readonly type: 'ACCEPT' | 'HELP' | 'STEP';
+  readonly type: 'ACCEPT' | 'HELP' | 'WITHDRAW' | 'STEP';
   readonly stepId: string | null;
 }
 
@@ -383,7 +384,8 @@ export function isOrdinaryContractCommand(value: unknown): value is OrdinaryCont
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u.test(value['commandId']) &&
     isText(value['instanceId']) &&
     isDecimal(value['expectedRevision']) &&
-    (((value['type'] === 'ACCEPT' || value['type'] === 'HELP') && value['stepId'] === null) ||
+    (((value['type'] === 'ACCEPT' || value['type'] === 'HELP' || value['type'] === 'WITHDRAW') &&
+      value['stepId'] === null) ||
       (value['type'] === 'STEP' && isText(value['stepId'])))
   );
 }

@@ -24,6 +24,7 @@ const board: OrdinaryContractBoardDto = {
       completedByYou: false,
       canAccept: false,
       canHelp: false,
+      canWithdraw: false,
       yourCustody: [],
       steps: [
         {

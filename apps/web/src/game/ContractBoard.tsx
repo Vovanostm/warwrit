@@ -204,6 +204,16 @@ export function ContractConversation(props: ConversationProps) {
           ))}
         </ol>
       )}
+      {contract.canWithdraw && (
+        <button
+          type="button"
+          className="quiet-action"
+          disabled={props.busy}
+          onClick={() => props.onCommand('WITHDRAW', null)}
+        >
+          Отказаться от поручения
+        </button>
+      )}
       {contract.yourCustody.length > 0 && (
         <p className="contract-custody">
           С отрядом: {contract.yourCustody.map(personName).join(', ')}
