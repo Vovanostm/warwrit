@@ -9,6 +9,8 @@ import {
   ORDINARY_CONTRACT_PROFILES,
   ordinaryContractGenesis,
   ordinaryContractProfile,
+  ordinaryContractProfileVersion,
+  ordinaryContractTerms,
   ordinaryStepBlocker,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
@@ -111,13 +113,15 @@ async function readGates(
   };
 }
 
-function contractView(
+export function contractView(
   profile: OrdinaryContractProfile,
   state: OrdinaryContractState,
   companyId: string | undefined,
   standingAt: ContractPlace | null,
   gates: Readonly<Record<OrdinaryStepGate, boolean>>,
+  battleStarted: boolean,
 ): OrdinaryContractDto {
+  const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const role =
     companyId && companyId === state.ownerCompanyId
       ? 'OWNER'
@@ -125,14 +129,14 @@ function contractView(
         ? 'HELPER'
         : 'NONE';
   const atIssuer =
-    standingAt?.siteId === profile.issuerPlace.siteId &&
-    standingAt.areaId === profile.issuerPlace.areaId;
+    standingAt?.siteId === terms.issuerPlace.siteId &&
+    standingAt.areaId === terms.issuerPlace.areaId;
   return {
     instanceId: profile.instanceId,
-    template: profile.template,
-    issuerRoleId: profile.issuerRoleId,
-    issuerLocation: profile.issuerPlace,
-    rewardQ: profile.rewardQ,
+    template: terms.template,
+    issuerRoleId: terms.issuerRoleId,
+    issuerLocation: terms.issuerPlace,
+    rewardQ: terms.rewardQ,
     revision: state.revision,
     yourRole: role,
     helperSlot: state.helperCompanyId === null ? 'AVAILABLE' : 'OCCUPIED',
@@ -150,7 +154,13 @@ function contractView(
       state.ownerCompanyId !== companyId &&
       state.helperCompanyId === null &&
       atIssuer,
-    steps: profile.steps.map((step) => ({
+    canWithdraw:
+      companyId !== undefined &&
+      (role === 'OWNER' || role === 'HELPER') &&
+      state.outcome === null &&
+      !battleStarted &&
+      state.custody.length === 0,
+    steps: terms.steps.map((step) => ({
       stepId: step.stepId,
       action: step.action,
       location: step.place,
@@ -169,6 +179,29 @@ function contractView(
       .filter((entry) => entry.companyId === companyId)
       .map((entry) => entry.personId),
   };
+}
+
+/** Only ordinary jobs tied to an authored battle source close the pre-battle exit. */
+const withdrawalBattleSource: Readonly<Record<string, string>> = Object.freeze({
+  'ci.m1.cellar-rescue.01': 'ci.m1.raider-standard.01',
+  'ci.m1.mill-worker.01': 'ci.m1.mill-beast.01',
+});
+
+async function ordinaryBattleStarted(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  profile: OrdinaryContractProfile,
+): Promise<boolean> {
+  const battleInstanceId = withdrawalBattleSource[profile.instanceId];
+  if (!battleInstanceId) return false;
+  return (
+    (await transaction
+      .selectFrom('encounter_admissions')
+      .select('encounter_id')
+      .where('world_id', '=', worldId)
+      .where('instance_id', '=', battleInstanceId)
+      .executeTakeFirst()) !== undefined
+  );
 }
 
 function isAccepted(
@@ -199,8 +232,8 @@ async function executeOrdinaryCommand(
     ok: false,
     code,
   });
-  const profile = ordinaryContractProfile(request.instanceId);
-  if (!profile) return reject('NOT_AVAILABLE');
+  const offeredProfile = ordinaryContractProfile(request.instanceId);
+  if (!offeredProfile) return reject('NOT_AVAILABLE');
   const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
   if (!companyId) return reject('NOT_AUTHORIZED');
   await ensureOrdinaryGenesis(transaction, worldId);
@@ -209,10 +242,13 @@ async function executeOrdinaryCommand(
     .selectFrom('ordinary_contracts')
     .selectAll()
     .where('world_id', '=', worldId)
-    .where('instance_id', '=', profile.instanceId)
+    .where('instance_id', '=', offeredProfile.instanceId)
     .forUpdate()
     .executeTakeFirst();
   if (!row) return reject('NOT_AVAILABLE');
+  const profile = ordinaryContractProfileVersion(offeredProfile.instanceId, row.profile_id);
+  if (!profile)
+    throw new TypeError('Ordinary contract row has no retained immutable profile version');
   if (!(await lockCompanyAggregate(transaction, worldId, companyId)))
     return reject('NOT_AUTHORIZED');
 
@@ -242,7 +278,9 @@ async function executeOrdinaryCommand(
   const clock = await readWorldClock(transaction, worldId, new Date(), true);
   company = await settleDueContinuousMovementInTransaction(transaction, company, accountId, clock);
   const gates = await readGates(transaction, worldId);
-  const state = readOrdinaryContractState(profile, row.state);
+  const state = readOrdinaryContractState(profile, row.state, row.profile_id);
+  if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profile.walletId))
+    throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
   const prepared = prepareOrdinaryContractCommand(
     profile,
     state,
@@ -256,6 +294,7 @@ async function executeOrdinaryCommand(
       expectedRevision: request.expectedRevision,
       sourceEventId: `ordinary-contract:${profile.instanceId}:${request.commandId}`,
       gates,
+      battleStarted: await ordinaryBattleStarted(transaction, worldId, profile),
     },
   );
   if (prepared.kind === 'REJECTED') return reject(prepared.code);
@@ -287,7 +326,7 @@ async function executeOrdinaryCommand(
   if (prepared.payout) {
     await persistContractRewardPayment(transaction, {
       previous: company,
-      issuerWalletId: profile.walletId,
+      issuerWalletId: state.acceptedTerms?.walletId ?? profile.walletId,
       rewardQ: prepared.payout.rewardQ,
       atTick: clock.tick,
       commandId: request.commandId,
@@ -319,8 +358,7 @@ async function executeOrdinaryCommand(
       instance_id: profile.instanceId,
       request_key: requestKey,
       response,
-      simulation_at_ms:
-        profile.instanceId === 'ci.m1.mill-worker.01' ? clock.nowMs : null,
+      simulation_at_ms: profile.instanceId === 'ci.m1.mill-worker.01' ? clock.nowMs : null,
     })
     .execute();
   return response;
@@ -345,23 +383,30 @@ export function registerOrdinaryContractRoutes(
       const gates = await readGates(transaction, worldId);
       const rows = await transaction
         .selectFrom('ordinary_contracts')
-        .select(['instance_id', 'state'])
+        .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
         .where('world_id', '=', worldId)
         .execute();
-      const contracts = ORDINARY_CONTRACT_PROFILES.flatMap((profile) => {
+      const contracts = [] as OrdinaryContractDto[];
+      for (const profile of ORDINARY_CONTRACT_PROFILES) {
         const row = rows.find((entry) => entry.instance_id === profile.instanceId);
-        return row
-          ? [
-              contractView(
-                profile,
-                readOrdinaryContractState(profile, row.state),
-                companyId,
-                standingAt,
-                gates,
-              ),
-            ]
-          : [];
-      });
+        if (!row) continue;
+        const profileVersion = ordinaryContractProfileVersion(profile.instanceId, row.profile_id);
+        if (!profileVersion)
+          throw new TypeError('Ordinary contract row has no retained immutable profile version');
+        const state = readOrdinaryContractState(profileVersion, row.state, row.profile_id);
+        if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profileVersion.walletId))
+          throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
+        contracts.push(
+          contractView(
+            profileVersion,
+            state,
+            companyId,
+            standingAt,
+            gates,
+            await ordinaryBattleStarted(transaction, worldId, profileVersion),
+          ),
+        );
+      }
       const board: OrdinaryContractBoardDto = { schemaVersion: 1, contracts };
       return board;
     });
