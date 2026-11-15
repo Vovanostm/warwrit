@@ -3,6 +3,7 @@ import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 import { conditionLabel, formatCrowns, formatRations, itemLabel, statusLabel } from './format.js';
 import { ItemTransferPanel } from './ItemTransferPanel.js';
 import { PayrollPanel } from './PayrollPanel.js';
+import { DeceasedPayrollPanel } from './DeceasedPayrollPanel.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
 import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 
@@ -223,6 +224,12 @@ export function CompanyPanel(props: {
             company={company}
             holdings={holdings}
             ticksPerDay={props.ticksPerDay}
+            onRefresh={props.onRefreshItems}
+          />
+          <DeceasedPayrollPanel
+            key={`deceased-payroll:${props.accountId}:${company.companyId}`}
+            accountId={props.accountId}
+            company={company}
             onRefresh={props.onRefreshItems}
           />
         </>
