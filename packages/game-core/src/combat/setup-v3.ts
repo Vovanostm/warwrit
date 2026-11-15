@@ -137,7 +137,12 @@ export function validateBattleSetupV3(setup: BattleSetupV3): BattleSetupV3 {
     unitsPerSide.set(unit.sideId, sideCount);
     invariant(sideCount <= 12, `Side ${unit.sideId} exceeds twelve units`);
     validateUnitPosition(unit, mapKeys, blockedKeys, occupied);
-    validatePersistentTacticalInputs(unit);
+    invariant(
+      unit.threatProfile === undefined ||
+        (unit.threatProfile === 'mill-slam' && party.kind === 'npc'),
+      `Unit ${unit.id} has an invalid V6 threat profile for its party`,
+    );
+    validatePersistentTacticalInputs(unit, true);
     invariant(
       (M0_WEAPON_IDS as readonly string[]).includes(unit.weaponId) || unit.weaponId === 'fists',
       `Unsupported V3 weapon profile: ${unit.weaponId}`,

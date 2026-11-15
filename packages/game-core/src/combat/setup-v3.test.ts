@@ -173,6 +173,34 @@ describe('combat setup schema 3', () => {
     ).toThrow(/Multiple units occupy/);
   });
 
+  it('accepts mill-slam only for an NPC party and rejects unmapped threat profiles', () => {
+    const base = setupV3();
+    const npcTrait = {
+      ...base,
+      units: base.units.map((unit, index) =>
+        index === 6 ? { ...unit, threatProfile: 'mill-slam' as const } : unit,
+      ),
+    };
+    expect(validateBattleSetupV3(npcTrait).units[6]?.threatProfile).toBe('mill-slam');
+    expect(() => assertBattleState(startBattleV3(npcTrait).state)).not.toThrow();
+
+    const playerTrait = {
+      ...base,
+      units: base.units.map((unit, index) =>
+        index === 0 ? { ...unit, threatProfile: 'mill-slam' as const } : unit,
+      ),
+    };
+    expect(() => validateBattleSetupV3(playerTrait)).toThrow(/invalid V6 threat profile/);
+    expect(() =>
+      validateBattleSetupV3({
+        ...base,
+        units: base.units.map((unit, index) =>
+          index === 6 ? { ...unit, threatProfile: 'unknown' as never } : unit,
+        ),
+      }),
+    ).toThrow(/invalid V6 threat profile/);
+  });
+
   it('keeps two remaining sides active after the third side is eliminated', () => {
     const initial = startBattleV3(setupV3()).state;
     const state = {
@@ -231,6 +259,30 @@ describe('combat setup schema 3', () => {
         ),
       }),
     ).toThrow(/must retain 1-12 units/);
+
+    const npcMill = {
+      ...initial,
+      units: initial.units.map((unit, index) =>
+        index === 6 ? { ...unit, threatProfile: 'mill-slam' as const } : unit,
+      ),
+    };
+    expect(() => assertBattleState(npcMill)).not.toThrow();
+    expect(() =>
+      assertBattleState({
+        ...npcMill,
+        units: npcMill.units.map((unit, index) =>
+          index === 6 ? { ...unit, partyId: 'party-player' } : unit,
+        ),
+      }),
+    ).toThrow(/threat profile requires an NPC party/);
+    expect(() =>
+      assertBattleState({
+        ...initial,
+        units: initial.units.map((unit, index) =>
+          index === 6 ? { ...unit, threatProfile: 'unknown' as never } : unit,
+        ),
+      }),
+    ).toThrow(/Unknown V6 threat profile/);
   });
 
   it('previews enemies from both other sides as hostile targets', () => {
