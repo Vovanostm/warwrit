@@ -269,3 +269,19 @@ Current checks for gameplay implementation, persistence and scene journeys:
 NOT_RUN in this documentation normalization. Balance and enjoyment: NOT_MEASURED.
 Next action: T033 verifies funding, then T034 implements and exercises the accepted
 story through its public entry points. Record evidence against the matrix above.
+
+## Funding check — 2026-11-15
+
+T033 complete, LOCAL. A separate executor transactionally restored the retained
+successful N02 dump into the owned `warwrit-m1-20261115` PostgreSQL17 project,
+database `m1_completion`. Read-only canonical inspection confirmed world
+`world.porechye.atlas-v1`, company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf`,
+SUCCESS mill-worker revision5 and the actual issuer
+`wallet.steward.severny-dvor.01` with `wallet_q = 80000000` (80 crowns).
+The approved B4 reward is `40000000` q. This verifies current funds in this
+restored test world. T034 must recheck and debit the locked issuer row in the
+same transaction as the story outcome, company credit and receipts.
+`persistContractRewardPayment` owns the company credit and does not debit the
+issuer row. No B4 activation or reward was performed by this funding check.
+Sanitized local evidence is in the restore worktree's ignored
+`output/restore-provenance.json`; source dump and original databases were retained.

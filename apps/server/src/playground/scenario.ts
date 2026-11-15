@@ -1,9 +1,13 @@
 import * as combat from '@warwrit/game-core';
 import {
   PLAYGROUND_CONTENT_REVISION,
+  PLAYGROUND_MULTISIDE_CONTENT_REVISION,
   PLAYGROUND_SCHEMA_REVISION,
   type PlaygroundScenario,
   type PlaygroundFieldError,
+  type CombatLabBattleConfig,
+  type CombatLabBattleConfigV2,
+  type VersionedCombatLabBattleConfig,
 } from '@warwrit/protocol';
 import {
   combatLabCatalog,
@@ -11,11 +15,17 @@ import {
   defaultSpriteBattle,
   isCustomBattle,
 } from '../combat-lab/custom-battle.js';
+import {
+  createMultisideBattleSetup,
+  isMultisideBattle,
+  defaultMultisideBattle,
+  maximumMultisideBattle,
+} from '../combat-lab/multiside-battle.js';
 import { projectCombatLabView } from '../combat-lab/projection.js';
 
 export function playgroundCatalog() {
   const catalog = combatLabCatalog();
-  const stripSkills = (battle: typeof catalog.defaultBattle) => ({
+  const stripSkills = <T extends VersionedCombatLabBattleConfig>(battle: T): T => ({
     ...battle,
     units: battle.units.map((unit) => ({ ...unit, skillRanks: {} })),
   });
@@ -31,7 +41,10 @@ export function playgroundCatalog() {
   };
 }
 
-export function playgroundTemplate(): PlaygroundScenario {
+function legacyPlaygroundTemplate(): PlaygroundScenario & {
+  initial: CombatLabBattleConfig;
+  rulesetId: 'm1-domain-bridge-v5';
+} {
   return {
     schemaRevision: PLAYGROUND_SCHEMA_REVISION,
     contentRevision: PLAYGROUND_CONTENT_REVISION,
@@ -46,6 +59,24 @@ export function playgroundTemplate(): PlaygroundScenario {
     resources: [],
     equipment: [],
   };
+}
+
+export function playgroundTemplate(): PlaygroundScenario & {
+  initial: CombatLabBattleConfigV2;
+  rulesetId: 'm1-domain-bridge-v6';
+} {
+  const legacy = legacyPlaygroundTemplate();
+  const battle = defaultMultisideBattle();
+  return {
+    ...legacy,
+    contentRevision: PLAYGROUND_MULTISIDE_CONTENT_REVISION,
+    rulesetId: combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+    initial: { ...battle, units: battle.units.map((unit) => ({ ...unit, skillRanks: {} })) },
+  };
+}
+
+export function isSupportedPlaygroundContentRevision(value: unknown): boolean {
+  return value === PLAYGROUND_CONTENT_REVISION || value === PLAYGROUND_MULTISIDE_CONTENT_REVISION;
 }
 
 const record = (value: unknown): value is Record<string, unknown> =>
@@ -71,9 +102,16 @@ export function preflightPlayground(value: unknown): PlaygroundFieldError[] {
     add('scenario', 'Проверьте обязательные и неизвестные поля.');
   if (value['schemaRevision'] !== PLAYGROUND_SCHEMA_REVISION)
     add('schemaRevision', 'Неподдерживаемая версия схемы.');
-  if (value['contentRevision'] !== PLAYGROUND_CONTENT_REVISION)
+  const multiside = record(value['initial']) && value['initial']['version'] === 2;
+  if (
+    value['contentRevision'] !==
+    (multiside ? PLAYGROUND_MULTISIDE_CONTENT_REVISION : PLAYGROUND_CONTENT_REVISION)
+  )
     add('contentRevision', 'Ревизия контента недоступна.');
-  if (value['rulesetId'] !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID)
+  if (
+    value['rulesetId'] !==
+    (multiside ? combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID : combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID)
+  )
     add('rulesetId', 'Неподдерживаемая версия правил.');
   if (value['mapRef'] !== 'inline') add('mapRef', 'Доступны только сохранённые inline-карты.');
   if (
@@ -130,12 +168,18 @@ export function preflightPlayground(value: unknown): PlaygroundFieldError[] {
       });
     }
   }
-  if (!isCustomBattle(initial))
-    add('initial', 'Проверьте состав (1–6 на сторону), полную карту 15×11, проходы и выходы.');
-  if (!Array.isArray(value['resources']) || value['resources'].length > 12)
-    add('resources', 'Ожидается не более 12 наборов ресурсов.');
-  if (!Array.isArray(value['equipment']) || value['equipment'].length > 12)
-    add('equipment', 'Ожидается не более 12 комплектов.');
+  if (!(multiside ? isMultisideBattle(initial) : isCustomBattle(initial)))
+    add(
+      'initial',
+      multiside
+        ? 'Проверьте 2–3 стороны, до 12 бойцов на стороне и до 6 в отряде игрока, карту и выходы.'
+        : 'Проверьте состав (1–6 на сторону), полную карту 15×11, проходы и выходы.',
+    );
+  const unitLimit = multiside ? 36 : 12;
+  if (!Array.isArray(value['resources']) || value['resources'].length > unitLimit)
+    add('resources', `Ожидается не более ${unitLimit} наборов ресурсов.`);
+  if (!Array.isArray(value['equipment']) || value['equipment'].length > unitLimit)
+    add('equipment', `Ожидается не более ${unitLimit} комплектов.`);
   if (errors.length) return errors;
   try {
     createPlaygroundSetup(
@@ -170,8 +214,11 @@ export function isPlaygroundScenario(value: unknown): value is PlaygroundScenari
 export function createPlaygroundSetup(
   id: string,
   scenario: PlaygroundScenario,
-): combat.BattleSetupV2 {
-  const base = createCustomBattleFixture(id, scenario.initial).originalSetup();
+): combat.BattleSetupV2 | combat.BattleSetupV3 {
+  const base =
+    scenario.initial.version === 2
+      ? createMultisideBattleSetup(id, scenario.initial)
+      : createCustomBattleFixture(id, scenario.initial).originalSetup();
   const seen = new Set<string>();
   for (const pools of scenario.resources) {
     combat.invariant(
@@ -202,52 +249,61 @@ export function createPlaygroundSetup(
     );
     equipped.add(item.unitId);
   }
-  const setup: combat.BattleSetupV2 = {
+  if (base.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION)
+    return combat.validateBattleSetupV3({
+      ...base,
+      units: base.units.map((unit) => playgroundUnit(unit, scenario)),
+    });
+  return combat.validateBattleSetupV2({
     ...base,
-    schemaVersion: 2,
+    schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
     rulesetId: combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
-    units: base.units.map((unit) => {
-      const {
-        trainedMelee: _trained,
-        threatProfile: _threat,
-        incorporeal: _incorporeal,
-        ...rest
-      } = unit;
-      const override = scenario.resources.find((pools) => pools.unitId === unit.id);
-      return {
-        ...rest,
-        weaponId:
-          scenario.equipment.find((item) => item.unitId === unit.id)?.weaponId ?? unit.weaponId,
-        skillRanks: {},
-        capabilities: { move: true, attack: true, defend: true, retreat: true },
-        initialPools: override
-          ? {
-              health: override.health,
-              armor: override.armor,
-              stamina: override.stamina,
-              morale: override.morale,
-            }
-          : {
-              health: unit.attributes.health,
-              armor: unit.attributes.armor,
-              stamina: unit.attributes.stamina,
-              morale: unit.attributes.morale,
-            },
-      };
-    }),
+    units: base.units.map((unit) => playgroundUnit(unit, scenario)),
+  });
+}
+
+function playgroundUnit<T extends combat.CombatUnitSetup>(unit: T, scenario: PlaygroundScenario) {
+  const {
+    trainedMelee: _trained,
+    threatProfile: _threat,
+    incorporeal: _incorporeal,
+    ...rest
+  } = unit;
+  const pools = scenario.resources.find((value) => value.unitId === unit.id);
+  return {
+    ...rest,
+    weaponId: scenario.equipment.find((item) => item.unitId === unit.id)?.weaponId ?? unit.weaponId,
+    skillRanks: {},
+    capabilities: { move: true, attack: true, defend: true, retreat: true },
+    initialPools: pools
+      ? { health: pools.health, armor: pools.armor, stamina: pools.stamina, morale: pools.morale }
+      : {
+          health: unit.attributes.health,
+          armor: unit.attributes.armor,
+          stamina: unit.attributes.stamina,
+          morale: unit.attributes.morale,
+        },
   };
-  return combat.validateBattleSetupV2(setup);
 }
 
 export function inspectPlaygroundScenario(id: string, scenario: PlaygroundScenario) {
   const setup = createPlaygroundSetup(id, scenario);
-  const started = combat.startBattleV2(setup);
-  return projectCombatLabView(id, 'human', started.state, started.events, scenario.initial);
+  const started =
+    setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION
+      ? combat.startBattleV3(setup)
+      : combat.startBattleV2(setup);
+  return projectCombatLabView(
+    id,
+    setup.sides[0]!.id,
+    started.state,
+    started.events,
+    scenario.initial,
+  );
 }
 
 /** Fresh input fixtures only; never patch active state or force an outcome. */
 export function playgroundDebugScenarios(): PlaygroundScenario[] {
-  const base = playgroundTemplate();
+  const base = legacyPlaygroundTemplate();
   const duel = {
     ...base,
     initial: {
@@ -275,6 +331,7 @@ export function playgroundDebugScenarios(): PlaygroundScenario[] {
     metadata: { name },
     initial: { ...scenario.initial, name },
   });
+  const maximum = maximumMultisideBattle();
   return [
     named('Ближний и дальний бой', duel),
     named('Движение и препятствия', base),
@@ -298,5 +355,9 @@ export function playgroundDebugScenarios(): PlaygroundScenario[] {
     }),
     named('JOIN: две группы при старте', base),
     named('Retry / reconnect / restart', duel),
+    named('Три стороны по двенадцать бойцов', {
+      ...playgroundTemplate(),
+      initial: { ...maximum, units: maximum.units.map((unit) => ({ ...unit, skillRanks: {} })) },
+    }),
   ];
 }

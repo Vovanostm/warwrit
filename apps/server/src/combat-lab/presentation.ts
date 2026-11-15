@@ -1,4 +1,7 @@
-import type { CombatLabBattleConfig, CombatLabReplayPresentation } from '@warwrit/protocol';
+import type {
+  VersionedCombatLabBattleConfig,
+  CombatLabReplayPresentation,
+} from '@warwrit/protocol';
 import { combatLabProfiles } from './custom-battle.js';
 
 type Label = CombatLabReplayPresentation['units'][number];
@@ -17,7 +20,7 @@ function numberDuplicateNames(units: readonly Label[]): readonly Label[] {
 }
 
 export function createCombatLabPresentation(
-  battle: CombatLabBattleConfig,
+  battle: VersionedCombatLabBattleConfig,
   controlledSideId: string,
 ): CombatLabReplayPresentation {
   const saved = structuredClone(battle);
@@ -27,7 +30,7 @@ export function createCombatLabPresentation(
     name: combatLabProfiles.find((profile) => profile.id === profileId)?.name ?? id,
   }));
   return Object.freeze({
-    version: 1,
+    version: saved.version,
     controlledSideId,
     battle: saved,
     units: Object.freeze(numberDuplicateNames(units)),

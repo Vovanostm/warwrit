@@ -370,6 +370,99 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
     await send(command('delete', current));
   });
 
+  it('persists all 36 participants and ownership through config2, commands and replay', async () => {
+    let current = (await send(command('create'))).json<PlaygroundResult>();
+    const scenario = playgroundDebugScenarios().find(
+      (candidate) => candidate.initial.version === 2 && candidate.initial.sides.length === 3,
+    )!;
+    const before = await app.inject({ url: `/dev/playground/api/${current.sandbox.id}`, headers });
+    const invalid = {
+      ...scenario,
+      initial: {
+        ...scenario.initial,
+        units: scenario.initial.units.map((unit, index) =>
+          index === 1 ? { ...unit, position: scenario.initial.units[0]!.position } : unit,
+        ),
+      },
+    };
+    // Check malformed transport before requesting any canonical mutation.
+    const refused = await app.inject({
+      method: 'POST',
+      url: '/dev/playground/api/commands',
+      headers,
+      payload: { ...command('configure', current), scenario: invalid },
+    });
+    expect(refused.statusCode).toBe(400);
+    const unchanged = await app.inject({
+      url: `/dev/playground/api/${current.sandbox.id}`,
+      headers,
+    });
+    expect(unchanged.json().sandbox).toEqual(before.json().sandbox);
+
+    current = (await send({ ...command('configure', current), scenario })).json<PlaygroundResult>();
+    current = (await send(command('validate', current))).json<PlaygroundResult>();
+    current = (await send(command('activate', current))).json<PlaygroundResult>();
+    const read = async () =>
+      (
+        await app.inject({
+          url: `/dev/playground/api/${current.sandbox.id}`,
+          headers,
+        })
+      ).json<PlaygroundInspection>();
+    let inspected = await read();
+    expect(inspected.sandbox.scenario).toEqual(scenario);
+    expect(inspected.view).toMatchObject({ version: 2, rulesetId: 'm1-domain-bridge-v6' });
+    expect(inspected.view!.sides).toHaveLength(3);
+    expect(inspected.view!.units).toHaveLength(36);
+    expect(inspected.view!.parties).toEqual(
+      scenario.initial.version === 2 ? scenario.initial.parties : [],
+    );
+    const first: EncounterCommandDto = {
+      version: 2,
+      encounterId: inspected.encounterId!,
+      commandId: randomUUID(),
+      expectedRevision: inspected.view!.viewRevision,
+      activationId: inspected.view!.activation!.id,
+      actorId: inspected.view!.activation!.actorId,
+      intent: { type: 'wait' },
+    };
+    const post = (dto: EncounterCommandDto, cookie = headers.cookie) =>
+      app.inject({
+        method: 'POST',
+        url: '/dev/playground/api/combat/commands',
+        headers: { ...headers, cookie },
+        payload: dto,
+      });
+    expect((await post(first, 'warwrit_session=other-token')).statusCode).toBe(404);
+    const accepted = await post(first);
+    expect(accepted.statusCode).toBe(200);
+    inspected = await read();
+    const second: EncounterCommandDto = {
+      ...first,
+      commandId: randomUUID(),
+      expectedRevision: inspected.view!.viewRevision,
+      activationId: inspected.view!.activation!.id,
+      actorId: inspected.view!.activation!.actorId,
+    };
+    expect((await post(second)).statusCode).toBe(200);
+    expect((await post(first)).json()).toEqual(accepted.json());
+    const exported = (
+      await app.inject({
+        url: `/dev/playground/api/${current.sandbox.id}/replay`,
+        headers,
+      })
+    ).json();
+    expect(exported).toMatchObject({ matches: true, replay: { schemaVersion: 3 } });
+    expect(exported.replay.setup.sides).toEqual(
+      scenario.initial.version === 2 ? scenario.initial.sides : [],
+    );
+    const reconstructed = projectCombatLabReplay(exported.replay);
+    expect(reconstructed.units).toHaveLength(36);
+    expect(reconstructed.parties).toEqual(inspected.view!.parties);
+    expect(reconstructed.viewRevision).toBe(2);
+    await send(command('delete', current));
+  });
+
   it('accepts a one-AP move then a three-AP shot and rejects blocked movement atomically', async () => {
     let current = (await send(command('create'))).json<PlaygroundResult>();
     const base = playgroundTemplate();
@@ -382,6 +475,7 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
             id: 'archer',
             profileId: 'W05',
             sideId: 'human' as const,
+            partyId: 'human-party',
             position: { q: 2, r: 5 },
             skillRanks: {},
           },
@@ -389,6 +483,7 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
             id: 'enemy',
             profileId: 'W01',
             sideId: 'opponent' as const,
+            partyId: 'opponent-party',
             position: { q: 6, r: 5 },
             skillRanks: {},
           },

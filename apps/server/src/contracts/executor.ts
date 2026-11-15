@@ -7,6 +7,7 @@ import {
   canonicalJson,
   canonicalStateJson,
   COMBAT_V2_SCHEMA_VERSION,
+  COMBAT_V3_SCHEMA_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   FIRST_HUNT_PRACTICE_PROFILE_ID,
@@ -15,6 +16,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
   parseCompanyCommand,
   PHYSICAL_POLICY_VERSION,
   prepareConsumeCombatAggregate,
@@ -25,6 +27,7 @@ import {
 import type {
   HuntProfile,
   BattleSetupV2,
+  BattleSetupV3,
   BattleState,
   CompanyCombatAggregateState,
   ItemAccessEvidence,
@@ -530,21 +533,27 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   if (
     !stored ||
     stored.world_id !== input.worldId ||
-    stored.schema_version !== COMBAT_V2_SCHEMA_VERSION ||
+    (stored.schema_version !== COMBAT_V2_SCHEMA_VERSION &&
+      stored.schema_version !== COMBAT_V3_SCHEMA_VERSION) ||
     stored.status !== 'resolved' ||
     stored.revision !== input.terminalRevision
   )
     throw new TypeError('FIRST HUNT encounter is not at its recorded terminal revision');
 
   const encounter = stored as unknown as EncounterStoredRow;
-  const setup = encounter.setup as BattleSetupV2;
+  const setup = encounter.setup as BattleSetupV2 | BattleSetupV3;
   const state = encounter.state as BattleState;
+  const supportedSetup =
+    setup.schemaVersion === COMBAT_V3_SCHEMA_VERSION
+      ? setup.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
+      : setup.schemaVersion === COMBAT_V2_SCHEMA_VERSION &&
+        (setup.rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
+          setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
+          setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+          setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID);
   if (
-    setup.schemaVersion !== COMBAT_V2_SCHEMA_VERSION ||
-    (setup.rulesetId !== M1_DOMAIN_BRIDGE_V2_RULESET_ID &&
-      setup.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
-      setup.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-      setup.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
+    stored.schema_version !== setup.schemaVersion ||
+    !supportedSetup ||
     setup.units.length !== state.units.length ||
     !(await verifyEncounterReplayRow(transaction, encounter))
   )
@@ -710,12 +719,13 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   const companySide = setup.sides.find((side) => side.id === COMPANY_SIDE_ID);
   const hasCompanyVictory =
     companySide !== undefined && state.outcome?.winnerSideId === companySide.id;
-  // Historical V2/V3 settlements retain their rule. Tactical V4/V5 victory
+  // Historical V2/V3 settlements retain their rule. Tactical V4+ victory
   // can include escaped living targets, which do not supply a trophy.
   const objectivesDead = hostiles.every((hostile) => hostile.currentPools['health'] === 0);
   const tactical =
     state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID;
   if (hasCompanyVictory && (!tactical || objectivesDead)) {
     const groundItem = createGroundProof(input.worldId, proofSourceId, hunt);
     await transaction

@@ -2,55 +2,72 @@
 
 **Дата** 2026-11-15. **Состояние** решения дизайна, LOCAL.
 
-## Источники
+## Объём и проверка исходников
 
-Checkout `codex/sprite-combat-stage1`, HEAD `7841632a`, с существующей staged/unstaged
-работой. Граф warwrit сообщил ready и совпадающий HEAD, но пропустил часть WIP
-и вернул устаревшие границы одного фрагмента. Для выводов использованы текущие
-владельцы исходников. Два исследователя проверили бой и путь обычной выплаты.
-Инструментарий проверен локально, игровые и SQL-проверки — NOT_RUN.
+Проверена интеграционная ветка `codex/m1-completion-20261115`, HEAD
+`f708c958121ac301a5805d23719a30bb48392825`. Checkout содержит обширные
+staged/unstaged и untracked изменения. Это исследование использует текущие
+исходники, но не утверждает, что локальные правки проверены или приняты.
+Игровые, SQL и browser проверки — NOT_RUN; производительность — NOT_MEASURED.
+
+Источники фактических границ: `packages/game-core/src/combat/{types,setup-v2,
+setup-v3,runtime-v3,replay,rules}.ts`, `packages/protocol/src/{combat-lab,
+playground}.ts`, `apps/server/src/playground/{routes,scenario,combat,store}.ts`,
+`apps/server/src/combat-lab/multiside-battle.ts` и `apps/web/src/playground/`.
+Рабочий игровой путь и отдельные контракты остаются у владельцев из [плана](plan.md).
 
 ## Решения
 
-| Вопрос               | Решение                                                                                                      | Основание                                                                                                                  | Рассмотренный вариант                                                             |
-| -------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Стек                 | Использовать принятые Node/pnpm, TypeScript, Fastify, PostgreSQL/Kysely/pg, React/Vite и Babylon.js          | ADR-0003/0006, package.json и lockfile, текущие типы                                                                       | Пересмотр библиотек при конкретном несовместимом API или измеренном пробеле       |
-| Состав боя           | Новый setup/replay schema 3, lab config/protocol 2 с коллекцией сторон                                       | В types.ts schema 1, в setup-v2.ts schema 2. Обе модели ограничены двумя сторонами, startBattle копирует только первые две | Версионированное расширение общего ядра и копия отдельного многосоставного движка |
-| Алгоритмы            | Переиспользовать существующие S4, инициативу, AI, RNG и resolvedOutcome                                      | activeSideIds/resolvedOutcome уже учитывают множество активных sideId, AI выбирает враждебных по sideId                    | Новый планировщик и отдельная терминальная политика                               |
-| Полномочия           | Допуск из реального членства, управление своими unit IDs                                                     | Lab controlledSideId сейчас даёт доступ по стороне, целевая сторона может содержать несколько отрядов                      | Сторона как единственный контроллер                                               |
-| Старые форматы       | Dispatch по версии к существующим readers и правилам                                                         | replay.ts имеет schema 1/2, текущий config и экспорт карты используют version 1                                            | Переписывание сохранённых setup и истории                                         |
-| Обычная выплата      | Использовать ordinary.ts → executeCommandTransaction → executeOrdinaryCommand и persistContractRewardPayment | Права и блокировки проверяются до private receipt lookup, деньги/контракт/квитанции сохраняются одной транзакцией          | Общий новый сервис квитанций и второй владелец финансов                           |
-| Терминальный исход   | Сохранённый исход → pending effects → атомарное применение к компаниям                                       | encounters/effects.ts и applyPendingFirstHuntTerminalEffects уже владеют восстановлением                                   | Объединение двух этапов в одну операцию                                           |
-| Производительность   | Baseline на целевом устройстве, принятие бюджета, сопоставимая повторная проверка                            | N10 задаёт метод, численные цели в нём отсутствуют                                                                         | Выбор произвольного FPS или обещание ёмкости из размеров VM                       |
-| Быстрая проверка боя | pnpm dev:combat для временного стенда, обычный запуск для кампании                                           | start-sprite-combat.sh создаёт in-memory сессии и очищает campaign DB/OIDC настройки                                       | Использование временного стенда как доказательства долговременных последствий     |
-| Очередь              | Статусы и реальные критерии остаются у T001–T037 и владельцев функций                                        | spec.md и правило одного текущего источника                                                                                | Новая независимо обновляемая очередь завершения                                   |
+| Вопрос | Решение | Основание | Рассмотренный вариант |
+| --- | --- | --- | --- |
+| Многосоставный setup | Использовать `BattleSetupV3` / replay schema 3 и `m1-domain-bridge-v6` | `setup-v3.ts` задаёт 2–3 стороны, до 12 на сторону, до 36 всего; V3 сохраняет party ID и capabilities | Расширять setup/replay 1/2 или копировать отдельный движок |
+| Runtime state | Оставить `BattleState.schemaVersion = 1`; сохраняемая сторона содержит 2+ side rows и необязательные parties | `types.ts` задаёт runtime state schema 1; `runtime-v3.ts` запускает setup schema 3 через общий state/command model | Называть runtime schema новой версией setup/replay |
+| Формат редактора | Использовать `CombatLabBattleConfigV2` (`version: 2`) | Protocol DTO содержит `sides`, `parties`, party-aware `units`; старый config v1 остаётся отдельным reader | Переиспользовать старый бинарный config v1 |
+| Обычный вход | Использовать защищённый persistent Playground `/dev/playground/combat` и `/dev/playground/api` | `playground/routes.ts` подтверждает session account, developer allowlist, origin и dev/test loopback; `store.ts` сохраняет sandbox в схеме `playground` с owner ID, revisions, receipts и TTL | Возвращать временный standalone combat-lab сессии |
+| Команда боя | Отправлять `EncounterCommandDto` на `/dev/playground/api/combat/commands`, который вызывает существующий `executeEncounterCommand` с областью `playground` | `routes.ts` и `combat.ts`; обычная projection/read извлекается из sandbox-owned encounter | Второй combat executor и второй механизм квитанций |
+| Доступ | Использовать существующую cookie-сессию и проверки владельца sandbox; не передавать отдельную session capability | Playground preValidation вызывает `resolveSessionAccount`; reads дополнительно фильтруются по owner ID | Исторический `x-combat-lab-capability` и `sessionStorage` из standalone lab |
+| Старые версии | Оставить setup/replay schema 1/2, config 1, bridge-v5 и старый Playground content revision на их readers | Replay dispatcher и `scenario.ts` маршрутизируют по версии/revision | Переписывать старые сохранённые setup/replay |
+| Результат боя | Переиспользовать сохранённый encounter terminal marker и существующий pending-effects recovery | Доменный executor и `encounters/effects.ts` владеют сохранением и возобновлением терминальных последствий | Вводить отдельную транзакцию-владельца или второй recovery loop |
+| Обычная выплата | Использовать `apps/server/src/contracts/ordinary.ts`, существующие receipt key, транзакцию и payment writer | Владельцы проверяют полномочие до приватного receipt lookup и сохраняют точный ответ | Создавать общий новый receipt/payment сервис |
+| Производительность | Снять baseline и повторить ту же нагрузку на принятом устройстве; принять по N10 | N10 задаёт метод, но число бюджета/фактический результат здесь не проверялись | Обещать FPS или вместимость из целевых характеристик VM |
 
-## Проверенные границы
+## Версии и совместимость
 
-- `packages/game-core/src/combat/types.ts`, `setup-v2.ts`, `rules.ts`, `engine.ts`, `replay.ts` владеют версиями. Текущие лимиты общего ядра и sprite-профиля — 12 всего.
-- `apps/server/src/combat-lab/custom-battle.ts` и `apps/web/src/combat-lab/editor-model.ts` допускают human/opponent и по шесть. Новый путь валидирует 2–3 стороны, 12 на сторону, 36 всего и до шести в отряде игрока.
-- `packages/protocol/src/combat-lab.ts` содержит lab version 1 и единый controlledSideId. Новый протокол передаёт все стороны и доступные этому контроллеру unit IDs.
-- `apps/server/src/contracts/ordinary.ts` использует сессию, принадлежность компании, canonical request key и сохранённый ответ. Конкуренция обычной выплаты и exact retry требуют адресного подтверждения при исполнении.
-- `apps/server/src/encounters/effects.ts` сохраняет существующее ожидание допустимого выбора лидерства при восстановлении последствий.
-- Тип `MaterializedCompanyState` объединяет lifecycle, finance и physical. Optional finance learningObligations/learningEffects сохраняют чтение прежней формы состояния.
+- Setup/replay schema 1 и 2 остаются читаемыми своими функциями. Новый путь
+  использует schema 3 и replay dispatch для `BattleSetupV3`.
+- `BattleState.schemaVersion` остаётся 1. Новый setup содержит коллекции сторон
+  и party ownership, но runtime state намеренно продолжает общий формат state 1.
+- Старый battle config `version: 1` и новый `CombatLabBattleConfigV2.version: 2`
+  различаются. Новая конфигурация хранит `sides`, `parties` и `units.partyId`.
+- `PLAYGROUND_SCHEMA_REVISION` равна 2. Новый content revision
+  `playground-v3:m1-domain-bridge-v6` выбирает config 2 и `m1-domain-bridge-v6`;
+  прежний `playground-v2:m1-domain-bridge-v5` выбирает config 1/bridge-v5.
+- `m1-domain-bridge-v6` — новая редакция правил. Более старые bridge rulesets
+  и replay history сохраняют собственный dispatch; V6 не переименовывает их.
 
-## Исходные версии инструментария
+## Ограничения допуска и управления
 
-Node 24.20.0, pnpm 11.25.0, TypeScript 5.9.3, Vitest 4.1.11.
-Fastify 5.12.1, Kysely 0.28.17, pg 8.23.0, React 19.2.8, Vite 7.3.6,
-Babylon.js 9.28.0 установлены и присутствуют в pnpm-lock.yaml.
+`validateBattleSetupV3` проверяет 2–3 уникальные стороны, 2–36 фигур, уникальные
+ID и позиции, до 12 бойцов на сторону, до 6 в player party, party/side consistency,
+положения и capabilities. Серверный допуск кампании обязан дополнительно вывести
+party membership и доступные unit IDs из доверенного владельца; поля DTO не являются
+разрешением. Союзная сторона объединяет party membership, но не полномочия.
+
+Playground — ограниченный developer sandbox, а не доказательство долгосрочных
+последствий кампании. Его защищают session cookie, allowlist аккаунтов, origin
+и владение строкой sandbox. Он хранится в изолированной PostgreSQL schema,
+ограничен сроком жизни, и команды используют существующий encounter executor.
+Standalone `/dev/combat-lab` route module и capability header остались в исходниках,
+но `registerCombatLab` не зарегистрирован в `apps/server/src/app.ts`. Это не
+доступный обычный вход и не часть выбранного нового среза.
 
 ## Входы исполнения
 
-T001 подтверждает актуальную базу, T002 — компанию, T003 — владение путями.
-Точные новые SQL-колонки и миграции выводятся из проверенного хранения на T008.
-Численный бюджет N10 и реальные средства B4 проверяются в своих задачах.
-Это входы исполнения с выбранным способом получения и владельцем.
+T001/T003 подтверждают интеграционную базу, права на ресурсы и writer ownership;
+T002 подтверждает сохранённую компанию до кампанийного сценария. Реальный
+SQL-переход, exact retry и recovery проверяются в задачах их владельцев.
+T028 использует N10 для baseline, бюджета и повторного измерения. T033/T034
+подтверждают источник средств B4 при выплате 40 крон. Состояние исходного
+архива остаётся зафиксированным в `RC-GAP-MACHINE-01`.
 
-[План](plan.md) · [Модель](data-model.md) · [Контракты](contracts/README.md)
-
-## Уточнение очереди — 2026-11-15
-
-Команда speckit-tasks перенесла все 37 открытых работ в [tasks.md](tasks.md)
-активного пакета 002. Статусы и владельцы сохранены, ID упорядочены по новым
-историям. В 001 оставлена [таблица соответствия](../001-warwrit-m1/tasks.md).
+[План](plan.md) · [Модель](data-model.md) · [Контракты](contracts/README.md) · [Проверка](quickstart.md)

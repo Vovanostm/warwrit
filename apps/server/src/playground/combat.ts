@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import * as combat from '@warwrit/game-core';
 import { sql, type Kysely, type Transaction } from 'kysely';
-import { PLAYGROUND_CONTENT_REVISION, type PlaygroundScenario } from '@warwrit/protocol';
+import type { PlaygroundScenario } from '@warwrit/protocol';
 import type { DatabaseSchema } from '../db/database.js';
 import type { EncounterStoredRow } from '../encounters/executor.js';
 import { verifyEncounterReplay } from '../encounters/executor.js';
@@ -17,13 +17,16 @@ export async function activateSandboxEncounter(
 ) {
   const id = randomUUID();
   const setup = createPlaygroundSetup(id, scenario);
-  const started = combat.startBattleV2(setup);
+  const started =
+    setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION
+      ? combat.startBattleV3(setup)
+      : combat.startBattleV2(setup);
   await sql`insert into playground.encounters (id, sandbox_id, world_id, schema_version, setup, state, revision, status, activation_id, activation_epoch, deadline_at, ai_wake_at)
-    values (${id}::uuid, ${sandboxId}::uuid, 'sandbox', 2, ${JSON.stringify(setup)}::json, ${JSON.stringify(started.state)}::json, 0, ${started.state.status}, ${started.state.activation?.id ?? null}, 1, null, null)`.execute(
+    values (${id}::uuid, ${sandboxId}::uuid, 'sandbox', ${setup.schemaVersion}, ${JSON.stringify(setup)}::json, ${JSON.stringify(started.state)}::json, 0, ${started.state.status}, ${started.state.activation?.id ?? null}, 1, null, null)`.execute(
     transaction,
   );
   await sql`insert into playground.encounter_participants (encounter_id, account_id, side_id, unit_ids, admission_source)
-    values (${id}::uuid, ${owner}::uuid, 'human', ${JSON.stringify(setup.units.map((unit) => unit.id))}::jsonb, 'fixture')`.execute(
+    values (${id}::uuid, ${owner}::uuid, ${setup.sides[0]!.id}, ${JSON.stringify(setup.units.map((unit) => unit.id))}::jsonb, 'fixture')`.execute(
     transaction,
   );
   for (const [ordinal, event] of started.events.entries()) {
@@ -74,9 +77,10 @@ export async function readSandboxEncounter(
       database,
     )
   ).rows.map((item) => item.response);
-  // Both sides are controllable in a debug sandbox. No persisted actor is edited.
+  // The sandbox owner controls its authored participants on every side.
   const side =
-    row.state.units.find((unit) => unit.id === row.state.activation?.unitId)?.sideId ?? 'human';
+    row.state.units.find((unit) => unit.id === row.state.activation?.unitId)?.sideId ??
+    row.state.sides[0]!.id;
   return {
     row,
     commands,
@@ -99,12 +103,22 @@ export async function sandboxReplay(
     .transaction()
     .setIsolationLevel('repeatable read')
     .execute(async (transaction) => readSandboxEncounter(transaction, sandboxId, scenario));
-  if (!stored || stored.row.setup.schemaVersion !== 2) throw new Error('SANDBOX_NOT_ACTIVE');
+  if (!stored || stored.row.setup.schemaVersion === 1) throw new Error('SANDBOX_NOT_ACTIVE');
+  const versioned: combat.VersionedCombatReplay =
+    stored.row.setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION
+      ? {
+          schemaVersion: combat.COMBAT_V3_SCHEMA_VERSION,
+          setup: stored.row.setup,
+          commands: stored.commands,
+        }
+      : {
+          schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+          setup: stored.row.setup,
+          commands: stored.commands,
+        };
   const replay = {
-    schemaVersion: 2 as const,
-    setup: stored.row.setup,
-    commands: stored.commands,
-    contentRevision: PLAYGROUND_CONTENT_REVISION,
+    ...versioned,
+    contentRevision: scenario.contentRevision,
     labPresentation: createCombatLabPresentation(scenario.initial, stored.view.controlledSideId),
   };
   const expectedDigest = digest(stored.row.state);
@@ -129,7 +143,7 @@ export async function sandboxReplay(
     expectedDigest,
     actualDigest,
     rulesetId: stored.row.state.rulesetId,
-    contentRevision: PLAYGROUND_CONTENT_REVISION,
+    contentRevision: scenario.contentRevision,
     replay: { ...replay, finalDigest: expectedDigest },
   };
 }

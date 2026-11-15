@@ -18,6 +18,8 @@
 | Принятый контракт        | ID/version, issuer, terms, objective, participation, proof и settlement | Принятые условия обычного контракта фиксированы, доказательство/владение проверяются перед расчётом | `apps/server/src/contracts/`, M1-CONTRACT-TERMS                           |
 | Квитанция                | world/company/command ID, request key, исходный ответ                   | Сначала полномочие, затем private lookup. Точный повтор возвращает ответ, конфликт тела отклоняется | ordinary.ts, company executor и существующие receipt tables               |
 | Сюжет B4                 | Definition version, личные находки компаний, общий исход, плательщик    | Общий исход записывается один раз, доказанная награда — 40 крон из проверенного кошелька            | M1-STORY-MISSIONS, T033/T034                                              |
+| Playground sandbox       | owner account, scenario/content revision, status, revision, expiry      | Только development/test loopback; владелец видит и меняет свой sandbox; lifecycle commands дают receipts | `apps/server/src/playground/{routes,store}.ts`, `packages/protocol/src/playground.ts` |
+| Sandbox encounter        | setup/state schema, commands, events, receipts, rejections               | Запись живёт в schema `playground`, команды идут через существующий encounter executor              | `apps/server/src/playground/combat.ts`, `apps/server/src/encounters/executor.ts` |
 
 Finance learningObligations/learningEffects имеют существующую optional-форму
 для старого сохранённого состояния. Прочтение прежней редакции использует
@@ -27,33 +29,43 @@ Finance learningObligations/learningEffects имеют существующую 
 
 | Сущность         | Поля / связи                                                                  | Инвариант                                                                      |
 | ---------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Setup schema 3   | schema/ruleset version, seed/RNG inputs, map, sides, units, party attribution | Новый setup явно выбирает новые правила и содержит 2–3 стороны                 |
+| Setup schema 3   | `schemaVersion`, bridge-v6, seed, map, `sides`, `parties`, `units`        | `BattleSetupV3`: 2–3 стороны; до 12 бойцов на стороне и 36 всего              |
 | Сторона          | Стабильный side ID, метаданные, зоны отхода, ссылки участников                | Уникальный ID, до 12 участников, допустимые зоны и начальные участники         |
 | Отряд            | Ссылка на реальный источник членства, side ID, fighter IDs                    | Игрок выводит до 6 бойцов. Сумма допущенных отрядов стороны до 12              |
 | Боец             | Уникальный unit ID, side ID, принадлежность отряду, позиция, состояние        | Один участник и одна сторона, законная свободная позиция, состояние по профилю |
 | Право управления | Сессия/компания и вычисленные сервером unit IDs                               | Союз на одной стороне сохраняет отдельное право каждой компании                |
-| Battle state     | Все стороны и бойцы, активация, очередь, RNG, revision, events и outcome      | Удалённая из активного боя сторона сохраняет идентичность в истории            |
+| Battle state     | `schemaVersion: 1`, все стороны, parties, units, очередь, RNG, revision и outcome | Runtime state schema остаётся 1; устранённая сторона сохраняет ID и историю |
 | Replay schema 3  | Новый setup и упорядоченные принятые команды                                  | Одинаковые setup/seed/команды дают одинаковый результат                        |
-| Lab config 2     | Версия, имя, seed, карта, стороны, участники и группы                         | Полный save/load/import/export, контроль полей и лимитов до запуска            |
+| Battle config 2  | `version`, `name`, `seed`, `map`, `sides`, `parties`, `units`                 | Round trip сохраняет стороны, retreat areas, party/unit ownership              |
+| Playground scenario revision 2 | content revision, inline config, manual controls, resources/equipment | `playground-v3:m1-domain-bridge-v6` выбирает config 2 и bridge-v6 |
 
 Ограничение шести относится к отряду игрока. Состав NPC задаётся доверенным
 профилем встречи в пределах вместимости стороны. Членство и полномочия
-кампании выводятся из сохранённой компании. Экспорт сценария содержит
-данные состава, capability остаётся у авторизованной сессии.
+кампании выводятся из сохранённой компании. Экспорт battle config содержит
+редактируемый состав и не содержит сессионной авторизации. Playground
+аутентифицирует account через существующую cookie session, developer allowlist,
+origin guard и owner-scoped sandbox rows. Текущая команда sandbox боя идёт
+через `POST /dev/playground/api/combat/commands`; отдельного capability header
+или capability в sessionStorage у этого пути нет.
 
 ## Версии и совместимость
 
 | Граница                       | Наблюдаемая редакция                | Целевая редакция                                             |
 | ----------------------------- | ----------------------------------- | ------------------------------------------------------------ |
-| Setup и replay                | Schema 1/2, две стороны             | Schema 3, коллекция 2–3 сторон                               |
-| Lab transport и battle config | Version 1, human/opponent           | Version 2, side IDs и полное управление отрядами             |
-| Экспорт карты                 | Version 1, name/tiles               | Существующий формат карты 1                                  |
+| Setup и replay                | Schema 1/2, прежние rulesets        | Schema 3, bridge-v6, коллекция 2–3 сторон; readers 1/2 сохраняются |
+| Runtime battle state          | Schema 1                             | Schema 1 с 2+ sides и party attribution                       |
+| Battle config                 | Version 1, human/opponent           | Version 2, `sides`/`parties`/party-aware `units`               |
+| Playground scenario           | Schema revision 2; legacy content v2/bridge-v5 | content revision v3/bridge-v6 и config 2            |
+| Экспорт карты                 | Version 1, `name`/`tiles`           | Существующий формат карты 1                                   |
 | Компания и финансы            | Существующие schema/policy versions | Изменение только при потребности конкретного доменного среза |
 
 Выпущенные readers и ruleset dispatch сохраняют свой путь.
-Новая ветка переиспользует общие механики с явным выбором версии.
-Миграция для нового payload добавляется после проверки фактического хранилища
-на T008. Выпущенные миграции сохраняют свои записи.
+Schema 3 запускается через V3 validator/runtime и общий state/command reducer.
+Playground сохраняет sandbox/encounter данные в своей существующей PostgreSQL
+schema с owner ID, revision и receipt границами. Не следует добавлять второй
+transient session store или отдельный combat executor. Любое необходимое изменение
+payload/storage подтверждается текущим владельцем таблиц; выпущенные миграции
+не редактируются.
 
 ## Переходы и транзакционные границы
 

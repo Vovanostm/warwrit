@@ -213,6 +213,7 @@ export interface EncounterFixtureCreatedDto {
 export interface EncounterPublicUnitDto {
   readonly id: string;
   readonly sideId: string;
+  readonly partyId?: string;
   readonly q: number;
   readonly r: number;
   readonly health: number;
@@ -252,6 +253,16 @@ export interface EncounterPublicProjectionDto {
   readonly turnIndex?: number;
   readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };
   readonly deadlineAt: string | null;
+  readonly sides?: readonly {
+    readonly id: string;
+    readonly retreatHexes: readonly Readonly<{ q: number; r: number }>[];
+  }[];
+  readonly parties?: readonly {
+    readonly id: string;
+    readonly sideId: string;
+    readonly kind: 'player' | 'npc';
+    readonly controllerId?: string;
+  }[];
   readonly units: readonly EncounterPublicUnitDto[];
   /** Public board geometry. Optional only for compatibility with older responses. */
   readonly map?: {

@@ -1,14 +1,17 @@
 import { randomUUID } from 'node:crypto';
 import { sql, type Kysely } from 'kysely';
 import {
-  PLAYGROUND_CONTENT_REVISION,
   type PlaygroundCommand,
   type PlaygroundSandbox,
   type PlaygroundResult,
   type PlaygroundReceipt,
 } from '@warwrit/protocol';
 import type { DatabaseSchema } from '../db/database.js';
-import { inspectPlaygroundScenario, playgroundTemplate } from './scenario.js';
+import {
+  inspectPlaygroundScenario,
+  playgroundTemplate,
+  isSupportedPlaygroundContentRevision,
+} from './scenario.js';
 import { activateSandboxEncounter, readSandboxEncounter } from './combat.js';
 
 export class PlaygroundRefusal extends Error {
@@ -68,7 +71,7 @@ async function readPlaygroundSnapshot(database: Kysely<DatabaseSchema>, owner: s
   );
   const row = result.rows[0];
   if (!row) throw new PlaygroundRefusal('NOT_FOUND', 404);
-  const compatible = row.scenario.contentRevision === PLAYGROUND_CONTENT_REVISION;
+  const compatible = isSupportedPlaygroundContentRevision(row.scenario.contentRevision);
   const combat =
     row.status === 'active' && compatible
       ? await readSandboxEncounter(database, id, row.scenario)
@@ -161,7 +164,7 @@ export async function executePlayground(
       scenario = command.scenario!;
       status = 'draft';
     } else if (command.operation === 'validate' || command.operation === 'activate') {
-      if (scenario.contentRevision !== PLAYGROUND_CONTENT_REVISION)
+      if (!isSupportedPlaygroundContentRevision(scenario.contentRevision))
         throw new PlaygroundRefusal('CONTENT_REVISION_MISMATCH', 409);
       if (status === 'active' || (command.operation === 'activate' && status !== 'validated'))
         throw new PlaygroundRefusal('INVALID_LIFECYCLE', 409);

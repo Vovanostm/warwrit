@@ -236,7 +236,13 @@ export async function admitFirstHuntInTransaction(input: {
       ).length
     );
   }, 0);
-  if (totalMembers > profile.alliedSlots.length || totalMembers + survivors.length > 12)
+  const multiSideRules = profile.instanceId === 'ci.m1.wolf-trail.01';
+  if (
+    totalMembers > profile.alliedSlots.length ||
+    (multiSideRules
+      ? totalMembers > 12 || survivors.length > 12 || totalMembers + survivors.length > 36
+      : totalMembers + survivors.length > 12)
+  )
     return undefined;
 
   const encounterId = randomUUID();
@@ -307,12 +313,13 @@ export async function admitFirstHuntInTransaction(input: {
       ...profile.objectiveLocation,
     },
     setup: {
-      schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
+      schemaVersion: multiSideRules
+        ? combat.COMBAT_V3_SCHEMA_VERSION
+        : combat.COMBAT_V2_SCHEMA_VERSION,
       battleId: combat.battleId(encounterId),
-      rulesetId:
-        profile.instanceId === 'ci.m1.wolf-trail.01'
-          ? combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
-          : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      rulesetId: multiSideRules
+        ? combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
+        : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
       seed: world.seed,
       map: profile.combatMap,
       sides: [
@@ -375,7 +382,7 @@ export async function admitFirstHuntInTransaction(input: {
     .values({
       id: encounterId,
       world_id: worldId,
-      schema_version: combat.COMBAT_V2_SCHEMA_VERSION,
+      schema_version: binding.setup.schemaVersion,
       setup: binding.setup,
       state: initial.state,
       revision: initial.state.revision,

@@ -3,8 +3,9 @@ import {
   COMBAT_LAB_EVENT_LIMIT,
   COMBAT_LAB_SCENARIO,
   COMBAT_LAB_VERSION,
+  MULTISIDE_COMBAT_LAB_VERSION,
   SPRITE_COMBAT_LAB_SCENARIO,
-  type CombatLabBattleConfig,
+  type VersionedCombatLabBattleConfig,
   type CombatLabAttackRefusal,
   type CombatLabHex,
   type CombatLabReplayPresentation,
@@ -27,12 +28,13 @@ export function projectCombatLabView(
   controlledSideId: string,
   state: combat.BattleState,
   journal: readonly combat.CombatEvent[],
-  battle?: CombatLabBattleConfig,
+  battle?: VersionedCombatLabBattleConfig,
   presentation?: CombatLabReplayPresentation,
 ): CombatLabView {
   combat.invariant(
     state.rulesetId === 'm0-prototype-v1' ||
       state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID ||
       combat.isSpritePrototypeRuleset(state.rulesetId),
     'Unknown combat lab ruleset',
   );
@@ -105,7 +107,10 @@ export function projectCombatLabView(
     };
   });
   return {
-    version: COMBAT_LAB_VERSION,
+    version:
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
+        ? MULTISIDE_COMBAT_LAB_VERSION
+        : COMBAT_LAB_VERSION,
     rulesetId: state.rulesetId as NonNullable<CombatLabView['rulesetId']>,
     ruleHints: {
       hit: {
@@ -128,7 +133,8 @@ export function projectCombatLabView(
     },
     scenarioId:
       combat.isSpritePrototypeRuleset(state.rulesetId) ||
-      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
         ? SPRITE_COMBAT_LAB_SCENARIO
         : COMBAT_LAB_SCENARIO,
     ...(battle === undefined ? {} : { battle }),
@@ -145,6 +151,14 @@ export function projectCombatLabView(
       ...(battle === undefined ? {} : { name: battle.map.name, tiles: battle.map.tiles }),
     },
     ...projectSpriteActions(state, controlledSideId, availableActions),
+    ...(state.parties === undefined
+      ? {}
+      : {
+          parties: state.parties.map((party) => ({ ...party })),
+          controlledUnitIds: state.units
+            .filter((unit) => unit.sideId === controlledSideId)
+            .map((unit) => unit.id),
+        }),
     sides: state.sides.map(({ id, retreatHexes }) => ({
       id,
       retreatHexes: retreatHexes.map(copyHex),
@@ -154,6 +168,7 @@ export function projectCombatLabView(
       const label = labels.get(unit.id);
       return {
         id: unit.id,
+        ...(unit.partyId === undefined ? {} : { partyId: unit.partyId }),
         ...(label === undefined ? {} : { name: label.name, profileId: label.profileId }),
         sideId: unit.sideId,
         weaponId: labWeaponId(unit.weaponId),

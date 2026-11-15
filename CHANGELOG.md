@@ -9,6 +9,19 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: persist three-side combat setups, 36-figure Playground
+  scenarios and versioned replays; admit new wolf-trail battles with separate
+  company control and durable terminal effects.
+  [M1 combat result](docs/work-packages/M1-CAMPAIGN-BATTLE.md#current-result). LOCAL.
+- 2026-11-15 — Changed: accept stationary food-shortfall recovery, recording actual
+  consumption and missing food before further purchases.
+  [Owner decision](docs/work-packages/M1-SUPPLIES.md#food-shortfall--owner-decision-2026-11-15).
+  Implementation IN_PROGRESS / LOCAL.
+
+- 2026-11-15 — Added: start M1 implementation on current main in an isolated
+  integration branch, reserving combat ownership and restoring the retained company copy.
+  [Implementation checkpoint](docs/work-packages/M1-CAMPAIGN-BATTLE.md#current-implementation--2026-11-15). LOCAL.
+
 - 2026-11-14, `claude/m1-quest-texts` — Added: eleven M1 quest texts in Russian,
   approved by the owner 2026-11-13 ([texts](docs/wiki/economy-quests/m1-quest-texts.md),
   [task](docs/work-packages/M1-QUESTS.md)); the `warwrit-writer` skill with quest

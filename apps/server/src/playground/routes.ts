@@ -3,7 +3,7 @@ import { registerMapEditor } from '../map-editor/routes.js';
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
 import {
-  PLAYGROUND_CONTENT_REVISION,
+  PLAYGROUND_MULTISIDE_CONTENT_REVISION,
   isEncounterCommandDto,
   type PlaygroundCommand,
 } from '@warwrit/protocol';
@@ -136,7 +136,7 @@ export function registerPlayground(app: FastifyInstance, settings: PlaygroundSet
         ? { campaignTimeWorldId: settings.campaignTimeWorldId }
         : {}),
       accountId: request.playgroundAccountId,
-      contentRevision: PLAYGROUND_CONTENT_REVISION,
+      contentRevision: PLAYGROUND_MULTISIDE_CONTENT_REVISION,
       template: playgroundTemplate(),
       catalog: playgroundCatalog(),
       debugScenarios: playgroundDebugScenarios(),

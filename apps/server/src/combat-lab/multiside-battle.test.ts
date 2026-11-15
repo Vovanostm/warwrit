@@ -79,4 +79,17 @@ describe('multiside combat lab configuration', () => {
     fourthSide.sides = [...fourthSide.sides, { id: 'fourth', retreatHexes: [{ q: 7, r: 0 }] }];
     expect(isMultisideBattle(fourthSide)).toBe(false);
   });
+
+  it('preserves horizontal retreat regions and optional NPC controller references', () => {
+    const config = mutable(defaultMultisideBattle());
+    config.sides[1] = {
+      ...config.sides[1]!,
+      retreatHexes: Array.from({ length: 15 }, (_, q) => ({ q, r: 10 })),
+    };
+    config.parties[1] = { ...config.parties[1]!, controllerId: 'world-npc-controller' };
+    expect(isMultisideBattle(config)).toBe(true);
+    const setup = createMultisideBattleSetup('retreat-region', config);
+    expect(setup.sides[1]!.retreatHexes).toHaveLength(15);
+    expect(setup.parties[1]!.controllerId).toBe('world-npc-controller');
+  });
 });

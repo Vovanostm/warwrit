@@ -242,6 +242,8 @@ export interface CombatLabView extends CombatLabViewRequest {
   readonly battle?: VersionedCombatLabBattleConfig;
   readonly controlledSideId: string;
   readonly viewRevision: number;
+  readonly parties?: CombatLabBattleConfigV2['parties'];
+  readonly controlledUnitIds?: readonly string[];
   readonly rulesetId?:
     | 'm0-prototype-v1'
     | 'sprite-prototype-v1'

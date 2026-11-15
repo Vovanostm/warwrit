@@ -27,8 +27,8 @@ Old Mill has no shop. No new character, faction or lore is introduced.
 | Retry        | Same command ID and exact body                                                                            | Return committed receipt without another transfer     | Changed-body conflict                                | Repeat the same uncertain purchase    |
 
 Elapsed food/payroll is settled before purchase; bought stock never funds the
-past. An already starved legacy company can reject this purchase until a separately
-approved recovery policy exists. This cycle does not introduce starvation recovery.
+past. The owner amendment of 2026-11-15 below defines recovery when the carried
+food cannot cover that elapsed interval.
 The consumed opening evidence identifies the unique company field purse and the
 exact party carrying it. Purchases at destinations use only that carried purse
 or an actually local company wallet; other remote wallets stay inaccessible.
@@ -46,6 +46,25 @@ adapter/holdings/0014, web opening/company/bazaar UI, focused transactional test
 Parent is sole writer on `codex/supplies-playtest`. Preserve unrelated dirty wiki,
 AGENTS and CURRENT_PLAN amendments. Implementation authorized; merge/deployment
 not authorized for this new cycle. Independent playable critique required.
+
+## Food shortfall — owner decision 2026-11-15
+
+The owner accepted the following recovery rule after the restored N02 company
+could not buy food through its ordinary Granary control.
+
+> Списать оставшиеся пайки, сохранить дефицит в истории и разрешить дальнейшие
+> покупки. Последствия голода определить отдельной задачей.
+
+Settle the elapsed stationary interval using the actual remaining rations.
+Record the uncovered food requirement in durable company history and advance
+the settled interval once. A subsequent purchase supplies future time. Repeating
+the same settlement or purchase preserves the recorded result and finite stock.
+The hunger consequences remain a separate task requiring its own rules.
+
+Implementation is IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`.
+The retained refusal case preserves company revision178, 850 crowns and41 rations,
+and merchant revision2, 280 rations and80 crowns. Recovery acceptance and the next
+ordinary command remain NOT_RUN until the owning transaction is implemented.
 
 Verification result — 2026-10-04:
 
@@ -196,3 +215,9 @@ combat battles and migration smoke/14 SQL checks. Main's pipeline omits PR-only
 coverage/audit, which passed on the unchanged reviewed PR tree. Dev session44449
 serves primary main at5293/API3193/realtime3194; retained PostgreSQL55147 and Dex5587
 remain. Final map screenshot: `output/playwright/supplies-main-map.jpg`.
+
+### Follow-up hunger consequences
+
+- [ ] Define the gameplay consequences of recorded food shortfalls and implement
+  them as a separate owner-approved task. Recovery above preserves the shortfall
+  history needed by that future rule.

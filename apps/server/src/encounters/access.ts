@@ -49,7 +49,8 @@ export function toEncounterPublicProjection(
   const state = encounter.state as combat.BattleState;
   const tactical =
     state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID;
   const nextRound = tactical ? combat.previewCombatInitiative(state) : undefined;
   const nextRoundInitiative = nextRound
     ? { round: nextRound.round, unitIds: [...nextRound.unitIds] }
@@ -66,6 +67,15 @@ export function toEncounterPublicProjection(
     turnIndex: state.turnIndex,
     ...(nextRoundInitiative ? { nextRoundInitiative } : {}),
     deadlineAt: encounter.deadline_at?.toISOString() ?? null,
+    ...(state.parties === undefined
+      ? {}
+      : {
+          sides: state.sides.map((side) => ({
+            id: side.id,
+            retreatHexes: side.retreatHexes.map(({ q, r }) => ({ q, r })),
+          })),
+          parties: state.parties.map((party) => ({ ...party })),
+        }),
     map: {
       hexes: encounter.setup.map.hexes.toSorted(combat.compareHex).map(({ q, r }) => ({ q, r })),
       blocked: encounter.setup.map.blocked
@@ -94,6 +104,7 @@ export function toEncounterPublicProjection(
       combat.invariant(
         encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
           encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+          encounter.state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID ||
           unit.status !== 'surrendered',
         'Sprite prototype status cannot enter a V1 encounter projection',
       );
@@ -108,6 +119,7 @@ export function toEncounterPublicProjection(
       return {
         id: unit.id,
         sideId: unit.sideId,
+        ...(unit.partyId === undefined ? {} : { partyId: unit.partyId }),
         q: unit.position.q,
         r: unit.position.r,
         health: unit.health,
@@ -176,7 +188,8 @@ function actorActions(
   if (
     (state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
       state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID) ||
     !state.activation ||
     !actor?.capabilities ||
     !ownedIds.includes(actor.id)
@@ -195,7 +208,8 @@ function actorActions(
               (!combat.isCombatPanicked(state, actor) || intent === 'retreat')),
         ),
         ...(state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+        state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
           ? [
               'autoplay' as const,
               ...(combat.isCombatPanicked(state, actor) &&
@@ -219,7 +233,8 @@ function tacticalPreview(
   const actor = state.units.find((unit) => unit.id === activation?.unitId);
   if (
     (state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID) ||
     !activation ||
     !actor ||
     !ownedIds.includes(actor.id)
@@ -341,8 +356,8 @@ async function companyBindingAccess(
   binding: combat.FrozenEncounterBinding,
 ): Promise<EncounterAccess | undefined> {
   if (
-    encounter.schema_version !== combat.COMBAT_V2_SCHEMA_VERSION ||
-    encounter.setup.schemaVersion !== combat.COMBAT_V2_SCHEMA_VERSION ||
+    encounter.schema_version !== binding.setup.schemaVersion ||
+    encounter.setup.schemaVersion !== binding.setup.schemaVersion ||
     encounter.id !== binding.setup.battleId ||
     combat.canonicalJson(encounter.setup) !== combat.canonicalJson(binding.setup)
   )

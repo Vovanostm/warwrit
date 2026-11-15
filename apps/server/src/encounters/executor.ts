@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import * as combat from '@warwrit/game-core';
 import {
   PLAYGROUND_CONTENT_REVISION,
+  PLAYGROUND_MULTISIDE_CONTENT_REVISION,
   type EncounterCommandDto,
   type EncounterCommandResponse,
 } from '@warwrit/protocol';
@@ -27,7 +28,7 @@ export interface EncounterStoredRow {
   readonly world_id?: string;
   readonly id: string;
   readonly schema_version: number;
-  readonly setup: combat.BattleSetup | combat.BattleSetupV2;
+  readonly setup: combat.BattleSetup | combat.BattleSetupV2 | combat.BattleSetupV3;
   readonly state: combat.BattleState;
   readonly revision: number;
   readonly status: 'active' | 'resolved';
@@ -35,6 +36,17 @@ export interface EncounterStoredRow {
   readonly activation_epoch: number;
   readonly deadline_at: Date | null;
   readonly ai_wake_at: Date | null;
+}
+
+function replayForEncounter(
+  setup: EncounterStoredRow['setup'],
+  commands: readonly combat.CombatCommand[],
+): combat.VersionedCombatReplay {
+  if (setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION)
+    return { schemaVersion: combat.COMBAT_V3_SCHEMA_VERSION, setup, commands };
+  if (setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION)
+    return { schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION, setup, commands };
+  return { schemaVersion: combat.COMBAT_SCHEMA_VERSION, setup, commands };
 }
 
 interface ParticipantRow {
@@ -82,7 +94,7 @@ function aiWakeAdmissionAuthority(
         where participant.encounter_id = ${encounterId}
           and participant.admission_source <> 'fixture'
       )) or
-    (${controllerSource} = 'world_hostile' and ${schemaVersion} = 2 and
+    (${controllerSource} = 'world_hostile' and ${schemaVersion} in (2, 3) and
       exists (
         select 1 from encounter_admissions as admission
         where admission.encounter_id = ${encounterId}
@@ -109,8 +121,12 @@ async function replayMatches(
   try {
     if (
       sandbox &&
-      (encounter.setup.schemaVersion !== 2 ||
-        encounter.setup.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+      (!(
+        (encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
+          encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
+        (encounter.setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION &&
+          encounter.setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID)
+      ) ||
         encounter.deadline_at !== null ||
         encounter.ai_wake_at !== null)
     )
@@ -120,9 +136,7 @@ async function replayMatches(
       (encounter.schema_version === 1 &&
         encounter.setup.schemaVersion === combat.COMBAT_SCHEMA_VERSION &&
         encounter.setup.rulesetId === combat.M0_COMBAT_RULESET_ID);
-    const companyBindingEncounter =
-      encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
-      isPersistentEncounterSetup(encounter.setup);
+    const companyBindingEncounter = isCompanyEncounter(encounter);
     if (
       (!fixtureEncounter && !companyBindingEncounter) ||
       encounter.setup.battleId !== encounter.id ||
@@ -161,18 +175,10 @@ async function replayMatches(
       commandResult.rows.some(({ revision }, index) => revision !== index + 1)
     )
       return false;
-    const replay: combat.VersionedCombatReplay =
-      encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION
-        ? {
-            schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION,
-            setup: encounter.setup,
-            commands: commandResult.rows.map(({ command }) => command),
-          }
-        : {
-            schemaVersion: combat.COMBAT_SCHEMA_VERSION,
-            setup: encounter.setup,
-            commands: commandResult.rows.map(({ command }) => command),
-          };
+    const replay = replayForEncounter(
+      encounter.setup,
+      commandResult.rows.map(({ command }) => command),
+    );
     const grantsResult = await sql<ParticipantRow & { readonly account_id: string }>`
       select account_id, side_id, unit_ids, admission_source
       from encounter_participants where encounter_id = ${encounter.id}
@@ -206,11 +212,7 @@ async function replayMatches(
       from encounter_activation_policies where encounter_id = ${encounter.id}
     `.execute(executor);
     const policies = new Map(policiesResult.rows.map((policy) => [policy.activation_id, policy]));
-    let sourceReplayState = combat.replayCombat(
-      encounter.setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION
-        ? { schemaVersion: combat.COMBAT_V2_SCHEMA_VERSION, setup: encounter.setup, commands: [] }
-        : { schemaVersion: combat.COMBAT_SCHEMA_VERSION, setup: encounter.setup, commands: [] },
-    ).state;
+    let sourceReplayState = combat.replayCombat(replayForEncounter(encounter.setup, [])).state;
     const accountedUnits = new Set<string>();
     const expectedParticipantSource = fixtureEncounter ? 'fixture' : 'company_binding';
     const expectedControllerSource = fixtureEncounter ? 'fixture' : 'world_hostile';
@@ -299,7 +301,7 @@ async function replayMatches(
       if (
         !sandbox &&
         row.source_kind === 'account' &&
-        encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
+        isCompanyEncounter(encounter) &&
         (row.activation_policy_id !== row.command.activationId ||
           row.campaign_tick === null ||
           !/^(0|[1-9][0-9]*)$/u.test(row.campaign_tick))
@@ -307,7 +309,7 @@ async function replayMatches(
         return false;
       if (
         row.source_kind === 'system_ai' &&
-        encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
+        isCompanyEncounter(encounter) &&
         (row.campaign_tick === null || !/^(0|[1-9][0-9]*)$/u.test(row.campaign_tick))
       )
         return false;
@@ -483,7 +485,8 @@ function chooseEncounterAi(
   doctrine: combat.AiDoctrine,
 ): combat.CombatCommand {
   return state.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
     ? combat.chooseTacticalCombatCommand(state)
     : combat.chooseAiCommand(state, doctrine);
 }
@@ -658,7 +661,7 @@ async function persistTransition(
         : await controllerFor(transaction, encounter.id, nextActor);
     if (nextController === undefined) {
       aiWakeAt = null;
-      if (encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION) {
+      if (isCompanyEncounter(encounter)) {
         const participantResult = await sql<ParticipantRow & { readonly account_id: string }>`
           select account_id, side_id, unit_ids, admission_source, afk,
             resume_requested_after_epoch
@@ -786,11 +789,7 @@ async function persistTransition(
       })
       .execute();
   }
-  if (
-    !sandbox &&
-    result.state.status === 'resolved' &&
-    encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION
-  ) {
+  if (!sandbox && result.state.status === 'resolved' && isCompanyEncounter(encounter)) {
     await transaction
       .updateTable('encounter_admissions')
       .set({ terminal_revision: result.state.revision })
@@ -920,7 +919,7 @@ export async function executeEncounterCommand(
         join encounters as encounter on encounter.sandbox_id = sandbox.id
         where encounter.id = ${dto.encounterId}::uuid and sandbox.owner_id = ${accountId}
         and sandbox.status = 'active' and sandbox.expires_at > now()
-        and sandbox.scenario->>'contentRevision' = ${PLAYGROUND_CONTENT_REVISION}
+        and sandbox.scenario->>'contentRevision' in (${PLAYGROUND_CONTENT_REVISION}, ${PLAYGROUND_MULTISIDE_CONTENT_REVISION})
         for update of sandbox`.execute(transaction);
       if (owned.rows.length !== 1) return rejected('NOT_FOUND');
     }
@@ -961,8 +960,7 @@ export async function executeEncounterCommand(
       return rejected('CONFLICT');
     const fixtureEncounter = sandbox || encounter.schema_version === FIXTURE_SCHEMA_VERSION;
     const companyBindingEncounter =
-      encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
-      admitted.admission_source === 'company_binding';
+      isCompanyEncounter(encounter) && admitted.admission_source === 'company_binding';
     if (
       (!fixtureEncounter && (!companyBindingEncounter || !activeCompanyBinding)) ||
       (fixtureEncounter && admitted.admission_source !== 'fixture') ||
@@ -1043,7 +1041,8 @@ export async function executeEncounterCommand(
     if (
       dto.version === 2 &&
       state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+      state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
     )
       return rejected('INVALID_COMMAND');
     const command =
@@ -1086,7 +1085,7 @@ export async function requestEncounterResume(
     const encounter = encounterResult.rows[0];
     if (
       encounter === undefined ||
-      encounter.schema_version !== combat.COMBAT_V2_SCHEMA_VERSION ||
+      !isCompanyEncounter(encounter) ||
       encounter.status !== 'active' ||
       encounter.activation_id === null ||
       !(await replayMatches(transaction, encounter))
@@ -1208,9 +1207,7 @@ export async function executeEncounterAiWake(
       encounter.setup.rulesetId === combat.M0_COMBAT_RULESET_ID &&
       controller?.admission_source === 'fixture';
     const worldHostileAi =
-      encounter.schema_version === combat.COMBAT_V2_SCHEMA_VERSION &&
-      isPersistentEncounterSetup(encounter.setup) &&
-      controller?.admission_source === 'world_hostile';
+      isCompanyEncounter(encounter) && controller?.admission_source === 'world_hostile';
     const admissionAuthority = await sql<{ readonly accepted: boolean }>`
       select ${aiWakeAdmissionAuthority(
         sql.val(encounter.id),
@@ -1303,8 +1300,7 @@ export async function executeEncounterTimeout(
     const encounter = encounterResult.rows[0];
     if (
       encounter === undefined ||
-      encounter.schema_version !== combat.COMBAT_V2_SCHEMA_VERSION ||
-      encounter.setup.schemaVersion !== combat.COMBAT_V2_SCHEMA_VERSION ||
+      !isCompanyEncounter(encounter) ||
       encounter.status !== 'active' ||
       encounter.revision !== timeout.revision ||
       encounter.activation_id !== timeout.activationId ||
@@ -1394,7 +1390,16 @@ export async function verifyEncounterReplay(
     });
 }
 
+function isCompanyEncounter(encounter: EncounterStoredRow): boolean {
+  return (
+    encounter.schema_version === encounter.setup.schemaVersion &&
+    isPersistentEncounterSetup(encounter.setup)
+  );
+}
+
 function isPersistentEncounterSetup(setup: EncounterStoredRow['setup']): boolean {
+  if (setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION)
+    return setup.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID;
   return (
     setup.schemaVersion === combat.COMBAT_V2_SCHEMA_VERSION &&
     [

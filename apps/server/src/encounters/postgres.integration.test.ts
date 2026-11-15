@@ -3944,7 +3944,7 @@ it.skipIf(connectionString === undefined)(
 );
 
 it.skipIf(connectionString === undefined).each([0, 2160000])(
-  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects (QA offset %i)',
+  'freezes bridge v6 through real wolf JOIN, move and bow shot, durable retry and terminal effects (QA offset %i)',
   async (qaOffsetMs) => {
     const database = databases[0]!;
     // The world selects battle RNG, and participant IDs break tactical ties.
@@ -4001,9 +4001,21 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
         .selectAll()
         .where('id', '=', encounterId)
         .executeTakeFirstOrThrow();
-      const savedSetup = saved.setup as combat.BattleSetupV2;
+      const savedSetup = saved.setup as combat.BattleSetupV3;
       const savedBinding = admission.binding as combat.FrozenEncounterBinding;
-      expect(savedSetup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID);
+      expect(saved.schema_version).toBe(3);
+      expect(savedSetup.schemaVersion).toBe(3);
+      expect(savedSetup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID);
+      expect(savedSetup.parties.filter((party) => party.kind === 'player')).toHaveLength(2);
+      expect(savedSetup.parties.filter((party) => party.kind === 'npc')).toHaveLength(1);
+      for (const actor of [owner, helper]) {
+        expect(savedSetup.parties).toContainEqual({
+          id: `player:${JSON.stringify([actor.companyId, actor.partyId])}`,
+          sideId: 'first-hunt-companies',
+          kind: 'player',
+          controllerId: actor.companyId,
+        });
+      }
       expect((saved.state as combat.BattleState).rulesetId).toBe(savedSetup.rulesetId);
       expect(savedBinding.setup.rulesetId).toBe(savedSetup.rulesetId);
       for (const actor of [owner, helper]) {
@@ -4014,9 +4026,21 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
         expect(
           root?.encounter.active?.binding.participants.every(
             ({ projection }) =>
-              projection.schemaVersion === 5 && projection.combatRulesetId === savedSetup.rulesetId,
+              projection.schemaVersion === 6 && projection.combatRulesetId === savedSetup.rulesetId,
           ),
         ).toBe(true);
+        const access = await readEncounterAccess(database, actor.accountId, encounterId);
+        expect(access?.projection.sides).toEqual(savedSetup.sides);
+        expect(access?.projection.parties).toEqual(savedSetup.parties);
+        expect(access?.projection.units.map(({ id, partyId }) => ({ id, partyId }))).toEqual(
+          (saved.state as combat.BattleState).units.map(({ id, partyId }) => ({ id, partyId })),
+        );
+        expect(access?.controlGrant.controllableUnitIds.toSorted()).toEqual(
+          savedBinding.participants
+            .filter((participant) => participant.companyId === actor.companyId)
+            .map((participant) => participant.unitId)
+            .toSorted(),
+        );
       }
       let shotReceipt: EncounterCommandResponse | undefined;
       let shotRequest: Parameters<typeof executeEncounterCommand>[2] | undefined;
@@ -4223,7 +4247,7 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
         .executeTakeFirstOrThrow();
       expect(terminal.effects_applied_at).not.toBeNull();
       expect((terminal.binding as combat.FrozenEncounterBinding).setup.rulesetId).toBe(
-        combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+        combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID,
       );
       const terminalRows = async () => ({
         proofs: await database

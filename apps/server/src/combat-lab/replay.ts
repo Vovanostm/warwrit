@@ -26,7 +26,8 @@ function validatePresentation(
   state: combat.BattleState,
 ): void {
   combat.invariant(
-    presentation !== null && presentation.version === 1,
+    presentation !== null &&
+      presentation.version === (state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID ? 2 : 1),
     'Unknown lab presentation version',
   );
   combat.invariant(

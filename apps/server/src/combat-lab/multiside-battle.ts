@@ -4,6 +4,7 @@ import {
   combatLabProfiles,
   defaultSpriteBattle,
   createCombatLabProfiledUnitSetup,
+  validateBattleTiles,
 } from './custom-battle.js';
 
 const object = (value: unknown): value is Record<string, unknown> =>
@@ -20,27 +21,6 @@ const coordinate = (q: unknown, r: unknown) =>
   (q as number) < 15 &&
   (r as number) >= 0 &&
   (r as number) < 11;
-
-function validateTiles(tiles: readonly unknown[]): Set<string> | null {
-  const tileKeys = new Set<string>();
-  const blocked = new Set<string>();
-  for (const tile of tiles) {
-    if (
-      !object(tile) ||
-      !keys(tile, ['q', 'r', 'height', 'terrain', 'blocked']) ||
-      !coordinate(tile['q'], tile['r']) ||
-      ![0, 1, 2].includes(tile['height'] as number) ||
-      !['plain', 'mud', 'fire'].includes(tile['terrain'] as string) ||
-      typeof tile['blocked'] !== 'boolean'
-    )
-      return null;
-    const key = `${tile['q']},${tile['r']}`;
-    if (tileKeys.has(key)) return null;
-    tileKeys.add(key);
-    if (tile['blocked']) blocked.add(key);
-  }
-  return blocked;
-}
 
 export function defaultMultisideBattle(): CombatLabBattleConfigV2 {
   const legacy = defaultSpriteBattle();
@@ -169,7 +149,7 @@ export function isMultisideBattle(value: unknown): value is CombatLabBattleConfi
     map['tiles'].length !== 165
   )
     return false;
-  const blocked = validateTiles(map['tiles']);
+  const blocked = validateBattleTiles(map['tiles']);
   if (blocked === null) return false;
   if (
     !Array.isArray(value['sides']) ||
@@ -194,7 +174,7 @@ export function isMultisideBattle(value: unknown): value is CombatLabBattleConfi
       sideIds.has(side['id'] as string) ||
       !Array.isArray(side['retreatHexes']) ||
       side['retreatHexes'].length < 1 ||
-      side['retreatHexes'].length > 11
+      side['retreatHexes'].length > 165
     )
       return false;
     const exits = new Set<string>();
@@ -226,11 +206,10 @@ export function isMultisideBattle(value: unknown): value is CombatLabBattleConfi
     )
       return false;
     if (
-      party['kind'] === 'player' &&
+      (party['kind'] === 'player' || Object.hasOwn(party, 'controllerId')) &&
       (!text(party['controllerId']) || (party['controllerId'] as string).length > 64)
     )
       return false;
-    if (party['kind'] === 'npc' && Object.hasOwn(party, 'controllerId')) return false;
     partyIds.add(party['id'] as string);
     parties.set(party['id'] as string, { sideId: party['sideId'] as string, kind: party['kind'] });
   }

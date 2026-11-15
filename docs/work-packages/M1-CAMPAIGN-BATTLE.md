@@ -181,6 +181,17 @@ entry points and preserves the accepted campaign and replay histories.
 The attempted three-way source transfer stopped on removed legacy entry files
 before changing application files. Latest-main application sources are the baseline.
 
+T003 complete. The current public path is session cookie → resolveSessionAccount
+→ developer allowlist/origin → owned sandbox row → executeEncounterCommand
+→ trusted participant unit grant → existing receipt or replay-verified state
+→ persistTransition transaction → projected view. Existing command receipts bind
+account and canonical request body before returning private prior responses.
+New setup/replay schema3 and bridge-v6 keep state schema1. SQL setup/state columns
+are versioned JSON and already admit positive schema versions; no migration is
+needed merely to store schema3. Original setup/replay dispatch remains in place.
+Git, Prettier and ESLint ignore installed dependencies/generated output. All
+workspace packages are private, with no package publication requested.
+
 Ownership for the first slice is reserved below. Parent owns transport, server,
 integration, docs, task markers and local resources. A Luna writer owns pure
 combat schema/rules/runtime and focused regressions in its separate worktree.
@@ -190,6 +201,44 @@ No permission to merge, deploy or provision paid resources was granted here.
 
 ## Current result
 
-Prepared the corrected model, implementation seams, task order and direct
-acceptance contract. Multi-side engine implementation, stand/campaign gameplay,
-old/new replay execution and performance measurement are NOT_RUN.
+IN_PROGRESS / LOCAL. T001/T003/T004/T005/T008 complete on
+`codex/m1-completion-20261115`. Setup/replay schema3 with bridge-v6 retains
+runtime state schema1 and the historical setup1/2 execution paths. The new
+validator preserves all sides/parties/controller references and enforces the
+6/12/36 capacities, legal positions and stable history after side elimination.
+
+Protected persistent Playground now accepts config2, stores/reloads all 36 figures,
+projects three sides and exports a schema3 replay through the existing encounter
+executor. Old content/config1 remain readable. SQL storage already accepts the
+versioned JSON envelopes, so this slice needs no migration. Cookie session,
+developer allowlist, origin and sandbox ownership guard the normal entry.
+
+New wolf-trail admissions use schema3/bridge-v6 with player parties derived from
+trusted company membership and NPC parties from world sources. The actual SQL
+JOIN scenario admits two companies, verifies separate grants and metadata, moves
+an owned bow fighter, shoots, retries the saved command through a new connection,
+settles the real terminal battle and releases each company. Both clock-offset
+cases pass. The hostile-retreat/retry scenario also passes with saved survivors,
+rollback probe and one payout. Other authored hunts retain their released path.
+
+Checks completed on the integrated sources:
+
+- Core typecheck and 29 focused combat tests passed, including valid36, invalid
+  limits/attribution, third-side retention, continued two-side combat, deterministic
+  replay, legacy replay, S4 reaction/fire movement and incapacity.
+- Server/protocol builds and server typecheck passed before the final metadata
+  assertion was added. The assertion uses the existing controllableUnitIds DTO.
+- 29 adapter/projection tests passed. 26 encounter PostgreSQL tests passed.
+  The two Playground replay-view failures introduced by a presentation-only
+  control-list override were fixed by preserving its existing side projection;
+  the subsequent nine Playground PostgreSQL tests passed.
+- Ordinary browser created a sandbox, selected 36 figures, saved, validated and
+  started it. All three sides appear in the field and initiative. Day/night and
+  Home overview were inspected at 1200×757 CSS px, DPR 2, with no document overflow.
+  Artifacts are retained in `output/playwright/m1-multiside-*`.
+
+T006 remains open for a source-backed S4 monster-intention mapping in the new
+format. T007 still needs surrender-world disposition and gear consequences.
+T009/T010 retain final editor import/reload, combined campaign UI acceptance and
+remaining ordinary terminal checks. MULTI-7 ordinary browser continuation and
+full N10 measurement/acceptance remain open. Capacity/performance are NOT_MEASURED.

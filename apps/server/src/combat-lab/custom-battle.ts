@@ -133,7 +133,7 @@ const coordinate = (q: unknown, r: unknown) =>
   (r as number) >= 0 &&
   (r as number) < 11;
 
-function validateBattleTiles(tiles: readonly unknown[]): Set<string> | null {
+export function validateBattleTiles(tiles: readonly unknown[]): Set<string> | null {
   const tileKeys = new Set<string>();
   const blocked = new Set<string>();
   for (const tile of tiles) {
@@ -331,6 +331,7 @@ export function createCustomBattleFixture(id: string, config: CombatLabBattleCon
           : ['B001', 'B002', 'B003'].includes(unit.profileId)
             ? 'beast'
             : 'steady',
+        ...(unit.profileId === 'B053' ? { threatProfile: 'mill-slam' as const } : {}),
         attributes: {
           health: pools.health,
           armor: pools.armor,
