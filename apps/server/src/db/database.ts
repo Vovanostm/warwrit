@@ -136,6 +136,27 @@ interface CompanyAccountOwnerTable {
   readonly created_at: Generated<Date>;
 }
 
+interface CompanyReturnReportCursorTable {
+  readonly world_id: string;
+  readonly company_id: string;
+  readonly acknowledged_tick: string;
+  readonly acknowledged_event_sequence: string;
+  readonly acknowledged_movement_count: string;
+  readonly acknowledged_food: unknown;
+  readonly acknowledged_owed_q: string;
+  readonly acknowledged_debt_q: string;
+  readonly last_acknowledged_report_id: string | null;
+  readonly offered_report_id: string | null;
+  readonly offered_tick: string | null;
+  readonly offered_event_sequence: string | null;
+  readonly offered_movement_count: string | null;
+  readonly offered_food: unknown | null;
+  readonly offered_owed_q: string | null;
+  readonly offered_debt_q: string | null;
+  readonly offered_report: unknown | null;
+  readonly updated_at: Generated<Date>;
+}
+
 interface CompanyOpeningOptionTable {
   readonly id: string;
   readonly world_id: string;
@@ -325,6 +346,7 @@ export interface DatabaseSchema {
   readonly company_receipts: CompanyReceiptTable;
   readonly company_audit_events: CompanyAuditEventTable;
   readonly company_account_owners: CompanyAccountOwnerTable;
+  readonly company_return_report_cursors: CompanyReturnReportCursorTable;
   readonly company_opening_options: CompanyOpeningOptionTable;
   readonly world_campaign_clocks: WorldCampaignClockTable;
   readonly world_recruit_offers: WorldRecruitOfferTable;
@@ -487,6 +509,28 @@ export function createDatabaseReadinessProbe(
         cross join company_audit_events as e
         limit 0
       `.execute(database);
+      await sql`
+        select world_id, company_id, acknowledged_tick, acknowledged_event_sequence,
+          acknowledged_movement_count, acknowledged_food, acknowledged_owed_q,
+          acknowledged_debt_q, last_acknowledged_report_id, offered_report_id,
+          offered_tick, offered_event_sequence, offered_movement_count, offered_food,
+          offered_owed_q, offered_debt_q, offered_report, updated_at
+        from company_return_report_cursors
+        limit 0
+      `.execute(database);
+      await sql`
+        select world_id, mission_id, revision, state from story_world_states limit 0
+      `.execute(database);
+      await sql`
+        select world_id, mission_id, company_id, revision, state from story_company_states limit 0
+      `.execute(database);
+      await sql`
+        select world_id, mission_id, company_id, command_id, account_id, request_key,
+          response, created_at
+        from story_command_receipts
+        limit 0
+      `.execute(database);
+      await sql`select simulation_at_ms from ordinary_contract_receipts limit 0`.execute(database);
     }
     if (worldStorageEnabled) {
       await sql`
