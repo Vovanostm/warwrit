@@ -27,6 +27,29 @@ const activeProjection = (revision = 4) => ({
 });
 
 describe('encounter projection boundary', () => {
+  it('preserves optional incapacitation and rejects malformed values', () => {
+    const source = {
+      ...activeProjection(),
+      units: [
+        { ...activeProjection().units[0]!, incapacitated: true },
+        activeProjection().units[1]!,
+      ],
+    };
+    const projection = readEncounterProjection(source)!;
+
+    expect(projection.units[0]?.incapacitated).toBe(true);
+    expect(toEncounterRenderProjection(projection).units[0]?.incapacitated).toBe(true);
+    expect(readEncounterProjection(activeProjection())?.units[0]).not.toHaveProperty(
+      'incapacitated',
+    );
+    expect(
+      readEncounterProjection({
+        ...source,
+        units: [{ ...source.units[0], incapacitated: 'true' }, source.units[1]],
+      }),
+    ).toBeUndefined();
+  });
+
   it('copies only public facts into detached immutable values', () => {
     const source = activeProjection();
     const projection = readEncounterProjection(source, 'encounter-1');

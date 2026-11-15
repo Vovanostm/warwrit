@@ -105,6 +105,19 @@ function grant(revision = projection.revision): EncounterControlGrantDto {
 
 const label = (unit: EncounterPublicProjectionDto['units'][number]) => unit.id;
 
+it('projects incapacitation without changing the unit’s active status', () => {
+  const source: EncounterPublicProjectionDto = {
+    ...projection,
+    units: projection.units.map((unit, index) =>
+      index === 0 ? { ...unit, incapacitated: true } : unit,
+    ),
+  };
+  const view = toEncounterBattlePresentation(source, undefined, label, ['company.fists']);
+
+  expect(view.units[0]).toMatchObject({ status: 'active', incapacitated: true });
+  expect(view.units[0]?.status).not.toBe('dead');
+});
+
 it('keeps public observations honest and links only a matching owned quote', () => {
   const view = toEncounterBattlePresentation(projection, grant(), label);
   expect(view.sceneEnvironment).toBe('open-field');

@@ -45,13 +45,14 @@ const optionalUnitKeys = [
   'morale',
   'guarding',
   'panicking',
+  'incapacitated',
   'threat',
   'weaponReach',
 ];
 const unitStatuses = ['active', 'dead', 'retreated', 'surrendered'];
 const weaponIds = ['bow', 'great-weapon', 'raider', 'spear', 'sword-shield', 'fists'];
 const unitResourceKeys = ['armor', 'stamina', 'morale'] as const;
-const unitBooleanKeys = ['guarding', 'panicking'] as const;
+const unitBooleanKeys = ['guarding', 'panicking', 'incapacitated'] as const;
 
 function isSafeInteger(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value);
@@ -170,6 +171,9 @@ function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
     ...resources,
     ...(Object.hasOwn(value, 'guarding') ? { guarding: value['guarding'] as boolean } : {}),
     ...(Object.hasOwn(value, 'panicking') ? { panicking: value['panicking'] as boolean } : {}),
+    ...(Object.hasOwn(value, 'incapacitated')
+      ? { incapacitated: value['incapacitated'] as boolean }
+      : {}),
     ...(threat.value === undefined ? {} : { threat: threat.value }),
     ...(weaponReach.value ? { weaponReach: weaponReach.value } : {}),
     status: status as EncounterPublicUnitDto['status'],
