@@ -45,6 +45,7 @@ export {
 } from './physical-types.js';
 export { createCompanyPhysicalState, validatePhysicalState } from './physical-state.js';
 export { availableContainerG } from './physical-state.js';
+export { dropSurrenderedCharacterGear } from './physical-items.js';
 export { assessPhysicalFoodStock } from './physical-food.js';
 export { materializeCompanyPhysicalState } from './physical-load.js';
 export { projectCompanyPhysical } from './physical.js';

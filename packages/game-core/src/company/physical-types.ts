@@ -376,6 +376,13 @@ export interface DeathOutcomeEvidence extends PhysicalScope {
   readonly location: LocationRef;
   readonly corpseContainerId: string;
 }
+/** Verified combat surrender outcome used only to drop the character's current carried items. */
+export interface SurrenderGearOutcomeEvidence extends PhysicalScope {
+  readonly kind: 'SURRENDER_GEAR_OUTCOME';
+  readonly characterId: string;
+  readonly unitId: string;
+  readonly location: LocationRef;
+}
 export interface ContainerDispositionEvidence extends PhysicalScope {
   readonly kind: 'CONTAINER_DISPOSITION';
   readonly containerId: string;
@@ -408,5 +415,6 @@ export type PhysicalEvidence =
   | MissingResolutionEvidence
   | MissingEntryEvidence
   | DeathOutcomeEvidence
+  | SurrenderGearOutcomeEvidence
   | ContainerDispositionEvidence
   | PhysicalObservationEvidence;

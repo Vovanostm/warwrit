@@ -192,6 +192,71 @@ export function transferItem(
   physical = knownItemMutation(physical, affected, [p.fromContainerId, p.toContainerId]);
   return { ...root, physical, requirements: [] };
 }
+
+/** Move only the surrendering character's current carried items into a deterministic world bundle. */
+export function dropSurrenderedCharacterGear(
+  physical: CompanyPhysicalState,
+  input: {
+    readonly receiptId: string;
+    readonly sourceEventId: string;
+    readonly characterId: string;
+    readonly unitId: string;
+  },
+  context: EconomyContext,
+): CompanyPhysicalState {
+  const fact = physicalFact(context, input.receiptId, 'SURRENDER_GEAR_OUTCOME');
+  requirePhysical(
+    fact.sourceEventId === input.sourceEventId &&
+      fact.characterId === input.characterId &&
+      fact.unitId === input.unitId,
+    'INVALID_SOURCE',
+  );
+  const recorded = recordPhysicalSource(physical, fact);
+  if (recorded.replayed) return recorded.state;
+
+  const carried = recorded.state.containers.filter(
+    (container) =>
+      container.carrier?.kind === 'CHARACTER' && container.carrier.id === input.characterId,
+  );
+  for (const container of carried)
+    requirePhysical(sameLocation(container.location, fact.location), 'INVALID_SOURCE');
+  const carriedIds = new Set(carried.map((container) => container.containerId));
+  const dropped = recorded.state.items.filter(
+    (item) =>
+      item.tombstone === null &&
+      item.containerId !== null &&
+      carriedIds.has(item.containerId) &&
+      ['weapon', 'shield', 'armor'].includes(itemDefinition(item).kind),
+  );
+  if (dropped.length === 0) return recorded.state;
+
+  const bundleId = physicalId(input.sourceEventId, input.characterId, 'surrender-ground-bundle');
+  requirePhysical(
+    !recorded.state.containers.some((container) => container.containerId === bundleId),
+    'IDEMPOTENCY_CONFLICT',
+  );
+  const totalWeight = dropped.reduce((sum, item) => sum + itemWeight(item), 0);
+  requirePhysical(Number.isSafeInteger(totalWeight) && totalWeight > 0, 'CAPACITY');
+  const bundle: PhysicalContainer = {
+    containerId: bundleId,
+    kind: 'GROUND_BUNDLE',
+    location: ownPhysical(fact.location),
+    custodian: { kind: 'WORLD', id: context.worldId },
+    carrier: null,
+    capacityG: Math.max(totalWeight, 1),
+    access: 'CUSTODIAN',
+    closed: null,
+  };
+  const droppedIds = new Set(dropped.map((item) => item.itemId));
+  return {
+    ...recorded.state,
+    containers: [...recorded.state.containers, bundle],
+    items: recorded.state.items.map((item) =>
+      droppedIds.has(item.itemId) ? { ...item, containerId: bundleId, equipped: null } : item,
+    ),
+  };
+}
+
 function bodyFor(root: MaterializedCompanyState, characterId: string) {
   const character = person(root.lifecycle, characterId);
   const species = COMPANY_CATALOGUE.species.find(
