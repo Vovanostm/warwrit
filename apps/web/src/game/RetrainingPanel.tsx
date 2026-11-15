@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   WORLD_EXPECTED_COMPANY_ID_HEADER,
+  isCompanyEntityId,
   type CompanyRetrainingResponseDto,
   type CompanySummaryDto,
   type OrdinaryPlayerCompanyCommandV2Dto,
@@ -19,18 +20,6 @@ type StartCommand = Extract<
 >;
 type Scope = { readonly accountId: string; readonly companyId: string };
 type Attempt = { readonly scope: Scope; readonly command: StartCommand; readonly body: string };
-
-function isCompanyEntityId(value: unknown): value is string {
-  return (
-    typeof value === 'string' &&
-    Array.from(value).length <= 256 &&
-    value.trim() !== '' &&
-    !Array.from(value).some((character) => {
-      const codePoint = character.codePointAt(0)!;
-      return codePoint <= 0x1f || codePoint === 0x7f;
-    })
-  );
-}
 
 function storageKey(scope: Scope) {
   return `${STORAGE_PREFIX}:${encodeURIComponent(scope.accountId)}:${encodeURIComponent(scope.companyId)}`;
