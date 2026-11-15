@@ -3,6 +3,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
   validateCombatCapabilities,
   validatePersistentTacticalInputs,
 } from './setup-v2.js';
@@ -1668,10 +1669,28 @@ export function assertBattleState(state: BattleState): void {
 
   if (
     state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
   )
     validateCombatTiles(state.map);
   const activePositions = new Set<string>();
+  const sideIds = new Set(state.sides.map(({ id }) => id));
+  invariant(state.sides.length >= 2, 'Battle state must retain at least two sides');
+  invariant(sideIds.size === state.sides.length, 'Battle state sides must be unique');
+  if (state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID) {
+    invariant(state.sides.length <= 3, 'V3 battle state cannot exceed three sides');
+    invariant(
+      state.parties !== undefined && state.parties.length > 0,
+      'V3 battle state must retain parties',
+    );
+    for (const unit of state.units) {
+      invariant(
+        unit.partyId !== undefined &&
+          state.parties.some((party) => party.id === unit.partyId && party.sideId === unit.sideId),
+        `V3 unit ${unit.id} party attribution is invalid`,
+      );
+    }
+  }
   for (const unit of state.units) {
     assertUnitVersionState(unit, state.rulesetId);
     weaponProfile(rules, unit.weaponId);
@@ -1724,10 +1743,15 @@ function assertUnitVersionState(unit: CombatUnitState, rulesetId: BattleState['r
   if (
     rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
     rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
   )
     validateCombatCapabilities(unit.capabilities, rulesetId);
-  if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID || rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID)
+  if (
+    rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
+  )
     assertPersistentTacticalUnit(unit);
 }
 

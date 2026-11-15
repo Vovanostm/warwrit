@@ -6,6 +6,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
 } from './setup-v2.js';
 import {
   M0_COMBAT_RULESET_ID,
@@ -44,7 +45,7 @@ export interface CombatRules {
     readonly minimum: number;
     readonly maximum: number;
   };
-  readonly sides: 2;
+  readonly sides: 2 | 3;
   readonly actionPointsPerActivation: number;
   readonly movement: {
     readonly actionPointsPerHex: number;
@@ -251,7 +252,8 @@ export function isTacticalV3Ruleset(id: CombatRulesetId): boolean {
     id === SPRITE_PROTOTYPE_V3_RULESET_ID ||
     id === SPRITE_PROTOTYPE_V4_RULESET_ID ||
     id === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-    id === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    id === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    id === M1_DOMAIN_BRIDGE_V6_RULESET_ID
   );
 }
 
@@ -322,6 +324,13 @@ const COMPANY_COMBAT_RULES_V5: CombatRules = {
   recovery: SPRITE_PROTOTYPE_V3_RULES.recovery,
 };
 
+const COMPANY_COMBAT_RULES_V6: CombatRules = {
+  ...COMPANY_COMBAT_RULES_V5,
+  id: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+  sides: 3,
+  units: { minimum: 2, maximum: 36 },
+};
+
 export function combatActionAllowed(
   state: Pick<BattleState, 'rulesetId'>,
   unit: CombatUnitState,
@@ -330,7 +339,8 @@ export function combatActionAllowed(
   if (
     state.rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
     state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-    state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+    state.rulesetId !== M1_DOMAIN_BRIDGE_V6_RULESET_ID
   )
     return true;
   switch (intent) {
@@ -342,7 +352,8 @@ export function combatActionAllowed(
     default:
       return (
         (state.rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-          state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID) ||
+          state.rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+          state.rulesetId !== M1_DOMAIN_BRIDGE_V6_RULESET_ID) ||
         tacticalCapabilityAllowed(unit, intent)
       );
   }
@@ -373,7 +384,8 @@ export function combatRules(rulesetId: CombatRulesetId): CombatRules {
       rulesetId === M1_DOMAIN_BRIDGE_V2_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
       rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-      rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+      rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+      rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID,
     `Unknown combat ruleset: ${rulesetId}`,
   );
   if (rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID)
@@ -383,6 +395,7 @@ export function combatRules(rulesetId: CombatRulesetId): CombatRules {
       recovery: SPRITE_PROTOTYPE_V3_RULES.recovery,
     };
   if (rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID) return COMPANY_COMBAT_RULES_V5;
+  if (rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID) return COMPANY_COMBAT_RULES_V6;
   if (rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID) return COMPANY_COMBAT_RULES_V3;
   if (rulesetId === SPRITE_PROTOTYPE_V4_RULESET_ID) return SPRITE_PROTOTYPE_V4_RULES;
   if (rulesetId === SPRITE_PROTOTYPE_V3_RULESET_ID) return SPRITE_PROTOTYPE_V3_RULES;
@@ -405,6 +418,7 @@ export function compareCombatUnitIds(
     case M1_DOMAIN_BRIDGE_V3_RULESET_ID:
     case M1_DOMAIN_BRIDGE_V4_RULESET_ID:
     case M1_DOMAIN_BRIDGE_V5_RULESET_ID:
+    case M1_DOMAIN_BRIDGE_V6_RULESET_ID:
     case SPRITE_PROTOTYPE_RULESET_ID:
     case SPRITE_PROTOTYPE_V2_RULESET_ID:
     case SPRITE_PROTOTYPE_V3_RULESET_ID:
