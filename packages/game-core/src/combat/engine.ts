@@ -1676,22 +1676,59 @@ export function assertBattleState(state: BattleState): void {
   const activePositions = new Set<string>();
   const sideIds = new Set(state.sides.map(({ id }) => id));
   invariant(state.sides.length >= 2, 'Battle state must retain at least two sides');
+  invariant(
+    state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
+      ? state.sides.length <= 3
+      : state.sides.length === 2,
+    'Battle state side count does not match its ruleset',
+  );
   invariant(sideIds.size === state.sides.length, 'Battle state sides must be unique');
   if (state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID) {
-    invariant(state.sides.length <= 3, 'V3 battle state cannot exceed three sides');
     invariant(
       state.parties !== undefined && state.parties.length > 0,
       'V3 battle state must retain parties',
     );
+    const partyIds = new Set<string>();
+    for (const party of state.parties) {
+      invariant(
+        party.id.length > 0 && !partyIds.has(party.id),
+        'V3 battle state party IDs must be unique',
+      );
+      invariant(sideIds.has(party.sideId), `V3 party ${party.id} references an unknown side`);
+      invariant(
+        party.kind === 'player' || party.kind === 'npc',
+        `V3 party ${party.id} has an invalid kind`,
+      );
+      invariant(
+        party.kind !== 'player' ||
+          (typeof party.controllerId === 'string' && party.controllerId.length > 0),
+        `V3 player party ${party.id} must retain a controller`,
+      );
+      partyIds.add(party.id);
+    }
+    const unitsPerSide = new Map<string, number>();
+    const unitsPerParty = new Map<string, number>();
     for (const unit of state.units) {
+      invariant(sideIds.has(unit.sideId), `V3 unit ${unit.id} references an unknown side`);
       invariant(
         unit.partyId !== undefined &&
           state.parties.some((party) => party.id === unit.partyId && party.sideId === unit.sideId),
         `V3 unit ${unit.id} party attribution is invalid`,
       );
+      unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
+      unitsPerParty.set(unit.partyId, (unitsPerParty.get(unit.partyId) ?? 0) + 1);
     }
+    invariant(state.units.length <= 36, 'V3 battle state cannot exceed 36 units');
+    for (const side of state.sides)
+      invariant((unitsPerSide.get(side.id) ?? 0) <= 12, `V3 side ${side.id} exceeds twelve units`);
+    for (const party of state.parties)
+      invariant(
+        party.kind !== 'player' || (unitsPerParty.get(party.id) ?? 0) <= 6,
+        `V3 player party ${party.id} exceeds six units`,
+      );
   }
   for (const unit of state.units) {
+    invariant(sideIds.has(unit.sideId), `Unit ${unit.id} references an unknown battle side`);
     assertUnitVersionState(unit, state.rulesetId);
     weaponProfile(rules, unit.weaponId);
     assertUnitPools(unit, rules);
