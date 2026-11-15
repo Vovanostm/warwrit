@@ -84,12 +84,17 @@ export function readStoryWorldState(value: unknown): StoryWorldState {
       'sourceEventId',
       'deliveredAtTick',
       'availableAtTick',
+      'availabilityBasis',
     ]) ||
     source['contractId'] !== 'ci.m1.mill-worker.01' ||
     !isText(source['companyId']) ||
     !isText(source['sourceEventId']) ||
     !isTick(source['deliveredAtTick']) ||
-    !isTick(source['availableAtTick'])
+    !isTick(source['availableAtTick']) ||
+    (source['availabilityBasis'] !== undefined &&
+      !['EXACT_SIMULATION_TIME', 'LEGACY_FULL_CYCLE_ELAPSED'].includes(
+        source['availabilityBasis'] as string,
+      ))
   )
     return fail();
   if (BigInt(source['availableAtTick']) < BigInt(source['deliveredAtTick'])) return fail();
@@ -408,6 +413,7 @@ export function validateStoryDefinition(
     sourceEventId: 'delivery',
     deliveredAtTick: '1',
     availableAtTick: '0',
+    availabilityBasis: 'EXACT_SIMULATION_TIME' as const,
   };
   const startWorld = storyWorldGenesis(eligibilitySource);
   const startCompany = storyCompanyGenesis('validator-company', startWorld);

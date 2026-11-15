@@ -26,8 +26,9 @@ export interface StoryEligibilitySource {
   readonly companyId: string;
   readonly sourceEventId: string;
   readonly deliveredAtTick: string;
-  /** Derived by the campaign clock adapter as the end of the following night. */
+  /** Exact for new receipts; legacy sources may use a conservative full-cycle proof. */
   readonly availableAtTick: string;
+  readonly availabilityBasis?: 'EXACT_SIMULATION_TIME' | 'LEGACY_FULL_CYCLE_ELAPSED';
 }
 
 export interface StoryPublicConsequences {

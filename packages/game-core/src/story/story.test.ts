@@ -21,6 +21,7 @@ function worldGenesis(): StoryWorldState {
     sourceEventId: 'delivery-1',
     deliveredAtTick: '10',
     availableAtTick: '20',
+    availabilityBasis: 'EXACT_SIMULATION_TIME',
   });
 }
 
@@ -65,6 +66,15 @@ function proveDisclosure(world: StoryWorldState, company: StoryCompanyState) {
 }
 
 describe('B4 company story journal and reducer', () => {
+  it('retains reads of seeded world states written before availability provenance was added', () => {
+    const world = JSON.parse(JSON.stringify(worldGenesis())) as Record<string, unknown>;
+    const source = { ...(world['eligibilitySource'] as Record<string, unknown>) };
+    delete source['availabilityBasis'];
+    const restored = readStoryWorldState({ ...world, eligibilitySource: source });
+    expect(restored.eligibilitySource.availableAtTick).toBe('20');
+    expect(restored.eligibilitySource.availabilityBasis).toBeUndefined();
+  });
+
   it('keeps findings company private, first-attributed, and projection observer-scoped', () => {
     const world = worldGenesis();
     let companyA = storyCompanyGenesis('company-a', world);
