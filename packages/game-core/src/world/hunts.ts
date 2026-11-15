@@ -19,7 +19,7 @@ import {
 } from './population.js';
 
 /**
- * One encounter hunt: FIRST HUNT and the two hunts of the ordinary contract working profile
+ * One encounter hunt: FIRST HUNT and the hunts of the ordinary contract working profile
  * (owner decision 2026-10-02). Every hunt runs through the same runtime: offer, accept/help,
  * JOIN at the objective, encounter, a unique physical proof, pickup and one presentation.
  */
@@ -126,6 +126,28 @@ export const HUNT_PROFILES: readonly HuntProfile[] = freeze([
       wolf('world.wolf.bereznyak.leader.01', { q: 2, r: 0 }),
       wolf('world.wolf.bereznyak.02', { q: 2, r: -1 }),
       wolf('world.wolf.bereznyak.03', { q: 3, r: -2 }),
+    ],
+    nightOnly: false,
+    needsMillWorkerClues: false,
+  },
+  {
+    instanceId: 'ci.m1.not-one-pack.01',
+    profileId: 'ct.m1.not-one-pack.v1',
+    issuerId: 'npc.woodland-village-caller.savva-krivonos.01',
+    issuerLocation: { siteId: 'bereznyak', areaId: 'bereznyak-green' },
+    objectiveLocation: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+    walletId: 'wallet.savva-krivonos.bereznyak.01',
+    genesisWalletQ: '60000000',
+    rewardQ: '60000000',
+    proofId: 'proof.not-one-pack.pack-leader.01',
+    proofDefinitionId: 'wolf-pelt-trophy',
+    combatMap: { hexes: openField, blocked: [{ q: 1, r: 1 }] },
+    alliedSlots: FIRST_HUNT_ALLIED_SLOTS,
+    retreatHexes: openRetreat,
+    hostiles: [
+      wolf('world.wolf.krivonos.leader.01', { q: 2, r: 0 }),
+      wolf('world.wolf.krivonos.02', { q: 2, r: -1 }),
+      wolf('world.wolf.krivonos.03', { q: 3, r: -2 }),
     ],
     nightOnly: false,
     needsMillWorkerClues: false,

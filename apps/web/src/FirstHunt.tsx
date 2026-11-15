@@ -76,6 +76,7 @@ function containerLabel(containerId: string): string {
 const HUNT_CODES: Readonly<Record<string, string>> = {
   'ci.m1.raider-standard.01': 'HUNT-03',
   'ci.m1.wolf-trail.01': 'HUNT-02',
+  'ci.m1.not-one-pack.01': 'HUNT-04',
   'ci.m1.mill-beast.01': 'HUNT-01',
 };
 const HUNT_ISSUER_PORTRAITS: Readonly<Record<string, string>> = {

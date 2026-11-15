@@ -90,6 +90,23 @@ it('routes over the authored atlas bridges while keeping river water impassable'
   expect(findTravelPath(field, from, to)).toBeDefined();
 });
 
+it('keeps both T032 quest journeys connected on the painted atlas roads', () => {
+  const anchor = (siteId: string) => {
+    const site = PAINTED_ATLAS_SITES.find((entry) => entry.siteId === siteId);
+    if (!site) throw new Error(`Missing painted atlas site ${siteId}`);
+    return site.anchorFp;
+  };
+  for (const [fromSite, toSite] of [
+    ['bereznyak', 'tikhaya-gat'],
+    ['tikhaya-gat', 'bereznyak'],
+    ['kamenny-brod', 'bereznyak'],
+    ['bereznyak', 'tikhaya-gat'],
+    ['tikhaya-gat', 'kamenny-brod'],
+  ]) {
+    expect(findTravelPath(field, anchor(fromSite!), anchor(toSite!))).toBeDefined();
+  }
+});
+
 it('maps company positions to the selected edition without crossing atlas frames', () => {
   const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
   const location = { kind: 'AT' as const, siteId: bereznyak.siteId, areaId: bereznyak.areaId };

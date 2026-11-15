@@ -7,6 +7,7 @@ export interface FirstHuntLocationDto {
 export const HUNT_INSTANCE_IDS = [
   'ci.m1.raider-standard.01',
   'ci.m1.wolf-trail.01',
+  'ci.m1.not-one-pack.01',
   'ci.m1.mill-beast.01',
 ] as const;
 export type HuntInstanceId = (typeof HUNT_INSTANCE_IDS)[number];

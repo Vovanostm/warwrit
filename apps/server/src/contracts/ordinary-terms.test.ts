@@ -36,6 +36,26 @@ function acceptedState() {
 }
 
 describe('ordinary accepted term projection', () => {
+  it('keeps the mowers-or-bandits truth hidden in both sealed tracks editions', () => {
+    for (const definitionId of [
+      'ct.m1.tracks-over-tracks.kosars.v1',
+      'ct.m1.tracks-over-tracks.bandits.v1',
+    ]) {
+      const scenario = ordinaryContractProfileVersion('ci.m1.tracks-over-tracks.01', definitionId)!;
+      const view = contractView(
+        scenario,
+        ordinaryContractGenesis(scenario),
+        undefined,
+        null,
+        gates,
+        false,
+      );
+      expect(view.issuerRoleId).toBe('city-watch-contact');
+      expect(view.rewardQ).toBe('40000000');
+      expect(view.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+    }
+  });
+
   it('keeps both light-sack scenarios indistinguishable before their clues', () => {
     const stepProjections = [
       'ct.m1.light-sack.measure-error.v1',

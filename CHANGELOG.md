@@ -46,6 +46,9 @@ requests.
   [Owner-approved conditions](docs/work-packages/m1-next/06-company-capabilities.md#retraining-and-earned-nickname--owner-decision-2026-11-15). LOCAL.
 - 2026-11-15 — Fixed: delay the empty-watch camp and old-ford outcomes until
   their campaign timing and local Prokop read are satisfied. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
+- 2026-11-15 — Added: implement two approved M1 quests: a distinct physical-proof
+  wolf hunt for Савва and a scenario-sealed trail investigation for Гордей.
+  [T032 quest checkpoint](docs/work-packages/M1-QUESTS.md#t032-вожак-с-рваным-ухом-and-свежие-следы-на-дороге--2026-11-15). LOCAL.
 - 2026-11-15 — Fixed: show a no-payout contract ending without implying a
   reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement «Обход, которого не было» with a paid

@@ -105,6 +105,25 @@ async function ensureOrdinaryGenesis(
       if (!scenarioProfile) throw new TypeError('Light-sack scenario profile is missing');
       profile = scenarioProfile;
     }
+    if (offeredProfile.instanceId === 'ci.m1.tracks-over-tracks.01') {
+      const existing = await transaction
+        .selectFrom('ordinary_contracts')
+        .select('instance_id')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', offeredProfile.instanceId)
+        .executeTakeFirst();
+      if (existing) continue;
+      const definitionId =
+        randomInt(2) === 0
+          ? 'ct.m1.tracks-over-tracks.kosars.v1'
+          : 'ct.m1.tracks-over-tracks.bandits.v1';
+      const scenarioProfile = ordinaryContractProfileVersion(
+        offeredProfile.instanceId,
+        definitionId,
+      );
+      if (!scenarioProfile) throw new TypeError('Track-investigation scenario profile is missing');
+      profile = scenarioProfile;
+    }
     await transaction
       .insertInto('ordinary_contracts')
       .values({

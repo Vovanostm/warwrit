@@ -13,7 +13,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.mill-worker.01'
   | 'ci.m1.light-sack.01'
   | 'ci.m1.two-receipts.01'
-  | 'ci.m1.empty-watch-record.01';
+  | 'ci.m1.empty-watch-record.01'
+  | 'ci.m1.tracks-over-tracks.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -29,6 +30,8 @@ export interface OrdinaryStepDefinition {
   readonly place: ContractPlace;
   /** Source slots the acting company must already hold. */
   readonly requires: readonly string[];
+  /** Source slots that make this step unavailable to the acting company. */
+  readonly forbids?: readonly string[];
   readonly gates: readonly OrdinaryStepGate[];
   /** Source slots this step records for the acting company. */
   readonly produces: readonly string[];
@@ -359,6 +362,58 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
     ],
   },
   {
+    instanceId: 'ci.m1.tracks-over-tracks.01',
+    definitionId: 'ct.m1.tracks-over-tracks.kosars.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'city-watch-contact',
+    issuerPlace: KAMENNY_BROD,
+    walletId: 'wallet.city-watch.gordey-lapa.kamenny-brod.01',
+    genesisWalletQ: CROWNS(40),
+    rewardQ: CROWNS(40),
+    steps: [
+      {
+        stepId: 'follow-mowers',
+        action: 'SEARCH',
+        place: BEREZNYAK,
+        requires: [],
+        gates: [],
+        produces: ['tracks-over-tracks-kosars-fresh-traces'],
+        resultTextKey: 'tracks-over-tracks.kosars-fresh-traces',
+      },
+      {
+        stepId: 'inspect-old-stand',
+        action: 'INSPECT',
+        place: TIKHAYA_GAT,
+        requires: [],
+        gates: [],
+        produces: ['tracks-over-tracks-kosars-old-stand'],
+        resultTextKey: 'tracks-over-tracks.old-stand',
+      },
+      {
+        stepId: 'report-tracks',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['tracks-over-tracks-kosars-fresh-traces'],
+        gates: [],
+        produces: ['tracks-over-tracks-kosars-report'],
+        resultTextKey: 'tracks-over-tracks.kosars-report',
+        completes: true,
+      },
+      {
+        stepId: 'report-no-findings',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['tracks-over-tracks-kosars-old-stand'],
+        forbids: ['tracks-over-tracks-kosars-fresh-traces'],
+        gates: [],
+        produces: ['tracks-over-tracks-kosars-no-findings'],
+        resultTextKey: 'tracks-over-tracks.no-findings',
+        completes: true,
+        payoutPolicy: 'NO_PAYOUT',
+      },
+    ],
+  },
+  {
     instanceId: 'ci.m1.two-receipts.01',
     definitionId: 'ct.m1.two-receipts.v1',
     template: 'INVESTIGATE',
@@ -503,9 +558,59 @@ const lightSackDampRyeProfile: OrdinaryContractProfile = freeze({
   ],
 });
 
+const tracksOverTracksBanditsProfile: OrdinaryContractProfile = freeze({
+  ...ORDINARY_CONTRACT_PROFILES.find(
+    (profile) => profile.instanceId === 'ci.m1.tracks-over-tracks.01',
+  )!,
+  definitionId: 'ct.m1.tracks-over-tracks.bandits.v1',
+  steps: [
+    {
+      stepId: 'follow-mowers',
+      action: 'SEARCH',
+      place: BEREZNYAK,
+      requires: [],
+      gates: [],
+      produces: ['tracks-over-tracks-bandits-fresh-traces'],
+      resultTextKey: 'tracks-over-tracks.bandits-fresh-traces',
+    },
+    {
+      stepId: 'inspect-old-stand',
+      action: 'INSPECT',
+      place: TIKHAYA_GAT,
+      requires: [],
+      gates: [],
+      produces: ['tracks-over-tracks-bandits-old-stand'],
+      resultTextKey: 'tracks-over-tracks.old-stand',
+    },
+    {
+      stepId: 'report-tracks',
+      action: 'REPORT',
+      place: KAMENNY_BROD,
+      requires: ['tracks-over-tracks-bandits-fresh-traces'],
+      gates: [],
+      produces: ['tracks-over-tracks-bandits-report'],
+      resultTextKey: 'tracks-over-tracks.bandits-report',
+      completes: true,
+    },
+    {
+      stepId: 'report-no-findings',
+      action: 'REPORT',
+      place: KAMENNY_BROD,
+      requires: ['tracks-over-tracks-bandits-old-stand'],
+      forbids: ['tracks-over-tracks-bandits-fresh-traces'],
+      gates: [],
+      produces: ['tracks-over-tracks-bandits-no-findings'],
+      resultTextKey: 'tracks-over-tracks.no-findings',
+      completes: true,
+      payoutPolicy: 'NO_PAYOUT',
+    },
+  ],
+});
+
 export const ORDINARY_CONTRACT_PROFILE_VERSIONS: readonly OrdinaryContractProfile[] = freeze([
   ...ORDINARY_CONTRACT_PROFILES,
   lightSackDampRyeProfile,
+  tracksOverTracksBanditsProfile,
 ]);
 
 /** The slot pairs whose presence in any company's facts unlocks the mill-beast hunt (MILL-02). */
@@ -660,6 +765,8 @@ export function ordinaryStepBlocker(
     return 'ALREADY_DONE';
   if (!step.requires.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
     return 'MISSING_EVIDENCE';
+  if (step.forbids?.some((slotId) => companyHoldsSlot(state, companyId, slotId)))
+    return 'CONDITION_NOT_MET';
   if (
     step.needsCustodyOf !== undefined &&
     !state.custody.some(
@@ -935,6 +1042,7 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'action',
         'place',
         'requires',
+        'forbids',
         'gates',
         'produces',
         'resultTextKey',
@@ -951,6 +1059,9 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
     isPlace(value['place']) &&
     Array.isArray(value['requires']) &&
     value['requires'].every((slot) => typeof slot === 'string' && slot !== '') &&
+    (value['forbids'] === undefined ||
+      (Array.isArray(value['forbids']) &&
+        value['forbids'].every((slot) => typeof slot === 'string' && slot !== ''))) &&
     Array.isArray(value['gates']) &&
     value['gates'].every((gate) =>
       ['DAYLIGHT', 'RAIDERS_DEFEATED', 'BEAST_DEFEATED'].includes(gate as string),

@@ -129,3 +129,38 @@ by the CSRF check. Scoped ESLint, Prettier, migration guard and
 acceptance and remaining quest checks are NOT_RUN;
 broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
 merge are NOT_RUN.
+
+### T032 «Вожак с рваным ухом» and «Свежие следы на дороге» — 2026-11-15
+
+Implemented the two approved manuscripts as `ci.m1.not-one-pack.01` and
+`ci.m1.tracks-over-tracks.01`. Savva's HUNT has a separate world hunt profile,
+60-crown issuer wallet and a unique physical wolf-pelt proof. The existing
+server hunt flow records the actual encounter result, pickup and presentation;
+ordinary wolves cannot satisfy the leader proof. Savva's offer opens at the
+Bereznyak elder and returns to him for the trophy.
+
+Gordey's 40-crown INVESTIGATE offer freezes one of the approved mowers/bandits
+truths when its world instance is created. Only its matching fresh-tracks clue
+enables the paid report. The no-findings report requires the old-camp clue and
+is rejected once fresh tracks are found. It pays nothing. Gordey's offer opens
+at the Kamenny Brod watch; the investigation visits Bereznyak and Tikhaya Gat
+before returning to him. Russian names, brief, steps and findings are visible
+through the existing contract UI. Both journeys have connected routes on the
+canonical painted atlas.
+
+Focused core, manifest, server and web tests passed: 51 tests across 8 files,
+including truth privacy, paid/no-payout report rules, physical-proof custody,
+issuer visits and atlas connectivity. Game-core and server typechecks passed;
+the server check required building the workspace testkit dependency. Web
+typecheck is NOT_PASS because of four existing `EquipmentTrader.tsx` DTO errors
+(`publicRevision` and `interruptsLearning`); no T032 files were reported. Full
+browser play, player acceptance and balance approval are NOT_RUN/NOT_MEASURED.
+This T032 slice is LOCAL; commit, publication and merge are NOT_RUN.
+
+Parent integration of this two-quest slice passes 50 focused tests across eight
+files, both game-core/protocol builds and server/web typechecks. The first test
+launch failed with ENOSPC before collecting tests. After freeing space by
+sparsely omitting unchanged art in completed code worktrees, the same focused
+run passed. The author's four DTO errors are resolved on the integration base.
+The two-quest implementation is locally committed. Its native playthrough and
+the remaining T032 quests keep the whole task open.
