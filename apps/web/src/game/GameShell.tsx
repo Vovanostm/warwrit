@@ -18,6 +18,7 @@ import type {
 import type { WorldTravelAction } from '../world-travel-attempt.js';
 import { SupplyShop } from './SupplyShop.js';
 import { EquipmentTrader } from './EquipmentTrader.js';
+import { CoursePanel } from './CoursePanel.js';
 import { CompanyPanel } from './CompanyPanel.js';
 import { formatCrowns, itemLabel, siteKindLabel } from './format.js';
 import {
@@ -666,6 +667,15 @@ export function GameShell(props: {
                   key={`${props.freeMovementScope.accountId}:${props.freeMovementScope.companyId}:kamenny-brod`}
                   scope={props.freeMovementScope}
                   onRefreshCompany={props.onRefreshCompany}
+                />
+              )}
+              {contractVisit?.building === 'watch' && contractVisit.siteId === 'kamenny-brod' && (
+                <CoursePanel
+                  key={`${props.freeMovementScope.accountId}:${props.company.companyId}:kamenny-brod-course`}
+                  accountId={props.freeMovementScope.accountId}
+                  company={props.company}
+                  holdings={props.holdings}
+                  onRefresh={props.onRefreshCompany}
                 />
               )}
               {props.placeSlot({
