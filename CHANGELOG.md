@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: select routes only through observer-known segments, allowing
+  a slower known path when a faster road crosses unexplored terrain.
+  [N07 known-route search](docs/work-packages/m1-next/07-world.md#known-route-search--2026-11-16). LOCAL.
+
 - 2026-11-15 — Fixed: cover funded B4 endings when the paying company has no
   ration stock, preserving uncovered food time without consuming stock.
   [Funding regression check](docs/work-packages/M1-STORY-MISSIONS.md#funding-regression-check--2026-11-15). LOCAL.

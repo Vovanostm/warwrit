@@ -24,6 +24,84 @@ import {
 import { economy } from './company-economy-fixture.js';
 
 describe('authored free world movement', () => {
+  it('reproduces a faster physical shortcut that leaves a known corridor', () => {
+    const boundary = [
+      { xFp: 0, zFp: 0 },
+      { xFp: 1024, zFp: 0 },
+      { xFp: 1024, zFp: 448 },
+      { xFp: 0, zFp: 448 },
+    ];
+    const region: NavigationRegion = {
+      mapEdition: 'known-detour-v1',
+      speedProfileId: FREE_MOVEMENT_V3_PROFILE,
+      origin: { xFp: 0, zFp: 0 },
+      columns: 16,
+      rows: 7,
+      cellSizeFp: 64,
+      boundary,
+      terrainShapes: [
+        { shapeId: 'grass', terrainId: 'grassland', paintPriority: 0, polygon: boundary },
+      ],
+      overlayShapes: [
+        {
+          shapeId: 'unseen-fast-road',
+          overlayId: 'paved_road',
+          polygon: [
+            { xFp: 0, zFp: 192 },
+            { xFp: 1024, zFp: 192 },
+            { xFp: 1024, zFp: 320 },
+            { xFp: 0, zFp: 320 },
+          ],
+        },
+      ],
+      blockingShapes: [],
+      dangerAreaShapes: [],
+      sites: [],
+    };
+    const field = buildNavigationField({ ...region, navigationVersion: 'polygon-v1' });
+    const start = { xFp: 96, zFp: 96 },
+      goal = { xFp: 928, zFp: 96 };
+    const knownSegment = (from: { xFp: number; zFp: number }, to: { xFp: number; zFp: number }) =>
+      from.zFp <= 128 && to.zFp <= 128;
+    const physicalPath = findTravelPath(field, start, goal)!;
+    const knownPath = findTravelPath(field, start, goal, knownSegment)!;
+    const legacyField = buildNavigationField(region);
+    const legacyPhysicalPath = findTravelPath(legacyField, start, goal)!;
+    const legacyKnownPath = findTravelPath(legacyField, start, goal, knownSegment)!;
+    const routePlan = (path: typeof physicalPath, planId: string) =>
+      compileMovementPlan({
+        field,
+        path,
+        movementEpoch: '1',
+        startedAtMs: '1000',
+        planId,
+      });
+
+    expect(physicalPath.some((point) => point.zFp > 128)).toBe(true);
+    expect(physicalPath.slice(1).some((point, i) => !knownSegment(physicalPath[i]!, point))).toBe(
+      true,
+    );
+    expect(knownSegment(start, goal)).toBe(true);
+    expect(knownPath.slice(1).every((point, i) => knownSegment(knownPath[i]!, point))).toBe(true);
+    expect(BigInt(routePlan(knownPath, 'known-route').totalDurationUs)).toBeGreaterThan(
+      BigInt(routePlan(physicalPath, 'physical-route').totalDurationUs),
+    );
+    expect(
+      legacyPhysicalPath.slice(1).some((point, i) => !knownSegment(legacyPhysicalPath[i]!, point)),
+    ).toBe(true);
+    expect(
+      legacyKnownPath.slice(1).every((point, i) => knownSegment(legacyKnownPath[i]!, point)),
+    ).toBe(true);
+    expect(
+      BigInt(routePlan(legacyKnownPath, 'legacy-known-route').totalDurationUs),
+    ).toBeGreaterThan(
+      BigInt(routePlan(legacyPhysicalPath, 'legacy-physical-route').totalDurationUs),
+    );
+    expect(BigInt(routePlan([start, goal], 'known-slower').totalDurationUs)).toBeGreaterThan(
+      BigInt(routePlan(physicalPath, 'unknown-faster').totalDurationUs),
+    );
+  });
+
   it('keeps authored road junctions compatible and derives roads from versioned site edges', () => {
     const field = buildNavigationField(CONTINUOUS_WORLD_REGION);
     expect(field.region.overlayShapes.map((shape) => shape.shapeId).sort()).toEqual(
