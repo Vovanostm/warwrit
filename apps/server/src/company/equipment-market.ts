@@ -107,6 +107,8 @@ export function registerEquipmentMarketRoutes(
           siteId: SITE_ID,
           revision: String(row.revision),
           rations: row.rations,
+          herbalistMedicalUnits: row.herbalist_medical_units,
+          chapelCashQ: String(row.chapel_cash_q),
           cashQ: String(row.cash_q),
         };
         const carriedPurse = await readCarriedSupplyPurse(
@@ -369,6 +371,8 @@ export function registerEquipmentMarketRoutes(
           siteId: SITE_ID,
           revision: shopRow ? String(shopRow.revision) : '0',
           rations: shopRow?.rations ?? SUPPLY_INITIAL_RATIONS,
+          herbalistMedicalUnits: shopRow?.herbalist_medical_units ?? 0,
+          chapelCashQ: shopRow ? String(shopRow.chapel_cash_q) : '0',
           cashQ: shopRow ? String(shopRow.cash_q) : '0',
         };
         const carriedPurse = await readCarriedSupplyPurse(

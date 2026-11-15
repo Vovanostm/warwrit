@@ -3,6 +3,8 @@ import { canPerform, person, sameLocation } from './lifecycle-state.js';
 import { skillLevel } from './skill-progress.js';
 import { consumePhysicalQuantity } from './physical-items.js';
 import { payPhysicalProvider } from './physical-payments.js';
+import { payExternalProvider } from './economy-payments.js';
+import { poolWallet, requirePoolAccess } from './economy-state.js';
 import { evaluatePerkEffects } from './perk-effects.js';
 import type { ExactBps } from './perk-effects.js';
 import {
@@ -248,31 +250,67 @@ export function applyCare(
       },
     };
   } else {
-    requirePhysical(
-      fact.channel === 'PROVIDER' &&
+    if (fact.channel === 'CHAPEL') {
+      requirePhysical(
         p.budgetPoolId !== undefined &&
-        fact.poolId === p.budgetPoolId &&
-        fact.providerWalletId !== undefined &&
-        fact.moneyAccessEvidenceId !== undefined &&
-        fact.amountQ !== undefined &&
-        fact.resourceItemId === undefined &&
-        fact.resourceContainerId === undefined,
-      'INVALID_SOURCE',
-    );
-    const amountQ =
-      fact.supportsCareCostDiscount === true
-        ? applyQuotedCost(fact.amountQ, perkEffects.task.careCostBps)
-        : fact.amountQ;
-    finance = payPhysicalProvider({ ...root, physical }, context, {
-      poolId: fact.poolId,
-      providerWalletId: fact.providerWalletId,
-      moneyAccessEvidenceId: fact.moneyAccessEvidenceId,
-      providerId: fact.providerId,
-      location: fact.location,
-      amountQ,
-      movementId: physicalId(command.commandId, p.conditionId, 'care-payment'),
-      purpose: 'CARE',
-    });
+          fact.poolId === p.budgetPoolId &&
+          fact.providerWalletId === 'wallet.chapel.kamenny-brod.01' &&
+          fact.moneyAccessEvidenceId !== undefined &&
+          fact.amountQ !== undefined &&
+          fact.resourceItemId === undefined &&
+          fact.resourceContainerId === undefined &&
+          fact.supportsCareCostDiscount === false &&
+          fact.location.siteId === 'kamenny-brod',
+        'INVALID_SOURCE',
+      );
+      const access = requirePoolAccess(
+        { ...root, finance },
+        fact.poolId,
+        context,
+        fact.moneyAccessEvidenceId,
+      );
+      const source = poolWallet(finance, fact.poolId);
+      requirePhysical(
+        access.recipientWalletIds.includes(fact.providerWalletId) &&
+          sameLocation(source.location, fact.location),
+        'CONTACT_OR_ACCESS_REQUIRED',
+      );
+      finance = payExternalProvider(finance, {
+        poolId: fact.poolId,
+        providerWalletId: fact.providerWalletId,
+        moneyAccessEvidenceId: fact.moneyAccessEvidenceId,
+        amountQ: BigInt(fact.amountQ),
+        atTick: context.atTick,
+        movementId: physicalId(command.commandId, p.conditionId, 'chapel-care-payment'),
+        purpose: 'CARE',
+      });
+    } else {
+      requirePhysical(
+        fact.channel === 'PROVIDER' &&
+          p.budgetPoolId !== undefined &&
+          fact.poolId === p.budgetPoolId &&
+          fact.providerWalletId !== undefined &&
+          fact.moneyAccessEvidenceId !== undefined &&
+          fact.amountQ !== undefined &&
+          fact.resourceItemId === undefined &&
+          fact.resourceContainerId === undefined,
+        'INVALID_SOURCE',
+      );
+      const amountQ =
+        fact.supportsCareCostDiscount === true
+          ? applyQuotedCost(fact.amountQ, perkEffects.task.careCostBps)
+          : fact.amountQ;
+      finance = payPhysicalProvider({ ...root, physical }, context, {
+        poolId: fact.poolId,
+        providerWalletId: fact.providerWalletId,
+        moneyAccessEvidenceId: fact.moneyAccessEvidenceId,
+        providerId: fact.providerId,
+        location: fact.location,
+        amountQ,
+        movementId: physicalId(command.commandId, p.conditionId, 'care-payment'),
+        purpose: 'CARE',
+      });
+    }
   }
   condition = physical.conditions.find((entry) => entry.conditionId === p.conditionId)!;
   const care = {

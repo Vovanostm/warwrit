@@ -14,6 +14,7 @@ const request = {
     characterId: 'patient',
     conditionId: 'wound-instance',
     providerId: 'doctor',
+    mode: 'MATERIAL' as const,
     resourceItemId: 'medical-unit',
   },
 };
@@ -101,7 +102,7 @@ describe('company care command retry', () => {
     let root = createRoot(host);
     try {
       await act(async () => root.render(createElement(CompanyCarePanel, props)));
-      expect(host.querySelector('button')?.textContent).toBe('Провести уход');
+      expect(host.querySelector('button')?.textContent).toBe('Перевязать своим набором');
       await act(async () => host.querySelector('button')!.click());
       expect(post).toHaveBeenCalledTimes(1);
       const firstBody = post.mock.calls[0]![1]?.body;

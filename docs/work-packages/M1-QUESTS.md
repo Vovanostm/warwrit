@@ -88,6 +88,15 @@ the owner chose this over the church tannery on 2026-11-13 (studioigor #18).
 
 ## Implementation checkpoint — 2026-11-15
 
+Integration follow-up — 2026-11-16. The foul-well quest, company-specific chapel
+price and finite herbalist purchases are combined with the preceding quests.
+Game-core/protocol builds, server/web typechecks and39 focused tests across six
+files pass on the integrated candidate. Migration0030 was applied to the owned
+stand. Its down migration refuses retained chapel money or herbalist stock,
+with both populated cases checked in the author's disposable-clone smoke.
+The author's two real transaction cases pass. Native care and purchase outcomes
+remain pending their normal player journey.
+
 The isolated integration candidate now contains «Мешок легче накладной»,
 «Чужая расписка» and both «Обход, которого не было» endings together with
 the delayed-consequence correction. The merged candidate passes game-core and
@@ -164,3 +173,41 @@ sparsely omitting unchanged art in completed code worktrees, the same focused
 run passed. The author's four DTO errors are resolved on the integration base.
 The two-quest implementation is locally committed. Its native playthrough and
 the remaining T032 quests keep the whole task open.
+## «Грязный колодец» implementation checkpoint — 2026-11-15
+
+Added `ci.m1.foul-well.01` as an ordinary INVESTIGATE contract after
+«Пропавшие травы». The truth ending requires the ravine and Frol's testimony,
+does not pay, and records that Агафья stays; naming her pays a trial 120 crowns
+without requiring the ravine. Her exile and herb removal appear after seven
+campaign days; contract-board world facts show the current state. The doubled
+chapel-care price applies only to the truth-ending company. Reward and price
+figures remain trial balance values.
+
+The chapel option appears for an eligible company healer treating a known wound
+at Каменный Брод. It charges 5 crowns, or 10 for the truth-ending company, from
+the company's local purse and credits the shared chapel ledger in the same
+transaction. Березняк starts with 12 medical units at 5 crowns each; each
+purchase debits the purse, adds units to party inventory and reduces shared
+stock. At accusation tick + 7000, the herbalist leaves and the remaining stock
+becomes unavailable. The board reports current herbalist, chapel-price and
+trader-stock consequences.
+
+## Verification update — 2026-11-16
+
+Focused contract, supply-purchase and care-command UI tests passed (23/23);
+server typecheck, migration guard, migration smoke up/down, and `git diff
+--check` passed. Two focused PostgreSQL integration cases passed on disposable
+migration-backed clones: chapel payment verified 5/10-crown debits, shared
+treasury credit, company scoping, replay and rollback; herbalist purchase
+verified purse debit, company-owned party inventory, finite stock, replay,
+rollback, and zero stock plus rejection at accusation tick + 7000. The truth
+price remains private to its company in the contract board projection.
+
+Migration 0030 rollback now refuses to drop any nonzero chapel balance or
+herbalist stock. On a disposable clone, migration smoke verified that both a
+nonzero chapel balance and a nonzero stock value block rollback; after removing
+the test row, the migration completed the normal down/up checks.
+
+Normal browser playthrough, downstream acceptance and player acceptance are
+NOT_RUN. Web typecheck still reports four existing `EquipmentTrader.tsx` DTO
+errors. The slice is LOCAL; publication and merge are NOT_RUN.

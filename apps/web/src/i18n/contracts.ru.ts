@@ -190,6 +190,40 @@ export const contractsRu = {
   'contract.ci.m1.not-one-pack.01.brief':
     'Волки опять ходят к моему пастбищу. Это не та стая, что у Тихона: у вожака рваное ухо. Убейте их.',
 
+  'contract.ci.m1.foul-well.01.title': 'Грязный колодец',
+  'contract.ci.m1.foul-well.01.issuer': 'Отец Никон, священник часовни в Каменном Броде',
+  'contract.ci.m1.foul-well.01.brief':
+    'В Березняке трое заболели после воды из колодца. Травница что-то шепчет над водой. Узнайте, что она туда подсыпает.\n\n— Шепчет над ведром и крестится не по-нашему. Я сам видел.\n— Думаете, яд?\n— Не знаю, как это у них называется. Узнайте.',
+  'contract.ci.m1.foul-well.01.step.inspect-well': 'Осмотреть колодец и воду',
+  'contract.ci.m1.foul-well.01.step.ask-aghafya': 'Расспросить Агафью Сушину',
+  'contract.ci.m1.foul-well.01.step.search-ravine': 'Осмотреть овраг над родником',
+  'contract.ci.m1.foul-well.01.step.ask-frol': 'Расспросить Фрола Звонаря',
+  'contract.ci.m1.foul-well.01.step.tell-nikon-about-ravine': 'Рассказать Никону про овраг',
+  'contract.ci.m1.foul-well.01.step.name-aghafya': 'Назвать Никону Агафью',
+  'contract.ci.m1.foul-well.01.done': 'Никон знает, кого вы сочли виновным в болезни людей.',
+  'contract.ci.m1.foul-well.01.result.foul-well.well':
+    'У воды сладковатый запах. Сверху, у родника, просела земля.',
+  'contract.ci.m1.foul-well.01.result.foul-well.aghafya':
+    '«Шепчу, да. Так бабушка шептала. От шёпота вода не портится». «У воды сладковатый запах. Выше родника, в овраге, просела земля».',
+  'contract.ci.m1.foul-well.01.result.foul-well.graves':
+    'В овраге кости и обрывки солдатских курток. Закопаны неглубоко.',
+  'contract.ci.m1.foul-well.01.result.foul-well.frol':
+    '«Мы их туда и носили после битвы. Отец Никон сказал, что земля там освящена».',
+  'contract.ci.m1.foul-well.01.result.foul-well.truth-ending':
+    'Отец Никон выслушивает вас до конца и только потом снимает ладонь с книги.\n\n— Вы на мёртвых наговариваете. Платить не за что.\n\nС тех пор в часовне за перевязку ваших людей просят вдвое. Агафья уже договаривается с мужиками: новый колодец будут копать у её огорода.\n\n— Подальше от святой земли, — говорит она.',
+  'contract.ci.m1.foul-well.01.result.foul-well.accusation-ending':
+    'Никон отсчитывает деньги медленно, по одной монете.\n\n— Так я и думал. Ступайте с богом.\n\nЧерез неделю дверь сарая, где Агафья сушила травы, заколочена крест-накрест. Пучки тысячелистника так и висят под крышей.',
+  'contract.ci.m1.foul-well.01.report.truth': 'Вы рассказали Никону об овраге. Выплаты нет.',
+  'contract.ci.m1.foul-well.01.report.accusation':
+    'Никон заплатил за имя Агафьи; травница изгнана.',
+  'contract.ci.m1.foul-well.01.world.herbalist-stays': 'Агафья Сушина остаётся в Березняке.',
+  'contract.ci.m1.foul-well.01.world.herbalist-exiled': 'Агафью Сушину изгнали из Березняка.',
+  'contract.ci.m1.foul-well.01.world.care-price-doubled':
+    'В часовне за перевязку теперь просят вдвое.',
+  'contract.ci.m1.foul-well.01.world.care-price-normal': 'Цена перевязки в часовне не изменилась.',
+  'contract.ci.m1.foul-well.01.world.herbs-available': 'У торговца по-прежнему есть травы Агафьи.',
+  'contract.ci.m1.foul-well.01.world.herbs-removed': 'Травы Агафьи сняли с продажи.',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',

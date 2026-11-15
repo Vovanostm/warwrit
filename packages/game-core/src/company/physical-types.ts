@@ -110,7 +110,7 @@ export interface ConditionInstance {
     readonly careDefinitionId: string;
     readonly sourceId: string;
     readonly fulfilledAt: CampaignTick;
-    readonly channel: 'MATERIAL' | 'PROVIDER' | 'INHERITED_STABILIZATION';
+    readonly channel: 'MATERIAL' | 'PROVIDER' | 'CHAPEL' | 'INHERITED_STABILIZATION';
     /** Present for B03 care; omitted only on compatible pre-B03 loaded snapshots. */
     readonly providerId?: string;
     /** Frozen concrete duration after the actual provider's CareRecovery modifier. */
@@ -261,7 +261,7 @@ export interface CareFulfillmentEvidence extends PhysicalScope {
   readonly careDefinitionId: string;
   readonly providerId: string;
   readonly location: AtLocation;
-  readonly channel: 'MATERIAL' | 'PROVIDER';
+  readonly channel: 'MATERIAL' | 'PROVIDER' | 'CHAPEL';
   readonly resourceItemId?: string;
   readonly resourceContainerId?: string;
   readonly poolId?: string;

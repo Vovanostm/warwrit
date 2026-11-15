@@ -41,6 +41,7 @@ import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
+import { foulWellCarePriceQ, readFoulWellOutcome } from '../contracts/foul-well-state.js';
 import { registerCompanyReturnReportRoutes } from './return-report.js';
 import { parsePayDeceasedWagesRequest } from './deceased-wages-routes.js';
 import { executePayDeceasedWages } from './deceased-wages.js';
@@ -132,10 +133,13 @@ export function registerCompanyRoutes(
         state.economy.lifecycle.parties.length === 1
           ? state.economy.lifecycle.parties[0]
           : undefined;
+      const foulWellOutcome = await readFoulWellOutcome(transaction, worldId);
+      const chapelCarePriceQ = foulWellCarePriceQ(foulWellOutcome, companyId);
       const holdings = projectCompanyHoldings(
         state,
         companyId,
         view.characters.map((character) => character.characterId),
+        chapelCarePriceQ,
       );
       // Holdings already exposes witnessed deaths from this company's completed encounters.
       const fallen = new Set(
@@ -489,10 +493,15 @@ function parseOrdinaryCompanyCommandV2(
       return undefined;
   } else if (value['type'] === 'BuySupplies') {
     if (
-      canonicalJson(Object.keys(payload).sort()) !==
-        canonicalJson(['quantity', 'shopRevision', 'siteId']) ||
+      ![
+        canonicalJson(['quantity', 'shopRevision', 'siteId']),
+        canonicalJson(['goodId', 'quantity', 'shopRevision', 'siteId']),
+      ].includes(canonicalJson(Object.keys(payload).sort())) ||
       !isEntityId(payload['siteId']) ||
       !isExactInteger(payload['shopRevision']) ||
+      (Object.hasOwn(payload, 'goodId') &&
+        payload['goodId'] !== 'RATION' &&
+        payload['goodId'] !== 'MEDICAL_UNIT') ||
       !Number.isInteger(payload['quantity']) ||
       Number(payload['quantity']) < 1 ||
       Number(payload['quantity']) > 100
@@ -546,13 +555,18 @@ function parseOrdinaryCompanyCommandV2(
     )
       return undefined;
   } else if (value['type'] === 'ApplyCare') {
+    const carePayloadKeys = Object.keys(payload).sort().join(',');
     if (
-      canonicalJson(Object.keys(payload).sort()) !==
-        canonicalJson(['characterId', 'conditionId', 'providerId', 'resourceItemId']) ||
+      ![
+        'characterId,conditionId,mode,providerId,resourceItemId',
+        'characterId,conditionId,mode,providerId',
+      ].includes(carePayloadKeys) ||
       !isEntityId(payload['characterId']) ||
       !isEntityId(payload['conditionId']) ||
       !isEntityId(payload['providerId']) ||
-      !isEntityId(payload['resourceItemId'])
+      (payload['mode'] !== 'MATERIAL' && payload['mode'] !== 'CHAPEL') ||
+      (payload['mode'] === 'MATERIAL' && !isEntityId(payload['resourceItemId'])) ||
+      (payload['mode'] === 'CHAPEL' && Object.hasOwn(payload, 'resourceItemId'))
     )
       return undefined;
   } else if (value['type'] === 'StartLearning') {

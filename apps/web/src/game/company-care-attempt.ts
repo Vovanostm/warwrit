@@ -29,11 +29,20 @@ export function readCompanyCareAttempt(
     )
       return undefined;
     const payload = request['payload'];
+    const keys = Object.keys(payload).sort().join(',');
     if (
-      Object.keys(payload).length !== 4 ||
-      !['characterId', 'conditionId', 'providerId', 'resourceItemId'].every(
+      ![
+        'characterId,conditionId,mode,providerId',
+        'characterId,conditionId,mode,providerId,resourceItemId',
+      ].includes(keys) ||
+      !['characterId', 'conditionId', 'providerId'].every(
         (key) => typeof payload[key] === 'string' && payload[key] !== '',
-      )
+      ) ||
+      (payload['mode'] !== 'MATERIAL' && payload['mode'] !== 'CHAPEL') ||
+      (payload['mode'] === 'MATERIAL' &&
+        (typeof payload['resourceItemId'] !== 'string' ||
+          payload['resourceItemId'].length === 0)) ||
+      (payload['mode'] === 'CHAPEL' && Object.hasOwn(payload, 'resourceItemId'))
     )
       return undefined;
     return request as unknown as CompanyCareAttempt;

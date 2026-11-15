@@ -10,6 +10,7 @@ export function projectCompanyHoldings(
   state: CompanyCombatAggregateState,
   companyId: string,
   memberIds: readonly string[],
+  chapelPriceQ?: string,
 ): CompanyHoldingsDto {
   const characterIds = new Set<string>(memberIds);
   const ownedByCompany = (owner: { readonly kind: string; readonly id: string }) =>
@@ -148,7 +149,7 @@ export function projectCompanyHoldings(
   };
   const accessible = itemTransferOptions(state);
   return {
-    care: companyCareOptions(state),
+    care: companyCareOptions(state, chapelPriceQ),
     ...(accessible
       ? {
           transfer: {

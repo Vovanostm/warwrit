@@ -2,12 +2,16 @@ import {
   SUPPLY_SHOPS,
   SUPPLY_PRICE_Q,
   SUPPLY_INITIAL_RATIONS,
+  HERBALIST_INITIAL_MEDICAL_UNITS,
+  MEDICAL_UNIT_PRICE_Q,
   supplySpendableCashQ,
 } from '@warwrit/game-core';
 import type { Kysely, Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
 import type { SupplyShopDto } from '@warwrit/protocol';
 import { lockCompanyAggregate } from './repository.js';
+import { readWorldClock } from '../world/clock.js';
+import { foulWellHerbalistRemoved, readFoulWellOutcome } from '../contracts/foul-well-state.js';
 
 export async function readSupplyShop(
   database: Kysely<DatabaseSchema>,
@@ -24,6 +28,8 @@ export async function readSupplyShop(
       site_id: siteId,
       revision: '0',
       rations: SUPPLY_INITIAL_RATIONS,
+      herbalist_medical_units: siteId === 'bereznyak' ? HERBALIST_INITIAL_MEDICAL_UNITS : 0,
+      chapel_cash_q: '0',
       cash_q: '0',
     })
     .onConflict((conflict) => conflict.columns(['world_id', 'site_id']).doNothing())
@@ -37,11 +43,16 @@ export async function readSupplyShop(
   return database.transaction().execute(async (transaction) => {
     const company = await lockCompanyAggregate(transaction, worldId, companyId);
     if (!company) return undefined;
+    const clock = await readWorldClock(transaction, worldId);
+    const outcome = await readFoulWellOutcome(transaction, worldId);
     const carriedPurse = await readCarriedSupplyPurse(transaction, worldId, companyId, accountId);
+    const stockRemoved = foulWellHerbalistRemoved(outcome, clock.tick);
     return {
       siteId,
       revision: String(row.revision),
       rations: row.rations,
+      herbalistMedicalUnits: stockRemoved ? 0 : row.herbalist_medical_units,
+      medicalUnitPriceQ: MEDICAL_UNIT_PRICE_Q,
       rationPriceQ: SUPPLY_PRICE_Q,
       availableCashQ: supplySpendableCashQ(company.economy, siteId, carriedPurse),
     };

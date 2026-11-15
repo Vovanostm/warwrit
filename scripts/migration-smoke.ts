@@ -39,6 +39,8 @@ async function downToFirstHunt(): Promise<void> {
 /** Remove only newer migrations before testing the retained older rollback guards. */
 async function downAfterRecruitPool(): Promise<void> {
   for (const name of [
+    '0030_herbalist_stock',
+    '0029_return_report_contract_outcomes',
     '0028_equipment_market',
     '0027_company_return_report',
     '0026_story_missions',
@@ -90,6 +92,8 @@ try {
     '0026_story_missions',
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -122,30 +126,47 @@ try {
     '0026_story_missions',
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
 
-  await client.query(`insert into settlement_equipment
-    (world_id, item_id, site_id, owner_kind, owner_id, source_id, acquired_by_company_id, item)
-    values ('migration-smoke-market', 'migration-smoke-item', 'kamenny-brod', 'WORLD',
-      'migration-smoke-market', 'migration-smoke-source', 'migration-smoke-company',
-      '{"itemId":"migration-smoke-item","owner":{"kind":"WORLD","id":"migration-smoke-market"},"provenance":{"sourceId":"migration-smoke-source"}}')`);
-  await assert.rejects(runMigrations(client, 'down'), /retained settlement equipment/);
-  await client.query("delete from settlement_equipment where world_id = 'migration-smoke-market'");
-  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0028_equipment_market']);
-  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0027_company_return_report']);
   await client.query(`insert into story_world_states
     (world_id, mission_id, definition_version, revision, state)
     values ('migration-smoke-story', 'sm.m1.cache-disclosure.01', 1, 0, '{}')`);
-  await assert.rejects(runMigrations(client, 'down'), /retain story mission states/);
-  assert.deepEqual((await runMigrations(client, 'status')).pending, [
-    '0027_company_return_report',
+  await client.query(`insert into settlement_supplies
+    (world_id, site_id, revision, rations, herbalist_medical_units, chapel_cash_q, cash_q)
+    values ('migration-smoke-foul-well', 'kamenny-brod', 0, 300, 0, 1, 0)`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Refusing to drop retained chapel funds or herbalist stock/u,
+  );
+  await client.query(`update settlement_supplies
+    set chapel_cash_q = 0, herbalist_medical_units = 1
+    where world_id = 'migration-smoke-foul-well'`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Refusing to drop retained chapel funds or herbalist stock/u,
+  );
+  await client.query(
+    "delete from settlement_supplies where world_id = 'migration-smoke-foul-well'",
+  );
+  for (const name of [
+    '0030_herbalist_stock',
+    '0029_return_report_contract_outcomes',
     '0028_equipment_market',
-  ]);
+    '0027_company_return_report',
+  ]) {
+    assert.deepEqual((await runMigrations(client, 'down')).applied, [name]);
+  }
+  await assert.rejects(runMigrations(client, 'down'), /retain story mission states/);
   await client.query("delete from story_world_states where world_id = 'migration-smoke-story'");
   assert.deepEqual((await runMigrations(client, 'up')).applied, [
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
+  assert.deepEqual((await runMigrations(client, 'status')).pending, []);
   await downAfterRecruitPool();
   assert.deepEqual((await runMigrations(client, 'down')).applied, ['0019_world_recruit_pool']);
 
@@ -212,6 +233,8 @@ try {
     '0026_story_missions',
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
   assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
@@ -322,6 +345,8 @@ try {
     '0026_story_missions',
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -653,6 +678,8 @@ try {
     '0026_story_missions',
     '0027_company_return_report',
     '0028_equipment_market',
+    '0029_return_report_contract_outcomes',
+    '0030_herbalist_stock',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

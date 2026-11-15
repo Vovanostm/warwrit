@@ -177,6 +177,48 @@ export function receiveExternalPayment(
   };
 }
 
+/** Debit a local pool for a trusted external provider whose shared balance lives in the adapter. */
+export function payExternalProvider(
+  finance: CompanyFinance,
+  input: {
+    readonly poolId: string;
+    readonly providerWalletId: string;
+    readonly moneyAccessEvidenceId: string;
+    readonly amountQ: bigint;
+    readonly atTick: CampaignTick;
+    readonly movementId: string;
+    readonly purpose: Extract<CashMovement['purpose'], 'CARE'>;
+  },
+): CompanyFinance {
+  requireEconomy(input.amountQ > 0n, 'INVALID_ARGUMENT');
+  const source = poolWallet(finance, input.poolId);
+  requireEconomy(spendableQ(finance, source.walletId) >= input.amountQ, 'INSUFFICIENT_FUNDS');
+  requireEconomy(
+    !finance.movements.some((movement) => movement.movementId === input.movementId),
+    'IDEMPOTENCY_CONFLICT',
+  );
+  const amountQ = q(input.amountQ);
+  return {
+    ...finance,
+    wallets: finance.wallets.map((wallet) =>
+      wallet.walletId === source.walletId
+        ? { ...wallet, cashQ: q(BigInt(wallet.cashQ) - input.amountQ) }
+        : wallet,
+    ),
+    movements: [
+      ...finance.movements,
+      {
+        movementId: input.movementId,
+        from: source.walletId,
+        to: input.providerWalletId,
+        amountQ,
+        atTick: input.atTick,
+        purpose: input.purpose,
+      },
+    ],
+  };
+}
+
 export function recipientWallet(
   finance: CompanyFinance,
   recipient: OwnerRef,

@@ -100,6 +100,7 @@ const twoReceiptsId = 'ct.m1.two-receipts.v1';
 const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
 const tracksOverTracksKosarsId = 'ct.m1.tracks-over-tracks.kosars.v1';
 const tracksOverTracksBanditsId = 'ct.m1.tracks-over-tracks.bandits.v1';
+const foulWellId = 'ct.m1.foul-well.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -202,6 +203,22 @@ const definitions: readonly ContractDefinition[] = [
     ['INVEST-05-EMPTY-WATCH-RECORD'],
   ),
   definition(
+    foulWellId,
+    'INVESTIGATE',
+    'father-nikon',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'foul-well-observation',
+      'foul-well-aghafya-testimony',
+      'foul-well-graves',
+      'foul-well-frol-testimony',
+      'foul-well-truth-reported',
+      'foul-well-aghafya-accused',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-06-FOUL-WELL'],
+  ),
+  definition(
     cellarRescueId,
     'RESCUE',
     'river-village-caller',
@@ -258,11 +275,7 @@ const definitions: readonly ContractDefinition[] = [
     'HUNT',
     'woodland-village-caller',
     location('bereznyak', 'bereznyak-green'),
-    [
-      'not-one-pack-terminal-result',
-      'not-one-pack-proof-pickup',
-      'not-one-pack-presenter-custody',
-    ],
+    ['not-one-pack-terminal-result', 'not-one-pack-proof-pickup', 'not-one-pack-presenter-custody'],
     'UNIQUE_PHYSICAL_TROPHY',
     ['HUNT-04'],
     ['ACCEPTED_POLICY', 'PROVISIONAL_LORE', 'AUTHORED_DERIVATIVE'],
@@ -347,6 +360,12 @@ const slots: ContractSourceSlot[] = [
   source('tracks-over-tracks-bandits-old-stand', tracksOverTracksBanditsId, 'OBSERVATION'),
   source('tracks-over-tracks-bandits-report', tracksOverTracksBanditsId, 'REPORT'),
   source('tracks-over-tracks-bandits-no-findings', tracksOverTracksBanditsId, 'REPORT'),
+  source('foul-well-observation', foulWellId, 'OBSERVATION'),
+  source('foul-well-aghafya-testimony', foulWellId, 'OBSERVATION'),
+  source('foul-well-graves', foulWellId, 'OBSERVATION'),
+  source('foul-well-frol-testimony', foulWellId, 'OBSERVATION'),
+  source('foul-well-truth-reported', foulWellId, 'REPORT'),
+  source('foul-well-aghafya-accused', foulWellId, 'REPORT'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -577,6 +596,26 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-06-FOUL-WELL',
+    foulWellId,
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'foul-well-observation',
+      'foul-well-aghafya-testimony',
+      'foul-well-graves',
+      'foul-well-frol-testimony',
+      'foul-well-truth-reported',
+      'foul-well-aghafya-accused',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', ['foul-well-truth-reported', 'foul-well-aghafya-accused']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -675,11 +714,7 @@ const standaloneScenes: ContractScene[] = [
     'HUNT-04',
     notOnePackId,
     location('tikhaya-gat', 'tikhaya-gat-bank'),
-    [
-      'not-one-pack-terminal-result',
-      'not-one-pack-proof-pickup',
-      'not-one-pack-presenter-custody',
-    ],
+    ['not-one-pack-terminal-result', 'not-one-pack-proof-pickup', 'not-one-pack-presenter-custody'],
     [
       outcome(
         'SUCCESS',
@@ -754,14 +789,13 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
     binding('ci.m1.two-receipts.01', twoReceiptsId),
     binding('ci.m1.empty-watch-record.01', emptyWatchRecordId),
+    binding('ci.m1.foul-well.01', foulWellId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),
     binding('ci.m1.raider-standard.01', raiderStandardId),
     binding('ci.m1.not-one-pack.01', notOnePackId),
-    binding('ci.m1.tracks-over-tracks.01', tracksOverTracksKosarsId, [
-      tracksOverTracksBanditsId,
-    ]),
+    binding('ci.m1.tracks-over-tracks.01', tracksOverTracksKosarsId, [tracksOverTracksBanditsId]),
   ],
   scenes: [...millWorkerScenes, ...standaloneScenes],
   sourceSlots: slots,
