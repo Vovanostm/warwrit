@@ -6,6 +6,8 @@ import {
   canonicalJson,
   canonicalStateJson,
   canPerform,
+  continuousLocationPoint,
+  CONTINUOUS_WORLD_REGION,
   huntProfile,
   ORDINARY_CONTRACT_PROFILES,
   FIRST_HUNT_PROOF_ID,
@@ -26,10 +28,12 @@ import {
   readOrdinaryContractState,
   type CompanyCombatAggregateState,
   type ContractPlace,
+  type OrdinaryContractContext,
   type OrdinaryContractProfile,
   type OrdinaryContractState,
   type OrdinaryStepGate,
 } from '@warwrit/game-core';
+import { foulWellHerbalistRemoved, readFoulWellOutcome } from './foul-well-state.js';
 import type {
   OrdinaryContractBoardDto,
   OrdinaryContractCommandDto,
@@ -176,6 +180,23 @@ function standingPlace(state: CompanyCombatAggregateState): ContractPlace | null
   return null;
 }
 
+function standingTerrainPosition(
+  state: CompanyCombatAggregateState | undefined,
+):
+  | { readonly mapEdition: string; readonly xMicroFp: string; readonly zMicroFp: string }
+  | undefined {
+  const party = state?.economy.lifecycle.parties[0];
+  if (!party || party.location.kind === 'MOVING') return undefined;
+  const point = continuousLocationPoint(party.location, CONTINUOUS_WORLD_REGION);
+  return point
+    ? {
+        mapEdition: CONTINUOUS_WORLD_REGION.mapEdition,
+        xMicroFp: point.xMicroFp,
+        zMicroFp: point.zMicroFp,
+      }
+    : undefined;
+}
+
 async function ensureOrdinaryGenesis(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
@@ -281,6 +302,8 @@ async function readGates(
   worldId: string,
 ): Promise<Readonly<Record<OrdinaryStepGate, boolean>>> {
   const clock = await readWorldClock(transaction, worldId);
+  const foulWellOutcome = await readFoulWellOutcome(transaction, worldId);
+  const herbalistExiled = foulWellHerbalistRemoved(foulWellOutcome, clock.tick);
   const allDead = (state: { readonly hostiles: readonly FirstHuntHostileState[] }) =>
     state.hostiles.every((hostile) => hostile.currentPools['health'] === 0);
   const raiders = await ensureFirstHuntGenesisInTransaction(transaction, worldId);
@@ -289,6 +312,8 @@ async function readGates(
     DAYLIGHT: readWorldLight(clock).phase === 'DAY',
     RAIDERS_DEFEATED: allDead(raiders),
     BEAST_DEFEATED: allDead(beast),
+    HERBALIST_PRESENT: !herbalistExiled,
+    HERBALIST_EXILED: herbalistExiled,
   };
 }
 
@@ -302,6 +327,7 @@ export function contractView(
   currentTick = '0',
   prerequisiteMet = true,
   kitStock?: { readonly revision: string; readonly quantity: number; readonly priceQ: string },
+  terrainPosition?: OrdinaryContractContext['terrainPosition'],
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const deadlineTicks =
@@ -478,6 +504,7 @@ export function contractView(
     ...(draggedSackPublicConsequences ? { publicConsequences: draggedSackPublicConsequences } : {}),
     canAccept:
       prerequisiteMet &&
+      (profile.instanceId !== 'ci.m1.man-by-road.01' || gates.HERBALIST_PRESENT) &&
       companyId !== undefined &&
       projectedState.outcome === null &&
       state.ownerCompanyId === null &&
@@ -489,6 +516,7 @@ export function contractView(
       projectedState.outcome === null &&
       state.ownerCompanyId !== null &&
       state.ownerCompanyId !== companyId &&
+      profile.allowHelper !== false &&
       state.helperCompanyId === null &&
       atIssuer,
     canWithdraw:
@@ -523,6 +551,7 @@ export function contractView(
           stepId: step.stepId,
           action: step.action,
           location: step.place,
+          ...(step.terrainTarget ? { terrainTarget: { ...step.terrainTarget } } : {}),
           doneByYou,
           ...(doneByYou && step.resultTextKey !== undefined
             ? { findingTextKey: `contract.${profile.instanceId}.result.${step.resultTextKey}` }
@@ -534,7 +563,13 @@ export function contractView(
                   step.stepId === 'buy-descent-kit' &&
                   kitStock?.quantity === 0
                 ? 'CONDITION_NOT_MET'
-                : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates, atTick: currentTick }),
+                : ordinaryStepBlocker(projectedState, step, {
+                    companyId,
+                    standingAt,
+                    gates,
+                    atTick: currentTick,
+                    ...(terrainPosition ? { terrainPosition } : {}),
+                  }),
           completes: step.completes === true,
         };
       }),
@@ -694,6 +729,12 @@ async function executeOrdinaryCommand(
   const state = readOrdinaryContractState(profile, row.state, row.profile_id);
   if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profile.walletId))
     throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
+  if (
+    profile.instanceId === 'ci.m1.man-by-road.01' &&
+    request.type === 'ACCEPT' &&
+    !gates.HERBALIST_PRESENT
+  )
+    return reject('NOT_AVAILABLE');
   if (profile.instanceId === 'ci.m1.foul-well.01' && request.type === 'ACCEPT') {
     const priorProfile = ordinaryContractProfile('ci.m1.missing-herbs.01');
     const priorRow = await transaction
@@ -709,6 +750,7 @@ async function executeOrdinaryCommand(
     )
       return reject('NOT_AVAILABLE');
   }
+  const terrainPosition = standingTerrainPosition(company);
   const prepared = prepareOrdinaryContractCommand(
     profile,
     state,
@@ -718,6 +760,7 @@ async function executeOrdinaryCommand(
     {
       companyId,
       standingAt: standingPlace(company),
+      ...(terrainPosition ? { terrainPosition } : {}),
       atTick: clock.tick,
       expectedRevision: request.expectedRevision,
       sourceEventId: `ordinary-contract:${profile.instanceId}:${request.commandId}`,
@@ -978,6 +1021,13 @@ export function registerOrdinaryContractRoutes(
             readOrdinaryContractState(priorProfile, priorRow.state, priorRow.profile_id).outcome,
           );
         }
+        if (
+          profile.instanceId === 'ci.m1.man-by-road.01' &&
+          !gates.HERBALIST_PRESENT &&
+          state.ownerCompanyId === null &&
+          state.outcome === null
+        )
+          continue;
         if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profileVersion.walletId))
           throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
         if (companyId)
@@ -1002,6 +1052,7 @@ export function registerOrdinaryContractRoutes(
             clock.tick,
             prerequisiteMet,
             profile.instanceId === VOICE_UNDER_BOARDS ? kitStock : undefined,
+            standingTerrainPosition(projectedCompany),
           ),
         );
       }

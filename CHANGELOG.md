@@ -33,6 +33,12 @@ requests.
   stale authorized map markers, derived from stored observation time and current
   visibility; legacy pre-epoch times retain their original timestamp. Added the
   wheel-zoom control hint. [N07 marker presentation](docs/work-packages/m1-next/07-world.md#dated-marker-presentation--2026-11-16). LOCAL.
+- 2026-11-15 — Added: «Человек на обочине» as a living rescue with distinct
+  on-foot and fetched-stretcher routes, finite 25-crown purse, saved custody
+  burden and a painted-road target. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16). LOCAL.
+
+- 2026-11-16 — Changed: preserve an accepted roadside rescue if Agafya is exiled;
+  deliver Sidor alive to Bereznyak without payment and retain him in company food loads. [T032 checkpoint](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16). LOCAL.
 
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation

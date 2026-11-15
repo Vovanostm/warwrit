@@ -32,7 +32,12 @@ import { departureKey, TravelPanel } from './TravelPanel.js';
 import { WorldMap, type PartyMarker } from './WorldMap.js';
 import { WorldMapCanvas } from './WorldMapCanvas.js';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
-import type { ContractPlaceFact, ContractVisit, ContractVisitProps } from './contract-visits.js';
+import type {
+  ContractPlaceFact,
+  ContractTerrainTargetMarker,
+  ContractVisit,
+  ContractVisitProps,
+} from './contract-visits.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
 import { StoryPanel } from './StoryPanel.js';
 import { lookup } from '../i18n/index.js';
@@ -108,6 +113,9 @@ export function GameShell(props: {
   const [freeSiteTargeting, setFreeSiteTargeting] = useState(false);
   const [focusSiteId, setFocusSiteId] = useState<string | null>(null);
   const [placeFacts, setPlaceFacts] = useState<readonly ContractPlaceFact[]>([]);
+  const [terrainQuestTargets, setTerrainQuestTargets] = useState<
+    readonly ContractTerrainTargetMarker[]
+  >([]);
   const [buildingVisit, setBuildingVisit] = useState<ContractVisit | null>(null);
   const [storyOpen, setStoryOpen] = useState(false);
   useEffect(() => {
@@ -361,6 +369,7 @@ export function GameShell(props: {
               companyId={props.company.companyId}
               cartography={cartography!}
               sites={map.sites}
+              questTargets={terrainQuestTargets}
               current={movement.current}
               clock={movement.clock.current}
               night={light.phase === 'NIGHT'}
@@ -682,6 +691,7 @@ export function GameShell(props: {
               {props.placeSlot({
                 visit: contractVisit,
                 onPlaceFacts: setPlaceFacts,
+                onTerrainTargets: setTerrainQuestTargets,
                 canVisit,
                 onVisitIssuer: visitIssuer,
                 onJournal: openJournal,

@@ -328,3 +328,58 @@ Rollback follow-up (2026-11-16): the 0031 guard passed an empty down/up cycle
 and refused rollback after a populated one-purchase stock/cash fixture, retaining
 the row and applied migration record. The migration test ran on the disposable
 per-file integration clone; no source database was migrated.
+
+## T032 roadside rescue — 2026-11-16
+
+Implemented approved `ci.m1.man-by-road.01` as a one-company RESCUE offer from
+Агафья. The offer is available only while she remains in Березняке; the normal
+board and authoritative command both close it after a saved accusation and
+7,000 campaign ticks. A truth report or no foul-well result leaves her available.
+The roadside scene has no new world site: it uses the first outward station on
+the existing Bereznyak approach road, at painted-map fp `(-2548, 1127)` with a
+128-fp radius on the retained atlas edition. An active company sees its target
+marker on the painted map and can send the normal movement command there.
+
+At the target, the player chooses either to take Sidor into on-foot custody or
+return to Агафья for the single stretcher tracked by this contract before going
+back to fetch him. The fetched source is a one-use fact in the unique world
+contract; helper companies are disabled so they cannot duplicate that source.
+On foot, the party must record the roadside rest and wait at least 300 campaign
+ticks before continuing. On either route, Sidor remains in the party's canonical
+contract custody. If Агафья is still in Березняке, delivery to her pays at most
+the 25 crowns in his seeded wallet. If her exile matures while the rescue is
+active, delivery to the village completes without payment and releases Sidor
+from custody; the scene does not claim that anyone treats or houses him. Offers
+disappear and ACCEPT is rejected after the exile, while an accepted rescue
+remains finishable. Custody stores `ON_FOOT` or `STRETCHER`, which the ordinary
+movement adapter uses for the route's travel burden and food; all company-scoped
+custody remains in guest food loads even when a travel mode is not assigned.
+Reward, rest duration and one-stretcher availability are trial values, not a
+balance acceptance. The approved Russian brief and findings remain in
+[the manuscript](../wiki/economy-quests/m1-quest-texts.md#человек-на-обочине).
+
+Owner decision 2026-11-16: after exile matures, an already accepted rescue can
+finish by delivering Sidor alive to Березняк without reward. No new failure
+ending is inferred, and custody stays with the company until delivery.
+
+The early game-core/protocol commit is `8841f9c1779f5e48170712aaeafdfda8862b8ac6`;
+the foul-well shared dependency is `54290b29`. Game-core and protocol builds
+and testkit build, server and web typechecks pass. Focused game-core, server,
+foul-well and map-visit tests pass 27/27 across four files. Movement burden
+integration, PostgreSQL, browser/native play and owner acceptance are NOT_RUN.
+This slice is LOCAL and does not close T032 or M1 acceptance yet.
+
+### Rescue integration checks — 2026-11-16
+
+Integrated the quiet mill rescue and roadside rescue into the retained M1
+checkout. Preserved cargo deadlines, unpaid person return after withdrawal,
+delayed Prokop disclosure and the current tick as the seventh projection
+argument. Sidor branches reuse the existing unavailable-step response for
+mutually exclusive findings. The owner-approved exile ending delivers living
+Sidor to Bereznyak without reward and retains custody until delivery.
+
+Parent checks passed 42 focused tests across ordinary transitions, projection,
+well consequences and meeting points. Mill rescue purchase/delivery and guarded
+0031 rollback passed 2/2 on disposable PostgreSQL databases, both disposed.
+Migration 0031 was applied to the owned local stand. Native rescue play remains
+NOT_RUN and T032 remains open. LOCAL.

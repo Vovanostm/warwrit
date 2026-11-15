@@ -28,7 +28,12 @@ export interface ContractPlace {
 }
 
 /** World conditions a step needs, read by the adapter from authoritative world state. */
-export type OrdinaryStepGate = 'DAYLIGHT' | 'RAIDERS_DEFEATED' | 'BEAST_DEFEATED';
+export type OrdinaryStepGate =
+  | 'DAYLIGHT'
+  | 'RAIDERS_DEFEATED'
+  | 'BEAST_DEFEATED'
+  | 'HERBALIST_PRESENT'
+  | 'HERBALIST_EXILED';
 
 export type OrdinaryCustodyTravelMode = 'ON_FOOT' | 'STRETCHER';
 
@@ -837,8 +842,8 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         action: 'DELIVER',
         place: BEREZNYAK,
         requires: ['man-by-road-walking', 'man-by-road-rest-complete'],
-        gates: [],
-        produces: ['man-by-road-living-rescue', 'man-by-road-delivered'],
+        gates: ['HERBALIST_PRESENT'],
+        produces: ['man-by-road-living-rescue', 'man-by-road-delivered', 'man-by-road-resolved'],
         needsCustodyOf: 'person.sidor',
         completes: true,
       },
@@ -847,10 +852,38 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         action: 'DELIVER',
         place: BEREZNYAK,
         requires: ['man-by-road-stretcher-loaded', 'man-by-road-living-rescue'],
-        gates: [],
-        produces: ['man-by-road-delivered'],
+        gates: ['HERBALIST_PRESENT'],
+        produces: ['man-by-road-delivered', 'man-by-road-resolved'],
         needsCustodyOf: 'person.sidor',
         completes: true,
+      },
+      {
+        stepId: 'deliver-on-foot-after-exile',
+        action: 'DELIVER',
+        place: BEREZNYAK,
+        requires: ['man-by-road-walking', 'man-by-road-rest-complete'],
+        gates: ['HERBALIST_EXILED'],
+        produces: [
+          'man-by-road-living-rescue',
+          'man-by-road-exile-delivery',
+          'man-by-road-resolved',
+        ],
+        needsCustodyOf: 'person.sidor',
+        resultTextKey: 'man-by-road.exile-delivery',
+        completes: true,
+        payoutPolicy: 'NO_PAYOUT',
+      },
+      {
+        stepId: 'deliver-on-stretcher-after-exile',
+        action: 'DELIVER',
+        place: BEREZNYAK,
+        requires: ['man-by-road-stretcher-loaded', 'man-by-road-living-rescue'],
+        gates: ['HERBALIST_EXILED'],
+        produces: ['man-by-road-exile-delivery', 'man-by-road-resolved'],
+        needsCustodyOf: 'person.sidor',
+        resultTextKey: 'man-by-road.exile-delivery',
+        completes: true,
+        payoutPolicy: 'NO_PAYOUT',
       },
     ],
   },
@@ -1202,10 +1235,13 @@ function isWithdrawnCustodyDelivery(
 export function ordinaryCustodyTravelLoads(
   state: OrdinaryContractState,
   companyId: string,
-): readonly { readonly personId: string; readonly travelMode: OrdinaryCustodyTravelMode }[] {
+): readonly {
+  readonly personId: string;
+  readonly travelMode?: OrdinaryCustodyTravelMode;
+}[] {
   return state.custody.flatMap((entry) =>
-    entry.companyId === companyId && entry.travelMode
-      ? [{ personId: entry.personId, travelMode: entry.travelMode }]
+    entry.companyId === companyId
+      ? [{ personId: entry.personId, ...(entry.travelMode ? { travelMode: entry.travelMode } : {}) }]
       : [],
   );
 }
@@ -1907,7 +1943,13 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         value['forbids'].every((slot) => typeof slot === 'string' && slot !== ''))) &&
     Array.isArray(value['gates']) &&
     value['gates'].every((gate) =>
-      ['DAYLIGHT', 'RAIDERS_DEFEATED', 'BEAST_DEFEATED'].includes(gate as string),
+      [
+        'DAYLIGHT',
+        'RAIDERS_DEFEATED',
+        'BEAST_DEFEATED',
+        'HERBALIST_PRESENT',
+        'HERBALIST_EXILED',
+      ].includes(gate as string),
     ) &&
     Array.isArray(value['produces']) &&
     value['produces'].every((slot) => typeof slot === 'string' && slot !== '') &&

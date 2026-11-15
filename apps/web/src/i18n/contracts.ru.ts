@@ -54,6 +54,36 @@ export const contractsRu = {
   'contract.ci.m1.cellar-rescue.01.condition.release': 'у мельницы стоит банда',
   'contract.ci.m1.cellar-rescue.01.done': 'Демьян вернулся в Тихую Гать.',
 
+  'contract.ci.m1.man-by-road.01.title': 'Человек на обочине',
+  'contract.ci.m1.man-by-road.01.issuer': 'Агафья Сушина, травница',
+  'contract.ci.m1.man-by-road.01.brief':
+    'У поворота на Березняк лежит человек. То ли подвернул ногу, то ли хуже. Приведите его ко мне.',
+  'contract.ci.m1.man-by-road.01.step.find-sidor': 'Найти Сидора на дороге к Березняку',
+  'contract.ci.m1.man-by-road.01.step.walk-with-stops': 'Вести Сидора с остановками',
+  'contract.ci.m1.man-by-road.01.step.rest-with-sidor': 'Остановиться и дать Сидору передохнуть',
+  'contract.ci.m1.man-by-road.01.step.continue-after-rest': 'Продолжить путь после отдыха',
+  'contract.ci.m1.man-by-road.01.step.fetch-stretcher': 'Сначала принести носилки',
+  'contract.ci.m1.man-by-road.01.step.load-sidor-on-stretcher': 'Положить Сидора на носилки',
+  'contract.ci.m1.man-by-road.01.step.arrive-on-foot': 'Привести Сидора к Агафье',
+  'contract.ci.m1.man-by-road.01.step.arrive-on-stretcher': 'Доставить Сидора на носилках к Агафье',
+  'contract.ci.m1.man-by-road.01.step.deliver-on-foot-after-exile':
+    'Доставить Сидора живым в Березняк',
+  'contract.ci.m1.man-by-road.01.step.deliver-on-stretcher-after-exile':
+    'Доставить Сидора живым в Березняк на носилках',
+  'contract.ci.m1.man-by-road.01.finding.find-sidor':
+    'Это бродячий торговец Сидор. Нога распухла, идти может только с опорой. Свой короб с товаром не бросает.',
+  'contract.ci.m1.man-by-road.01.condition.continue-after-rest': 'Сидор ещё отдыхает.',
+  'contract.ci.m1.man-by-road.01.condition.arrive-on-foot': 'Агафью выслали; доставьте Сидора в Березняк без неё.',
+  'contract.ci.m1.man-by-road.01.condition.arrive-on-stretcher':
+    'Агафью выслали; доставьте Сидора в Березняк без неё.',
+  'contract.ci.m1.man-by-road.01.condition.deliver-on-foot-after-exile':
+    'Агафья ещё в Березняке.',
+  'contract.ci.m1.man-by-road.01.condition.deliver-on-stretcher-after-exile':
+    'Агафья ещё в Березняке.',
+  'contract.ci.m1.man-by-road.01.result.man-by-road.exile-delivery':
+    'Агафью выслали. Сидор жив и в Березняке; за доставку вам не заплатили.',
+  'contract.ci.m1.man-by-road.01.done': 'Сидор спит у печи, обняв короб.',
+
   'contract.ci.m1.lost-scout.01.title': 'Пропавший разведчик',
   'contract.ci.m1.lost-scout.01.issuer': 'Гордей Лапа, десятник стражи',
   'contract.ci.m1.lost-scout.01.brief':
@@ -300,6 +330,7 @@ export const contractsRu = {
   'npc.local-warning-keeper.tikhaya-gat.01': 'Фрол Звонарь, смотритель Тихой Гати',
 
   'person.cellar-captive.01': 'Демьян Перевозчик',
+  'person.sidor': 'Сидор',
   'person.lost-scout.01': 'Ивашка Рябой, ранен',
   'person.mill-worker.01': 'Сенька',
   'person.ostap': 'Остап',

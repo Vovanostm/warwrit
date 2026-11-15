@@ -65,6 +65,7 @@ it('shows dates only for stale observed markers and preserves map controls and s
   const markup = renderToStaticMarkup(
     <PaintedMapCanvas
       companyId="company-1"
+      questTargets={[]}
       cartography={cartography}
       sites={cartography.sites.map(({ siteId, name }) => ({
         siteId,
@@ -102,6 +103,7 @@ it('renders a previously fetched campaign date without a tag', () => {
   const markup = renderToStaticMarkup(
     <PaintedMapCanvas
       companyId="company-1"
+      questTargets={[]}
       cartography={previous}
       sites={[]}
       current={null}

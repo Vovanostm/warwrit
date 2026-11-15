@@ -57,7 +57,13 @@ describe('foul well shared consequences', () => {
         atTick: '1000',
       },
     };
-    const gates = { DAYLIGHT: true, RAIDERS_DEFEATED: false, BEAST_DEFEATED: false };
+    const gates = {
+      DAYLIGHT: true,
+      RAIDERS_DEFEATED: false,
+      BEAST_DEFEATED: false,
+      HERBALIST_PRESENT: true,
+      HERBALIST_EXILED: false,
+    };
     const ownerView = contractView(
       profile,
       truth,

@@ -177,7 +177,13 @@ async function seedOrdinaryDelivery(
     .execute();
   const atTick = campaignTickAt(createCampaignClock(epochMs, startingTick), deliveryAtMs);
   let state: OrdinaryContractState = ordinaryContractGenesis(millWorker);
-  const gates = { DAYLIGHT: true, RAIDERS_DEFEATED: true, BEAST_DEFEATED: true } as const;
+  const gates = {
+    DAYLIGHT: true,
+    RAIDERS_DEFEATED: true,
+    BEAST_DEFEATED: true,
+    HERBALIST_PRESENT: true,
+    HERBALIST_EXILED: false,
+  } as const;
   let deliveryBody: Record<string, unknown> | undefined;
   for (const command of [
     { type: 'ACCEPT' as const },

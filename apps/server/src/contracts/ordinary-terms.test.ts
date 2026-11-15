@@ -16,7 +16,13 @@ import { contractView } from './ordinary.js';
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const issuer = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
 const bank = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
-const gates = { DAYLIGHT: true, RAIDERS_DEFEATED: false, BEAST_DEFEATED: false };
+const gates = {
+  DAYLIGHT: true,
+  RAIDERS_DEFEATED: false,
+  BEAST_DEFEATED: false,
+  HERBALIST_PRESENT: true,
+  HERBALIST_EXILED: false,
+};
 
 function acceptedState() {
   const result = prepareOrdinaryContractCommand(
@@ -700,5 +706,64 @@ describe('ordinary accepted term projection', () => {
         yourCargo: [],
       },
     );
+  });
+
+  it('keeps an accepted roadside rescue open but redirects terminal delivery after exile', () => {
+    const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
+    const bereznyak = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const present = { ...gates, HERBALIST_PRESENT: true, HERBALIST_EXILED: false };
+    const exiled = { ...gates, HERBALIST_PRESENT: false, HERBALIST_EXILED: true };
+    const genesis = ordinaryContractGenesis(roadside);
+    expect(contractView(roadside, genesis, 'company-a', bereznyak, exiled, false).canAccept).toBe(
+      false,
+    );
+
+    const accepted = prepareOrdinaryContractCommand(
+      roadside,
+      genesis,
+      { type: 'ACCEPT' },
+      {
+        companyId: 'company-a',
+        standingAt: bereznyak,
+        atTick: '10',
+        expectedRevision: genesis.revision,
+        sourceEventId: 'accept-roadside-rescue',
+        gates: present,
+      },
+    );
+    if (accepted.kind !== 'PREPARED') throw new Error('expected accepted roadside rescue');
+    const rescued = readOrdinaryContractState(roadside, {
+      ...accepted.next,
+      facts: [
+        {
+          slotId: 'man-by-road-sidor-found',
+          companyId: 'company-a',
+          sourceEventId: 'find-sidor',
+          atTick: '11',
+        },
+        {
+          slotId: 'man-by-road-walking',
+          companyId: 'company-a',
+          sourceEventId: 'take-sidor',
+          atTick: '12',
+        },
+        {
+          slotId: 'man-by-road-rest-complete',
+          companyId: 'company-a',
+          sourceEventId: 'rest-sidor',
+          atTick: '320',
+        },
+      ],
+      custody: [{ personId: 'person.sidor', companyId: 'company-a', travelMode: 'ON_FOOT' }],
+    });
+    const activeAfterExile = contractView(roadside, rescued, 'company-a', bereznyak, exiled, false);
+    expect(activeAfterExile.state).toBe('ACTIVE');
+    expect(activeAfterExile.steps.find((step) => step.stepId === 'arrive-on-foot')?.blocker).toBe(
+      'CONDITION_NOT_MET',
+    );
+    expect(
+      activeAfterExile.steps.find((step) => step.stepId === 'deliver-on-foot-after-exile')
+        ?.blocker,
+    ).toBeNull();
   });
 });

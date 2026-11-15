@@ -23,7 +23,13 @@ const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const CITY: ContractPlace = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
 const BEREZ: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
 const BANK: ContractPlace = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
-const gates = { DAYLIGHT: true, RAIDERS_DEFEATED: false, BEAST_DEFEATED: false };
+const gates = {
+  DAYLIGHT: true,
+  RAIDERS_DEFEATED: false,
+  BEAST_DEFEATED: false,
+  HERBALIST_PRESENT: true,
+  HERBALIST_EXILED: false,
+};
 
 function act(
   state: OrdinaryContractState,
@@ -598,6 +604,21 @@ describe('ordinary contract transitions', () => {
     });
   });
 
+  it('keeps all company custody available to food accounting, including guests without a travel mode', () => {
+    const state = {
+      ...ordinaryContractGenesis(profile),
+      custody: [
+        { personId: 'person.guest.01', companyId: 'company-a' },
+        { personId: 'person.sidor', companyId: 'company-a', travelMode: 'ON_FOOT' as const },
+        { personId: 'person.other-company', companyId: 'company-b' },
+      ],
+    };
+    expect(ordinaryCustodyTravelLoads(state, 'company-a')).toEqual([
+      { personId: 'person.guest.01' },
+      { personId: 'person.sidor', travelMode: 'ON_FOOT' },
+    ]);
+  });
+
   it('places Sidor on the charted Bereznyak road, reachable from Agafya on the retained map', () => {
     const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
     const target = roadside.steps[0]!.terrainTarget!;
@@ -680,6 +701,66 @@ describe('ordinary contract transitions', () => {
     const delivered = take(state, 'arrive-on-foot', '320', issuer);
     expect(delivered.custody).toEqual([]);
     expect(delivered.outcome?.kind).toBe('SUCCESS');
+  });
+
+  it('preserves accepted Sidor in custody and closes without payment after Agafya is exiled', () => {
+    const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
+    const issuer: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const target = roadside.steps[0]!.terrainTarget!;
+    const position = {
+      mapEdition: target.mapEdition,
+      xMicroFp: String(target.xFp * 65536),
+      zMicroFp: String(target.zFp * 65536),
+    };
+    const present = { ...gates, HERBALIST_PRESENT: true, HERBALIST_EXILED: false };
+    const exiled = { ...gates, HERBALIST_PRESENT: false, HERBALIST_EXILED: true };
+    const command = (
+      state: OrdinaryContractState,
+      type: 'ACCEPT' | 'STEP',
+      stepId: string | null,
+      atTick: string,
+      standingAt: ContractPlace | null,
+      worldGates = present,
+    ) =>
+      prepareOrdinaryContractCommand(
+        roadside,
+        state,
+        type === 'ACCEPT' ? { type } : { type, stepId: stepId! },
+        {
+          companyId: 'road-company',
+          standingAt,
+          terrainPosition: position,
+          atTick,
+          expectedRevision: state.revision,
+          sourceEventId: `road-${state.revision}`,
+          gates: worldGates,
+        },
+      );
+    const take = (
+      state: OrdinaryContractState,
+      stepId: string,
+      atTick: string,
+      standingAt: ContractPlace | null,
+    ) => prepared(command(state, 'STEP', stepId, atTick, standingAt)).next;
+
+    let state = prepared(
+      command(ordinaryContractGenesis(roadside), 'ACCEPT', null, '10', issuer),
+    ).next;
+    state = take(state, 'find-sidor', '11', null);
+    state = take(state, 'walk-with-stops', '12', null);
+    state = take(state, 'rest-with-sidor', '20', null);
+    state = take(state, 'continue-after-rest', '320', null);
+
+    expect(command(state, 'STEP', 'arrive-on-foot', '321', issuer, exiled)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'CONDITION_NOT_MET',
+    });
+    const delivered = command(state, 'STEP', 'deliver-on-foot-after-exile', '321', issuer, exiled);
+    expect(delivered).toMatchObject({ kind: 'PREPARED', payout: null });
+    const completed = prepared(delivered).next;
+    expect(completed.custody).toEqual([]);
+    expect(completed.outcome?.kind).toBe('SUCCESS');
+    expect(completed.facts.some((fact) => fact.slotId === 'man-by-road-exile-delivery')).toBe(true);
   });
 
   it('fetches the one stretcher at Agafya, takes Sidor into stretcher custody, and pays his finite purse once', () => {
