@@ -10,7 +10,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.missing-herbs.01'
   | 'ci.m1.cellar-rescue.01'
   | 'ci.m1.lost-scout.01'
-  | 'ci.m1.mill-worker.01';
+  | 'ci.m1.mill-worker.01'
+  | 'ci.m1.light-sack.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -29,6 +30,8 @@ export interface OrdinaryStepDefinition {
   readonly gates: readonly OrdinaryStepGate[];
   /** Source slots this step records for the acting company. */
   readonly produces: readonly string[];
+  /** Localized result shown only after this company records the observation. */
+  readonly resultTextKey?: string;
   /** A person who travels with the acting company from now on. */
   readonly takesCustodyOf?: string;
   /** Needs the acting company to hold this person; ends custody. */
@@ -264,11 +267,88 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
       },
     ],
   },
+  {
+    instanceId: 'ci.m1.light-sack.01',
+    definitionId: 'ct.m1.light-sack.measure-error.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'city-granary-clerk',
+    issuerPlace: KAMENNY_BROD,
+    walletId: 'wallet.nil-bezmen.kamenny-brod.01',
+    genesisWalletQ: CROWNS(80),
+    rewardQ: CROWNS(25),
+    steps: [
+      {
+        stepId: 'inspect-granary',
+        action: 'INSPECT',
+        place: SEVERNY_DVOR,
+        requires: [],
+        gates: [],
+        produces: ['light-sack-measure-clue'],
+        resultTextKey: 'light-sack.measure-clue',
+      },
+      {
+        stepId: 'ask-gate',
+        action: 'ASK',
+        place: KAMENNY_BROD,
+        requires: ['light-sack-dry-grain-clue'],
+        gates: [],
+        produces: ['light-sack-wet-sacks-clue'],
+        resultTextKey: 'light-sack.wet-sacks-clue',
+      },
+      {
+        stepId: 'report',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['light-sack-measure-clue'],
+        gates: [],
+        produces: ['light-sack-measure-report'],
+        resultTextKey: 'light-sack.measure-result',
+        completes: true,
+      },
+    ],
+  },
 ]);
 
 /** Keep released profile objects here when a later offer version is authored. */
-export const ORDINARY_CONTRACT_PROFILE_VERSIONS: readonly OrdinaryContractProfile[] =
-  ORDINARY_CONTRACT_PROFILES;
+const lightSackDampRyeProfile: OrdinaryContractProfile = freeze({
+  ...ORDINARY_CONTRACT_PROFILES.find((profile) => profile.instanceId === 'ci.m1.light-sack.01')!,
+  definitionId: 'ct.m1.light-sack.damp-rye.v1',
+  steps: [
+    {
+      stepId: 'inspect-granary',
+      action: 'INSPECT',
+      place: SEVERNY_DVOR,
+      requires: [],
+      gates: [],
+      produces: ['light-sack-dry-grain-clue'],
+      resultTextKey: 'light-sack.dry-grain-clue',
+    },
+    {
+      stepId: 'ask-gate',
+      action: 'ASK',
+      place: KAMENNY_BROD,
+      requires: ['light-sack-dry-grain-clue'],
+      gates: [],
+      produces: ['light-sack-wet-sacks-clue'],
+      resultTextKey: 'light-sack.wet-sacks-clue',
+    },
+    {
+      stepId: 'report',
+      action: 'REPORT',
+      place: KAMENNY_BROD,
+      requires: ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue'],
+      gates: [],
+      produces: ['light-sack-damp-rye-report'],
+      resultTextKey: 'light-sack.damp-rye-result',
+      completes: true,
+    },
+  ],
+});
+
+export const ORDINARY_CONTRACT_PROFILE_VERSIONS: readonly OrdinaryContractProfile[] = freeze([
+  ...ORDINARY_CONTRACT_PROFILES,
+  lightSackDampRyeProfile,
+]);
 
 /** The slot pairs whose presence in any company's facts unlocks the mill-beast hunt (MILL-02). */
 export const MILL_BEAST_UNLOCK_SLOTS = Object.freeze([
@@ -698,6 +778,7 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'requires',
         'gates',
         'produces',
+        'resultTextKey',
         'takesCustodyOf',
         'needsCustodyOf',
         'completes',
@@ -716,6 +797,8 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
     ) &&
     Array.isArray(value['produces']) &&
     value['produces'].every((slot) => typeof slot === 'string' && slot !== '') &&
+    (value['resultTextKey'] === undefined ||
+      (typeof value['resultTextKey'] === 'string' && value['resultTextKey'] !== '')) &&
     (value['takesCustodyOf'] === undefined ||
       (typeof value['takesCustodyOf'] === 'string' && value['takesCustodyOf'] !== '')) &&
     (value['needsCustodyOf'] === undefined ||

@@ -12,6 +12,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.raider-standard.01': 'watch',
   'ci.m1.wolf-trail.01': 'elder',
   'ci.m1.mill-beast.01': 'inn',
+  'ci.m1.light-sack.01': 'market',
 };
 
 export interface ContractVisit {
@@ -77,6 +78,8 @@ export function oldMillVisit(visit: ContractVisit, objectiveSiteId: string) {
 /** Conversations and hand-ins use a meeting point; field work stays at its real site. */
 export function ordinaryStepVenue(instanceId: string, action: string, stepId: string) {
   if (stepId === 'ask-keeper') return 'inn';
+  if (instanceId === 'ci.m1.light-sack.01' && stepId === 'inspect-granary') return 'granary';
+  if (instanceId === 'ci.m1.light-sack.01' && stepId === 'ask-gate') return 'watch';
   if (action === 'ASK' || action === 'REPORT' || action === 'DELIVER')
     return issuerBuilding(instanceId);
   return undefined;

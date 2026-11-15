@@ -1,6 +1,6 @@
 import { executeCommandTransaction } from '../db/command-transaction.js';
 import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 
 import {
   canonicalJson,
@@ -79,7 +79,14 @@ async function ensureOrdinaryGenesis(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
 ): Promise<void> {
-  for (const profile of ORDINARY_CONTRACT_PROFILES) {
+  for (const offeredProfile of ORDINARY_CONTRACT_PROFILES) {
+    const profile =
+      offeredProfile.instanceId === 'ci.m1.light-sack.01'
+        ? ordinaryContractProfileVersion(
+            offeredProfile.instanceId,
+            lightSackScenarioProfileId(worldId),
+          )!
+        : offeredProfile;
     await transaction
       .insertInto('ordinary_contracts')
       .values({
@@ -94,6 +101,14 @@ async function ensureOrdinaryGenesis(
       .onConflict((conflict) => conflict.columns(['world_id', 'instance_id']).doNothing())
       .execute();
   }
+}
+
+/** Assign the hidden cause once when this world's light-sack contract row is created. */
+export function lightSackScenarioProfileId(worldId: string): string {
+  const digest = createHash('sha256').update(worldId).digest();
+  return digest[0]! % 2 === 0
+    ? 'ct.m1.light-sack.measure-error.v1'
+    : 'ct.m1.light-sack.damp-rye.v1';
 }
 
 /** World conditions read from authoritative state; never from the client. */
@@ -160,21 +175,27 @@ export function contractView(
       state.outcome === null &&
       !battleStarted &&
       state.custody.length === 0,
-    steps: terms.steps.map((step) => ({
-      stepId: step.stepId,
-      action: step.action,
-      location: step.place,
-      doneByYou:
+    steps: terms.steps.map((step) => {
+      const doneByYou =
         companyId !== undefined &&
         step.produces.every((slotId) =>
           state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
-        ),
-      blocker:
-        companyId === undefined
-          ? 'NOT_A_PARTICIPANT'
-          : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
-      completes: step.completes === true,
-    })),
+        );
+      return {
+        stepId: step.stepId,
+        action: step.action,
+        location: step.place,
+        doneByYou,
+        ...(doneByYou && step.resultTextKey !== undefined
+          ? { findingTextKey: `contract.${profile.instanceId}.result.${step.resultTextKey}` }
+          : {}),
+        blocker:
+          companyId === undefined
+            ? 'NOT_A_PARTICIPANT'
+            : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
+        completes: step.completes === true,
+      };
+    }),
     yourCustody: state.custody
       .filter((entry) => entry.companyId === companyId)
       .map((entry) => entry.personId),

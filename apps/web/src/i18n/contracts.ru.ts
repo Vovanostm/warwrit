@@ -81,6 +81,24 @@ export const contractsRu = {
   'contract.ci.m1.mill-worker.01.condition.release': 'зверь у мельницы ещё жив',
   'contract.ci.m1.mill-worker.01.done': 'Сенька вернулся в Северный Двор.',
 
+  'contract.ci.m1.light-sack.01.title': 'Мешок легче накладной',
+  'contract.ci.m1.light-sack.01.issuer': 'Нил Безмен, городской кладовщик',
+  'contract.ci.m1.light-sack.01.brief':
+    'Каждый мешок ржи из Северного Двора на городских весах на два кило легче, чем в накладной. Узнайте почему.',
+  'contract.ci.m1.light-sack.01.step.inspect-granary': 'Осмотреть амбар Северного Двора',
+  'contract.ci.m1.light-sack.01.step.ask-gate': 'Расспросить стражу у городских ворот',
+  'contract.ci.m1.light-sack.01.step.report': 'Показать Нилу найденные улики',
+  'contract.ci.m1.light-sack.01.done': 'Нил переписал накладную по найденным уликам.',
+  'contract.ci.m1.light-sack.01.result.light-sack.measure-clue':
+    'В Северном Дворе зерно меряют старым ведром с вмятиной на боку.',
+  'contract.ci.m1.light-sack.01.result.light-sack.dry-grain-clue': 'Зерно сухое и шуршит.',
+  'contract.ci.m1.light-sack.01.result.light-sack.wet-sacks-clue':
+    'Телега пришла под дождём, мешки были мокрыми.',
+  'contract.ci.m1.light-sack.01.result.light-sack.measure-result':
+    'Нил смеётся так, что приходится утирать глаза рукавом. — Мятым ведром! Ладно, перепишу накладную.',
+  'contract.ci.m1.light-sack.01.result.light-sack.damp-rye-result':
+    'Нил растирает зерно между пальцами и нюхает. — Усушка, — говорит он. — Так сборщику и запишу. Это слово он знает.',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',

@@ -3,11 +3,14 @@ import { describe, expect, it } from 'vitest';
 import {
   ordinaryContractGenesis,
   ordinaryContractProfile,
+  ordinaryContractProfileVersion,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
   type ContractPlace,
   type OrdinaryContractState,
 } from './ordinary.js';
+import { CONTRACT_M1_CATALOGUE } from './manifest.js';
+import { validateContractCatalogue } from './validate.js';
 
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const CITY: ContractPlace = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
@@ -37,6 +40,98 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('binds the stable light-sack instance with both source-backed truth paths', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const edition = CONTRACT_M1_CATALOGUE.editions[0]!;
+    expect(
+      edition.initialInstances.find((instance) => instance.instanceId === 'ci.m1.light-sack.01')
+        ?.definitionId,
+    ).toBe('ct.m1.light-sack.measure-error.v1');
+    expect(
+      edition.initialInstances.find((instance) => instance.instanceId === 'ci.m1.light-sack.01')
+        ?.alternateDefinitionIds,
+    ).toEqual(['ct.m1.light-sack.damp-rye.v1']);
+    expect(edition.definitions.map((definition) => definition.definitionId)).toContain(
+      'ct.m1.light-sack.damp-rye.v1',
+    );
+  });
+
+  it('keeps the light-sack cause fixed in its profile and pays only for matching clues', () => {
+    const measure = ordinaryContractProfileVersion(
+      'ci.m1.light-sack.01',
+      'ct.m1.light-sack.measure-error.v1',
+    )!;
+    const damp = ordinaryContractProfileVersion(
+      'ci.m1.light-sack.01',
+      'ct.m1.light-sack.damp-rye.v1',
+    )!;
+    const farm: ContractPlace = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    const apply = (
+      activeProfile: typeof measure,
+      state: OrdinaryContractState,
+      companyId: string,
+      standingAt: ContractPlace,
+      command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+    ) =>
+      prepareOrdinaryContractCommand(activeProfile, state, command, {
+        companyId,
+        standingAt,
+        atTick: '10',
+        expectedRevision: state.revision,
+        sourceEventId: `source-${state.revision}`,
+        gates,
+      });
+    const take = (
+      activeProfile: typeof measure,
+      state: OrdinaryContractState,
+      companyId: string,
+      standingAt: ContractPlace,
+      command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+    ) => {
+      const result = apply(activeProfile, state, companyId, standingAt, command);
+      if (result.kind !== 'PREPARED') throw new Error(`expected PREPARED, got ${result.code}`);
+      return result;
+    };
+
+    let measureState = take(measure, ordinaryContractGenesis(measure), 'measure-company', CITY, {
+      type: 'ACCEPT',
+    }).next;
+    measureState = take(measure, measureState, 'measure-company', farm, {
+      type: 'STEP',
+      stepId: 'inspect-granary',
+    }).next;
+    expect(measureState.facts.map((fact) => fact.slotId)).toContain('light-sack-measure-clue');
+    expect(
+      apply(measure, measureState, 'measure-company', CITY, { type: 'STEP', stepId: 'report' }),
+    ).toMatchObject({ kind: 'PREPARED', payout: { rewardQ: '25000000' } });
+
+    let dampState = take(damp, ordinaryContractGenesis(damp), 'damp-company', CITY, {
+      type: 'ACCEPT',
+    }).next;
+    dampState = take(damp, dampState, 'damp-company', farm, {
+      type: 'STEP',
+      stepId: 'inspect-granary',
+    }).next;
+    expect(dampState.facts.map((fact) => fact.slotId)).toContain('light-sack-dry-grain-clue');
+    expect(
+      apply(damp, dampState, 'damp-company', CITY, { type: 'STEP', stepId: 'report' }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'MISSING_EVIDENCE' });
+    dampState = take(damp, dampState, 'damp-company', CITY, {
+      type: 'STEP',
+      stepId: 'ask-gate',
+    }).next;
+    expect(dampState.facts.map((fact) => fact.slotId)).toContain('light-sack-wet-sacks-clue');
+    const reloaded = readOrdinaryContractState(
+      damp,
+      JSON.parse(JSON.stringify(dampState)) as OrdinaryContractState,
+      damp.definitionId,
+    );
+    expect(reloaded.acceptedTerms?.profileId).toBe(damp.definitionId);
+    expect(
+      apply(damp, reloaded, 'damp-company', CITY, { type: 'STEP', stepId: 'report' }),
+    ).toMatchObject({ kind: 'PREPARED', payout: { rewardQ: '25000000' } });
+  });
+
   it('pays the delivering company exactly once and only for a person it holds', () => {
     let state = prepared(
       act(ordinaryContractGenesis(profile), 'owner', CITY, { type: 'ACCEPT' }),

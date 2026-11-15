@@ -48,9 +48,14 @@ const definition = (
   prerequisiteDefinitionIds,
   sceneIds,
 });
-const binding = (instanceId: string, definitionId: string): ContractInstanceBinding => ({
+const binding = (
+  instanceId: string,
+  definitionId: string,
+  alternateDefinitionIds?: readonly string[],
+): ContractInstanceBinding => ({
   instanceId,
   definitionId,
+  ...(alternateDefinitionIds ? { alternateDefinitionIds } : {}),
   definitionEdition: CONTRACT_M1_EDITION,
   terms: { status: 'UNBOUND' },
 });
@@ -88,6 +93,8 @@ const cellarRescueId = 'ct.m1.cellar-rescue.v1';
 const lostScoutId = 'ct.m1.lost-scout.v1';
 const wolfTrailId = 'ct.m1.wolf-trail.v1';
 const raiderStandardId = 'ct.m1.raider-standard.v1';
+const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
+const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -137,6 +144,24 @@ const definitions: readonly ContractDefinition[] = [
     ['missing-herbs-stock-record', 'missing-herbs-trail-observation', 'missing-herbs-report'],
     'ACCESSIBLE_OBSERVATION_SET',
     ['INVEST-02'],
+  ),
+  definition(
+    lightSackMeasureId,
+    'INVESTIGATE',
+    'city-granary-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    ['light-sack-measure-clue', 'light-sack-measure-report'],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-03-MEASURE'],
+  ),
+  definition(
+    lightSackDampRyeId,
+    'INVESTIGATE',
+    'city-granary-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue', 'light-sack-damp-rye-report'],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-03-DAMP-RYE'],
   ),
   definition(
     cellarRescueId,
@@ -211,6 +236,11 @@ const slots: ContractSourceSlot[] = [
   source('missing-herbs-stock-record', missingHerbsId, 'STOCK_RECORD'),
   source('missing-herbs-trail-observation', missingHerbsId, 'OBSERVATION'),
   source('missing-herbs-report', missingHerbsId, 'REPORT'),
+  source('light-sack-measure-clue', lightSackMeasureId, 'OBSERVATION'),
+  source('light-sack-dry-grain-clue', lightSackDampRyeId, 'OBSERVATION'),
+  source('light-sack-wet-sacks-clue', lightSackDampRyeId, 'OBSERVATION'),
+  source('light-sack-measure-report', lightSackMeasureId, 'REPORT'),
+  source('light-sack-damp-rye-report', lightSackDampRyeId, 'REPORT'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -370,6 +400,36 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-03-MEASURE',
+    lightSackMeasureId,
+    location('severny-dvor', 'severny-dvor-yard'),
+    ['light-sack-measure-clue', 'light-sack-measure-report'],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', ['light-sack-measure-clue', 'light-sack-measure-report']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
+    'INVEST-03-DAMP-RYE',
+    lightSackDampRyeId,
+    location('severny-dvor', 'severny-dvor-yard'),
+    ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue', 'light-sack-damp-rye-report'],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', [
+          'light-sack-dry-grain-clue',
+          'light-sack-wet-sacks-clue',
+          'light-sack-damp-rye-report',
+        ]),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -474,6 +534,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.mill-beast.01', millBeastId),
     binding('ci.m1.road-tracks.01', roadTracksId),
     binding('ci.m1.missing-herbs.01', missingHerbsId),
+    binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

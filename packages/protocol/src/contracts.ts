@@ -314,6 +314,8 @@ export interface OrdinaryContractDto {
     readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
     readonly location: { readonly siteId: string; readonly areaId: string };
     readonly doneByYou: boolean;
+    /** Localized clue/outcome key, present only after this company records the result. */
+    readonly findingTextKey?: string;
     /** Null when the step can be taken now; otherwise why not. */
     readonly blocker:
       | null

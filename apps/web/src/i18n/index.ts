@@ -3,7 +3,10 @@ import { ru, type MessageKey } from './ru.js';
 
 type Locale = 'ru' | 'en';
 
-const CATALOGUES: Readonly<Record<Locale, Readonly<Record<MessageKey, string>>>> = { ru, en };
+const CATALOGUES: Readonly<Record<Locale, Readonly<Partial<Record<MessageKey, string>>>>> = {
+  ru,
+  en,
+};
 const STORAGE_KEY = 'warwrit.locale';
 
 function isLocale(value: string | null | undefined): value is Locale {
@@ -36,5 +39,11 @@ function isMessageKey(key: string): key is MessageKey {
 export function lookup(key: MessageKey): string;
 export function lookup(key: string): string | undefined;
 export function lookup(key: string): string | undefined {
-  return isMessageKey(key) ? CATALOGUES[locale][key] : undefined;
+  return lookupForLocale(locale, key);
+}
+
+/** Fall back to the approved Russian source when an English translation is not authored yet. */
+export function lookupForLocale(locale: Locale, key: string): string | undefined {
+  if (!isMessageKey(key)) return undefined;
+  return CATALOGUES[locale][key] ?? ru[key];
 }

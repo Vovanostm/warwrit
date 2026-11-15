@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest';
 import {
   ordinaryContractGenesis,
   ordinaryContractProfile,
+  ordinaryContractProfileVersion,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
 } from '@warwrit/game-core';
 
-import { contractView } from './ordinary.js';
+import { contractView, lightSackScenarioProfileId } from './ordinary.js';
 
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const issuer = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
@@ -34,6 +35,62 @@ function acceptedState() {
 }
 
 describe('ordinary accepted term projection', () => {
+  it('assigns a stable per-world truth profile and supports both scenarios', () => {
+    expect(lightSackScenarioProfileId('world-0')).toBe('ct.m1.light-sack.measure-error.v1');
+    expect(lightSackScenarioProfileId('world-1')).toBe('ct.m1.light-sack.damp-rye.v1');
+    expect(lightSackScenarioProfileId('world-1')).toBe(lightSackScenarioProfileId('world-1'));
+  });
+
+  it('hides the light-sack truth until the participant records its clue', () => {
+    const profile = ordinaryContractProfileVersion(
+      'ci.m1.light-sack.01',
+      'ct.m1.light-sack.damp-rye.v1',
+    )!;
+    const farm = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    const genesis = ordinaryContractGenesis(profile);
+    const offered = contractView(profile, genesis, undefined, null, gates, false);
+    expect(offered.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+
+    const accepted = prepareOrdinaryContractCommand(
+      profile,
+      genesis,
+      { type: 'ACCEPT' },
+      {
+        companyId: 'company-a',
+        standingAt: issuer,
+        atTick: '10',
+        expectedRevision: genesis.revision,
+        sourceEventId: 'accept-light-sack',
+        gates,
+      },
+    );
+    if (accepted.kind !== 'PREPARED') throw new Error('expected accepted light-sack terms');
+    const beforeClue = contractView(profile, accepted.next, 'company-a', farm, gates, false);
+    expect(beforeClue.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+
+    const clue = prepareOrdinaryContractCommand(
+      profile,
+      accepted.next,
+      { type: 'STEP', stepId: 'inspect-granary' },
+      {
+        companyId: 'company-a',
+        standingAt: farm,
+        atTick: '11',
+        expectedRevision: accepted.next.revision,
+        sourceEventId: 'inspect-light-sack-granary',
+        gates,
+      },
+    );
+    if (clue.kind !== 'PREPARED') throw new Error('expected the granary clue');
+    const afterClue = contractView(profile, clue.next, 'company-a', farm, gates, false);
+    expect(afterClue.steps.find((step) => step.stepId === 'inspect-granary')).toMatchObject({
+      doneByYou: true,
+      findingTextKey: 'contract.ci.m1.light-sack.01.result.light-sack.dry-grain-clue',
+    });
+    const stranger = contractView(profile, clue.next, 'company-b', farm, gates, false);
+    expect(stranger.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+  });
+
   it('projects the saved terms after an offer is changed and reloads an old v1 save', () => {
     const accepted = acceptedState();
     const oldSave = structuredClone(accepted) as unknown as Record<string, unknown>;

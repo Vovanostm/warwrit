@@ -126,6 +126,38 @@ describe('contract conversation and journal boundaries', () => {
       'class="gear-action"',
     );
   });
+
+  it('shows a branch-specific result only after its source-backed observation is known', () => {
+    const lightSack: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.light-sack.01',
+      issuerRoleId: 'city-granary-clerk',
+      issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+      steps: [
+        {
+          stepId: 'inspect-granary',
+          action: 'INSPECT',
+          location: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+          doneByYou: false,
+          blocker: 'WRONG_PLACE',
+          completes: false,
+        },
+      ],
+    };
+    expect(render(lightSack, null)).not.toContain('старым ведром');
+    const observed: OrdinaryContractDto = {
+      ...lightSack,
+      steps: [
+        {
+          ...lightSack.steps[0]!,
+          doneByYou: true,
+          blocker: 'ALREADY_DONE',
+          findingTextKey: 'contract.ci.m1.light-sack.01.result.light-sack.measure-clue',
+        },
+      ],
+    };
+    expect(render(observed, null)).toContain('старым ведром с вмятиной на боку');
+  });
 });
 
 it('shows place memory only for established completion known to the company', () => {
