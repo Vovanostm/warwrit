@@ -10,6 +10,7 @@ import {
   type HuntProfile,
 } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
+import { validateFirstHuntHostileGear } from './first-hunt-gear.js';
 
 const FIRST_HUNT = huntProfile(FIRST_HUNT_INSTANCE_ID)!;
 
@@ -59,6 +60,20 @@ export interface FirstHuntHostileState {
   readonly armorCondition: number;
   readonly weaponCondition: number;
   readonly doctrine: 'aggressive';
+  /** Missing on legacy rows until a new V6 admission explicitly initializes gear. */
+  readonly gear?: FirstHuntHostileGearState;
+  /** Surrender is an outcome, independent from the hostile's living pool. */
+  readonly disposition?: 'surrendered';
+}
+
+export interface FirstHuntHostileGearState {
+  readonly schemaVersion: 1;
+  readonly sourceId: string;
+  readonly admissionId: string;
+  readonly status: 'HELD' | 'DROPPED';
+  readonly dropSourceId?: string;
+  readonly container: import('@warwrit/game-core').PhysicalContainer;
+  readonly items: readonly import('@warwrit/game-core').ItemInstance[];
 }
 
 interface HostilePoolMaximums {
@@ -239,7 +254,7 @@ export function readHuntWorldState(
   value: unknown,
 ): FirstHuntWorldState {
   if (!isRecord(value)) throw new TypeError('Hunt world state is invalid');
-  const hostiles = readHostiles(value['hostiles'], profile);
+  const hostiles = readHostiles(value['hostiles'], profile, worldId);
   const seed = Number(value['seed']);
   if (
     value['world_id'] !== worldId ||
@@ -274,6 +289,7 @@ export function readHuntWorldState(
 function readHostiles(
   value: unknown,
   profile: HuntProfile = FIRST_HUNT,
+  worldId: string,
 ): readonly FirstHuntHostileState[] {
   if (!Array.isArray(value) || value.length !== profile.hostiles.length)
     throw new TypeError('Hunt hostile state is invalid');
@@ -313,6 +329,16 @@ function readHostiles(
       !isPool(hostile['currentPools'], genesis.attributes)
     )
       throw new TypeError('Hunt hostile state does not match its retained genesis');
+    const disposition = hostile['disposition'];
+    if (
+      (disposition !== undefined && disposition !== 'surrendered') ||
+      (disposition === 'surrendered' &&
+        hostile['currentPools'] &&
+        (hostile['currentPools'] as Record<string, unknown>)['health'] === 0)
+    )
+      throw new TypeError('Hunt hostile disposition is invalid');
+    const gear = hostile['gear'];
+    if (gear !== undefined) validateFirstHuntHostileGear(worldId, profile, hostile, gear);
     byId.set(entityId, hostile as unknown as FirstHuntHostileState);
   }
   return profile.hostiles.map((entry) => byId.get(entry.entityId)!);
