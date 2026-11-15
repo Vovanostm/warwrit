@@ -1,0 +1,41 @@
+.npc-portrait {
+  display: grid;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 2px;
+  background: #292a28;
+  color: #d8c9a8;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.npc-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.npc-portrait-issuer {
+  flex-basis: 3rem;
+  width: 3rem;
+  height: 3rem;
+}
+
+.npc-portrait-fallback {
+  font-size: 0.85rem;
+}
+
+.story-line .npc-portrait {
+  margin-top: 0.1rem;
+}
+
+.first-hunt-issuer {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}

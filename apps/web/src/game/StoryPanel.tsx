@@ -8,6 +8,7 @@ import type {
 import { isStoryCommandRequest } from '@warwrit/protocol';
 import { useEffect, useState } from 'react';
 import { lookup } from '../i18n/index.js';
+import { NpcPortrait } from './NpcPortrait.js';
 import './story.css';
 
 const api = (import.meta.env['VITE_API_BASE_URL'] ?? '/api').replace(/\/$/u, '');
@@ -173,7 +174,7 @@ function lineText(sceneId: string, lineId: string): string | undefined {
   return lookup(`${mission}${sceneId}.${lineId}`);
 }
 
-function speaker(sceneId: string, lineId: string): string | undefined {
+function speakerActorId(sceneId: string, lineId: string): string | undefined {
   if (lineId === 'title' || lineId === 'brief' || lineId === 'reward' || lineId.startsWith('warn-'))
     return undefined;
   if (lineId.startsWith('journal-') || (sceneId === 'LATE' && lineId === 'moved')) return undefined;
@@ -228,7 +229,7 @@ function speaker(sceneId: string, lineId: string): string | undefined {
           ? 'SENKA'
           : 'KONDRAT';
   else if (sceneId === 'LATE') who = 'KONDRAT';
-  return lookup(`${mission}speaker.${who}`);
+  return who;
 }
 
 function choiceText(choice: StoryChoiceIdDto, story: StoryReadResponseDto): string {
@@ -482,7 +483,10 @@ export function StoryPanel(props: {
               .map((lineId, index) => {
                 const text = lineText(story.sceneId, lineId);
                 if (!text) return null;
-                const who = speaker(story.sceneId, lineId);
+                const actorId = speakerActorId(story.sceneId, lineId);
+                const who = actorId
+                  ? (lookup(`${mission}speaker.${actorId}`) ?? actorId)
+                  : undefined;
                 const warning = lineId.startsWith('warn-');
                 return (
                   <p
@@ -490,10 +494,8 @@ export function StoryPanel(props: {
                     className={`story-line${warning ? ' story-warning' : lineId.startsWith('journal-') ? ' story-public-note' : ''}`}
                     role={warning ? 'alert' : undefined}
                   >
-                    {who && (
-                      <span className="story-portrait" aria-hidden="true">
-                        {who.slice(0, 1)}
-                      </span>
+                    {actorId && actorId !== 'PLAYER' && actorId !== 'NARRATOR' && (
+                      <NpcPortrait actorId={actorId} />
                     )}
                     <span>
                       {who && <strong>{who}</strong>}
