@@ -19,6 +19,8 @@ export interface EncounterRenderProjection {
   readonly round: number;
   readonly units: readonly EncounterRenderUnit[];
   readonly map?: EncounterPublicProjectionDto['map'];
+  readonly sides?: EncounterPublicProjectionDto['sides'];
+  readonly parties?: EncounterPublicProjectionDto['parties'];
 }
 
 export interface RenderUnitDelta {
@@ -35,6 +37,7 @@ export interface RenderUnitDelta {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 const optionalUnitKeys = [
+  'partyId',
   'maximumHealth',
   'weaponId',
   'armor',
@@ -73,6 +76,11 @@ function validUnitShape(value: Record<string, unknown>): boolean {
 }
 
 function validUnitOptionalFields(value: Record<string, unknown>): boolean {
+  if (
+    Object.hasOwn(value, 'partyId') &&
+    (typeof value['partyId'] !== 'string' || value['partyId'].length === 0)
+  )
+    return false;
   if (Object.hasOwn(value, 'weaponId') && !weaponIds.includes(value['weaponId'] as string))
     return false;
   if (
@@ -149,6 +157,7 @@ function readUnit(value: unknown): EncounterPublicUnitDto | undefined {
   return Object.freeze({
     id: id as string,
     sideId: sideId as string,
+    ...(Object.hasOwn(value, 'partyId') ? { partyId: value['partyId'] as string } : {}),
     q: q as number,
     r: r as number,
     health: health as number,
@@ -215,12 +224,16 @@ const projectionKeys = [
   'turnIndex',
   'nextRoundInitiative',
   'outcome',
+  'sides',
+  'parties',
 ] as const;
 const optionalProjectionKeys = new Set([
   'initiativeOrder',
   'turnIndex',
   'nextRoundInitiative',
   'outcome',
+  'sides',
+  'parties',
 ]);
 
 function validProjectionShape(value: Record<string, unknown>): boolean {
@@ -307,6 +320,77 @@ function copyProjectionUnits(
   return Object.freeze(units);
 }
 
+function copyProjectionSides(value: unknown): EncounterPublicProjectionDto['sides'] | null {
+  if (!Array.isArray(value)) return null;
+  const sides: NonNullable<EncounterPublicProjectionDto['sides']>[number][] = [];
+  const ids = new Set<string>();
+  for (const side of value) {
+    if (
+      !isRecord(side) ||
+      Object.keys(side).length !== 2 ||
+      typeof side['id'] !== 'string' ||
+      side['id'].length === 0 ||
+      !Array.isArray(side['retreatHexes'])
+    )
+      return null;
+    const retreatHexes = readCoordinateList(side['retreatHexes'] as readonly unknown[]);
+    if (!retreatHexes || retreatHexes.length > 165 || ids.has(side['id'])) return null;
+    ids.add(side['id']);
+    sides.push(Object.freeze({ id: side['id'], retreatHexes }));
+  }
+  return Object.freeze(sides);
+}
+
+function copyProjectionParties(value: unknown): EncounterPublicProjectionDto['parties'] | null {
+  if (!Array.isArray(value)) return null;
+  const parties: NonNullable<EncounterPublicProjectionDto['parties']>[number][] = [];
+  const ids = new Set<string>();
+  for (const party of value) {
+    if (
+      !isRecord(party) ||
+      Object.keys(party).some((key) => !['id', 'sideId', 'kind', 'controllerId'].includes(key)) ||
+      !['id', 'sideId', 'kind'].every((key) => Object.hasOwn(party, key)) ||
+      typeof party['id'] !== 'string' ||
+      party['id'].length === 0 ||
+      typeof party['sideId'] !== 'string' ||
+      party['sideId'].length === 0 ||
+      !['player', 'npc'].includes(String(party['kind'])) ||
+      (Object.hasOwn(party, 'controllerId') &&
+        (typeof party['controllerId'] !== 'string' || party['controllerId'].length === 0)) ||
+      ids.has(party['id'])
+    )
+      return null;
+    ids.add(party['id']);
+    parties.push(
+      Object.freeze({
+        id: party['id'],
+        sideId: party['sideId'],
+        kind: party['kind'] as 'player' | 'npc',
+        ...(Object.hasOwn(party, 'controllerId')
+          ? { controllerId: party['controllerId'] as string }
+          : {}),
+      }),
+    );
+  }
+  return Object.freeze(parties);
+}
+
+function validPartyReferences(
+  units: readonly EncounterPublicUnitDto[],
+  sides: EncounterPublicProjectionDto['sides'],
+  parties: EncounterPublicProjectionDto['parties'],
+): boolean {
+  if (parties) {
+    const sideIds = new Set(sides?.map(({ id }) => id) ?? units.map(({ sideId }) => sideId));
+    if (parties.some(({ sideId }) => !sideIds.has(sideId))) return false;
+    const partiesById = new Map(parties.map((party) => [party.id, party]));
+    if (units.some((unit) => unit.partyId && partiesById.get(unit.partyId)?.sideId !== unit.sideId))
+      return false;
+  }
+  if (sides && units.some((unit) => !sides.some((side) => side.id === unit.sideId))) return false;
+  return true;
+}
+
 function copyProjectionOutcome(
   value: unknown,
 ): EncounterPublicProjectionDto['outcome'] | undefined {
@@ -346,6 +430,16 @@ export function readEncounterProjection(
     return undefined;
   const units = copyProjectionUnits(value['units'] as readonly unknown[]);
   if (!units) return undefined;
+  const sides = Object.hasOwn(value, 'sides') ? copyProjectionSides(value['sides']) : undefined;
+  const parties = Object.hasOwn(value, 'parties')
+    ? copyProjectionParties(value['parties'])
+    : undefined;
+  if (
+    (Object.hasOwn(value, 'sides') && !sides) ||
+    (Object.hasOwn(value, 'parties') && !parties) ||
+    !validPartyReferences(units, sides ?? undefined, parties ?? undefined)
+  )
+    return undefined;
   const outcomeValue = copyProjectionOutcome(outcome);
 
   return Object.freeze({
@@ -372,6 +466,8 @@ export function readEncounterProjection(
     ...(outcomeValue === undefined ? {} : { outcome: outcomeValue }),
     units,
     ...(map ? { map } : {}),
+    ...(sides ? { sides } : {}),
+    ...(parties ? { parties } : {}),
   });
 }
 
@@ -496,6 +592,7 @@ function copyRoomUnit(key: string, raw: unknown): Record<string, unknown> | unde
   return {
     id: raw['id'] ?? key,
     sideId: raw['sideId'],
+    ...(raw['partyId'] === undefined ? {} : { partyId: raw['partyId'] }),
     ...(raw['weaponId'] === undefined || raw['weaponId'] === ''
       ? {}
       : { weaponId: raw['weaponId'] }),
@@ -535,6 +632,29 @@ function copyRoomUnit(key: string, raw: unknown): Record<string, unknown> | unde
       : {}),
     status: raw['status'],
   };
+}
+
+function copyRoomMetadataList(value: unknown): unknown {
+  if (value === undefined) return undefined;
+  if (
+    !Array.isArray(value) &&
+    (value === null || typeof value !== 'object' || !(Symbol.iterator in value))
+  )
+    return value;
+  const entries = Array.isArray(value) ? value : Array.from(value as Iterable<unknown>);
+  return entries.map((entry) => {
+    if (!isRecord(entry)) return entry;
+    const retreatHexes = entry['retreatHexes'];
+    return {
+      ...entry,
+      ...(retreatHexes !== undefined &&
+      retreatHexes !== null &&
+      typeof retreatHexes === 'object' &&
+      Symbol.iterator in retreatHexes
+        ? { retreatHexes: Array.from(retreatHexes as Iterable<unknown>) }
+        : {}),
+    };
+  });
 }
 
 function copyRoomUnits(
@@ -597,6 +717,10 @@ export function readRoomProjection(
           }
         : {}),
       units,
+      ...(Object.hasOwn(value, 'sides') ? { sides: copyRoomMetadataList(value['sides']) } : {}),
+      ...(Object.hasOwn(value, 'parties')
+        ? { parties: copyRoomMetadataList(value['parties']) }
+        : {}),
       ...(map ? { map } : {}),
     },
     expectedEncounterId,
@@ -628,6 +752,8 @@ export function toEncounterRenderProjection(
       ),
     ),
     ...(projection.map ? { map: projection.map } : {}),
+    ...(projection.sides ? { sides: projection.sides } : {}),
+    ...(projection.parties ? { parties: projection.parties } : {}),
   });
 }
 

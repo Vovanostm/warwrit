@@ -52,7 +52,8 @@ export function toEncounterBattlePresentation(
     units: projection.units.map((unit) =>
       presentationUnit(unit, unitsById, labelForUnit, controlledIds),
     ),
-    sides: [...new Set(projection.units.map(({ sideId }) => sideId))].map((id) => ({ id })),
+    sides: encounterSides(projection),
+    ...(projection.parties ? { parties: projection.parties.map((party) => ({ ...party })) } : {}),
     activation:
       projection.activationId !== null && projection.actorUnitId !== null
         ? {
@@ -134,6 +135,17 @@ function presentationMap(projection: EncounterPublicProjectionDto) {
   };
 }
 
+function encounterSides(projection: EncounterPublicProjectionDto) {
+  const supplied = new Map((projection.sides ?? []).map((side) => [side.id, side]));
+  const ids = new Set([...supplied.keys(), ...projection.units.map(({ sideId }) => sideId)]);
+  return [...ids].map((id) => {
+    const side = supplied.get(id);
+    return side
+      ? { id: side.id, retreatHexes: side.retreatHexes.map((hex) => ({ ...hex })) }
+      : { id };
+  });
+}
+
 function presentationUnit(
   unit: EncounterPublicProjectionDto['units'][number],
   unitsById: ReadonlyMap<string, EncounterPublicProjectionDto['units'][number]>,
@@ -145,6 +157,7 @@ function presentationUnit(
     id: unit.id,
     name: labelForUnit(unit),
     sideId: unit.sideId,
+    ...(unit.partyId !== undefined ? { partyId: unit.partyId } : {}),
     position: { q: unit.q, r: unit.r },
     status: unit.status,
     visualKind: visualKind(unit, controlledIds),
