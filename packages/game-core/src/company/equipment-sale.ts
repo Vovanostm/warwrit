@@ -1,4 +1,7 @@
 import { sameLocation } from './lifecycle-state.js';
+import { activeMembership } from './lifecycle-state.js';
+import { COMPANY_CATALOGUE } from './definitions.js';
+import { canonicalJson } from './input.js';
 import type { CompanyCommand } from './commands.js';
 import type { ItemInstance } from './physical-types.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
@@ -84,8 +87,12 @@ export function prepareEquipmentSale(
   if (!item || item.tombstone !== null) return reject('INVALID_ITEM');
   if (item.owner.kind !== 'COMPANY' || item.owner.id !== root.lifecycle.companyId)
     return reject('ITEM_NOT_OWNED');
+  if (!Object.hasOwn(SALE_PRICES_Q, item.definitionId)) return reject('UNSALEABLE_ITEM');
+  const definition = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === item.definitionId && entry.enabled,
+  );
   const price = SALE_PRICES_Q[item.definitionId];
-  if (price === undefined || item.quantity !== 1) return reject('UNSALEABLE_ITEM');
+  if (!definition || price === undefined || item.quantity !== 1) return reject('UNSALEABLE_ITEM');
   const container = root.physical.containers.find(
     (entry) => entry.containerId === item.containerId && entry.closed === null,
   );
@@ -105,11 +112,28 @@ export function prepareEquipmentSale(
           person.presence.encounterBindingId === null &&
           sameLocation(person.presence.location, party.location),
       ));
+  const localCompanyCharacterCustodian =
+    container.custodian.kind === 'CHARACTER' &&
+    activeMembership(root.lifecycle, container.custodian.id) !== null &&
+    root.lifecycle.characters.some(
+      (person) =>
+        person.identity.characterId === container.custodian.id &&
+        person.presence.fieldPartyId === party.partyId &&
+        person.presence.availability === 'AVAILABLE' &&
+        person.presence.encounterBindingId === null &&
+        sameLocation(person.presence.location, party.location),
+    );
   const companyAccessible =
-    container.access === 'COMPANY' ||
-    (container.access === 'OWNER' && (container.custodian.kind === 'COMPANY' || carriedByParty)) ||
+    (container.access === 'COMPANY' &&
+      container.custodian.kind === 'COMPANY' &&
+      container.custodian.id === root.lifecycle.companyId) ||
+    (container.access === 'OWNER' &&
+      canonicalJson(container.custodian) === canonicalJson(item.owner)) ||
     (container.access === 'CUSTODIAN' &&
-      (container.custodian.kind === 'COMPANY' || carriedByParty));
+      ((container.custodian.kind === 'COMPANY' &&
+        container.custodian.id === root.lifecycle.companyId) ||
+        localCompanyCharacterCustodian ||
+        carriedByParty));
   if ((!atMarket && !carriedByParty) || !companyAccessible)
     return reject('CONTACT_OR_ACCESS_REQUIRED');
 
