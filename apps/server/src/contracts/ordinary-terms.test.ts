@@ -205,7 +205,10 @@ describe('ordinary accepted term projection', () => {
       return contractView(emptyWatch, state, viewer, issuer, gates, false);
     };
 
-    expect(projectOutcome('empty-watch-sack-handed-over', 'company-a').completedByYou).toBe(true);
+    expect(projectOutcome('empty-watch-sack-handed-over', 'company-a')).toMatchObject({
+      completedByYou: true,
+      terminalPayout: 'PAID',
+    });
     expect(projectOutcome('empty-watch-sack-handed-over').publicConsequences).toEqual({
       kind: 'EMPTY_WATCH_RECORD',
       refugeeCamp: 'REMOVED',
@@ -218,7 +221,11 @@ describe('ordinary accepted term projection', () => {
       watchman: 'ON_DUTY',
     });
     expect(spared.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
-    expect(projectOutcome('empty-watch-proof-destroyed', 'company-a').completedByYou).toBe(false);
+    expect(spared).toMatchObject({ completedByYou: false, terminalPayout: 'NO_PAYOUT' });
+    expect(projectOutcome('empty-watch-proof-destroyed', 'company-a')).toMatchObject({
+      completedByYou: false,
+      terminalPayout: 'NO_PAYOUT',
+    });
   });
 
   it('projects the saved terms after an offer is changed and reloads an old v1 save', () => {

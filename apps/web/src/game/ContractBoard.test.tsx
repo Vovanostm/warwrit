@@ -61,6 +61,29 @@ function render(
 }
 
 describe('contract conversation and journal boundaries', () => {
+  it('says a no-payout ending paid nobody for both the owner and other companies', () => {
+    const resolvedWithoutPayout: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.empty-watch-record.01',
+      issuerRoleId: 'city-notice-clerk',
+      issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+      state: 'COMPLETED',
+      terminalPayout: 'NO_PAYOUT',
+      completedByYou: false,
+    };
+
+    for (const yourRole of ['OWNER', 'NONE'] as const) {
+      const markup = render(
+        { ...resolvedWithoutPayout, yourRole },
+        { siteId: 'kamenny-brod', building: 'market' },
+        'kamenny-brod',
+      );
+      expect(markup).toContain('выполнен без выплаты');
+      expect(markup).not.toContain('оплачен вам');
+      expect(markup).not.toContain('оплачен другой компании');
+    }
+  });
+
   it('shows a local lead outside a conversation and fixed terms only at its issuer', () => {
     const offered = {
       ...herbs,

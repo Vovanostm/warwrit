@@ -90,7 +90,9 @@ Evidence stays company-private. After resolution, the shared contract board and
 town visit show the camp and watchman status. The no-payment ending grants only
 the acting company an approximate atlas marker at Каменный Брод; the testimony
 does not establish exact ford geography or a route benefit. The return report
-shows either ending to that company. Report cursor details are in
+shows either ending to that company. The board derives the ending's payout
+status from its frozen accepted terms and explicitly says when no reward was
+paid, for both the owner and other companies. Report cursor details are in
 [M1-OFFLINE-REPORT](M1-OFFLINE-REPORT.md#same-tick-contract-outcome-cursor--2026-11-15).
 
 Focused game-core, protocol, server and web consumer tests passed before the
@@ -98,7 +100,9 @@ same-tick cursor correction. After that correction, server typecheck and 8
 return-report unit tests passed; the focused PostgreSQL return-report API case
 passed 1/1 in a disposable clone with migration 0029 applied. Scoped ESLint,
 Prettier, migration guard and `git diff --check` passed. The full web typecheck
-still reports four existing `EquipmentTrader.tsx` DTO mismatches. Normal in-game
-playthrough, native player acceptance and remaining quest checks are NOT_RUN;
+still reports four existing `EquipmentTrader.tsx` DTO mismatches; this follow-up
+passed focused contract projection and board tests (14/14), including paid and
+no-payment labels. Normal in-game playthrough, native player acceptance and
+remaining quest checks are NOT_RUN;
 broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
 merge are NOT_RUN.

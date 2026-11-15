@@ -156,6 +156,10 @@ export function contractView(
       fact.sourceEventId === state.outcome?.sourceEventId &&
       fact.atTick === state.outcome?.atTick,
   );
+  const terminalStep =
+    terminalFact === undefined
+      ? undefined
+      : terms.steps.find((step) => step.produces.includes(terminalFact.slotId));
   const emptyWatchPublicConsequences =
     profile.instanceId === 'ci.m1.empty-watch-record.01' &&
     terminalFact?.slotId === 'empty-watch-sack-handed-over'
@@ -185,7 +189,10 @@ export function contractView(
     completedByYou:
       state.outcome !== null &&
       state.outcome.companyId === companyId &&
-      terminalFact?.slotId !== 'empty-watch-proof-destroyed',
+      terminalStep?.payoutPolicy !== 'NO_PAYOUT',
+    ...(terminalStep
+      ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
+      : {}),
     ...(emptyWatchPublicConsequences ? { publicConsequences: emptyWatchPublicConsequences } : {}),
     canAccept:
       companyId !== undefined &&

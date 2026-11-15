@@ -306,6 +306,8 @@ export interface OrdinaryContractDto {
   readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED';
   /** True when the viewer's company received a reward for completing this contract. */
   readonly completedByYou: boolean;
+  /** Actual payout policy for the recorded terminal step. */
+  readonly terminalPayout?: 'PAID' | 'NO_PAYOUT';
   /** Public only after a terminal choice has been recorded in the shared world contract. */
   readonly publicConsequences?: {
     readonly kind: 'EMPTY_WATCH_RECORD';

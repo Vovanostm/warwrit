@@ -163,7 +163,11 @@ export function ContractConversation(props: ConversationProps) {
         {issuer}, {siteName(contract.issuerLocation.siteId)}
         {{ OWNER: ' · ваш контракт', HELPER: ' · вы помогаете', NONE: '' }[contract.yourRole]}
         {contract.state === 'COMPLETED' &&
-          (contract.completedByYou ? ' · выполнен, оплачен вам' : ' · выполнен')}
+          (contract.terminalPayout === 'NO_PAYOUT'
+            ? ' · выполнен без выплаты'
+            : contract.completedByYou
+              ? ' · выполнен, оплачен вам'
+              : ' · выполнен')}
       </p>
       {atIssuer ? (
         <>
