@@ -5,6 +5,7 @@ import { ItemTransferPanel } from './ItemTransferPanel.js';
 import { PayrollPanel } from './PayrollPanel.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
 import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
+import { RetrainingPanel } from './RetrainingPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
@@ -173,6 +174,13 @@ export function CompanyPanel(props: {
             {...(props.refreshMessage === undefined
               ? {}
               : { refreshMessage: props.refreshMessage })}
+          />
+          <RetrainingPanel
+            key={`retraining:${props.accountId}:${company.companyId}`}
+            accountId={props.accountId}
+            company={company}
+            ticksPerDay={props.ticksPerDay}
+            onRefresh={props.onRefreshItems}
           />
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (
