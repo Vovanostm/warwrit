@@ -135,6 +135,29 @@ it('keeps public observations honest and links only a matching owned quote', () 
   expect(view.events).toBeUndefined();
 });
 
+it('preserves campaign side exits, party controller metadata, and unit grouping', () => {
+  const publicProjection: EncounterPublicProjectionDto = {
+    ...projection,
+    sides: [
+      { id: 'companies', retreatHexes: [{ q: 0, r: 0 }] },
+      { id: 'wolves', retreatHexes: [{ q: 1, r: 0 }] },
+      { id: 'bandits', retreatHexes: [{ q: 2, r: 0 }] },
+    ],
+    parties: [
+      { id: 'company-party', sideId: 'companies', kind: 'player', controllerId: 'account-a' },
+      { id: 'wolf-pack', sideId: 'wolves', kind: 'npc', controllerId: 'wolf-ai' },
+    ],
+    units: projection.units.map((unit, index) => ({
+      ...unit,
+      partyId: index ? 'wolf-pack' : 'company-party',
+    })),
+  };
+  const view = toEncounterBattlePresentation(publicProjection, grant(), label);
+  expect(view.sides?.find((side) => side.id === 'bandits')?.retreatHexes).toEqual([{ q: 2, r: 0 }]);
+  expect(view.parties).toEqual(publicProjection.parties);
+  expect(view.units.map((unit) => unit.partyId)).toEqual(['company-party', 'wolf-pack']);
+});
+
 it('retains the public actor identity but removes private quotes from stale grants', () => {
   const view = toEncounterBattlePresentation(projection, grant(projection.revision - 1), label);
   expect(view.activation).toEqual({ id: 'activation-8', actorId: 'company.fists' });
@@ -195,14 +218,19 @@ it('keeps lab-only provenance on lab views while persistent views use their own 
     scenarioId: 'combat-lab',
     map: { name: 'Test field', hexes: [], blocked: [] },
     controlledSideId: 'human',
+    controlledUnitIds: ['trusted-unit-only'],
     viewRevision: 1,
     status: 'active',
     round: 1,
-    units: [],
+    parties: [{ id: 'party-a', sideId: 'human', kind: 'player', controllerId: 'account-a' }],
+    units: [{ id: 'trusted-unit-only', partyId: 'party-a', sideId: 'human' }],
     activation: null,
     events: [],
   } as never);
   expect(lab.sourceNote).toContain('без сохранения кампании');
+  expect(lab.controlledUnitIds).toEqual(['trusted-unit-only']);
+  expect(lab.parties?.[0]?.controllerId).toBe('account-a');
+  expect(lab.units[0]?.partyId).toBe('party-a');
   expect(toEncounterBattlePresentation(projection, undefined, label)).not.toHaveProperty(
     'sourceNote',
   );

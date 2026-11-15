@@ -96,9 +96,18 @@ export function fromCombatLabView(view: CombatLabView): BattlePresentationView {
     label: view.map.name ?? view.battle?.map.name ?? 'Бой',
     sceneEnvironment: 'old-mill',
     sourceNote: '15 × 11 гексов · без сохранения кампании',
-    controlledUnitIds: view.units
-      .filter((unit) => unit.sideId === view.controlledSideId)
-      .map((unit) => unit.id),
+    controlledUnitIds: view.controlledUnitIds
+      ? [...view.controlledUnitIds]
+      : view.units.filter((unit) => unit.sideId === view.controlledSideId).map((unit) => unit.id),
+    ...(view.sides
+      ? {
+          sides: view.sides.map((side) => ({
+            ...side,
+            retreatHexes: side.retreatHexes.map((hex) => ({ ...hex })),
+          })),
+        }
+      : {}),
+    ...(view.parties ? { parties: view.parties.map((party) => ({ ...party })) } : {}),
     viewerSideKnown: true,
     units: view.units.map((unit) => ({
       ...unit,

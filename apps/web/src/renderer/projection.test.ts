@@ -114,6 +114,124 @@ describe('encounter projection boundary', () => {
     ).toBeUndefined();
   });
 
+  it('copies multiside party and retreat metadata into detached public and render projections', () => {
+    const source = {
+      ...activeProjection(),
+      sides: [
+        { id: 'side-a', retreatHexes: [{ q: 0, r: 0 }] },
+        { id: 'side-b', retreatHexes: [{ q: 14, r: 10 }] },
+      ],
+      parties: [
+        { id: 'party-a', sideId: 'side-a', kind: 'player', controllerId: 'account-a' },
+        { id: 'party-b', sideId: 'side-b', kind: 'npc', controllerId: 'ai-b' },
+      ],
+      units: [
+        {
+          id: 'unit-a',
+          sideId: 'side-a',
+          partyId: 'party-a',
+          q: 0,
+          r: 0,
+          health: 10,
+          status: 'active',
+        },
+        {
+          id: 'unit-b',
+          sideId: 'side-b',
+          partyId: 'party-b',
+          q: 1,
+          r: 0,
+          health: 8,
+          status: 'active',
+        },
+      ],
+    };
+    const projection = readEncounterProjection(source)!;
+    const render = toEncounterRenderProjection(projection);
+
+    expect(projection.units[0]?.partyId).toBe('party-a');
+    expect(projection.parties?.[1]?.controllerId).toBe('ai-b');
+    expect(render.sides?.[1]?.retreatHexes).toEqual([{ q: 14, r: 10 }]);
+    expect(render.parties).toEqual(projection.parties);
+    expect(Object.isFrozen(projection.sides)).toBe(true);
+    expect(Object.isFrozen(projection.sides?.[0]?.retreatHexes)).toBe(true);
+    source.sides[0]!.retreatHexes[0]!.q = 4;
+    source.parties[0]!.controllerId = 'changed';
+    expect(projection.sides?.[0]?.retreatHexes[0]?.q).toBe(0);
+    expect(projection.parties?.[0]?.controllerId).toBe('account-a');
+
+    expect(
+      readEncounterProjection({
+        ...source,
+        parties: [{ id: 'party-a', sideId: 'side-a', kind: 'player', extra: true }],
+      }),
+    ).toBeUndefined();
+    expect(
+      readEncounterProjection({
+        ...source,
+        parties: [{ id: 'party-a', sideId: 'side-b', kind: 'player' }],
+      }),
+    ).toBeUndefined();
+    expect(
+      readEncounterProjection({
+        ...source,
+        units: [{ ...source.units[0], partyId: 5 }, source.units[1]],
+      }),
+    ).toBeUndefined();
+  });
+
+  it('copies party metadata from iterable room collections', () => {
+    class Iterable<T> {
+      constructor(private readonly values: readonly T[]) {}
+      *[Symbol.iterator]() {
+        yield* this.values;
+      }
+    }
+    const projection = readRoomProjection(
+      {
+        ...activeProjection(),
+        units: new Map([
+          [
+            'unit-a',
+            {
+              id: 'unit-a',
+              sideId: 'side-a',
+              partyId: 'party-a',
+              q: 0,
+              r: 0,
+              health: 10,
+              status: 'active',
+            },
+          ],
+          [
+            'unit-b',
+            {
+              id: 'unit-b',
+              sideId: 'side-b',
+              partyId: 'party-b',
+              q: 1,
+              r: 0,
+              health: 8,
+              status: 'active',
+            },
+          ],
+        ]),
+        sides: new Iterable([
+          { id: 'side-a', retreatHexes: new Iterable([{ q: 0, r: 0 }]) },
+          { id: 'side-b', retreatHexes: new Iterable([{ q: 14, r: 10 }]) },
+        ]),
+        parties: new Iterable([
+          { id: 'party-a', sideId: 'side-a', kind: 'player', controllerId: 'account-a' },
+          { id: 'party-b', sideId: 'side-b', kind: 'npc', controllerId: 'ai-b' },
+        ]),
+      },
+      'encounter-1',
+    );
+    expect(projection?.units[0]?.partyId).toBe('party-a');
+    expect(projection?.sides?.[1]?.retreatHexes).toEqual([{ q: 14, r: 10 }]);
+    expect(projection?.parties?.[1]?.controllerId).toBe('ai-b');
+  });
+
   it('copies reflected Colyseus maps and converts positions without fixture assumptions', () => {
     const reflected = {
       version: 1,
