@@ -46,6 +46,8 @@ import type {
   WorldFreeMovementV2RejectionDto,
 } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
+import { prepareCourseInterruption } from '../company/courses.js';
+import { prepareStationaryFoodFacts } from '../company/travel-food.js';
 import { resolveSessionAccount } from '../auth/session.js';
 import {
   findOwnedCompanyId,
@@ -831,19 +833,38 @@ export async function executeContinuousMovement(
     if (
       !party ||
       state.encounter.active ||
-      state.learning.tasks.tasks.some((t) => !t.stop && !t.terminal) ||
       state.economy.finance.maintenance.some((m) => m.kind === 'FIELD_CAMP' && m.endedAt === null)
     )
       throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
     const row = await readPartyRoute(tx, worldId, companyId, party.partyId, true);
     if (input.expectedMovementEpoch !== (row?.route_epoch ?? '0'))
       throw new MovementRejection('STALE_MOVEMENT_EPOCH');
-    const clock = await readWorldClock(tx, worldId, movementNow(now), true),
-      settled = prepareDueContinuousMovement(state, row, clock, input.commandId, region);
+    const clock = await readWorldClock(tx, worldId, movementNow(now), true);
+    let movementState = state;
+    const courseEvents: Readonly<object>[] = [];
+    if (
+      input.action.kind === 'MOVE_TO' &&
+      state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal)
+    ) {
+      const food = prepareStationaryFoodFacts(state, clock.tick, input.commandId);
+      if (food.kind !== 'PREPARED') throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
+      const interruption = prepareCourseInterruption({
+        state,
+        commandId: `course-movement-stop-${input.commandId}`,
+        sourceEventId: `course-movement-stop-event-${input.commandId}`,
+        atTick: clock.tick,
+        reason: 'PREREQUISITES',
+        physicalFacts: food.facts,
+      });
+      if (interruption.kind !== 'PREPARED') throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
+      movementState = interruption.next;
+      courseEvents.push(...interruption.events);
+    }
+    const settled = prepareDueContinuousMovement(movementState, row, clock, input.commandId, region);
     let current = settled.state,
       stored = settled.stored,
       epoch = settled.epoch;
-    const events = [...settled.events];
+    const events = [...courseEvents, ...settled.events];
     const prior = stored?.status === 'MOVING' ? stored.execution : null;
     if (input.action.kind === 'STOP' && !prior) {
       const response = responseFor(current, stored, epoch, clock, input.commandId, region);

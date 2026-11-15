@@ -1,5 +1,8 @@
 import type { EconomyResult } from '@warwrit/game-core';
+import type { CompanyEconomyWithLearningResult } from '@warwrit/game-core';
+import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
+import { KAMENNY_BROD_GUARD_COURSE } from './courses.js';
 
 type OrdinaryRequest = Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'BuySupplies' }>;
 type PreparedEconomy = Extract<EconomyResult, { kind: 'PREPARED' }>;
@@ -104,6 +107,26 @@ export function ordinaryCommandIntent(
           fundingPoolId: ids.assignmentFundingPoolId,
         },
       };
+    case 'StartLearning':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          methodId: 'funded-practice',
+          goal: {
+            skillId: KAMENNY_BROD_GUARD_COURSE.skillId,
+            maxTicks: KAMENNY_BROD_GUARD_COURSE.durationTicks,
+          },
+          resourceIds: [...request.payload.resourceIds],
+          budgetPoolId: 'local',
+          maxBudgetQ: '15000000',
+        },
+      };
+    case 'StopLearning':
+      return {
+        type: request.type,
+        payload: { taskId: request.payload.taskId, reason: 'PLAYER' },
+      };
     default:
       return fieldCampIntent(request, ids);
   }
@@ -198,9 +221,56 @@ function requestedEffectPresent(
     case 'RenameCompany':
     case 'ChoosePerk':
       return lifecycleChanged(prepared);
+    case 'StartLearning':
+    case 'StopLearning':
+      return false;
     default:
       return fieldCampChanged(request, prepared, ids);
   }
+}
+
+export function ordinaryLearningCommandSucceeded(
+  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StopLearning' }>,
+  prepared: CompanyEconomyWithLearningResult,
+): boolean {
+  if (
+    prepared.kind !== 'PREPARED' ||
+    prepared.replayed ||
+    prepared.receipt.requirements.length !== 0
+  )
+    return false;
+  return request.type === 'StartLearning'
+    ? prepared.next.learning.tasks.tasks.some(
+        (task) =>
+          task.start.command.commandId === request.commandId &&
+          task.start.inputs?.kind === 'COURSE' &&
+          !task.stop &&
+          !task.terminal,
+      )
+    : prepared.next.learning.tasks.tasks.some(
+        (task) =>
+          task.start.taskId === request.payload.taskId &&
+          task.stop?.commandId === request.commandId,
+      );
+}
+
+export function ordinaryLearningStateSatisfies(
+  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StopLearning' }>,
+  state: CompanyCombatAggregateState,
+): boolean {
+  return request.type === 'StartLearning'
+    ? state.learning.tasks.tasks.some(
+        (task) =>
+          task.start.command.commandId === request.commandId &&
+          task.start.inputs?.kind === 'COURSE' &&
+          !task.stop &&
+          !task.terminal,
+      )
+    : state.learning.tasks.tasks.some(
+        (task) =>
+          task.start.taskId === request.payload.taskId &&
+          task.stop?.commandId === request.commandId,
+      );
 }
 
 function paymentCompleted(

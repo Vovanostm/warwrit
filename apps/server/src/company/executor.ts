@@ -6,7 +6,11 @@ import {
 import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
 import { readCarriedSupplyPurse } from './supplies.js';
-import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
+import {
+  ordinaryCommandIntent,
+  ordinaryCommandSucceeded,
+  ordinaryLearningStateSatisfies,
+} from './ordinary-command.js';
 import { observeLocalPayees } from './payroll-observation.js';
 import { payrollCommandIntent } from './payroll-intent.js';
 import type { PayrollRequest } from './payroll-intent.js';
@@ -35,6 +39,7 @@ import {
   companySourceKey,
   parseCompanyCommand,
   prepareCompanyEconomy,
+  prepareCompanyEconomyWithLearning,
   preparePartyTravelArrival,
   preparePartyTravelDeparture,
   prepareFreeMovementStart,
@@ -86,6 +91,20 @@ import {
 import type { TravelFoodRouteBoundary } from './travel-food.js';
 import { readWorldClock } from '../world/clock.js';
 import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
+import {
+  KAMENNY_BROD_GUARD_COURSE,
+  courseCauseManifest,
+  courseMoneyAccess,
+  courseProviderWalletId,
+  courseResourceIds,
+  courseSourceForStart,
+  courseTimeInterval,
+  ensureCourseProvider,
+  learningSourceForCourseTask,
+  prepareCourseAdvance,
+  prepareCourseInterruption,
+  prepareCourseStop,
+} from './courses.js';
 
 const preparedCompanyCommand: unique symbol = Symbol('prepared-company-command');
 const worldRequestKeyFields = ['commandId', 'companyId', 'kind', 'requestKey', 'worldId'];
@@ -207,8 +226,9 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     response: { commandId: input.request.commandId, ok: false, publicRevision: revision, code },
   });
 
-  if (!input.expectedCompanyId || input.requestKey !== canonicalJson(input.request))
+  if (!input.expectedCompanyId || input.requestKey !== canonicalJson(input.request)) {
     return rejectRequest('INVALID_COMMAND', '0', 400);
+  }
 
   const account = await input.transaction
     .selectFrom('identity_accounts')
@@ -259,7 +279,9 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'TransferItem' &&
     input.request.type !== 'BeginFieldCamp' &&
     input.request.type !== 'EndFieldCamp' &&
-    input.request.type !== 'SetAssignment'
+    input.request.type !== 'SetAssignment' &&
+    input.request.type !== 'StartLearning' &&
+    input.request.type !== 'StopLearning'
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -273,6 +295,34 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         true,
       )
     : undefined;
+  let courseInterruptionEvents: readonly Readonly<object>[] = [];
+  let courseInterruptedBeforeMovement = false;
+  if (
+    input.request.type !== 'StartLearning' &&
+    input.request.type !== 'StopLearning' &&
+    state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal)
+  ) {
+    const food = prepareStationaryFoodFacts(state, clock.tick, input.request.commandId);
+    if (food.kind !== 'PREPARED')
+      return rejectRequest(
+        food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
+        lifecycle.knowledge.revision,
+      );
+    const interruption = prepareCourseInterruption({
+      state,
+      commandId: `course-interruption-${input.request.commandId}`,
+      sourceEventId: `course-interruption-event-${input.request.commandId}`,
+      atTick: clock.tick,
+      reason: 'PREREQUISITES',
+      physicalFacts: food.facts,
+    });
+    if (interruption.kind !== 'PREPARED')
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    state = interruption.next;
+    lifecycle = state.economy.lifecycle;
+    courseInterruptionEvents = interruption.events;
+    courseInterruptedBeforeMovement = true;
+  }
   const due = prepareDueContinuousMovement(state, route, clock, input.request.commandId);
   state = due.state;
   lifecycle = state.economy.lifecycle;
@@ -282,6 +332,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       (party) => party.location.kind === 'TRANSIT' || party.location.kind === 'MOVING',
     ) ||
     (BigInt(clock.tick) > BigInt(lifecycle.campaignTick) &&
+      input.request.type !== 'StopLearning' &&
       state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
@@ -361,7 +412,43 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
       lifecycle.knowledge.revision,
     );
-  const foodFacts = food.facts;
+  let foodFacts = courseInterruptedBeforeMovement ? [] : food.facts;
+
+  let courseStart:
+    | { readonly walletId: string; readonly accessEvidenceId: string }
+    | undefined;
+  if (input.request.type === 'StartLearning') {
+    const location = KAMENNY_BROD_GUARD_COURSE.location;
+    const offeredResources = courseResourceIds(state);
+    const requestedResources = input.request.payload.resourceIds;
+    const activeLearning = state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal);
+    if (
+      input.request.payload.courseId !== KAMENNY_BROD_GUARD_COURSE.id ||
+      activeLearning ||
+      party?.location.kind !== 'AT' ||
+      party.location.siteId !== location.siteId ||
+      party.location.areaId !== location.areaId ||
+      localCompanyContacts(state, companyId, location).length === 0 ||
+      requestedResources.length === 0 ||
+      new Set(requestedResources).size !== requestedResources.length ||
+      requestedResources.some((itemId) => !offeredResources.includes(itemId))
+    )
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    state = ensureCourseProvider(state);
+    lifecycle = state.economy.lifecycle;
+    const walletId = courseProviderWalletId(input.worldId, companyId);
+    const accessEvidenceId = `course-access-${input.request.commandId}`;
+    const access = courseMoneyAccess({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      evidenceId: accessEvidenceId,
+      recipientWalletIds: [walletId],
+    });
+    if (!access) return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    courseStart = { walletId, accessEvidenceId };
+  }
 
   if (input.request.type === 'PayClaims')
     return executePayrollPayment({
@@ -376,6 +463,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       due,
       atTick: clock.tick,
       foodFacts,
+      courseEvents: courseInterruptionEvents,
     });
 
   if (input.request.type === 'BuySupplies') {
@@ -481,6 +569,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
           resultingRevision: next.economy.lifecycle.revision,
         },
         auditEvents: [
+          ...courseInterruptionEvents.map((event) => ({
+            eventId: randomUUID(),
+            revision: next.economy.lifecycle.revision,
+            event,
+          })),
           ...due.events.map((event) => ({
             eventId: randomUUID(),
             revision: next.economy.lifecycle.revision,
@@ -700,6 +793,83 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     ],
     practiceFacts: [],
   };
+  if (input.request.type === 'StartLearning') {
+    if (parsed.command.type !== 'StartLearning' || !courseStart)
+      return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
+    const access = courseMoneyAccess({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      evidenceId: courseStart.accessEvidenceId,
+      recipientWalletIds: [courseStart.walletId],
+    });
+    if (!access) return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    const source = courseSourceForStart({
+      command: parsed.command,
+      revision: lifecycle.revision,
+      providerWalletId: courseStart.walletId,
+      accessEvidenceId: courseStart.accessEvidenceId,
+    });
+    const courseContext = {
+      ...context,
+      contactIds: [
+        ...localCompanyContacts(state, companyId, source.location),
+        source.providerId!,
+        source.learnerId,
+      ],
+      financeFacts: [...context.financeFacts, access],
+      learningFacts: [source],
+    };
+    const prepared = prepareCompanyEconomyWithLearning(
+      { economy: state.economy, learning: state.learning },
+      parsed.command,
+      courseContext,
+      {
+        taskId: `learning-${input.request.commandId}`,
+        effectId: `course-start-${input.request.commandId}`,
+        intervals: [],
+      },
+    );
+    if (prepared.kind !== 'PREPARED')
+      return rejectRequest(mapDomainError(prepared.error), lifecycle.knowledge.revision);
+    const nextState = readCompanyCombatAggregateState({
+      ...state,
+      economy: prepared.next.economy,
+      learning: prepared.next.learning,
+    });
+    return commitOrdinaryCourseCommand({
+      transaction: input.transaction,
+      previousRevision: previousLifecycle.revision,
+      request: input.request,
+      requestKey: input.requestKey,
+      command: parsed.command,
+      state: nextState,
+      events: prepared.receipt.events,
+      due,
+    });
+  }
+  if (input.request.type === 'StopLearning') {
+    if (parsed.command.type !== 'StopLearning')
+      return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
+    const prepared = prepareCourseStop({
+      state,
+      command: parsed.command,
+      physicalFacts: context.physicalFacts,
+    });
+    if (prepared.kind !== 'PREPARED')
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    return commitOrdinaryCourseCommand({
+      transaction: input.transaction,
+      previousRevision: previousLifecycle.revision,
+      request: input.request,
+      requestKey: input.requestKey,
+      command: parsed.command,
+      state: prepared.next,
+      events: prepared.events,
+      due,
+    });
+  }
   const prepared = prepareCompanyEconomy(state.economy, parsed.command, context);
   if (prepared.kind !== 'PREPARED')
     return rejectRequest(mapDomainError(prepared.error), lifecycle.knowledge.revision);
@@ -746,6 +916,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
         resultingRevision: nextLifecycle.revision,
       },
       auditEvents: [
+        ...courseInterruptionEvents.map((event) => ({
+          eventId: randomUUID(),
+          revision: nextLifecycle.revision,
+          event,
+        })),
         ...due.events.map((event) => ({
           eventId: randomUUID(),
           revision: nextLifecycle.revision,
@@ -828,6 +1003,78 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   return { kind: 'COMMITTED', response };
 }
 
+async function commitOrdinaryCourseCommand(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly previousRevision: string;
+  readonly request: Extract<OrdinaryPlayerCompanyCommandV2Dto, { type: 'StartLearning' | 'StopLearning' }>;
+  readonly requestKey: string;
+  readonly command: Extract<CompanyCommand, { type: 'StartLearning' | 'StopLearning' }>;
+  readonly state: CompanyCombatAggregateState;
+  readonly events: readonly Readonly<object>[];
+  readonly due: ReturnType<typeof prepareDueContinuousMovement>;
+}): Promise<OrdinaryCompanyCommandExecution> {
+  const lifecycle = input.state.economy.lifecycle;
+  if (!ordinaryLearningStateSatisfies(input.request, input.state))
+    return {
+      kind: 'REJECTED',
+      statusCode: 409,
+      response: {
+        commandId: input.request.commandId,
+        ok: false,
+        publicRevision: lifecycle.knowledge.revision,
+        code: 'UNSUPPORTED_ACTION',
+      },
+    };
+  const sourceKey = companySourceKey(input.command);
+  if (sourceKey === null)
+    return {
+      kind: 'REJECTED',
+      statusCode: 400,
+      response: {
+        commandId: input.request.commandId,
+        ok: false,
+        publicRevision: lifecycle.knowledge.revision,
+        code: 'INVALID_COMMAND',
+      },
+    };
+  const response: CompanyCommandAcceptedDto = {
+    commandId: input.request.commandId,
+    ok: true,
+    publicRevision: lifecycle.knowledge.revision,
+  };
+  await updateCompanyAggregateWithReceipt(
+    input.transaction,
+    input.previousRevision,
+    lifecycle.revision,
+    input.state,
+    {
+      command: input.command,
+      receipt: {
+        receiptId: randomUUID(),
+        commandId: input.request.commandId,
+        sourceKey,
+        requestKey: input.requestKey,
+        response,
+        resultingRevision: lifecycle.revision,
+      },
+      auditEvents: [
+        ...input.due.events.map((event) => ({
+          eventId: randomUUID(),
+          revision: lifecycle.revision,
+          event,
+        })),
+        ...input.events.map((event) => ({
+          eventId: randomUUID(),
+          revision: lifecycle.revision,
+          event,
+        })),
+      ],
+    },
+  );
+  await persistDueContinuousMovementRoute(input.transaction, input.due);
+  return { kind: 'COMMITTED', response };
+}
+
 async function executePayrollPayment(input: {
   readonly transaction: Transaction<DatabaseSchema>;
   readonly accountId: string;
@@ -840,6 +1087,7 @@ async function executePayrollPayment(input: {
   readonly due: ReturnType<typeof prepareDueContinuousMovement>;
   readonly atTick: string;
   readonly foodFacts: readonly FoodFulfillmentEvidence[];
+  readonly courseEvents: readonly Readonly<object>[];
 }): Promise<OrdinaryCompanyCommandExecution> {
   const reject = (
     code: CompanyCommandRejectionDto['code'],
@@ -925,6 +1173,11 @@ async function executePayrollPayment(input: {
         resultingRevision: nextLifecycle.revision,
       },
       auditEvents: [
+        ...input.courseEvents.map((event) => ({
+          eventId: randomUUID(),
+          revision: nextLifecycle.revision,
+          event,
+        })),
         ...input.due.events.map((event) => ({
           eventId: randomUUID(),
           revision: nextLifecycle.revision,
@@ -1345,6 +1598,28 @@ export async function prepareTrustedCompanyCommand(
   } catch {
     return rejected(command.commandId, 'INVALID_COMMAND', lifecycle.knowledge.revision);
   }
+  const travelMode =
+    input.travelMode ??
+    ((context.trustedTransitSegments?.length ?? 0) === 1 ? 'ARRIVAL' : 'DEPARTURE');
+  const travelEvents: Readonly<object>[] = prepared.receipt.events.map((event) => event);
+  if (
+    travelMode !== 'ARRIVAL' &&
+    travelMode !== 'EXECUTION_ARRIVAL' &&
+    nextState.learning.tasks.tasks.some((task) => !task.stop && !task.terminal)
+  ) {
+    const interruption = prepareCourseInterruption({
+      state: nextState,
+      commandId: `course-travel-stop-${command.commandId}`,
+      sourceEventId: `course-travel-stop-event-${command.commandId}`,
+      atTick: command.payload.toTick,
+      reason: 'PREREQUISITES',
+      physicalFacts: [],
+    });
+    if (interruption.kind !== 'PREPARED')
+      return rejected(command.commandId, 'UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    nextState = interruption.next;
+    travelEvents.push(...interruption.events);
+  }
   const response: CompanyCommandAcceptedDto = {
     commandId: command.commandId,
     ok: true,
@@ -1363,10 +1638,11 @@ export async function prepareTrustedCompanyCommand(
       requestKey: prepared.receipt.requestKey,
       sourceKey,
       response,
-      events: prepared.receipt.events.map((event) => ({ eventId: event.id, event })),
-      travelMode:
-        input.travelMode ??
-        ((context.trustedTransitSegments?.length ?? 0) === 1 ? 'ARRIVAL' : 'DEPARTURE'),
+      events: travelEvents.map((event) => ({
+        eventId: randomUUID(),
+        event,
+      })),
+      travelMode,
       trustedTransitSegments: context.trustedTransitSegments ?? [],
     },
   };
@@ -1863,7 +2139,7 @@ export async function catchUpStationaryCompany(input: {
     type: 'AdvanceCampaign',
     payload: { toTick: input.atTick, authoritativeInputs: [] },
   });
-  if (!parsed.ok) return undefined;
+  if (!parsed.ok || parsed.command.type !== 'AdvanceCampaign') return undefined;
   if (
     (await findOwnedCompanyId(input.transaction, lifecycle.worldId, input.accountId)) !==
     lifecycle.companyId
@@ -1893,15 +2169,28 @@ export async function catchUpStationaryCompany(input: {
     practiceFacts: [],
     trustedTransitSegments: [],
   };
-  const prepared = prepareCompanyEconomy(previous.economy, parsed.command, context);
-  if (
-    prepared.kind !== 'PREPARED' ||
-    prepared.replayed ||
-    prepared.receipt.requirements.length !== 0 ||
-    !prepared.next.physical
-  )
-    return undefined;
-  const next = readCompanyCombatAggregateState({ ...previous, economy: prepared.next });
+  const hasActiveCourse = previous.learning.tasks.tasks.some(
+    (task) => !task.stop && !task.terminal && task.start.inputs?.kind === 'COURSE',
+  );
+  let next: CompanyCombatAggregateState;
+  let advancementEvents: readonly Readonly<object>[];
+  if (hasActiveCourse) {
+    const course = prepareCourseAdvance({ state: previous, command: parsed.command, physicalFacts: food.facts });
+    if (course.kind !== 'PREPARED') return undefined;
+    next = course.next;
+    advancementEvents = course.events;
+  } else {
+    const prepared = prepareCompanyEconomy(previous.economy, parsed.command, context);
+    if (
+      prepared.kind !== 'PREPARED' ||
+      prepared.replayed ||
+      prepared.receipt.requirements.length !== 0 ||
+      !prepared.next.physical
+    )
+      return undefined;
+    next = readCompanyCombatAggregateState({ ...previous, economy: prepared.next });
+    advancementEvents = prepared.receipt.events;
+  }
   const response: CompanyCommandAcceptedDto = {
     commandId,
     ok: true,
@@ -1930,8 +2219,8 @@ export async function catchUpStationaryCompany(input: {
         resultingRevision: next.economy.lifecycle.revision,
       },
       command: parsed.command,
-      auditEvents: prepared.receipt.events.map((event) => ({
-        eventId: event.id,
+      auditEvents: advancementEvents.map((event) => ({
+        eventId: (event as { readonly id?: string }).id ?? randomUUID(),
         revision: next.economy.lifecycle.revision,
         event,
       })),
