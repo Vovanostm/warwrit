@@ -110,6 +110,24 @@
   pointer-events: none;
 }
 
+.painted-site .site-last-seen {
+  fill: #e1c58e;
+  paint-order: stroke;
+  stroke: rgb(20 18 15 / 94%);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  font:
+    600 10px Georgia,
+    'Times New Roman',
+    serif;
+  pointer-events: none;
+}
+
+.painted-site[data-source='observed'][data-visible='false'] .site-disc {
+  stroke-dasharray: 3 2;
+  opacity: 0.82;
+}
+
 .painted-site .site-leader {
   stroke: #d0b981;
   stroke-width: 1;

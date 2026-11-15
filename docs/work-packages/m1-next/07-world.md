@@ -12,13 +12,34 @@ Return to view and verify the refreshed authorized observation. Check unknown,
 explored and visible terrain by day/night and confirm an old marker keeps its
 last known position. Fresh browser/SQL conformance checks are NOT_RUN.
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
+
+SPECIFIED / LOCAL; N07 observer, travel and offline acceptance remains open.
+The dated marker projection is implemented; the full two-observer/native
+day-night journey and fresh browser/SQL conformance are NOT_RUN here. Continue
+with the accepted observation → leave visibility → changed second observer →
+return and refresh scenario.
+
+### Prior checkpoint — 2026-11-08
 
 SPECIFIED / LOCAL; complete observer/travel/offline matrix NOT_RUN here.
 Painted private atlas and server-owned movement already exist; WLC-08 reports
 actual travel/restart, using explicitly accelerated QA time.
-Next: inspect actual cartography/surroundings authority and select one missing row.
 [Common contract](COMMON.md). [Prompt](prompts/07-world.md).
+
+### Dated marker presentation — 2026-11-16
+
+LOCAL — the authorized cartography DTO now carries optional current visibility
+and a campaign day/tick derived from each stored `lastObservedAt`. Chart grants
+remain chart-sourced and undated. Stale observed markers show their last-seen
+campaign date and keep their accessible site name; chart markers identify the
+map as their source. The existing map hint now names wheel zoom.
+
+PASS — focused cartography and rendered-markup tests (5 tests); core/protocol
+builds, server-projection and web type checks; Prettier and `git diff --check`.
+Full server typecheck was attempted but could not resolve missing `pngjs` and
+testkit packages in the available dependency tree. Two-observer/native day-night
+acceptance and fresh browser/SQL conformance remain NOT_RUN; N07 remains open.
 
 ## Player problem and result
 
