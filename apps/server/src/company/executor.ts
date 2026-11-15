@@ -26,6 +26,8 @@ import {
   RECRUIT_DAILY_WAGE_MILLI,
   RECRUIT_SIGNING_Q,
   attachRecruitGenesis,
+  companyHasLukaRecruitEntitlement,
+  isLukaRecruitOffer,
   localCompanyContacts,
   locateRecruitCarriedPurse,
   lockRecruitOffer,
@@ -722,8 +724,13 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       input.worldId,
       input.request.payload.offerId,
     );
+    const lukaEntitled =
+      recruitOffer && isLukaRecruitOffer(input.worldId, recruitOffer.offer_id)
+        ? await companyHasLukaRecruitEntitlement(input.transaction, input.worldId, companyId)
+        : true;
     if (
       !recruitOffer ||
+      !lukaEntitled ||
       recruitOffer.consumed_at !== null ||
       recruitOffer.offer_revision !== input.request.payload.offerRevision ||
       party?.location.kind !== 'AT' ||

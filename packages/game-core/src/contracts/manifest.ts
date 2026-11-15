@@ -104,6 +104,7 @@ const tracksOverTracksBanditsId = 'ct.m1.tracks-over-tracks.bandits.v1';
 const foulWellId = 'ct.m1.foul-well.v1';
 const voiceUnderBoardsId = 'ct.m1.voice-under-boards.v2';
 const manByRoadId = 'ct.m1.man-by-road.v1';
+const stretcherAndSwordId = 'ct.m1.stretcher-and-sword.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -273,6 +274,28 @@ const definitions: readonly ContractDefinition[] = [
     ],
     'LIVING_PERSON_DELIVERY',
     ['RESCUE-01'],
+  ),
+  definition(
+    stretcherAndSwordId,
+    'RESCUE',
+    'local-village-steward',
+    location('severny-dvor', 'severny-dvor-yard'),
+    [
+      'stretcher-contract-acceptance',
+      'stretcher-child-and-luka-found',
+      'stretcher-carry-both',
+      'stretcher-luka-carried',
+      'stretcher-nastya-recovered',
+      'stretcher-child-only',
+      'stretcher-luka-dead',
+      'stretcher-nastya-delivered',
+      'stretcher-luka-delivered',
+      'stretcher-pelageya-debt-recorded',
+      'stretcher-luka-death-observed',
+      'stretcher-luka-recruit-offer',
+    ],
+    'LIVING_PERSON_DELIVERY',
+    ['RESCUE-03-STRETCHER-AND-SWORD'],
   ),
   definition(
     lostScoutId,
@@ -455,6 +478,18 @@ const slots: ContractSourceSlot[] = [
   source('lost-scout-living-recovery', lostScoutId, 'LIVING_PERSON'),
   source('lost-scout-delivery', lostScoutId, 'LIVING_PERSON'),
   source('lost-scout-death-report', lostScoutId, 'REPORT'),
+  source('stretcher-contract-acceptance', stretcherAndSwordId, 'ACCEPTANCE'),
+  source('stretcher-child-and-luka-found', stretcherAndSwordId, 'DISCOVERY'),
+  source('stretcher-carry-both', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-luka-carried', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-nastya-recovered', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-child-only', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-luka-dead', stretcherAndSwordId, 'REPORT'),
+  source('stretcher-nastya-delivered', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-luka-delivered', stretcherAndSwordId, 'LIVING_PERSON'),
+  source('stretcher-pelageya-debt-recorded', stretcherAndSwordId, 'REPORT'),
+  source('stretcher-luka-death-observed', stretcherAndSwordId, 'OBSERVATION'),
+  source('stretcher-luka-recruit-offer', stretcherAndSwordId, 'OBSERVATION'),
   source('wolf-threat-source', wolfTrailId, 'ENCOUNTER'),
   source('wolf-terminal-result', wolfTrailId, 'TERMINAL_RESULT'),
   source('wolf-proof-pickup', wolfTrailId, 'PHYSICAL_PICKUP'),
@@ -765,6 +800,28 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'RESCUE-03-STRETCHER-AND-SWORD',
+    stretcherAndSwordId,
+    location('severny-dvor', 'severny-dvor-yard'),
+    [
+      'stretcher-child-and-luka-found',
+      'stretcher-carry-both',
+      'stretcher-luka-carried',
+      'stretcher-nastya-recovered',
+      'stretcher-child-only',
+      'stretcher-luka-dead',
+      'stretcher-nastya-delivered',
+      'stretcher-luka-delivered',
+      'stretcher-pelageya-debt-recorded',
+      'stretcher-luka-death-observed',
+      'stretcher-luka-recruit-offer',
+    ],
+    [
+      outcome('SUCCESS', gate('ALL_PRESENT', ['stretcher-pelageya-debt-recorded'])),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-02',
     lostScoutId,
     location('tikhaya-gat', 'tikhaya-gat-bank'),
@@ -945,6 +1002,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.dragged-sack.01', draggedSackId),
     binding('ci.m1.foul-well.01', foulWellId),
     binding('ci.m1.man-by-road.01', manByRoadId),
+    binding('ci.m1.stretcher-and-sword.01', stretcherAndSwordId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

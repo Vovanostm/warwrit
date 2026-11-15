@@ -302,6 +302,7 @@ function departureCarried(
 function prepareDepartureFood(
   state: CompanyCombatAggregateState,
   commandId: string,
+  additionalFoodPersons = 0,
 ): ReturnType<typeof prepareTravelFoodFacts> {
   const validated = readCompanyCombatAggregateState(state);
   const party = validated.economy.lifecycle.parties.find(
@@ -316,6 +317,7 @@ function prepareDepartureFood(
     partyId: party.partyId,
     location: party.location,
     settledThroughTick: toTick,
+    additionalFoodPersons,
   });
 }
 
@@ -538,6 +540,19 @@ describe('encounter food preparation', () => {
 });
 
 describe('departure food preparation', () => {
+  it('charges actual company food demand for custody guests', () => {
+    const state = readCompanyCombatAggregateState(withoutFoodStock(departureState()));
+    const toTick = (BigInt(state.economy.lifecycle.campaignTick) + 1000n).toString();
+    const baseline = prepareStationaryFoodFacts(state, toTick, 'guest-food-baseline');
+    const withGuest = prepareStationaryFoodFacts(state, toTick, 'guest-food-extra', 1);
+    expect(baseline.kind).toBe('PREPARED');
+    expect(withGuest.kind).toBe('PREPARED');
+    if (baseline.kind !== 'PREPARED' || withGuest.kind !== 'PREPARED') return;
+    const uncovered = (result: typeof baseline) =>
+      result.facts.reduce((total, fact) => total + BigInt(fact.uncoveredTickUnits ?? '0'), 0n);
+    expect(uncovered(withGuest)).toBeGreaterThan(uncovered(baseline));
+  });
+
   it('retains prepaid food when no container is accessible, and refuses its exhaustion', () => {
     const fixture = createCompanyCombatAggregateFixture();
     const funded = advanceCompanySource(fixture.f.sources[0]!, '1001', 'departure-backed-meal');

@@ -37,6 +37,31 @@ const MONEY = /^-?(0|[1-9][0-9]{0,127})$/u;
 const DECIMAL_DAYS = /^(0|[1-9][0-9]{0,127})(?:\.[0-9]{1,3})?$/u;
 const EVENT_TYPES = new Set<string>(COMPANY_RETURN_REPORT_EVENT_TYPES);
 
+function contractOutcomeTextKey(
+  outcome: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number],
+): string {
+  if (outcome.instanceId === 'ci.m1.stretcher-and-sword.01') {
+    const key =
+      outcome.outcome === 'LUKA_RESCUED'
+        ? 'luka-rescued'
+        : outcome.outcome === 'NASTYA_ONLY'
+          ? 'nastya-only'
+          : outcome.outcome === 'LUKA_DEATH_OBSERVED'
+            ? 'luka-death-observed'
+            : 'luka-recruit-offer';
+    return `contract.ci.m1.stretcher-and-sword.01.report.${key}`;
+  }
+  const key =
+    outcome.outcome === 'PROKOP_HANDED_OVER'
+      ? 'handed-over'
+      : outcome.outcome === 'PROOF_DESTROYED'
+        ? 'proof-destroyed'
+        : outcome.outcome === 'REFUGEE_CAMP_REMOVED'
+          ? 'camp-removed'
+          : 'old-ford-revealed';
+  return `contract.ci.m1.empty-watch-record.01.report.${key}`;
+}
+
 export function ReturnReport(props: {
   readonly scope: Scope;
   readonly companyCharacters: readonly { readonly characterId: string; readonly name: string }[];
@@ -283,17 +308,7 @@ export function ReturnReport(props: {
                 <ul>
                   {visibleState.report.contractOutcomes!.map((outcome) => (
                     <li key={`${outcome.instanceId}:${outcome.atTick}`}>
-                      {lookup(
-                        `contract.ci.m1.empty-watch-record.01.report.${
-                          outcome.outcome === 'PROKOP_HANDED_OVER'
-                            ? 'handed-over'
-                            : outcome.outcome === 'PROOF_DESTROYED'
-                              ? 'proof-destroyed'
-                              : outcome.outcome === 'REFUGEE_CAMP_REMOVED'
-                                ? 'camp-removed'
-                                : 'old-ford-revealed'
-                        }`,
-                      )}
+                      {lookup(contractOutcomeTextKey(outcome))}
                     </li>
                   ))}
                 </ul>
@@ -361,16 +376,24 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
     !Array.isArray(report['events']) ||
     (Object.hasOwn(report, 'contractOutcomes') &&
       (!Array.isArray(report['contractOutcomes']) ||
-        !report['contractOutcomes'].every(
-          (outcome) =>
-            isRecord(outcome) &&
-            outcome['instanceId'] === 'ci.m1.empty-watch-record.01' &&
-            (outcome['outcome'] === 'PROKOP_HANDED_OVER' ||
+        !report['contractOutcomes'].every((outcome) => {
+          if (!isRecord(outcome) || !isTick(outcome['atTick'])) return false;
+          if (outcome['instanceId'] === 'ci.m1.empty-watch-record.01')
+            return (
+              outcome['outcome'] === 'PROKOP_HANDED_OVER' ||
               outcome['outcome'] === 'PROOF_DESTROYED' ||
               outcome['outcome'] === 'REFUGEE_CAMP_REMOVED' ||
-              outcome['outcome'] === 'OLD_FORD_REVEALED') &&
-            isTick(outcome['atTick']),
-        )))
+              outcome['outcome'] === 'OLD_FORD_REVEALED'
+            );
+          if (outcome['instanceId'] === 'ci.m1.stretcher-and-sword.01')
+            return (
+              outcome['outcome'] === 'LUKA_RESCUED' ||
+              outcome['outcome'] === 'NASTYA_ONLY' ||
+              outcome['outcome'] === 'LUKA_DEATH_OBSERVED' ||
+              outcome['outcome'] === 'LUKA_RECRUIT_OFFER'
+            );
+          return false;
+        })))
   )
     return undefined;
 

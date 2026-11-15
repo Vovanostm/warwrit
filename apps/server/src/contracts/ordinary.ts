@@ -409,8 +409,20 @@ export function contractView(
   const knowsOldFord =
     companyId !== undefined && emptyWatchFordFact(state, companyId) !== undefined;
   const visibleSteps = [
-    ...terms.steps.filter((step) => step.stepId !== 'ask-prokop-about-old-ford'),
+    ...terms.steps.filter(
+      (step) => step.stepId !== 'ask-prokop-about-old-ford' && step.postCompletion !== true,
+    ),
     ...(knowsOldFord && lateFordStep ? [lateFordStep] : []),
+    ...terms.steps.filter(
+      (step) =>
+        step.postCompletion === true &&
+        state.outcome?.companyId === companyId &&
+        standingAt?.siteId === step.place.siteId &&
+        standingAt.areaId === step.place.areaId &&
+        step.requires.every((slotId) =>
+          state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
+        ),
+    ),
   ];
   const foulWellPublicConsequences =
     profile.instanceId === 'ci.m1.foul-well.01' &&

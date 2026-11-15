@@ -98,39 +98,66 @@ it('keeps malformed untrusted amounts out of money formatting', async () => {
 
 it.each([
   {
+    instanceId: 'ci.m1.empty-watch-record.01',
     outcome: 'PROKOP_HANDED_OVER',
     text: 'Мешок отдали Евсею. Прокоп под замком.',
   },
   {
+    instanceId: 'ci.m1.empty-watch-record.01',
     outcome: 'PROOF_DESTROYED',
     text: 'Мешок бросили в реку. Деньги остались в казне, шалаши стоят.',
   },
   {
+    instanceId: 'ci.m1.empty-watch-record.01',
     outcome: 'REFUGEE_CAMP_REMOVED',
     text: 'Шалаши убрали через два дня.',
   },
   {
+    instanceId: 'ci.m1.empty-watch-record.01',
     outcome: 'OLD_FORD_REVEALED',
     text: 'Через несколько дней Прокоп рассказал о старом броде у ив.',
   },
-])('shows the saved $outcome outcome in the return report', async ({ outcome, text }) => {
-  vi.stubGlobal('fetch', async () =>
-    Response.json({
-      report: {
-        ...report(),
-        contractOutcomes: [
-          {
-            instanceId: 'ci.m1.empty-watch-record.01',
-            outcome,
-            atTick: '2000',
-          },
-        ],
-      },
-    }),
-  );
-  await mount();
-  expect(container?.textContent).toContain(text);
-});
+  {
+    instanceId: 'ci.m1.stretcher-and-sword.01',
+    outcome: 'LUKA_RESCUED',
+    text: 'Пелагея забирает Настю и замечает чужака на носилках.',
+  },
+  {
+    instanceId: 'ci.m1.stretcher-and-sword.01',
+    outcome: 'NASTYA_ONLY',
+    text: 'Пелагея прижимает дочь к себе',
+  },
+  {
+    instanceId: 'ci.m1.stretcher-and-sword.01',
+    outcome: 'LUKA_DEATH_OBSERVED',
+    text: 'Меч он так и не выпустил.',
+  },
+  {
+    instanceId: 'ci.m1.stretcher-and-sword.01',
+    outcome: 'LUKA_RECRUIT_OFFER',
+    text: 'Домой мне дороги нет.',
+  },
+])(
+  'shows the saved $outcome outcome in the return report',
+  async ({ instanceId, outcome, text }) => {
+    vi.stubGlobal('fetch', async () =>
+      Response.json({
+        report: {
+          ...report(),
+          contractOutcomes: [
+            {
+              instanceId,
+              outcome,
+              atTick: '2000',
+            },
+          ],
+        },
+      }),
+    );
+    await mount();
+    expect(container?.textContent).toContain(text);
+  },
+);
 
 it('retries a failed read and does not acknowledge the empty result', async () => {
   const calls: string[] = [];

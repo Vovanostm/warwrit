@@ -313,6 +313,46 @@ export const contractsRu = {
   'contract.ci.m1.dragged-sack.01.world.yerema-slept':
     'Вы знаете: Ерёма заснул на телеге. Лошадь сама довезла его домой.',
   'contract.ci.m1.dragged-sack.01.cargo.dragged-sack.01': 'мешок с мукой',
+  'contract.ci.m1.stretcher-and-sword.01.title': 'Девочка в синем платке',
+  'contract.ci.m1.stretcher-and-sword.01.issuer': 'Пелагея, работница Северного Двора',
+  'contract.ci.m1.stretcher-and-sword.01.brief':
+    'Настя, ей семь лет, ушла за хворостом к броду и третий день не возвращается. Найдите её. — Мы звали её до темноты. Никто не ответил. — Как её узнать? — На ней мой синий платок. Такого больше ни у кого нет. Кондрат: — Верните девочку. Заплачу я и запишу Пелагее в долг.',
+  'contract.ci.m1.stretcher-and-sword.01.step.search-road': 'Обыскать дорогу к броду',
+  'contract.ci.m1.stretcher-and-sword.01.step.carry-both': 'Нести обоих',
+  'contract.ci.m1.stretcher-and-sword.01.step.pick-up-nastya': 'Поднять Настю на носилки',
+  'contract.ci.m1.stretcher-and-sword.01.step.take-only-nastya': 'Взять только Настю',
+  'contract.ci.m1.stretcher-and-sword.01.step.deliver-nastya': 'Передать Настю Пелагее',
+  'contract.ci.m1.stretcher-and-sword.01.step.deliver-luka': 'Передать Луку Кондрату',
+  'contract.ci.m1.stretcher-and-sword.01.step.deliver-only-nastya': 'Передать Настю Пелагее',
+  'contract.ci.m1.stretcher-and-sword.01.step.inspect-return-road': 'Осмотреть дорогу у брода',
+  'contract.ci.m1.stretcher-and-sword.01.step.inspect-luka-at-camp': 'Оглядеться у костра',
+  'contract.ci.m1.stretcher-and-sword.01.done': 'Пелагея забрала Настю и записала помощь в долг.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.child-and-luka-found':
+    'На дороге к броду раненый ополченец из Полесского герцогства несёт девочку в синем платке. У Насти жар, она почти не открывает глаза.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.carry-both':
+    '— Я нёс её к людям. Дальше идти не могу. — В деревню мне нельзя, там повесят. Возьмите её. Несли обоих. Дорога заняла больше времени, пайков ушло больше.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.nastya-recovered':
+    'У Насти жар, она почти не открывает глаза.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.take-only-nastya':
+    'Взяли только Настю.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.nastya-delivered':
+    'Пелагея забирает Настю и только потом замечает чужака на носилках. — А это кто?',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.both-delivered':
+    'К воротам Северного Двора вы подходите в темноте. Пелагея забирает Настю и только потом замечает чужака на носилках. — А это кто?',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.luka-recruit-offer':
+    'Через несколько дней Лука садится к вашему костру, не спрашивая, и кладёт меч на землю рукоятью к вам. — Домой мне дороги нет. А вам, я смотрю, люди нужны. Ест он молча и быстро, как едят в отряде.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.only-nastya-delivered':
+    'Успели до ночи. Пелагея прижимает дочь к себе и никак не может развязать на ней свой синий платок. — Живая, — повторяет она. — Живая.',
+  'contract.ci.m1.stretcher-and-sword.01.result.stretcher-and-sword.luka-death-observed':
+    'Когда вы снова идёте к броду, в кустах у дороги лежит тот ополченец. Меч он так и не выпустил.',
+  'contract.ci.m1.stretcher-and-sword.01.report.luka-rescued':
+    'Пелагея забирает Настю и замечает чужака на носилках.',
+  'contract.ci.m1.stretcher-and-sword.01.report.nastya-only':
+    'Пелагея прижимает дочь к себе и никак не может развязать на ней синий платок. — Живая, — повторяет она. — Живая.',
+  'contract.ci.m1.stretcher-and-sword.01.report.luka-death-observed':
+    'Когда вы снова идёте к броду, в кустах у дороги лежит тот ополченец. Меч он так и не выпустил.',
+  'contract.ci.m1.stretcher-and-sword.01.report.luka-recruit-offer':
+    'Через несколько дней Лука садится к вашему костру, не спрашивая, и кладёт меч на землю рукоятью к вам. — Домой мне дороги нет. А вам, я смотрю, люди нужны.',
 
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':

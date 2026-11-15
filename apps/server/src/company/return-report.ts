@@ -91,25 +91,31 @@ export function settledReturnReportTick(state: CompanyCombatAggregateState): str
     .reduce((minimum, tick) => (BigInt(tick) < BigInt(minimum) ? tick : minimum));
 }
 
-type EmptyWatchOutcomePhase = 'TERMINAL' | 'CAMP_REMOVED' | 'OLD_FORD_REVEALED';
+type ContractOutcomePhase =
+  'TERMINAL' | 'CAMP_REMOVED' | 'OLD_FORD_REVEALED' | 'LUKA_DEATH_OBSERVED' | 'LUKA_RECRUIT_OFFER';
 
 function contractOutcomeIdentity(
+  instanceId: 'ci.m1.empty-watch-record.01' | 'ci.m1.stretcher-and-sword.01',
   sourceEventId: string,
-  phase: EmptyWatchOutcomePhase = 'TERMINAL',
+  phase: ContractOutcomePhase = 'TERMINAL',
 ): string {
   return phase === 'TERMINAL'
-    ? `ci.m1.empty-watch-record.01:${sourceEventId}`
-    : `ci.m1.empty-watch-record.01:${phase}:${sourceEventId}`;
+    ? `${instanceId}:${sourceEventId}`
+    : `${instanceId}:${phase}:${sourceEventId}`;
 }
 
 function phaseForReturnOutcome(
   outcome: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number]['outcome'],
-): EmptyWatchOutcomePhase {
+): ContractOutcomePhase {
   return outcome === 'REFUGEE_CAMP_REMOVED'
     ? 'CAMP_REMOVED'
     : outcome === 'OLD_FORD_REVEALED'
       ? 'OLD_FORD_REVEALED'
-      : 'TERMINAL';
+      : outcome === 'LUKA_RECRUIT_OFFER'
+        ? 'LUKA_RECRUIT_OFFER'
+        : outcome === 'LUKA_DEATH_OBSERVED'
+          ? 'LUKA_DEATH_OBSERVED'
+          : 'TERMINAL';
 }
 
 function foodSnapshot(state: CompanyCombatAggregateState, throughTick: string): FoodBaseline[] {
@@ -150,16 +156,32 @@ function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
     const candidate = entry as Record<string, unknown>;
     const sourceEventId = candidate['sourceEventId'];
     if (
-      candidate['instanceId'] !== 'ci.m1.empty-watch-record.01' ||
+      (candidate['instanceId'] !== 'ci.m1.empty-watch-record.01' &&
+        candidate['instanceId'] !== 'ci.m1.stretcher-and-sword.01') ||
       typeof sourceEventId !== 'string' ||
       sourceEventId.length === 0 ||
       (candidate['phase'] !== undefined &&
         candidate['phase'] !== 'TERMINAL' &&
         candidate['phase'] !== 'CAMP_REMOVED' &&
-        candidate['phase'] !== 'OLD_FORD_REVEALED')
+        candidate['phase'] !== 'OLD_FORD_REVEALED' &&
+        candidate['phase'] !== 'LUKA_DEATH_OBSERVED' &&
+        candidate['phase'] !== 'LUKA_RECRUIT_OFFER') ||
+      (candidate['instanceId'] === 'ci.m1.empty-watch-record.01' &&
+        candidate['phase'] === 'LUKA_RECRUIT_OFFER') ||
+      (candidate['instanceId'] === 'ci.m1.stretcher-and-sword.01' &&
+        candidate['phase'] !== undefined &&
+        candidate['phase'] !== 'TERMINAL' &&
+        candidate['phase'] !== 'LUKA_DEATH_OBSERVED' &&
+        candidate['phase'] !== 'LUKA_RECRUIT_OFFER')
     )
       return undefined;
-    identities.add(contractOutcomeIdentity(sourceEventId, candidate['phase'] ?? 'TERMINAL'));
+    identities.add(
+      contractOutcomeIdentity(
+        candidate['instanceId'],
+        sourceEventId,
+        candidate['phase'] ?? 'TERMINAL',
+      ),
+    );
   }
   return identities;
 }
@@ -167,22 +189,33 @@ function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
 function serializeContractOutcomeIds(identities: ReadonlySet<string>): string {
   return JSON.stringify(
     [...identities].flatMap((identity) => {
-      const prefix = 'ci.m1.empty-watch-record.01:';
-      if (!identity.startsWith(prefix) || identity.length <= prefix.length) return [];
-      const remainder = identity.slice(prefix.length);
+      const instanceId = identity.startsWith('ci.m1.empty-watch-record.01:')
+        ? 'ci.m1.empty-watch-record.01'
+        : identity.startsWith('ci.m1.stretcher-and-sword.01:')
+          ? 'ci.m1.stretcher-and-sword.01'
+          : undefined;
+      if (!instanceId) return [];
+      const remainder = identity.slice(instanceId.length + 1);
+      if (!remainder) return [];
       const phaseSeparator = remainder.indexOf(':');
       const phase = remainder.slice(0, phaseSeparator);
-      if (phaseSeparator > 0 && (phase === 'CAMP_REMOVED' || phase === 'OLD_FORD_REVEALED'))
+      if (
+        phaseSeparator > 0 &&
+        (phase === 'CAMP_REMOVED' ||
+          phase === 'OLD_FORD_REVEALED' ||
+          phase === 'LUKA_DEATH_OBSERVED' ||
+          phase === 'LUKA_RECRUIT_OFFER')
+      )
         return [
           {
-            instanceId: 'ci.m1.empty-watch-record.01' as const,
+            instanceId,
             phase,
             sourceEventId: remainder.slice(phaseSeparator + 1),
           },
         ];
       return [
         {
-          instanceId: 'ci.m1.empty-watch-record.01' as const,
+          instanceId,
           sourceEventId: remainder,
         },
       ];
@@ -349,7 +382,7 @@ export function projectEmptyWatchReturnOutcome(
   if (!terminal) return [];
   const result: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number][] = [];
   const terminalTick = BigInt(state.outcome.atTick);
-  const terminalId = contractOutcomeIdentity(terminal.sourceEventId);
+  const terminalId = contractOutcomeIdentity('ci.m1.empty-watch-record.01', terminal.sourceEventId);
   if (terminalTick >= from && terminalTick <= through && !acknowledgedOutcomeIds.has(terminalId))
     result.push({
       instanceId: 'ci.m1.empty-watch-record.01',
@@ -361,7 +394,11 @@ export function projectEmptyWatchReturnOutcome(
     });
 
   const campRemovedAt = emptyWatchCampRemovedAt(state);
-  const campId = contractOutcomeIdentity(terminal.sourceEventId, 'CAMP_REMOVED');
+  const campId = contractOutcomeIdentity(
+    'ci.m1.empty-watch-record.01',
+    terminal.sourceEventId,
+    'CAMP_REMOVED',
+  );
   if (
     campRemovedAt !== undefined &&
     campRemovedAt >= from &&
@@ -375,7 +412,11 @@ export function projectEmptyWatchReturnOutcome(
     });
 
   const fordFact = emptyWatchFordFact(state, companyId);
-  const fordId = contractOutcomeIdentity(terminal.sourceEventId, 'OLD_FORD_REVEALED');
+  const fordId = contractOutcomeIdentity(
+    'ci.m1.empty-watch-record.01',
+    terminal.sourceEventId,
+    'OLD_FORD_REVEALED',
+  );
   if (
     fordFact &&
     BigInt(fordFact.atTick) >= from &&
@@ -390,11 +431,98 @@ export function projectEmptyWatchReturnOutcome(
   return result;
 }
 
+export function projectStretcherReturnOutcome(
+  state: OrdinaryContractState | undefined,
+  companyId: string,
+  fromTick: string,
+  throughTick: string,
+  acknowledgedOutcomeIds: ReadonlySet<string> = new Set(),
+): NonNullable<CompanyReturnReportDto['contractOutcomes']> {
+  if (!state?.outcome || state.outcome.companyId !== companyId) return [];
+  const from = BigInt(fromTick);
+  const through = BigInt(throughTick);
+  const result: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number][] = [];
+  const terminalId = contractOutcomeIdentity(
+    'ci.m1.stretcher-and-sword.01',
+    state.outcome.sourceEventId,
+  );
+  const terminalInWindow =
+    BigInt(state.outcome.atTick) >= from && BigInt(state.outcome.atTick) <= through;
+  const carriedLuka = state.facts.some(
+    (fact) => fact.companyId === companyId && fact.slotId === 'stretcher-luka-delivered',
+  );
+  if (terminalInWindow && !acknowledgedOutcomeIds.has(terminalId))
+    result.push({
+      instanceId: 'ci.m1.stretcher-and-sword.01',
+      outcome: carriedLuka ? 'LUKA_RESCUED' : 'NASTYA_ONLY',
+      atTick: state.outcome.atTick,
+    });
+
+  const deathFact = state.facts.find(
+    (fact) => fact.companyId === companyId && fact.slotId === 'stretcher-luka-death-observed',
+  );
+  if (deathFact) {
+    const deathId = contractOutcomeIdentity(
+      'ci.m1.stretcher-and-sword.01',
+      deathFact.sourceEventId,
+      'LUKA_DEATH_OBSERVED',
+    );
+    if (
+      BigInt(deathFact.atTick) >= from &&
+      BigInt(deathFact.atTick) <= through &&
+      !acknowledgedOutcomeIds.has(deathId)
+    )
+      result.push({
+        instanceId: 'ci.m1.stretcher-and-sword.01',
+        outcome: 'LUKA_DEATH_OBSERVED',
+        atTick: deathFact.atTick,
+      });
+  }
+
+  const recruitFact = state.facts.find(
+    (fact) => fact.companyId === companyId && fact.slotId === 'stretcher-luka-recruit-offer',
+  );
+  if (recruitFact) {
+    const recruitId = contractOutcomeIdentity(
+      'ci.m1.stretcher-and-sword.01',
+      recruitFact.sourceEventId,
+      'LUKA_RECRUIT_OFFER',
+    );
+    if (
+      BigInt(recruitFact.atTick) >= from &&
+      BigInt(recruitFact.atTick) <= through &&
+      !acknowledgedOutcomeIds.has(recruitId)
+    )
+      result.push({
+        instanceId: 'ci.m1.stretcher-and-sword.01',
+        outcome: 'LUKA_RECRUIT_OFFER',
+        atTick: recruitFact.atTick,
+      });
+  }
+  return result;
+}
+
 async function emptyWatchContractState(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
 ): Promise<OrdinaryContractState | undefined> {
   const profile = ordinaryContractProfile('ci.m1.empty-watch-record.01');
+  if (!profile) return undefined;
+  const row = await transaction
+    .selectFrom('ordinary_contracts')
+    .select(['profile_id', 'state'])
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .executeTakeFirst();
+  if (!row || row.profile_id !== profile.definitionId) return undefined;
+  return readOrdinaryContractState(profile, row.state, row.profile_id);
+}
+
+async function stretcherContractState(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<OrdinaryContractState | undefined> {
+  const profile = ordinaryContractProfile('ci.m1.stretcher-and-sword.01');
   if (!profile) return undefined;
   const row = await transaction
     .selectFrom('ordinary_contracts')
@@ -419,13 +547,66 @@ function companyEmptyWatchOutcomeIdentities(
     return new Set();
   const terminal = emptyWatchTerminalFact(state);
   if (!terminal) return new Set();
-  const identities = new Set([contractOutcomeIdentity(terminal.sourceEventId)]);
+  const identities = new Set([
+    contractOutcomeIdentity('ci.m1.empty-watch-record.01', terminal.sourceEventId),
+  ]);
   const campRemovedAt = emptyWatchCampRemovedAt(state);
   if (campRemovedAt !== undefined && campRemovedAt <= BigInt(throughTick))
-    identities.add(contractOutcomeIdentity(terminal.sourceEventId, 'CAMP_REMOVED'));
+    identities.add(
+      contractOutcomeIdentity(
+        'ci.m1.empty-watch-record.01',
+        terminal.sourceEventId,
+        'CAMP_REMOVED',
+      ),
+    );
   const fordFact = emptyWatchFordFact(state, companyId);
   if (fordFact && BigInt(fordFact.atTick) <= BigInt(throughTick))
-    identities.add(contractOutcomeIdentity(terminal.sourceEventId, 'OLD_FORD_REVEALED'));
+    identities.add(
+      contractOutcomeIdentity(
+        'ci.m1.empty-watch-record.01',
+        terminal.sourceEventId,
+        'OLD_FORD_REVEALED',
+      ),
+    );
+  return identities;
+}
+
+function companyStretcherOutcomeIdentities(
+  state: OrdinaryContractState | undefined,
+  companyId: string,
+  throughTick: string,
+): Set<string> {
+  if (
+    !state?.outcome ||
+    state.outcome.companyId !== companyId ||
+    BigInt(state.outcome.atTick) > BigInt(throughTick)
+  )
+    return new Set();
+  const identities = new Set([
+    contractOutcomeIdentity('ci.m1.stretcher-and-sword.01', state.outcome.sourceEventId),
+  ]);
+  const deathFact = state.facts.find(
+    (fact) => fact.companyId === companyId && fact.slotId === 'stretcher-luka-death-observed',
+  );
+  if (deathFact && BigInt(deathFact.atTick) <= BigInt(throughTick))
+    identities.add(
+      contractOutcomeIdentity(
+        'ci.m1.stretcher-and-sword.01',
+        deathFact.sourceEventId,
+        'LUKA_DEATH_OBSERVED',
+      ),
+    );
+  const recruitFact = state.facts.find(
+    (fact) => fact.companyId === companyId && fact.slotId === 'stretcher-luka-recruit-offer',
+  );
+  if (recruitFact && BigInt(recruitFact.atTick) <= BigInt(throughTick))
+    identities.add(
+      contractOutcomeIdentity(
+        'ci.m1.stretcher-and-sword.01',
+        recruitFact.sourceEventId,
+        'LUKA_RECRUIT_OFFER',
+      ),
+    );
   return identities;
 }
 
@@ -504,11 +685,18 @@ async function getReturnReport(
       if (BigInt(atTick) > BigInt(throughTick)) break;
       latestSequence = BigInt(row.sequence);
     }
-    const initialOutcomeIds = companyEmptyWatchOutcomeIdentities(
-      await emptyWatchContractState(transaction, worldId),
-      companyId,
-      throughTick,
-    );
+    const initialOutcomeIds = new Set([
+      ...companyEmptyWatchOutcomeIdentities(
+        await emptyWatchContractState(transaction, worldId),
+        companyId,
+        throughTick,
+      ),
+      ...companyStretcherOutcomeIdentities(
+        await stretcherContractState(transaction, worldId),
+        companyId,
+        throughTick,
+      ),
+    ]);
     await transaction
       .insertInto('company_return_report_cursors')
       .values({
@@ -600,13 +788,23 @@ async function getReturnReport(
     events.push(event);
   }
   const emptyWatchState = await emptyWatchContractState(transaction, worldId);
-  const contractOutcomes = projectEmptyWatchReturnOutcome(
-    emptyWatchState,
-    companyId,
-    fromTick,
-    throughTick,
-    acknowledgedContractOutcomeIds,
-  );
+  const stretcherState = await stretcherContractState(transaction, worldId);
+  const contractOutcomes = [
+    ...projectEmptyWatchReturnOutcome(
+      emptyWatchState,
+      companyId,
+      fromTick,
+      throughTick,
+      acknowledgedContractOutcomeIds,
+    ),
+    ...projectStretcherReturnOutcome(
+      stretcherState,
+      companyId,
+      fromTick,
+      throughTick,
+      acknowledgedContractOutcomeIds,
+    ),
+  ];
   const elapsedTicks = BigInt(throughTick) - BigInt(fromTick);
   if (
     !hasReturnReportFacts({
@@ -644,9 +842,19 @@ async function getReturnReport(
   const offeredContractOutcomeIds = new Set(acknowledgedContractOutcomeIds);
   if (contractOutcomes.length > 0) {
     for (const outcome of contractOutcomes) {
+      const sourceEventId =
+        outcome.instanceId === 'ci.m1.empty-watch-record.01'
+          ? emptyWatchState!.outcome!.sourceEventId
+          : outcome.outcome === 'LUKA_RECRUIT_OFFER'
+            ? stretcherState!.facts.find(
+                (fact) =>
+                  fact.companyId === companyId && fact.slotId === 'stretcher-luka-recruit-offer',
+              )!.sourceEventId
+            : stretcherState!.outcome!.sourceEventId;
       offeredContractOutcomeIds.add(
         contractOutcomeIdentity(
-          emptyWatchState!.outcome!.sourceEventId,
+          outcome.instanceId,
+          sourceEventId,
           phaseForReturnOutcome(outcome.outcome),
         ),
       );

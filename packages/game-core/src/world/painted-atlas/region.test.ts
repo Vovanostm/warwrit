@@ -70,6 +70,42 @@ it('uses the drawn field-edge bends instead of cutting across the repaired road 
   }
 });
 
+it('applies custody and exact guide time modifiers to newly compiled plans', () => {
+  const start = paintedAtlasPoint([2691, 1379]);
+  const goal = paintedAtlasPoint([3072, 1454]);
+  const path = findTravelPath(field, start, goal)!;
+  const base = compileMovementPlan({
+    field,
+    path,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'base-travel',
+  });
+  const stretcher = compileMovementPlan({
+    field,
+    path,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'stretcher-travel',
+    travelModifiers: { custodyModes: ['STRETCHER'] },
+  });
+  const guided = compileMovementPlan({
+    field,
+    path,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'guided-travel',
+    travelModifiers: {
+      custodyModes: ['ON_FOOT', 'STRETCHER'],
+      wolvesGuideSourceEventId: 'wolf-guide-source',
+    },
+  });
+  const baseUs = BigInt(base.totalDurationUs);
+  expect(stretcher.planVersion).toBe(4);
+  expect(BigInt(stretcher.totalDurationUs)).toBe((baseUs * 3n + 1n) / 2n);
+  expect(BigInt(guided.totalDurationUs)).toBe((baseUs * 45n + 31n) / 32n);
+});
+
 it('uses the rendered atlas frame and resolves its authored settlement zone', () => {
   const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
   const entrance = paintedAtlasPoint([1536 + 195, 1024 + 220]);

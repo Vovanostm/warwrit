@@ -80,12 +80,22 @@ export interface SpeedSpan {
     readonly toT: StoredRatio;
   };
 }
+export interface ContinuousMovementTravelModifiers {
+  /** Present only when the company has a living ordinary-contract guest on its field party. */
+  readonly custodyModes?: readonly ('ON_FOOT' | 'STRETCHER')[];
+  /** Canonical source event for the company-private Tikhaya Gat → Severny Dvor guide. */
+  readonly wolvesGuideSourceEventId?: string;
+  /** Guest count fixed when the route was accepted; guest food uses ordinary stock settlement. */
+  readonly additionalFoodPersons?: number;
+}
 export interface ContinuousMovementPlan {
-  readonly planVersion: 2 | 3;
+  readonly planVersion: 2 | 3 | 4;
   readonly navigationVersion?: 'polygon-v1';
   readonly planId: string;
   readonly mapEdition: string;
   readonly speedProfileId: SpeedProfileId;
+  /** Modifier-bearing plans are versioned so old saved routes keep their original timing. */
+  readonly travelModifiers?: ContinuousMovementTravelModifiers;
   readonly movementEpoch: string;
   readonly from: PointMicroFp;
   readonly goal: PointMicroFp;
@@ -161,6 +171,53 @@ const MAX_PROFILE_SPEED = Object.fromEntries(
     Math.max(...Object.values(profile.terrain), ...Object.values(profile.overlays)),
   ]),
 ) as Readonly<Record<SpeedProfileId, number>>;
+function travelTimeScale(modifiers: ContinuousMovementTravelModifiers | undefined) {
+  let numerator = 1n;
+  let denominator = 1n;
+  for (const custodyMode of modifiers?.custodyModes ?? []) {
+    if (custodyMode === 'ON_FOOT') {
+      numerator *= 5n;
+      denominator *= 4n;
+    } else if (custodyMode === 'STRETCHER') {
+      numerator *= 3n;
+      denominator *= 2n;
+    }
+  }
+  if (modifiers?.wolvesGuideSourceEventId) {
+    numerator *= 3n;
+    denominator *= 4n;
+  }
+  const divisor = gcdTimeScale(numerator, denominator);
+  return { numerator: numerator / divisor, denominator: denominator / divisor };
+}
+function validTravelModifiers(value: ContinuousMovementTravelModifiers): boolean {
+  return (
+    Object.keys(value).length > 0 &&
+    Object.keys(value).every((key) =>
+      ['custodyModes', 'wolvesGuideSourceEventId', 'additionalFoodPersons'].includes(key),
+    ) &&
+    (value.custodyModes === undefined ||
+      (Array.isArray(value.custodyModes) &&
+        value.custodyModes.length > 0 &&
+        value.custodyModes.length <= 8 &&
+        value.custodyModes.every((mode) => mode === 'ON_FOOT' || mode === 'STRETCHER'))) &&
+    (value.wolvesGuideSourceEventId === undefined ||
+      (typeof value.wolvesGuideSourceEventId === 'string' &&
+        value.wolvesGuideSourceEventId.length > 0 &&
+        value.wolvesGuideSourceEventId.length <= 128)) &&
+    (value.additionalFoodPersons === undefined ||
+      (Number.isSafeInteger(value.additionalFoodPersons) &&
+        value.additionalFoodPersons > 0 &&
+        value.additionalFoodPersons <= 8))
+  );
+}
+function scaledCumulativeDuration(baseDuration: bigint, scale: ReturnType<typeof travelTimeScale>) {
+  return ceilDiv(baseDuration * scale.numerator, scale.denominator);
+}
+function gcdTimeScale(a: bigint, b: bigint): bigint {
+  while (b !== 0n) [a, b] = [b, a % b];
+  return a;
+}
 /** Bridge precedence and fastest road selection are shared with the stationary terrain view. */
 export function compareNavigationOverlays(
   left: string,
@@ -648,12 +705,15 @@ function compileExactMovementPlan(input: {
   movementEpoch: string;
   startedAtMs: string;
   planId: string;
+  travelModifiers?: ContinuousMovementTravelModifiers;
 }): ContinuousMovementPlan {
   const path = input.path.map(toMicro),
     speedSpans: SpeedSpan[] = [],
     danger = new Set<string>();
   if (path.length > MAX_PATH_POINTS) throw new RangeError('ROUTE_TOO_COMPLEX');
+  let baseOffset = 0n;
   let offset = 0n;
+  const scale = travelTimeScale(input.travelModifiers);
   for (let i = 0; i + 1 < path.length; i++) {
     const trace = traceExactGeometry(
       input.field.exactGeometry!,
@@ -669,6 +729,8 @@ function compileExactMovementPlan(input: {
         interval.lengthMicroFp * 1000000000n,
         65536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(interval.speedPermille),
       );
+      const nextBaseOffset = baseOffset + duration;
+      const nextOffset = scaledCumulativeDuration(nextBaseOffset, scale);
       speedSpans.push(
         Object.freeze({
           from: interval.from,
@@ -677,21 +739,23 @@ function compileExactMovementPlan(input: {
           overlayId: interval.overlayId,
           speedPermille: interval.speedPermille,
           startOffsetUs: offset.toString(),
-          endOffsetUs: (offset + duration).toString(),
+          endOffsetUs: nextOffset.toString(),
           geometry: { segmentIndex: i, fromT: interval.fromT, toT: interval.toT },
         }),
       );
-      offset += duration;
+      baseOffset = nextBaseOffset;
+      offset = nextOffset;
       if (speedSpans.length > MAX_SPEED_SPANS) throw new RangeError('ROUTE_TOO_COMPLEX');
     }
   }
   if (offset <= 0n) throw new RangeError('ZERO_LENGTH_PLAN');
   return Object.freeze({
-    planVersion: 3,
+    planVersion: input.travelModifiers ? 4 : 3,
     navigationVersion: 'polygon-v1',
     planId: input.planId,
     mapEdition: input.field.region.mapEdition,
     speedProfileId: profileId(input.field),
+    ...(input.travelModifiers ? { travelModifiers: input.travelModifiers } : {}),
     movementEpoch: input.movementEpoch,
     from: path[0]!,
     goal: path.at(-1)!,
@@ -753,12 +817,6 @@ function validateExactSpan(plan: ContinuousMovementPlan, span: SpeedSpan, index:
   )
     throw new RangeError('Invalid saved geometric span');
   validateExactSpanContinuity(plan, index, geometry, a, b);
-  const duration = ceilDiv(
-    exactIntervalLength(from, to, a, b) * 1000000000n,
-    65536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(span.speedPermille),
-  );
-  if (BigInt(span.endOffsetUs) - BigInt(span.startOffsetUs) !== duration)
-    throw new RangeError('Invalid saved geometric timing');
 }
 
 function gridColumns(field: Pick<NavigationField, 'region' | 'searchGrid'>): number {
@@ -1092,12 +1150,14 @@ export function compileMovementPlan(input: {
   readonly movementEpoch: string;
   readonly startedAtMs: string;
   readonly planId: string;
+  readonly travelModifiers?: ContinuousMovementTravelModifiers;
 }): ContinuousMovementPlan {
   if (
     !/^(0|[1-9]\d{0,18})$/.test(input.movementEpoch) ||
     !/^\d{1,16}$/.test(input.startedAtMs) ||
     !/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(input.planId) ||
-    input.path.length < 2
+    input.path.length < 2 ||
+    (input.travelModifiers !== undefined && !validTravelModifiers(input.travelModifiers))
   )
     throw new RangeError('Invalid movement plan boundary');
   if (input.field.exactGeometry) return compileExactMovementPlan(input);
@@ -1149,26 +1209,32 @@ function compileLegacyMovementPlan(
 ): ContinuousMovementPlan {
   const { routeSpans, danger } = collectLegacyRouteSpans(input.field, input.path);
   const speedSpans: SpeedSpan[] = [];
+  const scale = travelTimeScale(input.travelModifiers);
+  let baseOffset = 0n;
   let offset = 0n;
   for (const span of routeSpans) {
     const duration = legacySpanDuration(span);
+    const nextBaseOffset = baseOffset + duration;
+    const nextOffset = scaledCumulativeDuration(nextBaseOffset, scale);
     speedSpans.push(
       Object.freeze({
         ...span,
         startOffsetUs: offset.toString(),
-        endOffsetUs: (offset + duration).toString(),
+        endOffsetUs: nextOffset.toString(),
       }),
     );
-    offset += duration;
+    baseOffset = nextBaseOffset;
+    offset = nextOffset;
   }
   if (offset <= 0n) throw new RangeError('ZERO_LENGTH_PLAN');
   const startedAtMs = BigInt(input.startedAtMs);
   const arrivesAtMs = ceilDiv(startedAtMs * 1000n + offset, 1000n);
   return Object.freeze({
-    planVersion: 2,
+    planVersion: input.travelModifiers ? 4 : 2,
     planId: input.planId,
     mapEdition: input.field.region.mapEdition,
     speedProfileId: profileId(input.field),
+    ...(input.travelModifiers ? { travelModifiers: input.travelModifiers } : {}),
     movementEpoch: input.movementEpoch,
     from: toMicro(input.path[0]!),
     goal: toMicro(input.path.at(-1)!),
@@ -1182,12 +1248,12 @@ function compileLegacyMovementPlan(
 }
 
 function supportedPlanVersion(p: ContinuousMovementPlan): boolean {
-  return p.planVersion === 3
+  return p.planVersion === 3 || p.planVersion === 4
     ? p.navigationVersion === 'polygon-v1'
     : p.planVersion === 2 && p.navigationVersion === undefined;
 }
 function validateSpanVersion(plan: ContinuousMovementPlan, span: SpeedSpan, index: number): void {
-  if (plan.planVersion === 3) {
+  if (plan.planVersion === 3 || plan.planVersion === 4) {
     validateExactSpan(plan, span, index);
     return;
   }
@@ -1196,6 +1262,16 @@ function validateSpanVersion(plan: ContinuousMovementPlan, span: SpeedSpan, inde
     (span.from.xMicroFp === span.to.xMicroFp && span.from.zMicroFp === span.to.zMicroFp)
   )
     throw new RangeError('Invalid saved movement plan');
+}
+function baseSpanDuration(plan: ContinuousMovementPlan, span: SpeedSpan): bigint {
+  if (plan.planVersion === 2) return legacySpanDuration(span);
+  const geometry = span.geometry!;
+  const from = plan.path[geometry.segmentIndex]!;
+  const to = plan.path[geometry.segmentIndex + 1]!;
+  return ceilDiv(
+    exactIntervalLength(from, to, readRatio(geometry.fromT), readRatio(geometry.toT)) * 1000000000n,
+    65536n * BigInt(BASE_SPEED_FP_PER_SECOND) * BigInt(span.speedPermille),
+  );
 }
 /** Read a frozen persisted schedule without rebuilding it under a later map. */
 export function readContinuousMovementPlan(value: unknown): ContinuousMovementPlan {
@@ -1229,6 +1305,9 @@ export function readContinuousMovementPlan(value: unknown): ContinuousMovementPl
     !decimal(p.arrivesAtMs) ||
     !decimal(p.totalDurationUs) ||
     BigInt(p.totalDurationUs) <= 0n ||
+    (p.planVersion === 4
+      ? !p.travelModifiers || !validTravelModifiers(p.travelModifiers)
+      : p.travelModifiers !== undefined) ||
     !point(p.from) ||
     !point(p.goal) ||
     typeof p.planId !== 'string' ||
@@ -1248,7 +1327,9 @@ export function readContinuousMovementPlan(value: unknown): ContinuousMovementPl
     throw new RangeError('Invalid saved movement plan');
   const profile = SPEED_PROFILES[p.speedProfileId];
   let end = '0',
+    baseEnd = 0n,
     last = p.from;
+  const scale = travelTimeScale(p.travelModifiers);
   for (const [spanIndex, span] of (p.speedSpans as readonly SpeedSpan[]).entries()) {
     if (
       !span ||
@@ -1267,11 +1348,19 @@ export function readContinuousMovementPlan(value: unknown): ContinuousMovementPl
     )
       throw new RangeError('Invalid saved movement plan');
     validateSpanVersion(p, span, spanIndex);
+    const nextBaseEnd = baseEnd + baseSpanDuration(p, span);
+    if (
+      BigInt(span.startOffsetUs) !== scaledCumulativeDuration(baseEnd, scale) ||
+      BigInt(span.endOffsetUs) !== scaledCumulativeDuration(nextBaseEnd, scale)
+    )
+      throw new RangeError('Invalid saved movement timing');
+    baseEnd = nextBaseEnd;
     end = span.endOffsetUs;
     last = span.to;
   }
   if (
     end !== p.totalDurationUs ||
+    BigInt(p.totalDurationUs) !== scaledCumulativeDuration(baseEnd, scale) ||
     !equal(last, p.goal) ||
     BigInt(p.arrivesAtMs) !== BigInt(p.startedAtMs) + ceilDiv(BigInt(p.totalDurationUs), 1000n)
   )
@@ -1297,7 +1386,7 @@ export function positionAt(plan: ContinuousMovementPlan, trustedTimeMs: string):
   const start = BigInt(span.startOffsetUs);
   const duration = BigInt(span.endOffsetUs) - start;
   const at = elapsed - start;
-  if (plan.planVersion === 3) {
+  if (plan.planVersion === 3 || plan.planVersion === 4) {
     const geometry = span.geometry!;
     const a = readRatio(geometry.fromT),
       b = readRatio(geometry.toT);

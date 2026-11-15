@@ -32,6 +32,12 @@ import {
   prepareFreeMovementStop,
   readContinuousMovementPlan,
   readCompanyCombatAggregateState,
+  ordinaryContractProfile,
+  ordinaryCustodyTravelLoads,
+  readOrdinaryContractState,
+  huntProfile,
+  WHOSE_WOLVES_INSTANCE_ID,
+  whoseWolvesGuideEntitlement,
 } from '@warwrit/game-core';
 import type {
   CompanyCombatAggregateState,
@@ -48,6 +54,7 @@ import type {
 } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { prepareCourseInterruption } from '../company/courses.js';
+import { readHuntWorldState } from '../contracts/first-hunt-runtime.js';
 import { prepareStationaryFoodFacts } from '../company/travel-food.js';
 import { resolveSessionAccount } from '../auth/session.js';
 import {
@@ -152,10 +159,12 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
     s.execution?.schemaVersion !== 2 ||
     s.execution.partyId !== row.party_id ||
     s.execution.routeEpoch !== row.route_epoch ||
-    (s.execution.plan?.planVersion !== 2 && s.execution.plan?.planVersion !== 3) ||
+    (s.execution.plan?.planVersion !== 2 &&
+      s.execution.plan?.planVersion !== 3 &&
+      s.execution.plan?.planVersion !== 4) ||
     s.execution.plan.planId !== row.segment_id ||
     !isContinuousRegionVersion(s.execution.plan.mapEdition) ||
-    (s.execution.plan.planVersion === 3) !==
+    (s.execution.plan.planVersion === 3 || s.execution.plan.planVersion === 4) !==
       (s.execution.plan.mapEdition === 'seroe-porechye-continuous-v5' ||
         s.execution.plan.mapEdition === PAINTED_ATLAS_REGION_VERSION) ||
     s.execution.plan.speedProfileId !== row.profile_id ||
@@ -990,12 +999,81 @@ export async function executeContinuousMovement(
         allowedSegment,
       );
       if (!path || path.length < 2) throw new MovementRejection('NO_PATH');
+      const rescueProfileIds = ['ci.m1.stretcher-and-sword.01', 'ci.m1.man-by-road.01'] as const;
+      const guests: { readonly personId: string; readonly travelMode?: 'ON_FOOT' | 'STRETCHER' }[] =
+        [];
+      for (const instanceId of rescueProfileIds) {
+        const profile = ordinaryContractProfile(instanceId);
+        if (!profile) throw new TypeError(`Rescue profile ${instanceId} is unavailable`);
+        const row = await tx
+          .selectFrom('ordinary_contracts')
+          .select(['profile_id', 'state'])
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .executeTakeFirst();
+        if (row) {
+          const contractState = readOrdinaryContractState(profile, row.state, row.profile_id);
+          const travelLoads = new Map(
+            ordinaryCustodyTravelLoads(contractState, companyId).map((guest) => [
+              guest.personId,
+              guest.travelMode,
+            ]),
+          );
+          guests.push(
+            ...contractState.custody
+              .filter((entry) => entry.companyId === companyId)
+              .map((entry) => {
+                const travelMode = travelLoads.get(entry.personId);
+                return {
+                  personId: entry.personId,
+                  ...(travelMode ? { travelMode } : {}),
+                };
+              }),
+          );
+        }
+      }
+      const originSiteId =
+        current.economy.lifecycle.parties[0]!.location.kind === 'AT'
+          ? current.economy.lifecycle.parties[0]!.location.siteId
+          : '';
+      const wolfGuideProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+      const wolfGuideRow =
+        originSiteId === 'tikhaya-gat' && site?.siteId === 'severny-dvor'
+          ? await tx
+              .selectFrom('world_hunt_states')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', WHOSE_WOLVES_INSTANCE_ID)
+              .executeTakeFirst()
+          : undefined;
+      const wolfGuideState =
+        wolfGuideRow && wolfGuideProfile
+          ? readHuntWorldState(worldId, wolfGuideProfile, wolfGuideRow).questState
+          : undefined;
+      const guide = wolfGuideState
+        ? whoseWolvesGuideEntitlement(wolfGuideState, companyId, originSiteId, site?.siteId ?? '')
+        : undefined;
+      const travelModifiers =
+        guests.length > 0 || guide !== undefined
+          ? {
+              ...(guests.some((guest) => guest.travelMode)
+                ? {
+                    custodyModes: guests.flatMap((guest) =>
+                      guest.travelMode ? [guest.travelMode] : [],
+                    ),
+                  }
+                : {}),
+              ...(guests.length > 0 ? { additionalFoodPersons: guests.length } : {}),
+              ...(guide ? { wolvesGuideSourceEventId: guide.sourceEventId } : {}),
+            }
+          : undefined;
       const plan = compileMovementPlan({
         field,
         path,
         startedAtMs: clock.nowMs,
         movementEpoch: epoch,
         planId: randomUUID(),
+        ...(travelModifiers ? { travelModifiers } : {}),
       });
       const arrivesAt = campaignTickAt(
         createCampaignClock(clock.epochMs, clock.startingTick),

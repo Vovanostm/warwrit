@@ -48,6 +48,8 @@ export interface TravelFoodDepartureBoundary {
   readonly partyId: string;
   readonly location: LocationRef;
   readonly settledThroughTick: string;
+  /** Server-derived guests travelling with the company; never read from a client request. */
+  readonly additionalFoodPersons?: number;
 }
 
 export interface TravelFoodFreeMovementBoundary {
@@ -388,10 +390,22 @@ function prepareFoodFacts(
   const requirements = accrual.requirements.filter(
     (requirement): requirement is FoodRequirement => requirement.kind === 'FOOD_CONSUMPTION',
   );
+  const additionalFoodPersons =
+    routeBoundary?.kind === 'DEPARTURE'
+      ? (routeBoundary.additionalFoodPersons ?? 0)
+      : routeBoundary?.kind === 'FREE_MOVEMENT' && routeBoundary.execution.schemaVersion === 2
+        ? (routeBoundary.execution.plan.travelModifiers?.additionalFoodPersons ?? 0)
+        : 0;
+  const requirementsWithGuests = addGuestFoodDemand(
+    requirements,
+    lifecycle.memberships,
+    additionalFoodPersons,
+  );
+  if (!requirementsWithGuests) return { kind: 'REJECTED', reason: 'INVALID_STATE' };
   return prepareStockFoodFacts(
     state,
     toTick,
-    requirements,
+    requirementsWithGuests,
     (_member, character) => {
       const location = character.presence.location;
       if (location.kind === 'TRANSIT') return { kind: 'SKIP' };
@@ -461,6 +475,36 @@ function prepareFoodFacts(
       ]),
     allowStationaryShortfall,
   );
+}
+
+/** Allocate each custody guest's actual food demand to the first active company member. */
+function addGuestFoodDemand(
+  requirements: readonly FoodRequirement[],
+  memberships: CompanyCombatAggregateState['economy']['lifecycle']['memberships'],
+  guestCount: number,
+): readonly FoodRequirement[] | undefined {
+  if (!Number.isSafeInteger(guestCount) || guestCount < 0 || guestCount > 8) return undefined;
+  if (guestCount === 0) return requirements;
+  const member = memberships
+    .filter((entry) => entry.endedAt === null)
+    .toSorted((left, right) =>
+      left.membershipId < right.membershipId ? -1 : left.membershipId > right.membershipId ? 1 : 0,
+    )
+    .find((entry) =>
+      requirements.some((requirement) => requirement.membershipId === entry.membershipId),
+    );
+  if (!member) return undefined;
+  const rate = BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay);
+  return requirements.map((requirement) => {
+    if (requirement.membershipId !== member.membershipId) return requirement;
+    const interval = BigInt(requirement.toTick) - BigInt(requirement.fromTick);
+    if (interval < 0n) return requirement;
+    const additionalTickUnits = interval * BigInt(guestCount) * rate;
+    return {
+      ...requirement,
+      tickUnits: (BigInt(requirement.tickUnits) + additionalTickUnits).toString(),
+    };
+  });
 }
 
 export function prepareTravelFoodFacts(
@@ -669,6 +713,7 @@ export function prepareStationaryFoodFacts(
   state: CompanyCombatAggregateState,
   toTick: string,
   commandId: string,
+  additionalFoodPersons = 0,
 ): TravelFoodPreparation {
   const lifecycle = state.economy.lifecycle;
   if (BigInt(toTick) <= BigInt(lifecycle.campaignTick)) return { kind: 'PREPARED', facts: [] };
@@ -684,6 +729,7 @@ export function prepareStationaryFoodFacts(
       partyId: party.partyId,
       location: party.location,
       settledThroughTick: toTick,
+      additionalFoodPersons,
     },
     true,
   );

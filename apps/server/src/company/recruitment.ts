@@ -11,6 +11,8 @@ import {
   initialSkillProgress,
   moneyQ,
   skillLevel,
+  ordinaryContractProfile,
+  readOrdinaryContractState,
 } from '@warwrit/game-core';
 import type {
   CompanyCombatAggregateState,
@@ -59,7 +61,19 @@ const profiles = [
     sex: 'female',
     templateId: 'reach',
   },
+  {
+    key: 'stretcher-and-sword-luka',
+    siteId: 'severny-dvor',
+    areaId: 'severny-dvor-yard',
+    name: 'Лука',
+    sex: 'male',
+    templateId: 'front',
+  },
 ] as const;
+
+const lukaRecruitProfile = profiles.find((profile) => profile.key === 'stretcher-and-sword-luka')!;
+const lukaContractProfile = ordinaryContractProfile('ci.m1.stretcher-and-sword.01')!;
+const LUKA_RECRUITMENT_SLOT = 'stretcher-luka-recruit-offer';
 
 export interface StoredRecruitOffer {
   readonly world_id: string;
@@ -281,6 +295,7 @@ export async function readSiteRecruitOffers(
   worldId: string,
   siteId: string,
   areaId: string,
+  companyId: string,
 ): Promise<readonly LocalRecruitOfferDto[]> {
   await ensureWorldRecruitPool(transaction, worldId);
   const rows = await transaction
@@ -292,7 +307,40 @@ export async function readSiteRecruitOffers(
     .where('consumed_at', 'is', null)
     .orderBy('offer_id')
     .execute();
-  return rows.map(projectRecruitOffer);
+  const lukaOfferId = offerGenesis(worldId, lukaRecruitProfile).offerId;
+  const canRecruitLuka =
+    siteId === lukaRecruitProfile.siteId &&
+    areaId === lukaRecruitProfile.areaId &&
+    (await companyHasLukaRecruitEntitlement(transaction, worldId, companyId));
+  return rows
+    .filter((row) => row.offer_id !== lukaOfferId || canRecruitLuka)
+    .map(projectRecruitOffer);
+}
+
+/** Luka's world-owned offer stays hidden until its company observes him after the delay. */
+export async function companyHasLukaRecruitEntitlement(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  companyId: string,
+): Promise<boolean> {
+  const row = await transaction
+    .selectFrom('ordinary_contracts')
+    .select(['profile_id', 'state'])
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', lukaContractProfile.instanceId)
+    .executeTakeFirst();
+  if (!row || row.profile_id !== lukaContractProfile.definitionId) return false;
+  const state = readOrdinaryContractState(lukaContractProfile, row.state, row.profile_id);
+  return (
+    state.outcome?.companyId === companyId &&
+    state.facts.some(
+      (fact) => fact.companyId === companyId && fact.slotId === LUKA_RECRUITMENT_SLOT,
+    )
+  );
+}
+
+export function isLukaRecruitOffer(worldId: string, offerId: string): boolean {
+  return offerGenesis(worldId, lukaRecruitProfile).offerId === offerId;
 }
 
 function projectRecruitOffer(row: StoredRecruitOffer): LocalRecruitOfferDto {

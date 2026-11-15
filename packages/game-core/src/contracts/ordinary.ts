@@ -20,7 +20,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.foul-well.01'
   | 'ci.m1.dragged-sack.01'
   | 'ci.m1.voice-under-boards.01'
-  | 'ci.m1.man-by-road.01';
+  | 'ci.m1.man-by-road.01'
+  | 'ci.m1.stretcher-and-sword.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -29,11 +30,7 @@ export interface ContractPlace {
 
 /** World conditions a step needs, read by the adapter from authoritative world state. */
 export type OrdinaryStepGate =
-  | 'DAYLIGHT'
-  | 'RAIDERS_DEFEATED'
-  | 'BEAST_DEFEATED'
-  | 'HERBALIST_PRESENT'
-  | 'HERBALIST_EXILED';
+  'DAYLIGHT' | 'RAIDERS_DEFEATED' | 'BEAST_DEFEATED' | 'HERBALIST_PRESENT' | 'HERBALIST_EXILED';
 
 export type OrdinaryCustodyTravelMode = 'ON_FOOT' | 'STRETCHER';
 
@@ -927,6 +924,115 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
       },
     ],
   },
+  {
+    instanceId: 'ci.m1.stretcher-and-sword.01',
+    definitionId: 'ct.m1.stretcher-and-sword.v1',
+    template: 'RESCUE',
+    issuerRoleId: 'local-village-steward',
+    issuerPlace: SEVERNY_DVOR,
+    walletId: 'wallet.kondrat.ovsyanik.severny-dvor.01',
+    genesisWalletQ: CROWNS(90),
+    rewardQ: CROWNS(90),
+    acceptanceSlot: 'stretcher-contract-acceptance',
+    steps: [
+      {
+        stepId: 'search-road',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: [],
+        gates: [],
+        produces: ['stretcher-child-and-luka-found'],
+        resultTextKey: 'stretcher-and-sword.child-and-luka-found',
+      },
+      {
+        stepId: 'carry-both',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: ['stretcher-child-and-luka-found'],
+        gates: [],
+        excludes: ['stretcher-child-only'],
+        produces: ['stretcher-carry-both', 'stretcher-luka-carried'],
+        takesCustodyOf: 'person.luka.01',
+        custodyTravelMode: 'STRETCHER',
+        resultTextKey: 'stretcher-and-sword.carry-both',
+      },
+      {
+        stepId: 'pick-up-nastya',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: ['stretcher-carry-both'],
+        gates: [],
+        produces: ['stretcher-nastya-recovered'],
+        takesCustodyOf: 'person.nastya.01',
+        custodyTravelMode: 'STRETCHER',
+        resultTextKey: 'stretcher-and-sword.nastya-recovered',
+      },
+      {
+        stepId: 'take-only-nastya',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: ['stretcher-child-and-luka-found'],
+        gates: [],
+        excludes: ['stretcher-carry-both'],
+        produces: ['stretcher-child-only', 'stretcher-nastya-recovered', 'stretcher-luka-dead'],
+        takesCustodyOf: 'person.nastya.01',
+        resultTextKey: 'stretcher-and-sword.take-only-nastya',
+      },
+      {
+        stepId: 'deliver-nastya',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: ['stretcher-carry-both', 'stretcher-luka-carried', 'stretcher-nastya-recovered'],
+        gates: [],
+        produces: ['stretcher-nastya-delivered'],
+        needsCustodyOf: 'person.nastya.01',
+        resultTextKey: 'stretcher-and-sword.nastya-delivered',
+      },
+      {
+        stepId: 'deliver-luka',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: ['stretcher-carry-both', 'stretcher-luka-carried', 'stretcher-nastya-delivered'],
+        gates: [],
+        produces: ['stretcher-luka-delivered', 'stretcher-pelageya-debt-recorded'],
+        needsCustodyOf: 'person.luka.01',
+        completes: true,
+        resultTextKey: 'stretcher-and-sword.both-delivered',
+      },
+      {
+        stepId: 'deliver-only-nastya',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: ['stretcher-child-only', 'stretcher-nastya-recovered'],
+        gates: [],
+        produces: ['stretcher-nastya-delivered', 'stretcher-pelageya-debt-recorded'],
+        needsCustodyOf: 'person.nastya.01',
+        completes: true,
+        resultTextKey: 'stretcher-and-sword.only-nastya-delivered',
+      },
+      {
+        stepId: 'inspect-return-road',
+        action: 'INSPECT',
+        place: KAMENNY_BROD,
+        requires: ['stretcher-luka-dead'],
+        gates: [],
+        produces: ['stretcher-luka-death-observed'],
+        postCompletion: true,
+        resultTextKey: 'stretcher-and-sword.luka-death-observed',
+      },
+      {
+        stepId: 'inspect-luka-at-camp',
+        action: 'INSPECT',
+        place: SEVERNY_DVOR,
+        requires: ['stretcher-luka-delivered'],
+        gates: [],
+        minElapsedTicksSinceSlot: { slotId: 'stretcher-luka-delivered', ticks: '3000' },
+        produces: ['stretcher-luka-recruit-offer'],
+        postCompletion: true,
+        resultTextKey: 'stretcher-and-sword.luka-recruit-offer',
+      },
+    ],
+  },
 ]);
 
 /** Keep released profile objects here when a later offer version is authored. */
@@ -1241,7 +1347,12 @@ export function ordinaryCustodyTravelLoads(
 }[] {
   return state.custody.flatMap((entry) =>
     entry.companyId === companyId
-      ? [{ personId: entry.personId, ...(entry.travelMode ? { travelMode: entry.travelMode } : {}) }]
+      ? [
+          {
+            personId: entry.personId,
+            ...(entry.travelMode ? { travelMode: entry.travelMode } : {}),
+          },
+        ]
       : [],
   );
 }

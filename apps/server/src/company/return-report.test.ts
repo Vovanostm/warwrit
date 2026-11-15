@@ -9,6 +9,7 @@ import {
   hasReturnReportFacts,
   projectReturnReportEvent,
   projectEmptyWatchReturnOutcome,
+  projectStretcherReturnOutcome,
   returnReportElapsedDays,
   settledMovementCount,
   settledReturnReportTick,
@@ -367,6 +368,94 @@ describe('company return report facts', () => {
     ]);
     expect(projectEmptyWatchReturnOutcome(fordRevealed, 'company-b', '20', '3020')).toEqual([]);
     expect(beforeInterval).toHaveLength(1);
+  });
+
+  it('reports the blue-kerchief choice and delayed Luka offer only to its company', () => {
+    const rescued = {
+      outcome: {
+        kind: 'SUCCESS',
+        companyId: 'company-a',
+        sourceEventId: 'contract:deliver-luka',
+        atTick: '20',
+      },
+      facts: [
+        {
+          slotId: 'stretcher-luka-delivered',
+          companyId: 'company-a',
+          sourceEventId: 'contract:deliver-luka',
+          atTick: '20',
+        },
+        {
+          slotId: 'stretcher-luka-recruit-offer',
+          companyId: 'company-a',
+          sourceEventId: 'observe-luka-at-camp',
+          atTick: '3020',
+        },
+      ],
+    } as unknown as OrdinaryContractState;
+    expect(projectStretcherReturnOutcome(rescued, 'company-a', '15', '25')).toEqual([
+      {
+        instanceId: 'ci.m1.stretcher-and-sword.01',
+        outcome: 'LUKA_RESCUED',
+        atTick: '20',
+      },
+    ]);
+    expect(projectStretcherReturnOutcome(rescued, 'company-a', '1000', '3019')).toEqual([]);
+    expect(
+      projectStretcherReturnOutcome(
+        rescued,
+        'company-a',
+        '1000',
+        '3020',
+        new Set(['ci.m1.stretcher-and-sword.01:LUKA_RECRUIT_OFFER:observe-luka-at-camp']),
+      ),
+    ).toEqual([]);
+    expect(projectStretcherReturnOutcome(rescued, 'company-b', '15', '3020')).toEqual([]);
+
+    const lost = {
+      ...rescued,
+      facts: [
+        {
+          slotId: 'stretcher-luka-dead',
+          companyId: 'company-a',
+          sourceEventId: 'contract:leave-luka',
+          atTick: '10',
+        },
+      ],
+      outcome: {
+        kind: 'SUCCESS',
+        companyId: 'company-a',
+        sourceEventId: 'contract:deliver-nastya',
+        atTick: '20',
+      },
+    } as unknown as OrdinaryContractState;
+    expect(projectStretcherReturnOutcome(lost, 'company-a', '15', '25')).toEqual([
+      {
+        instanceId: 'ci.m1.stretcher-and-sword.01',
+        outcome: 'NASTYA_ONLY',
+        atTick: '20',
+      },
+    ]);
+    const observed = {
+      ...lost,
+      facts: [
+        ...lost.facts,
+        {
+          slotId: 'stretcher-luka-death-observed',
+          companyId: 'company-a',
+          sourceEventId: 'inspect-return-road',
+          atTick: '40',
+        },
+      ],
+    } as unknown as OrdinaryContractState;
+    expect(projectStretcherReturnOutcome(observed, 'company-a', '25', '39')).toEqual([]);
+    expect(projectStretcherReturnOutcome(observed, 'company-a', '25', '40')).toEqual([
+      {
+        instanceId: 'ci.m1.stretcher-and-sword.01',
+        outcome: 'LUKA_DEATH_OBSERVED',
+        atTick: '40',
+      },
+    ]);
   });
 
   it('hides allowlisted audit events until the lifecycle observer knows their IDs and subjects', () => {

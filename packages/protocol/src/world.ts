@@ -221,11 +221,16 @@ export interface WorldFreeMovementV2ResponseDto {
     readonly speedPermille: number;
   };
   readonly plan: null | {
-    readonly planVersion: 2 | 3;
+    readonly planVersion: 2 | 3 | 4;
     readonly navigationVersion?: 'polygon-v1';
     readonly planId: string;
     readonly mapEdition: string;
     readonly speedProfileId: string;
+    readonly travelModifiers?: {
+      readonly custodyModes?: readonly ('ON_FOOT' | 'STRETCHER')[];
+      readonly wolvesGuideSourceEventId?: string;
+      readonly additionalFoodPersons?: number;
+    };
     readonly movementEpoch: string;
     readonly from: WorldPointMicroFpDto;
     readonly goal: WorldPointMicroFpDto;

@@ -81,6 +81,11 @@ requests.
   to the informed company travelling from Тихая Гать to Северный Двор; its
   revised line is «Быстрее доберётесь». Canonical finding fields survive reload.
   [Quest checkpoint](docs/work-packages/M1-QUESTS.md). LOCAL.
+- 2026-11-16 — Added: «Девочка в синем платке» saves both rescue choices,
+  guest rations, timed travel burden, and Лука’s delayed company-only recruit
+  offer. The return report separates the rescue choice, later death observation
+  and recruit offer.
+  [Quest checkpoint](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-15 — Fixed: delay the empty-watch camp and old-ford outcomes until
   their campaign timing and local Prokop read are satisfied. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement two approved M1 quests: a distinct physical-proof

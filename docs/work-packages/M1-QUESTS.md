@@ -426,3 +426,28 @@ contract board. Prettier, scoped ESLint and `git diff --check` passed; the
 migration guard is NOT_RUN because no migration changed in this follow-up.
 Normal playthrough and player acceptance are NOT_RUN; enjoyment is NOT_MEASURED.
 This slice is LOCAL; publication and merge are NOT_RUN.
+
+## «Девочка в синем платке» checkpoint — 2026-11-16
+
+Implemented `ci.m1.stretcher-and-sword.01` with the approved two outcomes. Both
+deliver Настя to Пелагея and record Кондрат’s 90-crown payment as her debt.
+Carrying Лука uses stretcher travel; carrying Настя alone keeps normal pace.
+Custody guests add food demand against company stock. Continuous movement plan
+version 4 stores the finite custody modes and exact source for any route guide;
+the trial scales are on-foot ×1.25, stretcher ×1.5 and guide ×0.75. They
+multiply over cumulative route timing,
+so old saved plans retain their original timing. The guide is applied only to
+the company and Тихая Гать → Северный Двор trip that earned it.
+
+After carrying Лука, the owning company can observe his camp offer in Северный
+Двор after 3,000 campaign ticks; the offer appears only for that company and the
+server rechecks the saved observation when it is hired. Taking only Настя leaves
+Лука at the ford. His death appears only after that company inspects the return
+road. The return report separates the choice from the later death observation and
+recruit offer, with each result scoped to its company.
+
+Game-core and protocol builds, testkit build, and server and web typechecks
+passed. Focused movement-timing, guest-food-demand, return-report and contract
+board tests passed (60 tests across six files). Browser playthrough, PostgreSQL integration, and
+native player acceptance are NOT_RUN; enjoyment is NOT_MEASURED. This slice is
+LOCAL; publication and merge are NOT_RUN.

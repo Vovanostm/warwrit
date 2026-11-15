@@ -88,6 +88,7 @@ export function registerCompanyRoutes(
           worldId,
           request.params.siteId,
           partyLocation.areaId,
+          companyId,
         ),
       } satisfies LocalRecruitOffersResponseDto;
     });

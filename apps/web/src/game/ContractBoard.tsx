@@ -44,6 +44,8 @@ function stepBlockerText(
       return conditionText(contract.instanceId, step.stepId) ?? 'условие не выполнено';
     case 'ALREADY_DONE':
       return 'сделано';
+    case 'ALTERNATIVE_CHOSEN':
+      return 'вы выбрали другой путь';
     case 'NOT_A_PARTICIPANT':
       return 'возьмите контракт';
     case 'NOT_AVAILABLE':
@@ -294,7 +296,11 @@ function ContractStep(
     <li className={step.doneByYou ? 'contract-step-done' : ''}>
       <span>{stepText(contract.instanceId, step.stepId) ?? step.stepId}</span>
       {step.doneByYou && finding && <span className="contract-finding">{finding}</span>}
-      {!step.doneByYou && contract.state === 'ACTIVE' && <ContractStepAction {...props} />}
+      {!step.doneByYou &&
+        (contract.state === 'ACTIVE' ||
+          (contract.state === 'COMPLETED' && step.blocker === null)) && (
+          <ContractStepAction {...props} />
+        )}
     </li>
   );
 }
