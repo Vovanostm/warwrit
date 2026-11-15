@@ -4,7 +4,10 @@ import type {
   CompanyReturnReportEventDto,
   CompanyReturnReportEventType,
 } from '@warwrit/protocol';
-import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
+import {
+  COMPANY_RETURN_REPORT_EVENT_TYPES,
+  WORLD_EXPECTED_COMPANY_ID_HEADER,
+} from '@warwrit/protocol';
 import { formatCrowns } from './format.js';
 import './ReturnReport.css';
 
@@ -28,26 +31,10 @@ type State =
     };
 
 const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
-const INTEGER = /^(0|[1-9][0-9]{0,79})$/u;
-const MONEY = /^-?(0|[1-9][0-9]{0,79})$/u;
-const DECIMAL_DAYS = /^(0|[1-9][0-9]{0,69})(?:\.[0-9]{1,10})?$/u;
-const EVENT_TYPES = new Set<string>([
-  'CompanyStarted',
-  'CompanyEnded',
-  'LeadershipResolved',
-  'HeirDesignated',
-  'HeirNotified',
-  'ServiceStarted',
-  'JoinedFieldParty',
-  'Arrived',
-  'AssignmentChanged',
-  'ReturnedToService',
-  'PerkChosen',
-  'NicknameProposed',
-  'NicknameAccepted',
-  'NicknameRejected',
-  'CompanyRenamed',
-]);
+const INTEGER = /^(0|[1-9][0-9]{0,127})$/u;
+const MONEY = /^-?(0|[1-9][0-9]{0,127})$/u;
+const DECIMAL_DAYS = /^(0|[1-9][0-9]{0,127})(?:\.[0-9]{1,3})?$/u;
+const EVENT_TYPES = new Set<string>(COMPANY_RETURN_REPORT_EVENT_TYPES);
 
 export function ReturnReport(props: {
   readonly scope: Scope;
@@ -59,6 +46,7 @@ export function ReturnReport(props: {
   const requestGeneration = useRef(0);
   const readController = useRef<AbortController | undefined>(undefined);
   const ackController = useRef<AbortController | undefined>(undefined);
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   const [retry, setRetry] = useState(0);
   const [dismissed, setDismissed] = useState(false);
   const [state, setState] = useState<State>({ scopeKey, status: 'loading' });
@@ -123,6 +111,13 @@ export function ReturnReport(props: {
     };
   }, [props.scope.companyId, props.scope.accountId, retry, scopeKey]);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    dialog.showModal?.();
+    return () => dialog.close?.();
+  }, [dismissed, scopeKey, visibleState.status]);
+
   if (dismissed || visibleState.status === 'empty' || visibleState.status === 'closed') return null;
 
   const continueWithoutAck = () => {
@@ -148,7 +143,10 @@ export function ReturnReport(props: {
         method: 'POST',
         credentials: 'same-origin',
         cache: 'no-store',
-        headers: { 'content-type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          [WORLD_EXPECTED_COMPANY_ID_HEADER]: props.scope.companyId,
+        },
         body: JSON.stringify({ schemaVersion: 1, reportId: report.reportId }),
         signal: controller.signal,
       });
@@ -181,18 +179,24 @@ export function ReturnReport(props: {
   };
 
   return (
-    <div className="return-report-backdrop">
-      <section
-        className="return-report"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="return-report-title"
-        aria-busy={
-          visibleState.status === 'loading' ||
-          (visibleState.status === 'report' && visibleState.acknowledging)
-        }
-      >
-        <p className="return-report-eyebrow">Книга компании</p>
+    <dialog
+      ref={dialogRef}
+      className="return-report-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="return-report-title"
+      aria-busy={
+        visibleState.status === 'loading' ||
+        (visibleState.status === 'report' && visibleState.acknowledging)
+      }
+      onKeyDown={(event) => event.stopPropagation()}
+      onCancel={(event) => {
+        event.preventDefault();
+        if (visibleState.status === 'report') void acknowledge(visibleState.report);
+        else continueWithoutAck();
+      }}
+    >
+      <section className="return-report">
         <h1 id="return-report-title">Пока вас не было</h1>
         {visibleState.status === 'loading' && (
           <>
@@ -251,7 +255,7 @@ export function ReturnReport(props: {
                 <dd>{formatCrowns(visibleState.report.wages.currentOwedQ)} кр.</dd>
               </div>
               <div>
-                <dt>Текущий долг компании</dt>
+                <dt>Прочие долги компании</dt>
                 <dd>{formatCrowns(visibleState.report.debt.currentQ)} кр.</dd>
               </div>
             </dl>
@@ -302,7 +306,7 @@ export function ReturnReport(props: {
           </>
         )}
       </section>
-    </div>
+    </dialog>
   );
 }
 
@@ -331,8 +335,7 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
     !isMoney(report['wages']['currentOwedQ']) ||
     !isRecord(report['debt']) ||
     !isMoney(report['debt']['currentQ']) ||
-    !Array.isArray(report['events']) ||
-    report['events'].length > 200
+    !Array.isArray(report['events'])
   )
     return undefined;
 
@@ -347,7 +350,7 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
       !Array.isArray(event['subjectIds']) ||
       event['subjectIds'].length > 32 ||
       !event['subjectIds'].every(
-        (id) => typeof id === 'string' && id.length > 0 && id.length <= 200,
+        (id) => typeof id === 'string' && id.length > 0 && [...id].length <= 256,
       )
     )
       return undefined;
@@ -422,9 +425,9 @@ function describeEvent(
     CompanyEnded: 'Служба компании завершилась.',
     LeadershipResolved: 'Назначен глава компании.',
     HeirDesignated: 'Назначен наследник.',
-    HeirNotified: 'Наследнику отправили весть.',
-    ServiceStarted: 'Компания снова поступила на службу.',
-    JoinedFieldParty: 'Компания присоединилась к отряду в поле.',
+    HeirNotified: 'Наследник получил весть.',
+    ServiceStarted: 'Боец поступил на службу.',
+    JoinedFieldParty: 'Боец вошёл в полевой отряд.',
     Arrived: 'Компания добралась до места.',
     AssignmentChanged: 'Изменилось назначение бойца.',
     ReturnedToService: 'Боец вернулся на службу.',
@@ -437,15 +440,12 @@ function describeEvent(
   };
   const namesById = new Map(
     characters
-      .filter((character) => character.name.length > 0 && character.name.length <= 100)
+      .filter((character) => character.name.length > 0)
       .map((character) => [character.characterId, character.name]),
   );
   const names = event.subjectIds
     .map((id) => namesById.get(id))
     .filter((name) => name !== undefined);
   const description = descriptions[event.type as CompanyReturnReportEventType | 'unknown'];
-  const namePrefix = names.length > 0 ? `${names.join(', ')}: ` : '';
-  return namePrefix
-    ? `${namePrefix}${description[0]!.toLocaleLowerCase('ru-RU')}${description.slice(1)}`
-    : description;
+  return names.length > 0 ? `${names.join(', ')} · ${description}` : description;
 }

@@ -69,6 +69,21 @@ it('shows no report when the server returns null and never acknowledges on read'
   expect(calls).toEqual(['/api/company/return-report']);
 });
 
+it('accepts canonical large amounts and a report with more than two hundred events', async () => {
+  const value = report();
+  value.wages.accruedQ = '9'.repeat(100);
+  value.events = Array.from({ length: 201 }, () => ({
+    type: 'NicknameAccepted',
+    atTick: '1500',
+    subjectIds: ['fighter-a'],
+  }));
+  vi.stubGlobal('fetch', async () => Response.json({ report: value }));
+  await mount();
+  expect(container?.querySelectorAll('.return-report-events li')).toHaveLength(201);
+  expect(container?.textContent).not.toContain('Не удалось получить сводку');
+  expect(button('Закрыть сводку')).toBeDefined();
+});
+
 it('keeps malformed untrusted amounts out of money formatting', async () => {
   vi.stubGlobal('fetch', async () =>
     Response.json({ report: { ...report(), wages: { ...report().wages, accruedQ: 'NaN' } } }),
@@ -113,9 +128,9 @@ it('shows only granted report facts, then acknowledges on explicit close', async
   expect(container?.textContent).toContain('2,5 кр.');
   expect(container?.textContent).toContain('1 кр.');
   expect(container?.textContent).toContain('Сейчас не выплачено жалованья0,5 кр.');
-  expect(container?.textContent).toContain('Текущий долг компании0,7 кр.');
+  expect(container?.textContent).toContain('Прочие долги компании0,7 кр.');
   expect(container?.textContent).toContain('В сумму вошёл расход пайков из более раннего периода');
-  expect(container?.textContent).toContain('Мора: прозвище принято.');
+  expect(container?.textContent).toContain('Мора · Прозвище принято.');
   expect(container?.textContent).toContain('Произошло событие в компании.');
   expect(container?.textContent).not.toContain('private-character-id');
   expect(container?.textContent).not.toContain('do-not-render');

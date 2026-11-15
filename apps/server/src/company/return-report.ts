@@ -10,7 +10,10 @@ import type {
   CompanyReturnReportEventType,
   CompanyReturnReportReadResponseDto,
 } from '@warwrit/protocol';
-import { COMPANY_RETURN_REPORT_EVENT_TYPES } from '@warwrit/protocol';
+import {
+  COMPANY_RETURN_REPORT_EVENT_TYPES,
+  WORLD_EXPECTED_COMPANY_ID_HEADER,
+} from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
 import type { DatabaseSchema } from '../db/database.js';
 import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
@@ -472,6 +475,9 @@ export function registerCompanyReturnReportRoutes(
         return reply.code(401).send({ error: 'authentication required' });
       const companyId = await findOwnedCompanyId(transaction, options.worldId, accountId);
       if (companyId === undefined) return reply.code(403).send({ error: 'company required' });
+      const expectedCompanyId = request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER];
+      if (expectedCompanyId !== undefined && expectedCompanyId !== companyId)
+        return reply.code(409).send({ error: 'company scope changed' });
       const loaded = await lockCompanyAggregate(transaction, options.worldId, companyId);
       if (loaded === undefined) throw new Error('Owned company snapshot is unavailable');
       const observed = await observeLocalCompanyConditions(transaction, loaded, new Date());
@@ -489,6 +495,9 @@ export function registerCompanyReturnReportRoutes(
         return reply.code(401).send({ error: 'authentication required' });
       const companyId = await findOwnedCompanyId(transaction, options.worldId, accountId);
       if (companyId === undefined) return reply.code(403).send({ error: 'company required' });
+      const expectedCompanyId = request.headers[WORLD_EXPECTED_COMPANY_ID_HEADER];
+      if (expectedCompanyId !== undefined && expectedCompanyId !== companyId)
+        return reply.code(409).send({ error: 'company scope changed' });
       if (!(await lockCompanyAggregate(transaction, options.worldId, companyId)))
         throw new Error('Owned company snapshot is unavailable');
       const cursor = await transaction

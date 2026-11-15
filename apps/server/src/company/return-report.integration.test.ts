@@ -10,6 +10,7 @@ import {
   publicRevision,
 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
+import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from '../app.js';
@@ -145,6 +146,19 @@ describe('company return report (PostgreSQL)', () => {
       expect(otherRead.statusCode).toBe(403);
       expect(anonymousAck.statusCode).toBe(401);
       expect(otherAck.statusCode).toBe(403);
+      const wrongScopeRead = await app.inject({
+        method: 'GET',
+        url: '/company/return-report',
+        headers: { ...ownerHeaders, [WORLD_EXPECTED_COMPANY_ID_HEADER]: 'old-company' },
+      });
+      const wrongScopeAck = await app.inject({
+        method: 'POST',
+        url: '/company/return-report/ack',
+        headers: { ...ownerPostHeaders, [WORLD_EXPECTED_COMPANY_ID_HEADER]: 'old-company' },
+        payload: { schemaVersion: 1, reportId: randomUUID() },
+      });
+      expect(wrongScopeRead.statusCode).toBe(409);
+      expect(wrongScopeAck.statusCode).toBe(409);
 
       const firstRead = await app.inject({
         method: 'GET',
