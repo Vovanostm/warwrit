@@ -1,0 +1,1 @@
+drop table company_return_report_cursors;
