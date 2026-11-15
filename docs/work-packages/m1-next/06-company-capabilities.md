@@ -281,8 +281,13 @@ existing transaction receipt before rechecking offer freshness.
 
 Focused source and adapter/UI checks pass: guard offer/access tests, ordinary
 entry/amend/exit adapter tests, saved-response retry, the F1 maintenance rule
-suite, and the guard panel test (16 assertions across five test files). Protocol
-build plus server and web typechecks pass. A real PostgreSQL entry/amend/exit run
-and native player journey are NOT_RUN; player acceptance is NOT_MEASURED. No
-migration or new financial policy was added. N06 remains open for N1/I1 and
-independent player acceptance.
+suite, and the guard panel test (16 assertions across five test files). The
+per-file PostgreSQL clone test passed 1/1 through authenticated quote, entry,
+exact retry, two elapsed covered intervals split by amendment, exit, overdue-debt
+refusal without partial balance or coverage, and wrong-company scope privacy.
+It also confirmed that a guard quote catches a stationary company up to the
+current campaign tick before issue: a command carrying the older public revision
+is refused after catch-up, and the refreshed quote allows the player to continue.
+Protocol build plus server and web typechecks pass. A native player journey is
+NOT_RUN; player acceptance is NOT_MEASURED. No migration or new financial policy
+was added. N06 remains open for N1/I1 and independent player acceptance.

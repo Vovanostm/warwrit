@@ -99,6 +99,7 @@ import {
 } from './travel-food.js';
 import type { TravelFoodRouteBoundary } from './travel-food.js';
 import { readWorldClock } from '../world/clock.js';
+import type { WorldClockReading } from '../world/clock.js';
 import { localSiteHasHostiles } from './local-safe-place.js';
 import {
   KAMENNY_BROD_GUARD_COURSE,
@@ -257,7 +258,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
 
   const previous = await lockCompanyAggregate(input.transaction, input.worldId, companyId);
   if (!previous) throw new Error('Owned company snapshot is unavailable');
-  const previousLifecycle = previous.economy.lifecycle;
+  let previousLifecycle = previous.economy.lifecycle;
 
   // A durable exact retry answers before public freshness or a new clock boundary.
   const existingReceipt = await readCompanyCommandReceipt(
@@ -304,6 +305,27 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
   const clock = await readWorldClock(input.transaction, input.worldId, input.now, true);
+  if (
+    (input.request.type === 'AcceptSafeService' ||
+      input.request.type === 'AmendSafeService' ||
+      input.request.type === 'EndSafeService') &&
+    BigInt(clock.tick) > BigInt(state.economy.finance.processedTick)
+  ) {
+    const caughtUp = await catchUpStationaryCompany({
+      transaction: input.transaction,
+      accountId: input.accountId,
+      state,
+      atTick: clock.tick,
+      requestKind: input.request.type,
+      clock,
+    });
+    if (!caughtUp) return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    state = caughtUp;
+    lifecycle = state.economy.lifecycle;
+    previousLifecycle = lifecycle;
+    if (input.request.expectedPublicRevision !== lifecycle.knowledge.revision)
+      return rejectRequest('STALE_REVISION', lifecycle.knowledge.revision);
+  }
   const route = lifecycle.parties[0]
     ? await readPartyRoute(
         input.transaction,
@@ -2340,16 +2362,18 @@ function commandIdFrom(value: unknown): string {
 }
 
 function mapDomainError(error: string): CompanyCommandRejectionDto['code'] {
-  return error === 'CAPACITY' ||
-    error === 'INSUFFICIENT_ITEMS' ||
-    error === 'INSUFFICIENT_STAMINA' ||
-    error === 'INSUFFICIENT_FUNDS'
-    ? error
-    : error === 'CONTACT_OR_ACCESS_REQUIRED'
+  return error === 'UNPAID_OBLIGATIONS'
+    ? 'INSUFFICIENT_FUNDS'
+    : error === 'CAPACITY' ||
+        error === 'INSUFFICIENT_ITEMS' ||
+        error === 'INSUFFICIENT_STAMINA' ||
+        error === 'INSUFFICIENT_FUNDS'
       ? error
-      : error === 'IDEMPOTENCY_CONFLICT'
-        ? 'IDEMPOTENCY_CONFLICT'
-        : 'UNSUPPORTED_ACTION';
+      : error === 'CONTACT_OR_ACCESS_REQUIRED'
+        ? error
+        : error === 'IDEMPOTENCY_CONFLICT'
+          ? 'IDEMPOTENCY_CONFLICT'
+          : 'UNSUPPORTED_ACTION';
 }
 
 function isRevision(value: unknown): value is string {
@@ -2380,13 +2404,16 @@ export async function catchUpStationaryCompany(input: {
   readonly state: CompanyCombatAggregateState;
   readonly atTick: string;
   readonly requestKind: string;
+  readonly clock?: WorldClockReading;
 }): Promise<CompanyCombatAggregateState | undefined> {
-  const clock = await readWorldClock(
-    input.transaction,
-    input.state.economy.lifecycle.worldId,
-    new Date(),
-    true,
-  );
+  const clock =
+    input.clock ??
+    (await readWorldClock(
+      input.transaction,
+      input.state.economy.lifecycle.worldId,
+      new Date(),
+      true,
+    ));
   const previous = await settleDueContinuousMovementInTransaction(
     input.transaction,
     input.state,

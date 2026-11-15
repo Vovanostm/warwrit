@@ -10,8 +10,11 @@ import {
 import type { CompanyGuardServiceResponseDto } from '@warwrit/protocol';
 import { isCompanyEntityId, WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
+import type { Transaction } from 'kysely';
 import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
+import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock } from '../world/clock.js';
+import type { WorldClockReading } from '../world/clock.js';
 import type { CompanyRoutesOptions } from './routes.js';
 import { findOwnedCompanyId, lockCompanyAggregate } from './repository.js';
 import { localCompanyContacts } from './recruitment.js';
@@ -163,7 +166,20 @@ export function guardServiceView(
 
 export function registerGuardServiceRoute(
   app: FastifyInstance,
-  { database, worldId }: CompanyRoutesOptions,
+  {
+    database,
+    worldId,
+    catchUpStationaryCompany,
+  }: CompanyRoutesOptions & {
+    readonly catchUpStationaryCompany: (input: {
+      readonly transaction: Transaction<DatabaseSchema>;
+      readonly accountId: string;
+      readonly state: CompanyCombatAggregateState;
+      readonly atTick: string;
+      readonly requestKind: string;
+      readonly clock?: WorldClockReading;
+    }) => Promise<CompanyCombatAggregateState | undefined>;
+  },
 ): void {
   app.get<{ Params: { siteId: string } }>(
     '/company/guard-service/:siteId',
@@ -176,9 +192,21 @@ export function registerGuardServiceRoute(
         if (!companyId) return null;
         if (readExpectedCompanyId(request.raw.rawHeaders) !== companyId)
           return reply.code(409).send({ error: 'company scope changed' });
-        const state = await lockCompanyAggregate(transaction, worldId, companyId);
+        let state = await lockCompanyAggregate(transaction, worldId, companyId);
         if (!state) throw new Error('Owned company snapshot is unavailable');
         const clock = await readWorldClock(transaction, worldId, new Date(), true);
+        if (BigInt(clock.tick) > BigInt(state.economy.finance.processedTick)) {
+          const caughtUp = await catchUpStationaryCompany({
+            transaction,
+            accountId,
+            state,
+            atTick: clock.tick,
+            requestKind: 'GuardServiceOffer',
+            clock,
+          });
+          if (!caughtUp) return reply.code(503).send({ error: 'guard service offer unavailable' });
+          state = caughtUp;
+        }
         const offerId = guardServiceOfferId(
           worldId,
           companyId,

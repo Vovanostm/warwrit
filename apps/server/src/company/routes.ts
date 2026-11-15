@@ -39,7 +39,7 @@ import { observeLocalCompanyConditions } from './observation.js';
 import { createOpeningAggregate, issueOpeningOption, openingOptionView } from './opening.js';
 import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
-import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
+import { catchUpStationaryCompany, executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { foulWellCarePriceQ, readFoulWellOutcome } from '../contracts/foul-well-state.js';
 import { registerGuardServiceRoute } from './guard-service.js';
@@ -64,7 +64,7 @@ export function registerCompanyRoutes(
   { database, worldId }: CompanyRoutesOptions,
 ): void {
   registerCompanyReturnReportRoutes(app, { database, worldId });
-  registerGuardServiceRoute(app, { database, worldId });
+  registerGuardServiceRoute(app, { database, worldId, catchUpStationaryCompany });
   app.get<{ Params: { siteId: string } }>('/company/recruits/:siteId', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
