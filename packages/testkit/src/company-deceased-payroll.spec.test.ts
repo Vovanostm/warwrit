@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   DECEASED_KIN_WAGE_SINK_ID,
+  deceasedWageQuotes,
   payDeceasedWages,
   parseCompanyCommand,
   prepareCompanyEconomy,
@@ -267,6 +268,9 @@ describe('N04 finite deceased wage settlement', () => {
     const originalEstate = observed.finance.accounts.find(
       (account) => account.membershipId === 'service-worker-0',
     )!.death!.recipient;
+    expect(deceasedWageQuotes(observed)).toEqual([
+      { characterId: 'worker-0', name: 'worker-0', amountQ: '26' },
+    ]);
     const settlement = run(observed);
 
     expect(
@@ -566,5 +570,17 @@ describe('N04 finite deceased wage settlement', () => {
     const poor = deceasedState(4n);
     expect(() => run(poor)).toThrow();
     expect(poor.finance.claims[0]?.paidQ).toBe('0');
+
+    const actorMismatch = request(state);
+    expect(() =>
+      payDeceasedWages(
+        state,
+        actorMismatch as Extract<CompanyCommand, { type: 'PayDeceasedWages' }>,
+        {
+          ...context(state, actorMismatch, [localAccess(state, actorMismatch)]),
+          principal: { kind: 'PLAYER', id: 'other-player' },
+        },
+      ),
+    ).toThrow();
   });
 });

@@ -102,3 +102,4 @@ export type {
   EquipmentSaleRequestDto,
   EquipmentSaleResponseDto,
 } from './equipment-market.js';
+export type { DeceasedWageQuoteDto } from './deceased-wages.js';

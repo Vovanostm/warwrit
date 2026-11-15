@@ -41,7 +41,79 @@ export interface DeceasedWageSettlementResult {
   readonly settlement: DeceasedWageSettlement;
 }
 
+export interface DeceasedWageQuote {
+  readonly characterId: string;
+  readonly name: string;
+  readonly amountQ: MoneyQ;
+}
+
 type DeceasedWageCommand = Extract<CompanyCommand, { type: 'PayDeceasedWages' }>;
+
+/** Exposes only observed deaths with fully known account history and earned pre-death debt. */
+export function deceasedWageQuotes(state: CompanyEconomyState): readonly DeceasedWageQuote[] {
+  const { lifecycle, finance } = state;
+  const quotes: DeceasedWageQuote[] = [];
+  for (const knownPerson of lifecycle.knowledge.characters) {
+    if (knownPerson.presence.availability !== 'DEAD') continue;
+    const characterId = knownPerson.identity.characterId;
+    const actualPerson = lifecycle.characters.find(
+      (person) => person.identity.characterId === characterId,
+    );
+    if (actualPerson?.presence.availability !== 'DEAD') continue;
+    const memberships = lifecycle.memberships.filter(
+      (membership) =>
+        membership.companyId === lifecycle.companyId && membership.characterId === characterId,
+    );
+    if (memberships.length === 0) continue;
+    const membershipIds = new Set<string>(memberships.map((membership) => membership.membershipId));
+    if (membershipIds.size !== memberships.length) continue;
+    const accounts = finance.accounts.filter((account) => membershipIds.has(account.membershipId));
+    if (
+      accounts.length !== memberships.length ||
+      accounts.some((account) => !account.known) ||
+      memberships.some(
+        (membership) =>
+          accounts.filter((account) => account.membershipId === membership.membershipId).length !==
+          1,
+      )
+    )
+      continue;
+    const knownDeaths = accounts.filter((account) => account.knownDeath && account.death);
+    if (knownDeaths.length === 0) continue;
+    const death = knownDeaths[0]!.death!;
+    if (
+      accounts.some((account) => account.knownDeath && !account.death) ||
+      accounts.some(
+        (account) =>
+          account.death !== null &&
+          (account.death.sourceId !== death.sourceId ||
+            account.death.atTick !== death.atTick ||
+            canonicalJson(account.death.recipient) !== canonicalJson(death.recipient)),
+      ) ||
+      BigInt(death.atTick) > BigInt(lifecycle.campaignTick) ||
+      memberships.some((membership) => BigInt(membership.startedAt) > BigInt(death.atTick))
+    )
+      continue;
+    const claims = finance.claims.filter((claim) => membershipIds.has(claim.membershipId));
+    let amount = 0n;
+    let valid = true;
+    for (const claim of claims) {
+      if (claim.earned.some((period) => BigInt(period.toTick) > BigInt(death.atTick))) {
+        valid = false;
+        break;
+      }
+      const owed = actualOwedQ(claim);
+      if (owed < 0n) {
+        valid = false;
+        break;
+      }
+      amount += owed;
+    }
+    if (valid && amount > 0n)
+      quotes.push({ characterId, name: knownPerson.identity.birthName, amountQ: q(amount) });
+  }
+  return quotes.sort((left, right) => left.characterId.localeCompare(right.characterId));
+}
 
 /**
  * Pays only the known, earned, pre-death debt to the accepted external kin sink.
@@ -56,6 +128,8 @@ export function payDeceasedWages(
   const characterId = command.payload.characterId;
   requireEconomy(
     command.actorRef.kind === 'PLAYER' &&
+      context.principal.kind === command.actorRef.kind &&
+      context.principal.id === command.actorRef.id &&
       command.worldId === lifecycle.worldId &&
       command.companyId === lifecycle.companyId &&
       context.worldId === lifecycle.worldId &&
