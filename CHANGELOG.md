@@ -12,6 +12,9 @@ requests.
 - 2026-11-15 — Fixed: cover funded B4 endings when the paying company has no
   ration stock, preserving uncovered food time without consuming stock.
   [Funding regression check](docs/work-packages/M1-STORY-MISSIONS.md#funding-regression-check--2026-11-15). LOCAL.
+- 2026-11-15 — Fixed: replace the skipped leader-death succession case with a
+  terminal choice, release and idempotent-retry regression using established
+  member terms. [Battle outcomes](docs/work-packages/m1-next/08-battle-outcomes.md#leadership-choice-regression--2026-11-15). LOCAL.
 
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation

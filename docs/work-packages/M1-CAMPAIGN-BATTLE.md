@@ -1,8 +1,10 @@
 # M1 campaign battle — S4 and multiple conflict sides
 
-**Status** SPECIFIED / LOCAL, reconciled with the owner correction of 2026-11-14.
-The inspected checkout still contains two-side assumptions. Three-side gameplay
-and 36-figure acceptance are NOT_RUN.
+**Status** IN_PROGRESS / LOCAL. The native Playground now demonstrates a saved,
+editable three-side battle with 36 figures, replay and day/night readability;
+see [current implementation](#current-implementation--2026-11-15). Campaign
+joins and continuation, native surrender and full N10 performance acceptance
+remain open. Capacity/performance measurements are NOT_MEASURED.
 
 [Normalized M1](../../specs/001-warwrit-m1/spec.md) ·
 [Battlefield specification](../wiki/battlefield-test-maps.md) ·

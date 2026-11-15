@@ -39,6 +39,18 @@ item snapshots and the observed ground bundle through the existing mutation help
 The finalization regression checks all 12 moved items, their three observed bundles,
 living people and exact retry. The focused source test passes.
 
+### Leadership-choice regression — 2026-11-15
+
+The focused terminal-evidence test now resolves a deterministic battle with the
+company leader dead and a paid companion retreating alive. It verifies that
+finalization waits for the player's choice, restores the companion's verified prior
+presence, then applies their permanent succession using the existing membership and
+wage account. It checks the saved leader death, released binding, one completed
+encounter and idempotent finalization retry. This is constructed-source regression
+evidence, not native campaign acceptance; SQL, browser continuation and native
+leadership remain NOT_RUN. A household-only successor still requires real
+service-terms evidence.
+
 Native hostile escape/surrender, browser continuation and the remaining outcome
 rows keep their direct acceptance criteria below.
 

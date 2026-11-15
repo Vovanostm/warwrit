@@ -10,6 +10,7 @@ function resolvedBattle(
   retreatVersion?: 3 | 4 | 5,
   leaderHealth = 100,
   reactionGain = false,
+  retreatSurvivor = false,
 ) {
   let fixture = createCompanyCombatAggregateFixture(false, killLeader ? leaderHealth : 10_000);
   if (retreatVersion) {
@@ -130,6 +131,38 @@ function resolvedBattle(
                   : 'aggressive'
                 : 'aggressive',
             );
+    // Preserve a real eligible companion after leader death so terminal succession can use them.
+    if (retreatSurvivor && !leaderCanBeTargeted && actor.sideId === 'a-side') {
+      const exits = state.sides.find((side) => side.id === actor.sideId)!.retreatHexes;
+      const onExit = exits.some((exit) => coreHexEqual(exit, actor.position));
+      const freeExit = exits.find(
+        (exit) =>
+          !state.units.some(
+            (unit) => unit.status === 'active' && coreHexEqual(unit.position, exit),
+          ),
+      );
+      command = onExit
+        ? {
+            type: 'retreat',
+            commandId: combat.commandId(`terminal-survivor-retreat-${state.revision}`),
+            activationId: state.activation!.id,
+            actorId: actor.id,
+          }
+        : freeExit
+          ? {
+              type: 'move',
+              commandId: combat.commandId(`terminal-survivor-move-${state.revision}`),
+              activationId: state.activation!.id,
+              actorId: actor.id,
+              to: freeExit,
+            }
+          : {
+              type: 'wait',
+              commandId: combat.commandId(`terminal-survivor-wait-${state.revision}`),
+              activationId: state.activation!.id,
+              actorId: actor.id,
+            };
+    }
     if (retreatVersion) {
       const base = {
         commandId: combat.commandId(`retreat-proof-${state.revision}`),
@@ -219,8 +252,15 @@ function terminalInput(
   retreatVersion?: 3 | 4 | 5,
   leaderHealth = 100,
   reactionGain = false,
+  retreatSurvivor = false,
 ) {
-  const battle = resolvedBattle(killLeader, retreatVersion, leaderHealth, reactionGain);
+  const battle = resolvedBattle(
+    killLeader,
+    retreatVersion,
+    leaderHealth,
+    reactionGain,
+    retreatSurvivor,
+  );
   const active = battle.fixture.begun.binding;
   const companyId = battle.fixture.f.root.lifecycle.companyId;
   const partyId = active.participants.find(
@@ -302,7 +342,7 @@ describe('FIRST HUNT terminal evidence composition', () => {
     ).toBeGreaterThan(0);
 
     const prepared = prepareFirstHuntTerminalEvidence(input);
-    expect(prepared.status, JSON.stringify(prepared)).toBe('READY');
+    expect(prepared.status).toBe('READY');
     if (prepared.status !== 'READY') return;
     expect(prepared.consume.applications[1]?.time.atTick).toBe('1001');
     expect(prepared.consume.applications[1]?.advance?.command.type).toBe('AdvanceCampaign');
@@ -395,10 +435,8 @@ describe('FIRST HUNT terminal evidence composition', () => {
     expect(combat.canonicalStateJson(input.previous)).toBe(before);
   }, 15_000);
 
-  // NOT_RUN: the generic fixture needs a long target-combat simulation to force a durable death.
-  // Keep the intended residual assertion visible until a small authentic V2 fixture is available.
-  it.skip('leaves leadership unresolved when the bound leader dies', () => {
-    const { battle, input } = terminalInput(true);
+  it('waits for the owner to choose a successor after a verified leader death, then releases once', () => {
+    const { battle, input } = terminalInput(true, undefined, 1, false, true);
     const leaderId =
       input.previous.economy.lifecycle.company?.actingLeaderId ??
       input.previous.economy.lifecycle.company?.currentLeaderId;
@@ -410,10 +448,77 @@ describe('FIRST HUNT terminal evidence composition', () => {
     expect(leaderUnit).toBeDefined();
     expect(battle.state.units.find((unit) => unit.id === leaderUnit?.unitId)?.health).toBe(0);
 
-    expect(prepareFirstHuntTerminalEvidence(input)).toEqual({
+    const waiting = prepareFirstHuntTerminalEvidence(input);
+    expect(waiting).toEqual({
       status: 'NOT_READY',
-      residuals: ['LEADERSHIP_SUCCESSION_EVIDENCE_MISSING'],
+      residuals: ['LEADERSHIP_CHOICE_REQUIRED'],
     });
+
+    const candidateId = 'a-worker-1';
+    const candidateUnit = input.previous.encounter.active?.binding.participants.find(
+      (participant) => participant.projection.characterId === candidateId,
+    );
+    expect(candidateUnit).toBeDefined();
+    const candidateState = battle.state.units.find((unit) => unit.id === candidateUnit?.unitId);
+    expect(candidateState?.health).toBeGreaterThan(0);
+    expect(candidateState?.status).toBe('retreated');
+    const candidateMembership = input.previous.economy.lifecycle.memberships.find(
+      (membership) => membership.characterId === candidateId && membership.endedAt === null,
+    );
+    expect(candidateMembership?.basis).toBe('PAID');
+    const candidateAccount = input.previous.economy.finance.accounts.find(
+      (account) => account.membershipId === candidateMembership?.membershipId,
+    );
+    expect(candidateAccount?.schedule).not.toBeNull();
+    const prepared = prepareFirstHuntTerminalEvidence({
+      ...input,
+      leadershipChoice: {
+        accountId: 'principal',
+        commandId: combat.commandId('terminal-leadership-choice'),
+        candidateId,
+        mode: 'PERMANENT',
+      },
+    });
+    expect(
+      prepared.status,
+      JSON.stringify(prepared.status === 'NOT_READY' ? prepared.residuals : 'READY'),
+    ).toBe('READY');
+    if (prepared.status !== 'READY') return;
+    expect(prepared.finalize.leadership?.command).toMatchObject({
+      type: 'ResolveLeadership',
+      actorRef: { kind: 'PLAYER', id: 'principal' },
+      payload: { candidateId, mode: 'PERMANENT' },
+    });
+
+    const consumed = combat.prepareConsumeCombatAggregate(input.previous, prepared.consume);
+    expect(consumed.kind).toBe('PREPARED');
+    if (consumed.kind !== 'PREPARED') throw new Error(consumed.error);
+    const finalized = combat.prepareFinalizeCombatAggregate(consumed.next, prepared.finalize);
+    expect(finalized.kind).toBe('PREPARED');
+    if (finalized.kind !== 'PREPARED') throw new Error(finalized.error);
+    expect(finalized.next.encounter.active).toBeNull();
+    expect(finalized.next.encounter.completed).toHaveLength(1);
+    expect(finalized.next.economy.lifecycle.company).toMatchObject({
+      currentLeaderId: candidateId,
+      runStatus: 'ACTIVE',
+    });
+    expect(
+      finalized.next.economy.lifecycle.characters.find(
+        (person) => person.identity.characterId === candidateId,
+      )?.presence,
+    ).toMatchObject({ availability: 'AVAILABLE', encounterBindingId: null });
+    expect(
+      finalized.next.economy.lifecycle.characters.find(
+        (person) => person.identity.characterId === leaderId,
+      )?.presence.availability,
+    ).toBe('DEAD');
+    expect(combat.readCompanyCombatAggregateState(prepared.finalState)).toEqual(finalized.next);
+
+    const retry = combat.prepareFinalizeCombatAggregate(finalized.next, prepared.finalize);
+    expect(retry.kind).toBe('PREPARED');
+    if (retry.kind !== 'PREPARED') throw new Error(retry.error);
+    expect(retry.replayed).toBe(true);
+    expect(retry.next).toEqual(finalized.next);
   });
 });
 
