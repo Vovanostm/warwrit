@@ -1,6 +1,7 @@
 import type { OrdinaryContractCommandDto, OrdinaryContractDto } from '@warwrit/protocol';
 import type { OrdinaryContractAttemptScope } from './ordinary-contract-attempt-storage.js';
 
+import { useEffect } from 'react';
 import { lookup } from '../i18n/index.js';
 import { formatCrowns } from './format.js';
 import {
@@ -9,6 +10,7 @@ import {
   ordinaryStepVenue,
   oldMillVisit,
   visitingIssuer,
+  contractTerrainTargetMarkers,
   type ContractVisitProps,
 } from './contract-visits.js';
 import { useOrdinaryContractBoard } from './use-ordinary-contract-board.js';
@@ -36,6 +38,8 @@ function stepBlockerText(
       return `нужно быть ${siteIn(step.location.siteId)}`;
     case 'MISSING_EVIDENCE':
       return 'сначала предыдущие шаги';
+    case 'ALTERNATIVE_CHOSEN':
+      return 'выбран другой способ';
     case 'CONDITION_NOT_MET':
       return conditionText(contract.instanceId, step.stepId) ?? 'условие не выполнено';
     case 'ALREADY_DONE':
@@ -65,6 +69,9 @@ export function ContractBoard(
     onRewardPaid: props.onRewardPaid,
     ...(props.onPlaceFacts ? { onPlaceFacts: props.onPlaceFacts } : {}),
   });
+  useEffect(() => {
+    props.onTerrainTargets?.(contractTerrainTargetMarkers(board));
+  }, [board, props.onTerrainTargets]);
 
   const command = (
     contract: OrdinaryContractDto,

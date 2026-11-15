@@ -110,6 +110,31 @@
   pointer-events: none;
 }
 
+.painted-quest-target {
+  pointer-events: none;
+  transform-box: fill-box;
+}
+
+.painted-quest-target .quest-target-halo {
+  fill: rgb(171 99 56 / 22%);
+  stroke: #e3c48d;
+  stroke-width: 2;
+}
+
+.painted-quest-target .quest-target-mark {
+  fill: #632b21;
+  stroke: #f0d19c;
+  stroke-width: 2;
+}
+
+.painted-quest-target .quest-target-label {
+  fill: #f1dfbd;
+  paint-order: stroke;
+  stroke: #30251e;
+  stroke-width: 3px;
+  font: 12px Georgia, serif;
+}
+
 .painted-site .site-leader {
   stroke: #d0b981;
   stroke-width: 1;

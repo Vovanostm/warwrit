@@ -24,6 +24,7 @@ const REJECTION_TEXT: Readonly<Record<string, string>> = {
   WRONG_PLACE: 'Отряд должен стоять в нужном месте.',
   ALREADY_DONE: 'Это уже сделано.',
   MISSING_EVIDENCE: 'Сначала выполните предыдущие шаги.',
+  ALTERNATIVE_CHOSEN: 'Вы выбрали другой способ.',
   CONDITION_NOT_MET: 'Условие ещё не выполнено.',
   INSUFFICIENT_FUNDS: 'У заказчика нет денег на выплату.',
   NOT_AUTHORIZED: 'Сеанс не подтверждён. Войдите снова.',

@@ -22,6 +22,7 @@ import {
 import { isMapIconName, mapIconHref } from '../../../../scripts/world-map/map-symbols.js';
 import { layoutMapLabels } from '../../../../scripts/world-map/map-labels.js';
 import { continuousMovementPositionAt } from '../renderer/continuous-movement-display.js';
+import type { ContractTerrainTargetMarker } from './contract-visits.js';
 import unknownPaper from '../../../../assets/art/world/fog-paper-v1/unknown-paper.png?url';
 import './painted-map.css';
 
@@ -40,6 +41,7 @@ type PaintedMapProps = {
   readonly companyId: string;
   readonly cartography: PaintedCartography;
   readonly sites: readonly MapSite[];
+  readonly questTargets: readonly ContractTerrainTargetMarker[];
   readonly current: WorldFreeMovementV2ResponseDto | null;
   readonly clock: { readonly serverMs: number; readonly receivedAt: number };
   readonly night: boolean;
@@ -136,7 +138,7 @@ function mountPaintedMap(refs: PaintedMapRefs, setTileError: (error: boolean) =>
 
   const updateSiteMarkerScale = () => {
     const scale = 1 / (svg.getScreenCTM()?.a ?? 1);
-    for (const marker of svg.querySelectorAll<SVGGElement>('.painted-site'))
+    for (const marker of svg.querySelectorAll<SVGGElement>('.painted-site, .painted-quest-target'))
       marker.setAttribute(
         'transform',
         `translate(${marker.dataset['x']} ${marker.dataset['y']}) scale(${scale})`,
@@ -382,6 +384,38 @@ function PaintedRoute({
   );
 }
 
+function PaintedQuestTarget({
+  target,
+  sheet,
+}: {
+  readonly target: ContractTerrainTargetMarker;
+  readonly sheet: PaintedCartography['sheet'];
+}) {
+  const position = toPixel(
+    {
+      xMicroFp: String(target.xFp * 65536),
+      zMicroFp: String(target.zFp * 65536),
+    },
+    sheet,
+  );
+  return (
+    <g
+      className="painted-quest-target"
+      data-x={position.x}
+      data-y={position.y}
+      transform={`translate(${position.x} ${position.y})`}
+      role="img"
+      aria-label={`${target.label}: место на дороге`}
+    >
+      <circle className="quest-target-halo" r="17" />
+      <path className="quest-target-mark" d="M 0 -11 L 8 0 L 0 11 L -8 0 Z" />
+      <text className="quest-target-label" textAnchor="middle" y="-22">
+        {target.label}
+      </text>
+    </g>
+  );
+}
+
 export function PaintedMapCanvas(props: PaintedMapProps) {
   const refs = useRef<PaintedMapRefs>({
     map: { current: null },
@@ -472,6 +506,17 @@ export function PaintedMapCanvas(props: PaintedMapProps) {
               onSelectSite={props.onSelectSite}
             />
           ))}
+        </g>
+        <g className="painted-map-quest-targets">
+          {props.questTargets
+            .filter((target) => target.mapEdition === props.cartography.mapEdition)
+            .map((target) => (
+              <PaintedQuestTarget
+                key={`${target.mapEdition}:${target.xFp}:${target.zFp}`}
+                target={target}
+                sheet={props.cartography.sheet}
+              />
+            ))}
         </g>
         <PaintedRoute current={props.current} sheet={props.cartography.sheet} />
         <g ref={party} className="painted-map-party" visibility="hidden" aria-label="Ваш отряд">

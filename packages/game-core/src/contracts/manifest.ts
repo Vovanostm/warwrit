@@ -98,6 +98,7 @@ const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 const twoReceiptsId = 'ct.m1.two-receipts.v1';
 const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
 const foulWellId = 'ct.m1.foul-well.v1';
+const manByRoadId = 'ct.m1.man-by-road.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -180,6 +181,27 @@ const definitions: readonly ContractDefinition[] = [
     ],
     'ACCESSIBLE_OBSERVATION_SET',
     ['INVEST-04-TWO-RECEIPTS'],
+  ),
+  definition(
+    manByRoadId,
+    'RESCUE',
+    'herbalist',
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'man-by-road-sidor-found',
+      'man-by-road-transport-chosen',
+      'man-by-road-walking',
+      'man-by-road-rest-started',
+      'man-by-road-rest-complete',
+      'man-by-road-stretcher-fetched',
+      'man-by-road-stretcher-loaded',
+      'man-by-road-living-rescue',
+      'man-by-road-delivered',
+      'man-by-road-exile-delivery',
+      'man-by-road-resolved',
+    ],
+    'LIVING_PERSON_DELIVERY',
+    ['RESCUE-03-MAN-BY-ROAD'],
   ),
   definition(
     emptyWatchRecordId,
@@ -298,6 +320,17 @@ const slots: ContractSourceSlot[] = [
   source('two-receipts-stolen-badge', twoReceiptsId, 'OBSERVATION'),
   source('two-receipts-reported-to-tikhon', twoReceiptsId, 'REPORT'),
   source('two-receipts-reported-to-both', twoReceiptsId, 'REPORT'),
+  source('man-by-road-sidor-found', manByRoadId, 'DISCOVERY'),
+  source('man-by-road-transport-chosen', manByRoadId, 'REPORT'),
+  source('man-by-road-walking', manByRoadId, 'LIVING_PERSON'),
+  source('man-by-road-rest-started', manByRoadId, 'OBSERVATION'),
+  source('man-by-road-rest-complete', manByRoadId, 'OBSERVATION'),
+  source('man-by-road-stretcher-fetched', manByRoadId, 'STOCK_RECORD'),
+  source('man-by-road-stretcher-loaded', manByRoadId, 'PHYSICAL_PICKUP'),
+  source('man-by-road-living-rescue', manByRoadId, 'LIVING_PERSON'),
+  source('man-by-road-delivered', manByRoadId, 'LIVING_PERSON'),
+  source('man-by-road-exile-delivery', manByRoadId, 'LIVING_PERSON'),
+  source('man-by-road-resolved', manByRoadId, 'REPORT'),
   source('empty-watch-log', emptyWatchRecordId, 'OBSERVATION'),
   source('empty-watch-bridge-witness', emptyWatchRecordId, 'OBSERVATION'),
   source('empty-watch-refugee-camp', emptyWatchRecordId, 'OBSERVATION'),
@@ -520,6 +553,19 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'RESCUE-03-MAN-BY-ROAD',
+    manByRoadId,
+    location('bereznyak', 'bereznyak-green'),
+    ['man-by-road-sidor-found', 'man-by-road-resolved'],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', ['man-by-road-sidor-found', 'man-by-road-resolved']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'INVEST-05-EMPTY-WATCH-RECORD',
     emptyWatchRecordId,
     location('kamenny-brod', 'kamenny-brod-market'),
@@ -670,6 +716,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.two-receipts.01', twoReceiptsId),
     binding('ci.m1.empty-watch-record.01', emptyWatchRecordId),
     binding('ci.m1.foul-well.01', foulWellId),
+    binding('ci.m1.man-by-road.01', manByRoadId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

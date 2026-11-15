@@ -1,4 +1,4 @@
-import type { OrdinaryContractDto } from '@warwrit/protocol';
+import type { OrdinaryContractBoardDto, OrdinaryContractDto } from '@warwrit/protocol';
 import { lookup } from '../i18n/index.js';
 import { BUILDINGS, type BuildingType } from './place-buildings.js';
 
@@ -14,6 +14,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.mill-beast.01': 'inn',
   'ci.m1.light-sack.01': 'market',
   'ci.m1.empty-watch-record.01': 'market',
+  'ci.m1.man-by-road.01': 'herbalist',
 };
 
 export interface ContractVisit {
@@ -25,6 +26,39 @@ export interface ContractPlaceFact {
   readonly instanceId: string;
   readonly siteId: string;
   readonly text: string;
+}
+
+export interface ContractTerrainTargetMarker {
+  readonly label: string;
+  readonly mapEdition: string;
+  readonly xFp: number;
+  readonly zFp: number;
+}
+
+export function contractTerrainTargetMarkers(
+  board: OrdinaryContractBoardDto | undefined,
+): ContractTerrainTargetMarker[] {
+  const markers = new Map<string, ContractTerrainTargetMarker>();
+  for (const contract of board?.contracts ?? []) {
+    if (contract.yourRole === 'NONE' || contract.state === 'COMPLETED') continue;
+    for (const step of contract.steps) {
+      const target = step.terrainTarget;
+      if (
+        !target ||
+        step.doneByYou ||
+        step.blocker === 'ALTERNATIVE_CHOSEN' ||
+        step.blocker === 'NOT_AVAILABLE'
+      )
+        continue;
+      markers.set(`${target.mapEdition}:${target.xFp}:${target.zFp}`, {
+        label: lookup(`contract.${contract.instanceId}.title`) ?? contract.instanceId,
+        mapEdition: target.mapEdition,
+        xFp: target.xFp,
+        zFp: target.zFp,
+      });
+    }
+  }
+  return [...markers.values()];
 }
 
 /** Authored completion line, if any: `contract.<id>.done`. */
@@ -77,6 +111,7 @@ export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): C
 
 export interface ContractVisitProps {
   readonly onPlaceFacts?: (facts: readonly ContractPlaceFact[]) => void;
+  readonly onTerrainTargets?: (targets: readonly ContractTerrainTargetMarker[]) => void;
   readonly visit: ContractVisit | null;
   readonly canVisit: boolean;
   readonly onVisitIssuer: (siteId: string, building: BuildingType) => void;
