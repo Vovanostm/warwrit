@@ -52,6 +52,12 @@ interface ReturnReportCursor {
 
 const allowedEventTypes = new Set<string>(COMPANY_RETURN_REPORT_EVENT_TYPES);
 
+function isReportableAuditLifecycleEvent(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object') return false;
+  const type = (value as Record<string, unknown>)['type'];
+  return typeof type === 'string' && allowedEventTypes.has(type);
+}
+
 interface FoodDelta {
   readonly unitsConsumed: bigint;
   readonly includesLateSettlement: boolean;
@@ -309,8 +315,11 @@ async function getReturnReport(
     if (!initialRows) return { report: null };
     let latestSequence = 0n;
     for (const row of initialRows) {
-      if (row.event === null || typeof row.event !== 'object') return { report: null };
-      const atTick = (row.event as Record<string, unknown>)['atTick'];
+      if (!isReportableAuditLifecycleEvent(row.event)) {
+        latestSequence = BigInt(row.sequence);
+        continue;
+      }
+      const atTick = row.event['atTick'];
       if (typeof atTick !== 'string' || !/^(0|[1-9][0-9]*)$/.test(atTick)) return { report: null };
       if (BigInt(atTick) > BigInt(throughTick)) break;
       latestSequence = BigInt(row.sequence);
@@ -381,8 +390,11 @@ async function getReturnReport(
     state.economy.lifecycle.knowledge.characters.map((character) => character.identity.characterId),
   );
   for (const row of rows) {
-    if (row.event === null || typeof row.event !== 'object') return { report: null };
-    const rawAtTick = (row.event as Record<string, unknown>)['atTick'];
+    if (!isReportableAuditLifecycleEvent(row.event)) {
+      eventSequence = BigInt(row.sequence);
+      continue;
+    }
+    const rawAtTick = row.event['atTick'];
     if (typeof rawAtTick !== 'string' || !/^(0|[1-9][0-9]*)$/.test(rawAtTick))
       return { report: null };
     if (BigInt(rawAtTick) > BigInt(throughTick)) break;

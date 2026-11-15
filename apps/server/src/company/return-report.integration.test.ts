@@ -100,6 +100,23 @@ describe('company return report (PostgreSQL)', () => {
         .insertInto('company_account_owners')
         .values({ world_id: worldId, company_id: companyId, account_id: accountId })
         .execute();
+      await database
+        .insertInto('company_audit_events')
+        .values({
+          world_id: worldId,
+          company_id: companyId,
+          revision: state.economy.lifecycle.revision,
+          event_id: 'return-report-purchase-before-baseline',
+          event: {
+            type: 'SuppliesPurchased',
+            commandId: 'purchase-before-baseline',
+            siteId: 'kamenny-brod-market',
+            quantity: 1,
+            costQ: '200',
+            shopRevision: '3',
+          },
+        })
+        .execute();
 
       const ownerHeaders = { cookie: `warwrit_session=${token}` };
       const otherHeaders = { cookie: `warwrit_session=${otherToken}` };
@@ -141,6 +158,7 @@ describe('company return report (PostgreSQL)', () => {
       const movementTo = state.economy.finance.wallets.find(
         (wallet) => wallet.owner.kind === 'CHARACTER' && wallet.owner.id === 'a-worker-0',
       )!.walletId;
+      const purchaseAfterBaselineId = 'return-report-purchase-after-baseline';
       const knownEventId = 'return-report-known-event';
       const hiddenEventId = 'return-report-hidden-event';
       state = {
@@ -231,6 +249,20 @@ describe('company return report (PostgreSQL)', () => {
       await database
         .insertInto('company_audit_events')
         .values([
+          {
+            world_id: worldId,
+            company_id: companyId,
+            revision: '1',
+            event_id: purchaseAfterBaselineId,
+            event: {
+              type: 'SuppliesPurchased',
+              commandId: 'purchase-after-baseline',
+              siteId: 'kamenny-brod-market',
+              quantity: 2,
+              costQ: '400',
+              shopRevision: '4',
+            },
+          },
           {
             world_id: worldId,
             company_id: companyId,
