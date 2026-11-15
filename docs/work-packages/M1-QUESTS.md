@@ -106,3 +106,43 @@ no-payment labels. Normal in-game playthrough, native player acceptance and
 remaining quest checks are NOT_RUN;
 broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
 merge are NOT_RUN.
+
+## «Мешок у дороги» implementation — 2026-11-15
+
+Player goal: find Ерёма’s missing flour sack and return that same cargo to him
+at Северный Двор. The normal path follows flour from Каменный Брод to two boys
+in the willows, then delivers the sack. At the meeting the company may return
+the full sack or leave the boys one hat of flour and deliver the same sack
+short. The short branch also records the boys’ private account that Ерёма slept
+on the cart. Either delivery pays the trial 25 crowns; the shared world records
+whether the granary received the full sack, while the sleep fact stays known
+only to the company that heard it.
+
+Observable result: after a short return, the Northern Dvor visit shows that the
+granary received less flour and the participating company sees the sleep fact.
+Try it from the ordinary contract board at Северный Двор: accept the offer,
+follow the flour, share flour with the boys, then return the sack.
+
+The ordinary-contract state now tracks the unique contract-owned sack through
+pickup, company custody and delivery to issuer custody; it is displayed with
+the company and retains its original pickup receipt. Sharing flour disables the
+full-sack ending. Delivery by another company cannot settle the owner’s cargo.
+The owner may withdraw while carrying the sack: the company keeps custody, the
+offer stays unavailable, and only that former holder can return the sack to
+the issuer. That return ends the offer without a reward. Old ordinary saves
+without the cargo field still load as having no cargo.
+Wrong-place or missing-evidence commands leave state unchanged and can be
+retried after travelling or recording the required clue. Withdrawal before
+pickup reopens the offer; withdrawal while carrying keeps the sack with that
+company and exposes its unpaid return action at the issuer. The approved
+late/missed-deadline outcome remains unimplemented pending the clock decision.
+The accepted clocks define Campaign Day as 1,000 ticks and visual DAY/NIGHT as
+600/300 seconds; they do not define an evening boundary or ordinary-contract
+expiry. Owner decision on the intended deadline rule is pending.
+
+Focused game-core, server projection and web consumer tests passed (28/28).
+Game-core, protocol and testkit builds and server typecheck passed. Web
+typecheck is blocked by four existing `EquipmentTrader.tsx` DTO errors
+(`publicRevision` and `interruptsLearning`). Normal in-game playthrough and
+player acceptance are NOT_RUN; broader player acceptance is NOT_MEASURED. This
+slice is LOCAL; publication and merge are NOT_RUN.

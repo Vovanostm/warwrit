@@ -228,6 +228,171 @@ describe('ordinary accepted term projection', () => {
     });
   });
 
+  it('publishes grain loss while keeping Yerema’s sleep fact company-private', () => {
+    const draggedSack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const genesis = ordinaryContractGenesis(draggedSack);
+    const sourceEventId = 'dragged-sack-short-delivery';
+    const state = readOrdinaryContractState(draggedSack, {
+      ...genesis,
+      revision: '5',
+      ownerCompanyId: 'company-a',
+      acceptedTerms: ordinaryContractTerms(draggedSack),
+      facts: [
+        {
+          slotId: 'dragged-sack-found',
+          companyId: 'company-a',
+          sourceEventId: 'dragged-sack-pickup',
+          atTick: '12',
+        },
+        {
+          slotId: 'dragged-sack-flour-shared',
+          companyId: 'company-a',
+          sourceEventId: 'dragged-sack-share',
+          atTick: '13',
+        },
+        {
+          slotId: 'dragged-sack-yerema-slept',
+          companyId: 'company-a',
+          sourceEventId: 'dragged-sack-share',
+          atTick: '13',
+        },
+        {
+          slotId: 'dragged-sack-delivered-short',
+          companyId: 'company-a',
+          sourceEventId,
+          atTick: '14',
+        },
+      ],
+      cargoCustody: [
+        {
+          cargoId: 'dragged-sack.01',
+          companyId: null,
+          pickupCompanyId: 'company-a',
+          pickupSourceEventId: 'dragged-sack-pickup',
+          pickupAtTick: '12',
+          sourceEventId,
+          atTick: '14',
+        },
+      ],
+      outcome: { kind: 'SUCCESS', companyId: 'company-a', sourceEventId, atTick: '14' },
+    });
+
+    expect(
+      contractView(draggedSack, state, 'company-a', issuer, gates, false).publicConsequences,
+    ).toEqual({
+      kind: 'DRAGGED_SACK',
+      northernDvorGrain: 'SHORT_SACK',
+      yourCompanyKnowsYeremaSlept: true,
+    });
+    expect(
+      contractView(draggedSack, state, 'company-b', issuer, gates, false).publicConsequences,
+    ).toEqual({
+      kind: 'DRAGGED_SACK',
+      northernDvorGrain: 'SHORT_SACK',
+      yourCompanyKnowsYeremaSlept: false,
+    });
+  });
+
+  it('projects a withdrawn sack return as terminal without payment', () => {
+    const draggedSack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const sourceEventId = 'dragged-sack-after-withdrawal';
+    const pickupSourceEventId = 'dragged-sack-original-pickup';
+    const state = readOrdinaryContractState(draggedSack, {
+      ...ordinaryContractGenesis(draggedSack),
+      revision: '5',
+      facts: [
+        {
+          slotId: 'dragged-sack-found',
+          companyId: 'company-a',
+          sourceEventId: pickupSourceEventId,
+          atTick: '12',
+        },
+        {
+          slotId: 'dragged-sack-returned-after-withdrawal',
+          companyId: 'company-a',
+          sourceEventId,
+          atTick: '14',
+        },
+      ],
+      cargoCustody: [
+        {
+          cargoId: 'dragged-sack.01',
+          companyId: null,
+          pickupCompanyId: 'company-a',
+          pickupSourceEventId,
+          pickupAtTick: '12',
+          sourceEventId,
+          atTick: '14',
+        },
+      ],
+      lastWithdrawal: {
+        companyId: 'company-a',
+        sourceEventId: 'withdraw-command',
+        atTick: '13',
+      },
+      outcome: { kind: 'SUCCESS', companyId: 'company-a', sourceEventId, atTick: '14' },
+    });
+    expect(contractView(draggedSack, state, 'company-a', issuer, gates, false)).toMatchObject({
+      state: 'COMPLETED',
+      completedByYou: false,
+      terminalPayout: 'NO_PAYOUT',
+      terminalFindingTextKey:
+        'contract.ci.m1.dragged-sack.01.result.dragged-sack.returned-after-withdrawal',
+      yourCargo: [],
+      publicConsequences: {
+        kind: 'DRAGGED_SACK',
+        northernDvorGrain: 'FULL_SACK',
+      },
+    });
+  });
+
+  it('offers only the former holder a return action at the issuer while the sack is carried', () => {
+    const draggedSack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const sackIssuer = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    const state = readOrdinaryContractState(draggedSack, {
+      ...ordinaryContractGenesis(draggedSack),
+      revision: '4',
+      facts: [
+        {
+          slotId: 'dragged-sack-found',
+          companyId: 'company-a',
+          sourceEventId: 'dragged-sack-pickup',
+          atTick: '12',
+        },
+      ],
+      cargoCustody: [
+        {
+          cargoId: 'dragged-sack.01',
+          companyId: 'company-a',
+          pickupCompanyId: 'company-a',
+          pickupSourceEventId: 'dragged-sack-pickup',
+          pickupAtTick: '12',
+          sourceEventId: 'dragged-sack-pickup',
+          atTick: '12',
+        },
+      ],
+      lastWithdrawal: {
+        companyId: 'company-a',
+        sourceEventId: 'dragged-sack-withdrawal',
+        atTick: '13',
+      },
+    });
+
+    expect(contractView(draggedSack, state, 'company-a', sackIssuer, gates, false)).toMatchObject({
+      canAccept: false,
+      canWithdraw: false,
+      canReturnCargo: true,
+    });
+    expect(contractView(draggedSack, state, 'company-a', issuer, gates, false)).toMatchObject({
+      canReturnCargo: false,
+      yourCargo: ['dragged-sack.01'],
+    });
+    expect(contractView(draggedSack, state, 'company-b', sackIssuer, gates, false)).toMatchObject({
+      canReturnCargo: false,
+      yourCargo: [],
+    });
+  });
+
   it('projects the saved terms after an offer is changed and reloads an old v1 save', () => {
     const accepted = acceptedState();
     const oldSave = structuredClone(accepted) as unknown as Record<string, unknown>;

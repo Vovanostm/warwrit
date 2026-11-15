@@ -14,6 +14,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.mill-beast.01': 'inn',
   'ci.m1.light-sack.01': 'market',
   'ci.m1.empty-watch-record.01': 'market',
+  'ci.m1.dragged-sack.01': 'elder',
 };
 
 export interface ContractVisit {
@@ -71,6 +72,28 @@ export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): C
           text: watchmanText,
         });
     }
+    if (contract.publicConsequences?.kind === 'DRAGGED_SACK') {
+      const grainText = lookup(
+        contract.publicConsequences.northernDvorGrain === 'FULL_SACK'
+          ? 'contract.ci.m1.dragged-sack.01.world.grain-full'
+          : 'contract.ci.m1.dragged-sack.01.world.grain-short',
+      );
+      if (grainText !== undefined)
+        facts.push({
+          instanceId: `${contract.instanceId}:grain`,
+          siteId: 'severny-dvor',
+          text: grainText,
+        });
+      if (contract.publicConsequences.yourCompanyKnowsYeremaSlept) {
+        const sleepText = lookup('contract.ci.m1.dragged-sack.01.world.yerema-slept');
+        if (sleepText !== undefined)
+          facts.push({
+            instanceId: `${contract.instanceId}:sleep`,
+            siteId: 'severny-dvor',
+            text: sleepText,
+          });
+      }
+    }
     return facts;
   });
 }
@@ -121,6 +144,7 @@ export function ordinaryStepVenue(instanceId: string, action: string, stepId: st
     return 'watch';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'inspect-granary') return 'granary';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'ask-gate') return 'watch';
+  if (instanceId === 'ci.m1.dragged-sack.01' && stepId === 'leave-flour') return 'market';
   if (action === 'ASK' || action === 'REPORT' || action === 'DELIVER')
     return issuerBuilding(instanceId);
   return undefined;

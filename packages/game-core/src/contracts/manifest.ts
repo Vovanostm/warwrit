@@ -97,6 +97,7 @@ const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 const twoReceiptsId = 'ct.m1.two-receipts.v1';
 const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
+const draggedSackId = 'ct.m1.dragged-sack.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -199,6 +200,24 @@ const definitions: readonly ContractDefinition[] = [
     ['INVEST-05-EMPTY-WATCH-RECORD'],
   ),
   definition(
+    draggedSackId,
+    'INVESTIGATE',
+    'northern-grain-hauler',
+    location('severny-dvor', 'severny-dvor-yard'),
+    [
+      'dragged-sack-contract-acceptance',
+      'dragged-sack-flour-trail',
+      'dragged-sack-found',
+      'dragged-sack-flour-shared',
+      'dragged-sack-delivered-full',
+      'dragged-sack-delivered-short',
+      'dragged-sack-returned-after-withdrawal',
+      'dragged-sack-yerema-slept',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-06-DRAGGED-SACK'],
+  ),
+  definition(
     cellarRescueId,
     'RESCUE',
     'river-village-caller',
@@ -289,6 +308,14 @@ const slots: ContractSourceSlot[] = [
   source('empty-watch-sack-handed-over', emptyWatchRecordId, 'REPORT'),
   source('empty-watch-proof-destroyed', emptyWatchRecordId, 'REPORT'),
   source('empty-watch-old-ford-revealed', emptyWatchRecordId, 'OBSERVATION'),
+  source('dragged-sack-contract-acceptance', draggedSackId, 'ACCEPTANCE'),
+  source('dragged-sack-flour-trail', draggedSackId, 'OBSERVATION'),
+  source('dragged-sack-found', draggedSackId, 'PHYSICAL_PICKUP'),
+  source('dragged-sack-flour-shared', draggedSackId, 'REPORT'),
+  source('dragged-sack-delivered-full', draggedSackId, 'REPORT'),
+  source('dragged-sack-delivered-short', draggedSackId, 'REPORT'),
+  source('dragged-sack-returned-after-withdrawal', draggedSackId, 'REPORT'),
+  source('dragged-sack-yerema-slept', draggedSackId, 'OBSERVATION'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -519,6 +546,32 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-06-DRAGGED-SACK',
+    draggedSackId,
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'dragged-sack-contract-acceptance',
+      'dragged-sack-flour-trail',
+      'dragged-sack-found',
+      'dragged-sack-flour-shared',
+      'dragged-sack-delivered-full',
+      'dragged-sack-delivered-short',
+      'dragged-sack-returned-after-withdrawal',
+      'dragged-sack-yerema-slept',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', [
+          'dragged-sack-delivered-full',
+          'dragged-sack-delivered-short',
+          'dragged-sack-returned-after-withdrawal',
+        ]),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -626,6 +679,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
     binding('ci.m1.two-receipts.01', twoReceiptsId),
     binding('ci.m1.empty-watch-record.01', emptyWatchRecordId),
+    binding('ci.m1.dragged-sack.01', draggedSackId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

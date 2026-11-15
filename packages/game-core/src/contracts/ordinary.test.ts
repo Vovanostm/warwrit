@@ -40,6 +40,143 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('keeps the dragged sack in receipt-backed company custody through either delivery branch', () => {
+    const sack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const issuer: ContractPlace = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    const apply = (
+      state: OrdinaryContractState,
+      companyId: string,
+      standingAt: ContractPlace,
+      command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+    ) =>
+      prepareOrdinaryContractCommand(sack, state, command, {
+        companyId,
+        standingAt,
+        atTick: `${state.revision}`,
+        expectedRevision: state.revision,
+        sourceEventId: `dragged-sack-${companyId}-${state.revision}`,
+        gates,
+      });
+    const take = (
+      state: OrdinaryContractState,
+      companyId: string,
+      standingAt: ContractPlace,
+      stepId: string,
+    ) => prepared(apply(state, companyId, standingAt, { type: 'STEP', stepId })).next;
+    const accept = (companyId: string) =>
+      prepared(apply(ordinaryContractGenesis(sack), companyId, issuer, { type: 'ACCEPT' })).next;
+
+    let full = accept('full-company');
+    full = take(full, 'full-company', CITY, 'trace-flour');
+    full = take(full, 'full-company', CITY, 'find-boys');
+    expect(full.cargoCustody).toEqual([
+      {
+        cargoId: 'dragged-sack.01',
+        companyId: 'full-company',
+        pickupCompanyId: 'full-company',
+        pickupSourceEventId: 'dragged-sack-full-company-2',
+        pickupAtTick: '2',
+        sourceEventId: 'dragged-sack-full-company-2',
+        atTick: '2',
+      },
+    ]);
+    full = prepared(apply(full, 'another-company', issuer, { type: 'HELP' })).next;
+    expect(() =>
+      readOrdinaryContractState(sack, { ...full, cargoCustody: [] }, sack.definitionId),
+    ).toThrow(/state .* is invalid/u);
+    expect(
+      apply(full, 'another-company', issuer, {
+        type: 'STEP',
+        stepId: 'return-full-sack',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'MISSING_EVIDENCE' });
+    full = take(full, 'full-company', issuer, 'return-full-sack');
+    expect(full.cargoCustody).toEqual([
+      expect.objectContaining({ cargoId: 'dragged-sack.01', companyId: null }),
+    ]);
+    expect(full.outcome?.kind).toBe('SUCCESS');
+
+    let shared = accept('shared-company');
+    shared = take(shared, 'shared-company', CITY, 'trace-flour');
+    shared = take(shared, 'shared-company', CITY, 'find-boys');
+    shared = take(shared, 'shared-company', CITY, 'leave-flour');
+    expect(shared.cargoCustody).toEqual([
+      expect.objectContaining({ cargoId: 'dragged-sack.01', companyId: 'shared-company' }),
+    ]);
+    expect(
+      apply(shared, 'shared-company', issuer, {
+        type: 'STEP',
+        stepId: 'return-full-sack',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+    shared = take(shared, 'shared-company', issuer, 'return-short-sack');
+    expect(shared.cargoCustody).toEqual([
+      expect.objectContaining({ cargoId: 'dragged-sack.01', companyId: null }),
+    ]);
+    expect(shared.facts.map((fact) => fact.slotId)).toContain('dragged-sack-yerema-slept');
+
+    const legacyState = JSON.parse(JSON.stringify(ordinaryContractGenesis(sack))) as Record<
+      string,
+      unknown
+    >;
+    delete legacyState['cargoCustody'];
+    expect(readOrdinaryContractState(sack, legacyState, sack.definitionId)?.cargoCustody).toEqual(
+      [],
+    );
+
+    let withdrawn = accept('withdraw-company');
+    withdrawn = take(withdrawn, 'withdraw-company', CITY, 'trace-flour');
+    withdrawn = take(withdrawn, 'withdraw-company', CITY, 'find-boys');
+    const pickupReceipt = withdrawn.cargoCustody[0];
+    withdrawn = prepared(apply(withdrawn, 'withdraw-company', CITY, { type: 'WITHDRAW' })).next;
+    expect(withdrawn).toMatchObject({
+      ownerCompanyId: null,
+      acceptedTerms: null,
+      cargoCustody: [pickupReceipt],
+      lastWithdrawal: { companyId: 'withdraw-company' },
+    });
+    expect(apply(withdrawn, 'replacement-company', issuer, { type: 'ACCEPT' })).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    expect(
+      apply(withdrawn, 'withdraw-company', CITY, {
+        type: 'STEP',
+        stepId: 'return-cargo-after-withdrawal',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'WRONG_PLACE' });
+    expect(
+      apply(withdrawn, 'another-company', issuer, {
+        type: 'STEP',
+        stepId: 'return-cargo-after-withdrawal',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+    const recovered = apply(withdrawn, 'withdraw-company', issuer, {
+      type: 'STEP',
+      stepId: 'return-cargo-after-withdrawal',
+    });
+    expect(recovered).toMatchObject({ kind: 'PREPARED', payout: null });
+    if (recovered.kind !== 'PREPARED') throw new Error('expected unpaid cargo return');
+    expect(recovered.next.cargoCustody).toEqual([
+      expect.objectContaining({
+        cargoId: 'dragged-sack.01',
+        companyId: null,
+        pickupSourceEventId: pickupReceipt?.pickupSourceEventId,
+        pickupAtTick: pickupReceipt?.pickupAtTick,
+        pickupCompanyId: 'withdraw-company',
+      }),
+    ]);
+    expect(
+      apply(recovered.next, 'withdraw-company', issuer, {
+        type: 'STEP',
+        stepId: 'return-cargo-after-withdrawal',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+    expect(readOrdinaryContractState(sack, recovered.next, sack.definitionId)).toEqual(
+      recovered.next,
+    );
+  });
+
   it('binds the stable light-sack instance with both source-backed truth paths', () => {
     expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
     const edition = CONTRACT_M1_CATALOGUE.editions[0]!;

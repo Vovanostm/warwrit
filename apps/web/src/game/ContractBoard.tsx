@@ -169,6 +169,9 @@ export function ContractConversation(props: ConversationProps) {
               ? ' · выполнен, оплачен вам'
               : ' · выполнен')}
       </p>
+      {contract.terminalFindingTextKey && (
+        <p className="contract-result">{lookup(contract.terminalFindingTextKey)}</p>
+      )}
       {atIssuer ? (
         <>
           <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
@@ -218,10 +221,31 @@ export function ContractConversation(props: ConversationProps) {
           Отказаться от поручения
         </button>
       )}
+      {contract.canReturnCargo && (
+        <button
+          type="button"
+          className="quiet-action"
+          disabled={props.busy}
+          onClick={() => props.onCommand('STEP', 'return-cargo-after-withdrawal')}
+        >
+          {stepText(contract.instanceId, 'return-cargo-after-withdrawal')}
+        </button>
+      )}
       {contract.yourCustody.length > 0 && (
         <p className="contract-custody">
           С отрядом: {contract.yourCustody.map(personName).join(', ')}
         </p>
+      )}
+      {contract.yourCargo.length > 0 && (
+        <p className="contract-custody">
+          С отрядом:{' '}
+          {contract.yourCargo
+            .map((cargoId) => lookup(`contract.${contract.instanceId}.cargo.${cargoId}`) ?? 'груз')
+            .join(', ')}
+        </p>
+      )}
+      {contract.yourCargo.length > 0 && contract.yourRole === 'NONE' && (
+        <p className="contract-custody">Отнесите мешок заказчику в Северный Двор.</p>
       )}
     </article>
   );

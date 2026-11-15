@@ -25,7 +25,9 @@ const board: OrdinaryContractBoardDto = {
       canAccept: false,
       canHelp: false,
       canWithdraw: false,
+      canReturnCargo: false,
       yourCustody: [],
+      yourCargo: [],
       steps: [
         {
           stepId: 'inspect-bank',

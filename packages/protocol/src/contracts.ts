@@ -308,15 +308,25 @@ export interface OrdinaryContractDto {
   readonly completedByYou: boolean;
   /** Actual payout policy for the recorded terminal step. */
   readonly terminalPayout?: 'PAID' | 'NO_PAYOUT';
+  /** Local result for terminal steps hidden from the ordinary participant step list. */
+  readonly terminalFindingTextKey?: string;
   /** Public only after a terminal choice has been recorded in the shared world contract. */
-  readonly publicConsequences?: {
-    readonly kind: 'EMPTY_WATCH_RECORD';
-    readonly refugeeCamp: 'PRESENT' | 'REMOVED';
-    readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
-  };
+  readonly publicConsequences?:
+    | {
+        readonly kind: 'EMPTY_WATCH_RECORD';
+        readonly refugeeCamp: 'PRESENT' | 'REMOVED';
+        readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
+      }
+    | {
+        readonly kind: 'DRAGGED_SACK';
+        readonly northernDvorGrain: 'FULL_SACK' | 'SHORT_SACK';
+        readonly yourCompanyKnowsYeremaSlept: boolean;
+      };
   readonly canAccept: boolean;
   readonly canHelp: boolean;
   readonly canWithdraw: boolean;
+  /** The former holder may return withdrawn contract cargo at its issuer without a reward. */
+  readonly canReturnCargo: boolean;
   readonly steps: readonly {
     readonly stepId: string;
     readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
@@ -337,6 +347,8 @@ export interface OrdinaryContractDto {
   }[];
   /** People travelling with the viewer's company for this contract. */
   readonly yourCustody: readonly string[];
+  /** Contract-owned cargo travelling with the viewer's company until its delivery step. */
+  readonly yourCargo: readonly string[];
 }
 
 export interface OrdinaryContractBoardDto {

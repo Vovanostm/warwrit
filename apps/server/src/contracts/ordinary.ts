@@ -176,6 +176,33 @@ export function contractView(
             watchman: 'ON_DUTY' as const,
           }
         : undefined;
+  const draggedSackOutcome =
+    profile.instanceId === 'ci.m1.dragged-sack.01' &&
+    terminalFact?.slotId === 'dragged-sack-delivered-full'
+      ? ('FULL_SACK' as const)
+      : profile.instanceId === 'ci.m1.dragged-sack.01' &&
+          (terminalFact?.slotId === 'dragged-sack-delivered-short' ||
+            terminalFact?.slotId === 'dragged-sack-returned-after-withdrawal')
+        ? state.facts.some(
+            (fact) =>
+              fact.companyId === terminalFact.companyId &&
+              fact.slotId === 'dragged-sack-flour-shared',
+          )
+          ? ('SHORT_SACK' as const)
+          : ('FULL_SACK' as const)
+        : undefined;
+  const draggedSackPublicConsequences =
+    draggedSackOutcome === undefined
+      ? undefined
+      : {
+          kind: 'DRAGGED_SACK' as const,
+          northernDvorGrain: draggedSackOutcome,
+          yourCompanyKnowsYeremaSlept:
+            companyId !== undefined &&
+            state.facts.some(
+              (fact) => fact.companyId === companyId && fact.slotId === 'dragged-sack-yerema-slept',
+            ),
+        };
   return {
     instanceId: profile.instanceId,
     template: terms.template,
@@ -193,11 +220,21 @@ export function contractView(
     ...(terminalStep
       ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
       : {}),
-    ...(emptyWatchPublicConsequences ? { publicConsequences: emptyWatchPublicConsequences } : {}),
+    ...(terminalStep?.returnsCargoAfterWithdrawal && terminalStep.resultTextKey
+      ? {
+          terminalFindingTextKey: `contract.${profile.instanceId}.result.${terminalStep.resultTextKey}`,
+        }
+      : {}),
+    ...(emptyWatchPublicConsequences
+      ? { publicConsequences: emptyWatchPublicConsequences }
+      : draggedSackPublicConsequences
+        ? { publicConsequences: draggedSackPublicConsequences }
+        : {}),
     canAccept:
       companyId !== undefined &&
       state.outcome === null &&
       state.ownerCompanyId === null &&
+      !state.cargoCustody.some((entry) => entry.companyId !== null) &&
       atIssuer,
     canHelp:
       companyId !== undefined &&
@@ -211,31 +248,49 @@ export function contractView(
       (role === 'OWNER' || role === 'HELPER') &&
       state.outcome === null &&
       !battleStarted &&
-      state.custody.length === 0,
-    steps: terms.steps.map((step) => {
-      const doneByYou =
-        companyId !== undefined &&
-        step.produces.every((slotId) =>
-          state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
-        );
-      return {
-        stepId: step.stepId,
-        action: step.action,
-        location: step.place,
-        doneByYou,
-        ...(doneByYou && step.resultTextKey !== undefined
-          ? { findingTextKey: `contract.${profile.instanceId}.result.${step.resultTextKey}` }
-          : {}),
-        blocker:
-          companyId === undefined
-            ? 'NOT_A_PARTICIPANT'
-            : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
-        completes: step.completes === true,
-      };
-    }),
+      state.custody.length === 0 &&
+      !(
+        role === 'OWNER' &&
+        state.cargoCustody.some(
+          (entry) => entry.companyId !== null && entry.companyId !== companyId,
+        )
+      ),
+    canReturnCargo:
+      companyId !== undefined &&
+      state.outcome === null &&
+      state.lastWithdrawal?.companyId === companyId &&
+      state.cargoCustody.some((entry) => entry.companyId === companyId) &&
+      standingAt?.siteId === terms.issuerPlace.siteId &&
+      standingAt.areaId === terms.issuerPlace.areaId,
+    steps: terms.steps
+      .filter((step) => !step.returnsCargoAfterWithdrawal)
+      .map((step) => {
+        const doneByYou =
+          companyId !== undefined &&
+          step.produces.every((slotId) =>
+            state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
+          );
+        return {
+          stepId: step.stepId,
+          action: step.action,
+          location: step.place,
+          doneByYou,
+          ...(doneByYou && step.resultTextKey !== undefined
+            ? { findingTextKey: `contract.${profile.instanceId}.result.${step.resultTextKey}` }
+            : {}),
+          blocker:
+            companyId === undefined
+              ? 'NOT_A_PARTICIPANT'
+              : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
+          completes: step.completes === true,
+        };
+      }),
     yourCustody: state.custody
       .filter((entry) => entry.companyId === companyId)
       .map((entry) => entry.personId),
+    yourCargo: state.cargoCustody
+      .filter((entry) => entry.companyId === companyId)
+      .map((entry) => entry.cargoId),
   };
 }
 
