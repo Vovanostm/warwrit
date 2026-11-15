@@ -76,6 +76,11 @@ company advance legally. The 15 focused food tests, existing physical/combat
 regressions and real PostgreSQL supply exchange passed. Full M1 is unfinished.
 See [same-company continuation](m1-next/02-next-contract.md#current-result--2026-11-15).
 
+The native B4 reward exposed a second caller using strict departure-food checks
+for a stationary settlement. The common catch-up helper now prepares the same
+recorded-shortfall facts as ordinary stationary observation and purchases. The
+retained company completed its40-crown E01 payment after this correction.
+
 Verification result — 2026-10-04:
 
 - Clean disposable checkout at base `06b85550913dda93b445656a48ed7dab6eb11452`

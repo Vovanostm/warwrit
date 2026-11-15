@@ -90,6 +90,52 @@ it('renders only server-visible lines and stores the exact command before postin
   expect(stored.body).toBe(JSON.stringify(request));
 });
 
+it("asks who is groaning before referring to Ulita's son", async () => {
+  const ulita = {
+    ...read,
+    sceneId: 'S03',
+    visibleLineIds: ['01', 'enter', '02', '02-sound'],
+    availableChoices: ['ask-son'],
+  };
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(ulita))));
+  await mount();
+  expect(host!.textContent).toContain('За дверью стонут.');
+  expect(host!.querySelector('.story-choices button')!.textContent).toBe('Кто у тебя стонет?');
+  expect(host!.textContent).not.toContain('Когда он вернулся?');
+  expect(host!.textContent).not.toContain('Сын. Петрусь.');
+});
+
+it('names every accusation and the proven confirmation from the active scene', async () => {
+  const accusation = {
+    ...read,
+    sceneId: 'S07',
+    visibleLineIds: ['01', 'proof', 'senka', 'kondrat', 'wait'],
+    availableChoices: ['accuse-ulita', 'accuse-senka', 'accuse-kondrat', 'wait'],
+  };
+  const confirmation = {
+    ...accusation,
+    visibleLineIds: ['warn-proof', 'commit-proof', 'back'],
+    availableChoices: ['confirm', 'back'],
+  };
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce(new Response(JSON.stringify(accusation)))
+    .mockResolvedValueOnce(new Response(JSON.stringify(confirmation)));
+  vi.stubGlobal('fetch', fetchMock);
+  await mount();
+  const labels = [...host!.querySelectorAll('.story-choices button')].map(
+    (button) => button.textContent,
+  );
+  expect(labels).toEqual([
+    'Улита. Рассказать о мешке и сделке.',
+    'Сенька назвал Обуху тайник.',
+    'Кондрат, ты сам назвал Обуху тайник.',
+    'Ещё расспросим.',
+  ]);
+  await reloadPanel();
+  expect(host!.querySelector('.story-choices button')!.textContent).toBe('Рассказать Кондрату.');
+});
+
 it('keeps an unknown response pending and retries the same body', async () => {
   const wrong = new Response(
     JSON.stringify({ schemaVersion: 1, commandId: 'different', ok: true }),

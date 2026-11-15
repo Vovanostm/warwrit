@@ -65,7 +65,8 @@ function visibleLines(world: StoryWorldState, company: StoryCompanyState): reado
         '01',
         'enter',
         '02',
-        ...(hasStoryFact(company, 'F06') ? ['02-sound', 'who', '02-son', 'son', '03'] : []),
+        '02-sound',
+        ...(hasStoryFact(company, 'F06') ? ['who', '02-son', 'son', '03'] : []),
         ...(hasStoryFact(company, 'F07') ? ['inspect', '04'] : []),
         ...(hasStoryFact(company, 'F08')
           ? ['sack', '05', 'grain', ...(company.cacheReasonAsked ? ['06'] : [])]
@@ -77,7 +78,7 @@ function visibleLines(world: StoryWorldState, company: StoryCompanyState): reado
       return hasStoryFact(company, 'F11')
         ? ['compare', '01', '02', 'ask', '03', '04', '05', 'next']
         : hasStoryFact(company, 'F10')
-          ? ['compare', '01', '02', 'ask', '03']
+          ? ['compare', '01', '02', 'ask']
           : ['compare'];
     case 'S07':
       if (company.pendingAccusation) {

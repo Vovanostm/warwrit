@@ -92,19 +92,25 @@ No new service framework, second time/accrual owner or speculative course editor
 - [ ] CAP-7 Each leaf's result and limitations update its existing owning record;
       no fresh gameplay/balance rule is smuggled in as an adapter choice.
 
-## Open course input — 2026-11-15
+## Trial course — owner decision 2026-11-15
 
 L1–L3 have pure learning composition and interruption rules, while the production
 adapter, real course offer, provider/mentor source and ordinary controls remain
 unfinished. The command allowlist currently refuses StartLearning. Existing
 finance readers preserve optional learningObligations/learningEffects.
 
-An owner question is pending for the first trial offer. The proposed source is
-the existing Kamenny Brod guard contact, teaching sword skill for three Campaign
+The owner approved the first trial offer in this implementation chat. The source
+is the existing Kamenny Brod guard contact, teaching sword skill for three Campaign
 Days at five crowns per Campaign Day, charging only the elapsed accepted course
 time. Existing learning/progression coefficients determine earned skill. The
 full start/progress/stop/finish and mandatory interruption producers precede
-activation. This proposal has pending owner status.
+activation. The three-day/five-crown values are accepted for the first playtest.
+
+The adapter's selected trial difficulty is challenge level1, using the existing
+course formula. This is an implementer-chosen playtest parameter. The existing
+guard contact supplies the provider and mentor identity. Any distinct tuition
+wallet starts at zero and receives only actual company transfers. The provider's
+new canonical representation is part of implementing the approved offer.
 
 ## Decisions and checks
 

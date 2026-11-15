@@ -201,7 +201,7 @@ export const storyEn: Readonly<Record<keyof typeof storyRu, string>> = {
   [`${id}choice.confront-ulita`]:
     'You said Petrus brought it that night. Senka saw this sack earlier — you told him your son wasn’t back yet.',
   [`${id}choice.ask-where-grain`]: 'How did he find out where the grain was?',
-  [`${id}choice.open-confrontation`]: 'Return to Ulita.',
+  [`${id}choice.open-confrontation`]: 'Ask about what Senka saw.',
   [`${id}choice.open-accusation`]: 'Well? Who was it?',
   [`${id}choice.accuse-ulita`]: 'Ulita told Obukh.',
   [`${id}choice.accuse-senka`]: 'Senka told Obukh where the grain was hidden.',
@@ -224,7 +224,7 @@ export const storyEn: Readonly<Record<keyof typeof storyRu, string>> = {
   [`${id}ui.unauthenticated`]:
     'The account session expired. Sign in again, then retry the saved request.',
   [`${id}ui.retry-blocked`]: 'The saved request is damaged. Reload before continuing.',
-  [`${id}ui.reward-offer`]: 'Kondrat pays 40 crowns for a proven answer.',
+  [`${id}ui.reward-offer`]: '40 crowns.',
   [`${id}ui.reward`]: 'Received: 40 crowns.',
   [`${id}ui.insufficient`]: 'Kondrat does not have enough money to pay now. The case remains open.',
   [`${id}ui.stale`]: 'The story changed. Updating the journal and available actions.',

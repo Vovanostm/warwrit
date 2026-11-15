@@ -248,13 +248,17 @@ export function dropSurrenderedCharacterGear(
     closed: null,
   };
   const droppedIds = new Set(dropped.map((item) => item.itemId));
-  return {
-    ...recorded.state,
-    containers: [...recorded.state.containers, bundle],
-    items: recorded.state.items.map((item) =>
-      droppedIds.has(item.itemId) ? { ...item, containerId: bundleId, equipped: null } : item,
-    ),
-  };
+  return knownItemMutation(
+    {
+      ...recorded.state,
+      containers: [...recorded.state.containers, bundle],
+      items: recorded.state.items.map((item) =>
+        droppedIds.has(item.itemId) ? { ...item, containerId: bundleId, equipped: null } : item,
+      ),
+    },
+    [...droppedIds],
+    [bundleId],
+  );
 }
 
 function bodyFor(root: MaterializedCompanyState, characterId: string) {

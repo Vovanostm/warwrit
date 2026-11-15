@@ -9,8 +9,8 @@ Owner decision, 2026-10-07, verbatim **«Одобряю»**: revision 6 of
 at `874b8fc` is approved. **AC-1 PASS**; the story text is approved. The October 8 owner decision fixes the E01 reward
 at 40 crowns. Gameplay implementation and funding verification remain separate.
 
-Current status: SPECIFIED / LOCAL for this contract. Steps 3–5 require their
-own source and runtime checks. Funding verification belongs to T033; implementation
+Current status: IN_PROGRESS / LOCAL. Core, persistent server and interface are
+implemented, with the native E01 journey checked. Funding verification belongs to T033, implementation
 to T034. Delivery permissions follow AGENTS.md and the owning mission.
 
 ## First playable result
@@ -229,19 +229,19 @@ mission outcome and receipt. E02/E03 and unproved Ulita have no reward.
 | ------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
 | 1 — story          | Manuscript text ACCEPT and owner AC-1 approval                                                         | PASS; owner «Одобряю» for revision 6 at `874b8fc`.                       |
 | 2 — contract       | Model, guards/choices/outcomes, reducer, persistence, UI and AC recorded; documentation checks; commit | Contract specified. Reward fixed at 40 crowns, funding verified by T033. |
-| 3 — core           | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | NOT_RUN; use T033/T034.                                                  |
-| 4 — server/web     | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | NOT_RUN.                                                                 |
-| 5 — player journey | Play proven and false endings; verify final text and presentation; focused checks; delivery record     | NOT_RUN.                                                                 |
+| 3 — core           | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | Focused tests and types PASS locally. |
+| 4 — server/web     | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | SQL6, interface tests and native E01 PASS locally. |
+| 5 — player journey | Play proven and false endings; verify final text and presentation; focused checks; delivery record     | E01 passed. Native false ending and final portraits remain open. |
 
 | Brief AC | Direct evidence required                                                                                            | Current result                                         |
 | -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | AC-1     | Approval quote and approved story revision                                                                          | PASS: «Одобряю», 2026-10-07, revision 6, `874b8fc`.    |
-| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | NOT_RUN.                                               |
-| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | NOT_RUN.                                               |
-| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | NOT_RUN.                                               |
-| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | NOT_RUN.                                               |
-| AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | NOT_RUN in game; manuscript approval recorded in AC-1. |
-| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | NOT_RUN.                                               |
+| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | Native E01 and reload PASS. Wrong ending browser NOT_RUN. |
+| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | Focused core and real PG checks PASS. |
+| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | Real PG private journals/concurrent finish PASS. Native second company NOT_RUN. |
+| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | Focused validator tests PASS. |
+| AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | RU E01 route read in game. Choice labels and disclosure timing corrected. EN browser NOT_RUN. |
+| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | Day interviews/night E01 inspected. Portraits still use initials and remain unfinished. |
 
 Additional targeted checks: deterministic rejection/preparation without mutation;
 same-command retry once; conflicting retry rejection; concurrent confirmations
@@ -292,10 +292,14 @@ IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`. Pure story definition,
 private journals, guarded commands, shared endings and strict readers are
 implemented. Eleven focused story/public-export tests and core typecheck passed.
 A review correction makes Ulita's grain answer visible only after the company
-actually asks that question. E01 emits 40-crown payout eligibility; the server
-transaction still owns actual issuer debit and company credit.
+actually asks that question. The later confession also remains hidden until its
+question. Initial dialogue explains the groan before asking who is behind the door.
+Accusation and confirmation buttons now resolve their scene-specific labels.
+The final source-focused story/interface/surrender run passed 20 tests, with web
+typecheck passing.
 
-T034 stays open until the ordinary player journey is finished.
+T034 stays open for the native wrong-ending route and final portrait/presentation
+checks recorded in the matrix above.
 
 The server now has authenticated reads/commands, private journals, frozen delivery
 clock provenance and transactional issuer debit/company credit. Migration 0026
@@ -305,6 +309,20 @@ auth/private knowledge, E01 funds, E02, rollback, exact replay after movement,
 conflicting replay, concurrent finish and availability integrity. Integration
 verification passed all six story cases together with26 encounter cases.
 The migration launcher passed up/down and retained-story rollback protection
-on its disposable database. The ordinary interface is connected at Severny Dvor,
-and the retained company has accepted the story and begun interviewing the three
-characters. Its final accusation, payout and reload remain open.
+on its disposable database.
+
+The ordinary Severny Dvor interface completed E01 with the retained company
+`eb855f6f-ab02-42ca-9eef-a82b2c6830bf`. Interviews, patched-sack inspection,
+timing comparison, confession and final confirmation used visible game controls.
+The first payout attempt exposed a stationary catch-up mistakenly using strict
+departure food rules. The shared helper now records actual stationary shortfall
+before payment. The same confirmation then succeeded with 846→886 company crowns,
+80→40 issuer crowns and exactly one paid story receipt. Reload and reopening
+retain E01, ten personal findings and 886 crowns. Native artifacts are retained
+under `output/playwright/m1-b4-*`.
+
+New delivery receipts retain exact simulation time. Compatible legacy receipts
+with a known zero QA offset use their wall timestamp. A legacy receipt with an
+unknown nonzero historical offset becomes eligible only after one full real
+Light cycle has elapsed, with its first proven availability anchor persisted.
+The earlier anchor is preserved on subsequent reads.

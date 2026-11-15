@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: persistent B4 interviews, personal journal, shared endings
+  and funded 40-crown reward. Native E01 survives reload after fixing stationary
+  food catch-up and scene choice labels.
+  [Story result and remaining acceptance](docs/work-packages/M1-STORY-MISSIONS.md#implementation-checkpoint--2026-11-15). LOCAL.
+- 2026-11-15 — Fixed: surrendered gear now updates observed inventory and ground
+  bundles together with canonical equipment.
+  [Outcome correction](docs/work-packages/m1-next/08-battle-outcomes.md#current-result--2026-11-15). LOCAL.
 - 2026-11-15 — Added: apply trusted V6 intentions to new hunt admissions, show
   incapacitated fighters prone and preserve full scenario file roundtrips.
   [Integrated combat checks](docs/work-packages/M1-CAMPAIGN-BATTLE.md#current-result). LOCAL.

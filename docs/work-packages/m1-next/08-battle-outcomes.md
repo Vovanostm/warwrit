@@ -33,6 +33,12 @@ The final integrated encounter PostgreSQL suite passed26 tests. Focused company
 finalization, projection, scene and terminal-view checks also passed. Native
 surrender and ordinary campaign UI continuation remain unverified.
 
+Independent review found that surrendered gear moved canonically while observed
+inventory still showed its old equipment slots. The drop now refreshes the exact
+item snapshots and the observed ground bundle through the existing mutation helper.
+The finalization regression checks all 12 moved items, their three observed bundles,
+living people and exact retry. The focused source test passes.
+
 Native hostile escape/surrender, browser continuation and the remaining outcome
 rows keep their direct acceptance criteria below.
 

@@ -59,6 +59,10 @@ function proveDisclosure(world: StoryWorldState, company: StoryCompanyState) {
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'to-ulita' });
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'open-confrontation' });
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'confront-ulita' });
+  expect(state.company.facts.some((fact) => fact.factId === 'F11')).toBe(false);
+  expect(
+    projectStory(CACHE_DISCLOSURE_STORY, state.world, state.company, '20').visibleLineIds,
+  ).not.toContain('03');
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-where-grain' });
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'open-accusation' });
   state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'accuse-ulita' });
@@ -66,6 +70,20 @@ function proveDisclosure(world: StoryWorldState, company: StoryCompanyState) {
 }
 
 describe('B4 company story journal and reducer', () => {
+  it("shows the audible groan before the company learns who is behind Ulita's door", () => {
+    const world = worldGenesis();
+    let state = act(world, storyCompanyGenesis('company-a', world), { type: 'ACCEPT' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'to-ulita' });
+    const view = projectStory(CACHE_DISCLOSURE_STORY, state.world, state.company, '20');
+    expect(view.visibleLineIds).toContain('02-sound');
+    expect(view.visibleLineIds).not.toContain('02-son');
+    expect(view.journal.some((fact) => fact.factId === 'F06')).toBe(false);
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-son' });
+    expect(
+      projectStory(CACHE_DISCLOSURE_STORY, state.world, state.company, '20').visibleLineIds,
+    ).toEqual(expect.arrayContaining(['who', '02-son', 'son', '03']));
+  });
+
   it('retains reads of seeded world states written before availability provenance was added', () => {
     const world = JSON.parse(JSON.stringify(worldGenesis())) as Record<string, unknown>;
     const source = { ...(world['eligibilitySource'] as Record<string, unknown>) };

@@ -165,6 +165,16 @@ it('finalizes verified V6 surrender with living members, dropped gear and an exa
   );
   expect(dropped).toHaveLength(12);
   expect(dropped.every((item) => item.equipped === null)).toBe(true);
+  for (const item of dropped)
+    expect(
+      physical.knowledge.itemSnapshots.find((snapshot) => snapshot.itemId === item.itemId),
+    ).toEqual(item);
+  for (const bundle of bundles)
+    expect(
+      physical.knowledge.containerSnapshots.find(
+        (snapshot) => snapshot.containerId === bundle.containerId,
+      ),
+    ).toEqual(bundle);
   expect(physical.items.map((item) => item.itemId).toSorted()).toEqual(
     root.physical.items.map((item) => item.itemId).toSorted(),
   );

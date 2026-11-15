@@ -193,7 +193,7 @@ function speaker(sceneId: string, lineId: string): string | undefined {
           : 'PLAYER';
   else if (sceneId === 'S02') who = ['01', '02', '03', '04'].includes(lineId) ? 'SENKA' : 'PLAYER';
   else if (sceneId === 'S03')
-    who = ['01', '04'].includes(lineId)
+    who = ['01', '02-sound', '04'].includes(lineId)
       ? 'NARRATOR'
       : ['02', '02-son', '03', '05', '06'].includes(lineId)
         ? 'ULITA'
@@ -232,6 +232,8 @@ function speaker(sceneId: string, lineId: string): string | undefined {
 }
 
 function choiceText(choice: StoryChoiceIdDto, story: StoryReadResponseDto): string {
+  if (choice === 'ask-son' && !story.journal.some((fact) => fact.factId === 'F06'))
+    return lookup(`${mission}S03.who`)!;
   const key =
     choice === 'ask-senka-sack'
       ? `${story.sceneId}.${story.sceneId === 'S02' ? 'ask-senka-sack' : story.sceneId === 'S04' ? 'ask' : 'next'}`
@@ -248,7 +250,11 @@ function choiceText(choice: StoryChoiceIdDto, story: StoryReadResponseDto): stri
             : choice === 'accuse-kondrat'
               ? 'kondrat'
               : `choice.${choice}`;
-  return lookup(`${mission}${key}`) ?? lookup(`${mission}ui.unavailable`)!;
+  const sceneChoice = choice === 'confirm' || choice.startsWith('accuse-');
+  return (
+    lookup(`${mission}${sceneChoice ? `${story.sceneId}.` : ''}${key}`) ??
+    lookup(`${mission}ui.unavailable`)!
+  );
 }
 
 function choiceCommand(choice: StoryChoiceIdDto): StoryCommandRequestDto['command'] {
@@ -298,6 +304,8 @@ function choiceLineId(choice: StoryChoiceIdDto, sceneId: string): string {
 }
 
 function isChoiceLine(story: StoryReadResponseDto, lineId: string): boolean {
+  if (lineId === 'son' && story.journal.some((fact) => fact.factId === 'F06')) return false;
+  if (lineId === 'proof' && story.availableChoices.includes('accuse-ulita')) return true;
   return (
     story.availableChoices.some((choice) => choiceLineId(choice, story.sceneId) === lineId) ||
     (story.availableChoices.includes('confirm') && lineId === 'commit-proof')
