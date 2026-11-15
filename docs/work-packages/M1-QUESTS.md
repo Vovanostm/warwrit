@@ -464,3 +464,21 @@ and an intermediate position. The focused atlas movement test passed (7 tests);
 game-core typecheck, server typecheck, scoped Prettier and `git diff --check`
 passed. Browser playthrough, PostgreSQL integration and player acceptance are
 NOT_RUN. This compatibility fix is LOCAL; publication and merge are NOT_RUN.
+
+### Combined quest integration — 2026-11-16
+
+Integrated «Чьи волки», «Девочка в синем платке» and guard service with the
+ordinary rescue/cargo paths. The combined catalogue check exposed an absent
+whose-wolves manifest binding. Added its definition, observation/proof/report
+sources and scene for the existing killed/spared outcomes. Preserved the
+current cargo/custody return policy, seventh current-tick projection argument,
+terrain goals and quiet-descent stock projection. Removed one duplicate UI
+blocker case and retained grammatical hunt guidance.
+
+Game-core/protocol builds and server/web typechecks passed after updating the
+guard-service test fixture for the existing care-pool argument. Focused combined
+checks passed 91/92 initially, with one letter-case expectation then corrected
+and the affected 17-test file passing. The subsequent catalogue/ordinary/UI
+run passed 50/50, and food/return-report checks passed 41/41. Migration 0032
+was applied to the owned stand. Native combined quests and full T032
+acceptance remain NOT_RUN. LOCAL.

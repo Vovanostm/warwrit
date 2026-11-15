@@ -798,7 +798,7 @@ function activeHuntGuidance(
   const objective = contract.terms.objectiveLocation.siteId;
   return currentSiteId === objective
     ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
-    : 'Доберитесь до места задания, чтобы вступить в бой.';
+    : 'Следуйте по доступным маршрутам к месту задания, чтобы вступить в бой.';
 }
 
 export async function readHunt(instanceId: string | undefined) {

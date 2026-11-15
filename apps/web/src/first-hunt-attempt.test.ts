@@ -638,7 +638,7 @@ it('guides a fresh hunt by location and participation before terminal feedback t
   );
   const outsider = { ...active, yourRole: 'NONE' as const };
   expect(firstHuntGuidance(outsider, 'kamenny-brod')).toContain('Помощь добровольна');
-  expect(firstHuntGuidance(outsider, 'staraya-melnitsa')).toContain('прибудьте к заказчику');
+  expect(firstHuntGuidance(outsider, 'staraya-melnitsa')).toContain('Прибудьте к заказчику');
   expect(firstHuntGuidance({ ...outsider, helperSlot: 'OCCUPIED' }, 'kamenny-brod')).toContain(
     'Слот помощника занят',
   );

@@ -93,6 +93,7 @@ const cellarRescueId = 'ct.m1.cellar-rescue.v1';
 const lostScoutId = 'ct.m1.lost-scout.v1';
 const wolfTrailId = 'ct.m1.wolf-trail.v1';
 const notOnePackId = 'ct.m1.not-one-pack.v1';
+const whoseWolvesId = 'ct.m1.whose-wolves.v1';
 const raiderStandardId = 'ct.m1.raider-standard.v1';
 const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
@@ -336,6 +337,21 @@ const definitions: readonly ContractDefinition[] = [
     ['HUNT-03'],
   ),
   definition(
+    whoseWolvesId,
+    'HUNT',
+    'local-village-steward',
+    location('severny-dvor', 'severny-dvor-yard'),
+    [
+      'whose-wolves-bones-and-fish-guts',
+      'whose-wolves-efim-feeds-the-pack',
+      'whose-wolves-pack-killed',
+      'whose-wolves-proof-presented',
+      'whose-wolves-pack-spared-and-exposed',
+    ],
+    'SOURCE_BOUND_HUNT_PROOF',
+    ['HUNT-05-WHOSE-WOLVES'],
+  ),
+  definition(
     notOnePackId,
     'HUNT',
     'woodland-village-caller',
@@ -397,6 +413,11 @@ const definitions: readonly ContractDefinition[] = [
 ];
 
 const slots: ContractSourceSlot[] = [
+  source('whose-wolves-bones-and-fish-guts', whoseWolvesId, 'OBSERVATION'),
+  source('whose-wolves-efim-feeds-the-pack', whoseWolvesId, 'OBSERVATION'),
+  source('whose-wolves-pack-killed', whoseWolvesId, 'TERMINAL_RESULT'),
+  source('whose-wolves-proof-presented', whoseWolvesId, 'PHYSICAL_PICKUP'),
+  source('whose-wolves-pack-spared-and-exposed', whoseWolvesId, 'REPORT'),
   source('dragged-sack-contract-acceptance', draggedSackId, 'ACCEPTANCE'),
   source('dragged-sack-flour-trail', draggedSackId, 'OBSERVATION'),
   source('dragged-sack-found', draggedSackId, 'PHYSICAL_PICKUP'),
@@ -727,10 +748,7 @@ const standaloneScenes: ContractScene[] = [
     location('bereznyak', 'bereznyak-green'),
     ['man-by-road-sidor-found', 'man-by-road-resolved'],
     [
-      outcome(
-        'SUCCESS',
-        gate('ALL_PRESENT', ['man-by-road-sidor-found', 'man-by-road-resolved']),
-      ),
+      outcome('SUCCESS', gate('ALL_PRESENT', ['man-by-road-sidor-found', 'man-by-road-resolved'])),
       outcome('PENDING', gate('ALWAYS')),
     ],
   ),
@@ -921,6 +939,36 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'HUNT-05-WHOSE-WOLVES',
+    whoseWolvesId,
+    location('tikhaya-gat', 'tikhaya-gat-bank'),
+    [
+      'whose-wolves-bones-and-fish-guts',
+      'whose-wolves-efim-feeds-the-pack',
+      'whose-wolves-pack-killed',
+      'whose-wolves-proof-presented',
+      'whose-wolves-pack-spared-and-exposed',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate(
+          'ANY_GROUP_PRESENT',
+          ['whose-wolves-pack-killed', 'whose-wolves-proof-presented'],
+          [
+            'whose-wolves-bones-and-fish-guts',
+            'whose-wolves-efim-feeds-the-pack',
+            'whose-wolves-pack-spared-and-exposed',
+          ],
+        ),
+      ),
+      outcome(
+        'PENDING',
+        gate('ALL_ABSENT', ['whose-wolves-pack-killed', 'whose-wolves-pack-spared-and-exposed']),
+      ),
+    ],
+  ),
+  scene(
     'HUNT-04',
     notOnePackId,
     location('tikhaya-gat', 'tikhaya-gat-bank'),
@@ -1008,6 +1056,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.wolf-trail.01', wolfTrailId),
     binding('ci.m1.raider-standard.01', raiderStandardId),
     binding('ci.m1.not-one-pack.01', notOnePackId),
+    binding('ci.m1.whose-wolves.01', whoseWolvesId),
     binding('ci.m1.tracks-over-tracks.01', tracksOverTracksKosarsId, [tracksOverTracksBanditsId]),
     binding('ci.m1.voice-under-boards.01', voiceUnderBoardsId),
   ],

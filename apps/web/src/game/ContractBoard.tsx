@@ -44,8 +44,6 @@ function stepBlockerText(
       return conditionText(contract.instanceId, step.stepId) ?? 'условие не выполнено';
     case 'ALREADY_DONE':
       return 'сделано';
-    case 'ALTERNATIVE_CHOSEN':
-      return 'вы выбрали другой путь';
     case 'NOT_A_PARTICIPANT':
       return 'возьмите контракт';
     case 'NOT_AVAILABLE':

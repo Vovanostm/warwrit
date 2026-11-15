@@ -11,6 +11,7 @@ const ids = {
   accessEvidenceId: undefined,
   careEvidenceId: undefined,
   careDefinitionId: undefined,
+  carePoolId: undefined,
   assignmentEvidenceId: undefined,
   assignmentLocationId: undefined,
   assignmentFundingPoolId: undefined,
