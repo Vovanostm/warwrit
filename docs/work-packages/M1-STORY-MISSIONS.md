@@ -285,3 +285,23 @@ same transaction as the story outcome, company credit and receipts.
 issuer row. No B4 activation or reward was performed by this funding check.
 Sanitized local evidence is in the restore worktree's ignored
 `output/restore-provenance.json`; source dump and original databases were retained.
+
+## Implementation checkpoint — 2026-11-15
+
+IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`. Pure story definition,
+private journals, guarded commands, shared endings and strict readers are
+implemented. Eleven focused story/public-export tests and core typecheck passed.
+A review correction makes Ulita's grain answer visible only after the company
+actually asks that question. E01 emits 40-crown payout eligibility; the server
+transaction still owns actual issuer debit and company credit.
+
+The authenticated SQL adapter, ordinary interface, concurrent finish/retry and
+real player journey remain unfinished. T034 stays open.
+
+The server now has authenticated reads/commands, private journals, frozen delivery
+clock provenance and transactional issuer debit/company credit. Migration 0026
+was applied on the owned restored copy after correcting its new account foreign
+key to UUID. Six PostgreSQL cases passed on author revision `eb15a6a0`, covering
+auth/private knowledge, E01 funds, E02, rollback, exact replay after movement,
+conflicting replay, concurrent finish and availability integrity. Integration
+verification and the ordinary interface journey remain open.

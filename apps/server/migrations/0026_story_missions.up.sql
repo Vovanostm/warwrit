@@ -31,7 +31,7 @@ create table story_command_receipts (
   mission_id text not null,
   company_id text not null,
   command_id uuid not null,
-  account_id text not null references identity_accounts (id),
+  account_id uuid not null references identity_accounts (id),
   request_key text not null,
   response jsonb not null check (jsonb_typeof(response) = 'object'),
   created_at timestamptz not null default now(),
