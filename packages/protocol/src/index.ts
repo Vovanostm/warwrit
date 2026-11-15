@@ -95,3 +95,4 @@ export * from './playground.js';
 
 export * from './map-editor.js';
 export * from './return-report.js';
+export type { DeceasedWageQuoteDto } from './deceased-wages.js';

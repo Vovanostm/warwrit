@@ -17,9 +17,10 @@ import type {
   LocalMoneyAccess,
 } from '@warwrit/game-core';
 import type { CompanyCommandAcceptedDto } from '@warwrit/protocol';
-import type { Transaction } from 'kysely';
+import { sql, type Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock } from '../world/clock.js';
+import { catchUpStationaryCompany } from './executor.js';
 import {
   findOwnedCompanyId,
   lockCompanyAggregate,
@@ -253,17 +254,45 @@ export async function executePayDeceasedWages(input: {
   if (input.request.expectedPublicRevision !== previousLife.knowledge.revision)
     return reject('STALE_REVISION', previousLife.knowledge.revision);
 
+  await sql`SAVEPOINT deceased_wage_catch_up`.execute(input.transaction);
+  const releaseCatchUp = async () => {
+    await sql`RELEASE SAVEPOINT deceased_wage_catch_up`.execute(input.transaction);
+  };
+  const rollbackCatchUp = async () => {
+    await sql`ROLLBACK TO SAVEPOINT deceased_wage_catch_up`.execute(input.transaction);
+    await releaseCatchUp();
+  };
   const clock = await readWorldClock(input.transaction, input.worldId, input.now, true);
-  if (
-    previous.encounter.active !== null ||
-    previousLife.campaignTick !== clock.tick ||
-    previousEconomy.finance.processedTick !== clock.tick
-  )
+  const caughtUp = await catchUpStationaryCompany({
+    transaction: input.transaction,
+    accountId: input.accountId,
+    state: previous,
+    atTick: clock.tick,
+    requestKind: 'DECEASED_WAGES_CATCH_UP',
+  });
+  if (!caughtUp) {
+    await rollbackCatchUp();
     return reject('UNSUPPORTED_ACTION', previousLife.knowledge.revision);
+  }
+  const current = caughtUp;
+  const currentEconomy = current.economy;
+  const currentLife = currentEconomy.lifecycle;
+  if (
+    current.encounter.active !== null ||
+    currentLife.parties.some(
+      (party) => party.location.kind === 'TRANSIT' || party.location.kind === 'MOVING',
+    ) ||
+    currentLife.campaignTick !== currentEconomy.finance.processedTick
+  ) {
+    await rollbackCatchUp();
+    return reject('UNSUPPORTED_ACTION', previousLife.knowledge.revision);
+  }
 
-  const party = previousLife.parties.length === 1 ? previousLife.parties[0] : undefined;
-  if (!party || party.location.kind !== 'AT' || party.location.siteId !== 'kamenny-brod')
+  const party = currentLife.parties.length === 1 ? currentLife.parties[0] : undefined;
+  if (!party || party.location.kind !== 'AT' || party.location.siteId !== 'kamenny-brod') {
+    await rollbackCatchUp();
     return reject('CONTACT_OR_ACCESS_REQUIRED', previousLife.knowledge.revision);
+  }
   const carriedPurse = await readCarriedSupplyPurse(
     input.transaction,
     input.worldId,
@@ -274,16 +303,18 @@ export async function executePayDeceasedWages(input: {
   const scope: DeceasedWageAccessScope = {
     worldId: input.worldId,
     companyId,
-    atTick: campaignTick(clock.tick),
+    atTick: currentLife.campaignTick,
     commandId: input.request.commandId,
     sourceEventId,
     characterId: input.request.payload.characterId,
-    expectedPublicRevision: input.request.expectedPublicRevision,
+    expectedPublicRevision: currentLife.knowledge.revision,
     carriedPurse,
   };
-  const preparedAccess = prepareDeceasedWageAccess(previousEconomy, scope);
-  if (preparedAccess.kind !== 'PREPARED')
+  const preparedAccess = prepareDeceasedWageAccess(currentEconomy, scope);
+  if (preparedAccess.kind !== 'PREPARED') {
+    await rollbackCatchUp();
     return reject('CONTACT_OR_ACCESS_REQUIRED', previousLife.knowledge.revision);
+  }
 
   const parsed = parseCompanyCommand({
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
@@ -291,36 +322,39 @@ export async function executePayDeceasedWages(input: {
     worldId: input.worldId,
     companyId,
     actorRef: { kind: 'PLAYER', id: input.accountId },
-    expectedRevision: publicRevision(input.request.expectedPublicRevision),
-    campaignTick: campaignTick(clock.tick),
+    expectedRevision: publicRevision(currentLife.knowledge.revision),
+    campaignTick: currentLife.campaignTick,
     rulesetId: COMPANY_RULESET_ID,
     sourceEventId,
     type: 'PayDeceasedWages',
     payload: { characterId: input.request.payload.characterId },
   });
-  if (!parsed.ok || parsed.command.type !== 'PayDeceasedWages')
+  if (!parsed.ok || parsed.command.type !== 'PayDeceasedWages') {
+    await rollbackCatchUp();
     return reject('INVALID_COMMAND', previousLife.knowledge.revision);
+  }
 
   let result: ReturnType<typeof payDeceasedWages>;
   try {
-    result = payDeceasedWages(previousEconomy, parsed.command, {
+    result = payDeceasedWages(currentEconomy, parsed.command, {
       worldId: input.worldId,
       companyId,
       principal: { kind: 'PLAYER', id: input.accountId },
-      publicRevision: previousLife.knowledge.revision,
-      canonicalRevision: previousLife.revision,
-      atTick: campaignTick(clock.tick),
+      publicRevision: currentLife.knowledge.revision,
+      canonicalRevision: currentLife.revision,
+      atTick: currentLife.campaignTick,
       completeGraph: true,
       contactIds: preparedAccess.contactIds,
       facts: [],
       financeFacts: [preparedAccess.access],
     });
   } catch (error) {
+    await rollbackCatchUp();
     return reject(mapSettlementError(error), previousLife.knowledge.revision);
   }
 
   const sourceKey = companySourceKey(parsed.command);
-  const next = { ...previous, economy: result.next };
+  const next = { ...current, economy: result.next };
   const response: CompanyCommandAcceptedDto = {
     commandId: input.request.commandId,
     ok: true,
@@ -349,11 +383,12 @@ export async function executePayDeceasedWages(input: {
   };
   await updateCompanyAggregateWithReceipt(
     input.transaction,
-    previousLife.revision,
+    currentLife.revision,
     result.next.lifecycle.revision,
     next,
     write,
   );
+  await releaseCatchUp();
   return { kind: 'COMMITTED', response };
 }
 

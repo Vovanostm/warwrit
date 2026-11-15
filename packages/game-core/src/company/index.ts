@@ -17,8 +17,16 @@ export type * from './economy-types.js';
 export { ECONOMY_SCHEMA_VERSION, ECONOMY_POLICY_VERSION } from './economy-types.js';
 export { createCompanyEconomyState } from './economy-state.js';
 export { receiveExternalPayment } from './economy-payments.js';
-export { DECEASED_KIN_WAGE_SINK_ID, payDeceasedWages } from './deceased-payroll.js';
-export type { DeceasedWageSettlement, DeceasedWageSettlementResult } from './deceased-payroll.js';
+export {
+  DECEASED_KIN_WAGE_SINK_ID,
+  deceasedWageQuotes,
+  payDeceasedWages,
+} from './deceased-payroll.js';
+export type {
+  DeceasedWageQuote,
+  DeceasedWageSettlement,
+  DeceasedWageSettlementResult,
+} from './deceased-payroll.js';
 export { accrueFinance } from './economy-accrual.js';
 export {
   prepareCompanyEconomy,
