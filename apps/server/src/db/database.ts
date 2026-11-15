@@ -210,6 +210,38 @@ interface WorldFirstHuntStateTable {
   readonly hostiles: unknown;
 }
 
+interface StoryWorldStateTable {
+  readonly world_id: string;
+  readonly mission_id: string;
+  readonly definition_version: number;
+  readonly revision: string;
+  readonly state: unknown;
+  readonly created_at: Generated<Date>;
+  readonly updated_at: Generated<Date>;
+}
+
+interface StoryCompanyStateTable {
+  readonly world_id: string;
+  readonly mission_id: string;
+  readonly company_id: string;
+  readonly definition_version: number;
+  readonly revision: string;
+  readonly state: unknown;
+  readonly created_at: Generated<Date>;
+  readonly updated_at: Generated<Date>;
+}
+
+interface StoryCommandReceiptTable {
+  readonly world_id: string;
+  readonly mission_id: string;
+  readonly company_id: string;
+  readonly command_id: string;
+  readonly account_id: string;
+  readonly request_key: string;
+  readonly response: unknown;
+  readonly created_at: Generated<Date>;
+}
+
 interface ContractInstanceTable {
   readonly world_id: string;
   readonly instance_id: string;
@@ -299,6 +331,9 @@ export interface DatabaseSchema {
   readonly world_party_routes: WorldPartyRouteTable;
   readonly world_route_receipts: WorldRouteReceiptTable;
   readonly world_first_hunt_state: WorldFirstHuntStateTable;
+  readonly story_world_states: StoryWorldStateTable;
+  readonly story_company_states: StoryCompanyStateTable;
+  readonly story_command_receipts: StoryCommandReceiptTable;
   readonly contract_instances: ContractInstanceTable;
   readonly encounter_admissions: EncounterAdmissionTable;
   readonly world_proof_claims: WorldProofClaimTable;
@@ -343,6 +378,7 @@ export interface DatabaseSchema {
     readonly instance_id: string;
     readonly request_key: string;
     readonly response: unknown;
+    readonly simulation_at_ms: string | null;
     readonly created_at: Generated<Date>;
   };
 }

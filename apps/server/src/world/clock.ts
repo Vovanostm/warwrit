@@ -53,6 +53,7 @@ export async function readWorldClock(
 
 const LIGHT_DAY_MS = 600_000n;
 const LIGHT_NIGHT_MS = 300_000n;
+export const WORLD_LIGHT_CYCLE_MS = (LIGHT_DAY_MS + LIGHT_NIGHT_MS).toString();
 
 /** Light runs from the same world genesis as the campaign clock but on its own fixed cycle. */
 export function readWorldLight(clock: WorldClockReading): {

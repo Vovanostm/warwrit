@@ -319,6 +319,8 @@ async function executeOrdinaryCommand(
       instance_id: profile.instanceId,
       request_key: requestKey,
       response,
+      simulation_at_ms:
+        profile.instanceId === 'ci.m1.mill-worker.01' ? clock.nowMs : null,
     })
     .execute();
   return response;

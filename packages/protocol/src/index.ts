@@ -61,6 +61,7 @@ export type {
 } from './world.js';
 export { WORLD_EXPECTED_COMPANY_ID_HEADER } from './world.js';
 export * from './contracts.js';
+export * from './story.js';
 export * from './encounter.js';
 export * from './combat-lab.js';
 export type {
