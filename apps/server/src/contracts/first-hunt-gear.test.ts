@@ -10,6 +10,7 @@ import { readHuntWorldState, type FirstHuntHostileState } from './first-hunt-run
 import {
   groundSurrenderedHostileGear,
   initializeHostileGearForNewV6Admission,
+  reconcileHostileGearPools,
 } from './first-hunt-gear.js';
 
 const profile = HUNT_PROFILES[0]!;
@@ -74,6 +75,20 @@ describe('canonical hostile gear', () => {
         location,
       }),
     ).toEqual(initialized);
+  });
+
+  it('initializes post-retreat armor from its remaining verified pool', () => {
+    const raw = rawWorldHostiles();
+    const pools = raw[0]!['currentPools'] as Record<string, unknown>;
+    raw[0] = { ...raw[0]!, currentPools: { ...pools, armor: 23 } };
+    const initialized = initializeHostileGearForNewV6Admission({
+      world: world(raw),
+      encounterId,
+      rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      location,
+    });
+    expect(initialized[0]!.gear?.items[1]?.currentCondition).toBe(23);
+    expect(initialized[0]!.gear?.items[1]?.maximumCondition).toBe(40);
   });
 
   it('rejects non-V6 initialization and leaves beast descriptive gear without loot instances', () => {
@@ -175,6 +190,53 @@ describe('canonical hostile gear', () => {
         location,
       }),
     ).toThrow('already dropped');
+  });
+
+  it('reconciles terminal armor damage before surrender drop and keeps the same source on retry', () => {
+    const initialized = initializeHostileGearForNewV6Admission({
+      world: world(),
+      encounterId,
+      rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      location,
+    });
+    const original = initialized[0]!;
+    const reconciled = reconcileHostileGearPools(worldId, original, {
+      health: 38,
+      armor: 14,
+      stamina: 70,
+      morale: 85,
+    });
+    expect(reconciled.gear?.items.map((item) => item.itemId)).toEqual(
+      original.gear?.items.map((item) => item.itemId),
+    );
+    expect(reconciled.gear?.items[0]?.currentCondition).toBe(original.weaponCondition);
+    expect(reconciled.gear?.items[1]).toMatchObject({
+      currentCondition: 14,
+      maximumCondition: 40,
+    });
+    const persisted = world([reconciled, ...initialized.slice(1)]).hostiles[0]!;
+    const surrendered = { ...persisted, disposition: 'surrendered' as const };
+    const dropped = groundSurrenderedHostileGear({
+      worldId,
+      profile,
+      hostile: surrendered,
+      terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      location,
+    });
+    const retry = groundSurrenderedHostileGear({
+      worldId,
+      profile,
+      hostile: dropped,
+      terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      location,
+    });
+    expect(retry.gear?.items[1]).toMatchObject({
+      currentCondition: 14,
+      maximumCondition: 40,
+    });
+    expect(retry.gear?.items.map((item) => item.itemId)).toEqual(
+      original.gear?.items.map((item) => item.itemId),
+    );
   });
 
   it('rejects forged gear identities and ownership when reading saved hostiles', () => {
