@@ -63,6 +63,91 @@ function setupV3(): BattleSetupV3 {
   };
 }
 
+function twoUnitV6Setup(allIncapacitated = false): BattleSetupV3 {
+  const base = setupV3();
+  const incapable = {
+    ...base.units[0]!,
+    id: unitId('incapable'),
+    position: { q: 0, r: 0 },
+    weaponId: 'fists' as const,
+    attributes: {
+      health: 1,
+      armor: 0,
+      stamina: 40,
+      initiative: 100,
+      accuracy: 0,
+      defense: 0,
+      morale: 70,
+    },
+    initialPools: { health: 1, armor: 0, stamina: 40, morale: 70 },
+    capabilities: { move: false, attack: false, defend: false, retreat: false },
+  };
+  const capable = {
+    ...base.units[12]!,
+    id: unitId('capable'),
+    position: { q: 1, r: 0 },
+    weaponId: 'great-weapon' as const,
+    attributes: {
+      health: 100,
+      armor: 0,
+      stamina: 40,
+      initiative: 50,
+      accuracy: 1_000,
+      defense: 0,
+      morale: 70,
+    },
+    initialPools: { health: 100, armor: 0, stamina: 40, morale: 70 },
+    capabilities: allIncapacitated
+      ? { move: false, attack: false, defend: false, retreat: false }
+      : { move: true, attack: true, defend: true, retreat: true },
+  };
+  return {
+    ...base,
+    sides: base.sides.slice(0, 2),
+    parties: base.parties.filter((party) => party.id === 'party-player' || party.id === 'party-1'),
+    units: [incapable, capable],
+  };
+}
+
+function threeSideV6SetupWithOneCapableFighter(): BattleSetupV3 {
+  const base = setupV3();
+  const incapable = [base.units[0]!, base.units[12]!].map((unit, index) => ({
+    ...unit,
+    id: unitId('incapable-' + index),
+    position: { q: index, r: 0 },
+    attributes: { ...unit.attributes, health: 1, armor: 0 },
+    initialPools: { health: 1, armor: 0, stamina: 40, morale: 70 },
+    capabilities: { move: false, attack: false, defend: false, retreat: false },
+  }));
+  const capable = {
+    ...base.units[24]!,
+    id: unitId('last-capable'),
+    position: { q: 2, r: 0 },
+    attributes: {
+      health: 5,
+      armor: 0,
+      stamina: 40,
+      initiative: 50,
+      accuracy: 100,
+      defense: 0,
+      morale: 70,
+    },
+    initialPools: { health: 5, armor: 0, stamina: 40, morale: 70 },
+    capabilities: { move: true, attack: true, defend: true, retreat: true },
+  };
+  return {
+    ...base,
+    map: {
+      ...base.map,
+      tiles: [{ q: 3, r: 0, height: 0, terrain: 'fire' }],
+    },
+    parties: base.parties.filter(
+      (party) => party.id === 'party-player' || party.id === 'party-1' || party.id === 'party-2',
+    ),
+    units: [...incapable, capable],
+  };
+}
+
 describe('combat setup schema 3', () => {
   it('retains three sides and all 36 figures through deterministic replay', () => {
     const setup = setupV3();
@@ -199,6 +284,117 @@ describe('combat setup schema 3', () => {
         ),
       }),
     ).toThrow(/invalid V6 threat profile/);
+  });
+
+  it('skips incapable V6 fighters without treating them as casualties', () => {
+    const setup = twoUnitV6Setup();
+    const started = startBattleV3(setup);
+    const state = started.state;
+    expect(state.initiativeOrder).toEqual([unitId('capable')]);
+    expect(state.activation?.unitId).toBe(unitId('capable'));
+    expect(state.units.find(({ id }) => id === unitId('incapable'))).toMatchObject({
+      health: 1,
+      status: 'active',
+      stamina: 40,
+    });
+    expect(state.status).toBe('active');
+    expect(state.outcome).toBeUndefined();
+    expect(
+      previewCombatAttacks(state).find(({ targetId }) => targetId === unitId('incapable'))
+        ?.hitChance,
+    ).toBe(95);
+
+    const legacyOrdered = {
+      ...state,
+      initiativeOrder: [unitId('capable'), unitId('incapable')],
+    };
+    const waited = applyCombatCommand(legacyOrdered, {
+      type: 'wait',
+      commandId: 'incapable-skipped-within-round' as never,
+      actorId: unitId('capable'),
+      activationId: state.activation!.id,
+    });
+    expect(waited.ok).toBe(true);
+    if (waited.ok) {
+      expect(waited.state.round).toBe(2);
+      expect(waited.state.activation?.unitId).toBe(unitId('capable'));
+      expect(
+        waited.events.some(
+          (event) => event.type === 'activation.started' && event.unitId === unitId('incapable'),
+        ),
+      ).toBe(false);
+    }
+
+    const attack = applyCombatCommand(state, {
+      type: 'attack',
+      commandId: 'incapable-remains-targetable' as never,
+      actorId: unitId('capable'),
+      activationId: state.activation!.id,
+      targetId: unitId('incapable'),
+    });
+    expect(attack.ok).toBe(true);
+    if (attack.ok) {
+      expect(attack.state.units.find(({ id }) => id === unitId('incapable'))).toMatchObject({
+        health: 0,
+        status: 'dead',
+      });
+      expect(attack.state.outcome).toEqual({
+        reason: 'last-side-standing',
+        winnerSideId: sideId('side-1'),
+      });
+    }
+  });
+
+  it('passes empty V6 rounds to the existing round-limit outcome and replays it', () => {
+    const setup = twoUnitV6Setup(true);
+    const started = startBattleV3(setup);
+    expect(started.state.status).toBe('resolved');
+    expect(started.state.activation).toBeNull();
+    expect(started.state.round).toBe(60);
+    expect(started.state.outcome).toEqual({ reason: 'round-limit' });
+    expect(started.state.initiativeOrder).toEqual([]);
+    expect(started.state.units.every((unit) => unit.status === 'active')).toBe(true);
+    expect(started.state.units.map(({ health, stamina }) => [health, stamina])).toEqual([
+      [1, 40],
+      [100, 40],
+    ]);
+    expect(started.events).toHaveLength(started.state.round + 2);
+    expect(started.events.at(-1)).toMatchObject({
+      type: 'battle.resolved',
+      revision: 0,
+      outcome: { reason: 'round-limit' },
+    });
+
+    const replay = replayCombat({
+      schemaVersion: COMBAT_V3_SCHEMA_VERSION,
+      setup,
+      commands: [],
+    });
+    expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(started.state));
+  });
+
+  it('passes remaining empty V6 rounds when the last capable fighter dies', () => {
+    const started = startBattleV3(threeSideV6SetupWithOneCapableFighter());
+    expect(started.state.activation?.unitId).toBe(unitId('last-capable'));
+    const result = applyCombatCommand(started.state, {
+      type: 'move',
+      commandId: 'last-capable-dies-in-fire' as never,
+      actorId: unitId('last-capable'),
+      activationId: started.state.activation!.id,
+      to: { q: 3, r: 0 },
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.state.units.find(({ id }) => id === unitId('last-capable'))).toMatchObject({
+        health: 0,
+        status: 'dead',
+      });
+      expect(result.state.units.filter(({ status }) => status === 'active')).toHaveLength(2);
+      expect(result.state.status).toBe('resolved');
+      expect(result.state.activation).toBeNull();
+      expect(result.state.round).toBe(60);
+      expect(result.state.outcome).toEqual({ reason: 'round-limit' });
+    }
   });
 
   it('keeps two remaining sides active after the third side is eliminated', () => {

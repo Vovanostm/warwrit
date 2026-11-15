@@ -23,6 +23,7 @@ import {
   prepareBeginCombatAggregate,
   readCompanyCombatAggregateState,
   replayCombat,
+  startBattleV3,
   createSocialState,
   isOpposingEncounterSide,
   sideId,
@@ -30,6 +31,7 @@ import {
 } from '@warwrit/game-core';
 import type {
   BattleSetupV2,
+  BattleSetupV3,
   CombatCommand,
   CombatReceiptContext,
   CombatReceiptJournal,
@@ -523,6 +525,51 @@ describe('G05 — whole-candidate real participant binding', () => {
       ),
     };
     expect(() => prepareEncounterBinding(f.sources, f.request, duplicatedMember)).toThrow();
+  });
+
+  it('reads a V6 initial transition that passes all-incapable sides to round limit', () => {
+    const f = fixture();
+    const evidence: EncounterPositionEvidence = {
+      ...f.evidence,
+      setup: {
+        ...f.evidence.setup,
+        schemaVersion: 3,
+        rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      },
+    };
+    const aggregate = {
+      economy: f.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const begun = prepareBeginCombatAggregate(aggregate, f.sources, f.request, evidence);
+    if (begun.kind !== 'PREPARED') throw new Error(begun.error);
+
+    const stored = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const encounter = stored['encounter'] as Record<string, unknown>;
+    const active = encounter['active'] as Record<string, unknown>;
+    const binding = active['binding'] as Record<string, unknown>;
+    const setup = binding['setup'] as Record<string, unknown>;
+    const units = setup['units'] as Array<Record<string, unknown>>;
+    const participants = binding['participants'] as Array<Record<string, unknown>>;
+    for (const unit of units) {
+      unit['capabilities'] = { move: false, attack: false, defend: false, retreat: false };
+    }
+    for (const participant of participants) {
+      const projection = participant['projection'] as Record<string, unknown>;
+      projection['capabilities'] = { move: false, attack: false, defend: false, retreat: false };
+    }
+    binding['initial'] = startBattleV3(setup as unknown as BattleSetupV3);
+    active['bindingDigest'] = canonicalJson(binding);
+
+    const roundTrip = readCompanyCombatAggregateState(stored);
+    expect(roundTrip.encounter.active?.binding.initial.state).toMatchObject({
+      status: 'resolved',
+      activation: null,
+      round: 60,
+      outcome: { reason: 'round-limit' },
+    });
   });
 
   it('rejects a world mill-slam trait on the legacy V2 binding path', () => {

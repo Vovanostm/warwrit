@@ -1,4 +1,5 @@
 import { invariant } from '../primitives.js';
+import { canTakeCombatActivation } from './activation-capabilities.js';
 import { assertBattleState, effectiveInitiative } from './engine.js';
 import { createRandomState } from './random.js';
 import { combatRules, compareCombatUnitIds } from './rules.js';
@@ -9,6 +10,7 @@ import {
   type CombatTransition,
   type CombatUnitState,
   type CombatSideSetup,
+  type CombatEvent,
   type Hex,
 } from './types.js';
 
@@ -44,6 +46,7 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
     wounds: [],
   }));
   const initiativeOrder = units
+    .filter((unit) => canTakeCombatActivation(unit, setup.rulesetId))
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
@@ -51,14 +54,16 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
     )
     .map(({ id }) => id);
   const firstId = initiativeOrder[0];
-  invariant(firstId !== undefined, 'V3 battle must start with an active unit');
   const sides = materializeSides(setup.sides);
   const parties = setup.parties.map((party) => ({ ...party }));
-  const activation = {
-    id: `1:${firstId}`,
-    unitId: firstId,
-    remainingActionPoints: rules.actionPointsPerActivation,
-  };
+  const activation =
+    firstId === undefined
+      ? null
+      : {
+          id: `1:${firstId}`,
+          unitId: firstId,
+          remainingActionPoints: rules.actionPointsPerActivation,
+        };
   const state: BattleState = {
     schemaVersion: COMBAT_SCHEMA_VERSION,
     battleId: setup.battleId,
@@ -72,7 +77,7 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
     sides,
     parties,
     units: units.map((unit) =>
-      unit.id === firstId
+      firstId !== undefined && unit.id === firstId
         ? {
             ...unit,
             stamina: Math.min(
@@ -91,7 +96,7 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
     processedCommandIds: [],
     status: 'active',
   };
-  const events: CombatTransition['events'] = [
+  const events: CombatEvent[] = [
     {
       type: 'battle.started',
       battleId: setup.battleId,
@@ -100,15 +105,41 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
       rulesetId: setup.rulesetId,
     },
     { type: 'round.started', battleId: setup.battleId, revision: 0, round: 1, initiativeOrder },
-    {
-      type: 'activation.started',
+  ];
+  if (firstId === undefined) {
+    const finalRound = rules.limits.maximumRounds;
+    for (let round = 2; round <= finalRound; round += 1)
+      events.push({
+        type: 'round.started',
+        battleId: setup.battleId,
+        revision: 0,
+        round,
+        initiativeOrder,
+      });
+    const stateAtLimit: BattleState = {
+      ...state,
+      round: finalRound,
+      status: 'resolved',
+      outcome: { reason: 'round-limit' },
+    };
+    events.push({
+      type: 'battle.resolved',
       battleId: setup.battleId,
       revision: 0,
-      activationId: activation.id,
-      unitId: firstId,
-      actionPoints: activation.remainingActionPoints,
-    },
-  ];
+      outcome: { reason: 'round-limit' },
+    });
+    assertBattleState(stateAtLimit);
+    return { state: stateAtLimit, events };
+  }
+  invariant(activation !== null, 'V3 activation must exist for a capable unit');
+  events.push({
+    type: 'activation.started',
+    battleId: setup.battleId,
+    revision: 0,
+    activationId: activation.id,
+    unitId: firstId,
+    actionPoints: activation.remainingActionPoints,
+  });
   assertBattleState(state);
   return { state, events };
 }
