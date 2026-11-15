@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: give «Мешок у дороги» one Campaign Day from acceptance
+  and allow an expired holder to return the sack without payment.
+  [Deadline decision and result](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-deadline-decision-and-implementation--2026-11-16). LOCAL.
+
 - 2026-11-15 — Added: implement «Мешок у дороги» with tracked sack custody,
   full or short delivery, no-pay return after withdrawal, Northern Dvor grain
   state and company-private knowledge that Ерёма slept. Deadline expiry awaits

@@ -429,4 +429,58 @@ describe('ordinary accepted term projection', () => {
     });
     expect(contractView(profile, held, 'company-a', issuer, gates, false).canWithdraw).toBe(false);
   });
+
+  it('projects the dragged-sack deadline and expired return action from campaign time', () => {
+    const draggedSack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const terms = ordinaryContractTerms(draggedSack, '10');
+    const state = readOrdinaryContractState(draggedSack, {
+      ...ordinaryContractGenesis(draggedSack),
+      revision: '3',
+      ownerCompanyId: 'company-a',
+      acceptedTerms: terms,
+      facts: [
+        {
+          slotId: 'dragged-sack-found',
+          companyId: 'company-a',
+          sourceEventId: 'sack-pickup',
+          atTick: '20',
+        },
+      ],
+      cargoCustody: [
+        {
+          cargoId: 'dragged-sack.01',
+          companyId: 'company-a',
+          pickupCompanyId: 'company-a',
+          pickupSourceEventId: 'sack-pickup',
+          pickupAtTick: '20',
+          sourceEventId: 'sack-pickup',
+          atTick: '20',
+        },
+      ],
+    });
+    const yard = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    expect(contractView(draggedSack, state, 'company-a', yard, gates, false, '1009')).toMatchObject(
+      {
+        state: 'ACTIVE',
+        deadlineTicks: '1000',
+        canReturnCargo: false,
+        yourCargo: ['dragged-sack.01'],
+      },
+    );
+    expect(contractView(draggedSack, state, 'company-a', yard, gates, false, '1010')).toMatchObject(
+      {
+        state: 'EXPIRED',
+        terminalPayout: 'NO_PAYOUT',
+        canReturnCargo: true,
+        yourCargo: ['dragged-sack.01'],
+      },
+    );
+    expect(contractView(draggedSack, state, 'company-b', yard, gates, false, '1010')).toMatchObject(
+      {
+        state: 'EXPIRED',
+        canReturnCargo: false,
+        yourCargo: [],
+      },
+    );
+  });
 });

@@ -168,7 +168,11 @@ export function ContractConversation(props: ConversationProps) {
             : contract.completedByYou
               ? ' · выполнен, оплачен вам'
               : ' · выполнен')}
+        {contract.state === 'EXPIRED' && ' · срок истёк без выплаты'}
       </p>
+      {contract.deadlineTicks && contract.state !== 'EXPIRED' && (
+        <p className="state-note">Срок — один день кампании с момента принятия поручения.</p>
+      )}
       {contract.terminalFindingTextKey && (
         <p className="contract-result">{lookup(contract.terminalFindingTextKey)}</p>
       )}
@@ -262,7 +266,7 @@ function ContractStep(
     <li className={step.doneByYou ? 'contract-step-done' : ''}>
       <span>{stepText(contract.instanceId, step.stepId) ?? step.stepId}</span>
       {step.doneByYou && finding && <span className="contract-finding">{finding}</span>}
-      {!step.doneByYou && contract.state !== 'COMPLETED' && <ContractStepAction {...props} />}
+      {!step.doneByYou && contract.state === 'ACTIVE' && <ContractStepAction {...props} />}
     </li>
   );
 }

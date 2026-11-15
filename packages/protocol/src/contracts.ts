@@ -303,7 +303,9 @@ export interface OrdinaryContractDto {
   readonly revision: string;
   readonly yourRole: 'OWNER' | 'HELPER' | 'NONE';
   readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
-  readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED';
+  readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED' | 'EXPIRED';
+  /** Campaign ticks allowed from acceptance, if the accepted profile has a deadline. */
+  readonly deadlineTicks?: string;
   /** True when the viewer's company received a reward for completing this contract. */
   readonly completedByYou: boolean;
   /** Actual payout policy for the recorded terminal step. */

@@ -139,8 +139,29 @@ export function contractView(
   standingAt: ContractPlace | null,
   gates: Readonly<Record<OrdinaryStepGate, boolean>>,
   battleStarted: boolean,
+  atTick?: string,
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
+  const deadlineTicks =
+    state.acceptedTerms?.deadlineTicks ??
+    (state.ownerCompanyId === null ? profile.deadlineTicks : undefined);
+  const deadlineAtTick = state.acceptedTerms?.deadlineAtTick;
+  const deadlinePassed =
+    deadlineAtTick !== undefined &&
+    atTick !== undefined &&
+    BigInt(atTick) >= BigInt(deadlineAtTick);
+  const projectedState =
+    deadlinePassed && state.outcome === null
+      ? {
+          ...state,
+          outcome: {
+            kind: 'EXPIRED' as const,
+            companyId: state.ownerCompanyId!,
+            sourceEventId: `system:ordinary-contract-expiry:${state.instanceId}:${deadlineAtTick}`,
+            atTick: deadlineAtTick,
+          },
+        }
+      : state;
   const role =
     companyId && companyId === state.ownerCompanyId
       ? 'OWNER'
@@ -150,11 +171,11 @@ export function contractView(
   const atIssuer =
     standingAt?.siteId === terms.issuerPlace.siteId &&
     standingAt.areaId === terms.issuerPlace.areaId;
-  const terminalFact = state.facts.find(
+  const terminalFact = projectedState.facts.find(
     (fact) =>
-      fact.companyId === state.outcome?.companyId &&
-      fact.sourceEventId === state.outcome?.sourceEventId &&
-      fact.atTick === state.outcome?.atTick,
+      fact.companyId === projectedState.outcome?.companyId &&
+      fact.sourceEventId === projectedState.outcome?.sourceEventId &&
+      fact.atTick === projectedState.outcome?.atTick,
   );
   const terminalStep =
     terminalFact === undefined
@@ -199,7 +220,7 @@ export function contractView(
           northernDvorGrain: draggedSackOutcome,
           yourCompanyKnowsYeremaSlept:
             companyId !== undefined &&
-            state.facts.some(
+            projectedState.facts.some(
               (fact) => fact.companyId === companyId && fact.slotId === 'dragged-sack-yerema-slept',
             ),
         };
@@ -212,14 +233,24 @@ export function contractView(
     revision: state.revision,
     yourRole: role,
     helperSlot: state.helperCompanyId === null ? 'AVAILABLE' : 'OCCUPIED',
-    state: state.outcome ? 'COMPLETED' : state.ownerCompanyId ? 'ACTIVE' : 'OFFERED',
+    state:
+      projectedState.outcome?.kind === 'EXPIRED'
+        ? 'EXPIRED'
+        : state.outcome
+          ? 'COMPLETED'
+          : state.ownerCompanyId
+            ? 'ACTIVE'
+            : 'OFFERED',
+    ...(deadlineTicks ? { deadlineTicks } : {}),
     completedByYou:
-      state.outcome !== null &&
-      state.outcome.companyId === companyId &&
+      projectedState.outcome?.kind === 'SUCCESS' &&
+      projectedState.outcome.companyId === companyId &&
       terminalStep?.payoutPolicy !== 'NO_PAYOUT',
     ...(terminalStep
       ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
-      : {}),
+      : projectedState.outcome?.kind === 'EXPIRED'
+        ? { terminalPayout: 'NO_PAYOUT' as const }
+        : {}),
     ...(terminalStep?.returnsCargoAfterWithdrawal && terminalStep.resultTextKey
       ? {
           terminalFindingTextKey: `contract.${profile.instanceId}.result.${terminalStep.resultTextKey}`,
@@ -232,13 +263,13 @@ export function contractView(
         : {}),
     canAccept:
       companyId !== undefined &&
-      state.outcome === null &&
+      projectedState.outcome === null &&
       state.ownerCompanyId === null &&
       !state.cargoCustody.some((entry) => entry.companyId !== null) &&
       atIssuer,
     canHelp:
       companyId !== undefined &&
-      state.outcome === null &&
+      projectedState.outcome === null &&
       state.ownerCompanyId !== null &&
       state.ownerCompanyId !== companyId &&
       state.helperCompanyId === null &&
@@ -246,7 +277,7 @@ export function contractView(
     canWithdraw:
       companyId !== undefined &&
       (role === 'OWNER' || role === 'HELPER') &&
-      state.outcome === null &&
+      projectedState.outcome === null &&
       !battleStarted &&
       state.custody.length === 0 &&
       !(
@@ -257,8 +288,9 @@ export function contractView(
       ),
     canReturnCargo:
       companyId !== undefined &&
-      state.outcome === null &&
-      state.lastWithdrawal?.companyId === companyId &&
+      (projectedState.outcome?.kind === 'EXPIRED'
+        ? state.ownerCompanyId === companyId
+        : projectedState.outcome === null && state.lastWithdrawal?.companyId === companyId) &&
       state.cargoCustody.some((entry) => entry.companyId === companyId) &&
       standingAt?.siteId === terms.issuerPlace.siteId &&
       standingAt.areaId === terms.issuerPlace.areaId,
@@ -281,7 +313,7 @@ export function contractView(
           blocker:
             companyId === undefined
               ? 'NOT_A_PARTICIPANT'
-              : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
+              : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates }),
           completes: step.completes === true,
         };
       }),
@@ -506,6 +538,7 @@ export function registerOrdinaryContractRoutes(
         ? await loadCompanyAggregate(transaction, worldId, companyId)
         : undefined;
       const standingAt = company ? standingPlace(company) : null;
+      const clock = await readWorldClock(transaction, worldId);
       const gates = await readGates(transaction, worldId);
       const rows = await transaction
         .selectFrom('ordinary_contracts')
@@ -530,6 +563,7 @@ export function registerOrdinaryContractRoutes(
             standingAt,
             gates,
             await ordinaryBattleStarted(transaction, worldId, profileVersion),
+            clock.tick,
           ),
         );
       }

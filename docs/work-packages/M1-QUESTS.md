@@ -146,3 +146,31 @@ typecheck is blocked by four existing `EquipmentTrader.tsx` DTO errors
 (`publicRevision` and `interruptsLearning`). Normal in-game playthrough and
 player acceptance are NOT_RUN; broader player acceptance is NOT_MEASURED. This
 slice is LOCAL; publication and merge are NOT_RUN.
+
+## «Мешок у дороги» deadline decision and implementation — 2026-11-16
+
+Owner decision: the company has one Campaign Day, exactly 1,000 ticks, from
+acceptance. For acceptance at tick `A`, pickup and paid delivery are allowed
+only in `[A, A + 1000)`. The exact deadline tick is expired: a late pickup or
+delivery closes no reward path. This supersedes the earlier pending note. The
+contract UI replaces “before evening” with one day from acceptance and shows
+expiry without payment.
+
+After expiry, a sack already in company custody stays with that same holder.
+The holder can still return it to Ерёма at Северный Двор without payment; no
+expiry path deletes or teleports cargo. Existing command receipts still replay
+the original accepted response before evaluating current time. Code-path review
+confirmed this ordering is unchanged; exact replay after expiry was not runtime
+tested because PostgreSQL integration was NOT_RUN.
+
+The deadline and acceptance tick are frozen in accepted terms. Older accepted
+snapshots recover their deadline from the existing acceptance fact; no guessed
+wall time or migration is used. If that fact is absent, the legacy snapshot
+retains its prior terms. Core boundary tests cover pickup and delivery at the
+exclusive deadline, successful delivery one tick before it, unpaid cargo return
+after expiry and legacy-term reconstruction. Focused core, server projection
+and web contract tests passed 30/30; game-core/protocol builds and server
+typecheck pass. Web
+typecheck remains blocked by the four pre-existing `EquipmentTrader.tsx` DTO
+errors. PostgreSQL integration and native playthrough: NOT_RUN; player
+acceptance: NOT_MEASURED. This slice is LOCAL; publication and merge are NOT_RUN.

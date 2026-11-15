@@ -40,6 +40,90 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('freezes a one-day half-open deadline and leaves expired cargo with its holder', () => {
+    const sack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
+    const issuer: ContractPlace = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
+    const apply = (
+      state: OrdinaryContractState,
+      atTick: string,
+      standingAt: ContractPlace,
+      stepId?: string,
+    ) =>
+      prepareOrdinaryContractCommand(
+        sack,
+        state,
+        stepId ? { type: 'STEP', stepId } : { type: 'ACCEPT' },
+        {
+          companyId: 'deadline-company',
+          standingAt,
+          atTick,
+          expectedRevision: state.revision,
+          sourceEventId: `deadline-${atTick}-${stepId ?? 'accept'}`,
+          gates,
+        },
+      );
+
+    const accepted = prepared(apply(ordinaryContractGenesis(sack), '50', issuer)).next;
+    expect(accepted.acceptedTerms).toMatchObject({
+      deadlineTicks: '1000',
+      acceptedAtTick: '50',
+      deadlineAtTick: '1050',
+    });
+    expect(readOrdinaryContractState(sack, JSON.parse(JSON.stringify(accepted)))).toEqual(accepted);
+
+    let picked = prepared(apply(accepted, '999', CITY, 'trace-flour')).next;
+    picked = prepared(apply(picked, '1049', CITY, 'find-boys')).next;
+    expect(picked.cargoCustody[0]?.companyId).toBe('deadline-company');
+    const legacyTerms = { ...picked.acceptedTerms! };
+    delete (legacyTerms as { deadlineTicks?: string }).deadlineTicks;
+    delete (legacyTerms as { acceptedAtTick?: string }).acceptedAtTick;
+    delete (legacyTerms as { deadlineAtTick?: string }).deadlineAtTick;
+    const backfilledLegacy = readOrdinaryContractState(sack, {
+      ...picked,
+      acceptedTerms: legacyTerms,
+    });
+    expect(backfilledLegacy.acceptedTerms).toMatchObject({
+      acceptedAtTick: '50',
+      deadlineAtTick: '1050',
+    });
+    const preSnapshotSave = JSON.parse(JSON.stringify(picked)) as Record<string, unknown>;
+    delete preSnapshotSave['acceptedTerms'];
+    expect(readOrdinaryContractState(sack, preSnapshotSave).acceptedTerms).toMatchObject({
+      acceptedAtTick: '50',
+      deadlineAtTick: '1050',
+    });
+    expect(apply(picked, '1050', issuer, 'return-full-sack')).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    expect(apply(picked, '1049', issuer, 'return-full-sack')).toMatchObject({
+      kind: 'PREPARED',
+      payout: { companyId: 'deadline-company', rewardQ: '25000000' },
+    });
+    expect(apply(backfilledLegacy, '5000', issuer, 'return-full-sack')).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+
+    const beforePickup = prepared(apply(accepted, '51', CITY, 'trace-flour')).next;
+    expect(apply(beforePickup, '1050', CITY, 'find-boys')).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    expect(beforePickup.cargoCustody).toEqual([]);
+
+    const returnCargo = prepared(apply(picked, '1051', issuer, 'return-cargo-after-withdrawal'));
+    expect(returnCargo.payout).toBeNull();
+    expect(returnCargo.next).toMatchObject({
+      outcome: { kind: 'EXPIRED', companyId: 'deadline-company' },
+      cargoCustody: [expect.objectContaining({ companyId: null })],
+      acceptedTerms: { deadlineAtTick: '1050' },
+    });
+    expect(readOrdinaryContractState(sack, JSON.parse(JSON.stringify(returnCargo.next)))).toEqual(
+      returnCargo.next,
+    );
+  });
+
   it('keeps the dragged sack in receipt-backed company custody through either delivery branch', () => {
     const sack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
     const issuer: ContractPlace = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };

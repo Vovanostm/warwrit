@@ -64,6 +64,8 @@ export interface OrdinaryContractProfile {
   readonly walletId: string;
   readonly genesisWalletQ: string;
   readonly rewardQ: string;
+  /** Campaign ticks from acceptance until the deadline, if this offer is time-limited. */
+  readonly deadlineTicks?: string;
   /** Slot recorded for the owner when it accepts, if the contract has one. */
   readonly acceptanceSlot?: string;
   readonly steps: readonly OrdinaryStepDefinition[];
@@ -76,6 +78,10 @@ export interface OrdinaryContractTerms {
   readonly issuerRoleId: string;
   readonly issuerPlace: ContractPlace;
   readonly rewardQ: string;
+  /** Frozen duration and absolute end of the half-open acceptance interval. */
+  readonly deadlineTicks?: string;
+  readonly acceptedAtTick?: string;
+  readonly deadlineAtTick?: string;
   readonly walletId: string;
   readonly acceptanceSlot?: string;
   readonly steps: readonly OrdinaryStepDefinition[];
@@ -369,6 +375,7 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
     walletId: 'wallet.yerema.severny-dvor.01',
     genesisWalletQ: CROWNS(50),
     rewardQ: CROWNS(25),
+    deadlineTicks: '1000',
     acceptanceSlot: 'dragged-sack-contract-acceptance',
     steps: [
       {
@@ -615,13 +622,23 @@ export function ordinaryContractProfileVersion(
 }
 
 /** Build the immutable terms offered by this version of a profile. */
-export function ordinaryContractTerms(profile: OrdinaryContractProfile): OrdinaryContractTerms {
+export function ordinaryContractTerms(
+  profile: OrdinaryContractProfile,
+  acceptedAtTick?: string,
+): OrdinaryContractTerms {
   return freeze({
     profileId: profile.definitionId,
     template: profile.template,
     issuerRoleId: profile.issuerRoleId,
     issuerPlace: { ...profile.issuerPlace },
     rewardQ: profile.rewardQ,
+    ...(profile.deadlineTicks && acceptedAtTick !== undefined
+      ? {
+          deadlineTicks: profile.deadlineTicks,
+          acceptedAtTick,
+          deadlineAtTick: (BigInt(acceptedAtTick) + BigInt(profile.deadlineTicks)).toString(),
+        }
+      : {}),
     walletId: profile.walletId,
     ...(profile.acceptanceSlot ? { acceptanceSlot: profile.acceptanceSlot } : {}),
     steps: profile.steps.map((step) => ({
@@ -666,12 +683,20 @@ export interface OrdinaryContractState {
     readonly sourceEventId: string;
     readonly atTick: string;
   };
-  readonly outcome: null | {
-    readonly kind: 'SUCCESS';
-    readonly companyId: string;
-    readonly sourceEventId: string;
-    readonly atTick: string;
-  };
+  readonly outcome:
+    | null
+    | {
+        readonly kind: 'SUCCESS';
+        readonly companyId: string;
+        readonly sourceEventId: string;
+        readonly atTick: string;
+      }
+    | {
+        readonly kind: 'EXPIRED';
+        readonly companyId: string;
+        readonly sourceEventId: string;
+        readonly atTick: string;
+      };
 }
 
 export function ordinaryContractGenesis(profile: OrdinaryContractProfile): OrdinaryContractState {
@@ -728,6 +753,11 @@ export type OrdinaryContractPreparation =
 const samePlace = (left: ContractPlace | null, right: ContractPlace) =>
   left !== null && left.siteId === right.siteId && left.areaId === right.areaId;
 
+function contractDeadlinePassed(state: OrdinaryContractState, atTick: string): boolean {
+  const deadlineAtTick = state.acceptedTerms?.deadlineAtTick;
+  return deadlineAtTick !== undefined && BigInt(atTick) >= BigInt(deadlineAtTick);
+}
+
 export function companyHoldsSlot(
   state: OrdinaryContractState,
   companyId: string,
@@ -746,7 +776,11 @@ export function ordinaryStepBlocker(
   >,
 ): Exclude<OrdinaryContractRejection, 'STALE_REVISION'> | null {
   const { companyId } = context;
-  if (state.outcome !== null) return 'NOT_AVAILABLE';
+  const expiredReturn =
+    state.outcome?.kind === 'EXPIRED' &&
+    step.returnsCargoAfterWithdrawal === true &&
+    state.ownerCompanyId === companyId;
+  if (state.outcome !== null && !expiredReturn) return 'NOT_AVAILABLE';
   if (
     companyId !== state.ownerCompanyId &&
     companyId !== state.helperCompanyId &&
@@ -767,7 +801,11 @@ export function ordinaryStepBlocker(
     return 'ALREADY_DONE';
   if (step.takesCargoId !== undefined && state.ownerCompanyId !== companyId)
     return 'NOT_A_PARTICIPANT';
-  if (step.returnsCargoAfterWithdrawal && state.lastWithdrawal?.companyId !== companyId)
+  if (
+    step.returnsCargoAfterWithdrawal &&
+    state.lastWithdrawal?.companyId !== companyId &&
+    !expiredReturn
+  )
     return 'NOT_AVAILABLE';
   if (!step.requires.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
     return 'MISSING_EVIDENCE';
@@ -815,6 +853,7 @@ export function prepareOrdinaryContractCommand(
     const isHelper = state.helperCompanyId === context.companyId;
     if (
       state.outcome !== null ||
+      contractDeadlinePassed(state, context.atTick) ||
       (!isOwner && !isHelper) ||
       context.battleStarted === true ||
       state.custody.length > 0 ||
@@ -846,7 +885,8 @@ export function prepareOrdinaryContractCommand(
   }
 
   if (command.type !== 'STEP') {
-    if (state.outcome !== null) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+    if (state.outcome !== null || contractDeadlinePassed(state, context.atTick))
+      return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
     if (!samePlace(context.standingAt, state.acceptedTerms?.issuerPlace ?? profile.issuerPlace))
       return { kind: 'REJECTED', code: 'WRONG_PLACE' };
     const open =
@@ -866,7 +906,9 @@ export function prepareOrdinaryContractCommand(
         ownerCompanyId: command.type === 'ACCEPT' ? context.companyId : state.ownerCompanyId,
         helperCompanyId: command.type === 'HELP' ? context.companyId : state.helperCompanyId,
         acceptedTerms:
-          command.type === 'ACCEPT' ? ordinaryContractTerms(profile) : state.acceptedTerms,
+          command.type === 'ACCEPT'
+            ? ordinaryContractTerms(profile, context.atTick)
+            : state.acceptedTerms,
         facts:
           command.type === 'ACCEPT' && profile.acceptanceSlot !== undefined
             ? [...state.facts, fact(profile.acceptanceSlot)]
@@ -879,7 +921,22 @@ export function prepareOrdinaryContractCommand(
     (entry) => entry.stepId === command.stepId,
   );
   if (!step) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
-  const blocker = ordinaryStepBlocker(state, step, context);
+  const expired = contractDeadlinePassed(state, context.atTick);
+  if (expired && !step.returnsCargoAfterWithdrawal)
+    return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+  const blockerState =
+    expired && state.outcome === null
+      ? freeze({
+          ...state,
+          outcome: {
+            kind: 'EXPIRED' as const,
+            companyId: state.ownerCompanyId!,
+            sourceEventId: `system:ordinary-contract-expiry:${state.instanceId}:${state.acceptedTerms!.deadlineAtTick}`,
+            atTick: state.acceptedTerms!.deadlineAtTick!,
+          },
+        })
+      : state;
+  const blocker = ordinaryStepBlocker(blockerState, step, context);
   if (blocker !== null) return { kind: 'REJECTED', code: blocker };
 
   const custody = state.custody
@@ -934,12 +991,19 @@ export function prepareOrdinaryContractCommand(
       custody,
       cargoCustody,
       outcome: step.completes
-        ? {
-            kind: 'SUCCESS',
-            companyId: context.companyId,
-            sourceEventId: context.sourceEventId,
-            atTick: context.atTick,
-          }
+        ? expired && step.returnsCargoAfterWithdrawal
+          ? {
+              kind: 'EXPIRED',
+              companyId: context.companyId,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+            }
+          : {
+              kind: 'SUCCESS',
+              companyId: context.companyId,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+            }
         : null,
     }),
   };
@@ -966,19 +1030,40 @@ export function readOrdinaryContractState(
   const ownerCompanyId = record['ownerCompanyId'];
   const acceptedTerms = record['acceptedTerms'];
   const lastWithdrawal = record['lastWithdrawal'];
+  const acceptedAtTickFor = (acceptedProfile: OrdinaryContractProfile): string | undefined => {
+    if (!acceptedProfile.acceptanceSlot || !Array.isArray(facts)) return undefined;
+    const acceptance = facts.find(
+      (entry) =>
+        isRecord(entry) &&
+        entry['slotId'] === acceptedProfile.acceptanceSlot &&
+        entry['companyId'] === ownerCompanyId &&
+        isTick(entry['atTick']),
+    );
+    return isRecord(acceptance) ? (acceptance['atTick'] as string) : undefined;
+  };
   const readAcceptedTerms = (): OrdinaryContractTerms | null => {
     if (acceptedTerms === undefined) {
       // State v1 predates the snapshot; hydrate from its explicitly retained profile version.
       if (ownerCompanyId === null) return null;
       const legacyProfile = ordinaryContractProfileVersion(profile.instanceId, storedProfileId);
-      return legacyProfile ? ordinaryContractTerms(legacyProfile) : fail();
+      return legacyProfile
+        ? ordinaryContractTerms(legacyProfile, acceptedAtTickFor(legacyProfile))
+        : fail();
     }
     if (acceptedTerms === null) return null;
     if (!acceptedTerms || typeof acceptedTerms !== 'object' || Array.isArray(acceptedTerms))
       return fail();
     const terms = acceptedTerms as Record<string, unknown>;
+    const termsProfile = ordinaryContractProfileVersion(
+      profile.instanceId,
+      terms['profileId'] as string,
+    );
+    const hasDeadline =
+      terms['deadlineTicks'] !== undefined ||
+      terms['acceptedAtTick'] !== undefined ||
+      terms['deadlineAtTick'] !== undefined;
     if (
-      !ordinaryContractProfileVersion(profile.instanceId, terms['profileId'] as string) ||
+      !termsProfile ||
       !['INVESTIGATE', 'RESCUE'].includes(terms['template'] as string) ||
       !isText(terms['issuerRoleId']) ||
       !isText(terms['walletId']) ||
@@ -988,6 +1073,14 @@ export function readOrdinaryContractState(
       (terms['acceptanceSlot'] !== undefined && !isText(terms['acceptanceSlot'])) ||
       !Array.isArray(terms['steps']) ||
       !terms['steps'].every((step) => isStep(step)) ||
+      (hasDeadline &&
+        (terms['deadlineTicks'] !== termsProfile.deadlineTicks ||
+          typeof terms['acceptedAtTick'] !== 'string' ||
+          !isTick(terms['acceptedAtTick']) ||
+          typeof terms['deadlineAtTick'] !== 'string' ||
+          !isTick(terms['deadlineAtTick']) ||
+          BigInt(terms['deadlineAtTick']) !==
+            BigInt(terms['acceptedAtTick']) + BigInt(terms['deadlineTicks'] as string))) ||
       Object.keys(terms).some(
         (key) =>
           ![
@@ -997,13 +1090,29 @@ export function readOrdinaryContractState(
             'issuerPlace',
             'rewardQ',
             'walletId',
+            'deadlineTicks',
+            'acceptedAtTick',
+            'deadlineAtTick',
             'acceptanceSlot',
             'steps',
           ].includes(key),
       )
     )
       return fail();
-    return freeze(JSON.parse(JSON.stringify(terms)) as OrdinaryContractTerms);
+    const retained = JSON.parse(JSON.stringify(terms)) as OrdinaryContractTerms;
+    const acceptedAtTick = acceptedAtTickFor(termsProfile);
+    return freeze(
+      !hasDeadline && termsProfile.deadlineTicks && acceptedAtTick !== undefined
+        ? {
+            ...retained,
+            deadlineTicks: termsProfile.deadlineTicks,
+            acceptedAtTick,
+            deadlineAtTick: (
+              BigInt(acceptedAtTick) + BigInt(termsProfile.deadlineTicks)
+            ).toString(),
+          }
+        : retained,
+    );
   };
   const normalizedTerms = readAcceptedTerms();
   const slots = new Set([
@@ -1180,6 +1289,11 @@ export function readOrdinaryContractState(
       outcome === null ||
       (typeof outcome === 'object' &&
         (outcome as Record<string, unknown>)['kind'] === 'SUCCESS' &&
+        isText((outcome as Record<string, unknown>)['companyId']) &&
+        isText((outcome as Record<string, unknown>)['sourceEventId']) &&
+        isTick((outcome as Record<string, unknown>)['atTick'])) ||
+      (typeof outcome === 'object' &&
+        (outcome as Record<string, unknown>)['kind'] === 'EXPIRED' &&
         isText((outcome as Record<string, unknown>)['companyId']) &&
         isText((outcome as Record<string, unknown>)['sourceEventId']) &&
         isTick((outcome as Record<string, unknown>)['atTick']))

@@ -253,11 +253,16 @@ it('shows returned sack custody and the saved grain and company knowledge conseq
     instanceId: 'ci.m1.dragged-sack.01',
     issuerRoleId: 'northern-grain-hauler',
     issuerLocation: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+    deadlineTicks: '1000',
     yourCargo: ['dragged-sack.01'],
   };
-  expect(
-    render(draggedSack, { siteId: 'severny-dvor', building: 'elder' }, 'severny-dvor'),
-  ).toContain('мешок с мукой');
+  const activeSackView = render(
+    draggedSack,
+    { siteId: 'severny-dvor', building: 'elder' },
+    'severny-dvor',
+  );
+  expect(activeSackView).toContain('мешок с мукой');
+  expect(activeSackView).toContain('один день кампании с момента принятия поручения');
 
   const withdrawnCargo: OrdinaryContractDto = {
     ...draggedSack,
@@ -275,6 +280,22 @@ it('shows returned sack custody and the saved grain and company knowledge conseq
   expect(render(withdrawnCargo, null, 'kamenny-brod')).not.toContain(
     'Вернуть мешок заказчику без выплаты',
   );
+
+  const expiredCargo: OrdinaryContractDto = {
+    ...draggedSack,
+    state: 'EXPIRED',
+    deadlineTicks: '1000',
+    canWithdraw: false,
+    canReturnCargo: true,
+  };
+  const expiredView = render(
+    expiredCargo,
+    { siteId: 'severny-dvor', building: 'elder' },
+    'severny-dvor',
+  );
+  expect(expiredView).toContain('срок истёк без выплаты');
+  expect(expiredView).toContain('Вернуть мешок заказчику без выплаты');
+  expect(expiredView).not.toContain('один день с момента принятия поручения');
 
   const shortReturn: OrdinaryContractDto = {
     ...draggedSack,

@@ -161,7 +161,7 @@ export const contractsRu = {
   'contract.ci.m1.dragged-sack.01.title': 'Мешок у дороги',
   'contract.ci.m1.dragged-sack.01.issuer': 'Ерёма из Северного Двора, ездит с телегой в город',
   'contract.ci.m1.dragged-sack.01.brief':
-    'Вёз муку с городской мельницы, и по дороге пропал мешок. Найдите его до вечера, пока староста не пересчитал.',
+    'С телеги пропал мешок муки. Найдите и верните его мне в Северный Двор в течение дня после принятия поручения.',
   'contract.ci.m1.dragged-sack.01.step.trace-flour': 'Проследить полосу муки',
   'contract.ci.m1.dragged-sack.01.step.find-boys': 'Осмотреть ивы у развилки',
   'contract.ci.m1.dragged-sack.01.step.leave-flour': 'Оставить мальчишкам по шапке муки',
