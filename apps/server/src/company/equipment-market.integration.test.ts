@@ -13,7 +13,6 @@ import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { createDatabase } from '../db/database.js';
 import { sql } from 'kysely';
-import { registerEquipmentMarketRoutes } from './equipment-market.js';
 
 const connection = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const db = connection ? createDatabase(connection) : undefined;
@@ -42,7 +41,6 @@ it.skipIf(!db)(
       identity: { config: identity, database: db },
       company: { database: db, worldId },
     });
-    registerEquipmentMarketRoutes(app, { database: db, worldId });
     const headers = { cookie: `warwrit_session=${token}`, origin: 'http://127.0.0.1:3107' };
     try {
       await db
@@ -305,31 +303,48 @@ it.skipIf(!db)(
       expect(companyCashAfter).toBe(companyCashBefore + BigInt(quote!.priceQ));
       expect(BigInt(merchant.cash_q) + companyCashAfter).toBe(20_000_000n + companyCashBefore);
       expect((await send(request)).json()).toEqual(sold.json());
+      const wrongSiteRetry = await app.inject({
+        method: 'POST',
+        url: '/company/equipment-market/severny-dvor/sell',
+        headers: commandHeaders,
+        payload: request,
+      });
+      expect(wrongSiteRetry.json()).toMatchObject({ code: 'IDEMPOTENCY_CONFLICT' });
       expect((await send({ ...request, shopRevision: '2' })).json()).toMatchObject({
         code: 'IDEMPOTENCY_CONFLICT',
       });
 
+      const remoteLocation = { kind: 'AT', siteId: 'village', areaId: 'square' };
+      const relocated = readCompanyCombatAggregateState(
+        JSON.parse(
+          JSON.stringify(saved, (_key, value: unknown) => {
+            if (
+              value &&
+              typeof value === 'object' &&
+              'kind' in value &&
+              value.kind === 'AT' &&
+              'siteId' in value &&
+              value.siteId === 'kamenny-brod'
+            )
+              return { ...value, ...remoteLocation };
+            return value;
+          }),
+        ),
+      );
       await db
         .updateTable('company_snapshots')
-        .set({
-          state: {
-            ...saved,
-            economy: {
-              ...saved.economy,
-              lifecycle: {
-                ...saved.economy.lifecycle,
-                parties: saved.economy.lifecycle.parties.map((party) => ({
-                  ...party,
-                  location: { ...marketLocation, siteId: 'village' },
-                })),
-              },
-            },
-          },
-        })
+        .set({ state: relocated })
         .where('world_id', '=', worldId)
         .where('company_id', '=', companyId)
         .execute();
       expect((await send(request)).json()).toEqual(sold.json());
+      const remoteQuote = await app.inject({
+        method: 'GET',
+        url: '/company/equipment-market/kamenny-brod',
+        headers: commandHeaders,
+      });
+      expect(remoteQuote.statusCode).toBe(409);
+      expect(remoteQuote.json()).not.toHaveProperty('merchantCashQ');
       const duplicateSource = await send({ ...request, commandId: randomUUID() });
       expect(duplicateSource.json()).toMatchObject({ code: 'IDEMPOTENCY_CONFLICT' });
     } finally {

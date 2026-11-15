@@ -1,8 +1,9 @@
 # M1 loot sale to the town trader
 
-Status: **SPECIFIED / LOCAL**. Sale policy accepted by the owner on November 9,
+Status **PARTIALLY IMPLEMENTED / LOCAL**, checked 2026-11-15.
+Sale policy accepted by the owner on November 9,
 class-price approach selected November 13. Initial values retain their playtest
-status below. Fresh implementation/gameplay checks are NOT_RUN.
+status below. The full battle-loot-to-town journey remains open.
 Rules: [m1-spec §7](m1-next/06-company-capabilities.md).
 
 ## Player outcome
@@ -48,3 +49,49 @@ Creatures drop no sellable gear. Gear dropped by a surrendering enemy is
 lootable ([campaign battle](M1-CAMPAIGN-BATTLE.md#surrender--owner-decision-2026-11-13)).
 The implementing slice maps each roster item to one class; tuning after a
 playtest changes this table, not per-item exceptions.
+
+## Current implementation — 2026-11-15
+
+A Kamenny Brod market visit now offers equipment buyback through the normal
+place UI. The quote uses actual company access, public revision and the finite
+purse shared with local supply purchases. An equipped item identifies the fighter
+using it and displays condition as a percentage. Selling a required training
+resource warns that it interrupts learning. Contract trophies are excluded.
+
+The initial catalogue mapping is an implementation playtest choice. Sword,
+raider weapon, bow and spear use the light-weapon price, great weapon uses heavy
+weapon, shield uses shield, simple helmet and padded coat use light armor.
+The current catalogue supplies no enabled heavy-armor item for the final row.
+
+The sale atomically retains the exact item in world-owned trader custody,
+removes its company and observed inventory copies, transfers money and stores
+a receipt. A late exact retry reads that receipt. Changed bodies or settlement
+paths conflict. Remote quotes refuse before revealing the merchant purse.
+Locally present company members can hand over company gear carried in their
+owner-access bags. Foreign custody still refuses.
+
+### Direct results
+
+- The retained company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf` travelled from
+  Severny Dvor to Kamenny Brod through the map. Buying twenty rations cost eighty
+  crowns and funded the local merchant purse through the existing supply flow.
+- Through the market UI, Rell's equipped shield sold for three crowns. Company
+  cash changed 766 → 769, merchant cash 80 → 77. Readback found one retained
+  trader item with its original ID, condition and provenance, zero company copies
+  and one three-crown SALE movement. Reload showed the same 769-crown company.
+  Native captures and snapshots are in ignored `output/playwright/m1-*sale*`.
+- The focused pure sale regression passed ten tests, including the carried
+  owner-access bag found during the native journey. The trader UI passed six
+  tests, including definitive 409 rejection and persistent lost-response retry.
+- Isolated PostgreSQL market and FIRST HUNT company-transition checks passed
+  two tests. The market case checks finite funds, atomic refusal, exact late
+  replay, changed settlement path and remote quote privacy. The older proof
+  fixture now uses the actual issuer location. The remote market fixture keeps
+  party, people and carried containers coherent.
+- Migration smoke through 0028 passed, including refusal to roll back retained
+  trader equipment. Readiness probes the new table.
+
+Grounded hostile equipment pickup has a separate prepared implementation awaiting
+integration and PostgreSQL/native checks. The full win → pickup → town → sale
+journey and active-course item-sale interruption are NOT_RUN. T022 remains open.
+Publication and merge are NOT_RUN. Balance and owner enjoyment are NOT_MEASURED.

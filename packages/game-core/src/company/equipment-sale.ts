@@ -135,7 +135,8 @@ export function prepareEquipmentSale(
       container.custodian.kind === 'COMPANY' &&
       container.custodian.id === root.lifecycle.companyId) ||
     (container.access === 'OWNER' &&
-      canonicalJson(container.custodian) === canonicalJson(item.owner)) ||
+      (canonicalJson(container.custodian) === canonicalJson(item.owner) ||
+        localCompanyCharacterCustodian)) ||
     (container.access === 'CUSTODIAN' &&
       ((container.custodian.kind === 'COMPANY' &&
         container.custodian.id === root.lifecycle.companyId) ||

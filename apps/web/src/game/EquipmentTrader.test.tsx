@@ -21,6 +21,7 @@ function market(overrides: Record<string, unknown> = {}) {
         currentCondition: 2,
         maximumCondition: 3,
         equipped: true,
+        equippedByName: 'Rell',
         interruptsLearning: true,
         canSell: true,
         refusal: null,
@@ -87,8 +88,8 @@ it('shows the Kamenny Brod quote and sends the exact sale using its revisions', 
 
   expect(container?.textContent).toContain('У торговца: 5 кр.');
   expect(container?.textContent).toContain('Меч');
-  expect(container?.textContent).toContain('2/3');
-  expect(container?.textContent).toContain('Надето');
+  expect(container?.textContent).toContain('Состояние 67%');
+  expect(container?.textContent).toContain('Использует Rell');
   expect(container?.textContent).toContain('Продажа прервёт обучение.');
   expect(calls[0]?.url).toBe('/api/company/equipment-market/kamenny-brod');
   expect(calls[0]?.init?.credentials).toBe('same-origin');

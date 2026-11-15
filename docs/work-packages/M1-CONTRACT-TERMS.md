@@ -1,7 +1,7 @@
 # M1 ordinary contract terms — reward, withdrawal, trophy
 
-Status: **SPECIFIED / LOCAL**, reconciled with owner decisions of November 9
-and November 13. Fresh implementation/gameplay checks are NOT_RUN.
+Status **PARTIALLY IMPLEMENTED / LOCAL**, checked 2026-11-15.
+Owner decisions of November 9 and November 13 remain authoritative.
 Rules: [m1-spec §9](../wiki/m1-spec.md#9-контракты-улика-и-выплата).
 
 ## Accepted terms — owner decision 2026-11-13
@@ -48,3 +48,30 @@ conformance checks remain NOT_RUN.
   recorded result. FIRST HUNT uses its separately owned withdrawal rules.
 - Settle a successful ordinary contract, then read back/retry the same accepted
   command and verify the saved payment, terms and trophy ownership once.
+
+## Implementation checkpoint — 2026-11-15
+
+Ordinary investigation/rescue acceptance stores an immutable terms snapshot.
+Legacy accepted saves hydrate it from the retained profile ID and version.
+The board, objective progression and settlement use that accepted snapshot.
+Withdrawal is available before battle or custody under the owning profile.
+The existing offers carry no authored deadline to exercise expiry against.
+
+Ordinary hunt owners may withdraw before any admission, clearing helper consent.
+Presenting an ordinary proof moves the existing item to stable issuer custody
+within the company/payment transaction. FIRST HUNT retains its original proof
+policy. The external-transition validator independently checks the exact finance,
+item and knowledge delta. The UI describes payment to the person who brought
+the trophy. The two surfaced hunt briefs now use «сражение у брода», following
+the owner's wording correction.
+
+Focused hunt checks passed seventeen tests. The final focused trader and hunt UI
+run passed twenty-three tests before the trader's later presentation adjustments.
+The isolated FIRST HUNT company-transition check passed with its issuer-local
+fixture, proving rollback, exact settlement and stale-state rejection for that
+boundary. The revised Russian payment and battle wording passed the text checker
+and was separately reread for meaning and rhythm.
+
+The native two-company ordinary hunt, helper presentation and full NEXT-2–NEXT-6
+sequence remain NOT_RUN. T012–T014 remain open until their complete paths are
+verified. All changes are local on `codex/m1-completion-20261115`.

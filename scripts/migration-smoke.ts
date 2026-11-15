@@ -39,6 +39,8 @@ async function downToFirstHunt(): Promise<void> {
 /** Remove only newer migrations before testing the retained older rollback guards. */
 async function downAfterRecruitPool(): Promise<void> {
   for (const name of [
+    '0028_equipment_market',
+    '0027_company_return_report',
     '0026_story_missions',
     '0025_qa_world_clock',
     '0024_playground_campaign_time',
@@ -86,6 +88,8 @@ try {
     '0024_playground_campaign_time',
     '0025_qa_world_clock',
     '0026_story_missions',
+    '0027_company_return_report',
+    '0028_equipment_market',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -116,14 +120,32 @@ try {
     '0024_playground_campaign_time',
     '0025_qa_world_clock',
     '0026_story_missions',
+    '0027_company_return_report',
+    '0028_equipment_market',
   ]);
 
+  await client.query(`insert into settlement_equipment
+    (world_id, item_id, site_id, owner_kind, owner_id, source_id, acquired_by_company_id, item)
+    values ('migration-smoke-market', 'migration-smoke-item', 'kamenny-brod', 'WORLD',
+      'migration-smoke-market', 'migration-smoke-source', 'migration-smoke-company',
+      '{"itemId":"migration-smoke-item","owner":{"kind":"WORLD","id":"migration-smoke-market"},"provenance":{"sourceId":"migration-smoke-source"}}')`);
+  await assert.rejects(runMigrations(client, 'down'), /retained settlement equipment/);
+  await client.query("delete from settlement_equipment where world_id = 'migration-smoke-market'");
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0028_equipment_market']);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0027_company_return_report']);
   await client.query(`insert into story_world_states
     (world_id, mission_id, definition_version, revision, state)
     values ('migration-smoke-story', 'sm.m1.cache-disclosure.01', 1, 0, '{}')`);
   await assert.rejects(runMigrations(client, 'down'), /retain story mission states/);
-  assert.deepEqual((await runMigrations(client, 'status')).pending, []);
+  assert.deepEqual((await runMigrations(client, 'status')).pending, [
+    '0027_company_return_report',
+    '0028_equipment_market',
+  ]);
   await client.query("delete from story_world_states where world_id = 'migration-smoke-story'");
+  assert.deepEqual((await runMigrations(client, 'up')).applied, [
+    '0027_company_return_report',
+    '0028_equipment_market',
+  ]);
   await downAfterRecruitPool();
   assert.deepEqual((await runMigrations(client, 'down')).applied, ['0019_world_recruit_pool']);
 
@@ -188,6 +210,8 @@ try {
     '0024_playground_campaign_time',
     '0025_qa_world_clock',
     '0026_story_missions',
+    '0027_company_return_report',
+    '0028_equipment_market',
   ]);
   assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
@@ -296,6 +320,8 @@ try {
     '0024_playground_campaign_time',
     '0025_qa_world_clock',
     '0026_story_missions',
+    '0027_company_return_report',
+    '0028_equipment_market',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -625,6 +651,8 @@ try {
     '0024_playground_campaign_time',
     '0025_qa_world_clock',
     '0026_story_missions',
+    '0027_company_return_report',
+    '0028_equipment_market',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

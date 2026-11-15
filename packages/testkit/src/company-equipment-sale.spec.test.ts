@@ -109,6 +109,41 @@ describe('M1 loot sale preparation', () => {
     expect(canonicalJson(state)).toBe(before);
   });
 
+  it('sells company equipment carried in a present member owner-access bag', () => {
+    const base = saleState();
+    const partyId = base.lifecycle.parties[0]!.partyId;
+    const state = {
+      ...base,
+      lifecycle: {
+        ...base.lifecycle,
+        characters: base.lifecycle.characters.map((person) =>
+          person.identity.characterId === 'leader'
+            ? {
+                ...person,
+                presence: { ...person.presence, location: market, fieldPartyId: partyId },
+              }
+            : person,
+        ),
+      },
+      physical: {
+        ...base.physical!,
+        containers: base.physical!.containers.map((entry) =>
+          entry.containerId === 'market-stash'
+            ? {
+                ...entry,
+                access: 'OWNER' as const,
+                custodian: { kind: 'CHARACTER' as const, id: 'leader' },
+              }
+            : entry,
+        ),
+      },
+    };
+    const before = canonicalJson(state);
+    const result = sell(state);
+    expect(result.kind).toBe('PREPARED');
+    expect(canonicalJson(state)).toBe(before);
+  });
+
   it('refuses company gear stored in a foreign custodial container without changing input state', () => {
     const state = saleState();
     const before = canonicalJson(state);

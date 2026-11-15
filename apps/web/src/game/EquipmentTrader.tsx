@@ -13,7 +13,7 @@ const SITE_ID = 'kamenny-brod';
 const REVISION = /^(0|[1-9][0-9]{0,127})$/u;
 const AMOUNT = /^(0|[1-9][0-9]{0,127})$/u;
 const IDENTIFIER = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && value.length <= 256;
+  typeof value === 'string' && value.length > 0 && [...value].length <= 256;
 const RESULT_CODES = new Set([
   'INVALID_COMMAND',
   'NOT_AUTHORIZED',
@@ -230,7 +230,7 @@ export function EquipmentTrader(props: {
         </p>
       )}
       {activeMarket.status === 'ready' && activeMarket.market.items.length === 0 && !pending && (
-        <p className="state-note">У торговца пока нет подходящих предметов.</p>
+        <p className="state-note">Нет доступного снаряжения для продажи.</p>
       )}
       {activeMarket.status === 'ready' && activeMarket.market.items.length > 0 && (
         <ul className="equipment-trader-items">
@@ -239,8 +239,12 @@ export function EquipmentTrader(props: {
               <div>
                 <strong>{displayItemName(item.definitionId)}</strong>
                 <span className="equipment-trader-detail">
-                  Состояние {item.currentCondition}/{item.maximumCondition} ·{' '}
-                  {item.equipped ? 'Надето' : 'Не надето'}
+                  Состояние {Math.round((item.currentCondition / item.maximumCondition) * 100)}% ·{' '}
+                  {item.equippedByName
+                    ? `Использует ${item.equippedByName}`
+                    : item.equipped
+                      ? 'Используется'
+                      : 'В запасе'}
                 </span>
                 {item.interruptsLearning && (
                   <span className="equipment-trader-warning">Продажа прервёт обучение.</span>
@@ -298,6 +302,7 @@ function readEquipmentMarket(value: unknown): EquipmentMarketDto | undefined {
       (item['maximumCondition'] as number) <= 0 ||
       (item['currentCondition'] as number) > (item['maximumCondition'] as number) ||
       typeof item['equipped'] !== 'boolean' ||
+      (item['equippedByName'] !== undefined && typeof item['equippedByName'] !== 'string') ||
       typeof item['interruptsLearning'] !== 'boolean' ||
       typeof item['canSell'] !== 'boolean' ||
       (item['refusal'] !== null && item['refusal'] !== 'INSUFFICIENT_FUNDS')
@@ -310,6 +315,9 @@ function readEquipmentMarket(value: unknown): EquipmentMarketDto | undefined {
       currentCondition: item['currentCondition'] as number,
       maximumCondition: item['maximumCondition'] as number,
       equipped: item['equipped'],
+      ...(typeof item['equippedByName'] === 'string'
+        ? { equippedByName: item['equippedByName'] }
+        : {}),
       interruptsLearning: item['interruptsLearning'],
       canSell: item['canSell'],
       refusal: item['refusal'],

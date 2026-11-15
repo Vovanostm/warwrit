@@ -75,6 +75,7 @@ describe('database readiness dependencies', () => {
       'encounter_activation_policies',
       'company_receipts',
       'company_audit_events',
+      'settlement_equipment',
       'world_first_hunt_state',
       'contract_instances',
       'encounter_admissions',

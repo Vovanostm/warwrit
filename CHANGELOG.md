@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: town equipment buyback with finite trader funds, exact
+  custody and retry. A native shield sale and reload preserve the recorded result.
+  [Current sale and remaining loot journey](docs/work-packages/M1-LOOT-SALE.md#current-implementation--2026-11-15). LOCAL.
+- 2026-11-15 — Changed: freeze ordinary accepted terms and hand ordinary hunt
+  trophies to issuer custody. Clarify payment and battle wording in the player UI.
+  [Contract implementation and remaining checks](docs/work-packages/M1-CONTRACT-TERMS.md#implementation-checkpoint--2026-11-15). LOCAL.
+
 - 2026-11-15 — Changed: accept the first sword-specialization retraining and
   the earned nickname «Живучий», preserving explicit player consent.
   [Owner-approved conditions](docs/work-packages/m1-next/06-company-capabilities.md#retraining-and-earned-nickname--owner-decision-2026-11-15). LOCAL.

@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { sql, type Kysely } from 'kysely';
 import {
   COMPANY_COMMAND_SCHEMA_VERSION,
@@ -11,7 +11,6 @@ import {
   isEntityId,
   isExactInteger,
   materializeCompanyPhysicalState,
-  moneyQ,
   parseCompanyCommand,
   prepareCompanyEconomy,
   prepareEquipmentSale,
@@ -71,6 +70,19 @@ export function registerEquipmentMarketRoutes(
         if (!companyId) return null;
         const state = await lockCompanyAggregate(transaction, worldId, companyId);
         if (!state) throw new Error('Owned company snapshot is unavailable');
+        const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
+        if (expectedCompanyId !== undefined && expectedCompanyId !== companyId)
+          return 'UNAVAILABLE' as const;
+        const economy = state.economy;
+        const party =
+          economy.lifecycle.parties.length === 1 ? economy.lifecycle.parties[0] : undefined;
+        if (
+          economy.lifecycle.company?.runStatus !== 'ACTIVE' ||
+          party?.location.kind !== 'AT' ||
+          party.location.siteId !== SITE_ID ||
+          economy.lifecycle.characters.some((person) => person.presence.encounterBindingId !== null)
+        )
+          return 'UNAVAILABLE' as const;
         await transaction
           .insertInto('settlement_supplies')
           .values({
@@ -96,21 +108,6 @@ export function registerEquipmentMarketRoutes(
           rations: row.rations,
           cashQ: String(row.cash_q),
         };
-        const economy = state.economy;
-        const party =
-          economy.lifecycle.parties.length === 1 ? economy.lifecycle.parties[0] : undefined;
-        if (
-          economy.lifecycle.company?.runStatus !== 'ACTIVE' ||
-          party?.location.kind !== 'AT' ||
-          party.location.siteId !== SITE_ID ||
-          economy.lifecycle.characters.some((person) => person.presence.encounterBindingId !== null)
-        )
-          return {
-            siteId: SITE_ID,
-            revision: shop.revision,
-            merchantCashQ: shop.cashQ,
-            items: [],
-          } satisfies EquipmentMarketDto;
         const carriedPurse = await readCarriedSupplyPurse(
           transaction,
           worldId,
@@ -129,6 +126,17 @@ export function registerEquipmentMarketRoutes(
             continue;
           const command = quoteCommand(state, companyId, item.itemId, shop.revision);
           const candidate = prepareEquipmentSale(root, command, shop, carriedPurse);
+          const equippedByName = item.equipped
+            ? state.economy.lifecycle.knowledge.characters.find(
+                (person) => person.identity.characterId === item.equipped?.characterId,
+              )?.identity.birthName
+            : undefined;
+          const interruptsLearning = state.learning.tasks.tasks.some(
+            (task) =>
+              !task.stop &&
+              !task.terminal &&
+              task.start.command.payload.resourceIds.includes(item.itemId),
+          );
           if (candidate.kind === 'PREPARED')
             items.push({
               itemId: item.itemId,
@@ -137,6 +145,8 @@ export function registerEquipmentMarketRoutes(
               currentCondition: item.currentCondition,
               maximumCondition: item.maximumCondition,
               equipped: item.equipped !== null,
+              ...(equippedByName === undefined ? {} : { equippedByName }),
+              interruptsLearning,
               canSell: true,
               refusal: null,
             });
@@ -148,17 +158,22 @@ export function registerEquipmentMarketRoutes(
               currentCondition: item.currentCondition,
               maximumCondition: item.maximumCondition,
               equipped: item.equipped !== null,
+              ...(equippedByName === undefined ? {} : { equippedByName }),
+              interruptsLearning,
               canSell: false,
               refusal: 'INSUFFICIENT_FUNDS' as const,
             });
         }
         return {
+          publicRevision: state.economy.lifecycle.knowledge.revision,
           siteId: SITE_ID,
           revision: String(row.revision),
           merchantCashQ: String(row.cash_q),
           items,
         } satisfies EquipmentMarketDto;
       });
+      if (result === 'UNAVAILABLE')
+        return reply.code(409).send({ error: 'local equipment market access required' });
       return result === null ? reply.code(403).send({ error: 'company required' }) : result;
     },
   );
@@ -172,7 +187,7 @@ export function registerEquipmentMarketRoutes(
       if (!requestDto)
         return reply.code(400).send(reject(commandIdFrom(request.body), 'INVALID_COMMAND', '0'));
       const companyIdHeader = readExpectedCompanyId(request.raw.rawHeaders);
-      const requestKey = canonicalJson(requestDto);
+      const requestKey = canonicalJson([request.params.siteId, requestDto]);
       const result = await database.transaction().execute(async (transaction) => {
         if (!(await lockIdentityAccount(transaction, accountId)))
           return reject(requestDto.commandId, 'NOT_AUTHORIZED', '0');

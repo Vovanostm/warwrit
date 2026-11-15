@@ -104,7 +104,7 @@ it.each([false, true])(
     }
     expect(onRewardPaid).toHaveBeenCalledOnce();
     expect(host.textContent).toContain(
-      'Носитель трофея получил награду. Трофей отмечен как погашенный.',
+      'Награду получил тот, кто принёс трофей.',
     );
     expect(host.textContent).not.toContain('REDEEMED');
   },

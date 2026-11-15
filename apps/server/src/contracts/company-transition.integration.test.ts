@@ -7,6 +7,7 @@ import {
   readCompanyCombatAggregateState,
   receiveExternalPayment,
   campaignTick,
+  FIRST_HUNT_ISSUER_LOCATION,
   FIRST_HUNT_PROOF_DEFINITION_ID,
   FIRST_HUNT_PROOF_ID,
   FIRST_HUNT_REWARD_Q,
@@ -40,6 +41,8 @@ describe('FIRST HUNT revisioned company transition (isolated PostgreSQL)', () =>
       const replacements = new Map<string, string>([
         [String(fixture.economy.lifecycle.worldId), worldId],
         [String(fixture.economy.lifecycle.companyId), companyId],
+        ['village', FIRST_HUNT_ISSUER_LOCATION.siteId],
+        ['square', FIRST_HUNT_ISSUER_LOCATION.areaId],
       ]);
       const replaced = JSON.parse(
         JSON.stringify(fixture, (_key, value: unknown) =>

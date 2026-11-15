@@ -481,6 +481,10 @@ export function createDatabaseReadinessProbe(
       `.execute(database);
     }
     if (companyStorageEnabled) {
+      await sql`
+        select world_id, item_id, site_id, owner_kind, owner_id, source_id,
+          acquired_by_company_id, item from settlement_equipment limit 0
+      `.execute(database);
       await sql`select world_id, site_id, revision, rations, cash_q from settlement_supplies limit 0`.execute(
         database,
       );
