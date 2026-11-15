@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Fixed: cover funded B4 endings when the paying company has no
+  ration stock, preserving uncovered food time without consuming stock.
+  [Funding regression check](docs/work-packages/M1-STORY-MISSIONS.md#funding-regression-check--2026-11-15). LOCAL.
+
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation
   and STOP/reload continuation. [Native continuation](docs/work-packages/m1-next/02-next-contract.md#native-continuation-checkpoint--2026-11-15). LOCAL.

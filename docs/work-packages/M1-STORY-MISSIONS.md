@@ -327,6 +327,23 @@ unknown nonzero historical offset becomes eligible only after one full real
 Light cycle has elapsed, with its first proven availability anchor persisted.
 The earlier anchor is preserved on subsequent reads.
 
+### Funding regression check — 2026-11-15
+
+The focused B4 ending suite now seeds the paying company without ration stock
+and verifies that funded E01 records uncovered food time without consuming
+stock. The focused story and repository test run passed 14/14; core build passed.
+Core/server typechecks: FAIL because sparse checkout workspace dependency
+outputs are missing. Prettier passes for the test and changelog; the full task
+page check flags pre-existing table formatting. ESLint flags the test file's
+unused `DatabaseSchema` import. PostgreSQL integration: NOT_RUN this turn.
+
+Parent integration check — 2026-11-16. The unused import is removed and scoped
+ESLint passes. The two focused story/repository suites pass14/14. The real
+PostgreSQL zero-ration E01 case passes1/1, with five other cases deliberately
+filtered out. Its disposable clone was removed by the harness. The regression
+also verifies private findings, exact funded payment, duplicate/conflicting retry
+and foreign access in that case. Native alternative endings remain NOT_RUN.
+
 ### Portrait integration — 2026-11-15
 
 Six opaque 1254×1254 production portraits now supply Ульита Ткачиха, Гордей Лапа,
