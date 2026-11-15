@@ -164,6 +164,7 @@ export function readStoryCompanyState(value: unknown): StoryCompanyState {
       'currentSceneId',
       'pendingAccusation',
       'receiptsInspected',
+      'cacheReasonAsked',
       'metActors',
       'facts',
     ]) ||
@@ -181,6 +182,7 @@ export function readStoryCompanyState(value: unknown): StoryCompanyState {
   const pending = value['pendingAccusation'];
   if (
     typeof value['receiptsInspected'] !== 'boolean' ||
+    typeof value['cacheReasonAsked'] !== 'boolean' ||
     !Array.isArray(met) ||
     !met.every(isActor) ||
     new Set(met).size !== met.length ||
@@ -248,12 +250,17 @@ export function readStoryCompanyState(value: unknown): StoryCompanyState {
     return fail();
   if (
     (value['receiptsInspected'] && (!known.has('F02') || !met.includes('KONDRAT'))) ||
+    (value['cacheReasonAsked'] && (!known.has('F08') || !met.includes('ULITA'))) ||
     (known.has('F03') && !value['receiptsInspected'])
   )
     return fail();
   if (
     value['status'] === 'OFFERED' &&
-    (facts.length > 0 || met.length > 0 || pending !== null || value['receiptsInspected'])
+    (facts.length > 0 ||
+      met.length > 0 ||
+      pending !== null ||
+      value['receiptsInspected'] ||
+      value['cacheReasonAsked'])
   )
     return fail();
   if (pending !== null && value['status'] !== 'ACCEPTED') return fail();
@@ -298,6 +305,7 @@ function semanticKey(world: StoryWorldState, company: StoryCompanyState): string
     scene: company.currentSceneId,
     pending: company.pendingAccusation,
     receiptsInspected: company.receiptsInspected,
+    cacheReasonAsked: company.cacheReasonAsked,
     met: [...company.metActors].sort(),
     facts: company.facts.map((fact) => fact.factId).sort(),
   });

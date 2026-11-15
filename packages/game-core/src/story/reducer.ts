@@ -50,6 +50,7 @@ export function storyCompanyGenesis(companyId: string, world: StoryWorldState): 
     currentSceneId: 'S00',
     pendingAccusation: null,
     receiptsInspected: false,
+    cacheReasonAsked: false,
     metActors: [],
     facts: [],
   });
@@ -264,7 +265,7 @@ export function prepareStoryCommand(
       next = withFact(definition, nextCompany(company, {}), 'F08', context);
       break;
     case 'ask-why-cache':
-      next = nextCompany(company, {});
+      next = nextCompany(company, { cacheReasonAsked: true });
       break;
     case 'open-confrontation':
       next = nextCompany(company, { currentSceneId: 'S06', metActors: addMet(company, 'ULITA') });

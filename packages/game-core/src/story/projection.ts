@@ -67,7 +67,9 @@ function visibleLines(world: StoryWorldState, company: StoryCompanyState): reado
         '02',
         ...(hasStoryFact(company, 'F06') ? ['02-sound', 'who', '02-son', 'son', '03'] : []),
         ...(hasStoryFact(company, 'F07') ? ['inspect', '04'] : []),
-        ...(hasStoryFact(company, 'F08') ? ['sack', '05', 'grain', '06'] : []),
+        ...(hasStoryFact(company, 'F08')
+          ? ['sack', '05', 'grain', ...(company.cacheReasonAsked ? ['06'] : [])]
+          : []),
       ];
     case 'S04':
       return hasStoryFact(company, 'F09') ? ['ask', '01', '02', '03', 'next'] : ['ask'];

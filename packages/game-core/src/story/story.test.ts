@@ -142,6 +142,26 @@ describe('B4 company story journal and reducer', () => {
     );
   });
 
+  it('reveals Ulita’s cache explanation only after the company acknowledges that question', () => {
+    const world = worldGenesis();
+    let state = act(world, storyCompanyGenesis('company-a', world), { type: 'ACCEPT' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'to-ulita' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-son' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'to-kondrat' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-sacks' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'to-ulita' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'inspect-sack' });
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-sack-origin' });
+    expect(
+      projectStory(CACHE_DISCLOSURE_STORY, state.world, state.company, '20').visibleLineIds,
+    ).not.toContain('06');
+    state = act(state.world, state.company, { type: 'CHOOSE', choiceId: 'ask-why-cache' });
+    expect(
+      projectStory(CACHE_DISCLOSURE_STORY, state.world, state.company, '20').visibleLineIds,
+    ).toContain('06');
+    expect(readStoryCompanyState(JSON.parse(JSON.stringify(state.company)))).toEqual(state.company);
+  });
+
   it('allows a false accusation after hearing the confession, pays nothing and keeps the journal private', () => {
     const world = worldGenesis();
     let state = proveDisclosure(world, storyCompanyGenesis('finisher', world));
