@@ -65,10 +65,11 @@ function outcomeDescription(view: BattlePresentationView) {
 }
 
 function outcomeSideIds(view: BattlePresentationView): (string | undefined)[] {
-  if (view.viewerSideKnown === false) return (view.sides ?? []).map((side) => side.id);
   return [
-    view.controlledSideId,
-    (view.sides ?? []).find((side) => side.id !== view.controlledSideId)?.id,
+    ...new Set([
+      ...(view.sides ?? []).map((side) => side.id),
+      ...view.units.map((unit) => unit.sideId),
+    ]),
   ];
 }
 
@@ -82,10 +83,10 @@ function OutcomeSide({
   const units = view.units.filter((unit) => unit.sideId === sideId);
   const label =
     view.viewerSideKnown === false
-      ? 'Сторона'
+      ? `Сторона ${sideId ?? 'неизвестна'}`
       : sideId === view.controlledSideId
-        ? 'Ваш отряд'
-        : 'Противник';
+        ? `Ваш отряд · ${sideId}`
+        : `Сторона ${sideId ?? 'неизвестна'}`;
   return (
     <div>
       <strong>{label}</strong>

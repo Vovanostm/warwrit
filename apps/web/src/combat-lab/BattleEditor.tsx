@@ -194,9 +194,12 @@ function PresetPicker({
   readonly onSelect: (id: string) => void;
   readonly onLoad: (battle: CombatLabBattleConfig) => void;
 }) {
-  const presets = catalog.presets ?? [];
+  const presets = catalog.presets?.filter(({ battle }) => battle.version === 1) ?? [];
   if (presets.length === 0) return null;
-  const selectedPreset = presets.find(({ id }) => id === presetId);
+  const selectedPreset = presets.find(
+    ({ id }) =>
+      id === presetId && catalog.presets?.find((preset) => preset.id === id)?.battle.version === 1,
+  );
   return (
     <>
       <section className="battle-editor-meta" aria-label="Сценарии из каталога">
@@ -219,7 +222,7 @@ function PresetPicker({
           type="button"
           disabled={disabled || selectedPreset === undefined}
           onClick={() => {
-            if (!disabled && selectedPreset !== undefined) onLoad(selectedPreset.battle);
+            if (!disabled && selectedPreset?.battle.version === 1) onLoad(selectedPreset.battle);
           }}
         >
           Загрузить сценарий

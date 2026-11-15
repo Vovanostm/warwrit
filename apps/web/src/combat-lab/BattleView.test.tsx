@@ -289,8 +289,16 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
         status: 'resolved',
         activation: null,
         outcome: { reason: 'last-side-standing', winnerSideId: 'human' },
-        sides: [...view.sides, { id: 'opponent', retreatHexes: [] }],
-        units: [view.units[0]!, { ...view.units[1]!, status: 'surrendered' }],
+        sides: [
+          ...view.sides,
+          { id: 'opponent', retreatHexes: [] },
+          { id: 'third', retreatHexes: [] },
+        ],
+        units: [
+          view.units[0]!,
+          { ...view.units[1]!, status: 'surrendered' },
+          { ...view.units[1]!, id: 'C001', sideId: 'third', name: 'Третий боец' },
+        ],
       }}
       selectedUnitId="B001"
       selectedHex={null}
@@ -307,6 +315,7 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).not.toContain('aria-label="Действующий боец"');
   expect(html).not.toContain('aria-label="Состояние: Волк"');
   expect(html).toContain('Сдались <b>1</b>');
+  expect(html).toContain('Сторона third');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');
   expect(html).toContain('Вернуться к отряду');

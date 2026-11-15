@@ -179,7 +179,13 @@
   bottom: 20px;
   left: 7px;
   right: 7px;
-  background: #a6bca7;
+  background: var(--battle-side-color, #a6bca7);
+}
+.initiative-unit[data-side-id]::after {
+  background: var(--battle-side-color);
+}
+.initiative-unit[data-side-id] .battle-side-mark {
+  background: var(--battle-side-color);
 }
 .initiative-unit[aria-current='step'] {
   border: 2px solid #d9c082;
