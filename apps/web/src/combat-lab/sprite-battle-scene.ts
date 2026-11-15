@@ -285,7 +285,7 @@ export async function mountSpriteBattleScene(
   let actorPlacementKey = '';
   let actorMarker: ReturnType<typeof createActorMarker> | null = null;
   const eventLabels: Mesh[] = [];
-  const statusMarkers: Mesh[] = [];
+  const statusMarkers = new Map<string, { signature: string; mesh: Mesh }>();
   const threatLabels: Mesh[] = [];
   const textures = new Map<string, Texture>();
   const edgeTextures = new Map<string, DynamicTexture>();
@@ -522,21 +522,23 @@ export async function mountSpriteBattleScene(
     unitMaterials.set(unit.id, material);
     return { mesh, material };
   };
-  const addStatusMarker = (unit: BattleUnit, x: number, z: number, groundHeight: number) => {
+  const addStatusMarker = (unit: TerminalMarkerUnit) => {
+    const { x, z } = AXIAL_TO_WORLD(unit.position);
+    const groundHeight = groundYFor(unit.position);
     // A ground status plaque is deliberately separate from the baked figure.
     // Leave the cell centre clear when a living fighter steps onto this tile.
-    addLabel(
+    const marker = addLabel(
       scene,
-      statusMarkers,
+      [],
       unit.status === 'surrendered' ? 'СДАЛСЯ' : unit.status === 'retreated' ? 'ОТСТУПИЛ' : 'ПОГИБ',
       new Vector3(x - 0.34, groundHeight + 0.055, z + 0.3),
       unit.status === 'surrendered' ? 'event' : 'danger',
     );
-    const marker = statusMarkers.at(-1)!;
     marker.billboardMode = Mesh.BILLBOARDMODE_NONE;
     marker.rotation.x = Math.PI / 2;
     marker.scaling.set(0.55, 0.75, 1);
     marker.renderingGroupId = 0;
+    return marker;
   };
   const removeAbsentUnits = (view: BattlePresentationView) => {
     const liveIds = new Set(view.units.map(({ id }) => id));
@@ -588,12 +590,11 @@ export async function mountSpriteBattleScene(
     mesh.isPickable = standing;
     contactShadows.get(unit.id)?.setEnabled(standing);
     material.alpha = 1;
-    if (!standing) addStatusMarker(unit, x, z, groundHeight);
   };
   const unitMeshesForView = (view: BattlePresentationView) => {
-    for (const marker of statusMarkers.splice(0)) marker.dispose(false, true);
     removeAbsentUnits(view);
     for (const unit of view.units) syncUnit(unit);
+    reconcileTerminalMarkers(view.units, statusMarkers, addStatusMarker);
     fieldVitals.update(view);
   };
 
@@ -869,7 +870,7 @@ export async function mountSpriteBattleScene(
     const labels = [
       ...fixedLabels,
       ...heightLabels,
-      ...statusMarkers,
+      ...[...statusMarkers.values()].map(({ mesh }) => mesh),
       ...threatLabels,
       ...eventLabels,
       ...vitals,
@@ -1581,7 +1582,7 @@ function addLabel(
   text: string,
   position: Vector3,
   tone: 'height' | 'danger' | 'event',
-): void {
+): Mesh {
   const style = labelStyles[tone];
   const labelWidth = style.textureWidth;
   const texture = new DynamicTexture(
@@ -1626,6 +1627,39 @@ function addLabel(
   label.isPickable = false;
   label.renderingGroupId = 2;
   collection.push(label);
+  return label;
+}
+
+type TerminalMarkerUnit = Pick<BattleUnit, 'id' | 'status' | 'position'>;
+type TerminalMarker = { readonly signature: string; readonly mesh: Mesh };
+
+/** Keep terminal plaques alive while their public status and ground position stay unchanged. */
+export function reconcileTerminalMarkers(
+  units: readonly TerminalMarkerUnit[],
+  markers: Map<string, TerminalMarker>,
+  createMarker: (unit: TerminalMarkerUnit) => Mesh,
+) {
+  const liveIds = new Set(units.map(({ id }) => id));
+  for (const [id, marker] of markers) {
+    if (!liveIds.has(id)) {
+      marker.mesh.dispose(false, true);
+      markers.delete(id);
+    }
+  }
+
+  for (const unit of units) {
+    const existing = markers.get(unit.id);
+    if (unit.status === 'active') {
+      existing?.mesh.dispose(false, true);
+      markers.delete(unit.id);
+      continue;
+    }
+
+    const signature = `${unit.status}:${unit.position.q},${unit.position.r}`;
+    if (existing?.signature === signature) continue;
+    existing?.mesh.dispose(false, true);
+    markers.set(unit.id, { signature, mesh: createMarker(unit) });
+  }
 }
 
 export function initialFrameUnits(view: BattlePresentationView) {

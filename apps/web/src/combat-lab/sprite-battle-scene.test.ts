@@ -1,6 +1,8 @@
-import { expect, it } from 'vitest';
+import { MeshBuilder, NullEngine, Scene } from '@babylonjs/core';
+import { expect, it, vi } from 'vitest';
 import {
   initialFrameUnits,
+  reconcileTerminalMarkers,
   spriteFigureBounds,
   spriteFrameMapBounds,
 } from './sprite-battle-scene.js';
@@ -9,6 +11,61 @@ import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { battleHexToWorld } from './battle-layout.js';
 
 const CAMERA_ELEVATION = Math.PI / 6;
+
+it('reuses terminal markers until status or ground position changes', () => {
+  const engine = new NullEngine();
+  const scene = new Scene(engine);
+  const markers = new Map<
+    string,
+    { signature: string; mesh: ReturnType<typeof MeshBuilder.CreatePlane> }
+  >();
+  const createMarker = vi.fn((unit: { id: string }) =>
+    MeshBuilder.CreatePlane(`status:${unit.id}`, { size: 1 }, scene),
+  );
+  const terminal = {
+    id: 'unit',
+    status: 'dead' as const,
+    position: { q: 2, r: -1 },
+  } satisfies Parameters<typeof reconcileTerminalMarkers>[0][number];
+  try {
+    reconcileTerminalMarkers([terminal], markers, createMarker);
+    const original = markers.get('unit')!.mesh;
+    const disposeOriginal = vi.spyOn(original, 'dispose');
+    reconcileTerminalMarkers([terminal], markers, createMarker);
+    expect(createMarker).toHaveBeenCalledTimes(1);
+    expect(markers.get('unit')!.mesh).toBe(original);
+    expect(disposeOriginal).not.toHaveBeenCalled();
+
+    const retreated = { ...terminal, status: 'retreated' as const };
+    reconcileTerminalMarkers([retreated], markers, createMarker);
+    const afterStatusChange = markers.get('unit')!.mesh;
+    expect(createMarker).toHaveBeenCalledTimes(2);
+    expect(disposeOriginal).toHaveBeenCalledTimes(1);
+    const disposeAfterStatusChange = vi.spyOn(afterStatusChange, 'dispose');
+
+    const moved = { ...retreated, position: { q: 3, r: -1 } };
+    reconcileTerminalMarkers([moved], markers, createMarker);
+    const afterPositionChange = markers.get('unit')!.mesh;
+    expect(createMarker).toHaveBeenCalledTimes(3);
+    expect(disposeAfterStatusChange).toHaveBeenCalledTimes(1);
+    const disposeAfterPositionChange = vi.spyOn(afterPositionChange, 'dispose');
+
+    reconcileTerminalMarkers([{ ...moved, status: 'active' as const }], markers, createMarker);
+    expect(markers.has('unit')).toBe(false);
+    expect(createMarker).toHaveBeenCalledTimes(3);
+    expect(disposeAfterPositionChange).toHaveBeenCalledTimes(1);
+
+    reconcileTerminalMarkers([terminal], markers, createMarker);
+    const absentMarker = markers.get('unit')!.mesh;
+    const disposeAbsentMarker = vi.spyOn(absentMarker, 'dispose');
+    reconcileTerminalMarkers([], markers, createMarker);
+    expect(markers.has('unit')).toBe(false);
+    expect(disposeAbsentMarker).toHaveBeenCalledTimes(1);
+  } finally {
+    scene.dispose();
+    engine.dispose();
+  }
+});
 
 it('retains full-field limits separately from initial subjects and empty terminal fields', () => {
   const field = Object.freeze({ minX: -20, maxX: 60, minZ: -30, maxZ: 40 });
