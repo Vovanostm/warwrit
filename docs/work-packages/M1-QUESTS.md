@@ -64,6 +64,15 @@ consumer. No hidden outcome is shown before the player can observe it.
 Next: implement the approved texts and saved consequence consumers. Parameters
 (rewards, price deltas, durations) are set in the implementing slice.
 
+## Asset implementation checkpoint — 2026-11-15
+
+Six dialogue/issuer portraits are registered with prompts and adaptations in
+`assets/manifest.json` and consumed by NpcPortrait in B4 and hunt cards. The
+ordinary Фрол card was inspected in the browser. The other required art and
+twenty-quest consequence matrix remain open under T035. Portrait appearances
+are production candidates awaiting owner visual acceptance. Detailed evidence
+belongs to [the story record](M1-STORY-MISSIONS.md#portrait-integration--2026-11-15).
+
 ## Texts — 2026-11-13
 
 APPROVED by the owner on 2026-11-13 («Approve texts»), after a full logic and

@@ -78,6 +78,11 @@ it('renders only server-visible lines and stores the exact command before postin
   await mount();
   expect(host!.textContent).toContain('Парень вернулся. Теперь бы узнать, кто Обуху место назвал.');
   expect(host!.textContent).not.toContain('Я, Сенька, Улита Ткачиха. Больше никто.');
+  expect(host!.querySelector('.story-portrait')).toBeNull();
+  expect(host!.querySelector('.story-line .npc-portrait img')?.getAttribute('src')).toContain(
+    'kondrat-ovsyanik-v1.png',
+  );
+  expect(host!.textContent).toContain('Кондрат');
   await act(async () => {
     host!.querySelector<HTMLButtonElement>('.story-choices button')!.click();
     await Promise.resolve();

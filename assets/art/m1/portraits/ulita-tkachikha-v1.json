@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "art.m1.portrait.ulita-tkachikha",
+  "path": "assets/art/m1/portraits/ulita-tkachikha-v1.png",
+  "generatedAt": "2026-11-15",
+  "tool": "image_gen built-in",
+  "prompt": "Create one square 1024x1024 dialogue portrait for Warwrit, serious grounded low-fantasy game. Subject Ulita Tkachikha, a village weaver and mother of a wounded adult son in Severny Dvor. Her precise facial appearance is a production interpretation. One middle-aged woman, practical and worn by work, broad credible features, light brown hair with a few grey strands tucked beneath a simple faded linen headscarf, plain dark umber wool dress and grey linen collar. Mouth closed, alert guarded expression, looking slightly to viewer right as if listening before answering. Frame head and shoulders, entire crown of head inside frame with generous top and side margins, face taking about half image height. Match Warwrit's selected restrained graphic-novel direction. Confident irregular dark ink contours around major forms, broad matte flat colour washes and coherent shadow masses, only selective interior strokes for cloth and skin, naturally warm readable skin. Desaturated slate, soot, umber, restrained ochre and moss olive. Background a quiet opaque charcoal-grey flat wash, no scenery or storytelling props. Soft overcast light from upper left. Her face should remain legible in a 120-pixel dialogue card. Human ordinary person, credible period clothing. Produce one single portrait. No text, letters, insignia, decorative frame, watermark, collage, second person, glamour lighting, photographic skin texture, glossy CGI or cartoon exaggeration. The style adapts the proportions, warm skin and dark contour hierarchy of the project's graphic-novel character reference to an individual dialogue portrait.",
+  "transparentBackground": false,
+  "actualDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "style": "graphic-novel",
+  "references": [
+    "assets/art/styles/references/graphic-novel/character.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/severny-dvor.png"
+  ],
+  "adaptation": "Adapted the selected reference contour hierarchy, muted flat washes and practical costume materials to a distinct dialogue portrait. Facial features and unstated ages are production interpretations. Senka remains sixteen as authored.",
+  "canonicalSource": "docs/content/world/characters.csv",
+  "status": "LOCAL production candidate, owner visual acceptance pending"
+}

@@ -7,6 +7,7 @@ import {
   type ContractVisitProps,
 } from './game/contract-visits.js';
 import { lookup } from './i18n/index.js';
+import { NpcPortrait } from './game/NpcPortrait.js';
 
 import {
   isFirstHuntReadResponse,
@@ -76,6 +77,11 @@ const HUNT_CODES: Readonly<Record<string, string>> = {
   'ci.m1.raider-standard.01': 'HUNT-03',
   'ci.m1.wolf-trail.01': 'HUNT-02',
   'ci.m1.mill-beast.01': 'HUNT-01',
+};
+const HUNT_ISSUER_PORTRAITS: Readonly<Record<string, string>> = {
+  'ci.m1.raider-standard.01': 'npc.city-watch-contact.kamenny-brod.01',
+  'ci.m1.wolf-trail.01': 'npc.woodland-village-caller.bereznyak.01',
+  'ci.m1.mill-beast.01': 'npc.local-warning-keeper.tikhaya-gat.01',
 };
 
 export function FirstHunt(
@@ -280,6 +286,11 @@ export function FirstHunt(
     title: lookup(`contract.${huntId}.title`) ?? 'Охота',
     brief: lookup(`contract.${huntId}.brief`),
   };
+  const expectedIssuerPortrait = HUNT_ISSUER_PORTRAITS[contract?.instanceId ?? ''];
+  const issuerPortraitActorId =
+    expectedIssuerPortrait && expectedIssuerPortrait === contract?.terms.issuerId
+      ? expectedIssuerPortrait
+      : undefined;
   const atIssuer = contract
     ? visitingIssuer(props.visit, contract.instanceId, contract.terms.issuerLocation.siteId)
     : false;
@@ -341,11 +352,14 @@ export function FirstHunt(
       )}
       {contract && (
         <>
-          <p>
-            Заказчик: {issuerLabel(contract.terms.issuerId)} ·{' '}
-            {locationLabel(contract.terms.issuerLocation.siteId)},{' '}
-            {areaLabel(contract.terms.issuerLocation.areaId)}.
-          </p>
+          <div className="first-hunt-issuer">
+            {issuerPortraitActorId && <NpcPortrait actorId={issuerPortraitActorId} size="issuer" />}
+            <p>
+              Заказчик: {issuerLabel(contract.terms.issuerId)} ·{' '}
+              {locationLabel(contract.terms.issuerLocation.siteId)},{' '}
+              {areaLabel(contract.terms.issuerLocation.areaId)}.
+            </p>
+          </div>
           {huntText.brief && <p className="contract-brief">{huntText.brief}</p>}
           <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
           {contract.knownState !== 'SETTLED' && (

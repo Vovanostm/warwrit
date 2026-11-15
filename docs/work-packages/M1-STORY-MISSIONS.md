@@ -241,7 +241,7 @@ mission outcome and receipt. E02/E03 and unproved Ulita have no reward.
 | AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | Real PG private journals/concurrent finish PASS. Native second company NOT_RUN. |
 | AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | Focused validator tests PASS. |
 | AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | RU E01 route read in game. Choice labels and disclosure timing corrected. EN browser NOT_RUN. |
-| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | Day interviews/night E01 inspected. Portraits still use initials and remain unfinished. |
+| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | Day interviews/night E01 inspected. Six portraits integrated locally. Final scene/day/night portrait checks remain open. |
 
 Additional targeted checks: deterministic rejection/preparation without mutation;
 same-command retry once; conflicting retry rejection; concurrent confirmations
@@ -326,3 +326,24 @@ with a known zero QA offset use their wall timestamp. A legacy receipt with an
 unknown nonzero historical offset becomes eligible only after one full real
 Light cycle has elapsed, with its first proven availability anchor persisted.
 The earlier anchor is preserved on subsequent reads.
+
+### Portrait integration — 2026-11-15
+
+Six opaque 1254×1254 production portraits now supply Ульита Ткачиха, Гордей Лапа,
+Тихон Бортник, Фрол Звонарь, Кондрат Овсяник and Сенька through the shared
+NpcPortrait consumer in story lines and hunt issuer cards. Each original prompt,
+reference, adaptation and dimension is retained beside its PNG under
+`assets/art/m1/portraits/`; `assets/manifest.json` names the active revision and
+consumers. Their faces and unstated ages are production interpretations. Сенька
+retains his authored age of sixteen. Owner visual acceptance remains pending.
+
+The selected graphic-novel character reference, ink unit and Северный Двор scene
+guided the contour hierarchy, restrained colour and practical clothing. All six
+generated images were inspected. The ordinary HUNT-01 card loads Фрол's portrait
+at its actual issuer size, with readable text and no overlapping controls. Native
+capture is retained in `output/playwright/m1-frol-portrait-native.png`.
+
+The portrait/story/hunt component union passes 19 tests, web typecheck passes,
+and content validation accepts all136 assets after registering the new content
+revision. Native B4 wrong ending, second company and the final scene/day/night
+matrix remain NOT_RUN for this portrait step.

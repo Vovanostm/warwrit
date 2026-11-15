@@ -58,18 +58,6 @@
   gap: 0.15rem;
 }
 
-.story-portrait {
-  display: grid;
-  flex: 0 0 2rem;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border: 1px solid #9b895d;
-  border-radius: 50%;
-  color: #e4c88a;
-  font-weight: 700;
-}
-
 .story-choices button,
 .story-retry {
   min-height: 2.5rem;

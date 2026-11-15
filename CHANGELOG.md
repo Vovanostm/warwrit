@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: six sourced graphic-novel portraits in story dialogue and
+  hunt issuer cards, retaining generation prompts and adaptations.
+  [Portrait implementation and remaining visual checks](docs/work-packages/M1-STORY-MISSIONS.md#portrait-integration--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: guard-house sword course with saved progress, exact elapsed
   tuition, explicit stop and lost-response retry. Native completion retains the
   full three-day result. Retraining composition preserves the original perk on

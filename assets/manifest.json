@@ -2,6 +2,84 @@
   "schemaVersion": 1,
   "assets": [
     {
+      "id": "art.m1.portrait.ulita-tkachikha",
+      "path": "assets/art/m1/portraits/ulita-tkachikha-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/ulita-tkachikha-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
+      "id": "art.m1.portrait.gordey-lapa",
+      "path": "assets/art/m1/portraits/gordey-lapa-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/gordey-lapa-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
+      "id": "art.m1.portrait.tikhon-bortnik",
+      "path": "assets/art/m1/portraits/tikhon-bortnik-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/tikhon-bortnik-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
+      "id": "art.m1.portrait.frol-zvonar",
+      "path": "assets/art/m1/portraits/frol-zvonar-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/frol-zvonar-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
+      "id": "art.m1.portrait.kondrat-ovsyanik",
+      "path": "assets/art/m1/portraits/kondrat-ovsyanik-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/kondrat-ovsyanik-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
+      "id": "art.m1.portrait.senka",
+      "path": "assets/art/m1/portraits/senka-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/portraits/senka-v1.json",
+      "generatedAt": "2026-11-15",
+      "contentRevision": "m1-dialogue-portraits-v1",
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx"
+      ]
+    },
+    {
       "id": "art.m1.style.portrait-leader",
       "path": "assets/art/m1/style/portrait-leader.png",
       "kind": "image",
@@ -1226,6 +1304,14 @@
     }
   ],
   "contentRevisions": {
+    "m1-dialogue-portraits-v1": {
+      "consumers": [
+        "apps/web/src/game/NpcPortrait.tsx",
+        "apps/web/src/game/StoryPanel.tsx",
+        "apps/web/src/FirstHunt.tsx"
+      ],
+      "note": "Six graphic-novel portrait candidates with original prompts and reference adaptations. Owner visual acceptance is pending."
+    },
     "combat-sprite-current": {
       "hud": "apps/web/src/combat-lab/BattleView.tsx",
       "entry": "apps/web/src/EncounterPanel.tsx",
