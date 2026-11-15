@@ -856,6 +856,13 @@ function setupV3Shape(value: unknown): boolean {
 
 function transitionShape(value: unknown): boolean {
   if (
+    shape(value, ['state', 'events']) &&
+    battleStateShape(value['state']) &&
+    plainObject(value['state']) &&
+    emptyRoundLimitTransitionShape(value['state'], value['events'])
+  )
+    return true;
+  if (
     !shape(value, ['state', 'events']) ||
     !battleStateShape(value['state']) ||
     !Array.isArray(value['events']) ||
@@ -867,6 +874,63 @@ function transitionShape(value: unknown): boolean {
   if (!shape(state['activation'], ['id', 'unitId', 'remainingActionPoints'])) return false;
   const stateActivation = state['activation'] as Record<string, unknown>;
   return transitionEventsShape(started, round, activation, state, stateActivation);
+}
+
+function emptyRoundLimitTransitionShape(state: Record<string, unknown>, events: unknown): boolean {
+  const round = state['round'];
+  const rounds = Array.isArray(events) ? events.slice(1, -1) : [];
+  if (
+    state['rulesetId'] !== M1_DOMAIN_BRIDGE_V6_RULESET_ID ||
+    state['status'] !== 'resolved' ||
+    state['activation'] !== null ||
+    !plainObject(state['outcome']) ||
+    state['outcome']['reason'] !== 'round-limit' ||
+    !Number.isSafeInteger(round) ||
+    (round as number) < 1 ||
+    !Array.isArray(events) ||
+    events.length !== (round as number) + 2 ||
+    !Array.isArray(state['initiativeOrder']) ||
+    state['initiativeOrder'].length !== 0 ||
+    !Array.isArray(state['units']) ||
+    !state['units'].every((unit) => {
+      if (!plainObject(unit) || unit['status'] !== 'active') return false;
+      const capabilities = unit['capabilities'];
+      return (
+        plainObject(capabilities) &&
+        ['move', 'attack', 'defend', 'retreat'].every(
+          (capability) => capabilities[capability] === false,
+        )
+      );
+    }) ||
+    !Array.isArray(state['processedCommandIds']) ||
+    state['processedCommandIds'].length !== 0
+  )
+    return false;
+  const [started, ...tail] = events;
+  const resolved = tail.pop();
+  return (
+    shape(started, ['type', 'battleId', 'revision', 'seed', 'rulesetId']) &&
+    started['type'] === 'battle.started' &&
+    started['battleId'] === state['battleId'] &&
+    started['revision'] === 0 &&
+    started['seed'] === state['seed'] &&
+    started['rulesetId'] === state['rulesetId'] &&
+    tail.length === round &&
+    tail.every(
+      (event, index) =>
+        shape(event, ['type', 'battleId', 'revision', 'round', 'initiativeOrder']) &&
+        event['type'] === 'round.started' &&
+        event['battleId'] === state['battleId'] &&
+        event['revision'] === 0 &&
+        event['round'] === index + 1 &&
+        canonicalJson(event['initiativeOrder']) === canonicalJson(state['initiativeOrder']),
+    ) &&
+    shape(resolved, ['type', 'battleId', 'revision', 'outcome']) &&
+    resolved['type'] === 'battle.resolved' &&
+    resolved['battleId'] === state['battleId'] &&
+    resolved['revision'] === 0 &&
+    canonicalJson(resolved['outcome']) === canonicalJson(state['outcome'])
+  );
 }
 
 function transitionEventsShape(

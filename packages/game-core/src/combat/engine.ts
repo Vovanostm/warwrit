@@ -22,6 +22,7 @@ import {
   validateCombatSkillRanks,
 } from './skills.js';
 import { isSpriteS4Ruleset } from './rules.js';
+import { canTakeCombatActivation } from './activation-capabilities.js';
 import { type UseSkillCommand } from './types.js';
 import { combatReactionControllers } from './reaction.js';
 import { assertNever, invariant } from '../primitives.js';
@@ -298,7 +299,7 @@ function orderInitiative(
   rulesetId: CombatRulesetId,
 ): readonly UnitId[] {
   return units
-    .filter(({ status }) => status === 'active')
+    .filter((unit) => unit.status === 'active' && canTakeCombatActivation(unit, rulesetId))
     .toSorted(
       (left, right) =>
         effectiveInitiative(right, rules) - effectiveInitiative(left, rules) ||
@@ -460,46 +461,44 @@ function advanceActivation(
   let order = state.initiativeOrder;
   let turnIndex = state.turnIndex + 1;
 
-  while (turnIndex < order.length) {
-    const nextId = order[turnIndex];
-    invariant(nextId !== undefined, 'Initiative order index must reference a unit');
-    if (unitById(state, nextId)?.status === 'active') {
-      const started = startActivation(
-        { ...state, activation: null, turnIndex, initiativeOrder: order },
-        nextId,
-        rules,
-      );
-      return { state: started.state, events: [...events, ...started.events] };
+  while (true) {
+    while (turnIndex < order.length) {
+      const nextId = order[turnIndex];
+      invariant(nextId !== undefined, 'Initiative order index must reference a unit');
+      const nextUnit = unitById(state, nextId);
+      if (nextUnit?.status === 'active' && canTakeCombatActivation(nextUnit, state.rulesetId)) {
+        const started = startActivation(
+          { ...state, activation: null, turnIndex, initiativeOrder: order },
+          nextId,
+          rules,
+        );
+        return { state: started.state, events: [...events, ...started.events] };
+      }
+      turnIndex += 1;
     }
-    turnIndex += 1;
-  }
 
-  if (round >= rules.limits.maximumRounds) {
-    return resolveBattle({ ...state, activation: null }, { reason: 'round-limit' }, events);
-  }
+    if (round >= rules.limits.maximumRounds) {
+      return resolveBattle({ ...state, activation: null }, { reason: 'round-limit' }, events);
+    }
 
-  round += 1;
-  order = orderInitiative(state.units, rules, state.rulesetId);
-  turnIndex = 0;
-  const roundState: BattleState = {
-    ...state,
-    activation: null,
-    round,
-    initiativeOrder: order,
-    turnIndex,
-  };
-  const roundStarted: RoundStartedEvent = {
-    type: 'round.started',
-    battleId: state.battleId,
-    revision: state.revision,
-    round,
-    initiativeOrder: order,
-  };
-  events.push(roundStarted);
-  const nextId = order[0];
-  invariant(nextId !== undefined, 'An active battle must have a unit to activate');
-  const started = startActivation(roundState, nextId, rules);
-  return { state: started.state, events: [...events, ...started.events] };
+    round += 1;
+    order = orderInitiative(state.units, rules, state.rulesetId);
+    turnIndex = 0;
+    state = {
+      ...state,
+      activation: null,
+      round,
+      initiativeOrder: order,
+      turnIndex,
+    };
+    events.push({
+      type: 'round.started',
+      battleId: state.battleId,
+      revision: state.revision,
+      round,
+      initiativeOrder: order,
+    });
+  }
 }
 
 export function startBattle(setup: BattleSetup): CombatTransition {
