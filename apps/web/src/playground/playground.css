@@ -234,6 +234,59 @@
   padding: 0.4rem 0;
   border-top: 1px solid #454238;
 }
+.multiside-map-editor {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  max-width: 100%;
+}
+.multiside-map-editor h3 {
+  margin: 0;
+}
+.multiside-map-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.multiside-map-grid {
+  display: grid;
+  grid-template-columns: repeat(15, minmax(1.7rem, 2.2rem));
+  gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.multiside-map-tile {
+  min-width: 1.7rem;
+  height: 2rem;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #514e43;
+  color: #e6ddc6;
+  background: #55584a;
+  font-size: 0.58rem;
+  line-height: 1;
+  text-overflow: clip;
+}
+.multiside-map-tile.terrain-mud {
+  background: #66513e;
+}
+.multiside-map-tile.terrain-fire {
+  background: #8b4d35;
+}
+.multiside-map-tile.height-1 {
+  border-bottom-width: 3px;
+}
+.multiside-map-tile.height-2 {
+  border-bottom-width: 5px;
+}
+.multiside-map-tile.blocked {
+  box-shadow: inset 0 0 0 2px #c7b99b;
+  background-image: repeating-linear-gradient(135deg, transparent 0 4px, #252521 4px 6px);
+}
+.multiside-map-tile:focus-visible {
+  outline: 2px solid #e4ca84;
+  outline-offset: 1px;
+}
 .multiside-editor [role='alert'] {
   border-left: 3px solid #b86e54;
   padding: 0.5rem 1rem;

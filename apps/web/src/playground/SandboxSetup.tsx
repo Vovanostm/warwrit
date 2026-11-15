@@ -1,19 +1,46 @@
+import { useState } from 'react';
 import type {
   CombatLabBattleConfigV2,
+  CombatLabHex,
   PlaygroundBootstrap,
   PlaygroundScenario,
   VersionedCombatLabBattleConfig,
 } from '@warwrit/protocol';
-import { validateMapDraft } from '../combat-lab/editor-model.js';
+import { paintBattleTile, validateMapDraft } from '../combat-lab/editor-model.js';
+import type { TilePatch } from '../combat-lab/editor-model.js';
 import { BattleEditor } from '../combat-lab/BattleEditor.js';
 
 const record = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 
+export function paintMultisideBattleTile(
+  battle: CombatLabBattleConfigV2,
+  hex: { q: number; r: number },
+  patch: TilePatch,
+): CombatLabBattleConfigV2 {
+  return {
+    ...battle,
+    map: { ...battle.map, tiles: paintBattleTile(battle.map.tiles, hex, patch) },
+  };
+}
+
+export function parseRetreatHexes(value: string): CombatLabHex[] | null {
+  const pairs = value.trim() ? value.trim().split(/\s+/) : [];
+  const hexes: CombatLabHex[] = [];
+  for (const pair of pairs) {
+    if (!/^\d+,\d+$/.test(pair)) return null;
+    const [q, r] = pair.split(',').map(Number);
+    if (q === undefined || r === undefined) return null;
+    hexes.push({ q, r });
+  }
+  return hexes.length <= 165 ? hexes : null;
+}
+
 /** Keep malformed JSON in the text editor; never mount visual controls on unsafe shapes. */
 export function isEditableScenario(value: unknown): value is PlaygroundScenario {
   if (!record(value) || value['schemaRevision'] !== 2 || !record(value['initial'])) return false;
   const initial = value['initial'];
+  if (initial['version'] !== 1 && initial['version'] !== 2) return false;
   return (
     record(initial['map']) &&
     validateMapDraft({ version: 1, ...initial['map'] }).length === 0 &&
@@ -27,19 +54,31 @@ export function isEditableScenario(value: unknown): value is PlaygroundScenario 
         typeof unit['sideId'] === 'string' &&
         (initial['version'] !== 2 || typeof unit['partyId'] === 'string') &&
         record(unit['position']) &&
-        typeof unit['position']['q'] === 'number' &&
-        typeof unit['position']['r'] === 'number',
+        Number.isInteger(unit['position']['q']) &&
+        Number.isInteger(unit['position']['r']) &&
+        (unit['skillRanks'] === undefined || record(unit['skillRanks'])),
     ) &&
     (initial['version'] !== 2 ||
       (Array.isArray(initial['sides']) &&
         Array.isArray(initial['parties']) &&
-        initial['sides'].every((side) => record(side) && typeof side['id'] === 'string') &&
+        initial['sides'].every(
+          (side) =>
+            record(side) &&
+            typeof side['id'] === 'string' &&
+            Array.isArray(side['retreatHexes']) &&
+            side['retreatHexes'].length <= 165 &&
+            side['retreatHexes'].every(
+              (hex) => record(hex) && Number.isInteger(hex['q']) && Number.isInteger(hex['r']),
+            ),
+        ) &&
         initial['parties'].every(
           (party) =>
             record(party) &&
             typeof party['id'] === 'string' &&
             typeof party['sideId'] === 'string' &&
-            ['player', 'npc'].includes(String(party['kind'])),
+            ['player', 'npc'].includes(String(party['kind'])) &&
+            (party['controllerId'] === undefined ||
+              (typeof party['controllerId'] === 'string' && party['controllerId'].length > 0)),
         ))) &&
     Array.isArray(value['equipment']) &&
     value['equipment'].every(
@@ -222,6 +261,9 @@ export function MultisideBattleEditor({
   readonly disabled: boolean;
   readonly onChange: (value: VersionedCombatLabBattleConfig) => void;
 }) {
+  const [tilePatch, setTilePatch] = useState<TilePatch>({ terrain: 'mud' });
+  const [retreatDrafts, setRetreatDrafts] = useState<Record<string, string>>({});
+  const [retreatErrors, setRetreatErrors] = useState<Record<string, string>>({});
   const errors: string[] = [];
   if (value.sides.length < 2 || value.sides.length > 3) errors.push('Нужно от 2 до 3 сторон.');
   if (value.units.length > 36) errors.push('В бою может быть не более 36 бойцов.');
@@ -239,6 +281,8 @@ export function MultisideBattleEditor({
     if (count < 1 || count > 12)
       errors.push(`Сторона ${side.id}: от 1 до 12 бойцов (сейчас ${count}).`);
     if (!side.retreatHexes.length) errors.push(`У стороны ${side.id} не задана область отхода.`);
+    if (side.retreatHexes.length > 165)
+      errors.push(`Сторона ${side.id}: область отхода не может занимать более 165 клеток.`);
     for (const hex of side.retreatHexes) {
       if (
         !Number.isInteger(hex.q) ||
@@ -345,6 +389,56 @@ export function MultisideBattleEditor({
       <button type="button" disabled={disabled || value.sides.length >= 3} onClick={addSide}>
         Добавить сторону
       </button>
+      <section className="multiside-map-editor" aria-label="Карта боя и расположение бойцов">
+        <h3>Карта и расположение · 15 × 11</h3>
+        <div className="multiside-map-tools" role="group" aria-label="Кисть карты">
+          {(
+            [
+              ['plain', 'Ровное поле', { terrain: 'plain' }],
+              ['mud', 'Грязь', { terrain: 'mud' }],
+              ['fire', 'Огонь', { terrain: 'fire' }],
+              ['blocked', 'Препятствие', { blocked: true }],
+              ['clear', 'Убрать препятствие', { blocked: false }],
+              ['height-0', 'Высота 0', { height: 0 }],
+              ['height-1', 'Высота 1', { height: 1 }],
+              ['height-2', 'Высота 2', { height: 2 }],
+            ] as const
+          ).map(([id, label, patch]) => (
+            <button
+              key={id}
+              type="button"
+              disabled={disabled}
+              aria-pressed={JSON.stringify(tilePatch) === JSON.stringify(patch)}
+              onClick={() => setTilePatch(patch)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="multiside-map-grid" role="group" aria-label="Клетки карты">
+          {value.map.tiles.map((tile) => {
+            const occupants = value.units.filter(
+              (unit) => unit.position.q === tile.q && unit.position.r === tile.r,
+            );
+            return (
+              <button
+                key={`${tile.q},${tile.r}`}
+                type="button"
+                className={`multiside-map-tile terrain-${tile.terrain} height-${tile.height}${tile.blocked ? ' blocked' : ''}`}
+                disabled={disabled}
+                aria-label={`Клетка ${tile.q},${tile.r}: ${tile.terrain}, высота ${tile.height}${tile.blocked ? ', препятствие' : ''}${occupants.length ? `; бойцы ${occupants.map((unit) => unit.id).join(', ')}` : ''}`}
+                title={`${tile.q},${tile.r} · ${tile.terrain} · высота ${tile.height}${tile.blocked ? ' · препятствие' : ''}${occupants.length ? ` · ${occupants.map((unit) => unit.id).join(', ')}` : ''}`}
+                onClick={() => onChange(paintMultisideBattleTile(value, tile, tilePatch))}
+              >
+                {occupants.map((unit) => unit.id.slice(0, 3)).join('/') || `${tile.q},${tile.r}`}
+              </button>
+            );
+          })}
+        </div>
+        <small>
+          Бойцы показаны по своим координатам. Клик по клетке применяет выбранную кисть.
+        </small>
+      </section>
       <div className="multiside-editor-grid">
         {value.sides.map((side) => (
           <fieldset key={side.id} disabled={disabled}>
@@ -372,33 +466,50 @@ export function MultisideBattleEditor({
               Клетки отхода (q,r через пробел)
               <input
                 aria-label={`${side.id} клетки отхода`}
-                value={side.retreatHexes.map(({ q, r }) => `${q},${r}`).join(' ')}
+                value={
+                  retreatDrafts[side.id] ??
+                  side.retreatHexes.map(({ q, r }) => `${q},${r}`).join(' ')
+                }
                 onChange={(e) =>
-                  patch({
-                    sides: value.sides.map((item) =>
-                      item.id !== side.id
-                        ? item
-                        : {
-                            ...item,
-                            retreatHexes: e.target.value
-                              .trim()
-                              .split(/\s+/)
-                              .filter(Boolean)
-                              .flatMap((pair) => {
-                                const [q, r] = pair.split(',').map(Number);
-                                return q !== undefined &&
-                                  r !== undefined &&
-                                  Number.isInteger(q) &&
-                                  Number.isInteger(r)
-                                  ? [{ q, r }]
-                                  : [];
-                              }),
-                          },
-                    ),
-                  })
+                  setRetreatDrafts((drafts) => ({ ...drafts, [side.id]: e.target.value }))
                 }
               />
             </label>
+            {retreatErrors[side.id] && <p role="alert">{retreatErrors[side.id]}</p>}
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => {
+                const parsed = parseRetreatHexes(
+                  retreatDrafts[side.id] ??
+                    side.retreatHexes.map(({ q, r }) => `${q},${r}`).join(' '),
+                );
+                if (parsed === null) {
+                  setRetreatErrors((errors) => ({
+                    ...errors,
+                    [side.id]: 'Введите клетки как q,r, разделяя пары пробелами.',
+                  }));
+                  return;
+                }
+                setRetreatErrors((errors) => {
+                  const next = { ...errors };
+                  delete next[side.id];
+                  return next;
+                });
+                setRetreatDrafts((drafts) => {
+                  const next = { ...drafts };
+                  delete next[side.id];
+                  return next;
+                });
+                patch({
+                  sides: value.sides.map((item) =>
+                    item.id === side.id ? { ...item, retreatHexes: parsed } : item,
+                  ),
+                });
+              }}
+            >
+              Применить клетки отхода
+            </button>
             <button
               type="button"
               disabled={value.sides.length <= 2}
