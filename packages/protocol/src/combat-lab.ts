@@ -1,4 +1,5 @@
 export const COMBAT_LAB_VERSION = 1 as const;
+export const MULTISIDE_COMBAT_LAB_VERSION = 2 as const;
 export const COMBAT_LAB_SCENARIO = 'm0-3v3-v1' as const;
 export const SPRITE_COMBAT_LAB_SCENARIO = 'sprite-6v6-v1' as const;
 export const COMBAT_LAB_EVENT_LIMIT = 128;
@@ -55,11 +56,36 @@ export interface CombatLabBattleConfig {
   readonly map: { readonly name: string; readonly tiles: readonly CombatLabTile[] };
   readonly units: readonly CombatLabCustomUnit[];
 }
+export interface CombatLabBattleConfigV2 {
+  readonly version: 2;
+  readonly name: string;
+  readonly seed: number;
+  readonly map: { readonly name: string; readonly tiles: readonly CombatLabTile[] };
+  readonly sides: readonly {
+    readonly id: string;
+    readonly retreatHexes: readonly CombatLabHex[];
+  }[];
+  readonly parties: readonly {
+    readonly id: string;
+    readonly sideId: string;
+    readonly kind: 'player' | 'npc';
+    readonly controllerId?: string;
+  }[];
+  readonly units: readonly {
+    readonly id: string;
+    readonly profileId: string;
+    readonly sideId: string;
+    readonly partyId: string;
+    readonly position: CombatLabHex;
+    readonly skillRanks?: CombatLabSkillRanks;
+  }[];
+}
+export type VersionedCombatLabBattleConfig = CombatLabBattleConfig | CombatLabBattleConfigV2;
 /** Optional lab-only export metadata; canonical replay schemas remain unchanged. */
 export interface CombatLabReplayPresentation {
-  readonly version: 1;
+  readonly version: 1 | 2;
   readonly controlledSideId: string;
-  readonly battle?: CombatLabBattleConfig;
+  readonly battle?: VersionedCombatLabBattleConfig;
   readonly units: readonly {
     readonly id: string;
     readonly name: string;
@@ -71,7 +97,10 @@ export type CombatLabSkillDefinition = Omit<CombatLabSkill, 'rank' | 'equipmentA
 };
 
 export interface CombatLabCatalog {
-  readonly presets?: readonly { readonly id: string; readonly battle: CombatLabBattleConfig }[];
+  readonly presets?: readonly {
+    readonly id: string;
+    readonly battle: VersionedCombatLabBattleConfig;
+  }[];
   readonly skills?: readonly CombatLabSkillDefinition[];
   readonly profiles: readonly {
     readonly maximumPools?: {
@@ -93,16 +122,17 @@ export interface CombatLabCreate {
   readonly version: typeof COMBAT_LAB_VERSION;
   readonly requestId: string;
   readonly scenarioId: typeof COMBAT_LAB_SCENARIO | typeof SPRITE_COMBAT_LAB_SCENARIO;
-  readonly battle?: CombatLabBattleConfig;
+  readonly battle?: VersionedCombatLabBattleConfig;
 }
 export interface CombatLabViewRequest {
-  readonly version: typeof COMBAT_LAB_VERSION;
+  readonly version: typeof COMBAT_LAB_VERSION | typeof MULTISIDE_COMBAT_LAB_VERSION;
   readonly sessionId: string;
   readonly battleId: string;
 }
 export type CombatLabHex = Readonly<{ q: number; r: number }>;
 export type CombatLabPool = Readonly<{ current: number; maximum: number }>;
 export interface CombatLabAction extends CombatLabViewRequest {
+  readonly version: typeof COMBAT_LAB_VERSION;
   readonly requestId: string;
   readonly expectedViewRevision: number;
   readonly activationId: string;
@@ -209,7 +239,7 @@ export interface CombatLabView extends CombatLabViewRequest {
     readonly recovery: { readonly staminaPerActivation: number };
   };
   readonly scenarioId: typeof COMBAT_LAB_SCENARIO | typeof SPRITE_COMBAT_LAB_SCENARIO;
-  readonly battle?: CombatLabBattleConfig;
+  readonly battle?: VersionedCombatLabBattleConfig;
   readonly controlledSideId: string;
   readonly viewRevision: number;
   readonly rulesetId?:
@@ -218,7 +248,8 @@ export interface CombatLabView extends CombatLabViewRequest {
     | 'sprite-prototype-v2'
     | 'sprite-prototype-v3'
     | 'sprite-prototype-v4'
-    | 'm1-domain-bridge-v5';
+    | 'm1-domain-bridge-v5'
+    | 'm1-domain-bridge-v6';
   readonly status: 'active' | 'resolved';
   readonly round: number;
   readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };
@@ -277,6 +308,7 @@ export interface CombatLabView extends CombatLabViewRequest {
     readonly profileId?: string;
     readonly name?: string;
     readonly sideId: string;
+    readonly partyId?: string;
     readonly weaponId: 'bow' | 'great-weapon' | 'raider' | 'spear' | 'sword-shield';
     readonly position: CombatLabHex;
     readonly status: 'active' | 'dead' | 'retreated' | 'surrendered';

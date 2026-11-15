@@ -1,8 +1,13 @@
 import type { EncounterCommandResponse } from './encounter.js';
-import type { CombatLabBattleConfig, CombatLabView, CombatLabCatalog } from './combat-lab.js';
+import type {
+  VersionedCombatLabBattleConfig,
+  CombatLabView,
+  CombatLabCatalog,
+} from './combat-lab.js';
 
 export const PLAYGROUND_SCHEMA_REVISION = 2 as const;
 export const PLAYGROUND_CONTENT_REVISION = 'playground-v2:m1-domain-bridge-v5' as const;
+export const PLAYGROUND_MULTISIDE_CONTENT_REVISION = 'playground-v3:m1-domain-bridge-v6' as const;
 
 /** Editor adapter: combat/map/participant/seed entities remain owned by combat-lab. */
 export interface PlaygroundScenario {
@@ -10,9 +15,9 @@ export interface PlaygroundScenario {
   readonly contentRevision: string;
   readonly metadata: { readonly name: string };
   readonly mapRef: 'inline';
-  readonly initial: CombatLabBattleConfig;
+  readonly initial: VersionedCombatLabBattleConfig;
   readonly controls: { readonly mode: 'manual' };
-  readonly rulesetId: 'm1-domain-bridge-v5';
+  readonly rulesetId: 'm1-domain-bridge-v5' | 'm1-domain-bridge-v6';
   readonly equipment: readonly {
     readonly unitId: string;
     readonly weaponId: 'sword-shield' | 'spear' | 'bow' | 'raider' | 'great-weapon';

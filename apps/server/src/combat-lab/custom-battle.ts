@@ -1,5 +1,10 @@
 import * as combat from '@warwrit/game-core';
-import type { CombatLabBattleConfig, CombatLabCatalog } from '@warwrit/protocol';
+import type {
+  CombatLabBattleConfig,
+  CombatLabBattleConfigV2,
+  CombatLabCatalog,
+  CombatLabHex,
+} from '@warwrit/protocol';
 
 // Provisional lab equipment/stat presets. These are not bestiary abilities or campaign balance.
 const profileRows = [
@@ -113,7 +118,6 @@ export function combatLabCatalog(): CombatLabCatalog {
     ],
   };
 }
-
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 const keys = (value: Record<string, unknown>, expected: readonly string[]) =>
@@ -241,6 +245,39 @@ export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
   );
 }
 
+export function createCombatLabProfiledUnitSetup(
+  unit: CombatLabBattleConfigV2['units'][number],
+): Omit<combat.CombatUnitSetupV3, 'partyId'> {
+  const profile = combatLabProfiles.find((row) => row.id === unit.profileId);
+  combat.invariant(profile !== undefined, 'Unknown prototype profile');
+  const row = profileRows.find((item) => item[0] === unit.profileId);
+  combat.invariant(row !== undefined, 'Unknown prototype profile');
+  const pools = profile.maximumPools!;
+  return {
+    id: combat.unitId(unit.id),
+    sideId: combat.sideId(unit.sideId),
+    position: combat.hex(unit.position.q, unit.position.r),
+    weaponId: row[2],
+    skillRanks: {},
+    moralePolicy: unit.profileId.startsWith('W')
+      ? 'human'
+      : ['B001', 'B002', 'B003'].includes(unit.profileId)
+        ? 'beast'
+        : 'steady',
+    capabilities: { move: true, attack: true, defend: true, retreat: true },
+    attributes: {
+      health: pools.health,
+      armor: pools.armor,
+      defense: row[5],
+      initiative: row[6],
+      accuracy: unit.profileId === 'W08' ? 38 : unit.profileId === 'W05' ? 30 : 25,
+      stamina: pools.stamina,
+      morale: pools.morale,
+    },
+    initialPools: { ...pools },
+  };
+}
+
 export function createCustomBattleFixture(id: string, config: CombatLabBattleConfig) {
   combat.invariant(isCustomBattle(config), 'Invalid custom battle');
   const saved = structuredClone(config);
@@ -294,7 +331,6 @@ export function createCustomBattleFixture(id: string, config: CombatLabBattleCon
           : ['B001', 'B002', 'B003'].includes(unit.profileId)
             ? 'beast'
             : 'steady',
-        ...(unit.profileId === 'B053' ? { threatProfile: 'mill-slam' as const } : {}),
         attributes: {
           health: pools.health,
           armor: pools.armor,
