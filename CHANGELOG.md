@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: let terrain clicks pass through map labels while retaining
+  the circular place target and keyboard selection. [N07 input correction](docs/work-packages/m1-next/07-world.md#marker-hit-area-correction--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: refuse migration 0031 rollback after kit stock, price,
   revision or purchase cash changes, preserving per-world shop state. [Quest slice](docs/work-packages/M1-QUESTS.md).
   LOCAL.

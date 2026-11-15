@@ -173,3 +173,11 @@ Browser two-account journey, existing focused knowledge/travel tests and real DB
 for changed route authority/races. Do not run a broad performance campaign here.
 A missing accepted offline producer/policy leaves WORLD-3's affected subcase open;
 complete safe known rows and report the recommended bounded decision.
+
+### Marker hit area correction — 2026-11-16
+
+Two native helper terrain clicks near `(32,-160)` and `(-32,-160)` posted
+`SITE staraya-melnitsa` because the multiline label bounding box intercepted
+them. Marker groups and labels now pass pointer input through to the map.
+The explicit circular hit area still selects the place, and keyboard selection
+remains available. Native repeat and final arrival are pending. LOCAL.
