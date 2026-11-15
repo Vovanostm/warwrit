@@ -10,6 +10,8 @@ import { readHuntWorldState, type FirstHuntHostileState } from './first-hunt-run
 import {
   groundSurrenderedHostileGear,
   initializeHostileGearForNewV6Admission,
+  claimHostileGearItems,
+  recordHostileGearTerminal,
   reconcileHostileGearPools,
 } from './first-hunt-gear.js';
 
@@ -162,6 +164,7 @@ describe('canonical hostile gear', () => {
       profile,
       hostile: surrendered,
       terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      terminalRevision: 4,
       location,
     });
     expect(dropped.gear?.status).toBe('DROPPED');
@@ -178,6 +181,7 @@ describe('canonical hostile gear', () => {
         profile,
         hostile: dropped,
         terminalSourceId: 'encounter.hostile-gear.test.terminal',
+        terminalRevision: 4,
         location,
       }),
     ).toEqual(dropped);
@@ -187,6 +191,7 @@ describe('canonical hostile gear', () => {
         profile,
         hostile: dropped,
         terminalSourceId: 'encounter.hostile-gear.test.other-terminal',
+        terminalRevision: 4,
         location,
       }),
     ).toThrow('already dropped');
@@ -221,6 +226,7 @@ describe('canonical hostile gear', () => {
       profile,
       hostile: surrendered,
       terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      terminalRevision: 5,
       location,
     });
     const retry = groundSurrenderedHostileGear({
@@ -228,6 +234,7 @@ describe('canonical hostile gear', () => {
       profile,
       hostile: dropped,
       terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      terminalRevision: 5,
       location,
     });
     expect(retry.gear?.items[1]).toMatchObject({
@@ -237,6 +244,56 @@ describe('canonical hostile gear', () => {
     expect(retry.gear?.items.map((item) => item.itemId)).toEqual(
       original.gear?.items.map((item) => item.itemId),
     );
+  });
+
+  it('makes dead gear available at the verified terminal and removes claimed instances once', () => {
+    const initialized = initializeHostileGearForNewV6Admission({
+      world: world(),
+      encounterId,
+      rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      location,
+    });
+    const dead: FirstHuntHostileState = {
+      ...initialized[0]!,
+      currentPools: { ...initialized[0]!.currentPools, health: 0 },
+    };
+    const terminal = recordHostileGearTerminal({
+      worldId,
+      profile,
+      hostile: dead,
+      terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      terminalRevision: 8,
+    });
+    expect(terminal.gear?.status).toBe('HELD');
+    expect(terminal.gear?.terminalSourceId).toBe('encounter.hostile-gear.test.terminal');
+    expect(world([terminal, ...initialized.slice(1)]).hostiles[0]!.gear?.items).toHaveLength(2);
+
+    const claimedId = terminal.gear!.items[0]!.itemId;
+    const claimed = claimHostileGearItems({
+      worldId,
+      profile,
+      hostile: terminal,
+      itemIds: [claimedId],
+      terminalSourceId: 'encounter.hostile-gear.test.terminal',
+      terminalRevision: 8,
+    });
+    expect(claimed.gear?.items.map((item) => item.itemId)).toEqual(
+      terminal.gear!.items.slice(1).map((item) => item.itemId),
+    );
+    expect(claimed.gear?.claimedItemIds).toEqual([claimedId]);
+    expect(world([claimed, ...initialized.slice(1)]).hostiles[0]!.gear?.claimedItemIds).toEqual([
+      claimedId,
+    ]);
+    expect(() =>
+      claimHostileGearItems({
+        worldId,
+        profile,
+        hostile: claimed,
+        itemIds: [claimedId],
+        terminalSourceId: 'encounter.hostile-gear.test.terminal',
+        terminalRevision: 8,
+      }),
+    ).toThrow('unavailable');
   });
 
   it('rejects forged gear identities and ownership when reading saved hostiles', () => {

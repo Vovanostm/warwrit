@@ -62,7 +62,11 @@ import {
   updateHuntWorldRow,
   type FirstHuntHostileState,
 } from './first-hunt-runtime.js';
-import { groundSurrenderedHostileGear, reconcileHostileGearPools } from './first-hunt-gear.js';
+import {
+  groundSurrenderedHostileGear,
+  reconcileHostileGearPools,
+  recordHostileGearTerminal,
+} from './first-hunt-gear.js';
 
 const COMPANY_SIDE_ID = 'first-hunt-companies';
 const HOSTILE_SIDE_ID = 'first-hunt-hostiles';
@@ -698,7 +702,16 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     const reconciled = hostile.gear
       ? reconcileHostileGearPools(input.worldId, hostile, pools)
       : { ...hostile, currentPools: pools };
-    if (unit.status !== 'surrendered') return reconciled;
+    if (unit.status !== 'surrendered')
+      return pools.health === 0 && reconciled.gear
+        ? recordHostileGearTerminal({
+            worldId: input.worldId,
+            profile: hunt,
+            hostile: reconciled,
+            terminalSourceId: proofSourceId,
+            terminalRevision: input.terminalRevision,
+          })
+        : reconciled;
     if (setup.schemaVersion !== COMBAT_V3_SCHEMA_VERSION || !hostile.gear)
       throw new TypeError('Surrendered hostile is missing its admitted canonical gear');
     return groundSurrenderedHostileGear({
@@ -706,6 +719,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
       profile: hunt,
       hostile: { ...reconciled, disposition: 'surrendered' },
       terminalSourceId: proofSourceId,
+      terminalRevision: input.terminalRevision,
       location: { kind: 'AT', ...hunt.objectiveLocation },
     });
   });
