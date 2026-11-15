@@ -39,6 +39,11 @@ requests.
 
 - 2026-11-16 — Changed: preserve an accepted roadside rescue if Agafya is exiled;
   deliver Sidor alive to Bereznyak without payment and retain him in company food loads. [T032 checkpoint](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16). LOCAL.
+- 2026-11-16 — Fixed: keep modifier-bearing legacy movement plan version 4
+  readable with legacy timing and interpolation; exact geometry dispatch now
+  follows navigation metadata in core and server route loading. Added JSON
+  roundtrip, timing and position regression coverage.
+  [Compatibility checkpoint](docs/work-packages/M1-QUESTS.md#legacy-movement-plan-compatibility--2026-11-16). LOCAL.
 
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation

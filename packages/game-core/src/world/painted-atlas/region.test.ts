@@ -6,6 +6,8 @@ import {
   continuousSurfaceAt,
   findTravelPath,
   isContinuousPointWalkable,
+  positionAt,
+  readContinuousMovementPlan,
 } from '../continuous-movement.js';
 import { continuousLocationPoint } from '../continuous-company.js';
 import { CONTINUOUS_WORLD_REGION, isContinuousRegionVersion } from '../continuous-region.js';
@@ -104,6 +106,42 @@ it('applies custody and exact guide time modifiers to newly compiled plans', () 
   expect(stretcher.planVersion).toBe(4);
   expect(BigInt(stretcher.totalDurationUs)).toBe((baseUs * 3n + 1n) / 2n);
   expect(BigInt(guided.totalDurationUs)).toBe((baseUs * 45n + 31n) / 32n);
+});
+
+it('roundtrips modified legacy plans and retains legacy timing and positioning', () => {
+  const { navigationVersion: _navigationVersion, ...legacyRegion } = CONTINUOUS_WORLD_REGION;
+  const field = buildNavigationField({
+    ...legacyRegion,
+    mapEdition: 'seroe-porechye-continuous-v4',
+  });
+  const path = [
+    { xFp: 0, zFp: 0 },
+    { xFp: 1000, zFp: 0 },
+  ];
+  const base = compileMovementPlan({
+    field,
+    path,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'legacy-base',
+  });
+  const modified = compileMovementPlan({
+    field,
+    path,
+    startedAtMs: '0',
+    movementEpoch: '0',
+    planId: 'legacy-modified',
+    travelModifiers: { custodyModes: ['STRETCHER'] },
+  });
+  const restored = readContinuousMovementPlan(JSON.parse(JSON.stringify(modified)));
+  const midpointMs = (BigInt(restored.totalDurationUs) / 2000n).toString();
+  const midpoint = positionAt(restored, midpointMs);
+
+  expect(modified.planVersion).toBe(4);
+  expect(modified.navigationVersion).toBeUndefined();
+  expect(BigInt(modified.totalDurationUs)).toBe((BigInt(base.totalDurationUs) * 3n + 1n) / 2n);
+  expect(midpoint.xMicroFp).not.toBe(restored.from.xMicroFp);
+  expect(midpoint.xMicroFp).not.toBe(restored.goal.xMicroFp);
 });
 
 it('uses the rendered atlas frame and resolves its authored settlement zone', () => {

@@ -1248,12 +1248,15 @@ function compileLegacyMovementPlan(
 }
 
 function supportedPlanVersion(p: ContinuousMovementPlan): boolean {
-  return p.planVersion === 3 || p.planVersion === 4
-    ? p.navigationVersion === 'polygon-v1'
-    : p.planVersion === 2 && p.navigationVersion === undefined;
+  return p.navigationVersion === 'polygon-v1'
+    ? p.planVersion === 3 || p.planVersion === 4
+    : p.navigationVersion === undefined && (p.planVersion === 2 || p.planVersion === 4);
+}
+function exactPlanGeometry(plan: ContinuousMovementPlan): boolean {
+  return plan.navigationVersion === 'polygon-v1';
 }
 function validateSpanVersion(plan: ContinuousMovementPlan, span: SpeedSpan, index: number): void {
-  if (plan.planVersion === 3 || plan.planVersion === 4) {
+  if (exactPlanGeometry(plan)) {
     validateExactSpan(plan, span, index);
     return;
   }
@@ -1264,7 +1267,7 @@ function validateSpanVersion(plan: ContinuousMovementPlan, span: SpeedSpan, inde
     throw new RangeError('Invalid saved movement plan');
 }
 function baseSpanDuration(plan: ContinuousMovementPlan, span: SpeedSpan): bigint {
-  if (plan.planVersion === 2) return legacySpanDuration(span);
+  if (!exactPlanGeometry(plan)) return legacySpanDuration(span);
   const geometry = span.geometry!;
   const from = plan.path[geometry.segmentIndex]!;
   const to = plan.path[geometry.segmentIndex + 1]!;
@@ -1386,7 +1389,7 @@ export function positionAt(plan: ContinuousMovementPlan, trustedTimeMs: string):
   const start = BigInt(span.startOffsetUs);
   const duration = BigInt(span.endOffsetUs) - start;
   const at = elapsed - start;
-  if (plan.planVersion === 3 || plan.planVersion === 4) {
+  if (exactPlanGeometry(plan)) {
     const geometry = span.geometry!;
     const a = readRatio(geometry.fromT),
       b = readRatio(geometry.toT);

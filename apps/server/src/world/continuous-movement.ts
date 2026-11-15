@@ -164,7 +164,7 @@ function readContinuous(row: StoredPartyRoute | undefined): StoredContinuousMove
       s.execution.plan?.planVersion !== 4) ||
     s.execution.plan.planId !== row.segment_id ||
     !isContinuousRegionVersion(s.execution.plan.mapEdition) ||
-    (s.execution.plan.planVersion === 3 || s.execution.plan.planVersion === 4) !==
+    (s.execution.plan.navigationVersion === 'polygon-v1') !==
       (s.execution.plan.mapEdition === 'seroe-porechye-continuous-v5' ||
         s.execution.plan.mapEdition === PAINTED_ATLAS_REGION_VERSION) ||
     s.execution.plan.speedProfileId !== row.profile_id ||

@@ -451,3 +451,16 @@ passed. Focused movement-timing, guest-food-demand, return-report and contract
 board tests passed (60 tests across six files). Browser playthrough, PostgreSQL integration, and
 native player acceptance are NOT_RUN; enjoyment is NOT_MEASURED. This slice is
 LOCAL; publication and merge are NOT_RUN.
+
+### Legacy movement-plan compatibility — 2026-11-16
+
+Fixed persisted plan dispatch so version 4 uses `navigationVersion` to select
+its geometry: modifier-bearing legacy plans without navigation metadata retain
+legacy span timing and interpolation, while `polygon-v1` plans retain exact
+geometry. Server route loading now validates exact geometry against the same
+metadata instead of assuming every version 4 plan is exact. Added a JSON
+roundtrip regression for a modified legacy plan, including its scaled duration
+and an intermediate position. The focused atlas movement test passed (7 tests);
+game-core typecheck, server typecheck, scoped Prettier and `git diff --check`
+passed. Browser playthrough, PostgreSQL integration and player acceptance are
+NOT_RUN. This compatibility fix is LOCAL; publication and merge are NOT_RUN.
