@@ -235,6 +235,7 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ci.m1.cellar-rescue.01',
     'ci.m1.lost-scout.01',
     'ci.m1.wolf-trail.01',
+    'ci.m1.whose-wolves.01',
     'ci.m1.raider-standard.01',
     'ci.m1.not-one-pack.01',
     'ci.m1.tracks-over-tracks.01',

@@ -1,13 +1,20 @@
 import { createHash } from 'node:crypto';
-import { canonicalJson, createRandomState } from '@warwrit/game-core';
 import type { FirstHuntTermsDto } from '@warwrit/protocol';
 import type { Kysely, Transaction } from 'kysely';
 
 import {
+  canonicalJson,
+  createRandomState,
   FIRST_HUNT_INSTANCE_ID,
   HUNT_PROFILES,
+  WHOSE_WOLVES_INSTANCE_ID,
+  emptyWhoseWolvesQuestState,
   huntProfile,
+  readWhoseWolvesQuestState,
+  type ItemInstance,
   type HuntProfile,
+  type PhysicalContainer,
+  type WhoseWolvesQuestState,
 } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 import { validateFirstHuntHostileGear } from './first-hunt-gear.js';
@@ -46,6 +53,7 @@ export interface FirstHuntWorldState {
   readonly walletId: string;
   readonly walletQ: string;
   readonly hostiles: readonly FirstHuntHostileState[];
+  readonly questState?: WhoseWolvesQuestState;
 }
 
 export interface FirstHuntHostileState {
@@ -81,8 +89,8 @@ export interface FirstHuntHostileGearState {
   readonly terminalRevision?: number;
   /** Item IDs already transferred into company roots; provenance remains there. */
   readonly claimedItemIds?: readonly string[];
-  readonly container: import('@warwrit/game-core').PhysicalContainer;
-  readonly items: readonly import('@warwrit/game-core').ItemInstance[];
+  readonly container: PhysicalContainer;
+  readonly items: readonly ItemInstance[];
 }
 
 interface HostilePoolMaximums {
@@ -156,12 +164,14 @@ export async function updateHuntWorldRow(
     readonly revision: string;
     readonly walletQ?: string;
     readonly hostiles?: readonly FirstHuntHostileState[];
+    readonly questState?: WhoseWolvesQuestState;
   },
 ): Promise<void> {
   const profile = huntProfile(world.instanceId)!;
   const values = {
     revision: next.revision,
     ...(next.walletQ === undefined ? {} : { wallet_q: next.walletQ }),
+    ...(next.questState === undefined ? {} : { quest_state: next.questState }),
     ...(next.hostiles === undefined ? {} : { hostiles: canonicalJson(next.hostiles) }),
   };
   const updated =
@@ -205,6 +215,9 @@ export async function ensureHuntGenesisInTransaction(
     issuer_area_id: profile.issuerLocation.areaId,
     wallet_id: profile.walletId,
     wallet_q: profile.genesisWalletQ,
+    ...(profile.instanceId === WHOSE_WOLVES_INSTANCE_ID
+      ? { quest_state: emptyWhoseWolvesQuestState() }
+      : {}),
     hostiles: hostileGenesis,
   };
   if (profile === FIRST_HUNT)
@@ -264,6 +277,10 @@ export function readHuntWorldState(
 ): FirstHuntWorldState {
   if (!isRecord(value)) throw new TypeError('Hunt world state is invalid');
   const hostiles = readHostiles(value['hostiles'], profile, worldId);
+  const questState =
+    profile.instanceId === WHOSE_WOLVES_INSTANCE_ID
+      ? readWhoseWolvesQuestState(value['quest_state'] ?? emptyWhoseWolvesQuestState())
+      : undefined;
   const seed = Number(value['seed']);
   if (
     value['world_id'] !== worldId ||
@@ -292,6 +309,7 @@ export function readHuntWorldState(
     walletId: profile.walletId,
     walletQ: value['wallet_q'],
     hostiles,
+    ...(questState === undefined ? {} : { questState }),
   };
 }
 

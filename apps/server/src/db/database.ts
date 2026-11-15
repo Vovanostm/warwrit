@@ -402,6 +402,7 @@ export interface DatabaseSchema {
     readonly issuer_area_id: string;
     readonly wallet_id: string;
     readonly wallet_q: string;
+    readonly quest_state: unknown;
     readonly hostiles: unknown;
   };
   readonly ordinary_contract_receipts: {

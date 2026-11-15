@@ -336,7 +336,13 @@ describe('voice-under-boards kit purchase (isolated PostgreSQL)', () => {
           atTick: '0',
           expectedRevision: '0',
           sourceEventId: 'test-accept',
-          gates: { DAYLIGHT: true, RAIDERS_DEFEATED: true, BEAST_DEFEATED: false },
+          gates: {
+            DAYLIGHT: true,
+            RAIDERS_DEFEATED: true,
+            BEAST_DEFEATED: false,
+            HERBALIST_PRESENT: true,
+            HERBALIST_EXILED: false,
+          },
         },
       );
       if (accepted.kind !== 'PREPARED')

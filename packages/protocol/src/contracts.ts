@@ -8,6 +8,7 @@ export const HUNT_INSTANCE_IDS = [
   'ci.m1.raider-standard.01',
   'ci.m1.wolf-trail.01',
   'ci.m1.not-one-pack.01',
+  'ci.m1.whose-wolves.01',
   'ci.m1.mill-beast.01',
 ] as const;
 export type HuntInstanceId = (typeof HUNT_INSTANCE_IDS)[number];
@@ -28,6 +29,15 @@ export interface FirstHuntPickupTargetDto {
   readonly availableWeightG: string;
 }
 
+export interface WhoseWolvesQuestViewDto {
+  readonly findings: readonly ('bones-and-fish-guts' | 'efim-feeds-the-pack')[];
+  readonly outcome?: 'PACK_KILLED' | 'PACK_SPARED_AND_EXPOSED';
+  readonly raidAtTick?: string;
+  readonly guideAvailable?: boolean;
+  readonly issuerRefusalPending?: boolean;
+  readonly deniedOfferInstanceId?: string;
+}
+
 export interface FirstHuntContractViewDto {
   readonly instanceId: HuntInstanceId;
   readonly definitionEdition: string;
@@ -46,6 +56,8 @@ export interface FirstHuntContractViewDto {
     readonly hostileRetreated: boolean;
   };
   readonly pickupTargets: readonly FirstHuntPickupTargetDto[];
+  readonly whoseWolves?: WhoseWolvesQuestViewDto;
+  readonly issuerRefusedOffer?: boolean;
   readonly yourProof: null | {
     readonly itemId: string;
     readonly containerId: string;
@@ -72,6 +84,23 @@ export type FirstHuntCommandDto =
       readonly commandId: string;
       readonly expectedPublicRevision: string;
       readonly type: 'LEAVE' | 'JOIN' | 'PRESENT';
+      readonly payload: { readonly instanceId: string };
+    }
+  | {
+      readonly schemaVersion: 1;
+      readonly commandId: string;
+      readonly expectedPublicRevision: string;
+      readonly type: 'OBSERVE';
+      readonly payload: {
+        readonly instanceId: string;
+        readonly findingId: 'bones-and-fish-guts' | 'efim-feeds-the-pack';
+      };
+    }
+  | {
+      readonly schemaVersion: 1;
+      readonly commandId: string;
+      readonly expectedPublicRevision: string;
+      readonly type: 'REPORT_SPARED';
       readonly payload: { readonly instanceId: string };
     }
   | {
@@ -106,7 +135,18 @@ export interface FirstHuntCommandRejectedDto {
     | 'INSUFFICIENT_FUNDS';
 }
 
-export type FirstHuntCommandResponseDto = FirstHuntCommandAcceptedDto | FirstHuntCommandRejectedDto;
+/** A one-time issuer refusal is a rejected service result with a durable replay receipt. */
+export interface FirstHuntIssuerRefusalDto {
+  readonly schemaVersion: 1;
+  readonly commandId: string;
+  readonly ok: false;
+  readonly receiptId: string;
+  readonly publicRevision: string;
+  readonly result: 'ISSUER_REFUSED_OFFER';
+}
+
+export type FirstHuntCommandResponseDto =
+  FirstHuntCommandAcceptedDto | FirstHuntCommandRejectedDto | FirstHuntIssuerRefusalDto;
 
 export interface WorldTravelPreviewRequestDto {
   readonly schemaVersion: 1;
@@ -174,7 +214,14 @@ export function isFirstHuntCommand(value: unknown): value is FirstHuntCommandDto
     case 'LEAVE':
     case 'JOIN':
     case 'PRESENT':
+    case 'REPORT_SPARED':
       return hasExactKeys(payload, ['instanceId']);
+    case 'OBSERVE':
+      return (
+        hasExactKeys(payload, ['instanceId', 'findingId']) &&
+        (payload['findingId'] === 'bones-and-fish-guts' ||
+          payload['findingId'] === 'efim-feeds-the-pack')
+      );
     case 'PICKUP':
       return (
         hasExactKeys(payload, ['instanceId', 'toContainerId']) && isText(payload['toContainerId'])
@@ -223,6 +270,8 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
       'yourProof',
       ...(Object.hasOwn(contract, 'repeatAvailable') ? ['repeatAvailable'] : []),
       ...(Object.hasOwn(contract, 'terminal') ? ['terminal'] : []),
+      ...(Object.hasOwn(contract, 'whoseWolves') ? ['whoseWolves'] : []),
+      ...(Object.hasOwn(contract, 'issuerRefusedOffer') ? ['issuerRefusedOffer'] : []),
     ]) ||
     !HUNT_INSTANCE_IDS.includes(contract['instanceId'] as HuntInstanceId) ||
     !isText(contract['definitionEdition']) ||
@@ -271,6 +320,42 @@ export function isFirstHuntReadResponse(value: unknown): value is FirstHuntReadR
       !hasExactKeys(terminal, ['effects', 'hostileRetreated']) ||
       !['PENDING', 'APPLIED'].includes(String(terminal['effects'])) ||
       typeof terminal['hostileRetreated'] !== 'boolean'
+    )
+      return false;
+  }
+  if (
+    Object.hasOwn(contract, 'issuerRefusedOffer') &&
+    typeof contract['issuerRefusedOffer'] !== 'boolean'
+  )
+    return false;
+  if (Object.hasOwn(contract, 'whoseWolves')) {
+    const quest = contract['whoseWolves'];
+    if (
+      !isRecord(quest) ||
+      !Object.hasOwn(quest, 'findings') ||
+      Object.keys(quest).some(
+        (key) =>
+          ![
+            'findings',
+            'outcome',
+            'raidAtTick',
+            'guideAvailable',
+            'issuerRefusalPending',
+            'deniedOfferInstanceId',
+          ].includes(key),
+      ) ||
+      !Array.isArray(quest['findings']) ||
+      !quest['findings'].every(
+        (finding) => finding === 'bones-and-fish-guts' || finding === 'efim-feeds-the-pack',
+      ) ||
+      (quest['outcome'] !== undefined &&
+        quest['outcome'] !== 'PACK_KILLED' &&
+        quest['outcome'] !== 'PACK_SPARED_AND_EXPOSED') ||
+      (quest['raidAtTick'] !== undefined && !isDecimal(quest['raidAtTick'])) ||
+      (quest['guideAvailable'] !== undefined && typeof quest['guideAvailable'] !== 'boolean') ||
+      (quest['issuerRefusalPending'] !== undefined &&
+        typeof quest['issuerRefusalPending'] !== 'boolean') ||
+      (quest['deniedOfferInstanceId'] !== undefined && !isText(quest['deniedOfferInstanceId']))
     )
       return false;
   }

@@ -1,6 +1,11 @@
 import type { Hex, UnitAttributes } from '../combat/types.js';
 import { createHexagon } from '../combat/hex.js';
 import {
+  WHOSE_WOLVES_INSTANCE_ID,
+  WHOSE_WOLVES_ISSUER_ID,
+  WHOSE_WOLVES_REWARD_Q,
+} from '../contracts/whose-wolves.js';
+import {
   FIRST_HUNT_ALLIED_SLOTS,
   FIRST_HUNT_COMBAT_MAP,
   FIRST_HUNT_ENCOUNTER_LOCATION,
@@ -148,6 +153,36 @@ export const HUNT_PROFILES: readonly HuntProfile[] = freeze([
       wolf('world.wolf.krivonos.leader.01', { q: 2, r: 0 }),
       wolf('world.wolf.krivonos.02', { q: 2, r: -1 }),
       wolf('world.wolf.krivonos.03', { q: 3, r: -2 }),
+    ],
+    nightOnly: false,
+    needsMillWorkerClues: false,
+  },
+  {
+    instanceId: WHOSE_WOLVES_INSTANCE_ID,
+    profileId: 'ct.m1.whose-wolves.v1',
+    issuerId: WHOSE_WOLVES_ISSUER_ID,
+    issuerLocation: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+    objectiveLocation: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+    walletId: 'wallet.kondrat-ovsyanik.severny-dvor.01',
+    genesisWalletQ: WHOSE_WOLVES_REWARD_Q,
+    rewardQ: WHOSE_WOLVES_REWARD_Q,
+    proofId: 'proof.whose-wolves.pack.01',
+    proofDefinitionId: 'wolf-pelt-trophy',
+    combatMap: { hexes: openField, blocked: [{ q: 1, r: 1 }] },
+    alliedSlots: FIRST_HUNT_ALLIED_SLOTS,
+    repeatHostileSlots: [
+      { q: 0, r: 0 },
+      { q: 0, r: -1 },
+      { q: 0, r: 1 },
+    ],
+    retreatHexes: openRetreat,
+    hostiles: [
+      wolf('world.wolf.tikhaya-gat.leader.01', { q: 2, r: 0 }),
+      wolf('world.wolf.tikhaya-gat.02', { q: 2, r: -1 }),
+      wolf('world.wolf.tikhaya-gat.03', { q: 2, r: -2 }),
+      wolf('world.wolf.tikhaya-gat.04', { q: 3, r: -3 }),
+      wolf('world.wolf.tikhaya-gat.05', { q: 3, r: -2 }),
+      wolf('world.wolf.tikhaya-gat.06', { q: 3, r: -1 }),
     ],
     nightOnly: false,
     needsMillWorkerClues: false,
