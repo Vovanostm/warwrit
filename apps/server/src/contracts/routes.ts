@@ -50,6 +50,7 @@ import {
   canFirstHuntHelperOptIn,
   canFirstHuntParticipantLeave,
   isFirstHuntProofCustodian,
+  prepareOrdinaryHuntProofPresentation,
   prepareFirstHuntProofPickup,
 } from './executor.js';
 import {
@@ -349,15 +350,26 @@ async function executeContractCommand(input: {
           return reject('NOT_AVAILABLE', contract.revision);
       }
       let encounterActive = false;
+      let ownerMayWithdrawBeforeAdmission = false;
       if (commandType === 'LEAVE') {
-        const admission = await transaction
+        const admissions = await transaction
           .selectFrom('encounter_admissions')
-          .select(['encounter_id', 'terminal_revision', 'effects_source_id', 'effects_applied_at'])
+          .select([
+            'encounter_id',
+            'is_current',
+            'terminal_revision',
+            'effects_source_id',
+            'effects_applied_at',
+          ])
           .where('world_id', '=', worldId)
           .where('instance_id', '=', contract.instance_id)
-          .where('is_current', '=', true)
           .forUpdate()
-          .executeTakeFirst();
+          .execute();
+        const admission = admissions.find((entry) => entry.is_current);
+        ownerMayWithdrawBeforeAdmission =
+          role === 'OWNER' &&
+          profile.instanceId !== FIRST_HUNT_INSTANCE_ID &&
+          admissions.length === 0;
         const encounter = admission
           ? await transaction
               .selectFrom('encounters')
@@ -368,6 +380,8 @@ async function executeContractCommand(input: {
           : undefined;
         if (
           !canFirstHuntParticipantLeave({
+            actorRole: role,
+            allowOwnerWithdrawal: ownerMayWithdrawBeforeAdmission,
             admission:
               admission === undefined
                 ? undefined
@@ -579,6 +593,16 @@ async function executeContractCommand(input: {
         if (!recipient) return reject('NOT_AVAILABLE', contract.revision);
         if (BigInt(worldState.walletQ) < rewardQ)
           return reject('INSUFFICIENT_FUNDS', contract.revision);
+        const ordinaryPresentation =
+          profile.instanceId === FIRST_HUNT_INSTANCE_ID
+            ? undefined
+            : prepareOrdinaryHuntProofPresentation({
+                previous: state,
+                profile,
+                sourceId: proof.source_id,
+              });
+        if (profile.instanceId !== FIRST_HUNT_INSTANCE_ID && !ordinaryPresentation)
+          return reject('NOT_AVAILABLE', contract.revision);
         const finance = receiveExternalPayment(state.economy.finance, {
           fromWalletId: worldState.walletId,
           toWalletId: recipient.walletId,
@@ -598,6 +622,9 @@ async function executeContractCommand(input: {
           economy: {
             ...state.economy,
             finance,
+            ...(ordinaryPresentation === undefined
+              ? {}
+              : { physical: ordinaryPresentation.physical }),
             lifecycle: {
               ...state.economy.lifecycle,
               revision: nextCompanyRevision,
@@ -623,6 +650,9 @@ async function executeContractCommand(input: {
             operation: 'PRESENT',
             instanceId: profile.instanceId,
             sourceId: proof.source_id,
+            ...(ordinaryPresentation === undefined
+              ? {}
+              : { issuerContainerId: ordinaryPresentation.containerId }),
             issuerWalletId: worldState.walletId,
             recipientWalletId: recipient.walletId,
             rewardQ: terms.rewardQ,
@@ -674,6 +704,7 @@ async function executeContractCommand(input: {
                 accountId,
                 expectedRevision: request.expectedPublicRevision,
                 encounterActive,
+                allowOwnerWithdrawal: ownerMayWithdrawBeforeAdmission,
               }
             : {
                 type: commandType,
@@ -690,7 +721,8 @@ async function executeContractCommand(input: {
       const values = {
         owner_company_id: participation.next.ownerCompanyId,
         helper_company_id: participation.next.helperCompanyId,
-        owner_join: commandType === 'LEAVE' ? null : participation.next.ownerJoin,
+        owner_join:
+          commandType === 'LEAVE' && role === 'HELPER' ? null : participation.next.ownerJoin,
         helper_join: participation.next.helperJoin,
         owner_join_attempt_no:
           commandType !== 'LEAVE' && participation.next.ownerJoin ? joinAttemptNo : null,
@@ -813,7 +845,8 @@ async function readHuntView(
             : 'OFFERED';
   const proofCompanyId =
     companyId &&
-    (proof?.custodian_company_id === companyId || proof?.redeemed_company_id === companyId)
+    ((proof?.custodian_company_id === companyId && proof.redemption_receipt_id === null) ||
+      (profile.instanceId === FIRST_HUNT_INSTANCE_ID && proof?.redeemed_company_id === companyId))
       ? companyId
       : undefined;
   const proofAggregate = proofCompanyId

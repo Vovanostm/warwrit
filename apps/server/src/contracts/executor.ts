@@ -6,6 +6,7 @@ import {
   canonicalRevision,
   canonicalJson,
   canonicalStateJson,
+  FIRST_HUNT_INSTANCE_ID,
   COMBAT_V2_SCHEMA_VERSION,
   COMBAT_V3_SCHEMA_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
@@ -30,6 +31,7 @@ import type {
   BattleSetupV3,
   BattleState,
   CompanyCombatAggregateState,
+  CompanyPhysicalState,
   ItemAccessEvidence,
   LootAuthorizationEvidence,
   PhysicalContainer,
@@ -41,6 +43,7 @@ import type { DatabaseSchema } from '../db/database.js';
 import { verifyEncounterReplayRow, type EncounterStoredRow } from '../encounters/executor.js';
 import {
   firstHuntTerminalReceiptIdentity,
+  issuerProofContainerId,
   lockCompanyAggregate,
   persistFirstHuntTerminalCompanyTransition,
 } from '../company/repository.js';
@@ -70,6 +73,8 @@ export function canFirstHuntHelperOptIn(hasAdmission: boolean): boolean {
 }
 
 export function canFirstHuntParticipantLeave(input: {
+  readonly actorRole?: 'OWNER' | 'HELPER' | 'NONE';
+  readonly allowOwnerWithdrawal?: boolean;
   readonly admission:
     | {
         readonly terminalRevision: number | null;
@@ -81,6 +86,10 @@ export function canFirstHuntParticipantLeave(input: {
   readonly encounterRevision: number | undefined;
   readonly expectedEffectsSourceId: string | undefined;
 }): boolean {
+  const actorRole = input.actorRole ?? 'HELPER';
+  if (actorRole === 'OWNER')
+    return input.allowOwnerWithdrawal === true && input.admission === undefined;
+  if (actorRole !== 'HELPER') return false;
   if (input.admission === undefined) return true;
   return (
     input.encounterStatus === 'resolved' &&
@@ -151,6 +160,75 @@ export function isFirstHuntProofCustodian(
   custodianCompanyId: string | null,
 ): boolean {
   return custodianCompanyId === authenticatedCompanyId;
+}
+
+/** Transfer an ordinary hunt's actual proof to retained issuer custody. */
+export function prepareOrdinaryHuntProofPresentation(input: {
+  readonly previous: CompanyCombatAggregateState;
+  readonly profile: HuntProfile;
+  readonly sourceId: string;
+}): { readonly physical: CompanyPhysicalState; readonly containerId: string } | undefined {
+  if (input.profile.instanceId === FIRST_HUNT_INSTANCE_ID) return undefined;
+  const physical = input.previous.economy.physical;
+  const worldId = input.previous.economy.lifecycle.worldId;
+  const companyId = input.previous.economy.lifecycle.companyId;
+  const item = physical?.items.find(
+    (entry) => entry.itemId === input.profile.proofId && entry.tombstone === null,
+  );
+  const definition = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === input.profile.proofDefinitionId && entry.enabled,
+  );
+  if (
+    !physical ||
+    !item ||
+    !definition ||
+    item.definitionId !== input.profile.proofDefinitionId ||
+    item.quantity !== 1 ||
+    item.owner.kind !== 'COMPANY' ||
+    item.owner.id !== companyId ||
+    item.provenance.sourceId !== input.sourceId
+  )
+    return undefined;
+  const containerId = issuerProofContainerId(worldId, input.profile.instanceId, input.sourceId);
+  if (physical.containers.some((container) => container.containerId === containerId))
+    return undefined;
+  const presentedItem = {
+    ...item,
+    owner: { kind: 'WORLD' as const, id: worldId },
+    containerId,
+    equipped: null,
+  };
+  const issuerContainer: PhysicalContainer = {
+    containerId,
+    kind: 'STATIC',
+    location: { kind: 'AT', ...input.profile.issuerLocation },
+    custodian: { kind: 'WORLD', id: worldId },
+    carrier: null,
+    capacityG: definition.weightG,
+    access: 'CUSTODIAN',
+    closed: null,
+  };
+  return {
+    containerId,
+    physical: {
+      ...physical,
+      items: physical.items.map((entry) => (entry.itemId === item.itemId ? presentedItem : entry)),
+      containers: [...physical.containers, issuerContainer],
+      knowledge: {
+        ...physical.knowledge,
+        itemSnapshots: [
+          ...physical.knowledge.itemSnapshots.filter((entry) => entry.itemId !== item.itemId),
+          presentedItem,
+        ],
+        containerSnapshots: [
+          ...physical.knowledge.containerSnapshots.filter(
+            (entry) => entry.containerId !== containerId,
+          ),
+          issuerContainer,
+        ],
+      },
+    },
+  };
 }
 
 export type FirstHuntPickupPreparation =

@@ -7,6 +7,7 @@ import {
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
   FIRST_HUNT_INSTANCE_ID,
+  entityId,
   huntProfile,
   availableContainerG,
   campaignTick,
@@ -17,7 +18,12 @@ import {
   receiveExternalPayment,
   readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
-import type { CompanyCombatAggregateState, HuntProfile } from '@warwrit/game-core';
+import type {
+  CompanyCombatAggregateState,
+  HuntProfile,
+  ItemInstance,
+  PhysicalContainer,
+} from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 
 export interface CompanyStorageReceipt {
@@ -52,6 +58,7 @@ export type FirstHuntExternalCompanyTransition =
       readonly operation: 'PRESENT';
       readonly instanceId: string;
       readonly sourceId: string;
+      readonly issuerContainerId?: string;
       readonly issuerWalletId: string;
       readonly recipientWalletId: string;
       readonly rewardQ: string;
@@ -59,6 +66,11 @@ export type FirstHuntExternalCompanyTransition =
       readonly worldWalletBeforeQ: string;
       readonly worldRevisionBefore: string;
     };
+
+/** Stable retained container for ordinary-hunt proof presented to its issuer. */
+export function issuerProofContainerId(worldId: string, instanceId: string, sourceId: string) {
+  return entityId(JSON.stringify(['hunt-issuer-proof-v1', worldId, instanceId, sourceId]));
+}
 
 export async function loadCompanyAggregate(
   transaction: Transaction<DatabaseSchema>,
@@ -939,7 +951,6 @@ function validateFirstHuntExternalTransition(
   }
 
   if (
-    canonicalStateJson(beforeEconomy.physical) !== canonicalStateJson(afterEconomy.physical) ||
     input.event['rewardQ'] !== input.transition.rewardQ ||
     request['payload'] === null ||
     !validProofPresentationDelta(previous, next, input.transition, input.receiptId, hunt)
@@ -1070,7 +1081,7 @@ function validProofPickupDelta(
   );
 }
 
-function validProofPresentationDelta(
+export function validProofPresentationDelta(
   previous: CompanyCombatAggregateState,
   next: CompanyCombatAggregateState,
   transition: Extract<FirstHuntExternalCompanyTransition, { operation: 'PRESENT' }>,
@@ -1078,8 +1089,19 @@ function validProofPresentationDelta(
   hunt: HuntProfile,
 ): boolean {
   const companyId = previous.economy.lifecycle.companyId;
-  const sourceItem = previous.economy.physical?.items.find(
+  const worldId = previous.economy.lifecycle.worldId;
+  const before = previous.economy.physical;
+  const after = next.economy.physical;
+  const sourceItem = before?.items.find(
     (item) => item.itemId === hunt.proofId && item.tombstone === null,
+  );
+  const sourceContainer = sourceItem?.containerId
+    ? before?.containers.find((container) => container.containerId === sourceItem.containerId)
+    : undefined;
+  const activeCharacterIds = new Set(
+    previous.economy.lifecycle.memberships
+      .filter((membership) => membership.endedAt === null)
+      .map((membership) => String(membership.characterId)),
   );
   const pool = previous.economy.finance.pools.find((entry) => entry.poolId === 'local');
   const recipient = previous.economy.finance.wallets.find(
@@ -1088,9 +1110,22 @@ function validProofPresentationDelta(
   if (
     !sourceItem ||
     sourceItem.quantity !== 1 ||
+    sourceItem.definitionId !== hunt.proofDefinitionId ||
     sourceItem.owner.kind !== 'COMPANY' ||
     sourceItem.owner.id !== companyId ||
     sourceItem.provenance.sourceId !== transition.sourceId ||
+    !sourceContainer ||
+    sourceContainer.access !== 'COMPANY' ||
+    sourceContainer.closed !== null ||
+    sourceContainer.location.kind !== 'AT' ||
+    sourceContainer.location.siteId !== hunt.issuerLocation.siteId ||
+    sourceContainer.location.areaId !== hunt.issuerLocation.areaId ||
+    !(
+      (sourceContainer.custodian.kind === 'COMPANY' &&
+        sourceContainer.custodian.id === companyId) ||
+      (sourceContainer.custodian.kind === 'CHARACTER' &&
+        activeCharacterIds.has(sourceContainer.custodian.id))
+    ) ||
     pool?.walletId !== transition.recipientWalletId ||
     recipient?.owner.kind !== 'COMPANY' ||
     recipient.owner.id !== companyId ||
@@ -1115,7 +1150,59 @@ function validProofPresentationDelta(
   } catch {
     return false;
   }
-  return canonicalStateJson(next.economy.finance) === canonicalStateJson(expectedFinance);
+  if (canonicalStateJson(next.economy.finance) !== canonicalStateJson(expectedFinance))
+    return false;
+  if (!before || !after) return false;
+  if (hunt.instanceId === FIRST_HUNT_INSTANCE_ID)
+    return (
+      transition.issuerContainerId === undefined &&
+      canonicalStateJson(before) === canonicalStateJson(after)
+    );
+  const expectedContainerId = issuerProofContainerId(worldId, hunt.instanceId, transition.sourceId);
+  const definition = COMPANY_CATALOGUE.items.find(
+    (item) => item.id === sourceItem.definitionId && item.enabled,
+  );
+  if (
+    transition.issuerContainerId !== expectedContainerId ||
+    before.containers.some((container) => container.containerId === expectedContainerId) ||
+    !definition
+  )
+    return false;
+  const presentedItem: ItemInstance = {
+    ...sourceItem,
+    owner: { kind: 'WORLD', id: worldId },
+    containerId: expectedContainerId,
+    equipped: null,
+  };
+  const issuerContainer: PhysicalContainer = {
+    containerId: expectedContainerId,
+    kind: 'STATIC',
+    location: { kind: 'AT', ...hunt.issuerLocation },
+    custodian: { kind: 'WORLD', id: worldId },
+    carrier: null,
+    capacityG: definition.weightG,
+    access: 'CUSTODIAN',
+    closed: null,
+  };
+  const expectedPhysical = {
+    ...before,
+    items: before.items.map((item) => (item.itemId === hunt.proofId ? presentedItem : item)),
+    containers: [...before.containers, issuerContainer],
+    knowledge: {
+      ...before.knowledge,
+      itemSnapshots: [
+        ...before.knowledge.itemSnapshots.filter((item) => item.itemId !== hunt.proofId),
+        presentedItem,
+      ],
+      containerSnapshots: [
+        ...before.knowledge.containerSnapshots.filter(
+          (container) => container.containerId !== expectedContainerId,
+        ),
+        issuerContainer,
+      ],
+    },
+  };
+  return canonicalStateJson(after) === canonicalStateJson(expectedPhysical);
 }
 
 function isNonEmpty(value: unknown): value is string {

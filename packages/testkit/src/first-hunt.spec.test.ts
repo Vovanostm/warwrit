@@ -295,4 +295,62 @@ describe('FIRST HUNT participation lifecycle', () => {
       },
     });
   });
+
+  it('allows only an explicitly authorized pre-admission owner to withdraw the whole offer', () => {
+    const state = {
+      revision: '3',
+      ownerCompanyId: 'owner-company',
+      helperCompanyId: 'helper-company',
+      ownerJoin: {
+        companyId: 'owner-company',
+        accountId: 'owner-account',
+        publicRevision: '2',
+        campaignTick: '40',
+      },
+      helperJoin: {
+        companyId: 'helper-company',
+        accountId: 'helper-account',
+        publicRevision: '6',
+        campaignTick: '40',
+      },
+    } as const;
+    expect(
+      prepareFirstHuntLifecycleTransition(state, {
+        type: 'LEAVE',
+        companyId: 'owner-company',
+        accountId: 'owner-account',
+        expectedRevision: '3',
+        encounterActive: false,
+        allowOwnerWithdrawal: true,
+      }),
+    ).toEqual({
+      kind: 'PREPARED',
+      next: {
+        revision: '4',
+        ownerCompanyId: null,
+        helperCompanyId: null,
+        ownerJoin: null,
+        helperJoin: null,
+      },
+    });
+    expect(
+      prepareFirstHuntLifecycleTransition(state, {
+        type: 'LEAVE',
+        companyId: 'owner-company',
+        accountId: 'owner-account',
+        expectedRevision: '3',
+        encounterActive: false,
+      }),
+    ).toEqual({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+    expect(
+      prepareFirstHuntLifecycleTransition(state, {
+        type: 'LEAVE',
+        companyId: 'owner-company',
+        accountId: 'owner-account',
+        expectedRevision: '3',
+        encounterActive: true,
+        allowOwnerWithdrawal: true,
+      }),
+    ).toEqual({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+  });
 });
