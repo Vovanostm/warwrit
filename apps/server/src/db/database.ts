@@ -143,6 +143,7 @@ interface CompanyReturnReportCursorTable {
   readonly acknowledged_event_sequence: string;
   readonly acknowledged_movement_count: string;
   readonly acknowledged_food: unknown;
+  readonly acknowledged_contract_outcomes: unknown;
   readonly acknowledged_owed_q: string;
   readonly acknowledged_debt_q: string;
   readonly last_acknowledged_report_id: string | null;
@@ -151,6 +152,7 @@ interface CompanyReturnReportCursorTable {
   readonly offered_event_sequence: string | null;
   readonly offered_movement_count: string | null;
   readonly offered_food: unknown | null;
+  readonly offered_contract_outcomes: unknown;
   readonly offered_owed_q: string | null;
   readonly offered_debt_q: string | null;
   readonly offered_report: unknown | null;

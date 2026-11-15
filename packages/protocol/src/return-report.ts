@@ -42,6 +42,12 @@ export interface CompanyReturnReportDto {
   };
   readonly debt: { readonly currentQ: string };
   readonly events: readonly CompanyReturnReportEventDto[];
+  readonly contractOutcomes?: readonly {
+    readonly instanceId: 'ci.m1.empty-watch-record.01';
+    readonly outcome:
+      'PROKOP_HANDED_OVER' | 'PROOF_DESTROYED' | 'REFUGEE_CAMP_REMOVED' | 'OLD_FORD_REVEALED';
+    readonly atTick: string;
+  }[];
 }
 
 export interface CompanyReturnReportReadResponseDto {

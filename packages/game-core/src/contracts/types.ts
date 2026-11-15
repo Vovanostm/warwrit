@@ -49,6 +49,8 @@ export interface ContractDefinition {
 export interface ContractInstanceBinding {
   readonly instanceId: string;
   readonly definitionId: string;
+  /** Alternate immutable definitions for a spawn-time truth chosen for this same instance. */
+  readonly alternateDefinitionIds?: readonly string[];
   readonly definitionEdition: string;
   readonly terms: { readonly status: 'UNBOUND' };
 }

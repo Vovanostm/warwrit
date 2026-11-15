@@ -111,17 +111,33 @@ function editionShape(value: unknown): value is ContractEdition {
   )
     return false;
 
-  const instancesValid = value['initialInstances'].every(
-    (instance) =>
-      isRecord(instance) &&
-      exactKeys(instance, ['instanceId', 'definitionId', 'definitionEdition', 'terms']) &&
-      nonEmptyString(instance['instanceId']) &&
-      nonEmptyString(instance['definitionId']) &&
-      instance['definitionEdition'] === value['editionId'] &&
-      isRecord(instance['terms']) &&
-      exactKeys(instance['terms'], ['status']) &&
-      instance['terms']['status'] === 'UNBOUND',
-  );
+  const instancesValid = value['initialInstances'].every((instance) => {
+    if (
+      !isRecord(instance) ||
+      !(
+        exactKeys(instance, ['instanceId', 'definitionId', 'definitionEdition', 'terms']) ||
+        exactKeys(instance, [
+          'instanceId',
+          'definitionId',
+          'alternateDefinitionIds',
+          'definitionEdition',
+          'terms',
+        ])
+      ) ||
+      !nonEmptyString(instance['instanceId']) ||
+      !nonEmptyString(instance['definitionId']) ||
+      instance['definitionEdition'] !== value['editionId'] ||
+      (instance['alternateDefinitionIds'] !== undefined &&
+        !stringArray(instance['alternateDefinitionIds'])) ||
+      !isRecord(instance['terms']) ||
+      !exactKeys(instance['terms'], ['status']) ||
+      instance['terms']['status'] !== 'UNBOUND'
+    )
+      return false;
+    const alternatives =
+      (instance['alternateDefinitionIds'] as readonly string[] | undefined) ?? [];
+    return !alternatives.includes(instance['definitionId']) && !hasDuplicates(alternatives);
+  });
   const scenesValid = value['scenes'].every((scene) => {
     if (
       !isRecord(scene) ||
@@ -188,10 +204,6 @@ function addUniqueIssues(issues: string[], label: string, values: readonly strin
 }
 
 function validateEdition(edition: ContractEdition, issues: string[]): void {
-  if (edition.definitions.length !== 8) issues.push('INVALID_DEFINITION_COUNT');
-  if (edition.initialInstances.length !== 8) issues.push('INVALID_INITIAL_INSTANCE_COUNT');
-  if (edition.scenes.length !== 11) issues.push('INVALID_SCENE_COUNT');
-
   const definitionIds = edition.definitions.map((definition) => definition.definitionId);
   const instanceIds = edition.initialInstances.map((instance) => instance.instanceId);
   const sceneIds = edition.scenes.map((scene) => scene.sceneId);
@@ -200,6 +212,47 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
   addUniqueIssues(issues, 'INSTANCE', instanceIds);
   addUniqueIssues(issues, 'SCENE', sceneIds);
   addUniqueIssues(issues, 'SOURCE_SLOT', slotIds);
+
+  const originalDefinitionIds = [
+    'ct.m1.mill-worker.v1',
+    'ct.m1.mill-beast.v1',
+    'ct.m1.road-tracks.v1',
+    'ct.m1.missing-herbs.v1',
+    'ct.m1.cellar-rescue.v1',
+    'ct.m1.lost-scout.v1',
+    'ct.m1.wolf-trail.v1',
+    'ct.m1.raider-standard.v1',
+  ];
+  const originalInstanceIds = [
+    'ci.m1.mill-worker.01',
+    'ci.m1.mill-beast.01',
+    'ci.m1.road-tracks.01',
+    'ci.m1.missing-herbs.01',
+    'ci.m1.cellar-rescue.01',
+    'ci.m1.lost-scout.01',
+    'ci.m1.wolf-trail.01',
+    'ci.m1.raider-standard.01',
+  ];
+  const originalSceneIds = [
+    'MILL-01',
+    'MILL-02',
+    'MILL-03',
+    'MILL-04',
+    'HUNT-01',
+    'HUNT-02',
+    'HUNT-03',
+    'INVEST-01',
+    'INVEST-02',
+    'RESCUE-01',
+    'RESCUE-02',
+  ];
+  if (
+    originalDefinitionIds.some((id) => !definitionIds.includes(id)) ||
+    originalInstanceIds.some((id) => !instanceIds.includes(id)) ||
+    originalSceneIds.some((id) => !sceneIds.includes(id))
+  ) {
+    issues.push('MISSING_ORIGINAL_CONTRACT_COVERAGE');
+  }
 
   if (new Set(edition.definitions.map((definition) => definition.template)).size !== 3) {
     issues.push('INVALID_TEMPLATE_COVERAGE');
@@ -244,10 +297,27 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
   for (const instance of edition.initialInstances) {
     if (!definitionsById.has(instance.definitionId))
       issues.push(`UNKNOWN_INSTANCE_DEFINITION:${instance.instanceId}`);
+    for (const alternateDefinitionId of instance.alternateDefinitionIds ?? []) {
+      const primary = definitionsById.get(instance.definitionId);
+      const alternate = definitionsById.get(alternateDefinitionId);
+      if (!alternate) {
+        issues.push(`UNKNOWN_ALTERNATE_DEFINITION:${instance.instanceId}:${alternateDefinitionId}`);
+      } else if (
+        primary &&
+        (alternate.template !== primary.template ||
+          alternate.issuerRoleId !== primary.issuerRoleId ||
+          JSON.stringify(alternate.issuerLocation) !== JSON.stringify(primary.issuerLocation))
+      ) {
+        issues.push(
+          `INCOMPATIBLE_ALTERNATE_DEFINITION:${instance.instanceId}:${alternateDefinitionId}`,
+        );
+      }
+    }
   }
   const instanceCounts = new Map<string, number>();
   for (const instance of edition.initialInstances) {
-    instanceCounts.set(instance.definitionId, (instanceCounts.get(instance.definitionId) ?? 0) + 1);
+    for (const definitionId of [instance.definitionId, ...(instance.alternateDefinitionIds ?? [])])
+      instanceCounts.set(definitionId, (instanceCounts.get(definitionId) ?? 0) + 1);
   }
   if (
     definitionsById.size !== edition.definitions.length ||

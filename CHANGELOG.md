@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
+  Record the retained company's next contracts, voluntary helper preparation
+  and STOP/reload continuation. [Native continuation](docs/work-packages/m1-next/02-next-contract.md#native-continuation-checkpoint--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: source-backed hostile gear pickup in hunt outcomes and
   earned «Живучий» proposals with explicit consent/refusal and saved history.
   [Loot journey](docs/work-packages/M1-LOOT-SALE.md#current-implementation--2026-11-15)
@@ -40,6 +44,13 @@ requests.
 - 2026-11-15 — Changed: accept the first sword-specialization retraining and
   the earned nickname «Живучий», preserving explicit player consent.
   [Owner-approved conditions](docs/work-packages/m1-next/06-company-capabilities.md#retraining-and-earned-nickname--owner-decision-2026-11-15). LOCAL.
+- 2026-11-15 — Fixed: delay the empty-watch camp and old-ford outcomes until
+  their campaign timing and local Prokop read are satisfied. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
+- 2026-11-15 — Fixed: show a no-payout contract ending without implying a
+  reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
+- 2026-11-15 — Added: implement «Обход, которого не было» with a paid
+  hand-over or no-payment proof-destruction ending and saved town, atlas and
+  return-report consequences. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 
 - 2026-11-15 — Added: a persistent return report with observed events, settled
   food and payroll facts, explicit acknowledgement and safe lost-response retry.

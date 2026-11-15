@@ -1,6 +1,6 @@
 import { executeCommandTransaction } from '../db/command-transaction.js';
 import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 
 import {
   canonicalJson,
@@ -32,6 +32,7 @@ import type { Kysely, Transaction } from 'kysely';
 
 import { resolveSessionAccount } from '../auth/session.js';
 import { persistContractRewardPayment } from '../company/contract-payout.js';
+import { grantEmptyWatchOldFordMarker } from './cartography.js';
 import { catchUpStationaryCompany } from '../company/executor.js';
 import {
   findOwnedCompanyId,
@@ -40,6 +41,12 @@ import {
 } from '../company/repository.js';
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock, readWorldLight } from '../world/clock.js';
+import {
+  EMPTY_WATCH_CAMP_DELAY_TICKS,
+  canObserveEmptyWatchFordAt,
+  emptyWatchFordFact,
+  emptyWatchTerminalFact,
+} from './empty-watch.js';
 import {
   ensureFirstHuntGenesisInTransaction,
   ensureHuntGenesisInTransaction,
@@ -79,7 +86,25 @@ async function ensureOrdinaryGenesis(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
 ): Promise<void> {
-  for (const profile of ORDINARY_CONTRACT_PROFILES) {
+  for (const offeredProfile of ORDINARY_CONTRACT_PROFILES) {
+    let profile = offeredProfile;
+    if (offeredProfile.instanceId === 'ci.m1.light-sack.01') {
+      const existing = await transaction
+        .selectFrom('ordinary_contracts')
+        .select('instance_id')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', offeredProfile.instanceId)
+        .executeTakeFirst();
+      if (existing) continue;
+      const definitionId =
+        randomInt(2) === 0 ? 'ct.m1.light-sack.measure-error.v1' : 'ct.m1.light-sack.damp-rye.v1';
+      const scenarioProfile = ordinaryContractProfileVersion(
+        offeredProfile.instanceId,
+        definitionId,
+      );
+      if (!scenarioProfile) throw new TypeError('Light-sack scenario profile is missing');
+      profile = scenarioProfile;
+    }
     await transaction
       .insertInto('ordinary_contracts')
       .values({
@@ -120,6 +145,7 @@ export function contractView(
   standingAt: ContractPlace | null,
   gates: Readonly<Record<OrdinaryStepGate, boolean>>,
   battleStarted: boolean,
+  currentTick?: string,
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const role =
@@ -131,6 +157,46 @@ export function contractView(
   const atIssuer =
     standingAt?.siteId === terms.issuerPlace.siteId &&
     standingAt.areaId === terms.issuerPlace.areaId;
+  const terminalFact = state.facts.find(
+    (fact) =>
+      fact.companyId === state.outcome?.companyId &&
+      fact.sourceEventId === state.outcome?.sourceEventId &&
+      fact.atTick === state.outcome?.atTick,
+  );
+  const emptyWatchTerminal =
+    profile.instanceId === 'ci.m1.empty-watch-record.01' && state.outcome
+      ? emptyWatchTerminalFact(state)
+      : undefined;
+  const terminalStep =
+    terminalFact === undefined
+      ? undefined
+      : terms.steps.find((step) => step.produces.includes(terminalFact.slotId));
+  const emptyWatchPublicConsequences =
+    profile.instanceId === 'ci.m1.empty-watch-record.01' &&
+    emptyWatchTerminal?.slotId === 'empty-watch-sack-handed-over'
+      ? {
+          kind: 'EMPTY_WATCH_RECORD' as const,
+          refugeeCamp:
+            currentTick !== undefined &&
+            BigInt(currentTick) >= BigInt(state.outcome!.atTick) + EMPTY_WATCH_CAMP_DELAY_TICKS
+              ? ('REMOVED' as const)
+              : ('PRESENT' as const),
+          watchman: 'IN_CUSTODY' as const,
+        }
+      : emptyWatchTerminal?.slotId === 'empty-watch-proof-destroyed'
+        ? {
+            kind: 'EMPTY_WATCH_RECORD' as const,
+            refugeeCamp: 'PRESENT' as const,
+            watchman: 'ON_DUTY' as const,
+          }
+        : undefined;
+  const lateFordStep = profile.steps.find((step) => step.stepId === 'ask-prokop-about-old-ford');
+  const knowsOldFord =
+    companyId !== undefined && emptyWatchFordFact(state, companyId) !== undefined;
+  const visibleSteps = [
+    ...terms.steps.filter((step) => step.stepId !== 'ask-prokop-about-old-ford'),
+    ...(knowsOldFord && lateFordStep ? [lateFordStep] : []),
+  ];
   return {
     instanceId: profile.instanceId,
     template: terms.template,
@@ -141,7 +207,14 @@ export function contractView(
     yourRole: role,
     helperSlot: state.helperCompanyId === null ? 'AVAILABLE' : 'OCCUPIED',
     state: state.outcome ? 'COMPLETED' : state.ownerCompanyId ? 'ACTIVE' : 'OFFERED',
-    completedByYou: state.outcome !== null && state.outcome.companyId === companyId,
+    completedByYou:
+      state.outcome !== null &&
+      state.outcome.companyId === companyId &&
+      terminalStep?.payoutPolicy !== 'NO_PAYOUT',
+    ...(terminalStep
+      ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
+      : {}),
+    ...(emptyWatchPublicConsequences ? { publicConsequences: emptyWatchPublicConsequences } : {}),
     canAccept:
       companyId !== undefined &&
       state.outcome === null &&
@@ -160,21 +233,27 @@ export function contractView(
       state.outcome === null &&
       !battleStarted &&
       state.custody.length === 0,
-    steps: terms.steps.map((step) => ({
-      stepId: step.stepId,
-      action: step.action,
-      location: step.place,
-      doneByYou:
+    steps: visibleSteps.map((step) => {
+      const doneByYou =
         companyId !== undefined &&
         step.produces.every((slotId) =>
           state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
-        ),
-      blocker:
-        companyId === undefined
-          ? 'NOT_A_PARTICIPANT'
-          : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
-      completes: step.completes === true,
-    })),
+        );
+      return {
+        stepId: step.stepId,
+        action: step.action,
+        location: step.place,
+        doneByYou,
+        ...(doneByYou && step.resultTextKey !== undefined
+          ? { findingTextKey: `contract.${profile.instanceId}.result.${step.resultTextKey}` }
+          : {}),
+        blocker:
+          companyId === undefined
+            ? 'NOT_A_PARTICIPANT'
+            : ordinaryStepBlocker(state, step, { companyId, standingAt, gates }),
+        completes: step.completes === true,
+      };
+    }),
     yourCustody: state.custody
       .filter((entry) => entry.companyId === companyId)
       .map((entry) => entry.personId),
@@ -214,6 +293,46 @@ function isAccepted(
     (value as Record<string, unknown>)['ok'] === true &&
     (value as Record<string, unknown>)['commandId'] === commandId
   );
+}
+
+async function observeEmptyWatchFordAtKamennyBrod(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  companyId: string,
+  standingAt: ContractPlace | null,
+  currentTick: string,
+  nowMs: string,
+  profile: OrdinaryContractProfile,
+  state: OrdinaryContractState,
+): Promise<OrdinaryContractState> {
+  if (
+    profile.instanceId !== 'ci.m1.empty-watch-record.01' ||
+    !canObserveEmptyWatchFordAt(state, companyId, standingAt, currentTick) ||
+    emptyWatchFordFact(state, companyId)
+  )
+    return state;
+  const sourceEventId = `${state.outcome!.sourceEventId}:old-ford`;
+  const observed = readOrdinaryContractState(profile, {
+    ...state,
+    revision: (BigInt(state.revision) + 1n).toString(),
+    facts: [
+      ...state.facts,
+      {
+        slotId: 'empty-watch-old-ford-revealed',
+        companyId,
+        sourceEventId,
+        atTick: currentTick,
+      },
+    ],
+  });
+  await transaction
+    .updateTable('ordinary_contracts')
+    .set({ revision: observed.revision, state: observed })
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .executeTakeFirstOrThrow();
+  await grantEmptyWatchOldFordMarker(transaction, worldId, companyId, new Date(Number(nowMs)));
+  return observed;
 }
 
 async function executeOrdinaryCommand(
@@ -299,6 +418,19 @@ async function executeOrdinaryCommand(
   );
   if (prepared.kind === 'REJECTED') return reject(prepared.code);
 
+  if (
+    profile.instanceId === 'ci.m1.empty-watch-record.01' &&
+    request.type === 'STEP' &&
+    request.stepId === 'throw-sack-in-river'
+  ) {
+    await grantEmptyWatchOldFordMarker(
+      transaction,
+      worldId,
+      companyId,
+      new Date(Number(clock.nowMs)),
+    );
+  }
+
   let walletQ = BigInt(row.wallet_q);
   if (prepared.payout) {
     const rewardQ = BigInt(prepared.payout.rewardQ);
@@ -379,7 +511,7 @@ export function registerOrdinaryContractRoutes(
       const company = companyId
         ? await loadCompanyAggregate(transaction, worldId, companyId)
         : undefined;
-      const standingAt = company ? standingPlace(company) : null;
+      const clock = await readWorldClock(transaction, worldId);
       const gates = await readGates(transaction, worldId);
       const rows = await transaction
         .selectFrom('ordinary_contracts')
@@ -388,22 +520,45 @@ export function registerOrdinaryContractRoutes(
         .execute();
       const contracts = [] as OrdinaryContractDto[];
       for (const profile of ORDINARY_CONTRACT_PROFILES) {
-        const row = rows.find((entry) => entry.instance_id === profile.instanceId);
+        let row = rows.find((entry) => entry.instance_id === profile.instanceId);
         if (!row) continue;
+        let projectedCompany = company;
+        if (profile.instanceId === 'ci.m1.empty-watch-record.01' && companyId) {
+          row = await transaction
+            .selectFrom('ordinary_contracts')
+            .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', profile.instanceId)
+            .forUpdate()
+            .executeTakeFirstOrThrow();
+          projectedCompany = await lockCompanyAggregate(transaction, worldId, companyId);
+        }
         const profileVersion = ordinaryContractProfileVersion(profile.instanceId, row.profile_id);
         if (!profileVersion)
           throw new TypeError('Ordinary contract row has no retained immutable profile version');
-        const state = readOrdinaryContractState(profileVersion, row.state, row.profile_id);
+        let state = readOrdinaryContractState(profileVersion, row.state, row.profile_id);
         if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profileVersion.walletId))
           throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
+        if (companyId)
+          state = await observeEmptyWatchFordAtKamennyBrod(
+            transaction,
+            worldId,
+            companyId,
+            projectedCompany ? standingPlace(projectedCompany) : null,
+            clock.tick,
+            clock.nowMs,
+            profileVersion,
+            state,
+          );
         contracts.push(
           contractView(
             profileVersion,
             state,
             companyId,
-            standingAt,
+            projectedCompany ? standingPlace(projectedCompany) : null,
             gates,
             await ordinaryBattleStarted(transaction, worldId, profileVersion),
+            clock.tick,
           ),
         );
       }

@@ -163,7 +163,11 @@ export function ContractConversation(props: ConversationProps) {
         {issuer}, {siteName(contract.issuerLocation.siteId)}
         {{ OWNER: ' · ваш контракт', HELPER: ' · вы помогаете', NONE: '' }[contract.yourRole]}
         {contract.state === 'COMPLETED' &&
-          (contract.completedByYou ? ' · выполнен, оплачен вам' : ' · выполнен')}
+          (contract.terminalPayout === 'NO_PAYOUT'
+            ? ' · выполнен без выплаты'
+            : contract.completedByYou
+              ? ' · выполнен, оплачен вам'
+              : ' · выполнен')}
       </p>
       {atIssuer ? (
         <>
@@ -227,7 +231,9 @@ function ContractStep(
   props: ConversationProps & { readonly step: OrdinaryContractDto['steps'][number] },
 ) {
   const { contract, step } = props;
-  const finding = findingText(contract.instanceId, step.stepId);
+  const finding = step.findingTextKey
+    ? lookup(step.findingTextKey)
+    : findingText(contract.instanceId, step.stepId);
   return (
     <li className={step.doneByYou ? 'contract-step-done' : ''}>
       <span>{stepText(contract.instanceId, step.stepId) ?? step.stepId}</span>

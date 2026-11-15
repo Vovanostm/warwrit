@@ -22,6 +22,21 @@ Next: inspect actual cartography/surroundings authority and select one missing r
 
 ## Player problem and result
 
+### Native movement checkpoint — 2026-11-15
+
+The retained N01 company issued a normal Old Mill MOVE_TO, then stopped with S.
+STOP returned ACCEPTED, retained terrain point
+`88122332/-5948799` in micro-fixed-point coordinates and changed movement epoch
+33 to 34. A full page reload retained stationary terrain mode. A new right-click
+on Old Mill accepted a route from that position. This demonstrates the normal
+STOP/reload/new-path controls. Old-arrival replay, exact retry and the complete
+offline/observer matrix remain NOT_RUN here.
+
+The independently created helper received the real refusal for an Old Mill
+route crossing unexplored terrain, then accepted a nearby visible-frontier
+movement order. The destination marker alone did not disclose the intervening
+route. The complete three-state/dating/two-observer acceptance remains open.
+
 The player must distinguish what a map describes, where the company has been,
 what it sees now, and what someone merely reported. A chosen route must stop,
 change and resume predictably without teleporting or revealing hidden entities.

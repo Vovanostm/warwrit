@@ -61,6 +61,29 @@ function render(
 }
 
 describe('contract conversation and journal boundaries', () => {
+  it('says a no-payout ending paid nobody for both the owner and other companies', () => {
+    const resolvedWithoutPayout: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.empty-watch-record.01',
+      issuerRoleId: 'city-notice-clerk',
+      issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+      state: 'COMPLETED',
+      terminalPayout: 'NO_PAYOUT',
+      completedByYou: false,
+    };
+
+    for (const yourRole of ['OWNER', 'NONE'] as const) {
+      const markup = render(
+        { ...resolvedWithoutPayout, yourRole },
+        { siteId: 'kamenny-brod', building: 'market' },
+        'kamenny-brod',
+      );
+      expect(markup).toContain('выполнен без выплаты');
+      expect(markup).not.toContain('оплачен вам');
+      expect(markup).not.toContain('оплачен другой компании');
+    }
+  });
+
   it('shows a local lead outside a conversation and fixed terms only at its issuer', () => {
     const offered = {
       ...herbs,
@@ -126,6 +149,38 @@ describe('contract conversation and journal boundaries', () => {
       'class="gear-action"',
     );
   });
+
+  it('shows a branch-specific result only after its source-backed observation is known', () => {
+    const lightSack: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.light-sack.01',
+      issuerRoleId: 'city-granary-clerk',
+      issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+      steps: [
+        {
+          stepId: 'inspect-granary',
+          action: 'INSPECT',
+          location: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+          doneByYou: false,
+          blocker: 'WRONG_PLACE',
+          completes: false,
+        },
+      ],
+    };
+    expect(render(lightSack, null)).not.toContain('старым ведром');
+    const observed: OrdinaryContractDto = {
+      ...lightSack,
+      steps: [
+        {
+          ...lightSack.steps[0]!,
+          doneByYou: true,
+          blocker: 'ALREADY_DONE',
+          findingTextKey: 'contract.ci.m1.light-sack.01.result.light-sack.measure-clue',
+        },
+      ],
+    };
+    expect(render(observed, null)).toContain('старым ведром с вмятиной на боку');
+  });
 });
 
 it('shows place memory only for established completion known to the company', () => {
@@ -137,5 +192,55 @@ it('shows place memory only for established completion known to the company', ()
       siteId: 'bereznyak',
       text: 'Агафья знает: травы унесли в сторону Северного Двора.',
     },
+  ]);
+});
+
+it('shows shared empty-watch camp and watchman state only after the world choice', () => {
+  const emptyWatch: OrdinaryContractDto = {
+    ...herbs,
+    instanceId: 'ci.m1.empty-watch-record.01',
+    issuerRoleId: 'city-notice-clerk',
+    issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+    yourRole: 'NONE',
+    state: 'COMPLETED',
+  };
+  expect(contractPlaceFacts([emptyWatch])).toEqual([]);
+  expect(
+    contractPlaceFacts([
+      {
+        ...emptyWatch,
+        publicConsequences: {
+          kind: 'EMPTY_WATCH_RECORD',
+          refugeeCamp: 'REMOVED',
+          watchman: 'IN_CUSTODY',
+        },
+      },
+    ]),
+  ).toEqual([
+    {
+      instanceId: 'ci.m1.empty-watch-record.01:camp',
+      siteId: 'kamenny-brod',
+      text: 'Через два дня под мостом остаются только чёрные круги от костров.',
+    },
+    {
+      instanceId: 'ci.m1.empty-watch-record.01:watchman',
+      siteId: 'kamenny-brod',
+      text: 'Прокопа посадили под замок.',
+    },
+  ]);
+  expect(
+    contractPlaceFacts([
+      {
+        ...emptyWatch,
+        publicConsequences: {
+          kind: 'EMPTY_WATCH_RECORD',
+          refugeeCamp: 'PRESENT',
+          watchman: 'ON_DUTY',
+        },
+      },
+    ]).map((fact) => fact.text),
+  ).toEqual([
+    'Под мостом шалаши. В них живут семь семей с того берега, из Полесского герцогства.',
+    'Прокоп остаётся на службе.',
   ]);
 });

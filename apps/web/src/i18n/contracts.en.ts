@@ -1,7 +1,7 @@
 import type { contractsRu } from './contracts.ru.js';
 
-/** English for contracts.ru.ts; the type requires every Russian key. Glossary: docs/content/world/glossary.csv. */
-export const contractsEn: Readonly<Record<keyof typeof contractsRu, string>> = {
+/** English contract text; missing translations fall back to the Russian source. */
+export const contractsEn: Readonly<Partial<Record<keyof typeof contractsRu, string>>> = {
   'place.kamenny-brod.name': 'Kamenny Brod',
   'place.kamenny-brod.in': 'in Kamenny Brod',
   'place.bereznyak.name': 'Bereznyak',

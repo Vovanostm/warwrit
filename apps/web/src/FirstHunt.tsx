@@ -366,9 +366,9 @@ export function FirstHunt(
             <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
               <summary>Куда идти и что потребуется?</summary>
               <p>
-                Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-                {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
-                убедитесь, что у отряда есть провизия.
+                Место задания — «{locationLabel(contract.terms.objectiveLocation.siteId)}»,{' '}
+                {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед дорогой пополните запас
+                еды.
               </p>
             </details>
           )}
@@ -665,14 +665,14 @@ function activeHuntGuidance(
       return 'Слот помощника занят; второй слот не предусмотрен.';
     return currentSiteId === issuer
       ? 'Помощь добровольна и доступна у заказчика, пока слот свободен.'
-      : `Чтобы предложить помощь, прибудьте к заказчику в ${locationLabel(issuer)}.`;
+      : 'Прибудьте к заказчику, чтобы предложить помощь.';
   }
   if (contract.yourJoinIntent)
     return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
   const objective = contract.terms.objectiveLocation.siteId;
   return currentSiteId === objective
     ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
-    : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
+    : 'Доберитесь до места задания, чтобы вступить в бой.';
 }
 
 export async function readHunt(instanceId: string | undefined) {

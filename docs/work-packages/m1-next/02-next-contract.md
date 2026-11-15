@@ -27,6 +27,36 @@ retained company. NEXT-2–NEXT-6 remain open for the next newly selected contra
 
 ## Player goal and normal journey
 
+### Native continuation checkpoint — 2026-11-15
+
+After the recorded training and resupply journeys, the same retained company
+accepted «Пропавший разведчик» for 80 crowns and HUNT-03 «Знамя Харитона Обуха»
+for 100 crowns through the Kamenny Brod issuer controls. The scout objective is
+to search the bank at Тихая Гать and return Ивашка to the issuer. The hunt owner
+must reach the Old Mill yard. Neither new reward has been claimed.
+
+An independently created helper company, «Дозор помощника», belongs to account
+`62254143-e21c-4178-aecb-b5199bf8ae94` and has company ID
+`2a5ab48d-29c3-49d5-8bf7-526c7bd351bc`. It was created through ordinary login
+at Severny Dvor with three living members, 800 crowns and 27 rations, then
+travelled to Kamenny Brod and accepted the voluntary HUNT-03 helper slot.
+Readiness and battle admission remain pending. The owned local Dex configuration
+received a third test identity, retaining its existing clients and identities.
+
+The older helper company remains unchanged at Old Mill with one living member,
+two dead members and no rations. Its departure refusal is retained evidence.
+The fresh helper does not replace that saved state. The fresh helper's direct
+Old Mill route was refused because the intervening terrain was unexplored.
+A normal nearby movement order was subsequently accepted at the visible frontier.
+No route geometry or resources were granted.
+
+The retained owner stopped its Old Mill route using the native S control.
+The accepted STOP preserved terrain position and movement epoch 34. Reload
+retained «Отряд остановился в местности». A new ordinary right-click on the
+Old Mill marker then started movement from that position. Treasury remained
+398.71 crowns. The battle, separate control rights, loot and new payouts remain
+NOT_RUN in this continuation checkpoint.
+
 Keep a surviving company viable beyond the first reward. Continue its actual
 money, casualties, equipment, debts and accepted task. From ordinary login:
 inspect journal → meet the real issuer → follow available mill clues →

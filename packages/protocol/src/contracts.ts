@@ -304,8 +304,16 @@ export interface OrdinaryContractDto {
   readonly yourRole: 'OWNER' | 'HELPER' | 'NONE';
   readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
   readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED';
-  /** True when the viewer's company was paid for this contract. */
+  /** True when the viewer's company received a reward for completing this contract. */
   readonly completedByYou: boolean;
+  /** Actual payout policy for the recorded terminal step. */
+  readonly terminalPayout?: 'PAID' | 'NO_PAYOUT';
+  /** Public only after a terminal choice has been recorded in the shared world contract. */
+  readonly publicConsequences?: {
+    readonly kind: 'EMPTY_WATCH_RECORD';
+    readonly refugeeCamp: 'PRESENT' | 'REMOVED';
+    readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
+  };
   readonly canAccept: boolean;
   readonly canHelp: boolean;
   readonly canWithdraw: boolean;
@@ -314,6 +322,8 @@ export interface OrdinaryContractDto {
     readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
     readonly location: { readonly siteId: string; readonly areaId: string };
     readonly doneByYou: boolean;
+    /** Localized clue/outcome key, present only after this company records the result. */
+    readonly findingTextKey?: string;
     /** Null when the step can be taken now; otherwise why not. */
     readonly blocker:
       | null

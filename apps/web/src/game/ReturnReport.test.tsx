@@ -96,6 +96,42 @@ it('keeps malformed untrusted amounts out of money formatting', async () => {
   expect(container?.textContent).toContain('Повторить запрос');
 });
 
+it.each([
+  {
+    outcome: 'PROKOP_HANDED_OVER',
+    text: 'Мешок отдали Евсею. Прокоп под замком.',
+  },
+  {
+    outcome: 'PROOF_DESTROYED',
+    text: 'Мешок бросили в реку. Деньги остались в казне, шалаши стоят.',
+  },
+  {
+    outcome: 'REFUGEE_CAMP_REMOVED',
+    text: 'Шалаши убрали через два дня.',
+  },
+  {
+    outcome: 'OLD_FORD_REVEALED',
+    text: 'Через несколько дней Прокоп рассказал о старом броде у ив.',
+  },
+])('shows the saved $outcome outcome in the return report', async ({ outcome, text }) => {
+  vi.stubGlobal('fetch', async () =>
+    Response.json({
+      report: {
+        ...report(),
+        contractOutcomes: [
+          {
+            instanceId: 'ci.m1.empty-watch-record.01',
+            outcome,
+            atTick: '2000',
+          },
+        ],
+      },
+    }),
+  );
+  await mount();
+  expect(container?.textContent).toContain(text);
+});
+
 it('retries a failed read and does not acknowledge the empty result', async () => {
   const calls: string[] = [];
   vi.stubGlobal('fetch', async (input: string) => {

@@ -1,7 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { sql, type Kysely, type Transaction } from 'kysely';
-import { COMPANY_RULES, isEntityId } from '@warwrit/game-core';
-import type { CompanyCombatAggregateState } from '@warwrit/game-core';
+import {
+  COMPANY_RULES,
+  isEntityId,
+  ordinaryContractProfile,
+  readOrdinaryContractState,
+} from '@warwrit/game-core';
+import type { CompanyCombatAggregateState, OrdinaryContractState } from '@warwrit/game-core';
 import type {
   CompanyReturnReportAcknowledgeRequestDto,
   CompanyReturnReportAcknowledgeResponseDto,
@@ -20,6 +25,11 @@ import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import { findOwnedCompanyId, lockCompanyAggregate } from './repository.js';
 import { observeLocalCompanyConditions } from './observation.js';
 import { projectPayroll } from './payroll-view.js';
+import {
+  emptyWatchCampRemovedAt,
+  emptyWatchFordFact,
+  emptyWatchTerminalFact,
+} from '../contracts/empty-watch.js';
 
 interface FoodBaseline {
   readonly sourceId: string;
@@ -40,6 +50,7 @@ interface ReturnReportCursor {
   readonly acknowledged_event_sequence: string;
   readonly acknowledged_movement_count: string;
   readonly acknowledged_food: unknown;
+  readonly acknowledged_contract_outcomes: unknown;
   readonly acknowledged_owed_q: string;
   readonly acknowledged_debt_q: string;
   readonly last_acknowledged_report_id: string | null;
@@ -48,6 +59,7 @@ interface ReturnReportCursor {
   readonly offered_event_sequence: string | null;
   readonly offered_movement_count: string | null;
   readonly offered_food: unknown | null;
+  readonly offered_contract_outcomes: unknown;
   readonly offered_owed_q: string | null;
   readonly offered_debt_q: string | null;
   readonly offered_report: unknown | null;
@@ -79,6 +91,27 @@ export function settledReturnReportTick(state: CompanyCombatAggregateState): str
     .reduce((minimum, tick) => (BigInt(tick) < BigInt(minimum) ? tick : minimum));
 }
 
+type EmptyWatchOutcomePhase = 'TERMINAL' | 'CAMP_REMOVED' | 'OLD_FORD_REVEALED';
+
+function contractOutcomeIdentity(
+  sourceEventId: string,
+  phase: EmptyWatchOutcomePhase = 'TERMINAL',
+): string {
+  return phase === 'TERMINAL'
+    ? `ci.m1.empty-watch-record.01:${sourceEventId}`
+    : `ci.m1.empty-watch-record.01:${phase}:${sourceEventId}`;
+}
+
+function phaseForReturnOutcome(
+  outcome: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number]['outcome'],
+): EmptyWatchOutcomePhase {
+  return outcome === 'REFUGEE_CAMP_REMOVED'
+    ? 'CAMP_REMOVED'
+    : outcome === 'OLD_FORD_REVEALED'
+      ? 'OLD_FORD_REVEALED'
+      : 'TERMINAL';
+}
+
 function foodSnapshot(state: CompanyCombatAggregateState, throughTick: string): FoodBaseline[] {
   return (state.economy.physical?.food ?? [])
     .filter((entry) => BigInt(entry.toTick) <= BigInt(throughTick))
@@ -92,7 +125,7 @@ function foodSnapshot(state: CompanyCombatAggregateState, throughTick: string): 
 
 function parseFoodBaseline(value: unknown): FoodBaseline[] | undefined {
   if (!Array.isArray(value)) return undefined;
-  const result: FoodBaseline[] = [];
+  const food: FoodBaseline[] = [];
   for (const entry of value) {
     if (entry === null || typeof entry !== 'object') return undefined;
     const candidate = entry as Record<string, unknown>;
@@ -104,9 +137,57 @@ function parseFoodBaseline(value: unknown): FoodBaseline[] | undefined {
       (candidate['channel'] !== 'STOCK' && candidate['channel'] !== 'PROVIDER')
     )
       return undefined;
-    result.push(candidate as unknown as FoodBaseline);
+    food.push(candidate as unknown as FoodBaseline);
   }
-  return result;
+  return food;
+}
+
+function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const identities = new Set<string>();
+  for (const entry of value) {
+    if (entry === null || typeof entry !== 'object') return undefined;
+    const candidate = entry as Record<string, unknown>;
+    const sourceEventId = candidate['sourceEventId'];
+    if (
+      candidate['instanceId'] !== 'ci.m1.empty-watch-record.01' ||
+      typeof sourceEventId !== 'string' ||
+      sourceEventId.length === 0 ||
+      (candidate['phase'] !== undefined &&
+        candidate['phase'] !== 'TERMINAL' &&
+        candidate['phase'] !== 'CAMP_REMOVED' &&
+        candidate['phase'] !== 'OLD_FORD_REVEALED')
+    )
+      return undefined;
+    identities.add(contractOutcomeIdentity(sourceEventId, candidate['phase'] ?? 'TERMINAL'));
+  }
+  return identities;
+}
+
+function serializeContractOutcomeIds(identities: ReadonlySet<string>): string {
+  return JSON.stringify(
+    [...identities].flatMap((identity) => {
+      const prefix = 'ci.m1.empty-watch-record.01:';
+      if (!identity.startsWith(prefix) || identity.length <= prefix.length) return [];
+      const remainder = identity.slice(prefix.length);
+      const phaseSeparator = remainder.indexOf(':');
+      const phase = remainder.slice(0, phaseSeparator);
+      if (phaseSeparator > 0 && (phase === 'CAMP_REMOVED' || phase === 'OLD_FORD_REVEALED'))
+        return [
+          {
+            instanceId: 'ci.m1.empty-watch-record.01' as const,
+            phase,
+            sourceEventId: remainder.slice(phaseSeparator + 1),
+          },
+        ];
+      return [
+        {
+          instanceId: 'ci.m1.empty-watch-record.01' as const,
+          sourceEventId: remainder,
+        },
+      ];
+    }),
+  );
 }
 
 export function consumedReturnReportRations(
@@ -241,6 +322,7 @@ export function hasReturnReportFacts(input: {
   readonly oldDebtQ: bigint;
   readonly debtQ: bigint;
   readonly eventCount: number;
+  readonly contractOutcomeCount?: number;
 }): boolean {
   return (
     input.rationsConsumed > 0n ||
@@ -248,8 +330,103 @@ export function hasReturnReportFacts(input: {
     input.accruedQ > 0n ||
     input.owedQ !== input.oldOwedQ ||
     input.debtQ !== input.oldDebtQ ||
-    input.eventCount > 0
+    input.eventCount > 0 ||
+    (input.contractOutcomeCount ?? 0) > 0
   );
+}
+
+export function projectEmptyWatchReturnOutcome(
+  state: OrdinaryContractState | undefined,
+  companyId: string,
+  fromTick: string,
+  throughTick: string,
+  acknowledgedOutcomeIds: ReadonlySet<string> = new Set(),
+): NonNullable<CompanyReturnReportDto['contractOutcomes']> {
+  if (!state?.outcome || state.outcome.companyId !== companyId) return [];
+  const through = BigInt(throughTick);
+  const from = BigInt(fromTick);
+  const terminal = emptyWatchTerminalFact(state);
+  if (!terminal) return [];
+  const result: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number][] = [];
+  const terminalTick = BigInt(state.outcome.atTick);
+  const terminalId = contractOutcomeIdentity(terminal.sourceEventId);
+  if (terminalTick >= from && terminalTick <= through && !acknowledgedOutcomeIds.has(terminalId))
+    result.push({
+      instanceId: 'ci.m1.empty-watch-record.01',
+      outcome:
+        terminal.slotId === 'empty-watch-sack-handed-over'
+          ? 'PROKOP_HANDED_OVER'
+          : 'PROOF_DESTROYED',
+      atTick: terminal.atTick,
+    });
+
+  const campRemovedAt = emptyWatchCampRemovedAt(state);
+  const campId = contractOutcomeIdentity(terminal.sourceEventId, 'CAMP_REMOVED');
+  if (
+    campRemovedAt !== undefined &&
+    campRemovedAt >= from &&
+    campRemovedAt <= through &&
+    !acknowledgedOutcomeIds.has(campId)
+  )
+    result.push({
+      instanceId: 'ci.m1.empty-watch-record.01',
+      outcome: 'REFUGEE_CAMP_REMOVED',
+      atTick: campRemovedAt.toString(),
+    });
+
+  const fordFact = emptyWatchFordFact(state, companyId);
+  const fordId = contractOutcomeIdentity(terminal.sourceEventId, 'OLD_FORD_REVEALED');
+  if (
+    fordFact &&
+    BigInt(fordFact.atTick) >= from &&
+    BigInt(fordFact.atTick) <= through &&
+    !acknowledgedOutcomeIds.has(fordId)
+  )
+    result.push({
+      instanceId: 'ci.m1.empty-watch-record.01',
+      outcome: 'OLD_FORD_REVEALED',
+      atTick: fordFact.atTick,
+    });
+  return result;
+}
+
+async function emptyWatchContractState(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<OrdinaryContractState | undefined> {
+  const profile = ordinaryContractProfile('ci.m1.empty-watch-record.01');
+  if (!profile) return undefined;
+  const row = await transaction
+    .selectFrom('ordinary_contracts')
+    .select(['profile_id', 'state'])
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .executeTakeFirst();
+  if (!row || row.profile_id !== profile.definitionId) return undefined;
+  return readOrdinaryContractState(profile, row.state, row.profile_id);
+}
+
+function companyEmptyWatchOutcomeIdentities(
+  state: OrdinaryContractState | undefined,
+  companyId: string,
+  throughTick: string,
+): Set<string> {
+  if (
+    !state?.outcome ||
+    state.outcome.companyId !== companyId ||
+    BigInt(state.outcome.atTick) > BigInt(throughTick)
+  )
+    return new Set();
+  const terminal = emptyWatchTerminalFact(state);
+  if (!terminal) return new Set();
+  const identities = new Set([contractOutcomeIdentity(terminal.sourceEventId)]);
+  const campRemovedAt = emptyWatchCampRemovedAt(state);
+  if (campRemovedAt !== undefined && campRemovedAt <= BigInt(throughTick))
+    identities.add(contractOutcomeIdentity(terminal.sourceEventId, 'CAMP_REMOVED'));
+  const fordFact = emptyWatchFordFact(state, companyId);
+  if (fordFact && BigInt(fordFact.atTick) <= BigInt(throughTick))
+    identities.add(contractOutcomeIdentity(terminal.sourceEventId, 'OLD_FORD_REVEALED'));
+  return identities;
 }
 
 export function classifyReturnReportAcknowledgement(
@@ -327,6 +504,11 @@ async function getReturnReport(
       if (BigInt(atTick) > BigInt(throughTick)) break;
       latestSequence = BigInt(row.sequence);
     }
+    const initialOutcomeIds = companyEmptyWatchOutcomeIdentities(
+      await emptyWatchContractState(transaction, worldId),
+      companyId,
+      throughTick,
+    );
     await transaction
       .insertInto('company_return_report_cursors')
       .values({
@@ -336,6 +518,7 @@ async function getReturnReport(
         acknowledged_event_sequence: latestSequence.toString(),
         acknowledged_movement_count: String(movementCount),
         acknowledged_food: JSON.stringify(foodSnapshot(state, throughTick)),
+        acknowledged_contract_outcomes: serializeContractOutcomeIds(initialOutcomeIds),
         acknowledged_owed_q: owedQ,
         acknowledged_debt_q: debtQ,
         last_acknowledged_report_id: null,
@@ -344,6 +527,7 @@ async function getReturnReport(
         offered_event_sequence: null,
         offered_movement_count: null,
         offered_food: null,
+        offered_contract_outcomes: JSON.stringify([]),
         offered_owed_q: null,
         offered_debt_q: null,
         offered_report: null,
@@ -364,6 +548,10 @@ async function getReturnReport(
 
   const fromTick = cursor.acknowledged_tick;
   if (BigInt(throughTick) < BigInt(fromTick)) return { report: null };
+  const acknowledgedContractOutcomeIds = parseContractOutcomeIds(
+    cursor.acknowledged_contract_outcomes,
+  );
+  if (!acknowledgedContractOutcomeIds) return { report: null };
   const acknowledgedMovementCount = safeMovementCount(cursor.acknowledged_movement_count);
   const consumed = consumedReturnReportRations(
     state,
@@ -411,6 +599,14 @@ async function getReturnReport(
     if (!event) continue;
     events.push(event);
   }
+  const emptyWatchState = await emptyWatchContractState(transaction, worldId);
+  const contractOutcomes = projectEmptyWatchReturnOutcome(
+    emptyWatchState,
+    companyId,
+    fromTick,
+    throughTick,
+    acknowledgedContractOutcomeIds,
+  );
   const elapsedTicks = BigInt(throughTick) - BigInt(fromTick);
   if (
     !hasReturnReportFacts({
@@ -423,6 +619,7 @@ async function getReturnReport(
       oldDebtQ,
       debtQ: BigInt(debtQ),
       eventCount: events.length,
+      contractOutcomeCount: contractOutcomes.length,
     })
   )
     return { report: null };
@@ -442,8 +639,19 @@ async function getReturnReport(
     wages: { accruedQ: accruedQ.toString(), paidQ: paidQ.toString(), currentOwedQ: owedQ },
     debt: { currentQ: debtQ },
     events,
+    ...(contractOutcomes.length > 0 ? { contractOutcomes } : {}),
   };
-  const reportFood = foodSnapshot(state, throughTick);
+  const offeredContractOutcomeIds = new Set(acknowledgedContractOutcomeIds);
+  if (contractOutcomes.length > 0) {
+    for (const outcome of contractOutcomes) {
+      offeredContractOutcomeIds.add(
+        contractOutcomeIdentity(
+          emptyWatchState!.outcome!.sourceEventId,
+          phaseForReturnOutcome(outcome.outcome),
+        ),
+      );
+    }
+  }
   await transaction
     .updateTable('company_return_report_cursors')
     .set({
@@ -452,7 +660,8 @@ async function getReturnReport(
       offered_tick: throughTick,
       offered_event_sequence: eventSequence.toString(),
       offered_movement_count: String(movementCount),
-      offered_food: JSON.stringify(reportFood),
+      offered_food: JSON.stringify(foodSnapshot(state, throughTick)),
+      offered_contract_outcomes: serializeContractOutcomeIds(offeredContractOutcomeIds),
       offered_owed_q: owedQ,
       offered_debt_q: debtQ,
       offered_report: report,
@@ -511,6 +720,7 @@ export function registerCompanyReturnReportRoutes(
       if (acknowledgement === 'DUPLICATE') {
         return { ok: true, duplicate: true } satisfies CompanyReturnReportAcknowledgeResponseDto;
       }
+      const offeredContractOutcomeIds = parseContractOutcomeIds(cursor?.offered_contract_outcomes);
       if (
         acknowledgement !== 'CURRENT' ||
         !cursor ||
@@ -518,6 +728,7 @@ export function registerCompanyReturnReportRoutes(
         cursor.offered_event_sequence === null ||
         cursor.offered_movement_count === null ||
         cursor.offered_food === null ||
+        !offeredContractOutcomeIds ||
         cursor.offered_owed_q === null ||
         cursor.offered_debt_q === null
       )
@@ -530,6 +741,7 @@ export function registerCompanyReturnReportRoutes(
           acknowledged_event_sequence: cursor.offered_event_sequence,
           acknowledged_movement_count: cursor.offered_movement_count,
           acknowledged_food: JSON.stringify(cursor.offered_food),
+          acknowledged_contract_outcomes: serializeContractOutcomeIds(offeredContractOutcomeIds),
           acknowledged_owed_q: cursor.offered_owed_q,
           acknowledged_debt_q: cursor.offered_debt_q,
           last_acknowledged_report_id: input.reportId,
@@ -538,6 +750,7 @@ export function registerCompanyReturnReportRoutes(
           offered_event_sequence: null,
           offered_movement_count: null,
           offered_food: null,
+          offered_contract_outcomes: JSON.stringify([]),
           offered_owed_q: null,
           offered_debt_q: null,
           offered_report: null,

@@ -48,9 +48,14 @@ const definition = (
   prerequisiteDefinitionIds,
   sceneIds,
 });
-const binding = (instanceId: string, definitionId: string): ContractInstanceBinding => ({
+const binding = (
+  instanceId: string,
+  definitionId: string,
+  alternateDefinitionIds?: readonly string[],
+): ContractInstanceBinding => ({
   instanceId,
   definitionId,
+  ...(alternateDefinitionIds ? { alternateDefinitionIds } : {}),
   definitionEdition: CONTRACT_M1_EDITION,
   terms: { status: 'UNBOUND' },
 });
@@ -88,6 +93,10 @@ const cellarRescueId = 'ct.m1.cellar-rescue.v1';
 const lostScoutId = 'ct.m1.lost-scout.v1';
 const wolfTrailId = 'ct.m1.wolf-trail.v1';
 const raiderStandardId = 'ct.m1.raider-standard.v1';
+const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
+const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
+const twoReceiptsId = 'ct.m1.two-receipts.v1';
+const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -137,6 +146,57 @@ const definitions: readonly ContractDefinition[] = [
     ['missing-herbs-stock-record', 'missing-herbs-trail-observation', 'missing-herbs-report'],
     'ACCESSIBLE_OBSERVATION_SET',
     ['INVEST-02'],
+  ),
+  definition(
+    lightSackMeasureId,
+    'INVESTIGATE',
+    'city-granary-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    ['light-sack-measure-clue', 'light-sack-measure-report'],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-03-MEASURE'],
+  ),
+  definition(
+    lightSackDampRyeId,
+    'INVESTIGATE',
+    'city-granary-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue', 'light-sack-damp-rye-report'],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-03-DAMP-RYE'],
+  ),
+  definition(
+    twoReceiptsId,
+    'INVESTIGATE',
+    'woodland-village-caller',
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'two-receipts-smudged-seal',
+      'two-receipts-empty-ledger',
+      'two-receipts-stolen-badge',
+      'two-receipts-reported-to-tikhon',
+      'two-receipts-reported-to-both',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-04-TWO-RECEIPTS'],
+  ),
+  definition(
+    emptyWatchRecordId,
+    'INVESTIGATE',
+    'city-notice-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'empty-watch-log',
+      'empty-watch-bridge-witness',
+      'empty-watch-refugee-camp',
+      'empty-watch-city-marked-sack',
+      'empty-watch-prokop-confession',
+      'empty-watch-sack-handed-over',
+      'empty-watch-proof-destroyed',
+      'empty-watch-old-ford-revealed',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-05-EMPTY-WATCH-RECORD'],
   ),
   definition(
     cellarRescueId,
@@ -211,6 +271,24 @@ const slots: ContractSourceSlot[] = [
   source('missing-herbs-stock-record', missingHerbsId, 'STOCK_RECORD'),
   source('missing-herbs-trail-observation', missingHerbsId, 'OBSERVATION'),
   source('missing-herbs-report', missingHerbsId, 'REPORT'),
+  source('light-sack-measure-clue', lightSackMeasureId, 'OBSERVATION'),
+  source('light-sack-dry-grain-clue', lightSackDampRyeId, 'OBSERVATION'),
+  source('light-sack-wet-sacks-clue', lightSackDampRyeId, 'OBSERVATION'),
+  source('light-sack-measure-report', lightSackMeasureId, 'REPORT'),
+  source('light-sack-damp-rye-report', lightSackDampRyeId, 'REPORT'),
+  source('two-receipts-smudged-seal', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-empty-ledger', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-stolen-badge', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-reported-to-tikhon', twoReceiptsId, 'REPORT'),
+  source('two-receipts-reported-to-both', twoReceiptsId, 'REPORT'),
+  source('empty-watch-log', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-bridge-witness', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-refugee-camp', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-city-marked-sack', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-prokop-confession', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-sack-handed-over', emptyWatchRecordId, 'REPORT'),
+  source('empty-watch-proof-destroyed', emptyWatchRecordId, 'REPORT'),
+  source('empty-watch-old-ford-revealed', emptyWatchRecordId, 'OBSERVATION'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -370,6 +448,77 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-03-MEASURE',
+    lightSackMeasureId,
+    location('severny-dvor', 'severny-dvor-yard'),
+    ['light-sack-measure-clue', 'light-sack-measure-report'],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', ['light-sack-measure-clue', 'light-sack-measure-report']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
+    'INVEST-03-DAMP-RYE',
+    lightSackDampRyeId,
+    location('severny-dvor', 'severny-dvor-yard'),
+    ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue', 'light-sack-damp-rye-report'],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', [
+          'light-sack-dry-grain-clue',
+          'light-sack-wet-sacks-clue',
+          'light-sack-damp-rye-report',
+        ]),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
+    'INVEST-04-TWO-RECEIPTS',
+    twoReceiptsId,
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'two-receipts-smudged-seal',
+      'two-receipts-empty-ledger',
+      'two-receipts-stolen-badge',
+      'two-receipts-reported-to-tikhon',
+      'two-receipts-reported-to-both',
+    ],
+    [
+      outcome('SUCCESS', {
+        kind: 'ANY_PRESENT',
+        sourceSlotGroups: [['two-receipts-reported-to-tikhon', 'two-receipts-reported-to-both']],
+      }),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
+    'INVEST-05-EMPTY-WATCH-RECORD',
+    emptyWatchRecordId,
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'empty-watch-log',
+      'empty-watch-bridge-witness',
+      'empty-watch-refugee-camp',
+      'empty-watch-city-marked-sack',
+      'empty-watch-prokop-confession',
+      'empty-watch-sack-handed-over',
+      'empty-watch-proof-destroyed',
+      'empty-watch-old-ford-revealed',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', ['empty-watch-sack-handed-over', 'empty-watch-proof-destroyed']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -474,6 +623,9 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.mill-beast.01', millBeastId),
     binding('ci.m1.road-tracks.01', roadTracksId),
     binding('ci.m1.missing-herbs.01', missingHerbsId),
+    binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
+    binding('ci.m1.two-receipts.01', twoReceiptsId),
+    binding('ci.m1.empty-watch-record.01', emptyWatchRecordId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),
