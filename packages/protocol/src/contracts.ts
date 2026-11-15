@@ -346,8 +346,15 @@ export interface OrdinaryContractDto {
   readonly canReturnCargo: boolean;
   readonly steps: readonly {
     readonly stepId: string;
-    readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER' | 'BUY';
+    readonly action:
+      'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER' | 'BUY' | 'REST';
     readonly location: { readonly siteId: string; readonly areaId: string };
+    readonly terrainTarget?: {
+      readonly mapEdition: string;
+      readonly xFp: number;
+      readonly zFp: number;
+      readonly radiusFp: number;
+    };
     readonly doneByYou: boolean;
     /** Localized clue/outcome key, present only after this company records the result. */
     readonly findingTextKey?: string;
@@ -359,6 +366,7 @@ export interface OrdinaryContractDto {
       | 'WRONG_PLACE'
       | 'ALREADY_DONE'
       | 'MISSING_EVIDENCE'
+      | 'ALTERNATIVE_CHOSEN'
       | 'CONDITION_NOT_MET';
     readonly completes: boolean;
   }[];
@@ -403,6 +411,7 @@ export type OrdinaryContractCommandResponseDto =
         | 'WRONG_PLACE'
         | 'ALREADY_DONE'
         | 'MISSING_EVIDENCE'
+        | 'ALTERNATIVE_CHOSEN'
         | 'CONDITION_NOT_MET'
         | 'INSUFFICIENT_FUNDS'
         | 'INSUFFICIENT_PURCHASE_FUNDS'

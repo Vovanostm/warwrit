@@ -534,7 +534,7 @@ export function contractView(
                   step.stepId === 'buy-descent-kit' &&
                   kitStock?.quantity === 0
                 ? 'CONDITION_NOT_MET'
-                : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates }),
+                : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates, atTick: currentTick }),
           completes: step.completes === true,
         };
       }),

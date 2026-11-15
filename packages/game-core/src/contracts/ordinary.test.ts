@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ordinaryContractGenesis,
+  ordinaryCustodyTravelLoads,
   ordinaryContractProfile,
   ordinaryContractProfileVersion,
   prepareOrdinaryContractCommand,
@@ -11,6 +12,12 @@ import {
 } from './ordinary.js';
 import { CONTRACT_M1_CATALOGUE } from './manifest.js';
 import { validateContractCatalogue } from './validate.js';
+import {
+  buildNavigationField,
+  continuousSurfaceAt,
+  findTravelPath,
+} from '../world/continuous-movement.js';
+import { PAINTED_ATLAS_REGION, PAINTED_ATLAS_SITES } from '../world/painted-atlas/region.js';
 
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const CITY: ContractPlace = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
@@ -589,6 +596,156 @@ describe('ordinary contract transitions', () => {
         outcome: { kind: 'SUCCESS', companyId: 'company-a' },
       },
     });
+  });
+
+  it('places Sidor on the charted Bereznyak road, reachable from Agafya on the retained map', () => {
+    const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
+    const target = roadside.steps[0]!.terrainTarget!;
+    const field = buildNavigationField(PAINTED_ATLAS_REGION);
+    const sidor = { xFp: target.xFp, zFp: target.zFp };
+    const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
+    expect(target.mapEdition).toBe(PAINTED_ATLAS_REGION.mapEdition);
+    expect(continuousSurfaceAt(field, sidor).overlayId).toBe('dirt_road');
+    expect(findTravelPath(field, bereznyak.anchorFp, sidor)).not.toBeNull();
+  });
+
+  it('keeps the roadside rescue choices mutually exclusive and waits for an actual foot-rest interval', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
+    const issuer: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const target = roadside.steps[0]!.terrainTarget!;
+    const position = {
+      mapEdition: target.mapEdition,
+      xMicroFp: String(target.xFp * 65536),
+      zMicroFp: String(target.zFp * 65536),
+    };
+    const actRoadside = (
+      state: OrdinaryContractState,
+      type: 'ACCEPT' | 'STEP',
+      stepId: string | null,
+      atTick: string,
+      standingAt: ContractPlace | null,
+      terrainPosition = position,
+    ) =>
+      prepareOrdinaryContractCommand(
+        roadside,
+        state,
+        type === 'ACCEPT' ? { type } : { type, stepId: stepId! },
+        {
+          companyId: 'road-company',
+          standingAt,
+          terrainPosition,
+          atTick,
+          expectedRevision: state.revision,
+          sourceEventId: `road-${state.revision}`,
+          gates,
+        },
+      );
+    const take = (
+      state: OrdinaryContractState,
+      stepId: string,
+      atTick: string,
+      standingAt: ContractPlace | null,
+      terrainPosition = position,
+    ) => prepared(actRoadside(state, 'STEP', stepId, atTick, standingAt, terrainPosition)).next;
+
+    let state = prepared(
+      actRoadside(ordinaryContractGenesis(roadside), 'ACCEPT', null, '10', issuer),
+    ).next;
+    expect(
+      actRoadside(state, 'STEP', 'find-sidor', '11', null, {
+        ...position,
+        mapEdition: 'seroe-porechye-continuous-v4',
+      }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'WRONG_PLACE' });
+    state = take(state, 'find-sidor', '11', null);
+    state = take(state, 'walk-with-stops', '12', null);
+    expect(ordinaryCustodyTravelLoads(state, 'road-company')).toEqual([
+      { personId: 'person.sidor', travelMode: 'ON_FOOT' },
+    ]);
+    expect(actRoadside(state, 'STEP', 'fetch-stretcher', '13', issuer)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    state = take(state, 'rest-with-sidor', '20', null);
+    expect(actRoadside(state, 'STEP', 'continue-after-rest', '319', null)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'CONDITION_NOT_MET',
+    });
+    state = take(state, 'continue-after-rest', '320', null);
+    expect(actRoadside(state, 'STEP', 'arrive-on-foot', '320', issuer)).toMatchObject({
+      kind: 'PREPARED',
+      payout: { companyId: 'road-company', rewardQ: '25000000' },
+    });
+    const delivered = take(state, 'arrive-on-foot', '320', issuer);
+    expect(delivered.custody).toEqual([]);
+    expect(delivered.outcome?.kind).toBe('SUCCESS');
+  });
+
+  it('fetches the one stretcher at Agafya, takes Sidor into stretcher custody, and pays his finite purse once', () => {
+    const roadside = ordinaryContractProfile('ci.m1.man-by-road.01')!;
+    const issuer: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const target = roadside.steps[0]!.terrainTarget!;
+    const position = {
+      mapEdition: target.mapEdition,
+      xMicroFp: String(target.xFp * 65536),
+      zMicroFp: String(target.zFp * 65536),
+    };
+    const command = (
+      state: OrdinaryContractState,
+      companyId: string,
+      type: 'ACCEPT' | 'HELP' | 'STEP',
+      stepId: string | null,
+      atTick: string,
+      standingAt: ContractPlace | null,
+      terrainPosition = position,
+    ) =>
+      prepareOrdinaryContractCommand(
+        roadside,
+        state,
+        type === 'STEP' ? { type, stepId: stepId! } : { type },
+        {
+          companyId,
+          standingAt,
+          terrainPosition,
+          atTick,
+          expectedRevision: state.revision,
+          sourceEventId: `road-${state.revision}`,
+          gates,
+        },
+      );
+    let state = prepared(
+      command(ordinaryContractGenesis(roadside), 'road-company', 'ACCEPT', null, '10', issuer),
+    ).next;
+    expect(command(state, 'helper-company', 'HELP', null, '10', issuer)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    const take = (stepId: string, atTick: string, standingAt: ContractPlace | null) => {
+      const result = command(state, 'road-company', 'STEP', stepId, atTick, standingAt);
+      if (result.kind !== 'PREPARED') throw new Error(`expected PREPARED, got ${result.code}`);
+      state = result.next;
+      return result;
+    };
+    take('find-sidor', '11', null);
+    take('fetch-stretcher', '20', issuer);
+    expect(command(state, 'road-company', 'STEP', 'walk-with-stops', '21', null)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'NOT_AVAILABLE',
+    });
+    take('load-sidor-on-stretcher', '30', null);
+    expect(ordinaryCustodyTravelLoads(state, 'road-company')).toEqual([
+      { personId: 'person.sidor', travelMode: 'STRETCHER' },
+    ]);
+    expect(
+      command(state, 'road-company', 'STEP', 'load-sidor-on-stretcher', '31', null),
+    ).toMatchObject({
+      kind: 'REJECTED',
+      code: 'ALREADY_DONE',
+    });
+    const result = take('arrive-on-stretcher', '40', issuer);
+    expect(result.payout).toEqual({ companyId: 'road-company', rewardQ: '25000000' });
+    expect(result.next.custody).toEqual([]);
   });
 
   it('binds the stable light-sack instance with both source-backed truth paths', () => {
