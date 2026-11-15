@@ -252,6 +252,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'PayClaims' &&
     input.request.type !== 'Recruit' &&
     input.request.type !== 'JoinFieldParty' &&
+    input.request.type !== 'ResolveNickname' &&
     input.request.type !== 'RenameCompany' &&
     input.request.type !== 'ChoosePerk' &&
     input.request.type !== 'EquipItem' &&

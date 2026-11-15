@@ -6,10 +6,13 @@ import {
   campaignTick,
   parseCompanyCommand,
   prepareCompanyLifecycle,
+  readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
 import type {
   BattleState,
+  CompanyCommand,
   CompanyCombatAggregateState,
+  LifecycleEvent,
   LifecycleContext,
   NicknameDeedEvidence,
 } from '@warwrit/game-core';
@@ -17,6 +20,13 @@ import type {
 const RESILIENT_TEXT_KEY = 'nickname.resilient';
 const RESILIENT_REASON_KEY = 'nickname.reason.survived_near_death';
 const RESILIENT_DEED_KIND = 'SURVIVED_NEAR_DEATH';
+
+export interface ResilientNicknameTransition {
+  readonly previous: CompanyCombatAggregateState;
+  readonly next: CompanyCombatAggregateState;
+  readonly command: CompanyCommand;
+  readonly events: readonly LifecycleEvent[];
+}
 
 /**
  * Propose the established «Живучий» epithet for eligible company fighters.
@@ -28,7 +38,11 @@ export function proposeResilientNicknames(input: {
   readonly after: CompanyCombatAggregateState;
   readonly finalState: BattleState;
   readonly atTick: string;
-}): { readonly state: CompanyCombatAggregateState; readonly sourceEventIds: readonly string[] } {
+}): {
+  readonly state: CompanyCombatAggregateState;
+  readonly sourceEventIds: readonly string[];
+  readonly transitions: readonly ResilientNicknameTransition[];
+} {
   const { before, finalState } = input;
   let state = input.after;
   const companyId = before.economy.lifecycle.companyId;
@@ -42,9 +56,10 @@ export function proposeResilientNicknames(input: {
     companyId !== initialLifecycle.companyId ||
     initialLifecycle.company?.runStatus !== 'ACTIVE'
   )
-    return { state, sourceEventIds: [] };
+    return { state, sourceEventIds: [], transitions: [] };
 
   const sourceEventIds: string[] = [];
+  const transitions: ResilientNicknameTransition[] = [];
   for (const participant of binding.participants) {
     if (participant.companyId !== companyId || participant.sideId !== winnerSideId) continue;
     const unit = finalState.units.find((entry) => entry.id === participant.unitId);
@@ -129,16 +144,23 @@ export function proposeResilientNicknames(input: {
       contactIds: [],
       facts: [deed],
     };
+    const previous = state;
     const prepared = prepareCompanyLifecycle(lifecycle, parsed.command, context);
     if (prepared.kind !== 'PREPARED')
       throw new Error(`Resilient nickname proposal rejected: ${prepared.error}`);
-    state = {
+    state = readCompanyCombatAggregateState({
       ...state,
       economy: { ...state.economy, lifecycle: prepared.next },
-    };
+    });
     sourceEventIds.push(sourceEventId);
+    transitions.push({
+      previous,
+      next: state,
+      command: parsed.command,
+      events: prepared.receipt.events,
+    });
   }
-  return { state, sourceEventIds };
+  return { state, sourceEventIds, transitions };
 }
 
 function stableId(kind: string, battleId: string, characterId: string): string {

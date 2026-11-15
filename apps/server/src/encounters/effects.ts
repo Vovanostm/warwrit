@@ -1,8 +1,10 @@
 import { huntProfile } from '@warwrit/game-core';
+import type { BattleState, CompanyCombatAggregateState } from '@warwrit/game-core';
 import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import { lockCompanyAggregate } from '../company/repository.js';
+import { applyTerminalResilientNicknameEffects } from '../company/observation.js';
 import { applyFirstHuntTerminalEffectsInTransaction } from '../contracts/executor.js';
 import { selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
 import { readFirstHuntTerminalLockSet } from '../contracts/repository.js';
@@ -81,8 +83,11 @@ async function applyOne(
   )
     return false;
 
+  const beforeByCompany = new Map<string, CompanyCombatAggregateState>();
   for (const companyId of lockSet.companyIds) {
-    if (!(await lockCompanyAggregate(transaction, lockSet.worldId, companyId))) return false;
+    const state = await lockCompanyAggregate(transaction, lockSet.worldId, companyId);
+    if (!state) return false;
+    beforeByCompany.set(companyId, state);
   }
   await transaction
     .selectFrom('world_party_routes')
@@ -124,6 +129,49 @@ async function applyOne(
     terminalRevision: terminal.terminalRevision,
     prepareCompanyTerminalEvidence,
   });
+  const encounter = await transaction
+    .selectFrom('encounters')
+    .select(['state', 'status', 'revision'])
+    .where('world_id', '=', terminal.worldId)
+    .where('id', '=', terminal.encounterId)
+    .forUpdate()
+    .executeTakeFirst();
+  if (
+    !encounter ||
+    encounter.status !== 'resolved' ||
+    encounter.revision !== terminal.terminalRevision
+  )
+    return false;
+  const finalState = encounter.state as BattleState;
+  for (const companyId of lockSet.companyIds) {
+    const before = beforeByCompany.get(companyId);
+    const after = await lockCompanyAggregate(transaction, lockSet.worldId, companyId);
+    const binding = before?.encounter.active?.binding;
+    if (!before || !after || !binding) return false;
+    const witnessCharacterIds = binding.participants
+      .filter((participant) => {
+        if (participant.companyId !== companyId) return false;
+        const unit = finalState.units.find((entry) => entry.id === participant.unitId);
+        const character = after.economy.lifecycle.characters.find(
+          (entry) => entry.identity.characterId === participant.projection.characterId,
+        );
+        return (
+          unit !== undefined &&
+          unit.status !== 'dead' &&
+          character !== undefined &&
+          character.presence.availability !== 'DEAD'
+        );
+      })
+      .map((participant) => participant.projection.characterId);
+    await applyTerminalResilientNicknameEffects({
+      transaction,
+      before,
+      after,
+      finalState,
+      atTick: after.economy.lifecycle.campaignTick,
+      witnessCharacterIds,
+    });
+  }
   return true;
 }
 

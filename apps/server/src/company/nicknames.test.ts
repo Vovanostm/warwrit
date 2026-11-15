@@ -12,6 +12,7 @@ import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 
 import { proposeResilientNicknames } from './nicknames.js';
 import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
+import { prepareTerminalNicknameObservation } from './observation.js';
 
 function resolvedBattle(
   state: ReturnType<typeof createCompanyCombatAggregateFixture>['state'],
@@ -307,6 +308,52 @@ describe('resilient nickname producer', () => {
         proposalId: proposal.proposalId,
         resolution: 'REJECTED',
         decidedAt: lifecycle.campaignTick,
+      },
+    ]);
+  });
+
+  it('discloses only a saved deed source to its actual living witness', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const before = fixture.begun.next;
+    const participant = fixture.begun.binding.participants[0]!;
+    const proposalState = proposeResilientNicknames({
+      before,
+      after: before,
+      finalState: resolvedBattle(before, (unit) => ({ ...unit, health: 1 })),
+      atTick: before.economy.lifecycle.campaignTick,
+    }).state;
+    const proposal = proposalState.economy.lifecycle.nicknameProposals?.[0];
+    if (!proposal) throw new Error('expected a saved nickname deed');
+    const witnesses = [participant.projection.characterId];
+    expect(
+      prepareTerminalNicknameObservation(
+        proposalState,
+        proposal.characterId,
+        'invented-source',
+        witnesses,
+        proposal.proposedAt,
+      ),
+    ).toBeUndefined();
+    expect(
+      prepareTerminalNicknameObservation(
+        proposalState,
+        proposal.characterId,
+        proposal.sourceEventId,
+        [],
+        proposal.proposedAt,
+      ),
+    ).toBeUndefined();
+    const observed = prepareTerminalNicknameObservation(
+      proposalState,
+      proposal.characterId,
+      proposal.sourceEventId,
+      witnesses,
+      proposal.proposedAt,
+    );
+    expect(observed?.next.economy.lifecycle.knowledge.nicknameProposals).toMatchObject([
+      {
+        proposalId: proposal.proposalId,
+        sourceEventId: proposal.sourceEventId,
       },
     ]);
   });
