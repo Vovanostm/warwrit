@@ -87,6 +87,13 @@ export interface CompanySummaryDto {
     readonly name: string;
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
+    /** Choice authority derived only from this observer's known level and selected perk IDs. */
+    readonly perkChoices?: readonly {
+      readonly perkId: string;
+      readonly skillId: string;
+      readonly milestone: 25;
+      readonly effect: { readonly attribute: string; readonly value: number };
+    }[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
     /** The owner knows whether this character travels with the active field party. */
     readonly inFieldParty?: boolean;

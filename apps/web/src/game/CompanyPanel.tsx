@@ -6,6 +6,7 @@ import { PayrollPanel } from './PayrollPanel.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
 import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 import { RetrainingPanel } from './RetrainingPanel.js';
+import { PerkSelectionPanel } from './PerkSelectionPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
@@ -150,6 +151,12 @@ export function CompanyPanel(props: {
           );
         })}
       </ul>
+      <PerkSelectionPanel
+        key={`perk-selection:${props.accountId}:${company.companyId}`}
+        accountId={props.accountId}
+        company={company}
+        onRefresh={props.onRefreshItems}
+      />
       {holdings && (
         <>
           <ItemTransferPanel

@@ -146,6 +146,14 @@ export function registerCompanyRoutes(
       const fieldPartyFull =
         view.commandCapacity === null ||
         knownMembers.length >= Math.min(view.commandCapacity, COMPANY_RULES.partyHardMax);
+      const activeMemberIds = new Set(
+        state.economy.lifecycle.memberships
+          .filter((membership) => membership.companyId === companyId && membership.endedAt === null)
+          .map((membership) => membership.characterId),
+      );
+      const bladeMilestone25 = COMPANY_CATALOGUE.perks.filter(
+        (perk) => perk.skillId === 'blades' && perk.milestone === 25,
+      );
       return {
         holdings,
         summary: {
@@ -154,32 +162,55 @@ export function registerCompanyRoutes(
           companyPresentation: view.companyPresentation,
           leaderId: own ? (own.actingLeaderId ?? own.currentLeaderId) : view.leaderId,
           runStatus: own?.runStatus ?? view.runStatus,
-          characters: view.characters.map((character) => ({
-            characterId: character.characterId,
-            name: character.name,
-            nicknameTextKey: character.nicknameTextKey,
-            perkIds: [...character.perkIds],
-            knownStatus: character.knownStatus,
-            inFieldParty:
-              !fallen.has(character.characterId) && character.fieldPartyId === party?.partyId,
-            canJoinFieldParty: (() => {
-              const known = state.economy.lifecycle.knowledge.characters.find(
-                (entry) => entry.identity.characterId === character.characterId,
-              );
-              return Boolean(
-                party?.location.kind === 'AT' &&
-                !fallen.has(character.characterId) &&
-                !fieldPartyFull &&
-                known?.presence.availability === 'AVAILABLE' &&
-                known.presence.encounterBindingId === null &&
-                character.fieldPartyId === null &&
-                character.location.kind === 'AT' &&
-                character.location.siteId === party.location.siteId &&
-                character.location.areaId === party.location.areaId,
-              );
-            })(),
-            fieldPartyFull,
-          })),
+          characters: view.characters.map((character) => {
+            const hasBladeMilestone25 = character.perkIds.some((perkId) =>
+              COMPANY_CATALOGUE.perks.some(
+                (perk) => perk.id === perkId && perk.skillId === 'blades' && perk.milestone === 25,
+              ),
+            );
+            const hasObservedMastery = (character.skills['blades'] ?? 0) >= 25;
+            const eligibleForFirstChoice =
+              activeMemberIds.has(character.characterId) &&
+              character.knownStatus !== 'DEAD' &&
+              hasObservedMastery &&
+              !hasBladeMilestone25;
+            return {
+              characterId: character.characterId,
+              name: character.name,
+              nicknameTextKey: character.nicknameTextKey,
+              perkIds: [...character.perkIds],
+              ...(eligibleForFirstChoice
+                ? {
+                    perkChoices: bladeMilestone25.map((perk) => ({
+                      perkId: perk.id,
+                      skillId: perk.skillId,
+                      milestone: 25 as const,
+                      effect: { ...perk.effect },
+                    })),
+                  }
+                : {}),
+              knownStatus: character.knownStatus,
+              inFieldParty:
+                !fallen.has(character.characterId) && character.fieldPartyId === party?.partyId,
+              canJoinFieldParty: (() => {
+                const known = state.economy.lifecycle.knowledge.characters.find(
+                  (entry) => entry.identity.characterId === character.characterId,
+                );
+                return Boolean(
+                  party?.location.kind === 'AT' &&
+                  !fallen.has(character.characterId) &&
+                  !fieldPartyFull &&
+                  known?.presence.availability === 'AVAILABLE' &&
+                  known.presence.encounterBindingId === null &&
+                  character.fieldPartyId === null &&
+                  character.location.kind === 'AT' &&
+                  character.location.siteId === party.location.siteId &&
+                  character.location.areaId === party.location.areaId,
+                );
+              })(),
+              fieldPartyFull,
+            };
+          }),
         },
       };
     });
