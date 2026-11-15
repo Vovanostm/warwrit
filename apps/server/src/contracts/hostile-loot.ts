@@ -70,7 +70,10 @@ export function prepareHostileLootPickup(input: {
   );
   const activeCharacterIds = new Set(
     lifecycle.memberships
-      .filter((membership) => membership.endedAt === null)
+      .filter(
+        (membership) =>
+          membership.endedAt === null && membership.companyId === lifecycle.companyId,
+      )
       .map((membership) => String(membership.characterId)),
   );
   const targetOwned =
@@ -85,6 +88,7 @@ export function prepareHostileLootPickup(input: {
         character.presence.location.kind === 'AT' &&
         character.presence.location.siteId === location.siteId &&
         character.presence.location.areaId === location.areaId &&
+        activeCharacterIds.has(String(character.identity.characterId)) &&
         canPerform(character, 'travel'),
     )
     .toSorted((left, right) =>

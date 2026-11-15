@@ -1,5 +1,16 @@
 import { isRecord, isTransportId } from './value-guards.js';
 
+function isHostileLootEntityId(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    [...value].length <= 256 &&
+    value.length > 0 &&
+    !/^\s/u.test(value) &&
+    !/[\u0000-\u001f\u007f]/u.test(value) &&
+    /\S$/u.test(value)
+  );
+}
+
 export interface HostileLootItemDto {
   readonly itemId: string;
   readonly definitionId: string;
@@ -68,9 +79,9 @@ export function isHostileLootPickupRequestDto(
     isTransportId(value['commandId']) &&
     typeof value['expectedPublicRevision'] === 'string' &&
     /^(0|[1-9][0-9]*)$/.test(value['expectedPublicRevision']) &&
-    isTransportId(value['instanceId']) &&
-    isTransportId(value['hostileId']) &&
-    isTransportId(value['itemId']) &&
-    isTransportId(value['toContainerId'])
+    isHostileLootEntityId(value['instanceId']) &&
+    isHostileLootEntityId(value['hostileId']) &&
+    isHostileLootEntityId(value['itemId']) &&
+    isHostileLootEntityId(value['toContainerId'])
   );
 }

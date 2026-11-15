@@ -142,6 +142,57 @@ describe('hostile loot pickup preparation', () => {
     );
   });
 
+  it('requires a loot operator to have active membership in the owning company', () => {
+    const state = stateAtObjective();
+    const lifecycle = state.economy.lifecycle;
+    const remote = { kind: 'AT' as const, siteId: 'remote-site', areaId: 'remote-area' };
+    const provider = lifecycle.characters.find(
+      (character) => character.presence.fieldPartyId === null,
+    )!;
+    expect(
+      lifecycle.memberships.some(
+        (membership) => membership.characterId === provider.identity.characterId,
+      ),
+    ).toBe(false);
+    const previous = readCompanyCombatAggregateState({
+      ...state,
+      economy: {
+        ...state.economy,
+        lifecycle: {
+          ...lifecycle,
+          parties: lifecycle.parties.map((party) => ({ ...party, location: remote })),
+          characters: lifecycle.characters.map((character) =>
+            character.presence.fieldPartyId === null
+              ? character
+              : { ...character, presence: { ...character.presence, location: remote } },
+          ),
+          knowledge: {
+            ...lifecycle.knowledge,
+            characters: lifecycle.knowledge.characters.map((character) =>
+              character.presence.fieldPartyId === null
+                ? character
+                : { ...character, presence: { ...character.presence, location: remote } },
+            ),
+          },
+        },
+      },
+    });
+    const hostile = deadHostile();
+    expect(
+      prepareHostileLootPickup({
+        previous,
+        accountId: 'owner-account',
+        request: request(hostile.gear!.items[0]!.itemId),
+        worldId,
+        profile,
+        hostile,
+        terminalSourceId,
+        terminalRevision,
+        campaignTick: lifecycle.campaignTick,
+      }),
+    ).toEqual({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+  });
+
   it('can claim the second item from the same retained source container', () => {
     const previous = stateAtObjective();
     const hostile = deadHostile();
