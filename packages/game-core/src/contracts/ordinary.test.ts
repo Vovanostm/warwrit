@@ -40,6 +40,151 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('lets the holder return a rescued person after pre-battle withdrawal without payment', () => {
+    const mill: ContractPlace = {
+      siteId: 'staraya-melnitsa',
+      areaId: 'staraya-melnitsa-yard',
+    };
+    const cases = [
+      {
+        instanceId: 'ci.m1.cellar-rescue.01',
+        pickupStep: 'release',
+        pickupAt: mill,
+        personId: 'person.cellar-captive.01',
+        gates: { ...gates, RAIDERS_DEFEATED: true },
+      },
+      {
+        instanceId: 'ci.m1.lost-scout.01',
+        pickupStep: 'search',
+        pickupAt: BANK,
+        personId: 'person.lost-scout.01',
+        gates,
+      },
+    ] as const;
+
+    for (const scenario of cases) {
+      const rescue = ordinaryContractProfile(scenario.instanceId)!;
+      const issuerPlace = rescue.issuerPlace;
+      const run = (
+        state: OrdinaryContractState,
+        companyId: string,
+        sourceEventId: string,
+        standingAt: ContractPlace,
+        command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+        battleStarted = false,
+      ) =>
+        prepareOrdinaryContractCommand(rescue, state, command, {
+          companyId,
+          standingAt,
+          atTick: '10',
+          expectedRevision: state.revision,
+          sourceEventId,
+          gates: scenario.gates,
+          battleStarted,
+        });
+
+      const accepted = prepared(
+        run(
+          ordinaryContractGenesis(rescue),
+          'rescue-holder',
+          `${rescue.instanceId}:accept`,
+          issuerPlace,
+          { type: 'ACCEPT' },
+        ),
+      ).next;
+      const pickup = prepared(
+        run(accepted, 'rescue-holder', `${rescue.instanceId}:pickup`, scenario.pickupAt, {
+          type: 'STEP',
+          stepId: scenario.pickupStep,
+        }),
+      ).next;
+      const pickupFact = pickup.facts.find((fact) => fact.slotId.includes('living'));
+      expect(pickup.custody).toEqual([{ personId: scenario.personId, companyId: 'rescue-holder' }]);
+
+      expect(
+        run(
+          pickup,
+          'rescue-holder',
+          `${rescue.instanceId}:battle-withdrawal`,
+          scenario.pickupAt,
+          { type: 'WITHDRAW' },
+          true,
+        ),
+      ).toMatchObject({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+      const withdrawn = prepared(
+        run(pickup, 'rescue-holder', `${rescue.instanceId}:withdraw`, scenario.pickupAt, {
+          type: 'WITHDRAW',
+        }),
+      ).next;
+      expect(withdrawn).toMatchObject({
+        ownerCompanyId: null,
+        helperCompanyId: null,
+        acceptedTerms: accepted.acceptedTerms,
+        custody: [{ personId: scenario.personId, companyId: 'rescue-holder' }],
+      });
+      expect(withdrawn.facts.find((fact) => fact.slotId.includes('living'))).toEqual(pickupFact);
+      expect(readOrdinaryContractState(rescue, JSON.parse(JSON.stringify(withdrawn)))).toEqual(
+        withdrawn,
+      );
+      expect(() =>
+        readOrdinaryContractState(rescue, {
+          ...withdrawn,
+          lastWithdrawal: { ...withdrawn.lastWithdrawal!, companyId: 'another-company' },
+        }),
+      ).toThrow(/state .* is invalid/u);
+      expect(
+        run(
+          withdrawn,
+          'replacement-company',
+          `${rescue.instanceId}:replacement-accept`,
+          issuerPlace,
+          { type: 'ACCEPT' },
+        ),
+      ).toMatchObject({ kind: 'REJECTED', code: 'NOT_AVAILABLE' });
+
+      const wrongPlace = run(
+        withdrawn,
+        'rescue-holder',
+        `${rescue.instanceId}:wrong-place`,
+        scenario.pickupAt,
+        { type: 'STEP', stepId: 'deliver' },
+      );
+      expect(wrongPlace).toMatchObject({ kind: 'REJECTED', code: 'WRONG_PLACE' });
+      expect(withdrawn.custody).toEqual([
+        { personId: scenario.personId, companyId: 'rescue-holder' },
+      ]);
+      expect(
+        run(withdrawn, 'stranger', `${rescue.instanceId}:stranger-return`, issuerPlace, {
+          type: 'STEP',
+          stepId: 'deliver',
+        }),
+      ).toMatchObject({ kind: 'REJECTED', code: 'NOT_A_PARTICIPANT' });
+
+      const returned = prepared(
+        run(withdrawn, 'rescue-holder', `${rescue.instanceId}:return`, issuerPlace, {
+          type: 'STEP',
+          stepId: 'deliver',
+        }),
+      );
+      expect(returned.payout).toBeNull();
+      expect(returned.next).toMatchObject({
+        custody: [],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId: 'rescue-holder',
+          payoutPolicy: 'NO_PAYOUT',
+        },
+      });
+      expect(returned.next.facts.find((fact) => fact.slotId.endsWith('-delivery'))).toMatchObject({
+        companyId: 'rescue-holder',
+        sourceEventId: `${rescue.instanceId}:return`,
+      });
+      expect(readOrdinaryContractState(rescue, JSON.parse(JSON.stringify(returned.next)))).toEqual(
+        returned.next,
+      );
+    }
+  });
+
   it('freezes a one-day half-open deadline and leaves expired cargo with its holder', () => {
     const sack = ordinaryContractProfile('ci.m1.dragged-sack.01')!;
     const issuer: ContractPlace = { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' };
@@ -681,7 +826,7 @@ describe('ordinary contract transitions', () => {
     });
   });
 
-  it('rejects withdrawal after a linked battle starts or the company takes custody', () => {
+  it('rejects withdrawal after a linked battle starts but preserves held-person custody on withdrawal', () => {
     let state = prepared(
       act(ordinaryContractGenesis(profile), 'owner', CITY, { type: 'ACCEPT' }),
     ).next;
@@ -707,9 +852,11 @@ describe('ordinary contract transitions', () => {
       act(ordinaryContractGenesis(lostScout), 'owner', CITY, { type: 'ACCEPT' }),
     ).next;
     state = prepared(act(state, 'owner', BANK, { type: 'STEP', stepId: 'search' })).next;
-    expect(act(state, 'owner', CITY, { type: 'WITHDRAW' })).toEqual({
-      kind: 'REJECTED',
-      code: 'NOT_AVAILABLE',
+    const withdrawn = prepared(act(state, 'owner', CITY, { type: 'WITHDRAW' })).next;
+    expect(withdrawn).toMatchObject({
+      ownerCompanyId: null,
+      acceptedTerms: state.acceptedTerms,
+      custody: [{ personId: 'person.lost-scout.01', companyId: 'owner' }],
     });
   });
 });

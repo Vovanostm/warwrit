@@ -690,12 +690,14 @@ export interface OrdinaryContractState {
         readonly companyId: string;
         readonly sourceEventId: string;
         readonly atTick: string;
+        readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
       }
     | {
         readonly kind: 'EXPIRED';
         readonly companyId: string;
         readonly sourceEventId: string;
         readonly atTick: string;
+        readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
       };
 }
 
@@ -766,6 +768,23 @@ export function companyHoldsSlot(
   return state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId);
 }
 
+function isWithdrawnCustodyDelivery(
+  state: OrdinaryContractState,
+  companyId: string,
+  step: OrdinaryStepDefinition,
+): boolean {
+  const personId = step.needsCustodyOf;
+  return (
+    personId !== undefined &&
+    step.action === 'DELIVER' &&
+    step.completes === true &&
+    state.acceptedTerms !== null &&
+    state.lastWithdrawal !== null &&
+    (state.ownerCompanyId === null || state.lastWithdrawal.companyId === companyId) &&
+    state.custody.some((entry) => entry.personId === personId && entry.companyId === companyId)
+  );
+}
+
 /** Why a step is not available to this company now, or null when it can be taken. */
 export function ordinaryStepBlocker(
   state: OrdinaryContractState,
@@ -780,11 +799,13 @@ export function ordinaryStepBlocker(
     state.outcome?.kind === 'EXPIRED' &&
     step.returnsCargoAfterWithdrawal === true &&
     state.ownerCompanyId === companyId;
+  const withdrawnCustodyDelivery = isWithdrawnCustodyDelivery(state, companyId, step);
   if (state.outcome !== null && !expiredReturn) return 'NOT_AVAILABLE';
   if (
     companyId !== state.ownerCompanyId &&
     companyId !== state.helperCompanyId &&
-    !step.returnsCargoAfterWithdrawal
+    !step.returnsCargoAfterWithdrawal &&
+    !withdrawnCustodyDelivery
   )
     return 'NOT_A_PARTICIPANT';
   if (step.produces.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
@@ -856,7 +877,7 @@ export function prepareOrdinaryContractCommand(
       contractDeadlinePassed(state, context.atTick) ||
       (!isOwner && !isHelper) ||
       context.battleStarted === true ||
-      state.custody.length > 0 ||
+      state.custody.some((entry) => entry.companyId !== context.companyId) ||
       (isOwner &&
         state.cargoCustody.some(
           (entry) => entry.companyId !== null && entry.companyId !== context.companyId,
@@ -874,7 +895,7 @@ export function prepareOrdinaryContractCommand(
         revision,
         ownerCompanyId: isOwner ? null : state.ownerCompanyId,
         helperCompanyId: isOwner || isHelper ? null : state.helperCompanyId,
-        acceptedTerms: isOwner ? null : state.acceptedTerms,
+        acceptedTerms: isOwner && state.custody.length === 0 ? null : state.acceptedTerms,
         lastWithdrawal: {
           companyId: context.companyId,
           sourceEventId: context.sourceEventId,
@@ -892,7 +913,8 @@ export function prepareOrdinaryContractCommand(
     const open =
       command.type === 'ACCEPT'
         ? state.ownerCompanyId === null &&
-          !state.cargoCustody.some((entry) => entry.companyId !== null)
+          !state.cargoCustody.some((entry) => entry.companyId !== null) &&
+          state.custody.length === 0
         : state.ownerCompanyId !== null &&
           state.helperCompanyId === null &&
           state.ownerCompanyId !== context.companyId;
@@ -921,6 +943,7 @@ export function prepareOrdinaryContractCommand(
     (entry) => entry.stepId === command.stepId,
   );
   if (!step) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+  const withdrawnCustodyDelivery = isWithdrawnCustodyDelivery(state, context.companyId, step);
   const expired = contractDeadlinePassed(state, context.atTick);
   if (expired && !step.returnsCargoAfterWithdrawal)
     return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
@@ -976,7 +999,7 @@ export function prepareOrdinaryContractCommand(
   return {
     kind: 'PREPARED',
     payout:
-      step.completes && step.payoutPolicy !== 'NO_PAYOUT'
+      step.completes && step.payoutPolicy !== 'NO_PAYOUT' && !withdrawnCustodyDelivery
         ? { companyId: context.companyId, rewardQ: state.acceptedTerms?.rewardQ ?? profile.rewardQ }
         : null,
     next: freeze({
@@ -997,14 +1020,22 @@ export function prepareOrdinaryContractCommand(
               companyId: context.companyId,
               sourceEventId: context.sourceEventId,
               atTick: context.atTick,
+              payoutPolicy: 'NO_PAYOUT',
             }
           : {
               kind: 'SUCCESS',
               companyId: context.companyId,
               sourceEventId: context.sourceEventId,
               atTick: context.atTick,
+              ...(withdrawnCustodyDelivery || step.payoutPolicy === 'NO_PAYOUT'
+                ? { payoutPolicy: 'NO_PAYOUT' as const }
+                : {}),
             }
         : null,
+      acceptedTerms:
+        step.completes && withdrawnCustodyDelivery && state.ownerCompanyId === null
+          ? null
+          : state.acceptedTerms,
     }),
   };
 }
@@ -1291,16 +1322,39 @@ export function readOrdinaryContractState(
         (outcome as Record<string, unknown>)['kind'] === 'SUCCESS' &&
         isText((outcome as Record<string, unknown>)['companyId']) &&
         isText((outcome as Record<string, unknown>)['sourceEventId']) &&
-        isTick((outcome as Record<string, unknown>)['atTick'])) ||
+        isTick((outcome as Record<string, unknown>)['atTick']) &&
+        ((outcome as Record<string, unknown>)['payoutPolicy'] === undefined ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'FULL_REWARD' ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'NO_PAYOUT')) ||
       (typeof outcome === 'object' &&
         (outcome as Record<string, unknown>)['kind'] === 'EXPIRED' &&
         isText((outcome as Record<string, unknown>)['companyId']) &&
         isText((outcome as Record<string, unknown>)['sourceEventId']) &&
-        isTick((outcome as Record<string, unknown>)['atTick']))
+        isTick((outcome as Record<string, unknown>)['atTick']) &&
+        ((outcome as Record<string, unknown>)['payoutPolicy'] === undefined ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'FULL_REWARD' ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'NO_PAYOUT'))
     )
   )
     return fail();
-  if ((ownerCompanyId === null) !== (normalizedTerms === null)) return fail();
+  const retainedForHeldPerson =
+    ownerCompanyId === null &&
+    normalizedTerms !== null &&
+    normalizedWithdrawal !== null &&
+    Array.isArray(custody) &&
+    custody.some(
+      (entry: Record<string, unknown>) =>
+        isRecord(entry) &&
+        entry['companyId'] === normalizedWithdrawal['companyId'] &&
+        normalizedTerms.steps.some(
+          (step) =>
+            step.action === 'DELIVER' &&
+            step.completes === true &&
+            step.needsCustodyOf === entry['personId'],
+        ),
+    );
+  if ((ownerCompanyId === null) !== (normalizedTerms === null) && !retainedForHeldPerson)
+    return fail();
   return freeze({
     ...JSON.parse(JSON.stringify(record)),
     cargoCustody,

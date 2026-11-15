@@ -181,6 +181,9 @@ export function contractView(
     terminalFact === undefined
       ? undefined
       : terms.steps.find((step) => step.produces.includes(terminalFact.slotId));
+  const noPayout =
+    projectedState.outcome?.payoutPolicy === 'NO_PAYOUT' ||
+    terminalStep?.payoutPolicy === 'NO_PAYOUT';
   const emptyWatchPublicConsequences =
     profile.instanceId === 'ci.m1.empty-watch-record.01' &&
     terminalFact?.slotId === 'empty-watch-sack-handed-over'
@@ -238,19 +241,21 @@ export function contractView(
         ? 'EXPIRED'
         : state.outcome
           ? 'COMPLETED'
-          : state.ownerCompanyId
+          : state.ownerCompanyId || state.custody.length > 0
             ? 'ACTIVE'
             : 'OFFERED',
     ...(deadlineTicks ? { deadlineTicks } : {}),
     completedByYou:
       projectedState.outcome?.kind === 'SUCCESS' &&
       projectedState.outcome.companyId === companyId &&
-      terminalStep?.payoutPolicy !== 'NO_PAYOUT',
-    ...(terminalStep
-      ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
-      : projectedState.outcome?.kind === 'EXPIRED'
-        ? { terminalPayout: 'NO_PAYOUT' as const }
-        : {}),
+      !noPayout,
+    ...(noPayout
+      ? { terminalPayout: 'NO_PAYOUT' as const }
+      : terminalStep
+        ? { terminalPayout: 'PAID' as const }
+        : projectedState.outcome?.kind === 'EXPIRED'
+          ? { terminalPayout: 'NO_PAYOUT' as const }
+          : {}),
     ...(terminalStep?.returnsCargoAfterWithdrawal && terminalStep.resultTextKey
       ? {
           terminalFindingTextKey: `contract.${profile.instanceId}.result.${terminalStep.resultTextKey}`,
@@ -266,6 +271,7 @@ export function contractView(
       projectedState.outcome === null &&
       state.ownerCompanyId === null &&
       !state.cargoCustody.some((entry) => entry.companyId !== null) &&
+      state.custody.length === 0 &&
       atIssuer,
     canHelp:
       companyId !== undefined &&
@@ -279,7 +285,7 @@ export function contractView(
       (role === 'OWNER' || role === 'HELPER') &&
       projectedState.outcome === null &&
       !battleStarted &&
-      state.custody.length === 0 &&
+      state.custody.every((entry) => entry.companyId === companyId) &&
       !(
         role === 'OWNER' &&
         state.cargoCustody.some(

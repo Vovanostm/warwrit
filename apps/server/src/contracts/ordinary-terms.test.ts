@@ -415,7 +415,7 @@ describe('ordinary accepted term projection', () => {
     expect(view.canWithdraw).toBe(true);
   });
 
-  it('enables withdrawal only for an active participant before battle and without custody', () => {
+  it('enables pre-battle withdrawal for active participants while preserving held-person custody', () => {
     const state = acceptedState();
     const beforeBattle = contractView(profile, state, 'company-a', issuer, gates, false);
     const duringBattle = contractView(profile, state, 'company-a', issuer, gates, true);
@@ -427,7 +427,122 @@ describe('ordinary accepted term projection', () => {
       ...state,
       custody: [{ personId: 'person.lost-scout.01', companyId: 'company-a' }],
     });
-    expect(contractView(profile, held, 'company-a', issuer, gates, false).canWithdraw).toBe(false);
+    expect(contractView(profile, held, 'company-a', issuer, gates, false).canWithdraw).toBe(true);
+  });
+
+  it('projects a held rescue return after withdrawal as the holder’s unpaid issuer action', () => {
+    for (const scenario of [
+      {
+        instanceId: 'ci.m1.cellar-rescue.01',
+        pickupStep: 'release',
+        pickupAt: { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        personId: 'person.cellar-captive.01',
+        gates: { ...gates, RAIDERS_DEFEATED: true },
+      },
+      {
+        instanceId: 'ci.m1.lost-scout.01',
+        pickupStep: 'search',
+        pickupAt: bank,
+        personId: 'person.lost-scout.01',
+        gates,
+      },
+    ] as const) {
+      const rescue = ordinaryContractProfile(scenario.instanceId)!;
+      const run = (
+        state: ReturnType<typeof ordinaryContractGenesis>,
+        companyId: string,
+        commandId: string,
+        standingAt: { readonly siteId: string; readonly areaId: string },
+        command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+      ) =>
+        prepareOrdinaryContractCommand(rescue, state, command, {
+          companyId,
+          standingAt,
+          atTick: '10',
+          expectedRevision: state.revision,
+          sourceEventId: commandId,
+          gates: scenario.gates,
+        });
+      const issuerLocation = rescue.issuerPlace;
+      const accepted = run(
+        ordinaryContractGenesis(rescue),
+        'person-holder',
+        `${rescue.instanceId}:accept`,
+        issuerLocation,
+        { type: 'ACCEPT' },
+      );
+      if (accepted.kind !== 'PREPARED') throw new Error('expected accepted rescue');
+      const pickup = run(
+        accepted.next,
+        'person-holder',
+        `${rescue.instanceId}:pickup`,
+        scenario.pickupAt,
+        { type: 'STEP', stepId: scenario.pickupStep },
+      );
+      if (pickup.kind !== 'PREPARED') throw new Error('expected rescued person');
+      const withdrawn = run(
+        pickup.next,
+        'person-holder',
+        `${rescue.instanceId}:withdraw`,
+        scenario.pickupAt,
+        { type: 'WITHDRAW' },
+      );
+      if (withdrawn.kind !== 'PREPARED')
+        throw new Error(
+          `expected withdrawal for ${rescue.instanceId}: ${JSON.stringify(withdrawn)}`,
+        );
+
+      const holderView = contractView(
+        rescue,
+        withdrawn.next,
+        'person-holder',
+        issuerLocation,
+        scenario.gates,
+        false,
+      );
+      expect(holderView).toMatchObject({
+        state: 'ACTIVE',
+        yourRole: 'NONE',
+        yourCustody: [scenario.personId],
+        canAccept: false,
+        canWithdraw: false,
+      });
+      expect(holderView.steps.find((step) => step.stepId === 'deliver')).toMatchObject({
+        blocker: null,
+      });
+      const strangerView = contractView(
+        rescue,
+        withdrawn.next,
+        'stranger',
+        issuerLocation,
+        scenario.gates,
+        false,
+      );
+      expect(strangerView).toMatchObject({
+        yourCustody: [],
+      });
+      expect(strangerView.steps.find((step) => step.stepId === 'deliver')).toMatchObject({
+        blocker: 'NOT_A_PARTICIPANT',
+      });
+
+      const returned = run(
+        withdrawn.next,
+        'person-holder',
+        `${rescue.instanceId}:return`,
+        issuerLocation,
+        { type: 'STEP', stepId: 'deliver' },
+      );
+      if (returned.kind !== 'PREPARED') throw new Error('expected returned person');
+      expect(returned.payout).toBeNull();
+      expect(
+        contractView(rescue, returned.next, 'person-holder', issuerLocation, scenario.gates, false),
+      ).toMatchObject({
+        state: 'COMPLETED',
+        terminalPayout: 'NO_PAYOUT',
+        completedByYou: false,
+        yourCustody: [],
+      });
+    }
   });
 
   it('projects the dragged-sack deadline and expired return action from campaign time', () => {

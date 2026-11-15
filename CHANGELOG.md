@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16, `codex/m1-quest-road-20261115` — Changed: preserve a rescued
+  person's custody when the holder withdraws before battle, then allow only that
+  holder to return the person to the frozen issuer without payment.
+  [Held-person return result](docs/work-packages/M1-CONTRACT-TERMS.md#held-person-return-after-withdrawal--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: give «Мешок у дороги» one Campaign Day from acceptance
   and allow an expired holder to return the sack without payment.
   [Deadline decision and result](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-deadline-decision-and-implementation--2026-11-16). LOCAL.

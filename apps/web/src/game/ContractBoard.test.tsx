@@ -345,3 +345,41 @@ it('shows returned sack custody and the saved grain and company knowledge conseq
     'ci.m1.dragged-sack.01:sleep',
   );
 });
+
+it('shows a physical unpaid return action for a withdrawn rescue holder', () => {
+  const issuer = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
+  const returnedPerson: OrdinaryContractDto = {
+    ...herbs,
+    instanceId: 'ci.m1.lost-scout.01',
+    template: 'RESCUE',
+    issuerRoleId: 'city-watch-contact',
+    issuerLocation: issuer,
+    rewardQ: '80000000',
+    yourRole: 'NONE',
+    state: 'ACTIVE',
+    canWithdraw: false,
+    yourCustody: ['person.lost-scout.01'],
+    steps: [
+      {
+        stepId: 'deliver',
+        action: 'DELIVER',
+        location: issuer,
+        doneByYou: false,
+        blocker: null,
+        completes: true,
+      },
+    ],
+  };
+  const issuerVisit = { siteId: issuer.siteId, building: 'watch' as const };
+  const activeMarkup = render(returnedPerson, issuerVisit, issuer.siteId);
+  expect(activeMarkup).toContain('Верните человека заказчику; за этот возврат платить не будут.');
+  expect(activeMarkup).toContain('Отвести человека заказчику без выплаты');
+  expect(activeMarkup).not.toContain('Отказаться от поручения');
+
+  const completed = render(
+    { ...returnedPerson, state: 'COMPLETED', terminalPayout: 'NO_PAYOUT', yourCustody: [] },
+    issuerVisit,
+    issuer.siteId,
+  );
+  expect(completed).toContain('выполнен без выплаты');
+});

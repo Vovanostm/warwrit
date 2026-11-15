@@ -173,6 +173,15 @@ export function ContractConversation(props: ConversationProps) {
       {contract.deadlineTicks && contract.state !== 'EXPIRED' && (
         <p className="state-note">Срок — один день кампании с момента принятия поручения.</p>
       )}
+      {contract.yourRole === 'NONE' &&
+        contract.template === 'RESCUE' &&
+        contract.steps.some(
+          (step) => step.action === 'DELIVER' && step.completes && step.blocker === null,
+        ) && (
+          <p className="state-note">
+            Верните человека заказчику; за этот возврат платить не будут.
+          </p>
+        )}
       {contract.terminalFindingTextKey && (
         <p className="contract-result">{lookup(contract.terminalFindingTextKey)}</p>
       )}
@@ -208,7 +217,7 @@ export function ContractConversation(props: ConversationProps) {
           {contract.canAccept ? 'Договориться и взять поручение' : 'Предложить помощь'}
         </button>
       )}
-      {contract.yourRole !== 'NONE' && (
+      {(contract.yourRole !== 'NONE' || contract.yourCustody.length > 0) && (
         <ol className="contract-steps">
           {contract.steps.map((step) => (
             <ContractStep key={step.stepId} {...props} step={step} />
@@ -290,7 +299,11 @@ function ContractStepAction(
         onClick={() => props.onCommand('STEP', step.stepId)}
       >
         {step.completes
-          ? 'Передать результат заказчику'
+          ? contract.yourRole === 'NONE' &&
+            contract.template === 'RESCUE' &&
+            step.action === 'DELIVER'
+            ? 'Отвести человека заказчику без выплаты'
+            : 'Передать результат заказчику'
           : (stepText(contract.instanceId, step.stepId) ?? 'Продолжить')}
       </button>
     );
