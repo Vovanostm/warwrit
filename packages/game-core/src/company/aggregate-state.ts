@@ -450,7 +450,7 @@ function bindingShape(value: unknown): boolean {
     !transitionShape(value['initial']) ||
     !bindingVersionsMatch(value) ||
     !Number.isSafeInteger(value['lastAppliedRevision']) ||
-    (worldBinding && !worldParticipantsShape(value['worldParticipants'])) ||
+    (worldBinding && !worldParticipantsShape(value['worldParticipants'], value['setup'])) ||
     (bindingNeedsMemberMatch(value) && !worldBindingMembersMatch(value))
   )
     return false;
@@ -481,7 +481,11 @@ function combatUnitValuesShape(entry: Record<string, unknown>): boolean {
   );
 }
 
-function worldParticipantsShape(value: unknown): boolean {
+function worldParticipantsShape(value: unknown, setup: unknown): boolean {
+  const allowMillSlam =
+    plainObject(setup) &&
+    setup['schemaVersion'] === 3 &&
+    setup['rulesetId'] === M1_DOMAIN_BRIDGE_V6_RULESET_ID;
   return !(
     !Array.isArray(value) ||
     value.length === 0 ||
@@ -497,12 +501,17 @@ function worldParticipantsShape(value: unknown): boolean {
           'attributes',
           'initialPools',
           ...(plainObject(entry) && Object.hasOwn(entry, 'moralePolicy') ? ['moralePolicy'] : []),
+          ...(allowMillSlam && plainObject(entry) && Object.hasOwn(entry, 'threatProfile')
+            ? ['threatProfile']
+            : []),
         ]) &&
         ['entityId', 'sourceId', 'unitId', 'sideId', 'weaponId'].every((key) =>
           isEntityId(entry[key]),
         ) &&
         (entry['moralePolicy'] === undefined ||
           ['human', 'beast', 'steady'].includes(entry['moralePolicy'] as string)) &&
+        (!Object.hasOwn(entry, 'threatProfile') ||
+          (allowMillSlam && entry['threatProfile'] === 'mill-slam')) &&
         entry['entityId'] === entry['unitId'] &&
         hexShape(entry['position']) &&
         combatUnitValuesShape(entry),
@@ -700,8 +709,8 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
           ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
           : {}),
         ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V6_RULESET_ID &&
-        setupUnit['threatProfile'] === 'mill-slam'
-          ? { threatProfile: 'mill-slam' }
+        Object.hasOwn(participant, 'threatProfile')
+          ? { threatProfile: participant['threatProfile'] }
           : {}),
       }) === canonicalJson(setupUnit)
     );

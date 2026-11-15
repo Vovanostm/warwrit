@@ -88,6 +88,7 @@ export interface EncounterWorldParticipant {
   readonly attributes: BattleSetupV2['units'][number]['attributes'];
   readonly initialPools: BattleSetupV2['units'][number]['initialPools'];
   readonly moralePolicy?: 'human' | 'beast' | 'steady';
+  readonly threatProfile?: 'mill-slam';
 }
 
 /** Legacy evidence bytes remain company-only; world bindings require their own version. */
@@ -306,6 +307,16 @@ export function prepareEncounterBinding(
     return ownPhysical(participant);
   });
   requirePhysical(
+    worldParticipants.every(
+      (participant) =>
+        participant.threatProfile === undefined ||
+        (evidence.setup.schemaVersion === 3 &&
+          evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID &&
+          participant.threatProfile === 'mill-slam'),
+    ),
+    'INVALID_SOURCE',
+  );
+  requirePhysical(
     evidence.version !== FIRST_HUNT_WORLD_BINDING_VERSION || worldParticipants.length > 0,
     'INVALID_SOURCE',
   );
@@ -351,6 +362,9 @@ export function prepareEncounterBinding(
     weaponId: participant.weaponId,
     attributes: participant.attributes,
     initialPools: participant.initialPools,
+    ...(evidence.setup.schemaVersion === 3 && participant.threatProfile !== undefined
+      ? { threatProfile: participant.threatProfile }
+      : {}),
     ...(tacticalWorld ? { skillRanks: {}, moralePolicy: participant.moralePolicy } : {}),
     ...(evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || tacticalWorld
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }

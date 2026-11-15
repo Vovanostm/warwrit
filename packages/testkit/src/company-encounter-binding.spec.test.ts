@@ -312,6 +312,16 @@ describe('G05 — whole-candidate real participant binding', () => {
       const roundTrip = readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)));
       expect(roundTrip.encounter.active?.binding.version).toBe(FIRST_HUNT_WORLD_BINDING_VERSION);
       expect('worldParticipants' in roundTrip.encounter.active!.binding).toBe(true);
+      if (version === 2) {
+        const legacyTrait = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+        const legacyEncounter = legacyTrait['encounter'] as Record<string, unknown>;
+        const legacyActive = legacyEncounter['active'] as Record<string, unknown>;
+        const legacyBinding = legacyActive['binding'] as Record<string, unknown>;
+        const legacyWorld = legacyBinding['worldParticipants'] as Array<Record<string, unknown>>;
+        legacyWorld[0]!['threatProfile'] = 'mill-slam';
+        legacyActive['bindingDigest'] = canonicalJson(legacyBinding);
+        expect(() => readCompanyCombatAggregateState(legacyTrait)).toThrow(TypeError);
+      }
 
       const malformedLegacy = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
       const encounter = malformedLegacy['encounter'] as Record<string, unknown>;
@@ -373,6 +383,7 @@ describe('G05 — whole-candidate real participant binding', () => {
     const worldParticipants = [
       {
         moralePolicy: 'human' as const,
+        threatProfile: 'mill-slam' as const,
         entityId: 'world-first-npc',
         sourceId: 'world-first-npc-source',
         unitId: unitId('world-first-npc'),
@@ -445,6 +456,9 @@ describe('G05 — whole-candidate real participant binding', () => {
     expect(setup.units.filter((unit) => unit.sideId === alliedSideId)).toHaveLength(3);
     expect(setup.units.filter((unit) => unit.sideId === firstNpcSideId)).toHaveLength(1);
     expect(setup.units.filter((unit) => unit.sideId === secondNpcSideId)).toHaveLength(1);
+    expect(setup.units.find((unit) => unit.id === unitId('world-first-npc'))?.threatProfile).toBe(
+      'mill-slam',
+    );
     expect(
       setup.parties
         .filter((party) => party.kind === 'player')
@@ -465,6 +479,32 @@ describe('G05 — whole-candidate real participant binding', () => {
     expect(readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)))).toEqual(
       begun.next,
     );
+    const missingPersistedTrait = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const missingTraitActive = (missingPersistedTrait['encounter'] as Record<string, unknown>)[
+      'active'
+    ] as Record<string, unknown>;
+    const missingTraitBinding = missingTraitActive['binding'] as Record<string, unknown>;
+    const missingTraitParticipants = missingTraitBinding['worldParticipants'] as Array<
+      Record<string, unknown>
+    >;
+    Reflect.deleteProperty(missingTraitParticipants[0]!, 'threatProfile');
+    missingTraitActive['bindingDigest'] = canonicalJson(missingTraitBinding);
+    expect(() => readCompanyCombatAggregateState(missingPersistedTrait)).toThrow(TypeError);
+
+    const missingSetupTrait = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const missingSetupActive = (missingSetupTrait['encounter'] as Record<string, unknown>)[
+      'active'
+    ] as Record<string, unknown>;
+    const missingSetupBinding = missingSetupActive['binding'] as Record<string, unknown>;
+    const missingSetup = missingSetupBinding['setup'] as Record<string, unknown>;
+    const missingSetupUnits = missingSetup['units'] as Array<Record<string, unknown>>;
+    Reflect.deleteProperty(
+      missingSetupUnits.find((unit) => unit['id'] === 'world-first-npc')!,
+      'threatProfile',
+    );
+    missingSetupActive['bindingDigest'] = canonicalJson(missingSetupBinding);
+    expect(() => readCompanyCombatAggregateState(missingSetupTrait)).toThrow(TypeError);
+
     const unknownCombatParty = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
     const encounter = unknownCombatParty['encounter'] as Record<string, unknown>;
     const active = encounter['active'] as Record<string, unknown>;
@@ -483,6 +523,36 @@ describe('G05 — whole-candidate real participant binding', () => {
       ),
     };
     expect(() => prepareEncounterBinding(f.sources, f.request, duplicatedMember)).toThrow();
+  });
+
+  it('rejects a world mill-slam trait on the legacy V2 binding path', () => {
+    const f = fixture();
+    const evidence: EncounterPositionEvidence = {
+      ...f.evidence,
+      version: FIRST_HUNT_WORLD_BINDING_VERSION,
+      worldParticipants: [
+        {
+          entityId: 'world-raider-front',
+          sourceId: 'world-raider-genesis',
+          unitId: unitId('world-raider-front'),
+          sideId: f.evidence.setup.sides[1]!.id,
+          position: { q: 2, r: -1 },
+          weaponId: 'raider',
+          attributes: {
+            accuracy: 55,
+            armor: 20,
+            defense: 40,
+            health: 60,
+            initiative: 40,
+            morale: 60,
+            stamina: 70,
+          },
+          initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
+          threatProfile: 'mill-slam',
+        },
+      ],
+    };
+    expect(() => prepareEncounterBinding(f.sources, f.request, evidence)).toThrow();
   });
 
   type Fixture = ReturnType<typeof fixture>;
