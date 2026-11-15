@@ -7,6 +7,7 @@ import {
   canPerform,
   huntProfile,
   ORDINARY_CONTRACT_PROFILES,
+  FIRST_HUNT_PROOF_ID,
   ordinaryContractGenesis,
   ordinaryContractProfile,
   ordinaryContractProfileVersion,
@@ -54,6 +55,20 @@ import {
 } from './first-hunt-runtime.js';
 
 const MILL_BEAST = huntProfile('ci.m1.mill-beast.01')!;
+const VOICE_UNDER_BOARDS = 'ci.m1.voice-under-boards.01';
+
+async function voiceUnderBoardsUnlocked(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<boolean> {
+  const proof = await transaction
+    .selectFrom('world_proof_claims')
+    .select('redemption_receipt_id')
+    .where('world_id', '=', worldId)
+    .where('item_id', '=', FIRST_HUNT_PROOF_ID)
+    .executeTakeFirst();
+  return proof?.redemption_receipt_id !== null && proof?.redemption_receipt_id !== undefined;
+}
 
 type Rejection = Extract<OrdinaryContractCommandResponseDto, { ok: false }>['code'];
 
@@ -398,6 +413,7 @@ export function contractView(
 const withdrawalBattleSource: Readonly<Record<string, string>> = Object.freeze({
   'ci.m1.cellar-rescue.01': 'ci.m1.raider-standard.01',
   'ci.m1.mill-worker.01': 'ci.m1.mill-beast.01',
+  'ci.m1.voice-under-boards.01': 'ci.m1.raider-standard.01',
 });
 
 async function ordinaryBattleStarted(
@@ -499,6 +515,12 @@ async function executeOrdinaryCommand(
     .forUpdate()
     .executeTakeFirst();
   if (!row) return reject('NOT_AVAILABLE');
+  if (
+    request.type === 'ACCEPT' &&
+    request.instanceId === VOICE_UNDER_BOARDS &&
+    !(await voiceUnderBoardsUnlocked(transaction, worldId))
+  )
+    return reject('NOT_AVAILABLE');
   const profile = ordinaryContractProfileVersion(offeredProfile.instanceId, row.profile_id);
   if (!profile)
     throw new TypeError('Ordinary contract row has no retained immutable profile version');
@@ -669,6 +691,11 @@ export function registerOrdinaryContractRoutes(
         .execute();
       const contracts = [] as OrdinaryContractDto[];
       for (const profile of ORDINARY_CONTRACT_PROFILES) {
+        if (
+          profile.instanceId === VOICE_UNDER_BOARDS &&
+          !(await voiceUnderBoardsUnlocked(transaction, worldId))
+        )
+          continue;
         let row = rows.find((entry) => entry.instance_id === profile.instanceId);
         if (!row) continue;
         let projectedCompany = company;

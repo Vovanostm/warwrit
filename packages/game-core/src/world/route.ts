@@ -93,6 +93,7 @@ export const DANGEROUS_ROUTE_CONTRACTS: Readonly<Record<string, string>> = Objec
   'ci.m1.raider-standard.01': FIRST_HUNT_PROFILE_ID,
   'ci.m1.cellar-rescue.01': 'ct.m1.cellar-rescue.v1',
   'ci.m1.mill-worker.01': 'ct.m1.mill-worker.v1',
+  'ci.m1.voice-under-boards.01': 'ct.m1.voice-under-boards.v1',
   'ci.m1.mill-beast.01': 'ct.m1.mill-beast.v1',
 });
 

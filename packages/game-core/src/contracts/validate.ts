@@ -225,6 +225,7 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ct.m1.not-one-pack.v1',
     'ct.m1.tracks-over-tracks.kosars.v1',
     'ct.m1.tracks-over-tracks.bandits.v1',
+    'ct.m1.voice-under-boards.v1',
   ];
   const originalInstanceIds = [
     'ci.m1.mill-worker.01',
@@ -237,6 +238,7 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ci.m1.raider-standard.01',
     'ci.m1.not-one-pack.01',
     'ci.m1.tracks-over-tracks.01',
+    'ci.m1.voice-under-boards.01',
   ];
   const originalSceneIds = [
     'MILL-01',
@@ -253,6 +255,7 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'INVEST-02',
     'RESCUE-01',
     'RESCUE-02',
+    'RESCUE-03-VOICE-UNDER-BOARDS',
   ];
   if (
     originalDefinitionIds.some((id) => !definitionIds.includes(id)) ||

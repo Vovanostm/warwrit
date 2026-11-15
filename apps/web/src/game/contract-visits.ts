@@ -18,6 +18,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.not-one-pack.01': 'elder',
   'ci.m1.tracks-over-tracks.01': 'watch',
   'ci.m1.foul-well.01': 'chapel',
+  'ci.m1.voice-under-boards.01': 'elder',
 };
 
 export interface ContractVisit {

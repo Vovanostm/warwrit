@@ -91,6 +91,10 @@ requests.
   state and company-private knowledge that Ерёма slept. Deadline expiry awaits
   the owner’s clock decision.
   [Quest checkpoint](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-implementation--2026-11-15). LOCAL.
+- 2026-11-15 — Added: «Голос из-под пола» as a gated ordinary RESCUE through
+  the existing beast hunt, custody, travel, delivery and finite 120-crown purse.
+  The approved quiet descent remains unavailable until its material source is
+  implemented. [Quest slice](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-15 — Fixed: show a no-payout contract ending without implying a
   reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement «Обход, которого не было» with a paid
