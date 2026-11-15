@@ -20,6 +20,20 @@ day-night journey and fresh browser/SQL conformance are NOT_RUN here. Continue
 with the accepted observation → leave visibility → changed second observer →
 return and refresh scenario.
 
+### Known-route search — 2026-11-16
+
+LOCAL — movement path search now accepts an optional authorized segment rule.
+Painted cartography supplies the authenticated company's decoded charted and
+explored knowledge before route preparation; physical walkability and the final
+known-plan check remain in force. Exact replay and saved route execution keep
+their existing behavior.
+
+PASS — a focused regression reproduces the faster unseen paved-road detour and
+confirms both exact and legacy search choose the slower fully known route when
+given the segment rule. The 13-test free-movement suite, game-core typecheck,
+server typecheck and diff check PASS. Native journey and database checks are
+NOT_RUN; full N07 acceptance remains open.
+
 ### Prior checkpoint — 2026-11-08
 
 SPECIFIED / LOCAL; complete observer/travel/offline matrix NOT_RUN here.

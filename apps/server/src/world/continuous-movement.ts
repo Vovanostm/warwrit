@@ -38,6 +38,7 @@ import type {
   ContinuousCompanyExecution,
   FreeMovementExecution,
   NavigationRegion,
+  PointFp,
   TrustedTransitSegment,
 } from '@warwrit/game-core';
 import type {
@@ -804,6 +805,7 @@ export async function executeContinuousMovement(
   region: NavigationRegion = CONTINUOUS_WORLD_REGION,
   now: TrustedMovementTime = () => new Date(),
   requestIdentity: unknown = input,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ) {
   return movementTransaction(database, async (tx) => {
     const account = await tx
@@ -860,7 +862,13 @@ export async function executeContinuousMovement(
       movementState = interruption.next;
       courseEvents.push(...interruption.events);
     }
-    const settled = prepareDueContinuousMovement(movementState, row, clock, input.commandId, region);
+    const settled = prepareDueContinuousMovement(
+      movementState,
+      row,
+      clock,
+      input.commandId,
+      region,
+    );
     let current = settled.state,
       stored = settled.stored,
       epoch = settled.epoch;
@@ -979,6 +987,7 @@ export async function executeContinuousMovement(
         field,
         { xFp: Number(from.xMicroFp) / 65536, zFp: Number(from.zMicroFp) / 65536 },
         goal,
+        allowedSegment,
       );
       if (!path || path.length < 2) throw new MovementRejection('NO_PATH');
       const plan = compileMovementPlan({

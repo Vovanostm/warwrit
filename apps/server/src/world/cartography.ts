@@ -4,6 +4,7 @@ import type {
   WorldFreeMovementV2ResponseDto,
   WorldLabCartographyDto,
 } from '@warwrit/protocol';
+import type { PointFp } from '@warwrit/game-core';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
 import type { Transaction } from 'kysely';
@@ -89,6 +90,13 @@ function assertKnownPlan(
   )
     throw new MovementRejection('MAP_INFORMATION_REQUIRED');
 }
+function knownSegment(cartography: WorldLabCartographyDto, from: PointFp, to: PointFp): boolean {
+  const micro = (point: PointFp) => ({
+    xMicroFp: String(point.xFp * 65_536),
+    zMicroFp: String(point.zFp * 65_536),
+  });
+  return cartographyKnowsSegment(cartography, micro(from), micro(to));
+}
 function assertKnownTarget(
   cartography: WorldLabCartographyDto,
   input: WorldFreeMovementV2RequestDto,
@@ -168,6 +176,9 @@ export async function executePaintedMovement(
         companyId,
         input,
         PAINTED_ATLAS_REGION,
+        undefined,
+        undefined,
+        (from, to) => knownSegment(cartography, from, to),
       );
       if (input.action.kind === 'MOVE_TO') assertKnownPlan(cartography, response);
       return response;

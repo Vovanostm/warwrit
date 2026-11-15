@@ -545,14 +545,21 @@ export function findTravelPath(
   field: NavigationField,
   start: PointFp,
   goal: PointFp,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): readonly PointFp[] | undefined {
   if (!isContinuousPointWalkable(field, start) || !isContinuousPointWalkable(field, goal))
     return undefined;
   if (start.xFp === goal.xFp && start.zFp === goal.zFp) return Object.freeze([start]);
-  if (field.exactGeometry) return findExactTravelPath(field, start, goal);
+  if (field.exactGeometry) return findExactTravelPath(field, start, goal, allowedSegment);
   const connectors = (point: PointFp) =>
     nearbyGridNodes(field, point)
-      .filter((node) => traceSegment(field, point, centerByIndex(field, node)))
+      .filter((node) => {
+        const connected = centerByIndex(field, node);
+        return (
+          (!allowedSegment || allowedSegment(point, connected)) &&
+          traceSegment(field, point, connected)
+        );
+      })
       .sort((a, b) => a - b);
   const startEdges = new Map<number, number>();
   for (const node of connectors(start)) {
@@ -582,7 +589,7 @@ export function findTravelPath(
   let bestCost = Number.POSITIVE_INFINITY;
   let bestPath: readonly PointFp[] | undefined;
   const direct = traceSegment(field, start, goal);
-  if (direct) {
+  if (direct && (!allowedSegment || allowedSegment(start, goal))) {
     bestCost = direct.costUs;
     bestPath = Object.freeze([start, goal]);
   }
@@ -616,6 +623,11 @@ export function findTravelPath(
       if (next < 0 || !field.walkable[next]) continue;
       const edgeCost = neighborCost(field, current.node, next, dc, dr);
       if (edgeCost === undefined) continue;
+      if (
+        allowedSegment &&
+        !allowedSegment(centerByIndex(field, current.node), centerByIndex(field, next))
+      )
+        continue;
       const candidate = current.g + edgeCost;
       if (candidate < cost[next]! || (candidate === cost[next]! && current.node < parent[next]!)) {
         cost[next] = candidate;
@@ -627,7 +639,7 @@ export function findTravelPath(
   }
   if (!bestPath) return undefined;
   if (bestPath.length > MAX_PATH_POINTS) throw new RangeError('ROUTE_TOO_COMPLEX');
-  return smoothPath(field, bestPath);
+  return smoothPath(field, bestPath, allowedSegment);
 }
 
 function compileExactMovementPlan(input: {
@@ -885,6 +897,7 @@ function exactEndpointConnections(
   field: NavigationField,
   graph: ReturnType<typeof prepareExactSearchGraph>,
   origin: PointFp,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): Map<number, number> {
   const { gridCount, roadPoints, point, nearby } = graph;
   const nodes = nearbyGridNodes(field, origin);
@@ -893,7 +906,12 @@ function exactEndpointConnections(
   });
   return new Map(
     nodes
-      .map((n) => [n, traceSegment(field, origin, point(n))?.costUs])
+      .map((n) => [
+        n,
+        !allowedSegment || allowedSegment(origin, point(n))
+          ? traceSegment(field, origin, point(n))?.costUs
+          : undefined,
+      ])
       .filter((entry): entry is [number, number] => entry[1] !== undefined),
   );
 }
@@ -902,14 +920,18 @@ function findExactTravelPath(
   field: NavigationField,
   start: PointFp,
   goal: PointFp,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): readonly PointFp[] | undefined {
   const graph = prepareExactSearchGraph(field, start, goal);
   const { gridCount, roadPoints, point } = graph;
   const total = gridCount + roadPoints.length,
     edgeCosts = new Map<string, number | undefined>();
-  const edge = (a: number, b: number) => exactSearchEdgeCost(field, graph, edgeCosts, a, b);
-  const starts = exactEndpointConnections(field, graph, start),
-    goals = exactEndpointConnections(field, graph, goal),
+  const edge = (a: number, b: number) =>
+    !allowedSegment || allowedSegment(point(a), point(b))
+      ? exactSearchEdgeCost(field, graph, edgeCosts, a, b)
+      : undefined;
+  const starts = exactEndpointConnections(field, graph, start, allowedSegment),
+    goals = exactEndpointConnections(field, graph, goal, allowedSegment),
     cost = new Float64Array(total),
     parent = new Int32Array(total),
     closed = new Uint8Array(total),
@@ -941,7 +963,11 @@ function findExactTravelPath(
     const neighbors = field.gridNeighborNodes![current.node];
     const durations = field.gridNeighborDurations![current.node];
     if (neighbors && durations)
-      for (let i = 0; i < neighbors.length; i++) relax(neighbors[i]!, current, durations[i]);
+      for (let i = 0; i < neighbors.length; i++) {
+        const next = neighbors[i]!;
+        if (!allowedSegment || allowedSegment(point(current.node), point(next)))
+          relax(next, current, durations[i]);
+      }
     for (const next of graph.extras.get(current.node) ?? [])
       relax(next, current, edge(current.node, next));
   };
@@ -966,7 +992,7 @@ function findExactTravelPath(
     }
     relaxNeighbors(current);
   }
-  return chooseExactShortcut(field, start, goal, bestPath);
+  return chooseExactShortcut(field, start, goal, bestPath, allowedSegment);
 }
 
 function chooseExactShortcut(
@@ -974,26 +1000,29 @@ function chooseExactShortcut(
   start: PointFp,
   goal: PointFp,
   bestPath: readonly PointFp[] | undefined,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): readonly PointFp[] | undefined {
   const direct = traceSegment(field, start, goal);
-  const smoothed = finishExactPath(field, bestPath);
-  if (!smoothed) return direct ? [start, goal] : undefined;
+  const directAllowed = !allowedSegment || allowedSegment(start, goal);
+  const smoothed = finishExactPath(field, bestPath, allowedSegment);
+  if (!smoothed) return direct && directAllowed ? [start, goal] : undefined;
   const smoothedCost = smoothed
     .slice(1)
     .reduce((sum, p, i) => sum + traceSegment(field, smoothed[i]!, p)!.costUs, 0);
-  return direct && direct.costUs <= smoothedCost ? [start, goal] : smoothed;
+  return direct && directAllowed && direct.costUs <= smoothedCost ? [start, goal] : smoothed;
 }
 
 function finishExactPath(
   field: NavigationField,
   bestPath: readonly PointFp[] | undefined,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): readonly PointFp[] | undefined {
   if (!bestPath) return undefined;
   if (bestPath.length > MAX_PATH_POINTS) throw new RangeError('ROUTE_TOO_COMPLEX');
   const deduplicated = bestPath.filter(
     (p, i) => !i || p.xFp !== bestPath![i - 1]!.xFp || p.zFp !== bestPath![i - 1]!.zFp,
   );
-  return smoothPath(field, deduplicated);
+  return smoothPath(field, deduplicated, allowedSegment);
 }
 
 const CENTER_LENGTH_MICRO = BigInt(NAV_CELL_SIZE_FP * MICRO_FP_PER_FP);
@@ -1452,14 +1481,24 @@ function improveDirectShortcut(
   field: NavigationField,
   path: readonly PointFp[],
   preserveRoad: boolean,
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
 ): readonly PointFp[] {
   let out: PointFp[] = [path[0]!, path.at(-1)!];
-  let bestCost = traceSegment(field, path[0]!, path.at(-1)!)!.costUs;
+  const initial = traceSegment(field, path[0]!, path.at(-1)!);
+  let bestCost =
+    initial && (!allowedSegment || allowedSegment(path[0]!, path.at(-1)!))
+      ? initial.costUs
+      : Number.POSITIVE_INFINITY;
   const stride = Math.max(1, Math.ceil((path.length - 2) / 16));
   for (let i = 1; i < path.length - 1; i += stride) {
     const first = traceSegment(field, path[0]!, path[i]!);
     const last = traceSegment(field, path[i]!, path.at(-1)!);
     if (!first || !last) continue;
+    if (
+      allowedSegment &&
+      (!allowedSegment(path[0]!, path[i]!) || !allowedSegment(path[i]!, path.at(-1)!))
+    )
+      continue;
     if (preserveRoad && ![...first.spans, ...last.spans].every((span) => span.overlayId !== null))
       continue;
     const cost = first.costUs + last.costUs;
@@ -1470,7 +1509,11 @@ function improveDirectShortcut(
   }
   return Object.freeze(out);
 }
-function smoothPath(field: NavigationField, path: readonly PointFp[]): readonly PointFp[] {
+function smoothPath(
+  field: NavigationField,
+  path: readonly PointFp[],
+  allowedSegment?: (from: PointFp, to: PointFp) => boolean,
+): readonly PointFp[] {
   const out: PointFp[] = [path[0]!];
   const cumulative = [0];
   const offRoadEdges = [0];
@@ -1489,6 +1532,7 @@ function smoothPath(field: NavigationField, path: readonly PointFp[]): readonly 
       const preserveRoad = field.exactGeometry && offRoadEdges[candidate] === offRoadEdges[index];
       if (
         direct &&
+        (!allowedSegment || allowedSegment(path[index]!, path[candidate]!)) &&
         (!preserveRoad || direct.spans.every((s) => s.overlayId !== null)) &&
         direct.costUs <= cumulative[candidate]! - cumulative[index]!
       ) {
@@ -1500,7 +1544,7 @@ function smoothPath(field: NavigationField, path: readonly PointFp[]): readonly 
     index = selected;
   }
   if (field.exactGeometry && out.length === 2 && path.length > 2)
-    return improveDirectShortcut(field, path, offRoadEdges.at(-1) === 0);
+    return improveDirectShortcut(field, path, offRoadEdges.at(-1) === 0, allowedSegment);
   return Object.freeze(out);
 }
 function heuristic(field: NavigationField, node: number, goal: PointFp): number {
