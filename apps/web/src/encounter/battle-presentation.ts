@@ -160,6 +160,7 @@ function presentationUnit(
     ...(unit.partyId !== undefined ? { partyId: unit.partyId } : {}),
     position: { q: unit.q, r: unit.r },
     status: unit.status,
+    ...(unit.incapacitated !== undefined ? { incapacitated: unit.incapacitated } : {}),
     visualKind: visualKind(unit, controlledIds),
     ...(unit.weaponId !== undefined ? { weaponId: unit.weaponId } : {}),
     ...(unit.weaponReach ? { weaponReach: unit.weaponReach } : {}),

@@ -64,6 +64,24 @@ const b023FixtureUrl = new URL(
 
 const AXIAL_TO_WORLD = battleHexToWorld;
 const CAMERA_ELEVATION = Math.PI / 6;
+
+/** Keep the sprite's foot anchor on its hex while changing between upright and prone poses. */
+export function spriteUnitPose(
+  unit: Pick<BattleUnit, 'position' | 'incapacitated'>,
+  geometry: Pick<ReturnType<typeof spriteGeometry>, 'anchorX' | 'footY'>,
+  groundHeight: number,
+) {
+  const { x, z } = AXIAL_TO_WORLD(unit.position);
+  const rotationX = CAMERA_ELEVATION - (unit.incapacitated ? Math.PI / 2 : 0);
+  return {
+    rotationX,
+    position: {
+      x: x - geometry.anchorX,
+      y: groundHeight + geometry.footY * Math.cos(rotationX),
+      z: z + geometry.footY * Math.sin(rotationX),
+    },
+  };
+}
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -564,14 +582,11 @@ export async function mountSpriteBattleScene(
     let material = unitMaterials.get(unit.id);
     if (!mesh || !material) ({ mesh, material } = createUnitMeshes(unit, sprite, width, height));
 
-    const { x, z } = AXIAL_TO_WORLD(unit.position);
     const groundHeight = groundYFor(unit.position);
-    mesh.rotation.x = CAMERA_ELEVATION;
-    mesh.position.set(
-      x - anchorX,
-      footY * Math.cos(CAMERA_ELEVATION) + groundHeight,
-      z + footY * Math.sin(CAMERA_ELEVATION),
-    );
+    const pose = spriteUnitPose(unit, { anchorX, footY }, groundHeight);
+    const { x, z } = AXIAL_TO_WORLD(unit.position);
+    mesh.rotation.x = pose.rotationX;
+    mesh.position.set(pose.position.x, pose.position.y, pose.position.z);
     contactShadows.get(unit.id)?.position.set(x, groundHeight + 0.02, z);
     mesh.metadata = {
       combatUnitId: unit.id,
@@ -582,8 +597,8 @@ export async function mountSpriteBattleScene(
     edge.metadata = { combatUnitId: unit.id, combatFoot: mesh.metadata.combatFoot };
     edge.rotation.copyFrom(mesh.rotation);
     edge.position.copyFrom(mesh.position);
-    edge.position.y -= 0.002 * Math.sin(CAMERA_ELEVATION);
-    edge.position.z += 0.002 * Math.cos(CAMERA_ELEVATION);
+    edge.position.y -= 0.002 * Math.sin(pose.rotationX);
+    edge.position.z += 0.002 * Math.cos(pose.rotationX);
     edge.setEnabled(false);
     const standing = unit.status === 'active';
     mesh.setEnabled(standing);
@@ -1630,7 +1645,7 @@ function addLabel(
   return label;
 }
 
-type TerminalMarkerUnit = Pick<BattleUnit, 'id' | 'status' | 'position'>;
+type TerminalMarkerUnit = Pick<BattleUnit, 'id' | 'status' | 'position' | 'incapacitated'>;
 type TerminalMarker = { readonly signature: string; readonly mesh: Mesh };
 
 /** Keep terminal plaques alive while their public status and ground position stay unchanged. */

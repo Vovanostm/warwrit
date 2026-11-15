@@ -5,12 +5,46 @@ import {
   reconcileTerminalMarkers,
   spriteFigureBounds,
   spriteFrameMapBounds,
+  spriteUnitPose,
 } from './sprite-battle-scene.js';
 import { spriteForUnit } from './sprite-art.js';
 import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { battleHexToWorld } from './battle-layout.js';
 
 const CAMERA_ELEVATION = Math.PI / 6;
+
+it('lays an incapacitated active sprite down, restores its standing pose, and keeps it live', () => {
+  const geometry = { anchorX: 0.12, footY: -0.3 };
+  const active = {
+    id: 'unit',
+    sideId: 'company',
+    status: 'active' as const,
+    position: { q: 2, r: -1 },
+  };
+  const prone = spriteUnitPose({ ...active, incapacitated: true }, geometry, 0.4);
+  const standing = spriteUnitPose(active, geometry, 0.4);
+  const createMarker = vi.fn(() => {
+    throw new Error('active units do not receive terminal markers');
+  });
+  const markers = new Map<
+    string,
+    { signature: string; mesh: ReturnType<typeof MeshBuilder.CreatePlane> }
+  >();
+
+  expect(prone.rotationX).toBeCloseTo(CAMERA_ELEVATION - Math.PI / 2, 12);
+  expect(prone.position.y).not.toBeCloseTo(standing.position.y, 12);
+  expect(prone.position.z).not.toBeCloseTo(standing.position.z, 12);
+  expect(spriteUnitPose({ ...active, incapacitated: false }, geometry, 0.4)).toEqual(standing);
+  expect(
+    initialFrameUnits({
+      controlledSideId: 'company',
+      units: [{ ...active, incapacitated: true }],
+    } as never),
+  ).toHaveLength(1);
+  reconcileTerminalMarkers([{ ...active, incapacitated: true }], markers, createMarker);
+  expect(markers.size).toBe(0);
+  expect(createMarker).not.toHaveBeenCalled();
+});
 
 it('reuses terminal markers until status or ground position changes', () => {
   const engine = new NullEngine();
