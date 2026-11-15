@@ -530,6 +530,26 @@ describe('authenticated story routes (isolated PostgreSQL)', () => {
       });
       expect(conflict.statusCode).toBe(409);
       expect(conflict.json().code).toBe('CONFLICTING_REPLAY');
+
+      const awayCommandId = randomUUID();
+      const awayCommand = await scenario.app.inject({
+        method: 'POST',
+        url: '/story/commands',
+        headers: headers(ownerA),
+        payload: {
+          schemaVersion: 1,
+          commandId: awayCommandId,
+          expectedWorldRevision: final.story.worldRevision,
+          expectedCompanyRevision: final.story.companyRevision,
+          command: { type: 'RETURN' },
+        },
+      });
+      expect(awayCommand.statusCode).toBe(409);
+      expect(awayCommand.json()).toMatchObject({
+        commandId: awayCommandId,
+        ok: false,
+        code: 'NOT_AT_LOCATION',
+      });
     },
   );
 

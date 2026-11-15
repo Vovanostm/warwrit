@@ -137,7 +137,7 @@ async function resolveStoryWorld(
   worldId: string,
   accountId: string,
   companyId: string,
-  storyUnavailable: () => StoryCommandResponseDto,
+  storyUnavailable: (code?: 'NOT_AVAILABLE' | 'NOT_AT_LOCATION') => StoryCommandResponseDto,
 ): Promise<{
   readonly world: StoryWorldState;
   readonly company: StoryCompanyState;
@@ -211,7 +211,7 @@ async function resolveStoryWorld(
     throw new TypeError('Story eligibility source changed while locking world state');
   const { state: company } = await lockStoryCompany(transaction, worldId, companyId, world);
   if (!standingAtStoryYard(companyAfterMovement))
-    throw new StoryUnavailableError(rejection('pending', 'NOT_AT_LOCATION', null));
+    throw new StoryUnavailableError(storyUnavailable('NOT_AT_LOCATION'));
   return {
     world,
     company,
@@ -274,8 +274,8 @@ async function executeStoryCommand(
 
   let current: Awaited<ReturnType<typeof resolveStoryWorld>> | undefined;
   try {
-    current = await resolveStoryWorld(transaction, worldId, accountId, companyId, () =>
-      reject('NOT_AVAILABLE'),
+    current = await resolveStoryWorld(transaction, worldId, accountId, companyId, (code) =>
+      reject(code ?? 'NOT_AVAILABLE'),
     );
   } catch (error) {
     if (error instanceof StoryUnavailableError) return error.response;
