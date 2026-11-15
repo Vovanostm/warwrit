@@ -1,3 +1,5 @@
+import { PAINTED_ATLAS_REGION_VERSION } from '../world/continuous-region.js';
+
 /**
  * Ordinary M1 contracts (owner decision 2026-10-02, CONTRACTS_M1_DERIVATIVE "ordinary contract
  * working profile"): investigations and rescues whose facts come only from commands taken by a
@@ -13,7 +15,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.mill-worker.01'
   | 'ci.m1.light-sack.01'
   | 'ci.m1.two-receipts.01'
-  | 'ci.m1.empty-watch-record.01';
+  | 'ci.m1.empty-watch-record.01'
+  | 'ci.m1.man-by-road.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -23,25 +26,44 @@ export interface ContractPlace {
 /** World conditions a step needs, read by the adapter from authoritative world state. */
 export type OrdinaryStepGate = 'DAYLIGHT' | 'RAIDERS_DEFEATED' | 'BEAST_DEFEATED';
 
+export type OrdinaryCustodyTravelMode = 'ON_FOOT' | 'STRETCHER';
+
+export interface OrdinaryTerrainTarget {
+  readonly mapEdition: string;
+  readonly xFp: number;
+  readonly zFp: number;
+  readonly radiusFp: number;
+}
+
 export interface OrdinaryStepDefinition {
   readonly stepId: string;
-  readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
+  readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER' | 'REST';
   readonly place: ContractPlace;
+  /** A bounded point on the retained map edition; when present this replaces `place` for the step. */
+  readonly terrainTarget?: OrdinaryTerrainTarget;
   /** Source slots the acting company must already hold. */
   readonly requires: readonly string[];
   readonly gates: readonly OrdinaryStepGate[];
+  /** Steps rejected after any listed company-owned fact is recorded. */
+  readonly excludes?: readonly string[];
   /** Source slots this step records for the acting company. */
   readonly produces: readonly string[];
   /** Localized result shown only after this company records the observation. */
   readonly resultTextKey?: string;
   /** A person who travels with the acting company from now on. */
   readonly takesCustodyOf?: string;
+  /** Travel burden retained with custody and consumed by the normal movement adapter. */
+  readonly custodyTravelMode?: OrdinaryCustodyTravelMode;
   /** Needs the acting company to hold this person; ends custody. */
   readonly needsCustodyOf?: string;
+  /** Earliest time this step may run, measured from a trusted company-owned source fact. */
+  readonly minElapsedTicksSinceSlot?: { readonly slotId: string; readonly ticks: string };
   /** Completes the contract. By default the full reward is paid to the acting company. */
   readonly completes?: true;
   /** A terminal finding may close the contract without paying its advertised full reward. */
   readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
+  /** A finite owner observation available after the terminal result; never a second payout. */
+  readonly postCompletion?: true;
 }
 
 export interface OrdinaryContractProfile {
@@ -55,6 +77,8 @@ export interface OrdinaryContractProfile {
   readonly rewardQ: string;
   /** Slot recorded for the owner when it accepts, if the contract has one. */
   readonly acceptanceSlot?: string;
+  /** Omit or true for normal cooperative contracts; false for a one-source offer. */
+  readonly allowHelper?: boolean;
   readonly steps: readonly OrdinaryStepDefinition[];
 }
 
@@ -67,6 +91,7 @@ export interface OrdinaryContractTerms {
   readonly rewardQ: string;
   readonly walletId: string;
   readonly acceptanceSlot?: string;
+  readonly allowHelper?: boolean;
   readonly steps: readonly OrdinaryStepDefinition[];
 }
 
@@ -77,6 +102,12 @@ const TIKHAYA_GAT = place('tikhaya-gat', 'tikhaya-gat-bank');
 const SEVERNY_DVOR = place('severny-dvor', 'severny-dvor-yard');
 const MILL_YARD = place('staraya-melnitsa', 'staraya-melnitsa-yard');
 const CROWNS = (crowns: number) => `${crowns}000000`;
+const BEREZNYAK_ROADSIDE = Object.freeze({
+  mapEdition: PAINTED_ATLAS_REGION_VERSION,
+  xFp: -2548,
+  zFp: 1127,
+  radiusFp: 128,
+});
 
 function freeze<T>(value: T): T {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -426,6 +457,99 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
     ],
   },
   {
+    instanceId: 'ci.m1.man-by-road.01',
+    definitionId: 'ct.m1.man-by-road.v1',
+    template: 'RESCUE',
+    issuerRoleId: 'herbalist',
+    issuerPlace: BEREZNYAK,
+    walletId: 'wallet.sidor.roadside.01',
+    genesisWalletQ: CROWNS(25),
+    rewardQ: CROWNS(25),
+    allowHelper: false,
+    steps: [
+      {
+        stepId: 'find-sidor',
+        action: 'SEARCH',
+        place: BEREZNYAK,
+        terrainTarget: BEREZNYAK_ROADSIDE,
+        requires: [],
+        gates: [],
+        produces: ['man-by-road-sidor-found'],
+      },
+      {
+        stepId: 'walk-with-stops',
+        action: 'REPORT',
+        place: BEREZNYAK,
+        terrainTarget: BEREZNYAK_ROADSIDE,
+        requires: ['man-by-road-sidor-found'],
+        excludes: ['man-by-road-stretcher-fetched'],
+        gates: [],
+        produces: ['man-by-road-transport-chosen', 'man-by-road-walking'],
+        takesCustodyOf: 'person.sidor',
+        custodyTravelMode: 'ON_FOOT',
+      },
+      {
+        stepId: 'rest-with-sidor',
+        action: 'REST',
+        place: BEREZNYAK,
+        terrainTarget: BEREZNYAK_ROADSIDE,
+        requires: ['man-by-road-walking'],
+        gates: [],
+        produces: ['man-by-road-rest-started'],
+      },
+      {
+        stepId: 'continue-after-rest',
+        action: 'REST',
+        place: BEREZNYAK,
+        terrainTarget: BEREZNYAK_ROADSIDE,
+        requires: ['man-by-road-rest-started'],
+        minElapsedTicksSinceSlot: { slotId: 'man-by-road-rest-started', ticks: '300' },
+        gates: [],
+        produces: ['man-by-road-rest-complete'],
+      },
+      {
+        stepId: 'fetch-stretcher',
+        action: 'ASK',
+        place: BEREZNYAK,
+        requires: ['man-by-road-sidor-found'],
+        excludes: ['man-by-road-walking'],
+        gates: [],
+        produces: ['man-by-road-transport-chosen', 'man-by-road-stretcher-fetched'],
+      },
+      {
+        stepId: 'load-sidor-on-stretcher',
+        action: 'SEARCH',
+        place: BEREZNYAK,
+        terrainTarget: BEREZNYAK_ROADSIDE,
+        requires: ['man-by-road-sidor-found', 'man-by-road-stretcher-fetched'],
+        gates: [],
+        produces: ['man-by-road-stretcher-loaded', 'man-by-road-living-rescue'],
+        takesCustodyOf: 'person.sidor',
+        custodyTravelMode: 'STRETCHER',
+      },
+      {
+        stepId: 'arrive-on-foot',
+        action: 'DELIVER',
+        place: BEREZNYAK,
+        requires: ['man-by-road-walking', 'man-by-road-rest-complete'],
+        gates: [],
+        produces: ['man-by-road-living-rescue', 'man-by-road-delivered'],
+        needsCustodyOf: 'person.sidor',
+        completes: true,
+      },
+      {
+        stepId: 'arrive-on-stretcher',
+        action: 'DELIVER',
+        place: BEREZNYAK,
+        requires: ['man-by-road-stretcher-loaded', 'man-by-road-living-rescue'],
+        gates: [],
+        produces: ['man-by-road-delivered'],
+        needsCustodyOf: 'person.sidor',
+        completes: true,
+      },
+    ],
+  },
+  {
     instanceId: 'ci.m1.light-sack.01',
     definitionId: 'ct.m1.light-sack.measure-error.v1',
     template: 'INVESTIGATE',
@@ -537,11 +661,17 @@ export function ordinaryContractTerms(profile: OrdinaryContractProfile): Ordinar
     rewardQ: profile.rewardQ,
     walletId: profile.walletId,
     ...(profile.acceptanceSlot ? { acceptanceSlot: profile.acceptanceSlot } : {}),
+    ...(profile.allowHelper === undefined ? {} : { allowHelper: profile.allowHelper }),
     steps: profile.steps.map((step) => ({
       ...step,
       place: { ...step.place },
+      ...(step.terrainTarget ? { terrainTarget: { ...step.terrainTarget } } : {}),
+      ...(step.minElapsedTicksSinceSlot
+        ? { minElapsedTicksSinceSlot: { ...step.minElapsedTicksSinceSlot } }
+        : {}),
       requires: [...step.requires],
       gates: [...step.gates],
+      ...(step.excludes ? { excludes: [...step.excludes] } : {}),
       produces: [...step.produces],
     })),
   });
@@ -561,7 +691,11 @@ export interface OrdinaryContractState {
   readonly ownerCompanyId: string | null;
   readonly helperCompanyId: string | null;
   readonly facts: readonly OrdinaryContractFact[];
-  readonly custody: readonly { readonly personId: string; readonly companyId: string }[];
+  readonly custody: readonly {
+    readonly personId: string;
+    readonly companyId: string;
+    readonly travelMode?: OrdinaryCustodyTravelMode;
+  }[];
   /** Null while offered. Legacy accepted v1 saves hydrate from their retained v1 profile. */
   readonly acceptedTerms: OrdinaryContractTerms | null;
   readonly lastWithdrawal: null | {
@@ -600,6 +734,12 @@ export interface OrdinaryContractContext {
   readonly companyId: string;
   /** Where the company's party stands, or null while it is on a road. */
   readonly standingAt: ContractPlace | null;
+  /** Trusted settled coordinate supplied only for the matching continuous map edition. */
+  readonly terrainPosition?: {
+    readonly mapEdition: string;
+    readonly xMicroFp: string;
+    readonly zMicroFp: string;
+  };
   readonly atTick: string;
   readonly expectedRevision: string;
   /** Unique id of the accepted command; becomes the source of every fact it records. */
@@ -616,6 +756,7 @@ export type OrdinaryContractRejection =
   | 'WRONG_PLACE'
   | 'ALREADY_DONE'
   | 'MISSING_EVIDENCE'
+  | 'ALTERNATIVE_CHOSEN'
   | 'CONDITION_NOT_MET';
 
 export type OrdinaryContractPreparation =
@@ -638,19 +779,37 @@ export function companyHoldsSlot(
   return state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId);
 }
 
+/** Copied, company-scoped burdens that the continuous movement adapter retains in route plans. */
+export function ordinaryCustodyTravelLoads(
+  state: OrdinaryContractState,
+  companyId: string,
+): readonly { readonly personId: string; readonly travelMode: OrdinaryCustodyTravelMode }[] {
+  return state.custody.flatMap((entry) =>
+    entry.companyId === companyId && entry.travelMode
+      ? [{ personId: entry.personId, travelMode: entry.travelMode }]
+      : [],
+  );
+}
+
 /** Why a step is not available to this company now, or null when it can be taken. */
 export function ordinaryStepBlocker(
   state: OrdinaryContractState,
   step: OrdinaryStepDefinition,
   context: Omit<
     OrdinaryContractContext,
-    'expectedRevision' | 'sourceEventId' | 'atTick' | 'battleStarted'
+    'expectedRevision' | 'sourceEventId' | 'battleStarted'
   >,
 ): Exclude<OrdinaryContractRejection, 'STALE_REVISION'> | null {
   const { companyId } = context;
-  if (state.outcome !== null) return 'NOT_AVAILABLE';
   if (companyId !== state.ownerCompanyId && companyId !== state.helperCompanyId)
     return 'NOT_A_PARTICIPANT';
+  if (step.excludes?.some((slotId) => companyHoldsSlot(state, companyId, slotId)))
+    return 'ALTERNATIVE_CHOSEN';
+  if (
+    state.outcome !== null &&
+    (step.postCompletion !== true || state.outcome.companyId !== companyId)
+  )
+    return 'NOT_AVAILABLE';
   if (step.produces.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
     return 'ALREADY_DONE';
   if (
@@ -667,9 +826,33 @@ export function ordinaryStepBlocker(
     )
   )
     return 'MISSING_EVIDENCE';
-  if (!samePlace(context.standingAt, step.place)) return 'WRONG_PLACE';
+  if (step.terrainTarget) {
+    if (!isInsideTerrainTarget(context.terrainPosition, step.terrainTarget)) return 'WRONG_PLACE';
+  } else if (!samePlace(context.standingAt, step.place)) return 'WRONG_PLACE';
+  if (step.minElapsedTicksSinceSlot) {
+    const source = state.facts.find(
+      (fact) =>
+        fact.companyId === companyId && fact.slotId === step.minElapsedTicksSinceSlot!.slotId,
+    );
+    if (!source) return 'MISSING_EVIDENCE';
+    if (
+      BigInt(context.atTick) < BigInt(source.atTick) + BigInt(step.minElapsedTicksSinceSlot.ticks)
+    )
+      return 'CONDITION_NOT_MET';
+  }
   if (!step.gates.every((gate) => context.gates[gate])) return 'CONDITION_NOT_MET';
   return null;
+}
+
+function isInsideTerrainTarget(
+  position: OrdinaryContractContext['terrainPosition'],
+  target: OrdinaryTerrainTarget,
+): boolean {
+  if (position?.mapEdition !== target.mapEdition) return false;
+  const dx = BigInt(position.xMicroFp) - BigInt(target.xFp) * 65536n;
+  const dz = BigInt(position.zMicroFp) - BigInt(target.zFp) * 65536n;
+  const radius = BigInt(target.radiusFp) * 65536n;
+  return dx * dx + dz * dz <= radius * radius;
 }
 
 /** Pure, fail-closed transition of one ordinary contract; the adapter persists and pays. */
@@ -730,7 +913,8 @@ export function prepareOrdinaryContractCommand(
         ? state.ownerCompanyId === null
         : state.ownerCompanyId !== null &&
           state.helperCompanyId === null &&
-          state.ownerCompanyId !== context.companyId;
+          state.ownerCompanyId !== context.companyId &&
+          (state.acceptedTerms?.allowHelper ?? profile.allowHelper ?? true);
     if (!open) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
     return {
       kind: 'PREPARED',
@@ -762,12 +946,18 @@ export function prepareOrdinaryContractCommand(
     .concat(
       step.takesCustodyOf === undefined
         ? []
-        : [{ personId: step.takesCustodyOf, companyId: context.companyId }],
+        : [
+            {
+              personId: step.takesCustodyOf,
+              companyId: context.companyId,
+              ...(step.custodyTravelMode ? { travelMode: step.custodyTravelMode } : {}),
+            },
+          ],
     );
   return {
     kind: 'PREPARED',
     payout:
-      step.completes && step.payoutPolicy !== 'NO_PAYOUT'
+      step.completes && state.outcome === null && step.payoutPolicy !== 'NO_PAYOUT'
         ? { companyId: context.companyId, rewardQ: state.acceptedTerms?.rewardQ ?? profile.rewardQ }
         : null,
     next: freeze({
@@ -780,14 +970,14 @@ export function prepareOrdinaryContractCommand(
           .map(fact),
       ],
       custody,
-      outcome: step.completes
+      outcome: step.completes && state.outcome === null
         ? {
             kind: 'SUCCESS',
             companyId: context.companyId,
             sourceEventId: context.sourceEventId,
             atTick: context.atTick,
           }
-        : null,
+        : state.outcome,
     }),
   };
 }
@@ -832,6 +1022,7 @@ export function readOrdinaryContractState(
       !/^(0|[1-9][0-9]*)$/u.test(terms['rewardQ'] as string) ||
       !isPlace(terms['issuerPlace']) ||
       (terms['acceptanceSlot'] !== undefined && !isText(terms['acceptanceSlot'])) ||
+      (terms['allowHelper'] !== undefined && typeof terms['allowHelper'] !== 'boolean') ||
       !Array.isArray(terms['steps']) ||
       !terms['steps'].every((step) => isStep(step)) ||
       Object.keys(terms).some(
@@ -844,6 +1035,7 @@ export function readOrdinaryContractState(
             'rewardQ',
             'walletId',
             'acceptanceSlot',
+            'allowHelper',
             'steps',
           ].includes(key),
       )
@@ -855,8 +1047,12 @@ export function readOrdinaryContractState(
   const slots = new Set([
     ...(profile.acceptanceSlot ? [profile.acceptanceSlot] : []),
     ...profile.steps.flatMap((step) => step.produces),
+    ...profile.steps.flatMap((step) => step.minElapsedTicksSinceSlot?.slotId ?? []),
+    ...profile.steps.flatMap((step) => step.excludes ?? []),
     ...(normalizedTerms?.acceptanceSlot ? [normalizedTerms.acceptanceSlot] : []),
     ...(normalizedTerms?.steps.flatMap((step) => step.produces) ?? []),
+    ...(normalizedTerms?.steps.flatMap((step) => step.minElapsedTicksSinceSlot?.slotId ?? []) ?? []),
+    ...(normalizedTerms?.steps.flatMap((step) => step.excludes ?? []) ?? []),
   ]);
   const persons = new Set([
     ...profile.steps.flatMap((step) => step.takesCustodyOf ?? []),
@@ -889,7 +1085,13 @@ export function readOrdinaryContractState(
     ) ||
     !custody.every(
       (entry: Record<string, unknown>) =>
-        entry && persons.has(entry['personId'] as string) && isText(entry['companyId']),
+        entry &&
+        Object.keys(entry).every((key) => ['personId', 'companyId', 'travelMode'].includes(key)) &&
+        persons.has(entry['personId'] as string) &&
+        isText(entry['companyId']) &&
+        (entry['travelMode'] === undefined ||
+          entry['travelMode'] === 'ON_FOOT' ||
+          entry['travelMode'] === 'STRETCHER'),
     ) ||
     !(
       outcome === null ||
@@ -936,36 +1138,64 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'place',
         'requires',
         'gates',
+        'excludes',
         'produces',
         'resultTextKey',
+        'terrainTarget',
         'takesCustodyOf',
+        'custodyTravelMode',
         'needsCustodyOf',
+        'minElapsedTicksSinceSlot',
         'completes',
         'payoutPolicy',
+        'postCompletion',
       ].includes(key),
     ) &&
     typeof value['stepId'] === 'string' &&
-    ['INSPECT', 'ASK', 'SEARCH', 'RELEASE', 'REPORT', 'DELIVER'].includes(
+    ['INSPECT', 'ASK', 'SEARCH', 'RELEASE', 'REPORT', 'DELIVER', 'REST'].includes(
       value['action'] as string,
     ) &&
     isPlace(value['place']) &&
+    (value['terrainTarget'] === undefined ||
+      (isRecord(value['terrainTarget']) &&
+        Object.keys(value['terrainTarget']).length === 4 &&
+        typeof value['terrainTarget']['mapEdition'] === 'string' &&
+        value['terrainTarget']['mapEdition'] !== '' &&
+        Number.isSafeInteger(value['terrainTarget']['xFp']) &&
+        Number.isSafeInteger(value['terrainTarget']['zFp']) &&
+        Number.isSafeInteger(value['terrainTarget']['radiusFp']) &&
+        Number(value['terrainTarget']['radiusFp']) > 0)) &&
     Array.isArray(value['requires']) &&
     value['requires'].every((slot) => typeof slot === 'string' && slot !== '') &&
     Array.isArray(value['gates']) &&
     value['gates'].every((gate) =>
       ['DAYLIGHT', 'RAIDERS_DEFEATED', 'BEAST_DEFEATED'].includes(gate as string),
     ) &&
+    (value['excludes'] === undefined ||
+      (Array.isArray(value['excludes']) &&
+        value['excludes'].every((slot) => typeof slot === 'string' && slot !== ''))) &&
     Array.isArray(value['produces']) &&
     value['produces'].every((slot) => typeof slot === 'string' && slot !== '') &&
     (value['resultTextKey'] === undefined ||
       (typeof value['resultTextKey'] === 'string' && value['resultTextKey'] !== '')) &&
     (value['takesCustodyOf'] === undefined ||
       (typeof value['takesCustodyOf'] === 'string' && value['takesCustodyOf'] !== '')) &&
+    (value['custodyTravelMode'] === undefined ||
+      value['custodyTravelMode'] === 'ON_FOOT' ||
+      value['custodyTravelMode'] === 'STRETCHER') &&
     (value['needsCustodyOf'] === undefined ||
       (typeof value['needsCustodyOf'] === 'string' && value['needsCustodyOf'] !== '')) &&
+    (value['minElapsedTicksSinceSlot'] === undefined ||
+      (isRecord(value['minElapsedTicksSinceSlot']) &&
+        Object.keys(value['minElapsedTicksSinceSlot']).length === 2 &&
+        typeof value['minElapsedTicksSinceSlot']['slotId'] === 'string' &&
+        value['minElapsedTicksSinceSlot']['slotId'] !== '' &&
+        typeof value['minElapsedTicksSinceSlot']['ticks'] === 'string' &&
+        /^(0|[1-9][0-9]*)$/u.test(value['minElapsedTicksSinceSlot']['ticks']))) &&
     (value['completes'] === undefined || value['completes'] === true) &&
     (value['payoutPolicy'] === undefined ||
       value['payoutPolicy'] === 'FULL_REWARD' ||
-      value['payoutPolicy'] === 'NO_PAYOUT')
+      value['payoutPolicy'] === 'NO_PAYOUT') &&
+    (value['postCompletion'] === undefined || value['postCompletion'] === true)
   );
 }
