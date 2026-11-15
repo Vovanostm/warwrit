@@ -69,7 +69,7 @@ describe('M1 loot sale preparation', () => {
     expect(result.sold).toMatchObject({
       itemId: 'loot-sword',
       definitionId: 'sword',
-      owner: { kind: 'WORLD', id: 'supplies:world:kamenny-brod' },
+      owner: { kind: 'WORLD', id: 'world' },
       containerId: 'trader-items:world:kamenny-brod',
       provenance: { sourceId: 'fixture-item-source', parentItemId: null, ordinal: 0 },
       currentCondition: 10000,
