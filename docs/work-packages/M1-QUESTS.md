@@ -137,6 +137,11 @@ verified purse debit, company-owned party inventory, finite stock, replay,
 rollback, and zero stock plus rejection at accusation tick + 7000. The truth
 price remains private to its company in the contract board projection.
 
+Migration 0030 rollback now refuses to drop any nonzero chapel balance or
+herbalist stock. On a disposable clone, migration smoke verified that both a
+nonzero chapel balance and a nonzero stock value block rollback; after removing
+the test row, the migration completed the normal down/up checks.
+
 Normal browser playthrough, downstream acceptance and player acceptance are
 NOT_RUN. Web typecheck still reports four existing `EquipmentTrader.tsx` DTO
 errors. The slice is LOCAL; publication and merge are NOT_RUN.

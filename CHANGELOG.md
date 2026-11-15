@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: migration 0030 now protects retained chapel funds and
+  herbalist stock from rollback loss; populated-data migration smoke passed.
+  [Quest verification](docs/work-packages/M1-QUESTS.md#verification-update--2026-11-16).
+  Branch `codex/m1-quest-well-20261115`. LOCAL.
 - 2026-11-16 — Verified: chapel billing, finite herbalist stock, replay/rollback,
   and delayed exile on disposable PostgreSQL clones; migration 0030 up/down passed.
   Browser journey and player acceptance remain NOT_RUN. [Quest verification](docs/work-packages/M1-QUESTS.md#verification-update--2026-11-16).

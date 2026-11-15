@@ -133,6 +133,23 @@ try {
   await client.query(`insert into story_world_states
     (world_id, mission_id, definition_version, revision, state)
     values ('migration-smoke-story', 'sm.m1.cache-disclosure.01', 1, 0, '{}')`);
+  await client.query(`insert into settlement_supplies
+    (world_id, site_id, revision, rations, herbalist_medical_units, chapel_cash_q, cash_q)
+    values ('migration-smoke-foul-well', 'kamenny-brod', 0, 300, 0, 1, 0)`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Refusing to drop retained chapel funds or herbalist stock/u,
+  );
+  await client.query(`update settlement_supplies
+    set chapel_cash_q = 0, herbalist_medical_units = 1
+    where world_id = 'migration-smoke-foul-well'`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Refusing to drop retained chapel funds or herbalist stock/u,
+  );
+  await client.query(
+    "delete from settlement_supplies where world_id = 'migration-smoke-foul-well'",
+  );
   for (const name of [
     '0030_herbalist_stock',
     '0029_return_report_contract_outcomes',
