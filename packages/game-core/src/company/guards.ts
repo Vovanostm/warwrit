@@ -116,6 +116,8 @@ function playerSource(command: CompanyCommand) {
       return command.payload.ownershipReceiptId
         ? [command.payload.ownershipReceiptId, command.payload.itemId]
         : null;
+    case 'SellItem':
+      return [command.payload.itemId];
     default:
       return null;
   }

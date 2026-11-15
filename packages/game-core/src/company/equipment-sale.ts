@@ -21,6 +21,16 @@ const SALE_PRICES_Q: Readonly<Record<string, bigint>> = Object.freeze({
   'padded-coat': 5n * CROWN_Q,
 });
 
+/** Fixed owner-approved buyback quote in exact q units; returns nothing for other catalogue IDs. */
+export function equipmentSaleQuote(definitionId: string): string | undefined {
+  if (!Object.hasOwn(SALE_PRICES_Q, definitionId)) return undefined;
+  const definition = COMPANY_CATALOGUE.items.find(
+    (entry) => entry.id === definitionId && entry.enabled,
+  );
+  const price = SALE_PRICES_Q[definitionId];
+  return definition && price !== undefined ? price.toString() : undefined;
+}
+
 export type EquipmentSale =
   | {
       readonly kind: 'REJECTED';
@@ -87,12 +97,9 @@ export function prepareEquipmentSale(
   if (!item || item.tombstone !== null) return reject('INVALID_ITEM');
   if (item.owner.kind !== 'COMPANY' || item.owner.id !== root.lifecycle.companyId)
     return reject('ITEM_NOT_OWNED');
-  if (!Object.hasOwn(SALE_PRICES_Q, item.definitionId)) return reject('UNSALEABLE_ITEM');
-  const definition = COMPANY_CATALOGUE.items.find(
-    (entry) => entry.id === item.definitionId && entry.enabled,
-  );
-  const price = SALE_PRICES_Q[item.definitionId];
-  if (!definition || price === undefined || item.quantity !== 1) return reject('UNSALEABLE_ITEM');
+  const quoteQ = equipmentSaleQuote(item.definitionId);
+  if (quoteQ === undefined || item.quantity !== 1) return reject('UNSALEABLE_ITEM');
+  const price = BigInt(quoteQ);
   const container = root.physical.containers.find(
     (entry) => entry.containerId === item.containerId && entry.closed === null,
   );
@@ -161,11 +168,11 @@ export function prepareEquipmentSale(
     return reject('INVALID_STATE');
   const sold: ItemInstance = {
     ...item,
-    owner: { kind: 'WORLD', id: traderId },
+    owner: { kind: 'WORLD', id: root.lifecycle.worldId },
     containerId: traderContainerId,
     equipped: null,
   };
-  const priceQ = price.toString();
+  const priceQ = quoteQ;
   return {
     kind: 'PREPARED',
     next: {

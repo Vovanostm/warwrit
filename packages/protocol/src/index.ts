@@ -95,3 +95,9 @@ export * from './playground.js';
 
 export * from './map-editor.js';
 export * from './return-report.js';
+export type {
+  EquipmentMarketDto,
+  EquipmentMarketItemDto,
+  EquipmentSaleRequestDto,
+  EquipmentSaleResponseDto,
+} from './equipment-market.js';
