@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: first sword-specialization selection and retraining with
+  explicit stop, saved elapsed tuition and observed completion-only replacement.
+  Native stop, full completion and reload pass.
+  [Learning result](docs/work-packages/m1-next/06-company-capabilities.md#learning-implementation-checkpoint--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: six sourced graphic-novel portraits in story dialogue and
   hunt issuer cards, retaining generation prompts and adaptations.
   [Portrait implementation and remaining visual checks](docs/work-packages/M1-STORY-MISSIONS.md#portrait-integration--2026-11-15). LOCAL.

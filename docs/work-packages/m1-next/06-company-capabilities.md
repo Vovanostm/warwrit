@@ -94,9 +94,9 @@ No new service framework, second time/accrual owner or speculative course editor
 
 ## Trial course — owner decision 2026-11-15
 
-L1–L3 have pure learning composition and interruption rules, while the production
-adapter, real course offer, provider/mentor source and ordinary controls remain
-unfinished. The command allowlist currently refuses StartLearning. Existing
+At acceptance, L1–L3 had pure learning composition and interruption rules, while
+the production adapter, real course offer, provider/mentor source and ordinary
+controls were unfinished. The allowlist refused StartLearning. Existing
 finance readers preserve optional learningObligations/learningEffects.
 
 The owner approved the first trial offer in this implementation chat. The source
@@ -139,8 +139,8 @@ pair. It preserves skill XP, grants no additional skill XP and replaces the old
 specialization only after the full 3,000 accepted ticks. A five-crown starting
 balance authorizes the agreed maximum cost but pays only for 1,000 actual ticks,
 then ends with FUNDING_SHORTFALL and the original specialization. The maximum
-authorization creates no money or reservation. Adapter/UI integration and native
-retraining acceptance remain in progress.
+authorization creates no money or reservation. Adapter/UI and native results
+follow below.
 
 Native practice items use legitimate legacy JSON-shaped IDs. The shared protocol
 entity-ID guard now accepts these IDs within the canonical 256-codepoint bound,
@@ -149,8 +149,55 @@ known name and carrier. The focused learning/task/ID/course/trader/deceased-pane
 union passes 49 tests. Game-core and protocol builds and server/web typechecks
 pass. A real SQL retraining check exposed a stale known-perk projection, now
 corrected at successful completion with a public revision bump and pure
-regression. Its SQL rerun remains pending. Access/movement/duty/casualty checks
-and full CAP-3 closure remain open until their individual results are recorded.
+regression. Its SQL rerun passes. Full CAP-3 closure remains open until the
+remaining individual results are recorded.
+
+The retraining adapter and ordinary company panel now use the same learning
+transaction. Explicit stop, lost-response retry, validated readback and repeated
+enrollment are implemented. Malformed start/stop bodies are rejected before
+execution. The current parent PostgreSQL run passes the start/stop/duty/full
+completion scenario and malformed-body snapshot preservation. The author also
+passed the 13-case movement suite, including course settlement and stop before a
+MOVE_TO commit. The reverse-enrollment/history PostgreSQL regression also passes.
+The final first-perk/course/retraining UI union passes 15 tests, including a
+same-company revision refresh during an in-flight command.
+
+Current battle admissions are at Старая мельница or Березняк. They require leaving
+the guard course location first, and departure stops learning before admission.
+The static guard contact has no moving or battle-participant producer. Provider
+relocation/casualty is therefore unreachable through current normal controls.
+Direct resource-access loss through a sale passes an isolated PostgreSQL case.
+It settles the accepted course interval, records PREREQUISITES and transfers the
+required weapon to the merchant once. Its exact sale retry preserves that result.
+
+The retained leader reached sword level25 through fifteen completed ordinary
+three-day courses. Each full course charged15 crowns, using45 +1,000-tick QA
+clock advances in total. The earlier stopped courses remain in history. Treasury
+is538.72 crowns on Campaign Day76. A stale-revision refusal during rapid repeat
+enrollment preserved state, and the next explicit action after refresh succeeded.
+This progression exposed an I1 gap, now fixed with explicit first-specialization
+controls backed by the existing ChoosePerk command. Choices use observed mastery
+and the existing catalogue. A local company read now observes changed skill
+levels through the existing contact observation and qualification path. Its
+PostgreSQL regression verifies the new observed level and a stable public
+revision on the next identical read.
+
+For the native retraining test, the implementer selected «Точность» through the
+new control. The first retraining attempt accepted 1,002 ticks and charged5.01
+crowns before explicit stop, retaining that specialization. A separate complete
+attempt accepted3,000 ticks for15 crowns and replaced it with «Инициатива».
+The ordinary company view retained `blades-25-b` after reload, with398.71 crowns
+and15 rations. The panel offers the reverse pair and retains the latest completed
+result. Four +1,000-tick QA advances supplied this retraining check. The native
+attempt to drop the stop response was disrupted by a read-refresh cancellation,
+so native exact lost-response evidence for retraining remains NOT_RUN. The
+component lost-response regression passes. The cancellation was corrected so
+only account/company scope changes abort a pending command.
+
+Both course panels now have an explicit refresh control for elapsed progress.
+Native completion screenshot was inspected at
+`output/playwright/m1-retraining-complete-native.png`. L1–L3 are implemented and
+checked locally. The remaining S1/N1/I1 leaves keep this whole package open.
 
 ## Retraining and earned nickname — owner decision 2026-11-15
 
@@ -168,8 +215,8 @@ health becomes eligible for a proposal. The saved battle result identifies the
 fighter and deed. The player may accept or reject the proposal. The existing
 consent, source history and observer-appropriate knowledge rules apply.
 
-Both rules were accepted in this implementation chat on 2026-11-15. Their
-producer, ordinary controls and gameplay checks are still in progress.
+Both rules were accepted in this implementation chat on 2026-11-15. Current
+implementation evidence belongs to the checkpoint above.
 
 ## Decisions and checks
 

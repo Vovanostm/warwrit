@@ -10,6 +10,7 @@ import { registerIdentityRoutes, type IdentityRoutesOptions } from './auth/route
 import { registerCompanyRoutes, type CompanyRoutesOptions } from './company/routes.js';
 import { registerEquipmentMarketRoutes } from './company/equipment-market.js';
 import { registerCompanyCourseRoutes } from './company/course-routes.js';
+import { registerCompanyRetrainingRoutes } from './company/retraining-routes.js';
 import { registerCompanyDeceasedWagesRoutes } from './company/deceased-wages-routes.js';
 import { registerWorldRoutes } from './world/routes.js';
 import { registerOrdinaryContractRoutes } from './contracts/ordinary.js';
@@ -64,6 +65,7 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     registerCompanyRoutes(app, options.company);
     registerEquipmentMarketRoutes(app, options.company);
     registerCompanyCourseRoutes(app, options.company);
+    registerCompanyRetrainingRoutes(app, options.company);
     registerCompanyDeceasedWagesRoutes(app, options.company);
     registerWorldRoutes(app, options.company);
     registerFirstHuntRoutes(app, options.company);

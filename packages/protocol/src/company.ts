@@ -87,6 +87,13 @@ export interface CompanySummaryDto {
     readonly name: string;
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
+    /** Choice authority derived only from this observer's known level and selected perk IDs. */
+    readonly perkChoices?: readonly {
+      readonly perkId: string;
+      readonly skillId: string;
+      readonly milestone: 25;
+      readonly effect: { readonly attribute: string; readonly value: number };
+    }[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
     /** The owner knows whether this character travels with the active field party. */
     readonly inFieldParty?: boolean;
@@ -341,8 +348,43 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly resourceIds: readonly string[];
   };
+  /** Start the one offered Kamenny Brod milestone-25 blade perk replacement. */
+  readonly StartRetraining: {
+    readonly courseId: string;
+    readonly characterId: string;
+    readonly oldPerkId: string;
+    readonly newPerkId: string;
+  };
   /** Stop the caller's active course; settlement uses server-observed elapsed time. */
   readonly StopLearning: { readonly taskId: string };
+}
+
+export interface CompanyRetrainingResponseDto {
+  readonly publicRevision: string;
+  readonly retraining: {
+    readonly courseId: string;
+    readonly providerId: string;
+    readonly skillId: string;
+    readonly durationTicks: string;
+    readonly costQPerDay: string;
+    readonly status:
+      'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETE' | 'STOPPED' | 'INTERRUPTED' | 'UNAVAILABLE';
+    readonly unavailableReason?: 'NOT_LOCAL' | 'OTHER_LEARNING' | 'NO_ELIGIBLE_LEARNER';
+    readonly learners: readonly {
+      readonly characterId: string;
+      readonly masteredPerkId: string;
+      readonly replacementPerkId: string;
+    }[];
+    readonly progress?: {
+      readonly taskId: string;
+      readonly learnerId: string;
+      readonly oldPerkId: string;
+      readonly newPerkId: string;
+      readonly acceptedTicks: string;
+      readonly remainingTicks: string;
+      readonly chargedQ: string;
+    };
+  };
 }
 
 export interface LocalRecruitOfferDto {

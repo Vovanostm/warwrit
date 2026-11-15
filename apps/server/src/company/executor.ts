@@ -93,14 +93,13 @@ import { readWorldClock } from '../world/clock.js';
 import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
 import {
   KAMENNY_BROD_GUARD_COURSE,
-  courseCauseManifest,
+  KAMENNY_BROD_GUARD_RETRAINING,
   courseMoneyAccess,
   courseProviderWalletId,
   courseResourceIds,
   courseSourceForStart,
-  courseTimeInterval,
+  retrainingSourceForStart,
   ensureCourseProvider,
-  learningSourceForCourseTask,
   prepareCourseAdvance,
   prepareCourseInterruption,
   prepareCourseStop,
@@ -281,6 +280,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'EndFieldCamp' &&
     input.request.type !== 'SetAssignment' &&
     input.request.type !== 'StartLearning' &&
+    input.request.type !== 'StartRetraining' &&
     input.request.type !== 'StopLearning'
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
@@ -299,6 +299,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   let courseInterruptedBeforeMovement = false;
   if (
     input.request.type !== 'StartLearning' &&
+    input.request.type !== 'StartRetraining' &&
     input.request.type !== 'StopLearning' &&
     state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal)
   ) {
@@ -319,7 +320,6 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     if (interruption.kind !== 'PREPARED')
       return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
     state = interruption.next;
-    lifecycle = state.economy.lifecycle;
     courseInterruptionEvents = interruption.events;
     courseInterruptedBeforeMovement = true;
   }
@@ -412,9 +412,10 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       food.reason === 'INSUFFICIENT_ITEMS' ? 'INSUFFICIENT_ITEMS' : 'UNSUPPORTED_ACTION',
       lifecycle.knowledge.revision,
     );
-  let foodFacts = courseInterruptedBeforeMovement ? [] : food.facts;
+  const foodFacts = courseInterruptedBeforeMovement ? [] : food.facts;
 
   let courseStart: { readonly walletId: string; readonly accessEvidenceId: string } | undefined;
+  let retrainingStart: { readonly walletId: string; readonly accessEvidenceId: string } | undefined;
   if (input.request.type === 'StartLearning') {
     const location = KAMENNY_BROD_GUARD_COURSE.location;
     const offeredResources = courseResourceIds(state);
@@ -446,6 +447,44 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     });
     if (!access) return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
     courseStart = { walletId, accessEvidenceId };
+  }
+  if (input.request.type === 'StartRetraining') {
+    const location = KAMENNY_BROD_GUARD_RETRAINING.location;
+    const activeLearning = state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal);
+    const requested = input.request.payload;
+    const pairOffered = KAMENNY_BROD_GUARD_RETRAINING.perkPairs.some(
+      (pair) => pair.oldPerkId === requested.oldPerkId && pair.newPerkId === requested.newPerkId,
+    );
+    const learner = lifecycle.characters.find(
+      (character) => character.identity.characterId === requested.characterId,
+    );
+    if (
+      requested.courseId !== KAMENNY_BROD_GUARD_RETRAINING.id ||
+      !pairOffered ||
+      !learner ||
+      !learner.perks.includes(requested.oldPerkId) ||
+      learner.perks.includes(requested.newPerkId) ||
+      activeLearning ||
+      party?.location.kind !== 'AT' ||
+      party.location.siteId !== location.siteId ||
+      party.location.areaId !== location.areaId ||
+      !localCompanyContacts(state, companyId, location).includes(requested.characterId)
+    )
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    state = ensureCourseProvider(state);
+    lifecycle = state.economy.lifecycle;
+    const walletId = courseProviderWalletId(input.worldId, companyId);
+    const accessEvidenceId = `retraining-access-${input.request.commandId}`;
+    const access = courseMoneyAccess({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      evidenceId: accessEvidenceId,
+      recipientWalletIds: [walletId],
+    });
+    if (!access) return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    retrainingStart = { walletId, accessEvidenceId };
   }
 
   if (input.request.type === 'PayClaims')
@@ -830,7 +869,73 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       },
     );
     if (prepared.kind !== 'PREPARED')
-      return rejectRequest(mapDomainError(prepared.error), lifecycle.knowledge.revision);
+      return rejectRequest(
+        prepared.error === 'UNPAID_OBLIGATIONS'
+          ? 'INSUFFICIENT_FUNDS'
+          : mapDomainError(prepared.error),
+        lifecycle.knowledge.revision,
+      );
+    const nextState = readCompanyCombatAggregateState({
+      ...state,
+      economy: prepared.next.economy,
+      learning: prepared.next.learning,
+    });
+    return commitOrdinaryCourseCommand({
+      transaction: input.transaction,
+      previousRevision: previousLifecycle.revision,
+      request: input.request,
+      requestKey: input.requestKey,
+      command: parsed.command,
+      state: nextState,
+      events: prepared.receipt.events,
+      due,
+    });
+  }
+  if (input.request.type === 'StartRetraining') {
+    if (parsed.command.type !== 'StartRetraining' || !retrainingStart)
+      return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
+    const access = courseMoneyAccess({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      evidenceId: retrainingStart.accessEvidenceId,
+      recipientWalletIds: [retrainingStart.walletId],
+    });
+    if (!access) return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    const source = retrainingSourceForStart({
+      command: parsed.command,
+      revision: lifecycle.revision,
+      providerWalletId: retrainingStart.walletId,
+      accessEvidenceId: retrainingStart.accessEvidenceId,
+    });
+    const retrainingContext = {
+      ...context,
+      contactIds: [
+        ...localCompanyContacts(state, companyId, source.location),
+        source.providerId!,
+        source.learnerId,
+      ],
+      financeFacts: [...context.financeFacts, access],
+      learningFacts: [source],
+    };
+    const prepared = prepareCompanyEconomyWithLearning(
+      { economy: state.economy, learning: state.learning },
+      parsed.command,
+      retrainingContext,
+      {
+        taskId: `retraining-${input.request.commandId}`,
+        effectId: `retraining-start-${input.request.commandId}`,
+        intervals: [],
+      },
+    );
+    if (prepared.kind !== 'PREPARED')
+      return rejectRequest(
+        prepared.error === 'UNPAID_OBLIGATIONS'
+          ? 'INSUFFICIENT_FUNDS'
+          : mapDomainError(prepared.error),
+        lifecycle.knowledge.revision,
+      );
     const nextState = readCompanyCombatAggregateState({
       ...state,
       economy: prepared.next.economy,
@@ -1006,10 +1111,13 @@ async function commitOrdinaryCourseCommand(input: {
   readonly previousRevision: string;
   readonly request: Extract<
     OrdinaryPlayerCompanyCommandV2Dto,
-    { type: 'StartLearning' | 'StopLearning' }
+    { type: 'StartLearning' | 'StartRetraining' | 'StopLearning' }
   >;
   readonly requestKey: string;
-  readonly command: Extract<CompanyCommand, { type: 'StartLearning' | 'StopLearning' }>;
+  readonly command: Extract<
+    CompanyCommand,
+    { type: 'StartLearning' | 'StartRetraining' | 'StopLearning' }
+  >;
   readonly state: CompanyCombatAggregateState;
   readonly events: readonly Readonly<object>[];
   readonly due: ReturnType<typeof prepareDueContinuousMovement>;

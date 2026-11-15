@@ -262,14 +262,24 @@ export function CoursePanel(props: {
                 {formatCrowns(course.progress.chargedQ)} кр.
               </p>
               {course.status === 'IN_PROGRESS' && (
-                <button
-                  type="button"
-                  className="action action-quiet"
-                  disabled={busy || Boolean(pending)}
-                  onClick={stop}
-                >
-                  Остановить обучение
-                </button>
+                <div>
+                  <button
+                    type="button"
+                    className="action action-quiet"
+                    disabled={busy || Boolean(pending)}
+                    onClick={() => setQuoteRetry((revision) => revision + 1)}
+                  >
+                    Обновить курс
+                  </button>
+                  <button
+                    type="button"
+                    className="action action-quiet"
+                    disabled={busy || Boolean(pending)}
+                    onClick={stop}
+                  >
+                    Остановить обучение
+                  </button>
+                </div>
               )}
             </div>
           )}

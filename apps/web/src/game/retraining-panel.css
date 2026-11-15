@@ -1,0 +1,17 @@
+.retraining-panel {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #45433e;
+}
+
+.retraining-choice,
+.retraining-progress,
+.retraining-pending {
+  margin-top: 0.75rem;
+}
+
+.retraining-choice p,
+.retraining-progress p,
+.retraining-pending p {
+  margin: 0.35rem 0;
+}

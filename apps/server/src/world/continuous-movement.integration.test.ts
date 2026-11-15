@@ -9,15 +9,20 @@ import {
   COMPANY_SCHEMA_VERSION,
   FIRST_HUNT_INSTANCE_ID,
   CONTINUOUS_WORLD_REGION,
+  moneyQ,
   readCompanyCombatAggregateState,
   type CompanyCombatAggregateState,
   type LocationRef,
 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
-import type { WorldFreeMovementV2RequestDto } from '@warwrit/protocol';
+import type {
+  OrdinaryPlayerCompanyCommandV2Dto,
+  WorldFreeMovementV2RequestDto,
+} from '@warwrit/protocol';
 import { afterAll, describe, expect, it, vi } from 'vitest';
 
 import { ensureFirstHuntGenesisInTransaction } from '../contracts/first-hunt-runtime.js';
+import { courseResourceIds, KAMENNY_BROD_GUARD_COURSE } from '../company/courses.js';
 import { createDatabase } from '../db/database.js';
 import {
   executeContinuousMovement,
@@ -33,6 +38,82 @@ afterAll(async () => {
 });
 
 describe('continuous movement executor (PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'interrupts a local course before committing movement from Kamenny Brod',
+    async () => {
+      const db = requireDatabase();
+      const scenario = createScenario(randomUUID(), {
+        kind: 'AT',
+        siteId: 'kamenny-brod',
+        areaId: 'kamenny-brod-market',
+      });
+      await seedScenario(db, [scenario]);
+      try {
+        const learner = scenario.state.economy.lifecycle.characters.find(
+          (character) => character.presence.fieldPartyId !== null,
+        );
+        if (!learner) throw new Error('Course fixture learner missing');
+        const courseIntent = {
+          schemaVersion: 2,
+          commandId: randomUUID(),
+          expectedPublicRevision: scenario.state.economy.lifecycle.knowledge.revision,
+          type: 'StartLearning',
+          payload: {
+            courseId: KAMENNY_BROD_GUARD_COURSE.id,
+            characterId: learner.identity.characterId,
+            resourceIds: courseResourceIds(scenario.state),
+          },
+        } satisfies OrdinaryPlayerCompanyCommandV2Dto;
+        const start = await db.transaction().execute((transaction) =>
+          executeOrdinaryPlayerCompanyCommand({
+            transaction,
+            accountId: scenario.accountId,
+            expectedCompanyId: scenario.companyId,
+            worldId: scenario.worldId,
+            request: courseIntent,
+            requestKey: canonicalJson(courseIntent),
+            now: new Date(),
+          }),
+        );
+        expect(start.kind, JSON.stringify(start)).toBe('COMMITTED');
+
+        const startedState = await readSnapshot(db, scenario);
+        const course = startedState.learning.tasks.tasks.find(
+          (task) => !task.stop && !task.terminal && task.start.inputs?.kind === 'COURSE',
+        );
+        expect(course).toBeDefined();
+        const moved = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          {
+            schemaVersion: 2,
+            commandId: randomUUID(),
+            expectedPublicRevision: startedState.economy.lifecycle.knowledge.revision,
+            expectedMovementEpoch: '0',
+            action: {
+              kind: 'MOVE_TO',
+              mapEdition: MAP_EDITION,
+              target: { kind: 'SITE', siteId: 'tikhaya-gat' },
+            },
+          },
+        );
+
+        expect(moved.mode).toBe('MOVING');
+        const after = await readSnapshot(db, scenario);
+        const interrupted = after.learning.tasks.tasks.find(
+          (task) => task.start.taskId === course?.start.taskId,
+        );
+        expect(interrupted?.stop?.payload.reason).toBe('PREREQUISITES');
+        expect(interrupted?.processedThroughTick).toBeDefined();
+        expect(await routeReceiptCount(db, scenario)).toBe(1);
+      } finally {
+        await cleanupScenario(db, [scenario]);
+      }
+    },
+  );
+
   it.skipIf(database === undefined)(
     'starts the new map edition from an exact retained older terrain position',
     async () => {
@@ -781,6 +862,17 @@ function createScenario(
             : character,
         ),
       },
+      finance:
+        origin.kind === 'AT' && origin.siteId === 'kamenny-brod'
+          ? {
+              ...remapped.economy.finance,
+              wallets: remapped.economy.finance.wallets.map((wallet) => ({
+                ...wallet,
+                location: origin,
+                ...(wallet.walletId === 'purse' ? { cashQ: moneyQ('20000000') } : {}),
+              })),
+            }
+          : remapped.economy.finance,
       physical: {
         ...physical,
         containers: physical.containers.map(ownContainer),

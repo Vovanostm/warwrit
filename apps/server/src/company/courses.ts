@@ -43,6 +43,20 @@ export const KAMENNY_BROD_GUARD_COURSE = Object.freeze({
   sourceVersion: 'guard-blades-course-playtest-2026-11-15-v1',
 });
 
+export const KAMENNY_BROD_GUARD_RETRAINING = Object.freeze({
+  id: 'retraining.kamenny-brod.blades-25',
+  providerId: FIRST_HUNT_ISSUER_ID,
+  location: KAMENNY_BROD_GUARD_COURSE.location,
+  skillId: 'blades',
+  durationTicks: '3000',
+  costQPerDay: moneyQ('5000000'),
+  sourceVersion: 'guard-blades-retraining-playtest-2026-11-15-v1',
+  perkPairs: Object.freeze([
+    Object.freeze({ oldPerkId: 'blades-25-a', newPerkId: 'blades-25-b' }),
+    Object.freeze({ oldPerkId: 'blades-25-b', newPerkId: 'blades-25-a' }),
+  ]),
+});
+
 function stableWalletId(worldId: string, companyId: string): string {
   const digest = createHash('sha256')
     .update(`warwrit-course-wallet-v1:${worldId}:${companyId}:${KAMENNY_BROD_GUARD_COURSE.id}`)
@@ -193,6 +207,85 @@ export function learningSourceForCourseTask(task: LearningTask): LearningSourceE
   };
 }
 
+export function learningSourceForRetrainingTask(task: LearningTask): LearningSourceEvidence {
+  const command = task.start.command;
+  const sourceId = task.start.quote.sourceId;
+  const funding = task.start.quote.funding;
+  if (
+    command.type !== 'StartRetraining' ||
+    !task.start.retraining ||
+    !funding ||
+    task.start.inputs?.kind !== 'COURSE'
+  )
+    throw new Error('Expected a funded guard retraining task');
+  return {
+    id: sourceId,
+    companyId: command.companyId,
+    worldId: command.worldId,
+    revision: command.expectedRevision,
+    atTick: command.campaignTick,
+    expiresAt: (
+      BigInt(command.campaignTick) + BigInt(KAMENNY_BROD_GUARD_RETRAINING.durationTicks)
+    ).toString(),
+    learnerId: command.payload.characterId,
+    location: KAMENNY_BROD_GUARD_RETRAINING.location,
+    resourceIds: [],
+    sourceVersion: task.start.quote.sourceVersion,
+    kind: 'RETRAINING',
+    methodId: 'funded-practice',
+    skillId: KAMENNY_BROD_GUARD_RETRAINING.skillId,
+    oldPerkId: task.start.retraining.oldPerkId,
+    newPerkId: task.start.retraining.newPerkId,
+    providerId: KAMENNY_BROD_GUARD_RETRAINING.providerId,
+    mentorId: KAMENNY_BROD_GUARD_RETRAINING.providerId,
+    poolId: funding.poolId,
+    providerWalletId: funding.providerWalletId,
+    moneyAccessEvidenceId: `retraining-access-${command.commandId}`,
+    costQPerDay: KAMENNY_BROD_GUARD_RETRAINING.costQPerDay,
+    maxTicks: KAMENNY_BROD_GUARD_RETRAINING.durationTicks,
+  };
+}
+
+function learningSourceForTask(task: LearningTask): LearningSourceEvidence {
+  return task.start.retraining
+    ? learningSourceForRetrainingTask(task)
+    : learningSourceForCourseTask(task);
+}
+
+export function retrainingSourceForStart(input: {
+  readonly command: CommandOf<'StartRetraining'>;
+  readonly revision: string;
+  readonly providerWalletId: string;
+  readonly accessEvidenceId: string;
+}): LearningSourceEvidence {
+  return {
+    id: input.command.payload.mentorEvidenceId,
+    companyId: input.command.companyId,
+    worldId: input.command.worldId,
+    revision: input.revision,
+    atTick: campaignTick(input.command.campaignTick),
+    expiresAt: (
+      BigInt(input.command.campaignTick) + BigInt(KAMENNY_BROD_GUARD_RETRAINING.durationTicks)
+    ).toString(),
+    learnerId: input.command.payload.characterId,
+    location: KAMENNY_BROD_GUARD_RETRAINING.location,
+    resourceIds: [],
+    sourceVersion: KAMENNY_BROD_GUARD_RETRAINING.sourceVersion,
+    kind: 'RETRAINING',
+    methodId: 'funded-practice',
+    skillId: KAMENNY_BROD_GUARD_RETRAINING.skillId,
+    oldPerkId: input.command.payload.oldPerkId,
+    newPerkId: input.command.payload.newPerkId,
+    providerId: KAMENNY_BROD_GUARD_RETRAINING.providerId,
+    mentorId: KAMENNY_BROD_GUARD_RETRAINING.providerId,
+    poolId: input.command.payload.budgetPoolId,
+    providerWalletId: input.providerWalletId,
+    moneyAccessEvidenceId: input.accessEvidenceId,
+    costQPerDay: KAMENNY_BROD_GUARD_RETRAINING.costQPerDay,
+    maxTicks: KAMENNY_BROD_GUARD_RETRAINING.durationTicks,
+  };
+}
+
 export function courseSourceForStart(input: {
   readonly command: CommandOf<'StartLearning'>;
   readonly revision: string;
@@ -271,7 +364,7 @@ export function courseTimeInterval(input: {
   readonly toTick: string;
   readonly kind: 'ELIGIBLE' | 'INELIGIBLE';
 }): LearningTimeInterval {
-  const source = learningSourceForCourseTask(input.task);
+  const source = learningSourceForTask(input.task);
   const interval: LearningTimeInterval = {
     intervalId: `interval-${input.commandId}-${input.task.start.taskId}`,
     taskId: input.task.start.taskId,
@@ -351,7 +444,7 @@ export function courseCauseManifest(input: {
   readonly intervals: readonly LearningTimeInterval[];
   readonly extraEvidenceIds?: readonly string[];
 }): TrustedLearningCauseManifest {
-  const source = learningSourceForCourseTask(input.task);
+  const source = learningSourceForTask(input.task);
   return {
     companyId: source.companyId,
     worldId: source.worldId,
@@ -396,7 +489,7 @@ export function prepareCourseAdvance(input: {
   if (active.length !== 1 || active[0]?.start.inputs?.kind !== 'COURSE')
     return { kind: 'UNAVAILABLE' };
   const task = active[0];
-  const source = learningSourceForCourseTask(task);
+  const source = learningSourceForTask(task);
   const targetTick = input.command.payload.toTick;
   const access = courseMoneyAccess({
     state: input.state,
@@ -495,7 +588,7 @@ export function prepareCourseInterruption(input: {
   if (active.length !== 1 || active[0]?.start.inputs?.kind !== 'COURSE')
     return { kind: 'UNAVAILABLE' };
   const task = active[0];
-  const source = learningSourceForCourseTask(task);
+  const source = learningSourceForTask(task);
   const access = courseMoneyAccess({
     state: input.state,
     worldId: source.worldId,
@@ -607,7 +700,7 @@ export function prepareCourseStop(input: {
       entry.start.taskId === input.command.payload.taskId && !entry.stop && !entry.terminal,
   );
   if (!task || task.start.inputs?.kind !== 'COURSE') return { kind: 'UNAVAILABLE' };
-  const source = learningSourceForCourseTask(task);
+  const source = learningSourceForTask(task);
   const access = courseMoneyAccess({
     state: input.state,
     worldId: source.worldId,

@@ -5,10 +5,10 @@ import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
-  campaignTick,
   initialSkillProgress,
   moneyQ,
   readCompanyCombatAggregateState,
+  skillLevel,
 } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
@@ -84,7 +84,12 @@ describe('local guard course (PostgreSQL)', () => {
         .execute();
       await database
         .insertInto('world_campaign_clocks')
-        .values({ world_id: worldId, epoch_ms: String(Date.now()), starting_tick: '1000', qa_offset_ms: '0' })
+        .values({
+          world_id: worldId,
+          epoch_ms: String(Date.now()),
+          starting_tick: '1000',
+          qa_offset_ms: '0',
+        })
         .execute();
       for (const [companyId, accountId, state] of [
         [companyA, accountA, seededA],
@@ -134,7 +139,13 @@ describe('local guard course (PostgreSQL)', () => {
         expect(offerB.course.learners).toContainEqual(
           expect.objectContaining({ characterId: 'a-leader', currentLevel: 1 }),
         );
-        const startB = await startCourse(app, sessionB, companyB, seededB, offerB.course.learners[0]!);
+        const startB = await startCourse(
+          app,
+          sessionB,
+          companyB,
+          seededB,
+          offerB.course.learners[0]!,
+        );
         expect(startB.statusCode, startB.body).toBe(200);
         const activeB = await courseOffer(app, sessionB, companyB);
         expect(activeB.course.status).toBe('IN_PROGRESS');
@@ -194,7 +205,8 @@ describe('local guard course (PostgreSQL)', () => {
           companyA,
           seededA,
           secondLearner!,
-          revisionAfterStop.json().company.revision as typeof seededA.economy.lifecycle.knowledge.revision,
+          revisionAfterStop.json().company
+            .revision as typeof seededA.economy.lifecycle.knowledge.revision,
         );
         expect(restarted.statusCode, restarted.body).toBe(200);
         await database
@@ -242,6 +254,40 @@ describe('local guard course (PostgreSQL)', () => {
           chargedQ: '15000000',
           remainingTicks: '0',
         });
+        const completedCompany = await app.inject({
+          method: 'GET',
+          url: '/company',
+          headers: { cookie: `warwrit_session=${sessionB}` },
+        });
+        expect(completedCompany.statusCode, completedCompany.body).toBe(200);
+        const stored = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyB)
+          .executeTakeFirstOrThrow();
+        const afterObservation = readCompanyCombatAggregateState(stored.state).economy.lifecycle;
+        const learnerId = completed.course.progress!.learnerId;
+        const trained = afterObservation.characters.find(
+          (entry) => entry.identity.characterId === learnerId,
+        )!;
+        const known = afterObservation.knowledge.characters.find(
+          (entry) => entry.identity.characterId === learnerId,
+        )!;
+        expect(skillLevel(known.skills['blades']!)).toBe(skillLevel(trained.skills['blades']!));
+        expect(skillLevel(known.skills['blades']!)).toBeGreaterThan(
+          skillLevel(
+            seededB.economy.lifecycle.knowledge.characters.find(
+              (entry) => entry.identity.characterId === learnerId,
+            )!.skills['blades'] ?? 0,
+          ),
+        );
+        const repeatedRead = await app.inject({
+          method: 'GET',
+          url: '/company',
+          headers: { cookie: `warwrit_session=${sessionB}` },
+        });
+        expect(repeatedRead.json().company.revision).toBe(completedCompany.json().company.revision);
       } finally {
         await app.close();
       }
@@ -316,9 +362,13 @@ async function courseOffer(app: ReturnType<typeof buildApp>, session: string, co
   return response.json() as {
     readonly course: {
       readonly status: string;
-      readonly learners: readonly { readonly characterId: string; readonly resourceIds: readonly string[] }[];
+      readonly learners: readonly {
+        readonly characterId: string;
+        readonly resourceIds: readonly string[];
+      }[];
       readonly progress?: {
         readonly taskId: string;
+        readonly learnerId: string;
         readonly acceptedTicks: string;
         readonly chargedQ: string;
         readonly remainingTicks: string;

@@ -1,0 +1,21 @@
+.perk-selection-panel {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #45433e;
+}
+
+.perk-selection-choice,
+.perk-selection-pending {
+  margin-top: 0.75rem;
+}
+
+.perk-selection-choice p,
+.perk-selection-pending p {
+  margin: 0.35rem 0;
+}
+
+.perk-selection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

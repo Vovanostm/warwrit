@@ -10,19 +10,24 @@ import {
   parseCompanyCommand,
   prepareCompanyEconomy,
   prepareCompanyLifecycle,
+  skillLevels,
 } from '@warwrit/game-core';
-import type {
-  CompanyCombatAggregateState,
-  CompanyPhysicalState,
-  EconomyContext,
-} from '@warwrit/game-core';
+import type { CompanyCombatAggregateState, EconomyContext } from '@warwrit/game-core';
 import type { Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock } from '../world/clock.js';
 import { updateCompanyAggregateWithReceipt } from './repository.js';
 import { prepareStationaryFoodFacts } from './travel-food.js';
 
-function bodyChanged(physical: CompanyPhysicalState, characterId: string): boolean {
+function characterChanged(state: CompanyCombatAggregateState, characterId: string): boolean {
+  const { lifecycle, physical } = state.economy;
+  if (!physical) return false;
+  const character = lifecycle.characters.find(
+    (entry) => entry.identity.characterId === characterId,
+  );
+  const known = lifecycle.knowledge.characters.find(
+    (entry) => entry.identity.characterId === characterId,
+  );
   return (
     canonicalJson(physical.conditions.filter((entry) => entry.characterId === characterId)) !==
       canonicalJson(
@@ -31,7 +36,13 @@ function bodyChanged(physical: CompanyPhysicalState, characterId: string): boole
     canonicalJson(physical.vitals.filter((entry) => entry.characterId === characterId)) !==
       canonicalJson(
         physical.knowledge.vitalSnapshots.filter((entry) => entry.characterId === characterId),
-      )
+      ) ||
+    Boolean(
+      character &&
+      known &&
+      (canonicalJson(skillLevels(character.skills)) !== canonicalJson(skillLevels(known.skills)) ||
+        canonicalJson(character.perks) !== canonicalJson(known.perks)),
+    )
   );
 }
 
@@ -246,7 +257,7 @@ export async function observeLocalCompanyConditions(
       presence.location.siteId === place.siteId &&
       presence.location.areaId === place.areaId,
   );
-  const changed = local.some(({ identity }) => bodyChanged(physical, identity.characterId));
+  const changed = local.some(({ identity }) => characterChanged(state, identity.characterId));
   const recovering = local.find(({ presence }) => presence.assignment === 'RECOVERY');
   if (local.length === 0) return state;
   const clock = await readWorldClock(transaction, lifecycle.worldId, now, true);
@@ -262,7 +273,7 @@ export async function observeLocalCompanyConditions(
   );
   if (!changed && !recoveryDue && !payrollDue) return state;
 
-  const prepared = prepareLocalBodyObservations(
+  const prepared = prepareLocalCharacterObservations(
     state,
     local.map((person) => person.identity.characterId),
     clock.tick,
@@ -293,7 +304,7 @@ export async function observeLocalCompanyConditions(
   return prepared.next;
 }
 
-function prepareLocalBodyObservations(
+function prepareLocalCharacterObservations(
   state: CompanyCombatAggregateState,
   contactIds: readonly string[],
   tick: string,
@@ -306,12 +317,11 @@ function prepareLocalBodyObservations(
   for (let observedCount = 0; observedCount < contactIds.length; observedCount += 1) {
     // The first observation settles elapsed time for everyone. Each local payee
     // still needs their own observation to disclose newly earned wages. Recheck
-    // changed bodies too, preserving the same read's recovery and wound updates.
+    // changed characters too, preserving the same read's recovery and skill updates.
     const subject =
       contactIds.find(
         (characterId) =>
-          bodyChanged(next.economy.physical!, characterId) ||
-          payrollObservationDue(next, characterId, tick),
+          characterChanged(next, characterId) || payrollObservationDue(next, characterId, tick),
       ) ?? (observedCount === 0 ? recoverySubjectId : undefined);
     if (!subject) break;
     const draft = prepareObservationDraft(next, subject, contactIds, tick);

@@ -106,7 +106,10 @@ estate ownership remains with its canonical owner.
 
 The retained N01 company has no deceased wage account. Living former member Mora
 does not supply a death-payment case. Its UI can therefore establish the empty
-state only. Actual PostgreSQL settlement/retry/refusal coverage is being prepared
-in an isolated clone. Native eligible settlement, restart and PAY-3/PAY-5 remain
-NOT_RUN. The shared entity-ID reader accepts historical JSON-shaped IDs within
-the existing canonical bound.
+state only. Three isolated PostgreSQL cases pass using canonical RecordDeath and
+observation transitions with actual predeath claim and estate state. They verify
+quote/payment after a further clock tick, exact retry, foreign-company GET/POST
+refusal and insufficient-funds rollback across snapshot, receipt and audit
+counts. Native eligible settlement, restart and PAY-3/PAY-5 remain NOT_RUN. The
+shared entity-ID reader accepts historical JSON-shaped IDs within the existing
+canonical bound.

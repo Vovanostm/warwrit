@@ -125,6 +125,17 @@ export function ordinaryCommandIntent(
           maxBudgetQ: '15000000',
         },
       };
+    case 'StartRetraining':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          oldPerkId: request.payload.oldPerkId,
+          newPerkId: request.payload.newPerkId,
+          mentorEvidenceId: `retraining:${request.commandId}`,
+          budgetPoolId: 'local',
+        },
+      };
     case 'StopLearning':
       return {
         type: request.type,
@@ -225,6 +236,7 @@ function requestedEffectPresent(
     case 'ChoosePerk':
       return lifecycleChanged(prepared);
     case 'StartLearning':
+    case 'StartRetraining':
     case 'StopLearning':
       return false;
     default:
@@ -233,7 +245,7 @@ function requestedEffectPresent(
 }
 
 export function ordinaryLearningCommandSucceeded(
-  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StopLearning' }>,
+  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StartRetraining' | 'StopLearning' }>,
   prepared: CompanyEconomyWithLearningResult,
 ): boolean {
   if (
@@ -250,15 +262,24 @@ export function ordinaryLearningCommandSucceeded(
           !task.stop &&
           !task.terminal,
       )
-    : prepared.next.learning.tasks.tasks.some(
-        (task) =>
-          task.start.taskId === request.payload.taskId &&
-          task.stop?.commandId === request.commandId,
-      );
+    : request.type === 'StartRetraining'
+      ? prepared.next.learning.tasks.tasks.some(
+          (task) =>
+            task.start.command.commandId === request.commandId &&
+            task.start.retraining?.oldPerkId === request.payload.oldPerkId &&
+            task.start.retraining.newPerkId === request.payload.newPerkId &&
+            !task.stop &&
+            !task.terminal,
+        )
+      : prepared.next.learning.tasks.tasks.some(
+          (task) =>
+            task.start.taskId === request.payload.taskId &&
+            task.stop?.commandId === request.commandId,
+        );
 }
 
 export function ordinaryLearningStateSatisfies(
-  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StopLearning' }>,
+  request: Extract<OrdinaryRequest, { type: 'StartLearning' | 'StartRetraining' | 'StopLearning' }>,
   state: CompanyCombatAggregateState,
 ): boolean {
   return request.type === 'StartLearning'
@@ -269,11 +290,20 @@ export function ordinaryLearningStateSatisfies(
           !task.stop &&
           !task.terminal,
       )
-    : state.learning.tasks.tasks.some(
-        (task) =>
-          task.start.taskId === request.payload.taskId &&
-          task.stop?.commandId === request.commandId,
-      );
+    : request.type === 'StartRetraining'
+      ? state.learning.tasks.tasks.some(
+          (task) =>
+            task.start.command.commandId === request.commandId &&
+            task.start.retraining?.oldPerkId === request.payload.oldPerkId &&
+            task.start.retraining.newPerkId === request.payload.newPerkId &&
+            !task.stop &&
+            !task.terminal,
+        )
+      : state.learning.tasks.tasks.some(
+          (task) =>
+            task.start.taskId === request.payload.taskId &&
+            task.stop?.commandId === request.commandId,
+        );
 }
 
 function paymentCompleted(

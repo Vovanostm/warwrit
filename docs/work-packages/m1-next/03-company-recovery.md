@@ -91,3 +91,15 @@ real SQL for any changed transaction. No mock healing to create acceptance.
 An unavailable authorised provider is either a legitimate player refusal or a
 specific missing source input; do not invent a new doctor to complete this task.
 Continue independent recruitment/feedback work and report all residual blockers.
+
+## Native checkpoint — 2026-11-15
+
+PARTIAL / LOCAL on the retained N01 company. Rell was in RECOVERY at100/100 with
+no observed treatable condition. The ordinary company panel's «Вернуть в строй»
+command returned him to FIELD at the same health and treasury. Reload retained
+«в строю». The company then bought30 rations at the Каменный Брод bazaar for120
+crowns. The offer showed10 Campaign Days for the three living field members.
+
+The later course/retraining check retains all three living members and15
+rations, with398.71 crowns. Natural treatable injury, physician care and an actual
+replacement remain NOT_RUN here. REC-2/REC-4 and the whole package remain open.
