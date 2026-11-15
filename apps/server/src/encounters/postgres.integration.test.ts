@@ -29,6 +29,7 @@ import { createDatabase, createDatabaseReadinessProbe } from '../db/database.js'
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { loadCompanyAggregate } from '../company/repository.js';
+import { registerCompanyNicknameRoutes } from '../company/nickname-routes.js';
 import {
   createOpeningAggregate,
   issueOpeningOption,
@@ -942,6 +943,232 @@ afterAll(async () => {
 });
 
 describe('persistent fixture encounters (PostgreSQL)', () => {
+  it.skipIf(connectionString === undefined)(
+    'proposes, witnesses, resolves and reloads nicknames from a verified terminal battle',
+    async () => {
+      const database = databases[0];
+      if (database === undefined || connectionString === undefined)
+        throw new Error('database missing');
+      let fixtureId = 3000;
+      const createFixtureId = () =>
+        `00000000-0000-4000-8000-${String(fixtureId++).padStart(12, '0')}`;
+      const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
+        database,
+        false,
+        'world.test.nickname-terminal',
+        true,
+        false,
+        undefined,
+        true,
+        createFixtureId,
+      );
+      registerCompanyNicknameRoutes(app, { database, worldId });
+      const restoreClock = freezeCampaignClock();
+      let reopened: ReturnType<typeof createDatabase> | undefined;
+      let reloadedApp: ReturnType<typeof buildApp> | undefined;
+      try {
+        // Two surviving workers enter the verified battle already near death, so
+        // the genuine terminal receipt can produce both resolution outcomes.
+        const company = owner.initial.economy.lifecycle.company;
+        const workers = owner.initial.economy.lifecycle.characters.filter(
+          (character) =>
+            character.presence.fieldPartyId !== null &&
+            character.identity.characterId !== company?.currentLeaderId,
+        );
+        if (workers.length < 2) throw new Error('nickname fixture needs two bound workers');
+        const woundedIds = new Set<string>(
+          workers.slice(0, 2).map((entry) => String(entry.identity.characterId)),
+        );
+        const woundedIdStrings = new Set([...woundedIds].map(String));
+        const physical = owner.initial.economy.physical;
+        if (!physical) throw new Error('nickname fixture physical state is missing');
+        const woundedState = combat.readCompanyCombatAggregateState({
+          ...owner.initial,
+          economy: {
+            ...owner.initial.economy,
+            physical: {
+              ...physical,
+              vitals: physical.vitals.map((vital) =>
+                woundedIds.has(String(vital.characterId))
+                  ? { ...vital, currentHealth: Math.max(1, Math.floor(vital.maximumHealth / 4)) }
+                  : vital,
+              ),
+            },
+          },
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: woundedState })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', owner.companyId)
+          .executeTakeFirstOrThrow();
+
+        for (const actor of [owner, helper]) {
+          const read = await app.inject({
+            method: 'GET',
+            url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+            headers: actor.headers,
+          });
+          const joined = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: actor.headers,
+            payload: {
+              schemaVersion: 1,
+              commandId: randomUUID(),
+              expectedPublicRevision: read.json().publicRevision,
+              type: 'JOIN',
+              payload: { instanceId: 'ci.m1.wolf-trail.01' },
+            },
+          });
+          expect(joined.statusCode, joined.body).toBe(200);
+        }
+
+        const { encounter_id: encounterId } = await database
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
+        expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+        expect(await applyPendingFirstHuntTerminalEffects(database)).toContain(encounterId);
+
+        const verifiedTerminal = await database
+          .selectFrom('encounters')
+          .select(['revision', 'state'])
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow();
+        const terminalState = verifiedTerminal.state as combat.BattleState;
+        expect(terminalState.status).toBe('resolved');
+        expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+
+        const pendingRead = await app.inject({
+          method: 'GET',
+          url: '/company/nicknames',
+          headers: owner.headers,
+        });
+        expect(pendingRead.statusCode, pendingRead.body).toBe(200);
+        const initialView = pendingRead.json() as {
+          pending: { proposalId: string; characterId: string }[];
+          history: unknown[];
+        };
+        const proposals = initialView.pending.filter((entry) =>
+          woundedIdStrings.has(entry.characterId),
+        );
+        expect(proposals.length).toBeGreaterThanOrEqual(2);
+        const foreignView = await app.inject({
+          method: 'GET',
+          url: '/company/nicknames',
+          headers: { ...owner.headers, [WORLD_EXPECTED_COMPANY_ID_HEADER]: helper.companyId },
+        });
+        expect(foreignView.statusCode).toBe(403);
+
+        const resolve = async (
+          proposalId: string,
+          accept: boolean,
+          expectedPublicRevision: string,
+          commandId: string,
+        ) => {
+          const request = {
+            schemaVersion: 1,
+            commandId,
+            expectedPublicRevision,
+            proposalId,
+            accept,
+          };
+          const response = await app.inject({
+            method: 'POST',
+            url: '/company/nicknames/resolve',
+            headers: owner.headers,
+            payload: request,
+          });
+          return { request, response };
+        };
+        const first = proposals[0]!;
+        const accepted = await resolve(
+          first.proposalId,
+          true,
+          pendingRead.json().publicRevision,
+          randomUUID(),
+        );
+        expect(accepted.response.statusCode, accepted.response.body).toBe(200);
+        const exactRetry = await app.inject({
+          method: 'POST',
+          url: '/company/nicknames/resolve',
+          headers: owner.headers,
+          payload: accepted.request,
+        });
+        expect(exactRetry.statusCode, exactRetry.body).toBe(200);
+        expect(exactRetry.json()).toEqual(accepted.response.json());
+        const changedRetry = await app.inject({
+          method: 'POST',
+          url: '/company/nicknames/resolve',
+          headers: owner.headers,
+          payload: { ...accepted.request, accept: false },
+        });
+        expect(changedRetry.statusCode).toBe(409);
+
+        const afterAccept = await app.inject({
+          method: 'GET',
+          url: '/company/nicknames',
+          headers: owner.headers,
+        });
+        const second = proposals.find((entry) => entry.proposalId !== first.proposalId)!;
+        const refused = await resolve(
+          second.proposalId,
+          false,
+          afterAccept.json().publicRevision,
+          randomUUID(),
+        );
+        expect(refused.response.statusCode, refused.response.body).toBe(200);
+        const afterRefusal = await app.inject({
+          method: 'GET',
+          url: '/company/nicknames',
+          headers: owner.headers,
+        });
+        expect(afterRefusal.json().pending).toHaveLength(initialView.pending.length - 2);
+        expect(afterRefusal.json().history).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ proposalId: first.proposalId, resolution: 'ACCEPTED' }),
+            expect.objectContaining({ proposalId: second.proposalId, resolution: 'REJECTED' }),
+          ]),
+        );
+        expect(terminalState.revision).toBe(verifiedTerminal.revision);
+
+        reopened = createDatabase(connectionString);
+        const config = loadServerConfig({
+          DATABASE_URL: connectionString,
+          OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+          OIDC_CLIENT_ID: 'warwrit-local',
+          OIDC_CLIENT_SECRET: 'local-only-secret',
+          OIDC_REDIRECT_URI: 'http://127.0.0.1:3108/auth/callback',
+          PUBLIC_ORIGIN: 'http://127.0.0.1:3108',
+          HOST: '127.0.0.1',
+          PORT: '3108',
+        });
+        reloadedApp = buildApp({ identity: { config: config.identity!, database: reopened } });
+        registerCompanyNicknameRoutes(reloadedApp, { database: reopened, worldId });
+        const reloaded = await reloadedApp.inject({
+          method: 'GET',
+          url: '/company/nicknames',
+          headers: owner.headers,
+        });
+        expect(reloaded.statusCode, reloaded.body).toBe(200);
+        expect(reloaded.json()).toEqual(afterRefusal.json());
+        const persistedRoot = await reopened
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, owner.companyId));
+        expect(persistedRoot?.economy.lifecycle.knowledge.nicknameHistory).toHaveLength(2);
+      } finally {
+        restoreClock();
+        await reloadedApp?.close();
+        await reopened?.destroy();
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+    60_000,
+  );
+
   it.skipIf(connectionString === undefined)(
     'applies a lost multi-member two-company FIRST HUNT to both companies',
     async () => {
