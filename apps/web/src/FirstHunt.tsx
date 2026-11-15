@@ -13,6 +13,7 @@ import {
   type FirstHuntCommandDto,
   type FirstHuntReadResponseDto,
 } from '@warwrit/protocol';
+import { FIRST_HUNT_INSTANCE_ID } from '@warwrit/game-core';
 import {
   availableFirstHuntActions,
   clearFirstHuntAttempt,
@@ -229,8 +230,16 @@ export function FirstHunt(
     contract && shouldPollForFirstHuntActivation(contract)
       ? `${props.scope.accountId}:${props.scope.companyId}:${contract.instanceId}`
       : undefined;
+  const ordinaryOwnerCanWithdraw =
+    contract?.yourRole === 'OWNER' &&
+    contract.instanceId !== FIRST_HUNT_INSTANCE_ID &&
+    contract.knownState === 'ACTIVE' &&
+    contract.encounterId === null;
   const availableActions = contract
-    ? availableFirstHuntActions(contract, props.location, contract.pickupTargets.length > 0)
+    ? [
+        ...availableFirstHuntActions(contract, props.location, contract.pickupTargets.length > 0),
+        ...(ordinaryOwnerCanWithdraw ? (['LEAVE'] as const) : []),
+      ]
     : [];
   const hasUnresolvedAttempt = view.attempt !== undefined;
   const actionsDisabled = view.status !== 'ready' || view.pending || hasUnresolvedAttempt;
@@ -411,7 +420,7 @@ export function FirstHunt(
                 disabled={actionsDisabled}
                 onClick={() => void submit('LEAVE')}
               >
-                Отказаться от помощи
+                {contract?.yourRole === 'OWNER' ? 'Снять поручение' : 'Отказаться от помощи'}
               </button>
             )}
             {!atField &&

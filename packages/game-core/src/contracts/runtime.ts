@@ -29,6 +29,8 @@ export type FirstHuntLifecycleCommand =
       readonly accountId: string;
       readonly expectedRevision: string;
       readonly encounterActive: boolean;
+      /** Trusted adapter permission for an ordinary owner before any admission. */
+      readonly allowOwnerWithdrawal?: boolean;
     }
   | {
       readonly type: 'JOIN';
@@ -81,9 +83,18 @@ export function prepareFirstHuntLifecycleTransition(
       next = { ...state, helperCompanyId: command.companyId };
     }
   } else if (command.type === 'LEAVE') {
-    if (actorRole !== 'HELPER' || command.encounterActive)
-      return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
-    next = { ...state, helperCompanyId: null, helperJoin: null };
+    if (command.encounterActive) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+    if (actorRole === 'HELPER') {
+      next = { ...state, helperCompanyId: null, helperJoin: null };
+    } else if (actorRole === 'OWNER' && command.allowOwnerWithdrawal === true) {
+      next = {
+        ...state,
+        ownerCompanyId: null,
+        helperCompanyId: null,
+        ownerJoin: null,
+        helperJoin: null,
+      };
+    } else return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
   } else if (command.type === 'JOIN') {
     if (
       actorRole === 'NONE' ||
