@@ -9,6 +9,7 @@ import {
   type WorldFreeMovementResponseDto,
   WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
+import { FIRST_HUNT_INSTANCE_ID } from '@warwrit/game-core';
 import { CompanyOpening } from './CompanyOpening.js';
 import { SignIn } from './SignIn.js';
 import {
@@ -31,6 +32,7 @@ import { RecruitmentPanel } from './game/RecruitmentPanel.js';
 import { FirstHunt } from './FirstHunt.js';
 import { ContractBoard } from './game/ContractBoard.js';
 import { HuntList } from './game/HuntList.js';
+import { HostileLootPanel } from './game/HostileLootPanel.js';
 import {
   clearWorldTravelAttempt,
   clearWorldTravelReturnWindow,
@@ -1676,12 +1678,23 @@ export function App() {
               onRewardPaid={refreshWorldForShell}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
+            <HostileLootPanel
+              key={`${scope.accountId}:${scope.companyId}:${FIRST_HUNT_INSTANCE_ID}`}
+              accountId={scope.accountId}
+              company={journey.company}
+              instanceId={FIRST_HUNT_INSTANCE_ID}
+              refreshKey={contractRefreshGeneration}
+              onRefresh={refreshCompanyForShell}
+              onUnauthorized={onContractUnauthorized}
+            />
             <HuntList
               {...contractVisit}
               scope={scope}
+              company={journey.company}
               location={journey.world.party?.location ?? null}
               refreshKey={contractRefreshGeneration}
               onUnauthorized={onContractUnauthorized}
+              onRefreshCompany={refreshCompanyForShell}
               onRewardPaid={refreshWorldForShell}
               onEncounterDiscovered={() => setEncounterGeneration((generation) => generation + 1)}
             />
