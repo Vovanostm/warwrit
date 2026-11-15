@@ -1,4 +1,8 @@
-import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
+import type {
+  CompanyHoldingsDto,
+  CompanySummaryDto,
+  OrdinaryPlayerCompanyCommandV2Dto,
+} from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, formatRations, itemLabel, statusLabel } from './format.js';
 import { ItemTransferPanel } from './ItemTransferPanel.js';
@@ -9,6 +13,12 @@ import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 import { RetrainingPanel } from './RetrainingPanel.js';
 import { PerkSelectionPanel } from './PerkSelectionPanel.js';
 import { NicknamePanel } from './NicknamePanel.js';
+import { GuardServicePanel } from './GuardServicePanel.js';
+
+type GuardCommand = Extract<
+  OrdinaryPlayerCompanyCommandV2Dto,
+  { type: 'AcceptSafeService' | 'AmendSafeService' | 'EndSafeService' }
+>;
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
@@ -27,6 +37,10 @@ export function CompanyPanel(props: {
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
   readonly onJoinFieldParty: (characterId: string) => void;
+  readonly companyActionPending?: boolean;
+  readonly companyActionMessage?: string;
+  readonly onRetryCompanyAction?: () => void;
+  readonly onGuardServiceCommand?: (request: GuardCommand) => Promise<unknown>;
 }) {
   const { company, holdings } = props;
   const supplies = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
@@ -192,6 +206,20 @@ export function CompanyPanel(props: {
             ticksPerDay={props.ticksPerDay}
             onRefresh={props.onRefreshItems}
           />
+          {props.onGuardServiceCommand && (
+            <GuardServicePanel
+              key={`guard-service:${props.accountId}:${company.companyId}`}
+              company={company}
+              busy={props.equipBusy}
+              actionPending={props.companyActionPending ?? false}
+              {...(props.companyActionMessage === undefined
+                ? {}
+                : { actionMessage: props.companyActionMessage })}
+              onRetry={props.onRetryCompanyAction ?? (() => undefined)}
+              onCommand={props.onGuardServiceCommand}
+              onRefresh={props.onRefreshItems}
+            />
+          )}
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (
             <p className="state-note">Общих припасов нет.</p>

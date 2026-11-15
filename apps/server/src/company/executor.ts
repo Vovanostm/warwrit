@@ -59,7 +59,6 @@ import {
   readCompanyCombatAggregateState,
   publicRevision,
   PHYSICAL_POLICY_VERSION,
-  HUNT_PROFILES,
   huntProfile,
 } from '@warwrit/game-core';
 import type {
@@ -69,7 +68,9 @@ import type {
   EconomyContext,
   FoodFulfillmentEvidence,
   ItemAccessEvidence,
+  LocalMoneyAccess,
   PracticeContext,
+  SafeServiceOffer,
   TrustedTransitSegment,
   PartyRouteExecution,
 } from '@warwrit/game-core';
@@ -98,7 +99,7 @@ import {
 } from './travel-food.js';
 import type { TravelFoodRouteBoundary } from './travel-food.js';
 import { readWorldClock } from '../world/clock.js';
-import { readHuntWorldState, selectHuntWorldRow } from '../contracts/first-hunt-runtime.js';
+import { localSiteHasHostiles } from './local-safe-place.js';
 import {
   KAMENNY_BROD_GUARD_COURSE,
   KAMENNY_BROD_GUARD_RETRAINING,
@@ -112,6 +113,11 @@ import {
   prepareCourseInterruption,
   prepareCourseStop,
 } from './courses.js';
+import {
+  guardServiceOfferId,
+  prepareGuardServiceMoneyAccess,
+  prepareGuardServiceOffer,
+} from './guard-service.js';
 
 const preparedCompanyCommand: unique symbol = Symbol('prepared-company-command');
 const worldRequestKeyFields = ['commandId', 'companyId', 'kind', 'requestKey', 'worldId'];
@@ -290,7 +296,10 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     input.request.type !== 'SetAssignment' &&
     input.request.type !== 'StartLearning' &&
     input.request.type !== 'StartRetraining' &&
-    input.request.type !== 'StopLearning'
+    input.request.type !== 'StopLearning' &&
+    input.request.type !== 'AcceptSafeService' &&
+    input.request.type !== 'AmendSafeService' &&
+    input.request.type !== 'EndSafeService'
   )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
@@ -445,11 +454,68 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       partyId: party.partyId,
       location: party.location,
       stationary: true,
-      conflict: await hostilesPresent(input.transaction, input.worldId, party.location.siteId),
+      conflict: await localSiteHasHostiles(input.transaction, input.worldId, party.location.siteId),
     };
     if (campSite.conflict) return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
   }
   if (input.request.type === 'EndFieldCamp' && !openCamp)
+    return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+
+  let safeServiceOffer: SafeServiceOffer | undefined;
+  let safeServiceMoneyAccess: LocalMoneyAccess | undefined;
+  let safeServiceAgreement = state.economy.finance.maintenance.find(
+    (mode) => mode.kind === 'SAFE_SERVICE' && mode.endedAt === null,
+  );
+  if (input.request.type === 'AcceptSafeService' || input.request.type === 'AmendSafeService') {
+    if (
+      await localSiteHasHostiles(
+        input.transaction,
+        input.worldId,
+        KAMENNY_BROD_GUARD_COURSE.location.siteId,
+      )
+    )
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    const offerId = guardServiceOfferId(
+      input.worldId,
+      companyId,
+      lifecycle.knowledge.revision,
+      clock.tick,
+    );
+    if (
+      (input.request.type === 'AcceptSafeService' && input.request.payload.offerId !== offerId) ||
+      input.request.payload.quoteRevision !== lifecycle.knowledge.revision
+    )
+      return rejectRequest('STALE_REVISION', lifecycle.knowledge.revision);
+    const preparedOffer = prepareGuardServiceOffer({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      offerId,
+    });
+    if (!preparedOffer.offer)
+      return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    state = preparedOffer.state;
+    lifecycle = state.economy.lifecycle;
+    safeServiceOffer = preparedOffer.offer;
+    safeServiceMoneyAccess = prepareGuardServiceMoneyAccess({
+      state,
+      worldId: input.worldId,
+      companyId,
+      atTick: clock.tick,
+      evidenceId: randomUUID(),
+    });
+    if (!safeServiceMoneyAccess)
+      return rejectRequest('CONTACT_OR_ACCESS_REQUIRED', lifecycle.knowledge.revision);
+    safeServiceAgreement = state.economy.finance.maintenance.find(
+      (mode) => mode.kind === 'SAFE_SERVICE' && mode.endedAt === null,
+    );
+  }
+  if (
+    input.request.type === 'EndSafeService' &&
+    (!safeServiceAgreement ||
+      safeServiceAgreement.agreementId !== input.request.payload.agreementId)
+  )
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
 
   // A stationary company whose root lags the world clock settles the elapsed food
@@ -772,7 +838,11 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
           : input.request.type === 'JoinFieldParty'
             ? input.request.payload.characterId
             : undefined,
-      offerId: recruitOffer?.offer_id,
+      offerId:
+        safeServiceOffer?.id ??
+        (input.request.type === 'AcceptSafeService'
+          ? guardServiceOfferId(input.worldId, companyId, lifecycle.knowledge.revision, clock.tick)
+          : recruitOffer?.offer_id),
       offerRevision: recruitOffer?.offer_revision,
       siteEligibilityId: campSite?.id,
       accessEvidenceId: equipAccess?.id,
@@ -877,13 +947,20 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
             ? [preparedCareFulfillment.providerId]
             : assignmentEvidence
               ? assignmentEvidence.contactIds
-              : (input.request.type === 'BeginFieldCamp' ||
-                    input.request.type === 'EndFieldCamp') &&
-                  party
-                ? lifecycle.characters
-                    .filter((character) => character.presence.fieldPartyId === party.partyId)
-                    .map((character) => character.identity.characterId)
-                : [],
+              : input.request.type === 'AcceptSafeService' ||
+                  input.request.type === 'AmendSafeService' ||
+                  input.request.type === 'EndSafeService'
+                ? [
+                    ...(safeServiceOffer ? [safeServiceOffer.providerId] : []),
+                    ...localCompanyContacts(state, companyId, party?.location),
+                  ]
+                : (input.request.type === 'BeginFieldCamp' ||
+                      input.request.type === 'EndFieldCamp') &&
+                    party
+                  ? lifecycle.characters
+                      .filter((character) => character.presence.fieldPartyId === party.partyId)
+                      .map((character) => character.identity.characterId)
+                  : [],
     facts: [
       ...(recruitEvidence ? [recruitEvidence] : []),
       ...(meetingEvidence ? [meetingEvidence] : []),
@@ -891,6 +968,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     ],
     financeFacts: [
       ...(campSite ? [campSite] : []),
+      ...(safeServiceOffer ? [safeServiceOffer] : []),
+      ...(safeServiceMoneyAccess ? [safeServiceMoneyAccess] : []),
       ...(serviceTerms ? [serviceTerms] : []),
       ...(localMoneyAccess ? [localMoneyAccess] : []),
       ...(assignmentEvidence?.moneyAccess ? [assignmentEvidence.moneyAccess] : []),
@@ -2429,24 +2508,4 @@ export async function catchUpStationaryCompany(input: {
     },
   );
   return next;
-}
-
-/** Any living hostile of a hunt standing at this site makes a field camp a conflict. */
-async function hostilesPresent(
-  transaction: Transaction<DatabaseSchema>,
-  worldId: string,
-  siteId: string,
-): Promise<boolean> {
-  for (const hunt of HUNT_PROFILES) {
-    if (hunt.objectiveLocation.siteId !== siteId) continue;
-    const row = await selectHuntWorldRow(transaction, worldId, hunt, false);
-    if (!row) continue;
-    if (
-      readHuntWorldState(worldId, hunt, row).hostiles.some(
-        (hostile) => (hostile.currentPools['health'] ?? 0) > 0,
-      )
-    )
-      return true;
-  }
-  return false;
 }

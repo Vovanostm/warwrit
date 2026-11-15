@@ -42,6 +42,7 @@ import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { foulWellCarePriceQ, readFoulWellOutcome } from '../contracts/foul-well-state.js';
+import { registerGuardServiceRoute } from './guard-service.js';
 import { registerCompanyReturnReportRoutes } from './return-report.js';
 import { parsePayDeceasedWagesRequest } from './deceased-wages-routes.js';
 import { executePayDeceasedWages } from './deceased-wages.js';
@@ -63,6 +64,7 @@ export function registerCompanyRoutes(
   { database, worldId }: CompanyRoutesOptions,
 ): void {
   registerCompanyReturnReportRoutes(app, { database, worldId });
+  registerGuardServiceRoute(app, { database, worldId });
   app.get<{ Params: { siteId: string } }>('/company/recruits/:siteId', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
@@ -535,6 +537,38 @@ function parseOrdinaryCompanyCommandV2(
       return undefined;
   } else if (value['type'] === 'BeginFieldCamp' || value['type'] === 'EndFieldCamp') {
     if (Object.keys(payload).length !== 0) return undefined;
+  } else if (value['type'] === 'AcceptSafeService') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['beneficiaryIds', 'offerId', 'quoteRevision']) ||
+      !isEntityId(payload['offerId']) ||
+      !isExactInteger(payload['quoteRevision']) ||
+      !Array.isArray(payload['beneficiaryIds']) ||
+      payload['beneficiaryIds'].length < 1 ||
+      payload['beneficiaryIds'].length > 6 ||
+      !payload['beneficiaryIds'].every(isEntityId) ||
+      new Set(payload['beneficiaryIds']).size !== payload['beneficiaryIds'].length
+    )
+      return undefined;
+  } else if (value['type'] === 'AmendSafeService') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['agreementId', 'beneficiaryIds', 'quoteRevision']) ||
+      !isEntityId(payload['agreementId']) ||
+      !isExactInteger(payload['quoteRevision']) ||
+      !Array.isArray(payload['beneficiaryIds']) ||
+      payload['beneficiaryIds'].length < 1 ||
+      payload['beneficiaryIds'].length > 6 ||
+      !payload['beneficiaryIds'].every(isEntityId) ||
+      new Set(payload['beneficiaryIds']).size !== payload['beneficiaryIds'].length
+    )
+      return undefined;
+  } else if (value['type'] === 'EndSafeService') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['agreementId']) ||
+      !isEntityId(payload['agreementId'])
+    )
+      return undefined;
   } else if (value['type'] === 'EquipItem') {
     if (
       canonicalJson(Object.keys(payload).sort()) !==

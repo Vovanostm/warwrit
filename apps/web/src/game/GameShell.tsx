@@ -13,6 +13,7 @@ import type {
   WorldFreeMovementResponseDto,
   WorldPartyReadResponseDto,
   WorldSurroundingsDto,
+  OrdinaryPlayerCompanyCommandV2Dto,
 } from '@warwrit/protocol';
 
 import type { WorldTravelAction } from '../world-travel-attempt.js';
@@ -20,6 +21,11 @@ import { SupplyShop } from './SupplyShop.js';
 import { EquipmentTrader } from './EquipmentTrader.js';
 import { CoursePanel } from './CoursePanel.js';
 import { CompanyPanel } from './CompanyPanel.js';
+
+type GuardCommand = Extract<
+  OrdinaryPlayerCompanyCommandV2Dto,
+  { type: 'AcceptSafeService' | 'AmendSafeService' | 'EndSafeService' }
+>;
 import { formatCrowns, itemLabel, siteKindLabel } from './format.js';
 import {
   estimatedLight,
@@ -73,6 +79,7 @@ export function GameShell(props: {
   readonly companyActionBusy: boolean;
   readonly companyActionMessage?: string;
   readonly onRetryCompanyAction: () => void;
+  readonly onGuardServiceCommand: (request: GuardCommand) => Promise<unknown>;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: CompanyHoldingsDto['items'][number]) => void;
@@ -761,6 +768,12 @@ export function GameShell(props: {
                 if (party) visitIssuer(party.location, supplyBuilding);
               }}
               equipBusy={props.equipBusy}
+              companyActionPending={props.companyActionPending}
+              {...(props.companyActionMessage === undefined
+                ? {}
+                : { companyActionMessage: props.companyActionMessage })}
+              onRetryCompanyAction={props.onRetryCompanyAction}
+              onGuardServiceCommand={props.onGuardServiceCommand}
               {...(props.equipMessage === undefined ? {} : { equipMessage: props.equipMessage })}
               onEquip={props.onEquip}
               onJoinFieldParty={props.onJoinFieldParty}

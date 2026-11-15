@@ -15,7 +15,10 @@ export type CompanyRosterCommand = Extract<
       | 'SetAssignment'
       | 'EquipItem'
       | 'BeginFieldCamp'
-      | 'EndFieldCamp';
+      | 'EndFieldCamp'
+      | 'AcceptSafeService'
+      | 'AmendSafeService'
+      | 'EndSafeService';
   }
 >;
 export type CompanyRosterCommandType = CompanyRosterCommand['type'];
@@ -64,6 +67,30 @@ function isRosterCommand(
   const payload = value['payload'];
   if (type === 'BeginFieldCamp' || type === 'EndFieldCamp')
     return Object.keys(payload).length === 0;
+  if (type === 'AcceptSafeService')
+    return (
+      Object.keys(payload).length === 3 &&
+      isId(payload['offerId']) &&
+      isRevision(payload['quoteRevision']) &&
+      Array.isArray(payload['beneficiaryIds']) &&
+      payload['beneficiaryIds'].length >= 1 &&
+      payload['beneficiaryIds'].length <= 6 &&
+      payload['beneficiaryIds'].every(isId) &&
+      new Set(payload['beneficiaryIds']).size === payload['beneficiaryIds'].length
+    );
+  if (type === 'AmendSafeService')
+    return (
+      Object.keys(payload).length === 3 &&
+      isId(payload['agreementId']) &&
+      isRevision(payload['quoteRevision']) &&
+      Array.isArray(payload['beneficiaryIds']) &&
+      payload['beneficiaryIds'].length >= 1 &&
+      payload['beneficiaryIds'].length <= 6 &&
+      payload['beneficiaryIds'].every(isId) &&
+      new Set(payload['beneficiaryIds']).size === payload['beneficiaryIds'].length
+    );
+  if (type === 'EndSafeService')
+    return Object.keys(payload).length === 1 && isId(payload['agreementId']);
   if (type === 'EquipItem')
     return (
       Object.keys(payload).length === 3 &&

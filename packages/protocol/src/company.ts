@@ -270,6 +270,7 @@ export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
   'EndMaintenance',
   'AcceptSafeService',
   'AmendSafeService',
+  'EndSafeService',
   'StartLearning',
   'StopLearning',
   'ChoosePerk',
@@ -325,6 +326,18 @@ export interface OrdinaryPlayerCompanyPayloads {
   readonly BeginFieldCamp: Record<string, never>;
   /** Strike the party's field camp. */
   readonly EndFieldCamp: Record<string, never>;
+  /** Enter, amend or leave Gordey's currently offered local guard service. */
+  readonly AcceptSafeService: {
+    readonly offerId: string;
+    readonly beneficiaryIds: readonly string[];
+    readonly quoteRevision: string;
+  };
+  readonly AmendSafeService: {
+    readonly agreementId: string;
+    readonly beneficiaryIds: readonly string[];
+    readonly quoteRevision: string;
+  };
+  readonly EndSafeService: { readonly agreementId: string };
   /** Put an item the character already carries into a body slot; access is server-attested. */
   readonly EquipItem: {
     readonly characterId: string;
@@ -437,6 +450,22 @@ export interface CompanyCourseResponseDto {
       readonly remainingTicks: string;
       readonly chargedQ: string;
     };
+  };
+}
+
+export interface CompanyGuardServiceResponseDto {
+  readonly publicRevision: string;
+  readonly local: boolean;
+  readonly providerName: 'Гордей Лапа';
+  readonly unavailableReason?: 'PLACE_UNSAFE';
+  readonly offer?: {
+    readonly offerId: string;
+    readonly quoteRevision: string;
+    readonly beneficiaryIds: readonly string[];
+  };
+  readonly agreement?: {
+    readonly agreementId: string;
+    readonly beneficiaryIds: readonly string[];
   };
 }
 

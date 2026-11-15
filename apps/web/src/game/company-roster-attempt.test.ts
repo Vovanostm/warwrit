@@ -41,6 +41,41 @@ function response(status: number, value: unknown): Response {
 }
 
 describe('company roster command attempts', () => {
+  it('retries a lost guard-service acceptance with the exact saved cohort and quote', async () => {
+    const storage = new MemoryStorage();
+    const request = {
+      schemaVersion: 2 as const,
+      commandId: 'guard-service-command',
+      expectedPublicRevision: '7',
+      type: 'AcceptSafeService' as const,
+      payload: {
+        offerId: 'guard-service-offer',
+        beneficiaryIds: ['leader', 'worker'],
+        quoteRevision: '7',
+      },
+    };
+    const attempt = createCompanyRosterAttempt(scope, request);
+    expect(saveCompanyRosterAttempt(storage, attempt)).toBe(true);
+    const bodies: string[] = [];
+    const lostReply: typeof fetch = async (_input, init) => {
+      bodies.push(String(init?.body));
+      throw new Error('connection lost after server commit');
+    };
+    expect(await postCompanyRosterAttempt('/api', attempt, lostReply)).toBe('UNKNOWN');
+    const restored = readCompanyRosterAttempt(storage, scope, 'AcceptSafeService');
+    expect(restored?.body).toBe(attempt.body);
+    const retry: typeof fetch = async (_input, init) => {
+      bodies.push(String(init?.body));
+      return response(200, {
+        commandId: request.commandId,
+        ok: true,
+        publicRevision: '8',
+      });
+    };
+    expect(await postCompanyRosterAttempt('/api', restored!, retry)).toBe('ACCEPTED');
+    expect(bodies).toEqual([attempt.body, attempt.body]);
+  });
+
   it('retries a lost hire after remount with the exact persisted body', async () => {
     const storage = new MemoryStorage();
     const attempt = createCompanyRosterAttempt(scope, request);

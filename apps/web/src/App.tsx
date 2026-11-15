@@ -1620,6 +1620,7 @@ export function App() {
           ? {}
           : { companyActionMessage: companyAction.message })}
         onRetryCompanyAction={() => void companyAction.retry()}
+        onGuardServiceCommand={(request) => companyAction.send(request)}
         {...(equipMessage === undefined ? {} : { equipMessage })}
         onEquip={(characterId, item) =>
           item.slot !== null &&

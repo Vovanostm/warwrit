@@ -145,6 +145,31 @@ export function ordinaryCommandIntent(
         type: request.type,
         payload: { taskId: request.payload.taskId, reason: 'PLAYER' },
       };
+    case 'AcceptSafeService':
+      return {
+        type: request.type,
+        payload: {
+          partyId: ids.partyId,
+          offerId: ids.offerId,
+          beneficiaryIds: [...request.payload.beneficiaryIds],
+          fundingPoolId: 'local',
+          quoteRevision: request.payload.quoteRevision,
+        },
+      };
+    case 'AmendSafeService':
+      return {
+        type: request.type,
+        payload: {
+          agreementId: request.payload.agreementId,
+          beneficiaryIds: [...request.payload.beneficiaryIds],
+          quoteRevision: request.payload.quoteRevision,
+        },
+      };
+    case 'EndSafeService':
+      return {
+        type: 'EndMaintenance',
+        payload: { agreementOrCampId: request.payload.agreementId, reason: 'LEAVE' },
+      };
     default:
       return fieldCampIntent(request, ids);
   }
@@ -236,6 +261,35 @@ function requestedEffectPresent(
         character.presence.fieldPartyId === ids.partyId
       );
     }
+    case 'AcceptSafeService':
+      return prepared.next.finance.maintenance.some(
+        (mode) =>
+          mode.kind === 'SAFE_SERVICE' &&
+          mode.endedAt === null &&
+          sameIds(mode.beneficiaryIds, request.payload.beneficiaryIds),
+      );
+    case 'AmendSafeService': {
+      const oldAgreementEnded = prepared.next.finance.maintenance.some(
+        (mode) => mode.agreementId === request.payload.agreementId && mode.endedAt !== null,
+      );
+      return (
+        oldAgreementEnded &&
+        prepared.next.finance.maintenance.some(
+          (mode) =>
+            mode.kind === 'SAFE_SERVICE' &&
+            mode.endedAt === null &&
+            mode.agreementId !== request.payload.agreementId &&
+            sameIds(mode.beneficiaryIds, request.payload.beneficiaryIds),
+        )
+      );
+    }
+    case 'EndSafeService':
+      return prepared.next.finance.maintenance.some(
+        (mode) =>
+          mode.agreementId === request.payload.agreementId &&
+          mode.endedAt !== null &&
+          mode.knownEndedAt !== null,
+      );
     case 'RenameCompany':
     case 'ChoosePerk':
       return lifecycleChanged(prepared);
@@ -255,6 +309,12 @@ function requestedEffectPresent(
     default:
       return fieldCampChanged(request, prepared, ids);
   }
+}
+
+function sameIds(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const sortedB = [...b].sort();
+  return [...a].sort().every((id, index) => id === sortedB[index]);
 }
 
 export function ordinaryLearningCommandSucceeded(

@@ -14,9 +14,24 @@ import {
 
 type Action = Extract<
   CompanyRosterCommand,
-  { type: 'EquipItem' | 'BeginFieldCamp' | 'EndFieldCamp' }
+  {
+    type:
+      | 'EquipItem'
+      | 'BeginFieldCamp'
+      | 'EndFieldCamp'
+      | 'AcceptSafeService'
+      | 'AmendSafeService'
+      | 'EndSafeService';
+  }
 >;
-const types = ['EquipItem', 'BeginFieldCamp', 'EndFieldCamp'] as const;
+const types = [
+  'EquipItem',
+  'BeginFieldCamp',
+  'EndFieldCamp',
+  'AcceptSafeService',
+  'AmendSafeService',
+  'EndSafeService',
+] as const;
 const unknownMessage = 'Ответ на приказ неизвестен. Повторите сохранённый приказ.';
 const storageMessage = 'Не удалось прочитать или сохранить приказ. Проверьте хранилище браузера.';
 

@@ -22,6 +22,7 @@ export function envelope<Data>(data: Data): ApiEnvelope<Data> {
 export type {
   CompanyOpeningOptionsResponseDto,
   CompanyCourseResponseDto,
+  CompanyGuardServiceResponseDto,
   CompanyRetrainingResponseDto,
   LocalRecruitOfferDto,
   LocalRecruitOffersResponseDto,

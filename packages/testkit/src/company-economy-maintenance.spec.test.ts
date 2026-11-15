@@ -63,6 +63,54 @@ function unable(state: CompanyEconomyState): CompanyEconomyState {
   );
 }
 describe('WP02.3 — physical maintenance intervals', () => {
+  it('P6: F1 entry, explicit amendment and exit split coverage without creating money', () => {
+    const fresh = economy([1n], 10000n, 0);
+    const accepted = prepared(admit(fresh)).next;
+    const afterService = advance(accepted, 500).next;
+    const oldAgreement = afterService.finance.maintenance.find(
+      (mode) => mode.kind === 'SAFE_SERVICE' && mode.endedAt === null,
+    )!;
+    const ids = oldAgreement.beneficiaryIds.filter(
+      (id) => !oldAgreement.beneficiaryEnds.some((end) => end.characterId === id),
+    );
+    const amend = command(afterService, 'AmendSafeService', {
+      agreementId: oldAgreement.agreementId,
+      beneficiaryIds: ids,
+      quoteRevision: afterService.lifecycle.knowledge.revision,
+    });
+    const amended = prepared(
+      prepareCompanyEconomy(
+        afterService,
+        amend,
+        context(afterService, amend, [access(afterService), offer(afterService)]),
+      ),
+    ).next;
+    const nextAgreement = amended.finance.maintenance.find(
+      (mode) => mode.kind === 'SAFE_SERVICE' && mode.endedAt === null,
+    )!;
+    expect(
+      amended.finance.maintenance.find((mode) => mode.agreementId === oldAgreement.agreementId),
+    ).toMatchObject({ endedAt: '500', knownEndedAt: '500' });
+    expect(nextAgreement).toMatchObject({ startedAt: '500', beneficiaryIds: ids });
+    expect(amended.finance.wallets).toEqual(fresh.finance.wallets);
+    expect(amended.lifecycle.characters.map((person) => person.skills)).toEqual(
+      fresh.lifecycle.characters.map((person) => person.skills),
+    );
+
+    const end = command(amended, 'EndMaintenance', {
+      agreementOrCampId: nextAgreement.agreementId,
+      reason: 'LEAVE',
+    });
+    const ended = prepared(prepareCompanyEconomy(amended, end, context(amended, end))).next;
+    expect(
+      ended.finance.maintenance.find((mode) => mode.agreementId === nextAgreement.agreementId),
+    ).toMatchObject({ endedAt: '500', knownEndedAt: '500' });
+    expect(ended.finance.wallets).toEqual(fresh.finance.wallets);
+    expect(ended.lifecycle.characters.map((person) => person.skills)).toEqual(
+      fresh.lifecycle.characters.map((person) => person.skills),
+    );
+  });
+
   it('P6: F1 reserves pre-entry earnings, covers only named current intervals and creates no cash or practice', () => {
     let state = advance(economy([1n], 10000n, 0), 500).next;
     state = observation(state, 'worker-0').result.next;

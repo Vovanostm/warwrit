@@ -44,6 +44,8 @@ requests.
   follows navigation metadata in core and server route loading. Added JSON
   roundtrip, timing and position regression coverage.
   [Compatibility checkpoint](docs/work-packages/M1-QUESTS.md#legacy-movement-plan-compatibility--2026-11-16). LOCAL.
+- 2026-11-16 — Added: Gordey's local guard-service offer with deliberate entry,
+  amendment and exit in the company panel. [S1 record](docs/work-packages/m1-next/06-company-capabilities.md#guard-service-integration--2026-11-16). LOCAL on `codex/m1-guard-service-20261115`.
 
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation

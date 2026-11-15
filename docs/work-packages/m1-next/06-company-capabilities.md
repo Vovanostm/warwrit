@@ -36,7 +36,7 @@ at source; a command existing in core is not proof of an enabled user journey.
 | S1/#168      | Real local F1 provider, explicit eligible entry, accepted amendment and exit, truthful earned food/lodging/pay coverage; no surplus, debt forgiveness or automatic offline activation | Actual source-backed provider/access/terms                                 |
 | L1/#373      | One genuine offered course: inspect prerequisite/cost/time, start, observe progress, explicitly stop and complete in valid separate attempts; exact money/practice/progress           | Complete required producers and interruption effects before exposing Start |
 | L2/#374      | Access loss, movement/duty/casualty or other accepted interruption preserves legitimately earned learning and settles required costs once                                             | L1's complete transaction interfaces                                       |
-| L3/#375      | One permitted retraining retains the original specialization until accepted completion; stop/interruption never gives both or an early replacement                                             | L2 and accepted retraining catalogue/terms                                 |
+| L3/#375      | One permitted retraining retains the original specialization until accepted completion; stop/interruption never gives both or an early replacement                                    | L2 and accepted retraining catalogue/terms                                 |
 | N1/#172      | Real eligible deed → lawful proposal → player consent/refusal → nickname/history persists with observer-appropriate witnesses                                                         | Genuine deed/evidence and source-backed proposal                           |
 | I1/#171/#8   | Reconcile remaining required roster/inventory/command effects against actually enabled API/UI; one concrete missing required action at a time                                         | Existing producer/consumer and exact requirement                           |
 
@@ -242,3 +242,47 @@ Missing provider, eligible deed or course terms is a finite missing input, not
 permission to create one. Ask one bounded question only if repository authority
 cannot resolve it, keeping that leaf inactive. Focus tests on real temporal/
 money/authorization risks and try affected controls. Full suites/coverage optional.
+
+## Guard service — owner decision 2026-11-15
+
+The owner approved the existing Kamenny Brod guard contact, Gordey, as the local
+F1 provider for a company group of up to six, including its effective leader.
+While the company is actually on service, the agreement covers the group's
+current food, lodging and wages. Entry, any change to the covered group, and exit
+are deliberate player commands. Before entry, overdue earlier wages must already
+be paid and earned amounts that are not yet due must be paid or backed by actual
+local funds. The provider receives no funding. F1 creates no surplus, idle money,
+old-debt forgiveness or XP.
+
+Player path: travel to the guardhouse in Kamenny Brod, inspect Gordey's current
+group offer in Company, and choose to accept or leave it. If the group changes,
+choose a separate amendment; choose again to end service. A stale quote, unsafe
+site, inaccessible purse, unpaid overdue debt or unbacked future debt refuses
+without a partial entry. The player may settle overdue wages or make the future
+claims locally payable, refresh the offer, and try again. A lost response keeps
+the exact company-scoped command for retry; an exit or actual departure closes
+coverage at its recorded boundary. The saved agreement and maintenance receipts
+survive reload.
+
+## Guard service integration — 2026-11-16
+
+PARTIAL / LOCAL. At Kamenny Brod, the ordinary Company panel reads a server-owned
+offer from Gordey for the current co-located group. The player explicitly accepts
+it; a changed eligible group requires a separate amendment, and the player can
+end the agreement from the same panel. Leaving the guardhouse or an existing
+incompatible boundary closes service through the existing core lifecycle rules.
+The server derives the provider, local party, quote revision, service terms and
+accessible same-place pools. The offer identity binds the company, public
+revision and current Campaign tick. It is suppressed while a live hostile is at
+the site. The core keeps custody of debt checks, interval accrual, coverage,
+receipts and closure; local access evidence contains no provider recipient or
+transfer. Exact command retries use the saved ordinary-company request and
+existing transaction receipt before rechecking offer freshness.
+
+Focused source and adapter/UI checks pass: guard offer/access tests, ordinary
+entry/amend/exit adapter tests, saved-response retry, the F1 maintenance rule
+suite, and the guard panel test (16 assertions across five test files). Protocol
+build plus server and web typechecks pass. A real PostgreSQL entry/amend/exit run
+and native player journey are NOT_RUN; player acceptance is NOT_MEASURED. No
+migration or new financial policy was added. N06 remains open for N1/I1 and
+independent player acceptance.
