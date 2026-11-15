@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { isFirstHuntReadResponse, type FirstHuntReadResponseDto } from '@warwrit/protocol';
+import { WHOSE_WOLVES_INSTANCE_ID } from '@warwrit/game-core';
 import {
   availableFirstHuntActions,
   createFirstHuntAttempt,
@@ -160,6 +161,72 @@ describe('FIRST HUNT browser command attempts', () => {
         'accept-once',
       ),
     ).toMatchObject({ ok: false, code: 'CAPACITY' });
+    const refusal = {
+      schemaVersion: 1,
+      commandId: 'offer-once',
+      ok: false,
+      receiptId: 'refusal-receipt',
+      publicRevision: '5',
+      result: 'ISSUER_REFUSED_OFFER',
+    };
+    expect(readFirstHuntCommandResponse(refusal, 'offer-once')).toEqual(refusal);
+    expect(readFirstHuntCommandResponse(refusal, 'other-command')).toBeUndefined();
+  });
+
+  it('offers ordered wolf clues in the field and the spare report only at Kondrat’s yard', () => {
+    const wolves: NonNullable<FirstHuntReadResponseDto['contract']> = {
+      ...offer.contract!,
+      instanceId: WHOSE_WOLVES_INSTANCE_ID,
+      terms: {
+        ...offer.contract!.terms,
+        issuerLocation: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+        objectiveLocation: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+      },
+      yourRole: 'OWNER',
+      knownState: 'ACTIVE',
+      encounterId: null,
+      whoseWolves: { findings: [] },
+    };
+    expect(availableFirstHuntActions(wolves, 'tikhaya-gat', false)).toContain('OBSERVE');
+    const current: FirstHuntReadResponseDto = { ...offer, contract: wolves };
+    const attempt = createFirstHuntAttempt({
+      scope: { accountId: 'account-one', companyId: 'company-one' },
+      current,
+      commandId: 'observe-bones',
+      type: 'OBSERVE',
+      findingId: 'bones-and-fish-guts',
+    });
+    expect(JSON.parse(attempt.body)).toMatchObject({
+      type: 'OBSERVE',
+      payload: { instanceId: WHOSE_WOLVES_INSTANCE_ID, findingId: 'bones-and-fish-guts' },
+    });
+
+    const informed = {
+      ...wolves,
+      whoseWolves: { findings: ['bones-and-fish-guts', 'efim-feeds-the-pack'] as const },
+    };
+    expect(availableFirstHuntActions(informed, 'severny-dvor', false)).toContain('REPORT_SPARED');
+    expect(availableFirstHuntActions(informed, 'tikhaya-gat', false)).not.toContain(
+      'REPORT_SPARED',
+    );
+    const report = createFirstHuntAttempt({
+      scope: { accountId: 'account-one', companyId: 'company-one' },
+      current: { ...offer, contract: informed },
+      commandId: 'report-efim',
+      type: 'REPORT_SPARED',
+    });
+    expect(JSON.parse(report.body)).toMatchObject({
+      type: 'REPORT_SPARED',
+      payload: { instanceId: WHOSE_WOLVES_INSTANCE_ID },
+    });
+  });
+
+  it('shows a persisted issuer refusal and removes the denied offer action', () => {
+    const refused = { ...offer.contract!, issuerRefusedOffer: true };
+    expect(availableFirstHuntActions(refused, 'kamenny-brod', false)).not.toContain('ACCEPT');
+    expect(firstHuntStateLabel(refused)).toBe('заказчик отказал');
+    expect(firstHuntGuidance(refused, 'kamenny-brod')).toContain('Кондрат отказал');
+    expect(firstHuntCommandError('ISSUER_REFUSED_OFFER')).toContain('Работу ищите');
   });
 
   it('uses only a server-proposed local destination for proof pickup and retains it for retry', () => {

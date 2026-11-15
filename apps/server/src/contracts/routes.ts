@@ -22,6 +22,19 @@ import {
   receiveExternalPayment,
   prepareFirstHuntLifecycleTransition,
   type CompanyCombatAggregateState,
+  type WhoseWolvesQuestState,
+  WHOSE_WOLVES_GUIDE_DESTINATION_SITE_ID,
+  WHOSE_WOLVES_ISSUER_ID,
+  WHOSE_WOLVES_INSTANCE_ID,
+  WHOSE_WOLVES_GUIDE_ORIGIN_SITE_ID,
+  exposeWhoseWolvesTruth,
+  matureWhoseWolvesRaid,
+  recordWhoseWolvesFinding,
+  refuseNextWhoseWolvesIssuerOffer,
+  settleWhoseWolvesKill,
+  whoseWolvesFindingsFor,
+  whoseWolvesGuideEntitlement,
+  whoseWolvesOfferWasRefused,
 } from '@warwrit/game-core';
 import type {
   HuntInstanceId,
@@ -59,6 +72,8 @@ import {
   huntTerms,
   readHuntWorldState,
   selectHuntWorldRow,
+  type FirstHuntWorldState,
+  updateHuntWorldRow,
 } from './first-hunt-runtime.js';
 
 type ContractRow = Selectable<DatabaseSchema['contract_instances']>;
@@ -121,7 +136,11 @@ export function registerFirstHuntRoutes(
       request: request.body,
       requestKey: canonicalJson(request.body),
     });
-    const status = response.ok ? 200 : response.code === 'NOT_AUTHORIZED' ? 403 : 409;
+    const status = response.ok
+      ? 200
+      : 'code' in response && response.code === 'NOT_AUTHORIZED'
+        ? 403
+        : 409;
     return reply.code(status).send(response);
   });
 }
@@ -200,7 +219,10 @@ async function executeContractCommand(input: {
     database,
     async (transaction) => {
       const reject = (
-        code: Extract<FirstHuntCommandResponseDto, { ok: false }>['code'],
+        code: Extract<
+          FirstHuntCommandResponseDto,
+          { readonly ok: false; readonly code: string }
+        >['code'],
         revision = '0',
       ): FirstHuntCommandResponseDto => ({
         schemaVersion: 1,
@@ -330,6 +352,19 @@ async function executeContractCommand(input: {
       if (!state) return reject('NOT_AUTHORIZED', contract.revision);
       const commandType = request.type;
       if (
+        commandType === 'LEAVE' &&
+        role === 'OWNER' &&
+        profile.instanceId === WHOSE_WOLVES_INSTANCE_ID &&
+        worldState.questState?.outcome !== null
+      )
+        return reject('NOT_AVAILABLE', contract.revision);
+      if (
+        (commandType === 'ACCEPT' || commandType === 'JOIN' || commandType === 'HELP') &&
+        profile.instanceId === WHOSE_WOLVES_INSTANCE_ID &&
+        worldState.questState?.outcome !== null
+      )
+        return reject('NOT_AVAILABLE', contract.revision);
+      if (
         (commandType === 'ACCEPT' || commandType === 'HELP') &&
         profile.needsMillWorkerClues &&
         !(await millBeastUnlocked(transaction, worldId))
@@ -425,6 +460,76 @@ async function executeContractCommand(input: {
       )
         return reject('NOT_AVAILABLE', contract.revision);
       const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
+      let whoseWolvesWorldState =
+        profile.instanceId === WHOSE_WOLVES_INSTANCE_ID ? worldState : undefined;
+      if (
+        commandType === 'ACCEPT' &&
+        profile.issuerId === WHOSE_WOLVES_ISSUER_ID &&
+        whoseWolvesWorldState === undefined
+      ) {
+        const whoseWolvesProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+        const whoseWolvesRow = whoseWolvesProfile
+          ? await selectHuntWorldRow(transaction, worldId, whoseWolvesProfile)
+          : undefined;
+        if (whoseWolvesProfile && whoseWolvesRow)
+          whoseWolvesWorldState = readHuntWorldState(worldId, whoseWolvesProfile, whoseWolvesRow);
+      }
+      if (
+        commandType === 'ACCEPT' &&
+        role === 'NONE' &&
+        contract.owner_company_id === null &&
+        contract.helper_company_id === null &&
+        profile.instanceId !== WHOSE_WOLVES_INSTANCE_ID &&
+        profile.issuerId === WHOSE_WOLVES_ISSUER_ID &&
+        atIssuer &&
+        whoseWolvesWorldState?.questState
+      ) {
+        if (
+          whoseWolvesOfferWasRefused(
+            whoseWolvesWorldState.questState,
+            companyId,
+            profile.instanceId,
+          )
+        )
+          return persistIssuerRefusalReceipt({
+            transaction,
+            worldId,
+            companyId,
+            commandId: request.commandId,
+            requestKey,
+            publicRevision: contract.revision,
+          });
+        const refusedState = refuseNextWhoseWolvesIssuerOffer(whoseWolvesWorldState.questState, {
+          companyId,
+          instanceId: profile.instanceId,
+          issuerId: profile.issuerId,
+        });
+        if (refusedState) {
+          const nextRevision = (BigInt(contract.revision) + 1n).toString();
+          await updateHuntWorldRow(transaction, whoseWolvesWorldState, {
+            revision: (BigInt(whoseWolvesWorldState.revision) + 1n).toString(),
+            questState: refusedState,
+          });
+          const updated = await transaction
+            .updateTable('contract_instances')
+            .set({ revision: nextRevision })
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', contract.instance_id)
+            .where('revision', '=', contract.revision)
+            .executeTakeFirst();
+          if (Number(updated.numUpdatedRows) !== 1)
+            throw new Error('FIRST HUNT contract revision CAS failed');
+
+          return persistIssuerRefusalReceipt({
+            transaction,
+            worldId,
+            companyId,
+            commandId: request.commandId,
+            requestKey,
+            publicRevision: nextRevision,
+          });
+        }
+      }
       const atObjective =
         isAtArea(
           state,
@@ -434,6 +539,48 @@ async function executeContractCommand(input: {
         ) &&
         state.encounter.active === null &&
         !state.economy.lifecycle.parties.some((party) => party.location.kind === 'TRANSIT');
+      if (commandType === 'OBSERVE' || commandType === 'REPORT_SPARED') {
+        if (
+          profile.instanceId !== WHOSE_WOLVES_INSTANCE_ID ||
+          role !== 'OWNER' ||
+          (commandType === 'OBSERVE' ? !atObjective : !atIssuer) ||
+          !worldState.questState
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
+        const priorAdmission = await transaction
+          .selectFrom('encounter_admissions')
+          .select('encounter_id')
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .forUpdate()
+          .executeTakeFirst();
+        if (priorAdmission) return reject('NOT_AVAILABLE', contract.revision);
+
+        const nextQuestState =
+          commandType === 'OBSERVE'
+            ? recordWhoseWolvesFinding(worldState.questState, {
+                companyId,
+                findingId: request.payload.findingId,
+                sourceEventId: `${request.commandId}:finding`,
+                atTick: clock.tick,
+              })
+            : exposeWhoseWolvesTruth(worldState.questState, {
+                companyId,
+                sourceEventId: `${request.commandId}:expose`,
+                atTick: clock.tick,
+              });
+        if (!nextQuestState) return reject('NOT_AVAILABLE', contract.revision);
+        return persistWhoseWolvesStateCommand({
+          transaction,
+          worldId,
+          companyId,
+          world: worldState,
+          contract,
+          questState: nextQuestState,
+          request,
+          requestKey,
+        });
+      }
       if (commandType === 'PICKUP' || commandType === 'PRESENT') {
         if (commandType === 'PICKUP' && role !== 'OWNER' && role !== 'HELPER')
           return reject('NOT_AUTHORIZED', contract.revision);
@@ -566,6 +713,19 @@ async function executeContractCommand(input: {
           proofContainer.location.areaId !== terms.issuerLocation.areaId
         )
           return reject('NOT_AVAILABLE', contract.revision);
+        const questStateAfterPresentation =
+          profile.instanceId === WHOSE_WOLVES_INSTANCE_ID && worldState.questState
+            ? settleWhoseWolvesKill(worldState.questState, {
+                companyId,
+                sourceEventId: proof.source_id,
+                atTick: clock.tick,
+              })
+            : undefined;
+        if (
+          profile.instanceId === WHOSE_WOLVES_INSTANCE_ID &&
+          questStateAfterPresentation === undefined
+        )
+          return reject('NOT_AVAILABLE', contract.revision);
         const activeCharacterIds = new Set<string>(
           state.economy.lifecycle.memberships
             .filter((membership) => membership.endedAt === null)
@@ -662,6 +822,11 @@ async function executeContractCommand(input: {
           },
           rewardQ: terms.rewardQ,
         });
+        if (questStateAfterPresentation)
+          await updateHuntWorldRow(transaction, worldState, {
+            revision: (BigInt(worldState.revision) + 1n).toString(),
+            questState: questStateAfterPresentation,
+          });
         const updated = await transaction
           .updateTable('contract_instances')
           .set({ revision: nextRevision })
@@ -786,8 +951,143 @@ async function executeContractCommand(input: {
       });
       return response;
     },
-    (result) => result.ok,
+    (result) =>
+      result.ok ||
+      ('result' in result && result.result === 'ISSUER_REFUSED_OFFER' && !!result.receiptId),
   );
+}
+
+async function persistWhoseWolvesStateCommand(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly world: FirstHuntWorldState;
+  readonly contract: ContractRow;
+  readonly questState: WhoseWolvesQuestState;
+  readonly request: Extract<FirstHuntCommandDto, { readonly type: 'OBSERVE' | 'REPORT_SPARED' }>;
+  readonly requestKey: string;
+}): Promise<FirstHuntCommandResponseDto> {
+  const { transaction, worldId, companyId, world, contract, questState, request, requestKey } =
+    input;
+  const nextRevision = (BigInt(contract.revision) + 1n).toString();
+  await updateHuntWorldRow(transaction, world, {
+    revision: (BigInt(world.revision) + 1n).toString(),
+    questState,
+  });
+  const updated = await transaction
+    .updateTable('contract_instances')
+    .set({ revision: nextRevision })
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', contract.instance_id)
+    .where('revision', '=', contract.revision)
+    .executeTakeFirst();
+  if (Number(updated.numUpdatedRows) !== 1)
+    throw new Error('FIRST HUNT contract revision CAS failed');
+
+  const receiptId = randomUUID();
+  const receiptSnapshot = await transaction
+    .selectFrom('company_snapshots')
+    .select('canonical_revision')
+    .where('world_id', '=', worldId)
+    .where('company_id', '=', companyId)
+    .executeTakeFirst();
+  if (!receiptSnapshot) throw new Error('FIRST HUNT receipt company root is unavailable');
+  const response = {
+    schemaVersion: 1 as const,
+    commandId: request.commandId,
+    ok: true as const,
+    receiptId,
+    publicRevision: nextRevision,
+  };
+  await persistFirstHuntReceipt(transaction, {
+    worldId,
+    companyId,
+    commandId: request.commandId,
+    receiptId,
+    requestKey,
+    response,
+    expectedCanonicalRevision: receiptSnapshot.canonical_revision,
+  });
+  return response;
+}
+
+async function persistIssuerRefusalReceipt(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly commandId: string;
+  readonly requestKey: string;
+  readonly publicRevision: string;
+}): Promise<FirstHuntCommandResponseDto> {
+  const { transaction, worldId, companyId, commandId, requestKey, publicRevision } = input;
+  const receiptId = randomUUID();
+  const receiptSnapshot = await transaction
+    .selectFrom('company_snapshots')
+    .select('canonical_revision')
+    .where('world_id', '=', worldId)
+    .where('company_id', '=', companyId)
+    .executeTakeFirst();
+  if (!receiptSnapshot) throw new Error('FIRST HUNT receipt company root is unavailable');
+  const response: Extract<
+    FirstHuntCommandResponseDto,
+    { readonly result: 'ISSUER_REFUSED_OFFER' }
+  > = {
+    schemaVersion: 1,
+    commandId,
+    ok: false,
+    receiptId,
+    publicRevision,
+    result: 'ISSUER_REFUSED_OFFER',
+  };
+  await persistFirstHuntReceipt(transaction, {
+    worldId,
+    companyId,
+    commandId,
+    receiptId,
+    requestKey,
+    response,
+    expectedCanonicalRevision: receiptSnapshot.canonical_revision,
+  });
+  return response;
+}
+
+/** Persist the public raid fact lazily on a read, but never before its due tick. */
+async function materializeWhoseWolvesRaidIfDue(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<void> {
+  const profile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+  if (!profile) throw new Error('Whose-wolves runtime profile is unavailable');
+  const clock = await readWorldClock(transaction, worldId, new Date(), true);
+  const row = await selectHuntWorldRow(transaction, worldId, profile, true);
+  if (!row) return;
+  const world = readHuntWorldState(worldId, profile, row);
+  if (!world.questState) return;
+  const questState = matureWhoseWolvesRaid(world.questState, clock.tick);
+  if (!questState) return;
+  await updateHuntWorldRow(transaction, world, {
+    revision: (BigInt(world.revision) + 1n).toString(),
+    questState,
+  });
+
+  const contract = await transaction
+    .selectFrom('contract_instances')
+    .select(['instance_id', 'revision'])
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .forUpdate()
+    .executeTakeFirst();
+  if (!contract) throw new Error('Whose-wolves contract is unavailable');
+  const nextRevision = (BigInt(contract.revision) + 1n).toString();
+  const updated = await transaction
+    .updateTable('contract_instances')
+    .set({ revision: nextRevision })
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', profile.instanceId)
+    .where('revision', '=', contract.revision)
+    .executeTakeFirst();
+  if (Number(updated.numUpdatedRows) !== 1)
+    throw new Error('FIRST HUNT contract revision CAS failed');
 }
 
 /** One hunt contract as the viewing company knows it. */
@@ -798,12 +1098,33 @@ async function readHuntView(
   companyId: string | undefined,
   profile: HuntProfile,
 ): Promise<FirstHuntReadResponseDto | null> {
+  if (profile.instanceId === WHOSE_WOLVES_INSTANCE_ID)
+    await materializeWhoseWolvesRaidIfDue(transaction, worldId);
   const contract = await readContract(transaction, worldId, profile.instanceId);
   if (!contract) return null;
   const worldRow = await selectHuntWorldRow(transaction, worldId, profile);
-  const attempt = worldRow
-    ? await readHuntAttempt(transaction, readHuntWorldState(worldId, profile, worldRow))
-    : undefined;
+  const worldState = worldRow ? readHuntWorldState(worldId, profile, worldRow) : undefined;
+  const attempt = worldState ? await readHuntAttempt(transaction, worldState) : undefined;
+  let whoseWolvesState = worldState?.questState;
+  if (
+    !whoseWolvesState &&
+    companyId &&
+    profile.issuerId === WHOSE_WOLVES_ISSUER_ID &&
+    profile.instanceId !== WHOSE_WOLVES_INSTANCE_ID
+  ) {
+    const whoseWolvesProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+    const whoseWolvesRow = whoseWolvesProfile
+      ? await selectHuntWorldRow(transaction, worldId, whoseWolvesProfile)
+      : undefined;
+    if (whoseWolvesProfile && whoseWolvesRow)
+      whoseWolvesState = readHuntWorldState(worldId, whoseWolvesProfile, whoseWolvesRow).questState;
+  }
+  const companyWhoseWolvesState =
+    profile.instanceId === WHOSE_WOLVES_INSTANCE_ID ? whoseWolvesState : undefined;
+  const whoseWolvesCompany =
+    companyId && whoseWolvesState
+      ? whoseWolvesState.companies.find((entry) => entry.companyId === companyId)
+      : undefined;
   const admission = attempt?.admission;
   const encounter = admission
     ? await transaction
@@ -892,6 +1213,42 @@ async function readHuntView(
           encounterId: admission?.encounter_id ?? null,
           ...(terminal ? { terminal } : {}),
           repeatAvailable: role !== 'NONE' && attempt?.repeatAvailable === true,
+          ...(companyWhoseWolvesState
+            ? {
+                whoseWolves: {
+                  findings: whoseWolvesFindingsFor(companyWhoseWolvesState, companyId).map(
+                    (finding) => finding.findingId,
+                  ),
+                  ...(companyWhoseWolvesState.outcome
+                    ? { outcome: companyWhoseWolvesState.outcome.kind }
+                    : {}),
+                  ...(companyWhoseWolvesState.outcome?.raidAtTick
+                    ? { raidAtTick: companyWhoseWolvesState.outcome.raidAtTick }
+                    : {}),
+                  ...(whoseWolvesGuideEntitlement(
+                    companyWhoseWolvesState,
+                    companyId,
+                    WHOSE_WOLVES_GUIDE_ORIGIN_SITE_ID,
+                    WHOSE_WOLVES_GUIDE_DESTINATION_SITE_ID,
+                  )
+                    ? { guideAvailable: true }
+                    : {}),
+                  ...(whoseWolvesCompany
+                    ? {
+                        issuerRefusalPending: whoseWolvesCompany.refusalPending,
+                        ...(whoseWolvesCompany.deniedOfferInstanceId
+                          ? { deniedOfferInstanceId: whoseWolvesCompany.deniedOfferInstanceId }
+                          : {}),
+                      }
+                    : {}),
+                },
+              }
+            : {}),
+          ...(whoseWolvesState &&
+          profile.issuerId === WHOSE_WOLVES_ISSUER_ID &&
+          whoseWolvesOfferWasRefused(whoseWolvesState, companyId, profile.instanceId)
+            ? { issuerRefusedOffer: true }
+            : {}),
           pickupTargets:
             companyId &&
             (role === 'OWNER' || role === 'HELPER') &&
@@ -1056,6 +1413,25 @@ function readAcceptedResponse(
     typeof value.publicRevision === 'string'
   )
     return value as FirstHuntCommandResponseDto;
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    !Array.isArray(value) &&
+    Object.keys(value).length === 6 &&
+    'schemaVersion' in value &&
+    value.schemaVersion === 1 &&
+    'ok' in value &&
+    value.ok === false &&
+    'commandId' in value &&
+    value.commandId === commandId &&
+    'receiptId' in value &&
+    typeof value.receiptId === 'string' &&
+    'publicRevision' in value &&
+    typeof value.publicRevision === 'string' &&
+    'result' in value &&
+    value.result === 'ISSUER_REFUSED_OFFER'
+  )
+    return value as unknown as FirstHuntCommandResponseDto;
   return undefined;
 }
 

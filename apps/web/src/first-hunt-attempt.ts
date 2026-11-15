@@ -5,6 +5,7 @@ import {
   type FirstHuntContractViewDto,
   type FirstHuntReadResponseDto,
 } from '@warwrit/protocol';
+import { WHOSE_WOLVES_INSTANCE_ID } from '@warwrit/game-core';
 
 export interface FirstHuntScope {
   readonly accountId: string;
@@ -111,6 +112,7 @@ export function createFirstHuntAttempt(input: {
   readonly commandId: string;
   readonly type: FirstHuntCommandDto['type'];
   readonly containerId?: string;
+  readonly findingId?: 'bones-and-fish-guts' | 'efim-feeds-the-pack';
 }): FirstHuntAttempt {
   const contract = input.current.contract;
   if (!contract) throw new TypeError('The FIRST HUNT contract is unavailable');
@@ -132,6 +134,23 @@ export function createFirstHuntAttempt(input: {
       expectedPublicRevision: input.current.publicRevision,
       type: 'PICKUP',
       payload: { instanceId, toContainerId: input.containerId },
+    };
+  } else if (input.type === 'OBSERVE') {
+    if (!input.findingId) throw new TypeError('A quest finding is required');
+    request = {
+      schemaVersion: 1,
+      commandId: input.commandId,
+      expectedPublicRevision: input.current.publicRevision,
+      type: 'OBSERVE',
+      payload: { instanceId, findingId: input.findingId },
+    };
+  } else if (input.type === 'REPORT_SPARED') {
+    request = {
+      schemaVersion: 1,
+      commandId: input.commandId,
+      expectedPublicRevision: input.current.publicRevision,
+      type: 'REPORT_SPARED',
+      payload: { instanceId },
     };
   } else {
     request = {
@@ -156,13 +175,33 @@ export function availableFirstHuntActions(
   const atIssuer = currentSiteId === contract.terms.issuerLocation.siteId;
   const atObjective = currentSiteId === contract.terms.objectiveLocation.siteId;
 
-  if (contract.yourRole === 'NONE' && atIssuer && contract.knownState === 'OFFERED')
+  if (
+    contract.yourRole === 'NONE' &&
+    atIssuer &&
+    contract.knownState === 'OFFERED' &&
+    contract.issuerRefusedOffer !== true
+  )
     actions.push('ACCEPT');
+  const whoseWolves = contract.whoseWolves;
+  const bonesObserved = whoseWolves?.findings.includes('bones-and-fish-guts') === true;
+  const efimObserved = whoseWolves?.findings.includes('efim-feeds-the-pack') === true;
+  if (
+    contract.instanceId === WHOSE_WOLVES_INSTANCE_ID &&
+    contract.yourRole === 'OWNER' &&
+    whoseWolves?.outcome === undefined &&
+    contract.encounterId === null
+  ) {
+    if (atObjective && !bonesObserved) actions.push('OBSERVE');
+    else if (atObjective && bonesObserved && !efimObserved) actions.push('OBSERVE');
+    if (atIssuer && bonesObserved && efimObserved) actions.push('REPORT_SPARED');
+  }
+
   if (
     contract.yourRole === 'NONE' &&
     atIssuer &&
     contract.knownState === 'ACTIVE' &&
     contract.helperSlot === 'AVAILABLE' &&
+    !(contract.instanceId === WHOSE_WOLVES_INSTANCE_ID && contract.whoseWolves?.outcome) &&
     contract.encounterId === null
   )
     actions.push('HELP');
@@ -172,6 +211,7 @@ export function availableFirstHuntActions(
     contract.yourRole !== 'NONE' &&
     atObjective &&
     contract.knownState === 'ACTIVE' &&
+    !(contract.instanceId === WHOSE_WOLVES_INSTANCE_ID && contract.whoseWolves?.outcome) &&
     !contract.yourJoinIntent &&
     (contract.encounterId === null || contract.repeatAvailable === true)
   )
@@ -271,6 +311,14 @@ export function readFirstHuntCommandResponse(
     Object.keys(value).length === 5 &&
     typeof value['receiptId'] === 'string' &&
     value['receiptId'].length > 0
+  )
+    return value as unknown as FirstHuntCommandResponseDto;
+  if (
+    value['ok'] === false &&
+    Object.keys(value).length === 6 &&
+    typeof value['receiptId'] === 'string' &&
+    value['receiptId'].length > 0 &&
+    value['result'] === 'ISSUER_REFUSED_OFFER'
   )
     return value as unknown as FirstHuntCommandResponseDto;
   if (

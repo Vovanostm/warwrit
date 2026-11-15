@@ -187,7 +187,7 @@ export async function persistFirstHuntReceipt(
     readonly commandId: string;
     readonly receiptId: string;
     readonly requestKey: string;
-    readonly response: Extract<FirstHuntCommandResponseDto, { ok: true }>;
+    readonly response: FirstHuntCommandResponseDto;
     readonly expectedCanonicalRevision: string;
   },
 ): Promise<void> {

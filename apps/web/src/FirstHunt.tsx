@@ -14,7 +14,7 @@ import {
   type FirstHuntCommandDto,
   type FirstHuntReadResponseDto,
 } from '@warwrit/protocol';
-import { FIRST_HUNT_INSTANCE_ID } from '@warwrit/game-core';
+import { FIRST_HUNT_INSTANCE_ID, WHOSE_WOLVES_INSTANCE_ID } from '@warwrit/game-core';
 import {
   availableFirstHuntActions,
   clearFirstHuntAttempt,
@@ -61,6 +61,8 @@ export function firstHuntCommandError(code: unknown): string {
       return 'Для всех участников не хватает места в бою.';
     case 'INSUFFICIENT_FUNDS':
       return 'Кошелёк заказчика не покрывает выплату.';
+    case 'ISSUER_REFUSED_OFFER':
+      return 'Кондрат отворачивается к амбару: «Работу ищите в другом месте».';
     case 'NOT_AUTHORIZED':
       return 'Сеанс или право компании изменились.';
     default:
@@ -78,6 +80,7 @@ const HUNT_CODES: Readonly<Record<string, string>> = {
   'ci.m1.wolf-trail.01': 'HUNT-02',
   'ci.m1.not-one-pack.01': 'HUNT-04',
   'ci.m1.mill-beast.01': 'HUNT-01',
+  [WHOSE_WOLVES_INSTANCE_ID]: 'HUNT-04',
 };
 const HUNT_ISSUER_PORTRAITS: Readonly<Record<string, string>> = {
   'ci.m1.raider-standard.01': 'npc.city-watch-contact.kamenny-brod.01',
@@ -151,7 +154,10 @@ export function FirstHunt(
   }, [refresh]);
 
   const submit = useCallback(
-    async (type: FirstHuntCommandDto['type']) => {
+    async (
+      type: FirstHuntCommandDto['type'],
+      findingId?: 'bones-and-fish-guts' | 'efim-feeds-the-pack',
+    ) => {
       const current = view.response;
       if (!current || view.status !== 'ready' || view.pending) return;
       let attempt = view.attempt;
@@ -163,6 +169,7 @@ export function FirstHunt(
           commandId: crypto.randomUUID(),
           type,
           ...(type === 'PICKUP' ? { containerId: selectedContainerId } : {}),
+          ...(type === 'OBSERVE' && findingId ? { findingId } : {}),
         });
         try {
           const store = storage();
@@ -197,11 +204,20 @@ export function FirstHunt(
         if (!result.ok) {
           const store = storage();
           if (store) clearFirstHuntAttempt(store, props.scope);
+          if ('result' in result && result.result === 'ISSUER_REFUSED_OFFER') {
+            setView((state) => {
+              const { attempt: _attempt, error: _error, ...withoutAttempt } = state;
+              return { ...withoutAttempt, pending: false };
+            });
+            await refresh();
+            return;
+          }
+          const error = firstHuntCommandError('code' in result ? result.code : result.result);
           setView((state) => {
             const { attempt: _attempt, ...withoutAttempt } = state;
-            return { ...withoutAttempt, pending: false, error: firstHuntCommandError(result.code) };
+            return { ...withoutAttempt, pending: false, error };
           });
-          await refresh(firstHuntCommandError(result.code));
+          await refresh(error);
           return;
         }
         const store = storage();
@@ -232,6 +248,9 @@ export function FirstHunt(
   );
 
   const contract = view.response?.contract;
+  const whoseWolvesSpared =
+    contract?.instanceId === WHOSE_WOLVES_INSTANCE_ID &&
+    contract.whoseWolves?.outcome === 'PACK_SPARED_AND_EXPOSED';
   const encounterId = contract ? firstHuntEncounterDiscoveryId(contract) : undefined;
   const pendingJoinPollKey =
     contract && shouldPollForFirstHuntActivation(contract)
@@ -240,6 +259,7 @@ export function FirstHunt(
   const ordinaryOwnerCanWithdraw =
     contract?.yourRole === 'OWNER' &&
     contract.instanceId !== FIRST_HUNT_INSTANCE_ID &&
+    !(contract.instanceId === WHOSE_WOLVES_INSTANCE_ID && contract.whoseWolves?.outcome) &&
     contract.knownState === 'ACTIVE' &&
     contract.encounterId === null;
   const availableActions = contract
@@ -251,6 +271,14 @@ export function FirstHunt(
   const hasUnresolvedAttempt = view.attempt !== undefined;
   const actionsDisabled = view.status !== 'ready' || view.pending || hasUnresolvedAttempt;
   const pickupTargets = contract?.pickupTargets ?? [];
+  const whoseWolves = contract?.whoseWolves;
+  const nextWolvesFinding = whoseWolves
+    ? !whoseWolves.findings.includes('bones-and-fish-guts')
+      ? 'bones-and-fish-guts'
+      : !whoseWolves.findings.includes('efim-feeds-the-pack')
+        ? 'efim-feeds-the-pack'
+        : undefined
+    : undefined;
   useEffect(() => {
     if (!pickupTargets.some((target) => target.containerId === selectedContainerId))
       setSelectedContainerId(pickupTargets[0]?.containerId ?? '');
@@ -373,29 +401,93 @@ export function FirstHunt(
               </p>
             </details>
           )}
-          {contract.knownState !== 'SETTLED' && (
-            <details className="contract-conversation">
-              <summary>Как получить награду?</summary>
-              <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
-              <p>
-                Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
-                второй компании добровольна; выплата не делится. Принятые условия фиксированы.
-              </p>
-            </details>
+          {contract.issuerRefusedOffer && (
+            <p className="state-note">
+              Кондрат отворачивается к амбару: «Работу ищите в другом месте».
+            </p>
           )}
+          {!contract.issuerRefusedOffer && !whoseWolvesSpared && (
+            <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
+          )}
+          {contract.instanceId === WHOSE_WOLVES_INSTANCE_ID && whoseWolves && (
+            <section className="contract-conversation" aria-label="Находки у Тихой Гати">
+              <h3>Что вы узнали</h3>
+              {whoseWolves.findings.includes('bones-and-fish-guts') && (
+                <p>У мостков лежат кости и свежие рыбьи потроха. Кто-то носит их к лесу.</p>
+              )}
+              {whoseWolves.findings.includes('efim-feeds-the-pack') && (
+                <p>
+                  Ефим признался: «Да, кормлю. Пока волки тут, люди Обуха к нам ночью не ходят».
+                </p>
+              )}
+              {whoseWolves.findings.includes('efim-feeds-the-pack') && !whoseWolves.outcome && (
+                <p>Стаю можно убить или вернуться к Кондрату и рассказать о сделке Ефима.</p>
+              )}
+              {whoseWolves.outcome === 'PACK_KILLED' && (
+                <p>
+                  Стая мертва.
+                  {contract.yourProof?.redemption === 'REDEEMED' &&
+                    ' Кондрат выплатил награду за шкуры.'}
+                </p>
+              )}
+              {whoseWolves.outcome === 'PACK_SPARED_AND_EXPOSED' &&
+                contract.yourRole === 'OWNER' && (
+                  <p>
+                    Стая осталась у Тихой Гати. Кондрат не заплатил и откажет вам в следующей
+                    работе.
+                  </p>
+                )}
+              {whoseWolves.guideAvailable && (
+                <p>
+                  Ефим показал вашей компании тропу от Тихой Гати до Северного Двора. По ней вы
+                  доберётесь быстрее: путь займёт на четверть меньше времени.
+                </p>
+              )}
+              {whoseWolves.raidAtTick && (
+                <p>Над Тихой Гатью прозвучал колокол. На мостках нашли следы подкованных сапог.</p>
+              )}
+            </section>
+          )}
+          {contract.knownState !== 'SETTLED' &&
+            !contract.issuerRefusedOffer &&
+            !whoseWolvesSpared && (
+              <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
+                <summary>Куда идти и что потребуется?</summary>
+                <p>
+                  Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
+                  {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
+                  убедитесь, что у отряда есть провизия.
+                </p>
+              </details>
+            )}
+          {contract.knownState !== 'SETTLED' &&
+            !contract.issuerRefusedOffer &&
+            !whoseWolvesSpared && (
+              <details className="contract-conversation">
+                <summary>Как получить награду?</summary>
+                <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
+                <p>
+                  Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея.
+                  Помощь второй компании добровольна; выплата не делится. Принятые условия
+                  фиксированы.
+                </p>
+              </details>
+            )}
           <dl>
             <dt>Ваша роль</dt>
             <dd>{firstHuntRoleLabel(contract.yourRole)}</dd>
             <dt>Состояние</dt>
             <dd>{firstHuntStateLabel(contract)}</dd>
-            {contract.knownState !== 'SETTLED' && (
-              <>
-                <dt>Слот помощника</dt>
-                <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
-                <dt>Готовность к бою</dt>
-                <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
-              </>
-            )}
+            {contract.knownState !== 'SETTLED' &&
+              !contract.issuerRefusedOffer &&
+              !whoseWolvesSpared && (
+                <>
+                  <dt>Слот помощника</dt>
+                  <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
+                  <dt>Готовность к бою</dt>
+                  <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
+                </>
+              )}
           </dl>
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
@@ -451,7 +543,33 @@ export function FirstHunt(
                 disabled={actionsDisabled}
                 onClick={() => void submit('JOIN')}
               >
-                {contract.repeatAvailable ? 'Вступить в бой снова' : 'Вступить в бой'}
+                {contract.repeatAvailable
+                  ? 'Вступить в бой снова'
+                  : contract.instanceId === WHOSE_WOLVES_INSTANCE_ID
+                    ? 'Убить стаю'
+                    : 'Вступить в бой'}
+              </button>
+            )}
+            {atField && availableActions.includes('OBSERVE') && nextWolvesFinding && (
+              <button
+                className="primary-action button-action"
+                type="button"
+                disabled={actionsDisabled}
+                onClick={() => void submit('OBSERVE', nextWolvesFinding)}
+              >
+                {nextWolvesFinding === 'bones-and-fish-guts'
+                  ? 'Осмотреть кости у мостков'
+                  : 'Расспросить Ефима'}
+              </button>
+            )}
+            {atIssuer && availableActions.includes('REPORT_SPARED') && (
+              <button
+                className="primary-action button-action"
+                type="button"
+                disabled={actionsDisabled}
+                onClick={() => void submit('REPORT_SPARED')}
+              >
+                Рассказать Кондрату про Ефима
               </button>
             )}
             {atField && contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
@@ -574,6 +692,9 @@ export function firstHuntRoleLabel(
 export function firstHuntStateLabel(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
 ): string {
+  if (contract.issuerRefusedOffer) return 'заказчик отказал';
+  if (contract.whoseWolves?.outcome === 'PACK_SPARED_AND_EXPOSED')
+    return 'стая оставлена, решение сохранено';
   if (contract.terminal?.effects === 'PENDING') return 'бой завершён, сохраняем последствия';
   if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
     return 'охота не завершена';
@@ -616,6 +737,10 @@ export function firstHuntGuidance(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
   currentSiteId: string | null,
 ): string {
+  if (contract.issuerRefusedOffer)
+    return 'Кондрат отказал в работе: «Работу ищите в другом месте».';
+  if (contract.whoseWolves?.outcome === 'PACK_SPARED_AND_EXPOSED')
+    return 'Стая осталась у Тихой Гати; продолжить охоту по этому контракту нельзя.';
   if (contract.terminal?.effects === 'PENDING')
     return 'Бой завершён. Последствия ещё не сохранены; дождитесь обновления.';
   if (contract.repeatAvailable && contract.knownState === 'ACTIVE') {

@@ -62,6 +62,14 @@ consumer. No hidden outcome is shown before the player can observe it.
 | «Девочка в синем платке» (road to Северный Двор) | Carry the child and the wounded deserter: slower travel, extra rations; the deserter becomes a recruit candidate                                 | Carry only the child: on-time delivery, full reward; the deserter's death is recorded                                                   | persons alive/dead, recruit offer, travel time — recruitment panel, report               |
 | «Грязный колодец» (Березняк / Каменный Брод)     | Tell the truth (battle at Kamenny Brod graves above the spring fouled the well): the old-faith herbalist stays; the church raises its care price | Give the priest his culprit: reward paid; the herbalist is exiled; herbs leave the trader                                               | herbalist present/exiled, care price, trader stock — care panel, trader, report          |
 
+### «Чьи волки» guide — owner decision 2026-11-15
+
+The owner approved a 25% travel-time reduction from Тихая Гать to Северный
+Двор, granted only to the company that spared the pack and exposed Ефим. The
+revised line is «Быстрее доберётесь». The guide is a saved, company-scoped
+source and cannot shorten travel to other destinations. Movement profiles may
+combine it with carrying burdens only through finite approved modifiers.
+
 Next: implement the remaining approved texts and saved consequence consumers.
 Parameters (rewards, price deltas, durations) are set in each implementing slice.
 
@@ -383,3 +391,29 @@ well consequences and meeting points. Mill rescue purchase/delivery and guarded
 0031 rollback passed 2/2 on disposable PostgreSQL databases, both disposed.
 Migration 0031 was applied to the owned local stand. Native rescue play remains
 NOT_RUN and T032 remains open. LOCAL.
+
+## «Чьи волки» checkpoint — 2026-11-16
+
+Implemented `ci.m1.whose-wolves.01` as one finite HUNT offer with six wolves
+and an 80-crown issuer wallet. The owner can record the two ordered findings at
+Тихая Гать. Before any encounter, the company can return to Кондрат and expose
+Ефим; that rejects the reward and binds one later Кондрат offer refusal to the
+same company. Its denied instance ID stays recorded, so a fresh ACCEPT command
+cannot bypass that refusal. Killing the pack settles `PACK_KILLED` only with the actual pelt
+presentation and payment transaction. The public raid fact materializes on a
+read at or after 7,000 campaign ticks. Findings and the refused offer instance
+remain company-private.
+
+The owner approved the revised Efim line and a 25% travel-time reduction from
+Тихая Гать to Северный Двор. A pure guide-entitlement accessor binds the effect
+to the informed company, that direction and the saved exposure event. The
+movement-plan consumer and finite stacking profiles are being integrated by
+the movement slice; guide travel is not yet player-verified.
+
+The HUNT screen now offers clue inspection, the issuer report choice and
+branch feedback. Text check: 0 issues. Game-core, protocol and server
+typechecks passed. Web typecheck reports the four pre-existing
+`EquipmentTrader.tsx` DTO errors. Game tests and PostgreSQL integration are
+NOT_RUN. Prettier, scoped ESLint, migration guard and `git diff --check` passed.
+Normal playthrough and player acceptance are NOT_RUN; enjoyment is NOT_MEASURED.
+This slice is LOCAL; publication and merge are NOT_RUN.

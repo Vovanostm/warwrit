@@ -73,11 +73,11 @@ export const contractsRu = {
   'contract.ci.m1.man-by-road.01.finding.find-sidor':
     'Это бродячий торговец Сидор. Нога распухла, идти может только с опорой. Свой короб с товаром не бросает.',
   'contract.ci.m1.man-by-road.01.condition.continue-after-rest': 'Сидор ещё отдыхает.',
-  'contract.ci.m1.man-by-road.01.condition.arrive-on-foot': 'Агафью выслали; доставьте Сидора в Березняк без неё.',
+  'contract.ci.m1.man-by-road.01.condition.arrive-on-foot':
+    'Агафью выслали; доставьте Сидора в Березняк без неё.',
   'contract.ci.m1.man-by-road.01.condition.arrive-on-stretcher':
     'Агафью выслали; доставьте Сидора в Березняк без неё.',
-  'contract.ci.m1.man-by-road.01.condition.deliver-on-foot-after-exile':
-    'Агафья ещё в Березняке.',
+  'contract.ci.m1.man-by-road.01.condition.deliver-on-foot-after-exile': 'Агафья ещё в Березняке.',
   'contract.ci.m1.man-by-road.01.condition.deliver-on-stretcher-after-exile':
     'Агафья ещё в Березняке.',
   'contract.ci.m1.man-by-road.01.result.man-by-road.exile-delivery':
@@ -323,8 +323,12 @@ export const contractsRu = {
   'contract.ci.m1.mill-beast.01.title': 'Ночной зверь у мельницы',
   'contract.ci.m1.mill-beast.01.brief':
     'После сражения у брода оно и пришло. Раньше у мельницы только совы были. Там много закопано, неглубоко. Убейте его и принесите коготь.',
+  'contract.ci.m1.whose-wolves.01.title': 'Чьи волки',
+  'contract.ci.m1.whose-wolves.01.brief':
+    'У дороги на Тихую Гать волки задрали двух наших молодых овец. Стая живёт там с осени. Убейте её.',
 
   'npc.city-watch-contact.kamenny-brod.01': 'Гордей Лапа, десятник стражи',
+  'npc.kondrat-ovsyanik.severny-dvor.01': 'Кондрат Овсяник, староста Северного Двора',
   'npc.woodland-village-caller.bereznyak.01': 'Тихон Бортник, староста Березняка',
   'npc.woodland-village-caller.savva-krivonos.01': 'Савва Кривонос, сосед Тихона Бортника',
   'npc.local-warning-keeper.tikhaya-gat.01': 'Фрол Звонарь, смотритель Тихой Гати',
