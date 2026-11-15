@@ -52,7 +52,11 @@ interface Scenario {
   readonly foreign: StoryActor;
 }
 
-function companyFixture(worldId: string, companyId: string): CompanyCombatAggregateState {
+function companyFixture(
+  worldId: string,
+  companyId: string,
+  withoutFood = false,
+): CompanyCombatAggregateState {
   const base = createCompanyCombatAggregateFixture().state;
   const lifecycle = base.economy.lifecycle;
   const basePartyId = lifecycle.parties[0]?.partyId;
@@ -100,9 +104,15 @@ function companyFixture(worldId: string, companyId: string): CompanyCombatAggreg
       },
       physical: {
         ...physical,
+        items: withoutFood
+          ? physical.items.filter((item) => item.definitionId !== 'ration')
+          : physical.items,
         containers: physical.containers.map(moveContainer),
         knowledge: {
           ...physical.knowledge,
+          itemSnapshots: withoutFood
+            ? physical.knowledge.itemSnapshots.filter((item) => item.definitionId !== 'ration')
+            : physical.knowledge.itemSnapshots,
           containerSnapshots: physical.knowledge.containerSnapshots.map(moveContainer),
         },
       },
@@ -110,13 +120,13 @@ function companyFixture(worldId: string, companyId: string): CompanyCombatAggreg
   });
 }
 
-async function seedCompany(worldId: string): Promise<StoryActor> {
+async function seedCompany(worldId: string, withoutFood = false): Promise<StoryActor> {
   if (!database || !connectionString)
     throw new Error('Isolated story integration database missing');
   const companyId = randomUUID();
   const accountId = randomUUID();
   const sessionToken = randomUUID();
-  const initial = companyFixture(worldId, companyId);
+  const initial = companyFixture(worldId, companyId, withoutFood);
   const lifecycle = initial.economy.lifecycle;
   await database
     .insertInto('identity_accounts')
@@ -237,11 +247,12 @@ async function seedOrdinaryDelivery(
 async function makeScenario(
   walletQ = '80000000',
   simulationAtMs: string | null = String(Date.now() - 3_000_000),
+  withoutFood = false,
 ): Promise<Scenario> {
   if (!database || !connectionString)
     throw new Error('Isolated story integration database missing');
   const worldId = randomUUID();
-  const ownerA = await seedCompany(worldId);
+  const ownerA = await seedCompany(worldId, withoutFood);
   const ownerB = await seedCompany(worldId);
   const foreign = {
     accountId: randomUUID(),
@@ -371,7 +382,7 @@ describe('authenticated story routes (isolated PostgreSQL)', () => {
     'keeps company findings private and pays proven E01 exactly once',
     async () => {
       if (!database) throw new Error('Isolated story integration database missing');
-      const scenario = await makeScenario();
+      const scenario = await makeScenario('80000000', undefined, true);
       const [ownerA, ownerB] = scenario.owners;
       const anonymous = await scenario.app.inject({ method: 'GET', url: '/story' });
       expect(anonymous.statusCode).toBe(401);
@@ -431,6 +442,16 @@ describe('authenticated story routes (isolated PostgreSQL)', () => {
         )!.cashQ,
       );
       expect(afterCash - beforeCash).toBe(40_000_000n);
+      expect(
+        afterCompany.economy.physical!.food.some(
+          (entry) => BigInt(entry.uncoveredTickUnits ?? '0') > 0n,
+        ),
+      ).toBe(true);
+      expect(
+        afterCompany.economy.physical!.food.every(
+          (entry) => entry.channel !== 'STOCK' || entry.unitsConsumed === '0',
+        ),
+      ).toBe(true);
       const issuerAfter = await database
         .selectFrom('ordinary_contracts')
         .select('wallet_q')
