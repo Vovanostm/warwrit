@@ -1,41 +1,20 @@
 import type { FastifyInstance } from 'fastify';
 import type { Kysely } from 'kysely';
-import {
-  COMPANY_COMMAND_SCHEMA_VERSION,
-  COMPANY_RULESET_ID,
-  canonicalJson,
-  campaignTick,
-  companySourceKey,
-  parseCompanyCommand,
-  prepareCompanyEconomy,
-  projectCompanyLifecycle,
-  readCompanyCombatAggregateState,
-} from '@warwrit/game-core';
+import { canonicalJson, projectCompanyLifecycle } from '@warwrit/game-core';
 import type {
-  CompanyCombatAggregateState,
-  CompanyCommand,
-  LifecycleEvent,
-} from '@warwrit/game-core';
-import type {
-  CompanyCommandAcceptedDto,
-  CompanyCommandRejectionDto,
   CompanyNicknamesDto,
+  OrdinaryPlayerCompanyCommandV2Dto,
   ResolveCompanyNicknameRequestDto,
 } from '@warwrit/protocol';
 import {
   isResolveCompanyNicknameRequest,
   WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
-import { randomUUID } from 'node:crypto';
 
 import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import {
-  findOwnedCompanyId,
-  lockCompanyAggregate,
-  readCompanyCommandReceipt,
-  updateCompanyAggregateWithReceipt,
-} from './repository.js';
+import { findOwnedCompanyId, lockCompanyAggregate } from './repository.js';
+import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 
 export interface CompanyNicknameRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -78,79 +57,6 @@ export function companyNicknamesView(
   };
 }
 
-export function prepareNicknameResolution(input: {
-  readonly state: CompanyCombatAggregateState;
-  readonly request: ResolveCompanyNicknameRequestDto;
-  readonly accountId: string;
-  readonly atTick: string;
-}):
-  | { readonly kind: 'REJECTED'; readonly error: string; readonly publicRevision: string }
-  | {
-      readonly kind: 'PREPARED';
-      readonly state: CompanyCombatAggregateState;
-      readonly command: CompanyCommand;
-      readonly events: readonly LifecycleEvent[];
-    } {
-  const lifecycle = input.state.economy.lifecycle;
-  const parsed = parseCompanyCommand({
-    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
-    commandId: input.request.commandId,
-    worldId: lifecycle.worldId,
-    companyId: lifecycle.companyId,
-    actorRef: { kind: 'PLAYER', id: input.accountId },
-    expectedRevision: input.request.expectedPublicRevision,
-    campaignTick: campaignTick(input.atTick),
-    rulesetId: COMPANY_RULESET_ID,
-    type: 'ResolveNickname',
-    payload: { proposalId: input.request.proposalId, accept: input.request.accept },
-  });
-  if (!parsed.ok || parsed.command.type !== 'ResolveNickname')
-    return {
-      kind: 'REJECTED',
-      error: 'INVALID_COMMAND',
-      publicRevision: lifecycle.knowledge.revision,
-    };
-  const prepared = prepareCompanyEconomy(input.state.economy, parsed.command, {
-    worldId: lifecycle.worldId,
-    companyId: lifecycle.companyId,
-    principal: parsed.command.actorRef,
-    publicRevision: lifecycle.knowledge.revision,
-    canonicalRevision: lifecycle.revision,
-    atTick: campaignTick(input.atTick),
-    completeGraph: true,
-    contactIds: [],
-    facts: [],
-    financeFacts: [],
-    physicalFacts: [],
-  });
-  if (prepared.kind !== 'PREPARED')
-    return {
-      kind: 'REJECTED',
-      error: prepared.error,
-      publicRevision: lifecycle.knowledge.revision,
-    };
-  if (prepared.receipt.requirements.length > 0)
-    return {
-      kind: 'REJECTED',
-      error: 'UNSUPPORTED_ACTION',
-      publicRevision: lifecycle.knowledge.revision,
-    };
-  try {
-    return {
-      kind: 'PREPARED',
-      state: readCompanyCombatAggregateState({ ...input.state, economy: prepared.next }),
-      command: parsed.command,
-      events: prepared.receipt.events,
-    };
-  } catch {
-    return {
-      kind: 'REJECTED',
-      error: 'INVALID_STATE',
-      publicRevision: lifecycle.knowledge.revision,
-    };
-  }
-}
-
 export function registerCompanyNicknameRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyNicknameRoutesOptions,
@@ -189,132 +95,25 @@ export function registerCompanyNicknameRoutes(
     if (!isResolveCompanyNicknameRequest(request.body))
       return reply.code(400).send({ error: 'invalid nickname resolution request' });
     const input = request.body as ResolveCompanyNicknameRequestDto;
-    const requestKey = canonicalJson(input);
-
-    const result = await database.transaction().execute(async (transaction) => {
-      if (!(await lockIdentityAccount(transaction, accountId)))
-        return { kind: 'UNAUTHORIZED' as const };
-      const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
-      if (!companyId || companyId !== expectedCompanyId) return { kind: 'FORBIDDEN' as const };
-      const previous = await lockCompanyAggregate(transaction, worldId, companyId);
-      if (!previous) throw new Error('Owned company snapshot is unavailable');
-      const lifecycle = previous.economy.lifecycle;
-
-      // Exact retries are answered before revision freshness or any simulation work.
-      const prior = await readCompanyCommandReceipt(
+    const ordinaryRequest: OrdinaryPlayerCompanyCommandV2Dto = {
+      schemaVersion: 2,
+      commandId: input.commandId,
+      expectedPublicRevision: input.expectedPublicRevision,
+      type: 'ResolveNickname',
+      payload: { proposalId: input.proposalId, accept: input.accept },
+    };
+    const requestKey = canonicalJson(ordinaryRequest);
+    const result = await database.transaction().execute((transaction) =>
+      executeOrdinaryPlayerCompanyCommand({
         transaction,
-        worldId,
-        companyId,
-        input.commandId,
-      );
-      if (prior) {
-        if (prior.requestKey !== requestKey)
-          return { kind: 'CONFLICT' as const, publicRevision: lifecycle.knowledge.revision };
-        const replay = acceptedReceipt(prior.response, input.commandId);
-        return replay
-          ? { kind: 'REPLAY' as const, response: replay }
-          : {
-              kind: 'INVALID' as const,
-              publicRevision: lifecycle.knowledge.revision,
-              code: 'INVALID_COMMAND' as const,
-            };
-      }
-      if (input.expectedPublicRevision !== lifecycle.knowledge.revision)
-        return { kind: 'STALE' as const, publicRevision: lifecycle.knowledge.revision };
-
-      const prepared = prepareNicknameResolution({
-        state: previous,
-        request: input,
         accountId,
-        atTick: lifecycle.campaignTick,
-      });
-      if (prepared.kind !== 'PREPARED')
-        return {
-          kind: 'INVALID' as const,
-          publicRevision: lifecycle.knowledge.revision,
-          code: commandRejectionCode(prepared.error),
-        };
-      const next = prepared.state;
-      const response = {
-        commandId: input.commandId,
-        ok: true as const,
-        publicRevision: next.economy.lifecycle.knowledge.revision,
-      };
-      const commandRequestKey = requestKey;
-      await updateCompanyAggregateWithReceipt(
-        transaction,
-        lifecycle.revision,
-        next.economy.lifecycle.revision,
-        next,
-        {
-          command: prepared.command,
-          receipt: {
-            receiptId: randomUUID(),
-            commandId: input.commandId,
-            sourceKey: companySourceKey(prepared.command),
-            requestKey: commandRequestKey,
-            response,
-            resultingRevision: next.economy.lifecycle.revision,
-          },
-          auditEvents: prepared.events.map((event) => ({
-            eventId: event.id,
-            revision: next.economy.lifecycle.revision,
-            event,
-          })),
-        },
-      );
-      return { kind: 'COMMITTED' as const, response };
-    });
-
-    if (result.kind === 'UNAUTHORIZED')
-      return reply.code(401).send({ error: 'authentication required' });
-    if (result.kind === 'FORBIDDEN') return reply.code(403).send({ error: 'company required' });
-    if (result.kind === 'CONFLICT')
-      return reply.code(409).send({
-        commandId: input.commandId,
-        ok: false,
-        publicRevision: result.publicRevision,
-        code: 'IDEMPOTENCY_CONFLICT',
-      } satisfies CompanyCommandRejectionDto);
-    if (result.kind === 'STALE')
-      return reply.code(409).send({
-        commandId: input.commandId,
-        ok: false,
-        publicRevision: result.publicRevision,
-        code: 'STALE_REVISION',
-      } satisfies CompanyCommandRejectionDto);
-    if (result.kind === 'INVALID')
-      return reply.code(409).send({
-        commandId: input.commandId,
-        ok: false,
-        publicRevision: result.publicRevision,
-        code: result.code,
-      } satisfies CompanyCommandRejectionDto);
-    return result.response;
+        expectedCompanyId,
+        worldId,
+        request: ordinaryRequest,
+        requestKey,
+        now: new Date(),
+      }),
+    );
+    return reply.code(result.kind === 'COMMITTED' ? 200 : result.statusCode).send(result.response);
   });
-}
-
-function commandRejectionCode(error: string): CompanyCommandRejectionDto['code'] {
-  if (
-    error === 'STALE_REVISION' ||
-    error === 'UNSUPPORTED_ACTION' ||
-    error === 'IDEMPOTENCY_CONFLICT' ||
-    error === 'NOT_AUTHORIZED'
-  )
-    return error;
-  return 'INVALID_COMMAND';
-}
-
-function acceptedReceipt(value: unknown, commandId: string): CompanyCommandAcceptedDto | undefined {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
-  const response = value as Record<string, unknown>;
-  if (
-    Object.keys(response).toSorted().join('\0') !== 'commandId\0ok\0publicRevision' ||
-    response['commandId'] !== commandId ||
-    response['ok'] !== true ||
-    typeof response['publicRevision'] !== 'string' ||
-    !/^(0|[1-9][0-9]*)$/u.test(response['publicRevision'])
-  )
-    return undefined;
-  return response as unknown as CompanyCommandAcceptedDto;
 }

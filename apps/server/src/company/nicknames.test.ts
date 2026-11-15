@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest';
+import {
+  COMPANY_COMMAND_SCHEMA_VERSION,
+  COMPANY_RULESET_ID,
+  parseCompanyCommand,
+  prepareCompanyEconomy,
+  readCompanyCombatAggregateState,
+} from '@warwrit/game-core';
+import type { BattleState, CompanyCombatAggregateState } from '@warwrit/game-core';
+import type { OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
-import type { BattleState } from '@warwrit/game-core';
 
 import { proposeResilientNicknames } from './nicknames.js';
+import { ordinaryCommandIntent, ordinaryCommandSucceeded } from './ordinary-command.js';
 
 function resolvedBattle(
   state: ReturnType<typeof createCompanyCombatAggregateFixture>['state'],
@@ -21,6 +30,73 @@ function resolvedBattle(
     outcome: { reason: 'last-side-standing', winnerSideId: winner },
     units: basis.units.map((unit) => (unit.id === participant.unitId ? mutate(unit) : unit)),
   } as BattleState;
+}
+
+function resolveNickname(
+  state: CompanyCombatAggregateState,
+  proposalId: string,
+  accept: boolean,
+  commandId: string,
+) {
+  const lifecycle = state.economy.lifecycle;
+  const request: OrdinaryPlayerCompanyCommandV2Dto = {
+    schemaVersion: 2,
+    commandId,
+    expectedPublicRevision: lifecycle.knowledge.revision,
+    type: 'ResolveNickname',
+    payload: { proposalId, accept },
+  };
+  const intent = ordinaryCommandIntent(request, lifecycle.companyId, {
+    partyId: undefined,
+    openAgreementId: undefined,
+    meetingEvidenceId: undefined,
+    characterId: undefined,
+    siteEligibilityId: undefined,
+    accessEvidenceId: undefined,
+    careEvidenceId: undefined,
+    careDefinitionId: undefined,
+    assignmentEvidenceId: undefined,
+    assignmentLocationId: undefined,
+    assignmentFundingPoolId: undefined,
+    offerId: undefined,
+    offerRevision: undefined,
+  });
+  const parsed = parseCompanyCommand({
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    commandId,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    actorRef: { kind: 'PLAYER', id: 'fixture-owner' },
+    expectedRevision: request.expectedPublicRevision,
+    campaignTick: lifecycle.campaignTick,
+    rulesetId: COMPANY_RULESET_ID,
+    ...intent,
+  });
+  if (!parsed.ok) throw new Error(`Invalid nickname command: ${parsed.error}`);
+  const prepared = prepareCompanyEconomy(state.economy, parsed.command, {
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    principal: parsed.command.actorRef,
+    publicRevision: lifecycle.knowledge.revision,
+    canonicalRevision: lifecycle.revision,
+    atTick: lifecycle.campaignTick,
+    completeGraph: true,
+    contactIds: [],
+    facts: [],
+    financeFacts: [],
+    physicalFacts: [],
+  });
+  if (
+    prepared.kind !== 'PREPARED' ||
+    !ordinaryCommandSucceeded(request, prepared, {
+      partyId: undefined,
+      openAgreementId: undefined,
+      meetingEvidenceId: undefined,
+      characterId: undefined,
+    })
+  )
+    throw new Error('Nickname intent did not complete its requested effect');
+  return readCompanyCombatAggregateState({ ...state, economy: prepared.next });
 }
 
 describe('resilient nickname producer', () => {
@@ -169,5 +245,69 @@ describe('resilient nickname producer', () => {
     const result = proposeResilientNicknames({ before, after, finalState, atTick: '1000' });
     expect(result.sourceEventIds).toEqual([]);
     expect(result.state.economy.lifecycle.nicknameProposals ?? []).toHaveLength(0);
+  });
+
+  it('accepts and rejects only observed proposals through ordinary intent composition', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const before = fixture.begun.next;
+    const participant = fixture.begun.binding.participants[0]!;
+    const finalState = resolvedBattle(before, (unit) => ({ ...unit, health: 1 }));
+    const proposed = proposeResilientNicknames({
+      before,
+      after: before,
+      finalState,
+      atTick: before.economy.lifecycle.campaignTick,
+    }).state;
+    const lifecycle = proposed.economy.lifecycle;
+    const proposal = lifecycle.nicknameProposals?.[0];
+    if (!proposal) throw new Error('expected a prepared nickname proposal');
+    const observed = {
+      ...proposed,
+      economy: {
+        ...proposed.economy,
+        lifecycle: {
+          ...lifecycle,
+          knowledge: {
+            ...lifecycle.knowledge,
+            nicknameProposals: [
+              {
+                proposalId: proposal.proposalId,
+                characterId: proposal.characterId,
+                sourceEventId: proposal.sourceEventId,
+                cultureId: proposal.cultureId,
+                deedKind: proposal.deedKind,
+                reasonKey: proposal.reasonKey,
+                textKey: proposal.textKey,
+                proposedAt: proposal.proposedAt,
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    const accepted = resolveNickname(observed, proposal.proposalId, true, 'accept-nickname');
+    expect(
+      accepted.economy.lifecycle.characters.find(
+        (character) => character.identity.characterId === participant.projection.characterId,
+      )?.nickname,
+    ).toEqual({ proposalId: proposal.proposalId, textKey: 'nickname.resilient' });
+    expect(accepted.economy.lifecycle.knowledge.nicknameHistory).toMatchObject([
+      {
+        proposalId: proposal.proposalId,
+        resolution: 'ACCEPTED',
+        decidedAt: lifecycle.campaignTick,
+      },
+    ]);
+
+    const rejected = resolveNickname(observed, proposal.proposalId, false, 'reject-nickname');
+    expect(rejected.economy.lifecycle.nicknameProposals?.[0]?.resolution).toBe('REJECTED');
+    expect(rejected.economy.lifecycle.knowledge.nicknameHistory).toMatchObject([
+      {
+        proposalId: proposal.proposalId,
+        resolution: 'REJECTED',
+        decidedAt: lifecycle.campaignTick,
+      },
+    ]);
   });
 });
