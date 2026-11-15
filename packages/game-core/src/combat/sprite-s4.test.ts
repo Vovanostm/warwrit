@@ -24,6 +24,13 @@ import {
   findCombatEscapePlan,
   previewCombatThreats,
 } from './sprite-s4.js';
+import { startBattleV3 } from './runtime-v3.js';
+import {
+  COMBAT_V3_SCHEMA_VERSION,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+  type BattleSetupV3,
+} from './setup-v3.js';
+import { replayCombat } from './replay.js';
 
 function setup(
   options: { panic?: 'human' | 'beast'; mill?: boolean; legacy?: boolean; blocked?: boolean } = {},
@@ -244,6 +251,90 @@ describe('sprite S4 public combat transitions', () => {
     expect(verifyCombatReplay({ schemaVersion: 1, setup: source, commands }, state).matches).toBe(
       true,
     );
+  });
+  it('runs the mill-slam response and retarget flow in V6 with deterministic replay', () => {
+    const sides: BattleSetupV3['sides'] = [
+      { id: sideId('v6-alpha'), retreatHexes: [{ q: -6, r: 0 }] },
+      { id: sideId('v6-beta'), retreatHexes: [{ q: 6, r: 0 }] },
+    ];
+    const attributes = {
+      health: 100,
+      armor: 0,
+      stamina: 100,
+      initiative: 100,
+      accuracy: 1,
+      defense: 10,
+      morale: 70,
+    };
+    const setup: BattleSetupV3 = {
+      schemaVersion: COMBAT_V3_SCHEMA_VERSION,
+      battleId: battleId('s4-v6-mill'),
+      rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      seed: 42,
+      map: { hexes: createHexagon(6), blocked: [], tiles: [] },
+      sides,
+      parties: [
+        { id: 'v6-mill-party', sideId: sides[0]!.id, kind: 'npc' },
+        { id: 'v6-target-party', sideId: sides[1]!.id, kind: 'npc' },
+      ],
+      units: [
+        {
+          id: unitId('v6-mill'),
+          sideId: sides[0]!.id,
+          partyId: 'v6-mill-party',
+          position: { q: 0, r: 0 },
+          weaponId: 'great-weapon',
+          threatProfile: 'mill-slam',
+          attributes,
+          initialPools: { health: 100, armor: 0, stamina: 100, morale: 70 },
+          capabilities: { move: true, attack: true, defend: true, retreat: true },
+          skillRanks: {},
+          moralePolicy: 'steady',
+        },
+        {
+          id: unitId('v6-target'),
+          sideId: sides[1]!.id,
+          partyId: 'v6-target-party',
+          position: { q: 2, r: 0 },
+          weaponId: 'raider',
+          attributes: { ...attributes, initiative: 10, accuracy: 10 },
+          initialPools: { health: 100, armor: 0, stamina: 100, morale: 70 },
+          capabilities: { move: true, attack: true, defend: true, retreat: true },
+          skillRanks: {},
+          moralePolicy: 'human',
+        },
+      ],
+    };
+    let state = startBattleV3(setup).state;
+    const commands: CombatCommand[] = [];
+    const run = (value: object) => {
+      const command = act(state, value);
+      commands.push(command);
+      state = accept(state, value);
+    };
+
+    expect(state.activation?.unitId).toBe(unitId('v6-mill'));
+    run({ type: 'prepare-threat', targetId: unitId('v6-target') });
+    expect(state.units[0]!.threat?.responseReceived).toBe(false);
+    run({ type: 'move', to: { q: 1, r: 0 } });
+    run({ type: 'wait' });
+    expect(state.units[0]!.threat?.responseReceived).toBe(true);
+    run({ type: 'retarget-threat', targetId: unitId('v6-target') });
+    run({ type: 'wait' });
+    const healthBefore = state.units[1]!.health;
+    run({ type: 'execute-threat' });
+    expect(state.units[1]!.health).toBeLessThan(healthBefore);
+    expect(state.units[0]!.threat).toBeUndefined();
+
+    const replay = {
+      schemaVersion: COMBAT_V3_SCHEMA_VERSION,
+      setup,
+      commands,
+    } as const;
+    const once = replayCombat(replay);
+    const twice = replayCombat(replay);
+    expect(canonicalCombatState(once.state)).toBe(canonicalCombatState(state));
+    expect(canonicalCombatState(twice.state)).toBe(canonicalCombatState(state));
   });
   it('escapes over multiple turns and rejects panic attacks atomically', () => {
     let state = startBattle(setup({ panic: 'human' })).state;

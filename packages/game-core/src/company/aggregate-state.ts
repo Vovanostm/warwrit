@@ -699,6 +699,10 @@ function worldBindingMembersMatch(value: Record<string, unknown>): boolean {
         isTacticalBridgeRuleset(setup['rulesetId'])
           ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
           : {}),
+        ...(setup['rulesetId'] === M1_DOMAIN_BRIDGE_V6_RULESET_ID &&
+        setupUnit['threatProfile'] === 'mill-slam'
+          ? { threatProfile: 'mill-slam' }
+          : {}),
       }) === canonicalJson(setupUnit)
     );
   });
@@ -809,20 +813,26 @@ function setupV3Shape(value: unknown): boolean {
     Array.isArray(value['units']) &&
     value['units'].length >= 2 &&
     value['units'].length <= 36 &&
+    threatProfilesUseNpcParties(value['units'], value['parties']) &&
     value['units'].every(
       (entry) =>
-        shape(entry, [
-          'id',
-          'sideId',
-          'partyId',
-          'position',
-          'weaponId',
-          'attributes',
-          'initialPools',
-          'capabilities',
-          'skillRanks',
-          'moralePolicy',
-        ]) &&
+        shape(
+          entry,
+          [
+            'id',
+            'sideId',
+            'partyId',
+            'position',
+            'weaponId',
+            'attributes',
+            'initialPools',
+            'capabilities',
+            'skillRanks',
+            'moralePolicy',
+          ],
+          ['threatProfile'],
+        ) &&
+        (!Object.hasOwn(entry, 'threatProfile') || entry['threatProfile'] === 'mill-slam') &&
         capabilitiesShape(entry['capabilities'], M1_DOMAIN_BRIDGE_V6_RULESET_ID) &&
         tacticalProjectionFieldsShape(entry, M1_DOMAIN_BRIDGE_V6_RULESET_ID) &&
         isEntityId(entry['id']) &&
@@ -935,6 +945,7 @@ function battleStateShape(value: unknown): boolean {
               ? party['controllerId'] === undefined
               : party['kind'] === 'player' && isEntityId(party['controllerId'])),
         ))) ||
+    (v3 && !threatProfilesUseNpcParties(value['units'], value['parties'])) ||
     !shape(value['random'], ['algorithm', 'value', 'draws']) ||
     value['random']['algorithm'] !== 'xorshift32-v1' ||
     !Number.isSafeInteger(value['random']['value']) ||
@@ -978,6 +989,17 @@ function capabilitiesShape(value: unknown, rulesetId: unknown): boolean {
     ? shape(value, ['move', 'attack', 'defend', 'retreat']) &&
         Object.values(value).every((entry) => typeof entry === 'boolean')
     : value === undefined;
+}
+
+function threatProfilesUseNpcParties(units: unknown, parties: unknown): boolean {
+  if (!Array.isArray(units) || !Array.isArray(parties)) return false;
+  return units.every((unit) => {
+    if (!plainObject(unit) || !Object.hasOwn(unit, 'threatProfile')) return true;
+    if (unit['threatProfile'] !== 'mill-slam' || typeof unit['partyId'] !== 'string') return false;
+    return parties.some(
+      (party) => plainObject(party) && party['id'] === unit['partyId'] && party['kind'] === 'npc',
+    );
+  });
 }
 
 function battleUnitShape(value: unknown, rulesetId: unknown): boolean {

@@ -181,7 +181,10 @@ export function validateBattleSetupV2(setup: BattleSetupV2): BattleSetupV2 {
 }
 
 /** The bounded campaign bridge has no accepted skill/trait mapping. */
-export function validatePersistentTacticalInputs(unit: CombatUnitSetup): void {
+export function validatePersistentTacticalInputs(
+  unit: CombatUnitSetup,
+  allowMillSlam = false,
+): void {
   invariant(
     unit.skillRanks !== null &&
       typeof unit.skillRanks === 'object' &&
@@ -192,7 +195,9 @@ export function validatePersistentTacticalInputs(unit: CombatUnitSetup): void {
   invariant(
     unit.trainedMelee === undefined &&
       unit.incorporeal === undefined &&
-      unit.threatProfile === undefined,
+      (allowMillSlam
+        ? unit.threatProfile === undefined || unit.threatProfile === 'mill-slam'
+        : unit.threatProfile === undefined),
     'Unmapped campaign traits are unavailable',
   );
   invariant(

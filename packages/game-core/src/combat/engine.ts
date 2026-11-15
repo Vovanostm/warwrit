@@ -1715,6 +1715,16 @@ export function assertBattleState(state: BattleState): void {
           state.parties.some((party) => party.id === unit.partyId && party.sideId === unit.sideId),
         `V3 unit ${unit.id} party attribution is invalid`,
       );
+      invariant(
+        unit.threatProfile === undefined || unit.threatProfile === 'mill-slam',
+        'Unknown V6 threat profile',
+      );
+      invariant(
+        unit.threatProfile === undefined ||
+          (unit.threatProfile === 'mill-slam' &&
+            state.parties.some((party) => party.id === unit.partyId && party.kind === 'npc')),
+        `V3 unit ${unit.id} threat profile requires an NPC party`,
+      );
       unitsPerSide.set(unit.sideId, (unitsPerSide.get(unit.sideId) ?? 0) + 1);
       unitsPerParty.set(unit.partyId, (unitsPerParty.get(unit.partyId) ?? 0) + 1);
     }
@@ -1795,11 +1805,11 @@ function assertUnitVersionState(unit: CombatUnitState, rulesetId: BattleState['r
     rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
     rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
   )
-    assertPersistentTacticalUnit(unit);
+    assertPersistentTacticalUnit(unit, rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID);
 }
 
-function assertPersistentTacticalUnit(unit: CombatUnitState): void {
-  validatePersistentTacticalInputs(unit);
+function assertPersistentTacticalUnit(unit: CombatUnitState, allowMillSlam = false): void {
+  validatePersistentTacticalInputs(unit, allowMillSlam);
   invariant(
     ['active', 'dead', 'retreated', 'surrendered'].includes(unit.status),
     'Invalid combat status',
