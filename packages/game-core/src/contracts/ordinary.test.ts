@@ -40,6 +40,70 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('keeps the banner dependency and requires a defeated mill beast before releasing Ostap', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const edition = CONTRACT_M1_CATALOGUE.editions[0]!;
+    expect(
+      edition.initialInstances.find(
+        (instance) => instance.instanceId === 'ci.m1.voice-under-boards.01',
+      )?.definitionId,
+    ).toBe('ct.m1.voice-under-boards.v1');
+    expect(
+      edition.definitions.find(
+        (definition) => definition.definitionId === 'ct.m1.voice-under-boards.v1',
+      )?.prerequisiteDefinitionIds,
+    ).toEqual(['ct.m1.raider-standard.v1']);
+
+    const rescue = ordinaryContractProfile('ci.m1.voice-under-boards.01')!;
+    const tikhaya = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
+    const mill = { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' };
+    const run = (
+      state: OrdinaryContractState,
+      command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+      standingAt: ContractPlace,
+      beastDefeated = false,
+    ) =>
+      prepareOrdinaryContractCommand(rescue, state, command, {
+        companyId: 'company-a',
+        standingAt,
+        atTick: '10',
+        expectedRevision: state.revision,
+        sourceEventId: `voice-under-boards-${state.revision}`,
+        gates: { DAYLIGHT: true, RAIDERS_DEFEATED: true, BEAST_DEFEATED: beastDefeated },
+      });
+
+    let state = ordinaryContractGenesis(rescue);
+    const accepted = run(state, { type: 'ACCEPT' }, tikhaya);
+    if (accepted.kind !== 'PREPARED') throw new Error('expected rescue acceptance');
+    state = accepted.next;
+    for (const stepId of ['inspect-cellar', 'inspect-tracks']) {
+      const inspected = run(state, { type: 'STEP', stepId }, mill);
+      if (inspected.kind !== 'PREPARED') throw new Error(`expected ${stepId}`);
+      state = inspected.next;
+    }
+    expect(run(state, { type: 'STEP', stepId: 'release-ostap' }, mill)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'CONDITION_NOT_MET',
+    });
+    const released = run(state, { type: 'STEP', stepId: 'release-ostap' }, mill, true);
+    if (released.kind !== 'PREPARED') throw new Error('expected Ostap release');
+    state = released.next;
+    expect(state.custody).toEqual([{ personId: 'person.ostap', companyId: 'company-a' }]);
+    expect(run(state, { type: 'STEP', stepId: 'deliver-ostap' }, mill)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'WRONG_PLACE',
+    });
+    const delivered = run(state, { type: 'STEP', stepId: 'deliver-ostap' }, tikhaya, true);
+    expect(delivered).toMatchObject({
+      kind: 'PREPARED',
+      payout: { companyId: 'company-a', rewardQ: '120000000' },
+      next: {
+        custody: [],
+        outcome: { kind: 'SUCCESS', companyId: 'company-a' },
+      },
+    });
+  });
+
   it('binds the stable light-sack instance with both source-backed truth paths', () => {
     expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
     const edition = CONTRACT_M1_CATALOGUE.editions[0]!;

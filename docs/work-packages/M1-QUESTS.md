@@ -106,3 +106,36 @@ no-payment labels. Normal in-game playthrough, native player acceptance and
 remaining quest checks are NOT_RUN;
 broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
 merge are NOT_RUN.
+
+### «Голос из-под пола» — implementation slice, 2026-11-15
+
+**Player goal:** free Василиса's husband Остап from the cellar under the old
+mill and bring him alive to Тихая Гать.
+
+**Normal path implemented:** after a company redeems «Знамя Харитона Обуха»,
+Василиса's RESCUE offer appears in Тихая Гать. At the mill, the company records
+the cellar and beast-track observations, defeats the existing mill-beast hunt,
+releases Остап into the contract's custody, travels back with the field party,
+and delivers him to Василиса. The delivery pays 120 crowns from her finite
+120-crown contract purse. The ordinary RESCUE profile saves observations,
+custody and delivery; the existing mill hunt supplies the beast's real terminal
+state and its route transport.
+
+**Alternative and remaining scope:** the approved quiet descent is not exposed
+yet. Its text requires using a lantern and supports and consuming materials;
+there is no available inventory-backed source for those materials in the current
+catalogue and supply paths. Do not display it as a free second rescue route.
+Failure/retry: a living beast blocks release; observations and custody remain
+unfinished, and ordinary command receipts protect accepted steps and delivery.
+
+**Saved outcome and simplest try:** inspect the accepted contract after the
+banner proof is presented, complete the existing beast hunt, then rescue and
+deliver Остап. The owner contract, custody, hunt outcome and payment remain
+saved. Native playthrough and player acceptance are NOT_RUN / NOT_MEASURED; the
+quiet-material branch remains unimplemented.
+
+Focused game-core ordinary-contract tests and core/server typechecks passed.
+The web typecheck still reports the four existing `EquipmentTrader.tsx` DTO
+mismatches recorded above. The approved Russian source text was checked with
+`check_text.py` (0 issues). This partial slice is LOCAL; publication and merge
+are NOT_RUN.

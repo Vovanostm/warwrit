@@ -13,7 +13,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.mill-worker.01'
   | 'ci.m1.light-sack.01'
   | 'ci.m1.two-receipts.01'
-  | 'ci.m1.empty-watch-record.01';
+  | 'ci.m1.empty-watch-record.01'
+  | 'ci.m1.voice-under-boards.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -215,6 +216,56 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         gates: [],
         produces: ['lost-scout-delivery'],
         needsCustodyOf: 'person.lost-scout.01',
+        completes: true,
+      },
+    ],
+  },
+  {
+    instanceId: 'ci.m1.voice-under-boards.01',
+    definitionId: 'ct.m1.voice-under-boards.v1',
+    template: 'RESCUE',
+    issuerRoleId: 'woodland-village-caller',
+    issuerPlace: TIKHAYA_GAT,
+    walletId: 'wallet.vasilisa.tikhaya-gat.01',
+    genesisWalletQ: CROWNS(120),
+    rewardQ: CROWNS(120),
+    steps: [
+      {
+        stepId: 'inspect-cellar',
+        action: 'SEARCH',
+        place: MILL_YARD,
+        requires: [],
+        gates: ['RAIDERS_DEFEATED'],
+        produces: ['voice-under-boards-cellar'],
+        resultTextKey: 'voice-under-boards.cellar',
+      },
+      {
+        stepId: 'inspect-tracks',
+        action: 'INSPECT',
+        place: MILL_YARD,
+        requires: ['voice-under-boards-cellar'],
+        gates: ['RAIDERS_DEFEATED'],
+        produces: ['voice-under-boards-tracks'],
+        resultTextKey: 'voice-under-boards.tracks',
+      },
+      {
+        stepId: 'release-ostap',
+        action: 'RELEASE',
+        place: MILL_YARD,
+        requires: ['voice-under-boards-cellar', 'voice-under-boards-tracks'],
+        gates: ['RAIDERS_DEFEATED', 'BEAST_DEFEATED'],
+        produces: ['voice-under-boards-person-source', 'voice-under-boards-living-release'],
+        takesCustodyOf: 'person.ostap',
+      },
+      {
+        stepId: 'deliver-ostap',
+        action: 'DELIVER',
+        place: TIKHAYA_GAT,
+        requires: ['voice-under-boards-living-release'],
+        gates: [],
+        produces: ['voice-under-boards-delivery'],
+        needsCustodyOf: 'person.ostap',
+        resultTextKey: 'voice-under-boards.delivery',
         completes: true,
       },
     ],

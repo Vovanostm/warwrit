@@ -14,6 +14,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.mill-beast.01': 'inn',
   'ci.m1.light-sack.01': 'market',
   'ci.m1.empty-watch-record.01': 'market',
+  'ci.m1.voice-under-boards.01': 'elder',
 };
 
 export interface ContractVisit {
