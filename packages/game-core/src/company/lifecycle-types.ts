@@ -78,8 +78,8 @@ export interface LifecycleKnowledge {
   readonly eventIds: readonly string[];
   /** Optional in legacy V1 snapshots; only observed pending proposals are public. */
   readonly nicknameProposals?: readonly LifecycleNicknameProposalView[];
-  /** Accepted nickname source/reason history known to this observer. */
-  readonly nicknameHistory?: readonly LifecycleAcceptedNickname[];
+  /** Resolved nickname decisions known to this observer. Legacy acceptedAt-only entries are accepted. */
+  readonly nicknameHistory?: readonly LifecycleNicknameDecision[];
 }
 export interface LifecycleState {
   readonly schemaVersion: 1;
@@ -126,7 +126,7 @@ export type LifecycleNicknameProposalView = Pick<
   | 'textKey'
   | 'proposedAt'
 >;
-export interface LifecycleAcceptedNickname {
+export interface LifecycleNicknameDecision {
   readonly proposalId: string;
   readonly characterId: CharacterId;
   readonly sourceEventId: string;
@@ -135,8 +135,14 @@ export interface LifecycleAcceptedNickname {
   readonly reasonKey: string;
   /** Source-backed localization/reason key; never player-authored nickname text. */
   readonly textKey: string;
-  readonly acceptedAt: CampaignTick;
+  readonly proposedAt?: CampaignTick;
+  readonly resolution?: 'ACCEPTED' | 'REJECTED';
+  readonly decidedAt?: CampaignTick;
+  /** Legacy accepted decision timestamp; new decisions use decidedAt. */
+  readonly acceptedAt?: CampaignTick;
 }
+/** @deprecated Use LifecycleNicknameDecision. */
+export type LifecycleAcceptedNickname = LifecycleNicknameDecision;
 
 interface EvidenceScope {
   readonly id: string;

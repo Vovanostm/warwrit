@@ -66,6 +66,7 @@ export * from './contracts.js';
 export * from './story.js';
 export * from './encounter.js';
 export * from './combat-lab.js';
+export * from './nicknames.js';
 export type {
   WorldFreeMovementV2RequestDto,
   WorldFreeMovementV2ResponseDto,
@@ -104,3 +105,4 @@ export type {
   EquipmentSaleResponseDto,
 } from './equipment-market.js';
 export type { DeceasedWageQuoteDto } from './deceased-wages.js';
+export * from './hostile-loot.js';

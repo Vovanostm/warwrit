@@ -70,6 +70,8 @@ export function ordinaryCommandIntent(
           milestone: request.payload.milestone,
         },
       };
+    case 'ResolveNickname':
+      return { type: request.type, payload: { ...request.payload } };
     case 'EquipItem':
       return {
         type: request.type,
@@ -239,6 +241,15 @@ function requestedEffectPresent(
     case 'StartRetraining':
     case 'StopLearning':
       return false;
+    case 'ResolveNickname':
+      return (
+        lifecycleChanged(prepared) &&
+        prepared.next.lifecycle.nicknameProposals?.some(
+          (proposal) =>
+            proposal.proposalId === request.payload.proposalId &&
+            proposal.resolution === (request.payload.accept ? 'ACCEPTED' : 'REJECTED'),
+        ) === true
+      );
     default:
       return fieldCampChanged(request, prepared, ids);
   }

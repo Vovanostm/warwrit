@@ -516,6 +516,13 @@ function parseOrdinaryCompanyCommandV2(
       (payload['milestone'] !== 25 && payload['milestone'] !== 60)
     )
       return undefined;
+  } else if (value['type'] === 'ResolveNickname') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !== canonicalJson(['accept', 'proposalId']) ||
+      !isEntityId(payload['proposalId']) ||
+      typeof payload['accept'] !== 'boolean'
+    )
+      return undefined;
   } else if (value['type'] === 'BeginFieldCamp' || value['type'] === 'EndFieldCamp') {
     if (Object.keys(payload).length !== 0) return undefined;
   } else if (value['type'] === 'EquipItem') {

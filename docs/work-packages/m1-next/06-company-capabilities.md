@@ -218,6 +218,24 @@ consent, source history and observer-appropriate knowledge rules apply.
 Both rules were accepted in this implementation chat on 2026-11-15. Current
 implementation evidence belongs to the checkpoint above.
 
+### Earned nickname integration — 2026-11-15
+
+PARTIAL / LOCAL. The verified terminal-effect processor now proposes «Живучий»
+from the saved victorious battle result. It accumulates proposals across eligible
+fighters, retains stable deed identities and observes only saved deed sources
+with an actual bound living witness. The company panel offers explicit consent
+or refusal and retains the exact request after an unknown response. Both decisions
+appear in the company's observed history. A living incapacitated, retreated or
+surrendered winner remains eligible under the owner's living-fighter rule.
+
+The merged nickname/loot/source/protocol/UI union passes31 focused tests and
+server/web typechecks. The author's real PostgreSQL nickname case passed1 test
+with26 other encounter cases skipped. It used ordinary JOIN, battle commands,
+replay verification, terminal effects, consent/refusal, exact retry, conflicting
+retry and reopened-connection history. Parent route-registration integration and
+the local observation merge have been checked by focused types/tests. Their
+PostgreSQL rerun and native earned-deed journey remain pending. T021 stays open.
+
 ## Decisions and checks
 
 Missing provider, eligible deed or course terms is a finite missing input, not

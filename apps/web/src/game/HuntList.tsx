@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import type { FirstHuntReadResponseDto } from '@warwrit/protocol';
+import type { CompanySummaryDto, FirstHuntReadResponseDto } from '@warwrit/protocol';
 
 import { FirstHunt } from '../FirstHunt.js';
 import type { FirstHuntScope } from '../first-hunt-attempt.js';
 import type { ContractVisitProps } from './contract-visits.js';
+import { HostileLootPanel } from './HostileLootPanel.js';
 
 const REFRESH_MS = 15_000;
 
@@ -12,9 +13,11 @@ const REFRESH_MS = 15_000;
 export function HuntList(
   props: ContractVisitProps & {
     readonly scope: FirstHuntScope;
+    readonly company: CompanySummaryDto;
     readonly location: string | null;
     readonly refreshKey: number;
     readonly onUnauthorized: () => void;
+    readonly onRefreshCompany: () => void;
     readonly onEncounterDiscovered: () => void;
     readonly onRewardPaid?: () => void;
   },
@@ -63,21 +66,37 @@ export function HuntList(
               (contract.knownState !== 'SETTLED' &&
                 contract.terms.issuerLocation.siteId === props.location)),
         )
-        .map(({ contract }) => (
-          <FirstHunt
-            visit={props.visit}
-            canVisit={props.canVisit}
-            onJournal={props.onJournal}
-            onVisitIssuer={props.onVisitIssuer}
-            key={contract!.instanceId}
-            scope={{ ...props.scope, instanceId: contract!.instanceId }}
-            location={props.location}
-            onUnauthorized={props.onUnauthorized}
-            refreshKey={props.refreshKey}
-            onEncounterDiscovered={props.onEncounterDiscovered}
-            {...(props.onRewardPaid ? { onRewardPaid: props.onRewardPaid } : {})}
-          />
-        ))}
+        .map(({ contract }) => {
+          if (!contract) return null;
+          const scope = { ...props.scope, instanceId: contract.instanceId };
+          return (
+            <div className="hunt-journey" key={contract.instanceId}>
+              <FirstHunt
+                visit={props.visit}
+                canVisit={props.canVisit}
+                onJournal={props.onJournal}
+                onVisitIssuer={props.onVisitIssuer}
+                scope={scope}
+                location={props.location}
+                onUnauthorized={props.onUnauthorized}
+                refreshKey={props.refreshKey}
+                onEncounterDiscovered={props.onEncounterDiscovered}
+                {...(props.onRewardPaid ? { onRewardPaid: props.onRewardPaid } : {})}
+              />
+              {contract.terminal?.effects === 'APPLIED' && !contract.terminal.hostileRetreated && (
+                <HostileLootPanel
+                  key={`${props.scope.accountId}:${props.scope.companyId}:${contract.instanceId}`}
+                  accountId={props.scope.accountId}
+                  company={props.company}
+                  instanceId={contract.instanceId}
+                  refreshKey={props.refreshKey}
+                  onRefresh={props.onRefreshCompany}
+                  onUnauthorized={props.onUnauthorized}
+                />
+              )}
+            </div>
+          );
+        })}
     </>
   );
 }

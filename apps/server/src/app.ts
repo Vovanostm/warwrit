@@ -12,6 +12,8 @@ import { registerEquipmentMarketRoutes } from './company/equipment-market.js';
 import { registerCompanyCourseRoutes } from './company/course-routes.js';
 import { registerCompanyRetrainingRoutes } from './company/retraining-routes.js';
 import { registerCompanyDeceasedWagesRoutes } from './company/deceased-wages-routes.js';
+import { registerCompanyNicknameRoutes } from './company/nickname-routes.js';
+import { registerHostileLootRoutes } from './contracts/hostile-loot-routes.js';
 import { registerWorldRoutes } from './world/routes.js';
 import { registerOrdinaryContractRoutes } from './contracts/ordinary.js';
 import { registerStoryRoutes } from './story/routes.js';
@@ -67,6 +69,8 @@ export function buildApp(options: BuildAppOptions = {}): FastifyInstance {
     registerCompanyCourseRoutes(app, options.company);
     registerCompanyRetrainingRoutes(app, options.company);
     registerCompanyDeceasedWagesRoutes(app, options.company);
+    registerCompanyNicknameRoutes(app, options.company);
+    registerHostileLootRoutes(app, options.company);
     registerWorldRoutes(app, options.company);
     registerFirstHuntRoutes(app, options.company);
     registerOrdinaryContractRoutes(app, options.company);

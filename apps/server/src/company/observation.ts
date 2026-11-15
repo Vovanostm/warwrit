@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import {
+  PHYSICAL_POLICY_VERSION,
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
-  PHYSICAL_POLICY_VERSION,
   campaignTick,
   canonicalJson,
   companySourceKey,
@@ -11,13 +11,189 @@ import {
   prepareCompanyEconomy,
   prepareCompanyLifecycle,
   skillLevels,
+  readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
-import type { CompanyCombatAggregateState, EconomyContext } from '@warwrit/game-core';
+import type {
+  BattleState,
+  CompanyCommand,
+  CompanyCombatAggregateState,
+  EconomyContext,
+  LifecycleEvent,
+} from '@warwrit/game-core';
 import type { Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
 import { readWorldClock } from '../world/clock.js';
 import { updateCompanyAggregateWithReceipt } from './repository.js';
 import { prepareStationaryFoodFacts } from './travel-food.js';
+import { proposeResilientNicknames } from './nicknames.js';
+
+interface PreparedTerminalNicknameObservation {
+  readonly previous: CompanyCombatAggregateState;
+  readonly next: CompanyCombatAggregateState;
+  readonly command: CompanyCommand;
+  readonly events: readonly LifecycleEvent[];
+}
+
+/** Persist terminal deed proposals, then disclose only sources witnessed by a living bound company participant. */
+export async function applyTerminalResilientNicknameEffects(input: {
+  readonly transaction: Transaction<DatabaseSchema>;
+  readonly before: CompanyCombatAggregateState;
+  readonly after: CompanyCombatAggregateState;
+  readonly finalState: BattleState;
+  readonly atTick: string;
+  readonly witnessCharacterIds: readonly string[];
+}): Promise<CompanyCombatAggregateState> {
+  const proposed = proposeResilientNicknames(input);
+  for (const transition of proposed.transitions) {
+    await persistInternalLifecycleTransition(input.transaction, {
+      previous: transition.previous,
+      next: transition.next,
+      command: transition.command,
+      events: transition.events,
+    });
+  }
+
+  const witnesses = new Set(input.witnessCharacterIds);
+  let next = proposed.state;
+  for (const sourceEventId of proposed.sourceEventIds) {
+    const proposal = next.economy.lifecycle.nicknameProposals?.find(
+      (entry) => entry.sourceEventId === sourceEventId,
+    );
+    if (!proposal || !witnesses.has(proposal.characterId)) continue;
+    const observed = prepareTerminalNicknameObservation(
+      next,
+      proposal.characterId,
+      sourceEventId,
+      [...witnesses],
+      input.atTick,
+    );
+    if (!observed) throw new Error('Verified nickname deed could not be observed by its witness');
+    await persistInternalLifecycleTransition(input.transaction, observed);
+    next = observed.next;
+  }
+  return next;
+}
+
+export function prepareTerminalNicknameObservation(
+  state: CompanyCombatAggregateState,
+  characterId: string,
+  deedSourceEventId: string,
+  witnessCharacterIds: readonly string[],
+  tick: string,
+): PreparedTerminalNicknameObservation | undefined {
+  const lifecycle = state.economy.lifecycle;
+  const deed = lifecycle.nicknameProposals?.find(
+    (proposal) =>
+      proposal.sourceEventId === deedSourceEventId &&
+      proposal.characterId === characterId &&
+      proposal.resolution === 'PENDING',
+  );
+  if (!deed || !witnessCharacterIds.includes(characterId)) return undefined;
+  const commandId = randomUUID();
+  const principal = { kind: 'DOMAIN_RECEIPT' as const, id: 'terminal-nickname-observation' };
+  const subjectRef = { kind: 'CHARACTER' as const, id: characterId };
+  const observerRef = { kind: 'COMPANY' as const, id: lifecycle.companyId };
+  const commandValue = {
+    schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
+    rulesetId: COMPANY_RULESET_ID,
+    commandId,
+    sourceEventId: commandId,
+    type: 'Observe',
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    campaignTick: tick,
+    expectedRevision: lifecycle.revision,
+    actorRef: principal,
+    payload: {
+      observationId: commandId,
+      factId: commandId,
+      sourceId: commandId,
+      subjectRef,
+      observerRef,
+    },
+  };
+  const parsed = parseCompanyCommand(commandValue);
+  if (!parsed.ok || parsed.command.type !== 'Observe')
+    throw new Error('Invalid terminal nickname observation command');
+  const scope = {
+    id: commandId,
+    sourceEventId: commandId,
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    revision: lifecycle.revision,
+    atTick: campaignTick(tick),
+  };
+  const context: EconomyContext = {
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    principal,
+    publicRevision: lifecycle.knowledge.revision,
+    canonicalRevision: lifecycle.revision,
+    atTick: scope.atTick,
+    completeGraph: true,
+    contactIds: witnessCharacterIds,
+    facts: [
+      {
+        ...scope,
+        kind: 'COMPANY_OBSERVATION',
+        subject: subjectRef,
+        nicknameSourceEventIds: [deedSourceEventId],
+      },
+    ],
+    financeFacts: [],
+    physicalFacts: [],
+    internalGrant: {
+      commandId,
+      sourceEventId: commandId,
+      canonicalRequest: canonicalJson(parsed.command),
+    },
+  };
+  const prepared = prepareCompanyLifecycle(lifecycle, parsed.command, context);
+  if (prepared.kind !== 'PREPARED') return undefined;
+  const next = readCompanyCombatAggregateState({
+    ...state,
+    economy: { ...state.economy, lifecycle: prepared.next },
+  });
+  return {
+    previous: state,
+    next,
+    command: parsed.command,
+    events: prepared.receipt.events,
+  };
+}
+
+async function persistInternalLifecycleTransition(
+  transaction: Transaction<DatabaseSchema>,
+  input: PreparedTerminalNicknameObservation,
+) {
+  const lifecycle = input.next.economy.lifecycle;
+  await updateCompanyAggregateWithReceipt(
+    transaction,
+    input.previous.economy.lifecycle.revision,
+    lifecycle.revision,
+    input.next,
+    {
+      command: input.command,
+      receipt: {
+        receiptId: randomUUID(),
+        commandId: input.command.commandId,
+        sourceKey: companySourceKey(input.command),
+        requestKey: canonicalJson(input.command),
+        response: {
+          commandId: input.command.commandId,
+          ok: true,
+          publicRevision: lifecycle.knowledge.revision,
+        },
+        resultingRevision: lifecycle.revision,
+      },
+      auditEvents: input.events.map((event) => ({
+        eventId: event.id,
+        revision: lifecycle.revision,
+        event,
+      })),
+    },
+  );
+}
 
 function characterChanged(state: CompanyCombatAggregateState, characterId: string): boolean {
   const { lifecycle, physical } = state.economy;

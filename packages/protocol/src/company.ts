@@ -313,6 +313,7 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly perkId: string;
     readonly milestone: 25 | 60;
   };
+  readonly ResolveNickname: { readonly proposalId: string; readonly accept: boolean };
   /** Pitch a field camp where the party stands still; the server attests the site. */
   readonly BeginFieldCamp: Record<string, never>;
   /** Strike the party's field camp. */

@@ -1,0 +1,75 @@
+.hostile-loot,
+.hostile-loot-source,
+.hostile-loot-pending {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.game-side .hostile-loot {
+  margin-top: 0.7rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.hostile-loot .panel-subtitle,
+.hostile-loot-source h4,
+.hostile-loot-source ul,
+.hostile-loot-source li,
+.hostile-loot-pending p {
+  margin: 0;
+}
+
+.hostile-loot-source ul {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0;
+  list-style: none;
+}
+
+.hostile-loot-source li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(11rem, 0.8fr);
+  align-items: end;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid rgb(194 161 94 / 22%);
+}
+
+.hostile-loot-source h4 {
+  color: var(--gold);
+  font-size: 0.95rem;
+}
+
+.hostile-loot-destination {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.hostile-loot-destination select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid var(--bronze);
+  background: #171612;
+  color: var(--ink);
+  color-scheme: dark;
+}
+
+.hostile-loot-destination select:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.hostile-loot-destination select:disabled {
+  opacity: 0.55;
+}
+
+.hostile-loot .state-note,
+.hostile-loot-pending p {
+  margin: 0;
+  line-height: 1.5;
+}

@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: source-backed hostile gear pickup in hunt outcomes and
+  earned «Живучий» proposals with explicit consent/refusal and saved history.
+  [Loot journey](docs/work-packages/M1-LOOT-SALE.md#current-implementation--2026-11-15)
+  and [nickname checks](docs/work-packages/m1-next/06-company-capabilities.md#earned-nickname-integration--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: first sword-specialization selection and retraining with
   explicit stop, saved elapsed tuition and observed completion-only replacement.
   Native stop, full completion and reload pass.

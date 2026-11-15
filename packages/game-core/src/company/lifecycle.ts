@@ -79,7 +79,8 @@ function observeCompany(
         (proposal) =>
           proposal.characterId === fact.subject.id &&
           nicknameSourceSet.has(proposal.sourceEventId) &&
-          proposal.resolution === 'ACCEPTED',
+          proposal.resolution !== 'PENDING' &&
+          proposal.resolvedAt !== null,
       )
       .map((proposal) => ({
         proposalId: proposal.proposalId,
@@ -89,7 +90,10 @@ function observeCompany(
         deedKind: proposal.deedKind,
         reasonKey: proposal.reasonKey,
         textKey: proposal.textKey,
-        acceptedAt: proposal.resolvedAt!,
+        proposedAt: proposal.proposedAt,
+        resolution: proposal.resolution as 'ACCEPTED' | 'REJECTED',
+        decidedAt: proposal.resolvedAt!,
+        ...(proposal.resolution === 'ACCEPTED' ? { acceptedAt: proposal.resolvedAt! } : {}),
       }));
     const observedNickname =
       activeNickname && nicknameSourceSet.has(activeNickname.sourceEventId)

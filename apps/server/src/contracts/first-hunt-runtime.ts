@@ -76,6 +76,11 @@ export interface FirstHuntHostileGearState {
   readonly admissionId: string;
   readonly status: 'HELD' | 'DROPPED';
   readonly dropSourceId?: string;
+  /** Last verified terminal event that made this hostile's gear eligible to claim. */
+  readonly terminalSourceId?: string;
+  readonly terminalRevision?: number;
+  /** Item IDs already transferred into company roots; provenance remains there. */
+  readonly claimedItemIds?: readonly string[];
   readonly container: import('@warwrit/game-core').PhysicalContainer;
   readonly items: readonly import('@warwrit/game-core').ItemInstance[];
 }

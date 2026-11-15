@@ -91,7 +91,22 @@ owner-access bags. Foreign custody still refuses.
 - Migration smoke through 0028 passed, including refusal to roll back retained
   trader equipment. Readiness probes the new table.
 
-Grounded hostile equipment pickup has a separate prepared implementation awaiting
-integration and PostgreSQL/native checks. The full win → pickup → town → sale
-journey and active-course item-sale interruption are NOT_RUN. T022 remains open.
-Publication and merge are NOT_RUN. Balance and owner enjoyment are NOT_MEASURED.
+Grounded hostile equipment pickup is now integrated. The hunt outcome offers
+eligible dead/surrendered hostile gear while the company is physically local.
+The server selects an actual company operator and validates source, custody,
+capacity, observed revision and company scope. ClaimLoot, world claimed/removal
+state, canonical inventory and receipt commit in one transaction. Both the
+original hunt and later hunt cards use the same pickup panel, with known labels
+and an exact saved-request retry.
+
+The author passed one isolated PostgreSQL pickup case covering competing claims,
+retries, wrong company, remote access and capacity rollback. The integrated
+nickname/loot/source/protocol/UI union passes31 tests and server/web typechecks.
+The parent added expected-company validation to the private quote and uses the
+shared 256-codepoint ID reader. Its updated SQL case includes foreign-quote
+privacy and awaits the parent rerun. Required-course item sale interruption
+passes the separate PostgreSQL regression recorded in N06.
+
+The full native win → pickup → town → sale journey remains NOT_RUN. T022 remains
+open. Publication and merge are NOT_RUN. Balance and owner enjoyment are
+NOT_MEASURED.

@@ -8,6 +8,7 @@ import { CompanyCarePanel } from './CompanyCarePanel.js';
 import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 import { RetrainingPanel } from './RetrainingPanel.js';
 import { PerkSelectionPanel } from './PerkSelectionPanel.js';
+import { NicknamePanel } from './NicknamePanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
@@ -81,6 +82,7 @@ export function CompanyPanel(props: {
               <div className="person-head">
                 <span className="person-name">
                   {character.name}
+                  {character.nicknameTextKey && ` · «${nicknameLabel(character.nicknameTextKey)}»`}
                   {character.characterId === company.leaderId && (
                     <span className="leader-mark"> · глава</span>
                   )}
@@ -249,8 +251,18 @@ export function CompanyPanel(props: {
           />
         </>
       )}
+      <NicknamePanel
+        key={`nicknames:${props.accountId}:${company.companyId}`}
+        accountId={props.accountId}
+        company={company}
+        onRefresh={props.onRefreshItems}
+      />
     </section>
   );
+}
+
+function nicknameLabel(key: string) {
+  return key === 'nickname.resilient' ? 'Живучий' : key;
 }
 
 type RosterCharacter = CompanySummaryDto['characters'][number];

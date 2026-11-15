@@ -77,7 +77,7 @@ export function reconcileHostileGearPools(
   if (!profile) throw new TypeError('Hostile gear profile is unavailable');
   validateFirstHuntHostileGear(worldId, profile, hostile, hostile.gear);
   const items = hostile.gear.items.map((item, index) =>
-    index === 1
+    item.definitionId === gearDefinitions(hostile)?.[1]
       ? { ...item, currentCondition: Math.min(hostile.armorCondition, newPools['armor']!) }
       : item,
   );
@@ -92,6 +92,7 @@ export function groundSurrenderedHostileGear(input: {
   readonly profile: HuntProfile;
   readonly hostile: FirstHuntHostileState;
   readonly terminalSourceId: string;
+  readonly terminalRevision: number;
   readonly location: AtLocation;
 }): FirstHuntHostileState {
   const { hostile } = input;
@@ -99,13 +100,18 @@ export function groundSurrenderedHostileGear(input: {
     hostile.disposition !== 'surrendered' ||
     hostile.currentPools['health']! <= 0 ||
     !isEntityId(input.terminalSourceId) ||
+    !Number.isSafeInteger(input.terminalRevision) ||
+    input.terminalRevision < 0 ||
     !isAtLocation(input.location)
   )
     throw new TypeError('Only a living surrendered hostile can drop gear');
   if (!hostile.gear) return hostile;
   validateFirstHuntHostileGear(input.worldId, input.profile, hostile, hostile.gear);
   if (hostile.gear.status === 'DROPPED') {
-    if (hostile.gear.dropSourceId !== input.terminalSourceId)
+    if (
+      hostile.gear.dropSourceId !== input.terminalSourceId ||
+      hostile.gear.terminalRevision !== input.terminalRevision
+    )
       throw new TypeError('Hostile gear was already dropped by another terminal source');
     return hostile;
   }
@@ -135,11 +141,77 @@ export function groundSurrenderedHostileGear(input: {
     ...hostile.gear,
     status: 'DROPPED',
     dropSourceId: input.terminalSourceId,
+    terminalSourceId: input.terminalSourceId,
+    terminalRevision: input.terminalRevision,
     container,
     items,
   };
   validateFirstHuntHostileGear(input.worldId, input.profile, { ...hostile, gear }, gear);
   return { ...hostile, gear };
+}
+
+/** Attach the verified terminal boundary to retained gear, including dead-hostile gear. */
+export function recordHostileGearTerminal(input: {
+  readonly worldId: string;
+  readonly profile: HuntProfile;
+  readonly hostile: FirstHuntHostileState;
+  readonly terminalSourceId: string;
+  readonly terminalRevision: number;
+}): FirstHuntHostileState {
+  if (!input.hostile.gear) return input.hostile;
+  if (
+    (input.hostile.currentPools['health'] !== 0 && input.hostile.disposition !== 'surrendered') ||
+    !isEntityId(input.terminalSourceId) ||
+    !Number.isSafeInteger(input.terminalRevision) ||
+    input.terminalRevision < 0
+  )
+    throw new TypeError('Hostile gear terminal identity is invalid');
+  validateFirstHuntHostileGear(input.worldId, input.profile, input.hostile, input.hostile.gear);
+  const gear: FirstHuntHostileGearState = {
+    ...input.hostile.gear,
+    terminalSourceId: input.terminalSourceId,
+    terminalRevision: input.terminalRevision,
+  };
+  validateFirstHuntHostileGear(input.worldId, input.profile, { ...input.hostile, gear }, gear);
+  return { ...input.hostile, gear };
+}
+
+/** Remove claimed physical instances from the world source while retaining their IDs. */
+export function claimHostileGearItems(input: {
+  readonly worldId: string;
+  readonly profile: HuntProfile;
+  readonly hostile: FirstHuntHostileState;
+  readonly itemIds: readonly string[];
+  readonly terminalSourceId: string;
+  readonly terminalRevision: number;
+}): FirstHuntHostileState {
+  const { hostile } = input;
+  const gear = hostile.gear;
+  if (
+    !gear ||
+    (hostile.currentPools['health'] !== 0 && hostile.disposition !== 'surrendered') ||
+    gear.terminalSourceId !== input.terminalSourceId ||
+    gear.terminalRevision !== input.terminalRevision ||
+    input.itemIds.length === 0 ||
+    new Set(input.itemIds).size !== input.itemIds.length
+  )
+    throw new TypeError('Hostile gear is not available from this verified outcome');
+  validateFirstHuntHostileGear(input.worldId, input.profile, hostile, gear);
+  const selected = new Set(input.itemIds);
+  if (input.itemIds.some((id) => !gear.items.some((item) => item.itemId === id)))
+    throw new TypeError('Hostile gear item is already claimed or unavailable');
+  const nextGear: FirstHuntHostileGearState = {
+    ...gear,
+    items: gear.items.filter((item) => !selected.has(item.itemId)),
+    claimedItemIds: [...(gear.claimedItemIds ?? []), ...input.itemIds].toSorted(),
+  };
+  validateFirstHuntHostileGear(
+    input.worldId,
+    input.profile,
+    { ...hostile, gear: nextGear },
+    nextGear,
+  );
+  return { ...hostile, gear: nextGear };
 }
 
 /** Strict stored-data validator; absent legacy gear is handled by the caller. */
@@ -156,10 +228,23 @@ export function validateFirstHuntHostileGear(
   const admissionId = value['admissionId'];
   const status = value['status'];
   const dropSourceId = value['dropSourceId'];
-  const expectedGearKeys =
-    status === 'DROPPED'
-      ? ['schemaVersion', 'sourceId', 'admissionId', 'status', 'dropSourceId', 'container', 'items']
-      : ['schemaVersion', 'sourceId', 'admissionId', 'status', 'container', 'items'];
+  const terminalSourceId = value['terminalSourceId'];
+  const terminalRevision = value['terminalRevision'];
+  const claimedItemIds = value['claimedItemIds'] ?? [];
+  const optionalKeys = [
+    ...(status === 'DROPPED' ? ['dropSourceId'] : []),
+    ...(terminalSourceId === undefined ? [] : ['terminalSourceId', 'terminalRevision']),
+    ...(value['claimedItemIds'] === undefined ? [] : ['claimedItemIds']),
+  ];
+  const expectedGearKeys = [
+    'schemaVersion',
+    'sourceId',
+    'admissionId',
+    'status',
+    ...optionalKeys,
+    'container',
+    'items',
+  ];
   if (
     !exactKeys(value, expectedGearKeys) ||
     value['schemaVersion'] !== GEAR_SCHEMA_VERSION ||
@@ -167,6 +252,12 @@ export function validateFirstHuntHostileGear(
     typeof sourceId !== 'string' ||
     !isEntityId(admissionId) ||
     !['HELD', 'DROPPED'].includes(status as string) ||
+    (terminalSourceId !== undefined &&
+      (!isEntityId(terminalSourceId) ||
+        typeof terminalRevision !== 'number' ||
+        !Number.isSafeInteger(terminalRevision) ||
+        terminalRevision < 0)) ||
+    (terminalSourceId === undefined && terminalRevision !== undefined) ||
     sourceId !== gearSourceId(worldId, admissionId, hostileId) ||
     !validDispositionAndPool(hostileValue) ||
     (status === 'DROPPED' && hostileValue['disposition'] !== 'surrendered')
@@ -178,8 +269,23 @@ export function validateFirstHuntHostileGear(
     throw new TypeError('Hostile gear drop source is invalid');
   const rawItems = value['items'];
   const expectedDefinitions = gearDefinitions(hostileValue as unknown as FirstHuntHostileState);
-  if (!expectedDefinitions || !Array.isArray(rawItems) || rawItems.length !== 2)
+  if (
+    !expectedDefinitions ||
+    !Array.isArray(rawItems) ||
+    !Array.isArray(claimedItemIds) ||
+    claimedItemIds.some((id) => typeof id !== 'string')
+  )
     throw new TypeError('Hostile gear is outside the authored equipment source');
+
+  const allItemIds = expectedDefinitions.map((definitionId) =>
+    deterministicId(sourceId, hostileId, definitionId),
+  );
+  if (
+    new Set(claimedItemIds).size !== claimedItemIds.length ||
+    claimedItemIds.some((id) => !allItemIds.includes(id)) ||
+    rawItems.length + claimedItemIds.length !== allItemIds.length
+  )
+    throw new TypeError('Hostile gear claimed-item set is invalid');
 
   const profileLocation = expectedLocation(profile);
   const itemDefinitions = expectedDefinitions.map((id) => {
@@ -219,8 +325,10 @@ export function validateFirstHuntHostileGear(
   )
     throw new TypeError('Hostile gear container does not match its retained source');
 
-  const expectedItems = expectedDefinitions.map((definitionId, index) => {
-    const item = rawItems[index];
+  const expectedItems = expectedDefinitions.flatMap((definitionId, index) => {
+    const itemId = allItemIds[index]!;
+    if (claimedItemIds.includes(itemId)) return [];
+    const item = rawItems.find((entry) => isRecord(entry) && entry['itemId'] === itemId);
     if (!isRecord(item)) throw new TypeError('Hostile gear item is invalid');
     const definition = itemDefinitions[index]!;
     const condition =
@@ -245,7 +353,7 @@ export function validateFirstHuntHostileGear(
         'equipped',
         'tombstone',
       ]) ||
-      item['itemId'] !== deterministicId(sourceId, hostileId, definitionId) ||
+      item['itemId'] !== itemId ||
       item['definitionId'] !== definitionId ||
       !isWorldOwner(item['owner'], worldId) ||
       item['containerId'] !== expectedContainerId ||
@@ -262,9 +370,12 @@ export function validateFirstHuntHostileGear(
       item['tombstone'] !== null
     )
       throw new TypeError('Hostile gear item does not match its retained source');
-    return item as unknown as ItemInstance;
+    return [item as unknown as ItemInstance];
   });
-  if (new Set(expectedItems.map((item) => item.itemId)).size !== expectedItems.length)
+  if (
+    new Set(expectedItems.map((item) => item.itemId)).size !== expectedItems.length ||
+    rawItems.length !== expectedItems.length
+  )
     throw new TypeError('Hostile gear item IDs are not unique');
 }
 
