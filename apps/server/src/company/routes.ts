@@ -41,6 +41,7 @@ import type { IssuedOpeningOption } from './opening.js';
 import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
+import { registerCompanyReturnReportRoutes } from './return-report.js';
 import { projectCompanyHoldings } from './holdings.js';
 import { isPayrollPayload } from './payroll-intent.js';
 import {
@@ -58,6 +59,7 @@ export function registerCompanyRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  registerCompanyReturnReportRoutes(app, { database, worldId });
   app.get<{ Params: { siteId: string } }>('/company/recruits/:siteId', async (request, reply) => {
     const accountId = await resolveSessionAccount(request, database);
     if (!accountId) return reply.code(401).send({ error: 'authentication required' });
