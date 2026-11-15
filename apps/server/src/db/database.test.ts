@@ -79,6 +79,11 @@ describe('database readiness dependencies', () => {
       'contract_instances',
       'encounter_admissions',
       'world_proof_claims',
+      'company_return_report_cursors',
+      'story_world_states',
+      'story_company_states',
+      'story_command_receipts',
+      'ordinary_contract_receipts',
     ]) {
       expect(sql).toContain(table);
     }
@@ -88,6 +93,7 @@ describe('database readiness dependencies', () => {
       'campaign_tick',
       'effects_applied_at',
       'redemption_receipt_id',
+      'simulation_at_ms',
     ]) {
       expect(sql).toContain(column);
     }
