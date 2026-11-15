@@ -2,6 +2,9 @@ import {
   PAINTED_ATLAS_REGION,
   PAINTED_ATLAS_SHEET,
   PAINTED_ATLAS_SITES,
+  COMPANY_RULES,
+  campaignTickAt,
+  createCampaignClock,
   mergeExploredBits,
   sightHasCell,
   worldSightCells,
@@ -13,6 +16,7 @@ import type {
   WorldFreeMovementTargetDto,
   WorldLabCartographyDto,
   WorldLabKnownSiteDto,
+  WorldLabObservationDateDto,
 } from '@warwrit/protocol';
 import type { Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
@@ -114,10 +118,11 @@ async function ensureWorldLabCartography(
   }
 }
 
-function knownSite(
+export function projectKnownSite(
   snapshot: Readonly<Record<string, unknown>>,
   source: 'CHART' | 'OBSERVED',
   visited: boolean,
+  lastObservedAt?: WorldLabObservationDateDto,
 ): WorldLabKnownSiteDto {
   const point = snapshot['point'] as WorldLabKnownSiteDto['point'] | undefined;
   if (
@@ -136,7 +141,44 @@ function knownSite(
     point: { ...point },
     source,
     visited,
+    ...(lastObservedAt ? { lastObservedAt } : {}),
   };
+}
+
+export function campaignObservationDate(
+  observedAt: Date,
+  clock: Pick<WorldClockReading, 'epochMs' | 'startingTick'>,
+): { readonly campaignDay: string; readonly tick: string } {
+  const absoluteTick = BigInt(
+    campaignTickAt(
+      createCampaignClock(clock.epochMs, clock.startingTick),
+      String(observedAt.getTime()),
+    ),
+  );
+  const ticksPerDay = BigInt(COMPANY_RULES.ticksPerDay);
+  return {
+    campaignDay: (absoluteTick / ticksPerDay + 1n).toString(),
+    tick: (absoluteTick % ticksPerDay).toString(),
+  };
+}
+
+export function observationDate(
+  observedAt: Date,
+  clock: Pick<WorldClockReading, 'epochMs' | 'startingTick'>,
+): WorldLabObservationDateDto {
+  if (BigInt(observedAt.getTime()) < BigInt(clock.epochMs))
+    return { kind: 'TIMESTAMP', timestamp: observedAt.toISOString() };
+  return { kind: 'CAMPAIGN', ...campaignObservationDate(observedAt, clock) };
+}
+
+export function siteIsVisible(site: WorldLabKnownSiteDto, visible: Uint8Array): boolean {
+  return sightHasCell(
+    visible,
+    worldSightIndex(sightField, {
+      xFp: Number(site.point.xMicroFp) / 65_536,
+      zFp: Number(site.point.zMicroFp) / 65_536,
+    }),
+  );
 }
 
 export async function readWorldLabCartography(
@@ -162,7 +204,7 @@ export async function readWorldLabCartography(
       throw new TypeError('Map grid mismatch');
     charted = mergeExploredBits(charted, grant.coverageSnapshot);
     for (const snapshot of grant.siteSnapshot) {
-      const site = knownSite(snapshot, 'CHART', false);
+      const site = projectKnownSite(snapshot, 'CHART', false);
       sites.set(site.siteId, {
         ...site,
         questMarker:
@@ -171,10 +213,11 @@ export async function readWorldLabCartography(
     }
   }
   for (const observation of stored.places) {
-    const site = knownSite(
+    const site = projectKnownSite(
       observation.knownSnapshot,
       'OBSERVED',
       observation.firstVisitedAt !== null,
+      observationDate(observation.lastObservedAt, clock),
     );
     sites.set(site.siteId, { ...site, questMarker: sites.get(site.siteId)?.questMarker === true });
   }
@@ -207,9 +250,9 @@ export async function readWorldLabCartography(
     charted: Buffer.from(charted).toString('base64'),
     explored: stored.exploredBits.toString('base64'),
     visible: Buffer.from(visible).toString('base64'),
-    sites: [...sites.values()].sort((a, b) =>
-      a.siteId < b.siteId ? -1 : a.siteId > b.siteId ? 1 : 0,
-    ),
+    sites: [...sites.values()]
+      .map((site) => ({ ...site, currentlyVisible: siteIsVisible(site, visible) }))
+      .sort((a, b) => (a.siteId < b.siteId ? -1 : a.siteId > b.siteId ? 1 : 0)),
     imageTileSize: WORLD_LAB_TILE_SIZE,
   };
 }

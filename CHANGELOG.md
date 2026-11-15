@@ -15,6 +15,10 @@ requests.
 - 2026-11-15 — Fixed: replace the skipped leader-death succession case with a
   terminal choice, release and idempotent-retry regression using established
   member terms. [Battle outcomes](docs/work-packages/m1-next/08-battle-outcomes.md#leadership-choice-regression--2026-11-15). LOCAL.
+- 2026-11-16 — Changed: show chart provenance and campaign last-seen dates for
+  stale authorized map markers, derived from stored observation time and current
+  visibility; legacy pre-epoch times retain their original timestamp. Added the
+  wheel-zoom control hint. [N07 marker presentation](docs/work-packages/m1-next/07-world.md#dated-marker-presentation--2026-11-16). LOCAL.
 
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation

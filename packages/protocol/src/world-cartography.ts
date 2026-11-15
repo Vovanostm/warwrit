@@ -1,5 +1,9 @@
 import type { WorldPointMicroFpDto } from './world-point.js';
 
+export type WorldLabObservationDateDto =
+  | { readonly kind?: 'CAMPAIGN'; readonly campaignDay: string; readonly tick: string }
+  | { readonly kind: 'TIMESTAMP'; readonly timestamp: string };
+
 /** Personal, server-filtered knowledge of the current region; no private world catalogue. */
 export interface WorldLabKnownSiteDto {
   readonly siteId: string;
@@ -8,6 +12,10 @@ export interface WorldLabKnownSiteDto {
   readonly icon: string;
   readonly source: 'CHART' | 'OBSERVED';
   readonly visited: boolean;
+  /** Last authorized observation; legacy values before world genesis retain their timestamp. */
+  readonly lastObservedAt?: WorldLabObservationDateDto;
+  /** Derived from this company's server-issued visibility mask for this snapshot. */
+  readonly currentlyVisible?: boolean;
   /** The location was supplied by a quest marker grant; retain its name at overview scale. */
   readonly questMarker?: boolean;
 }

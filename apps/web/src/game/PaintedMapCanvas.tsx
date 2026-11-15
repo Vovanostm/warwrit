@@ -310,17 +310,31 @@ type PaintedSiteProps = {
 function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSiteProps) {
   const position = toPixel(site.point, sheet);
   const icon = isMapIconName(site.icon) ? site.icon : undefined;
+  const lastObservedAt = site.lastObservedAt;
+  const lastSeen =
+    site.source === 'OBSERVED' && site.currentlyVisible === false && lastObservedAt
+      ? lastObservedAt.kind !== 'TIMESTAMP'
+        ? `Видели в день ${lastObservedAt.campaignDay} · такт ${lastObservedAt.tick}`
+        : `Видели ${new Intl.DateTimeFormat('ru-RU', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            timeZone: 'UTC',
+          }).format(new Date(lastObservedAt.timestamp))} UTC`
+      : undefined;
+  const sourceLabel = site.source === 'CHART' ? 'По карте' : 'По наблюдению';
   return (
     <g
       className={`site-marker painted-site${site.visited ? ' site-visited' : ''}`}
       data-site-id={site.siteId}
       data-source={site.source.toLowerCase()}
+      data-visible={site.currentlyVisible === undefined ? undefined : String(site.currentlyVisible)}
       data-x={position.x}
       data-y={position.y}
       transform={`translate(${position.x} ${position.y})`}
       role={actionable ? 'button' : 'img'}
       tabIndex={actionable ? 0 : undefined}
       aria-label={site.name}
+      aria-description={lastSeen}
       onClick={actionable ? () => onSelectSite(site.siteId) : undefined}
       onKeyDown={
         actionable
@@ -333,6 +347,7 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
           : undefined
       }
     >
+      <title>{lastSeen ? `${site.name} · ${lastSeen}` : `${sourceLabel}: ${site.name}`}</title>
       <circle className="site-hit" r="18" />
       <line className="site-leader" />
       <circle className="site-disc" r="11" />
@@ -340,12 +355,20 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
         <use className="map-icon" href={mapIconHref(icon)} x="-10" y="-10" width="20" height="20" />
       )}
       <text
+        key={`${site.name} · ${lastSeen ?? ''}`}
         className="site-label"
-        data-major={String(site.questMarker === true || ['town', 'village'].includes(site.icon))}
+        data-major={String(
+          actionable || site.questMarker === true || ['town', 'village'].includes(site.icon),
+        )}
         textAnchor="middle"
         y="-20"
       >
-        {site.name}
+        <tspan x="0">{site.name}</tspan>
+        {lastSeen && (
+          <tspan className="site-last-seen" x="0" dy="14">
+            {lastSeen}
+          </tspan>
+        )}
       </text>
     </g>
   );
@@ -415,7 +438,7 @@ export function PaintedMapCanvas(props: PaintedMapProps) {
       <svg
         ref={map}
         className={`world-map painted-world-map${props.night ? ' painted-world-map-night' : ''}`}
-        aria-label="Карта Серого Поречья. Перетаскивание двигает карту, правая кнопка мыши задаёт путь, S или пробел останавливает отряд."
+        aria-label="Карта Серого Поречья. Перетаскивание двигает карту, колесо мыши меняет масштаб, правая кнопка задаёт путь, S или пробел останавливает отряд."
         tabIndex={0}
         preserveAspectRatio="none"
       >

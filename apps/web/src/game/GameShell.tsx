@@ -431,7 +431,8 @@ export function GameShell(props: {
             </>
           )}
           <p className="map-legend" hidden={Boolean(visiting)}>
-            {map.regionName} · ПКМ — идти · S или пробел — остановиться · зажать ЛКМ — двигать карту
+            {map.regionName} · ПКМ — идти · S или пробел — остановиться · колесо — масштаб · ЛКМ —
+            двигать карту
           </p>
         </div>
 

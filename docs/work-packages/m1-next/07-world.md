@@ -12,13 +12,46 @@ Return to view and verify the refreshed authorized observation. Check unknown,
 explored and visible terrain by day/night and confirm an old marker keeps its
 last known position. Fresh browser/SQL conformance checks are NOT_RUN.
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
+
+SPECIFIED / LOCAL; N07 observer, travel and offline acceptance remains open.
+The dated marker projection is implemented; the full two-observer/native
+day-night journey and fresh browser/SQL conformance are NOT_RUN here. Continue
+with the accepted observation → leave visibility → changed second observer →
+return and refresh scenario.
+
+### Prior checkpoint — 2026-11-08
 
 SPECIFIED / LOCAL; complete observer/travel/offline matrix NOT_RUN here.
 Painted private atlas and server-owned movement already exist; WLC-08 reports
 actual travel/restart, using explicitly accelerated QA time.
-Next: inspect actual cartography/surroundings authority and select one missing row.
 [Common contract](COMMON.md). [Prompt](prompts/07-world.md).
+
+### Dated marker presentation — 2026-11-16
+
+LOCAL — the authorized cartography DTO now carries optional current visibility
+and a campaign day/tick derived from each stored `lastObservedAt`. Observations
+before world genesis retain their original timestamp instead of failing the
+map projection or receiving an invented campaign day. Chart grants remain
+chart-sourced and undated. Stale observed markers show their last-seen date and
+keep their accessible site name; chart markers identify the map as their source.
+The existing map hint now names wheel zoom.
+
+PASS — focused cartography and rendered-markup tests (6 tests); core/protocol
+builds, server-projection and web type checks; Prettier and `git diff --check`.
+Full server typecheck was attempted but could not resolve missing `pngjs` and
+testkit packages in the available dependency tree. Two-observer/native day-night
+acceptance and fresh browser/SQL conformance remain NOT_RUN; N07 remains open.
+
+Parent integration passes both server/web typechecks and seven focused tests.
+A cached campaign-date response without its new tag caused an observed renderer
+error during the development update. The renderer now accepts that prior shape,
+with a regression. The visible map hint includes wheel zoom. Native inspection
+also found dates overlapping site names. Dates now share the measured label
+layout with their site, including its full height and per-line width; actionable
+places retain overview labels. The retained owner map shows its saved observation
+dates after ordinary retry/reload. The complete paired-observer matrix remains
+open. Captures are in `output/playwright/m1-dated-atlas-*20261116.png`.
 
 ## Player problem and result
 

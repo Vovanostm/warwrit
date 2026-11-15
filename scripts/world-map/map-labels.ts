@@ -29,12 +29,12 @@ function available(box: Box, context: LabelContext): boolean {
   );
 }
 
-function labelBox(origin: DOMMatrix, offset: Offset, width: number): Box {
+function labelBox(origin: DOMMatrix, offset: Offset, width: number, height: number): Box {
   return {
     left: origin.e + offset[0] - width / 2,
     right: origin.e + offset[0] + width / 2,
     top: origin.f + offset[1] - 14,
-    bottom: origin.f + offset[1] + 4,
+    bottom: origin.f + offset[1] - 14 + height,
   };
 }
 
@@ -42,23 +42,34 @@ function showLabel(label: SVGTextElement, context: LabelContext): void {
   const marker = label.parentElement as unknown as SVGGElement;
   const origin = marker.getScreenCTM();
   if (!origin) return;
-  const width = Number((label.dataset['textWidth'] ??= String(label.getComputedTextLength())));
+  const lines = [...label.querySelectorAll<SVGTSpanElement>('tspan')];
+  const width = Number(
+    (label.dataset['textWidth'] ??= String(
+      lines.length
+        ? Math.max(...lines.map((line) => line.getComputedTextLength()))
+        : label.getComputedTextLength(),
+    )),
+  );
+  const height = Number(
+    (label.dataset['textHeight'] ??= String(Math.max(18, label.getBBox().height + 4))),
+  );
+  const extraHeight = height - 18;
   const side = width / 2 + 24;
   const choices: readonly Offset[] = [
-    [0, -29],
-    [side, 4],
-    [0, 35],
-    [-side, 4],
-    [side, -28],
-    [-side, -28],
-    [side, 35],
-    [-side, 35],
-    [0, -58],
+    [0, -29 - extraHeight],
+    [side, 4 - extraHeight / 2],
+    [0, 36],
+    [-side, 4 - extraHeight / 2],
+    [side, -28 - extraHeight],
+    [-side, -28 - extraHeight],
+    [side, 36],
+    [-side, 36],
+    [0, -58 - extraHeight],
     [0, 63],
   ];
   const previous = Number(label.dataset['slot'] ?? 0);
   const slots = [previous, ...choices.map((_, i) => i).filter((i) => i !== previous)];
-  const slot = slots.find((i) => available(labelBox(origin, choices[i]!, width), context));
+  const slot = slots.find((i) => available(labelBox(origin, choices[i]!, width, height), context));
   const leader = marker.querySelector<SVGLineElement>('.site-leader')!;
   label.style.visibility = slot === undefined ? 'hidden' : 'visible';
   leader.style.visibility = label.style.visibility;
@@ -67,9 +78,10 @@ function showLabel(label: SVGTextElement, context: LabelContext): void {
   label.dataset['slot'] = String(slot);
   label.setAttribute('x', String(offset[0]));
   label.setAttribute('y', String(offset[1]));
+  for (const line of lines) line.setAttribute('x', String(offset[0]));
   leader.setAttribute('x2', String(offset[0] === 0 ? 0 : Math.sign(offset[0]) * 20));
-  leader.setAttribute('y2', String(offset[1] < 0 ? offset[1] + 6 : offset[1] - 16));
-  context.placed.push(labelBox(origin, offset, width));
+  leader.setAttribute('y2', String(offset[1] < 0 ? offset[1] + extraHeight + 6 : offset[1] - 16));
+  context.placed.push(labelBox(origin, offset, width, height));
 }
 
 function priority(label: SVGTextElement, focusedSiteId: string | undefined): number {
