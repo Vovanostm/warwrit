@@ -13,7 +13,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.mill-worker.01'
   | 'ci.m1.light-sack.01'
   | 'ci.m1.two-receipts.01'
-  | 'ci.m1.empty-watch-record.01';
+  | 'ci.m1.empty-watch-record.01'
+  | 'ci.m1.foul-well.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -73,6 +74,7 @@ export interface OrdinaryContractTerms {
 const place = (siteId: string, areaId: string): ContractPlace => ({ siteId, areaId });
 const KAMENNY_BROD = place('kamenny-brod', 'kamenny-brod-market');
 const BEREZNYAK = place('bereznyak', 'bereznyak-green');
+const CHAPEL = KAMENNY_BROD;
 const TIKHAYA_GAT = place('tikhaya-gat', 'tikhaya-gat-bank');
 const SEVERNY_DVOR = place('severny-dvor', 'severny-dvor-yard');
 const MILL_YARD = place('staraya-melnitsa', 'staraya-melnitsa-yard');
@@ -346,6 +348,75 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         resultTextKey: 'empty-watch-record.proof-destroyed',
         completes: true,
         payoutPolicy: 'NO_PAYOUT',
+      },
+    ],
+  },
+  {
+    instanceId: 'ci.m1.foul-well.01',
+    definitionId: 'ct.m1.foul-well.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'father-nikon',
+    issuerPlace: CHAPEL,
+    walletId: 'wallet.chapel.kamenny-brod.01',
+    genesisWalletQ: CROWNS(240),
+    rewardQ: CROWNS(120),
+    steps: [
+      {
+        stepId: 'inspect-well',
+        action: 'INSPECT',
+        place: BEREZNYAK,
+        requires: [],
+        gates: [],
+        produces: ['foul-well-observation'],
+        resultTextKey: 'foul-well.well',
+      },
+      {
+        stepId: 'ask-aghafya',
+        action: 'ASK',
+        place: BEREZNYAK,
+        requires: ['foul-well-observation'],
+        gates: [],
+        produces: ['foul-well-aghafya-testimony'],
+        resultTextKey: 'foul-well.aghafya',
+      },
+      {
+        stepId: 'search-ravine',
+        action: 'SEARCH',
+        place: BEREZNYAK,
+        requires: ['foul-well-aghafya-testimony'],
+        gates: [],
+        produces: ['foul-well-graves'],
+        resultTextKey: 'foul-well.graves',
+      },
+      {
+        stepId: 'ask-frol',
+        action: 'ASK',
+        place: BEREZNYAK,
+        requires: ['foul-well-graves'],
+        gates: [],
+        produces: ['foul-well-frol-testimony'],
+        resultTextKey: 'foul-well.frol',
+      },
+      {
+        stepId: 'tell-nikon-about-ravine',
+        action: 'REPORT',
+        place: CHAPEL,
+        requires: ['foul-well-graves', 'foul-well-frol-testimony'],
+        gates: [],
+        produces: ['foul-well-truth-reported'],
+        resultTextKey: 'foul-well.truth-ending',
+        completes: true,
+        payoutPolicy: 'NO_PAYOUT',
+      },
+      {
+        stepId: 'name-aghafya',
+        action: 'REPORT',
+        place: CHAPEL,
+        requires: ['foul-well-aghafya-testimony'],
+        gates: [],
+        produces: ['foul-well-aghafya-accused'],
+        resultTextKey: 'foul-well.accusation-ending',
+        completes: true,
       },
     ],
   },

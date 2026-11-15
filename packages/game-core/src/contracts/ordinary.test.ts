@@ -14,6 +14,7 @@ import { validateContractCatalogue } from './validate.js';
 
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const CITY: ContractPlace = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
+const BEREZ: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
 const BANK: ContractPlace = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
 const gates = { DAYLIGHT: true, RAIDERS_DEFEATED: false, BEAST_DEFEATED: false };
 
@@ -337,6 +338,102 @@ describe('ordinary contract transitions', () => {
     expect(
       reloaded.acceptedTerms?.steps.find((step) => step.stepId === 'throw-sack-in-river'),
     ).toHaveProperty('payoutPolicy', 'NO_PAYOUT');
+  });
+
+  it('preserves the foul-well choice: truth is unpaid, accusation pays without the ravine', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const profile = ordinaryContractProfile('ci.m1.foul-well.01')!;
+    expect(profile.rewardQ).toBe('120000000');
+    const finish = (ending: 'tell-nikon-about-ravine' | 'name-aghafya') => {
+      let state = prepared(
+        prepareOrdinaryContractCommand(
+          profile,
+          ordinaryContractGenesis(profile),
+          { type: 'ACCEPT' },
+          {
+            companyId: ending,
+            standingAt: CITY,
+            atTick: '10',
+            expectedRevision: '0',
+            sourceEventId: `${ending}:accept`,
+            gates,
+          },
+        ),
+      ).next;
+      for (const stepId of ['inspect-well', 'ask-aghafya']) {
+        state = prepared(
+          prepareOrdinaryContractCommand(
+            profile,
+            state,
+            { type: 'STEP', stepId },
+            {
+              companyId: ending,
+              standingAt: BEREZ,
+              atTick: String(BigInt(state.revision) + 11n),
+              expectedRevision: state.revision,
+              sourceEventId: `${ending}:${stepId}`,
+              gates,
+            },
+          ),
+        ).next;
+      }
+      if (ending === 'tell-nikon-about-ravine') {
+        expect(
+          prepareOrdinaryContractCommand(
+            profile,
+            state,
+            { type: 'STEP', stepId: ending },
+            {
+              companyId: ending,
+              standingAt: CITY,
+              atTick: '13',
+              expectedRevision: state.revision,
+              sourceEventId: `${ending}:premature`,
+              gates,
+            },
+          ),
+        ).toMatchObject({ kind: 'REJECTED', code: 'MISSING_EVIDENCE' });
+        for (const stepId of ['search-ravine', 'ask-frol']) {
+          state = prepared(
+            prepareOrdinaryContractCommand(
+              profile,
+              state,
+              { type: 'STEP', stepId },
+              {
+                companyId: ending,
+                standingAt: BEREZ,
+                atTick: String(BigInt(state.revision) + 11n),
+                expectedRevision: state.revision,
+                sourceEventId: `${ending}:${stepId}`,
+                gates,
+              },
+            ),
+          ).next;
+        }
+      }
+      return prepared(
+        prepareOrdinaryContractCommand(
+          profile,
+          state,
+          { type: 'STEP', stepId: ending },
+          {
+            companyId: ending,
+            standingAt: CITY,
+            atTick: '20',
+            expectedRevision: state.revision,
+            sourceEventId: `${ending}:finish`,
+            gates,
+          },
+        ),
+      );
+    };
+    const truth = finish('tell-nikon-about-ravine');
+    expect(truth.payout).toBeNull();
+    expect(truth.next.facts.map((fact) => fact.slotId)).toContain('foul-well-truth-reported');
+    const accusation = finish('name-aghafya');
+    expect(accusation.payout).toEqual({ companyId: 'name-aghafya', rewardQ: '120000000' });
+    expect(accusation.next.facts.map((fact) => fact.slotId)).toContain('foul-well-aghafya-accused');
+    expect(accusation.next.facts.map((fact) => fact.slotId)).not.toContain('foul-well-graves');
   });
 
   it('pays the delivering company exactly once and only for a person it holds', () => {

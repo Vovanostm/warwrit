@@ -139,6 +139,8 @@ export function contractView(
   standingAt: ContractPlace | null,
   gates: Readonly<Record<OrdinaryStepGate, boolean>>,
   battleStarted: boolean,
+  prerequisiteMet = true,
+  worldTick = '0',
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const role =
@@ -176,6 +178,31 @@ export function contractView(
             watchman: 'ON_DUTY' as const,
           }
         : undefined;
+  const foulWellPublicConsequences =
+    profile.instanceId === 'ci.m1.foul-well.01' &&
+    terminalFact?.slotId === 'foul-well-truth-reported'
+      ? {
+          kind: 'FOUL_WELL' as const,
+          herbalist: 'IN_VILLAGE' as const,
+          herbsAtTrader: 'AVAILABLE' as const,
+          ...(state.outcome?.companyId === companyId
+            ? { chapelCarePriceMultiplier: 2 as const }
+            : {}),
+        }
+      : profile.instanceId === 'ci.m1.foul-well.01' &&
+          terminalFact?.slotId === 'foul-well-aghafya-accused'
+        ? BigInt(worldTick) - BigInt(terminalFact.atTick) >= 7000n
+          ? {
+              kind: 'FOUL_WELL' as const,
+              herbalist: 'EXILED' as const,
+              herbsAtTrader: 'REMOVED' as const,
+            }
+          : {
+              kind: 'FOUL_WELL' as const,
+              herbalist: 'IN_VILLAGE' as const,
+              herbsAtTrader: 'AVAILABLE' as const,
+            }
+        : undefined;
   return {
     instanceId: profile.instanceId,
     template: terms.template,
@@ -194,7 +221,9 @@ export function contractView(
       ? { terminalPayout: terminalStep.payoutPolicy === 'NO_PAYOUT' ? 'NO_PAYOUT' : 'PAID' }
       : {}),
     ...(emptyWatchPublicConsequences ? { publicConsequences: emptyWatchPublicConsequences } : {}),
+    ...(foulWellPublicConsequences ? { publicConsequences: foulWellPublicConsequences } : {}),
     canAccept:
+      prerequisiteMet &&
       companyId !== undefined &&
       state.outcome === null &&
       state.ownerCompanyId === null &&
@@ -339,6 +368,21 @@ async function executeOrdinaryCommand(
   const state = readOrdinaryContractState(profile, row.state, row.profile_id);
   if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profile.walletId))
     throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
+  if (profile.instanceId === 'ci.m1.foul-well.01' && request.type === 'ACCEPT') {
+    const priorProfile = ordinaryContractProfile('ci.m1.missing-herbs.01');
+    const priorRow = await transaction
+      .selectFrom('ordinary_contracts')
+      .select(['profile_id', 'state'])
+      .where('world_id', '=', worldId)
+      .where('instance_id', '=', 'ci.m1.missing-herbs.01')
+      .executeTakeFirst();
+    if (
+      !priorProfile ||
+      !priorRow ||
+      !readOrdinaryContractState(priorProfile, priorRow.state, priorRow.profile_id).outcome
+    )
+      return reject('NOT_AVAILABLE');
+  }
   const prepared = prepareOrdinaryContractCommand(
     profile,
     state,
@@ -452,6 +496,7 @@ export function registerOrdinaryContractRoutes(
         : undefined;
       const standingAt = company ? standingPlace(company) : null;
       const gates = await readGates(transaction, worldId);
+      const worldTick = (await readWorldClock(transaction, worldId)).tick;
       const rows = await transaction
         .selectFrom('ordinary_contracts')
         .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
@@ -465,6 +510,16 @@ export function registerOrdinaryContractRoutes(
         if (!profileVersion)
           throw new TypeError('Ordinary contract row has no retained immutable profile version');
         const state = readOrdinaryContractState(profileVersion, row.state, row.profile_id);
+        let prerequisiteMet = true;
+        if (profile.instanceId === 'ci.m1.foul-well.01') {
+          const priorProfile = ordinaryContractProfile('ci.m1.missing-herbs.01');
+          const priorRow = rows.find((entry) => entry.instance_id === 'ci.m1.missing-herbs.01');
+          prerequisiteMet = Boolean(
+            priorProfile &&
+            priorRow &&
+            readOrdinaryContractState(priorProfile, priorRow.state, priorRow.profile_id).outcome,
+          );
+        }
         if (row.wallet_id !== (state.acceptedTerms?.walletId ?? profileVersion.walletId))
           throw new TypeError('Ordinary contract issuer wallet does not match its accepted terms');
         contracts.push(
@@ -475,6 +530,8 @@ export function registerOrdinaryContractRoutes(
             standingAt,
             gates,
             await ordinaryBattleStarted(transaction, worldId, profileVersion),
+            prerequisiteMet,
+            worldTick,
           ),
         );
       }

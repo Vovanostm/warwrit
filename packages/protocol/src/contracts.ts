@@ -309,11 +309,19 @@ export interface OrdinaryContractDto {
   /** Actual payout policy for the recorded terminal step. */
   readonly terminalPayout?: 'PAID' | 'NO_PAYOUT';
   /** Public only after a terminal choice has been recorded in the shared world contract. */
-  readonly publicConsequences?: {
-    readonly kind: 'EMPTY_WATCH_RECORD';
-    readonly refugeeCamp: 'PRESENT' | 'REMOVED';
-    readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
-  };
+  readonly publicConsequences?:
+    | {
+        readonly kind: 'EMPTY_WATCH_RECORD';
+        readonly refugeeCamp: 'PRESENT' | 'REMOVED';
+        readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
+      }
+    | {
+        readonly kind: 'FOUL_WELL';
+        readonly herbalist: 'IN_VILLAGE' | 'EXILED';
+        /** Present only to the company whose chapel care price changed. */
+        readonly chapelCarePriceMultiplier?: 1 | 2;
+        readonly herbsAtTrader: 'AVAILABLE' | 'REMOVED';
+      };
   readonly canAccept: boolean;
   readonly canHelp: boolean;
   readonly canWithdraw: boolean;
