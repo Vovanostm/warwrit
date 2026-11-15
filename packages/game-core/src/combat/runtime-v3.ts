@@ -8,11 +8,22 @@ import {
   type BattleState,
   type CombatTransition,
   type CombatUnitState,
+  type CombatSideSetup,
   type Hex,
 } from './types.js';
 
 function copyHex(value: Hex): Hex {
   return { q: value.q, r: value.r };
+}
+
+function materializeSides(sides: readonly CombatSideSetup[]): BattleState['sides'] {
+  const [first, second, ...remaining] = sides;
+  invariant(first !== undefined && second !== undefined, 'V3 battle requires at least two sides');
+  const copy = (side: CombatSideSetup): CombatSideSetup => ({
+    id: side.id,
+    retreatHexes: side.retreatHexes.map(copyHex),
+  });
+  return [copy(first), copy(second), ...remaining.map(copy)];
 }
 
 export function startBattleV3(setup: BattleSetupV3): CombatTransition {
@@ -41,10 +52,7 @@ export function startBattleV3(setup: BattleSetupV3): CombatTransition {
     .map(({ id }) => id);
   const firstId = initiativeOrder[0];
   invariant(firstId !== undefined, 'V3 battle must start with an active unit');
-  const sides = setup.sides.map((side) => ({
-    id: side.id,
-    retreatHexes: side.retreatHexes.map(copyHex),
-  })) as unknown as BattleState['sides'];
+  const sides = materializeSides(setup.sides);
   const parties = setup.parties.map((party) => ({ ...party }));
   const activation = {
     id: `1:${firstId}`,

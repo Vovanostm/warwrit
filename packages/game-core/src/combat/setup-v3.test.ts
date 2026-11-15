@@ -3,6 +3,7 @@ import { battleId, sideId, unitId } from './types.js';
 import { applyCombatCommand, assertBattleState } from './engine.js';
 import { canonicalCombatState, replayCombat } from './replay.js';
 import { previewCombatAttacks } from './sprite-prototype.js';
+import { isSpriteS4Ruleset } from './rules.js';
 import { startBattleV3 } from './runtime-v3.js';
 import {
   COMBAT_V3_SCHEMA_VERSION,
@@ -75,10 +76,53 @@ describe('combat setup schema 3', () => {
       controllerId: 'controller-1',
     });
     expect(JSON.parse(canonicalCombatState(started.state)).unitParties).toHaveLength(36);
-    const replay = { schemaVersion: COMBAT_V3_SCHEMA_VERSION, setup, commands: [] } as const;
-    expect(canonicalCombatState(replayCombat(replay).state)).toBe(
-      canonicalCombatState(started.state),
-    );
+    const wait = {
+      type: 'wait' as const,
+      commandId: 'schema3-wait' as never,
+      actorId: started.state.activation!.unitId,
+      activationId: started.state.activation!.id,
+    };
+    const replay = { schemaVersion: COMBAT_V3_SCHEMA_VERSION, setup, commands: [wait] } as const;
+    const once = replayCombat(replay);
+    const twice = replayCombat(replay);
+    expect(once.commandsApplied).toBe(1);
+    expect(canonicalCombatState(once.state)).toBe(canonicalCombatState(twice.state));
+    expect(isSpriteS4Ruleset(M1_DOMAIN_BRIDGE_V6_RULESET_ID)).toBe(true);
+    const baseline = canonicalCombatState(started.state);
+    const changedCapability = {
+      ...started.state,
+      units: started.state.units.map((unit, index) =>
+        index === 0 ? { ...unit, capabilities: { ...unit.capabilities!, move: false } } : unit,
+      ),
+    };
+    const changedTerrain = {
+      ...started.state,
+      map: {
+        ...started.state.map,
+        tiles: [{ q: 0, r: 0, height: 0 as const, terrain: 'fire' as const }],
+      },
+    };
+    const changedThreat = {
+      ...started.state,
+      units: started.state.units.map((unit, index) =>
+        index === 0
+          ? {
+              ...unit,
+              threat: {
+                targetId: unitId('unit-01'),
+                targetHex: { q: 1, r: 0 },
+                range: 2 as const,
+                damage: { minimum: 2, maximum: 4 },
+                retargeted: false,
+                responseReceived: false,
+              },
+            }
+          : unit,
+      ),
+    };
+    expect(canonicalCombatState(changedCapability)).not.toBe(baseline);
+    expect(canonicalCombatState(changedTerrain)).not.toBe(baseline);
+    expect(canonicalCombatState(changedThreat)).not.toBe(baseline);
   });
 
   it('rejects oversize parties, sides, side references, fourth sides and overlapping positions', () => {
@@ -148,6 +192,47 @@ describe('combat setup schema 3', () => {
     if (waited.ok) expect(waited.state.status).toBe('active');
   });
 
+  it('rejects corrupted V6 attribution and capacity in persisted battle state', () => {
+    const initial = startBattleV3(setupV3()).state;
+    expect(() =>
+      assertBattleState({ ...initial, parties: [...initial.parties!, initial.parties![0]!] }),
+    ).toThrow(/party IDs must be unique/);
+    expect(() =>
+      assertBattleState({
+        ...initial,
+        parties: initial.parties!.map((party) =>
+          party.id === 'party-player'
+            ? { id: party.id, sideId: party.sideId, kind: 'player' as const }
+            : party,
+        ),
+      }),
+    ).toThrow(/must retain a controller/);
+    expect(() =>
+      assertBattleState({
+        ...initial,
+        units: initial.units.map((unit, index) =>
+          index === 12 ? { ...unit, sideId: sideId('unknown') } : unit,
+        ),
+      }),
+    ).toThrow(/unknown side/);
+    expect(() =>
+      assertBattleState({
+        ...initial,
+        units: initial.units.map((unit, index) =>
+          index === 6 ? { ...unit, partyId: 'party-player' } : unit,
+        ),
+      }),
+    ).toThrow(/exceeds six/);
+    expect(() =>
+      assertBattleState({
+        ...initial,
+        units: initial.units.map((unit, index) =>
+          index === 12 ? { ...unit, sideId: sideId('side-0'), partyId: 'party-0-npc' } : unit,
+        ),
+      }),
+    ).toThrow(/must retain 1-12 units/);
+  });
+
   it('previews enemies from both other sides as hostile targets', () => {
     const base = setupV3();
     const setup = {
@@ -164,5 +249,111 @@ describe('combat setup schema 3', () => {
     expect(state.activation?.unitId).toBe(unitId('unit-00'));
     const targets = previewCombatAttacks(state).map(({ targetId }) => targetId);
     expect(targets).toEqual(expect.arrayContaining([unitId('unit-12'), unitId('unit-24')]));
+  });
+
+  it('applies V6 terrain and capability rules through accepted command boundaries', () => {
+    const base = setupV3();
+    const setup: BattleSetupV3 = {
+      ...base,
+      map: {
+        ...base.map,
+        tiles: [{ q: 1, r: 0, height: 0, terrain: 'fire' }],
+      },
+      units: base.units.map((unit, index) => {
+        if (index === 1) return { ...unit, position: { q: 37, r: 0 } };
+        return unit;
+      }),
+    };
+    const started = startBattleV3(setup).state;
+    const actor = started.activation!.unitId;
+    const moved = applyCombatCommand(started, {
+      type: 'move',
+      commandId: 'schema3-fire-step' as never,
+      actorId: actor,
+      activationId: started.activation!.id,
+      to: { q: 1, r: 0 },
+    });
+    expect(moved.ok).toBe(true);
+    if (moved.ok) {
+      expect(moved.state.units.find(({ id }) => id === actor)?.health).toBe(95);
+      expect(moved.events.some(({ type }) => type === 'unit.fire-damaged')).toBe(true);
+    }
+
+    const adjacentSetup: BattleSetupV3 = {
+      ...setup,
+      map: { ...setup.map, tiles: [] },
+      units: setup.units.map((unit, index) =>
+        index === 1
+          ? { ...unit, position: { q: 37, r: 0 } }
+          : index === 12
+            ? { ...unit, position: { q: 1, r: 0 } }
+            : unit,
+      ),
+    };
+    const adjacent = startBattleV3(adjacentSetup).state;
+    const adjacentActor = adjacent.activation!.unitId;
+    const unableToAttack = {
+      ...adjacent,
+      units: adjacent.units.map((unit) =>
+        unit.id === adjacentActor
+          ? { ...unit, capabilities: { ...unit.capabilities!, attack: false } }
+          : unit,
+      ),
+    };
+    const rejected = applyCombatCommand(unableToAttack, {
+      type: 'attack',
+      commandId: 'schema3-incapable-attack' as never,
+      actorId: adjacentActor,
+      activationId: adjacent.activation!.id,
+      targetId: unitId('unit-12'),
+    });
+    expect(rejected.ok).toBe(false);
+    expect(rejected.state).toBe(unableToAttack);
+  });
+
+  it('resolves a free S4 reaction from another side during movement', () => {
+    const base = setupV3();
+    const mover = base.units[6]!;
+    const controller = base.units[12]!;
+    const setup: BattleSetupV3 = {
+      ...base,
+      map: {
+        hexes: [
+          { q: -1, r: 0 },
+          { q: 0, r: 0 },
+          { q: 1, r: 0 },
+          { q: 2, r: 0 },
+          { q: 3, r: 0 },
+        ],
+        blocked: [],
+      },
+      sides: [
+        { ...base.sides[0]!, retreatHexes: [{ q: -1, r: 0 }] },
+        { ...base.sides[1]!, retreatHexes: [{ q: 3, r: 0 }] },
+      ],
+      parties: [base.parties[1]!, base.parties[2]!],
+      units: [
+        { ...mover, position: { q: 1, r: 0 }, attributes: { ...mover.attributes, initiative: 20 } },
+        {
+          ...controller,
+          position: { q: 0, r: 0 },
+          attributes: { ...controller.attributes, accuracy: 100 },
+        },
+      ],
+    };
+    const started = startBattleV3(setup).state;
+    expect(started.activation?.unitId).toBe(mover.id);
+    const result = applyCombatCommand(started, {
+      type: 'move',
+      commandId: 'schema3-reaction-step' as never,
+      actorId: mover.id,
+      activationId: started.activation!.id,
+      to: { q: 2, r: 0 },
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.events.some(({ type }) => type === 'unit.damaged')).toBe(true);
+      expect(result.state.units.find(({ id }) => id === controller.id)?.reactionSpent).toBe(true);
+    }
   });
 });

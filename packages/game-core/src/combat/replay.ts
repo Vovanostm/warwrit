@@ -3,6 +3,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
 } from './setup-v2.js';
 import { isSpriteS4Ruleset } from './rules.js';
 import { invariant } from '../primitives.js';
@@ -87,7 +88,8 @@ export function canonicalCombatState(state: BattleState): string {
         ...canonicalUnit(unit),
         ...(state.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID ||
         state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+        state.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
           ? { capabilities: unit.capabilities }
           : {}),
         ...(isTacticalV3Ruleset(state.rulesetId)
