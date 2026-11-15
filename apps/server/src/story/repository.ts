@@ -190,14 +190,14 @@ export async function lockStoryWorld(
     .forUpdate()
     .executeTakeFirst();
   if (!row) throw new Error('Story world state could not be locked');
-  const state = validateStoryWorldRow(row, source, source.availabilityBasis);
+  const state = validateStoryWorldRow(row, source, source);
   return { row, state };
 }
 
 function validateStoryWorldRow(
   row: StoryWorldRow,
   identity: StoryDeliveryEvidence['identity'],
-  availabilityBasis?: StoryEligibilitySource['availabilityBasis'],
+  source?: StoryEligibilitySource,
 ): StoryWorldState {
   const state = readStoryWorldState(row.state);
   if (
@@ -208,8 +208,10 @@ function validateStoryWorldRow(
     state.eligibilitySource.sourceEventId !== identity.sourceEventId ||
     state.eligibilitySource.deliveredAtTick !== identity.deliveredAtTick ||
     (state.eligibilitySource.availabilityBasis !== undefined &&
-      availabilityBasis !== undefined &&
-      state.eligibilitySource.availabilityBasis !== availabilityBasis)
+      source !== undefined &&
+      (state.eligibilitySource.availabilityBasis !== source.availabilityBasis ||
+        (source.availabilityBasis === 'EXACT_SIMULATION_TIME' &&
+          state.eligibilitySource.availableAtTick !== source.availableAtTick)))
   )
     throw new TypeError('Story world row does not match its trusted rescue source');
   return state;
@@ -219,7 +221,7 @@ export async function readStoryWorldIfPresent(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
   identity: StoryDeliveryEvidence['identity'],
-  availabilityBasis?: StoryEligibilitySource['availabilityBasis'],
+  source?: StoryEligibilitySource,
 ): Promise<StoryWorldState | undefined> {
   const row = await transaction
     .selectFrom('story_world_states')
@@ -227,7 +229,7 @@ export async function readStoryWorldIfPresent(
     .where('world_id', '=', worldId)
     .where('mission_id', '=', STORY_MISSION_ID)
     .executeTakeFirst();
-  return row ? validateStoryWorldRow(row, identity, availabilityBasis) : undefined;
+  return row ? validateStoryWorldRow(row, identity, source) : undefined;
 }
 
 export async function lockStoryCompany(

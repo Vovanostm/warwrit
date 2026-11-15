@@ -70,7 +70,11 @@ function coreCommand(request: StoryCommandRequestDto): StoryCommand {
 
 type StoryRejectionCode = Exclude<
   Extract<StoryCommandResponseDto, { ok: false }>['code'],
-  'INVALID_COMMAND' | 'NOT_AUTHORIZED' | 'NOT_AT_LOCATION' | 'INSUFFICIENT_FUNDS' | 'CONFLICTING_REPLAY'
+  | 'INVALID_COMMAND'
+  | 'NOT_AUTHORIZED'
+  | 'NOT_AT_LOCATION'
+  | 'INSUFFICIENT_FUNDS'
+  | 'CONFLICTING_REPLAY'
 >;
 
 function rejectionCode(
@@ -87,9 +91,7 @@ function rejection(
   return { schemaVersion: 1, commandId, ok: false, code, story };
 }
 
-function standingAtStoryYard(
-  state: Awaited<ReturnType<typeof loadCompanyAggregate>>,
-): boolean {
+function standingAtStoryYard(state: Awaited<ReturnType<typeof loadCompanyAggregate>>): boolean {
   if (!state) return false;
   return state.economy.lifecycle.parties.some((party) => {
     if (party.location.kind !== 'AT' || party.location.siteId !== 'severny-dvor') return false;
@@ -155,7 +157,7 @@ async function resolveStoryWorld(
     transaction,
     worldId,
     evidence.identity,
-    evidence.source?.availabilityBasis,
+    evidence.source,
   );
   const eligibilitySource = existingWorld?.eligibilitySource ?? evidence.source;
   if (!eligibilitySource) throw new StoryUnavailableError(storyUnavailable());
@@ -248,18 +250,6 @@ async function executeStoryCommand(
     .executeTakeFirst();
   if (!allowed) return reject('NOT_AUTHORIZED');
 
-  let current:
-    | Awaited<ReturnType<typeof resolveStoryWorld>>
-    | undefined;
-  try {
-    current = await resolveStoryWorld(transaction, worldId, accountId, companyId, () =>
-      reject('NOT_AVAILABLE'),
-    );
-  } catch (error) {
-    if (error instanceof StoryUnavailableError) return error.response;
-    throw error;
-  }
-
   const prior = await transaction
     .selectFrom('story_command_receipts')
     .select(['account_id', 'request_key', 'response'])
@@ -282,18 +272,34 @@ async function executeStoryCommand(
     return prior.response as StoryCommandResponseDto;
   }
 
+  let current: Awaited<ReturnType<typeof resolveStoryWorld>> | undefined;
+  try {
+    current = await resolveStoryWorld(transaction, worldId, accountId, companyId, () =>
+      reject('NOT_AVAILABLE'),
+    );
+  } catch (error) {
+    if (error instanceof StoryUnavailableError) return error.response;
+    throw error;
+  }
+
   const { world, company, atTick, issuerRow } = current;
   const currentProjection = responseFor(world, company, atTick);
   if (!standingAtStoryYard(current.companyRoot))
     return rejection(request.commandId, 'NOT_AT_LOCATION', currentProjection);
-  const prepared = prepareStoryCommand(CACHE_DISCLOSURE_STORY, world, company, coreCommand(request), {
-    companyId,
-    standingPlaceId: 'severny-dvor-yard',
-    atTick,
-    expectedWorldRevision: request.expectedWorldRevision,
-    expectedCompanyRevision: request.expectedCompanyRevision,
-    sourceEventId: `story:${STORY_MISSION_ID}:${request.commandId}`,
-  });
+  const prepared = prepareStoryCommand(
+    CACHE_DISCLOSURE_STORY,
+    world,
+    company,
+    coreCommand(request),
+    {
+      companyId,
+      standingPlaceId: 'severny-dvor-yard',
+      atTick,
+      expectedWorldRevision: request.expectedWorldRevision,
+      expectedCompanyRevision: request.expectedCompanyRevision,
+      sourceEventId: `story:${STORY_MISSION_ID}:${request.commandId}`,
+    },
+  );
   if (prepared.kind === 'REJECTED')
     return rejection(request.commandId, rejectionCode(prepared), currentProjection);
 
@@ -320,7 +326,11 @@ async function executeStoryCommand(
       commandId: request.commandId,
       receiptId: randomUUID(),
       requestKey,
-      response: { schemaVersion: 1, commandId: request.commandId, rewardQ: prepared.payoutEligibility.rewardQ },
+      response: {
+        schemaVersion: 1,
+        commandId: request.commandId,
+        rewardQ: prepared.payoutEligibility.rewardQ,
+      },
       event: {
         schemaVersion: 1,
         type: 'ContractRewardPaid',
@@ -404,7 +414,7 @@ export function registerStoryRoutes(
         transaction,
         worldId,
         evidence.identity,
-        evidence.source?.availabilityBasis,
+        evidence.source,
       );
       const eligibilitySource = existingWorld?.eligibilitySource ?? evidence.source;
       if (!eligibilitySource) return null;
@@ -445,11 +455,15 @@ export function registerStoryRoutes(
         return responseFor(world, company, initialClock.tick);
       }
 
-      let current:
-        | Awaited<ReturnType<typeof resolveStoryWorld>>
-        | undefined;
+      let current: Awaited<ReturnType<typeof resolveStoryWorld>> | undefined;
       try {
-        current = await resolveStoryWorld(transaction, worldId, accountId, companyId, () => null as never);
+        current = await resolveStoryWorld(
+          transaction,
+          worldId,
+          accountId,
+          companyId,
+          () => null as never,
+        );
       } catch (error) {
         if (error instanceof StoryUnavailableError) return 'NOT_AT_LOCATION' as const;
         throw error;
@@ -458,7 +472,8 @@ export function registerStoryRoutes(
     });
     if (result === undefined) return reply.code(403).send({ error: 'company access required' });
     if (result === null) return reply.code(404).send({ error: 'story unavailable' });
-    if (result === 'NOT_AT_LOCATION') return reply.code(409).send({ error: 'company must be at Severny Dvor' });
+    if (result === 'NOT_AT_LOCATION')
+      return reply.code(409).send({ error: 'company must be at Severny Dvor' });
     reply.header('cache-control', 'no-store');
     return result;
   });
