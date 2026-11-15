@@ -8,7 +8,7 @@ import {
   readOrdinaryContractState,
 } from '@warwrit/game-core';
 
-import { contractView, lightSackScenarioProfileId } from './ordinary.js';
+import { contractView } from './ordinary.js';
 
 const profile = ordinaryContractProfile('ci.m1.lost-scout.01')!;
 const issuer = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
@@ -35,10 +35,41 @@ function acceptedState() {
 }
 
 describe('ordinary accepted term projection', () => {
-  it('assigns a stable per-world truth profile and supports both scenarios', () => {
-    expect(lightSackScenarioProfileId('world-0')).toBe('ct.m1.light-sack.measure-error.v1');
-    expect(lightSackScenarioProfileId('world-1')).toBe('ct.m1.light-sack.damp-rye.v1');
-    expect(lightSackScenarioProfileId('world-1')).toBe(lightSackScenarioProfileId('world-1'));
+  it('keeps both light-sack scenarios indistinguishable before their clues', () => {
+    const stepProjections = [
+      'ct.m1.light-sack.measure-error.v1',
+      'ct.m1.light-sack.damp-rye.v1',
+    ].map((definitionId) => {
+      const scenario = ordinaryContractProfileVersion('ci.m1.light-sack.01', definitionId)!;
+      const genesis = ordinaryContractGenesis(scenario);
+      const accepted = prepareOrdinaryContractCommand(
+        scenario,
+        genesis,
+        { type: 'ACCEPT' },
+        {
+          companyId: 'company-a',
+          standingAt: issuer,
+          atTick: '10',
+          expectedRevision: genesis.revision,
+          sourceEventId: `accept-${definitionId}`,
+          gates,
+        },
+      );
+      if (accepted.kind !== 'PREPARED') throw new Error('expected accepted light-sack terms');
+
+      const view = contractView(
+        scenario,
+        accepted.next,
+        'company-a',
+        { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+        gates,
+        false,
+      );
+      expect(view.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+      return view.steps;
+    });
+
+    expect(stepProjections[0]).toEqual(stepProjections[1]);
   });
 
   it('hides the light-sack truth until the participant records its clue', () => {

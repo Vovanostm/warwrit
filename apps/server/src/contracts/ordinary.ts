@@ -1,6 +1,6 @@
 import { executeCommandTransaction } from '../db/command-transaction.js';
 import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
-import { createHash, randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 
 import {
   canonicalJson,
@@ -80,13 +80,24 @@ async function ensureOrdinaryGenesis(
   worldId: string,
 ): Promise<void> {
   for (const offeredProfile of ORDINARY_CONTRACT_PROFILES) {
-    const profile =
-      offeredProfile.instanceId === 'ci.m1.light-sack.01'
-        ? ordinaryContractProfileVersion(
-            offeredProfile.instanceId,
-            lightSackScenarioProfileId(worldId),
-          )!
-        : offeredProfile;
+    let profile = offeredProfile;
+    if (offeredProfile.instanceId === 'ci.m1.light-sack.01') {
+      const existing = await transaction
+        .selectFrom('ordinary_contracts')
+        .select('instance_id')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', offeredProfile.instanceId)
+        .executeTakeFirst();
+      if (existing) continue;
+      const definitionId =
+        randomInt(2) === 0 ? 'ct.m1.light-sack.measure-error.v1' : 'ct.m1.light-sack.damp-rye.v1';
+      const scenarioProfile = ordinaryContractProfileVersion(
+        offeredProfile.instanceId,
+        definitionId,
+      );
+      if (!scenarioProfile) throw new TypeError('Light-sack scenario profile is missing');
+      profile = scenarioProfile;
+    }
     await transaction
       .insertInto('ordinary_contracts')
       .values({
@@ -101,14 +112,6 @@ async function ensureOrdinaryGenesis(
       .onConflict((conflict) => conflict.columns(['world_id', 'instance_id']).doNothing())
       .execute();
   }
-}
-
-/** Assign the hidden cause once when this world's light-sack contract row is created. */
-export function lightSackScenarioProfileId(worldId: string): string {
-  const digest = createHash('sha256').update(worldId).digest();
-  return digest[0]! % 2 === 0
-    ? 'ct.m1.light-sack.measure-error.v1'
-    : 'ct.m1.light-sack.damp-rye.v1';
 }
 
 /** World conditions read from authoritative state; never from the client. */
