@@ -4,8 +4,8 @@ term_ru,term_en,type,rule,note
 война за венец,War of the Circlet,event,translate,официальное название
 венец,circlet,object,translate,королевский венец; не crown — чтобы не путать с монетой
 крона,crown,currency,translate,мн. ч. кроны/крон; см. ICU plural
-Собор,the Assembly,institution,translate,вручает венец
-Боярская дума,the Boyar Council,institution,translate,семь бояр хранят венец в Белоречи; в народе — «семибоярщина»
+Великое вече,the Great Veche,institution,translate+transliterate,собрание для избрания нового короля; далее в том же контексте — вече; название утверждено владельцем 2026-11-14
+Боярская дума,the Boyar Council,institution,translate,совет в Белоречи
 герцогство,duchy,title,translate,
 посадник,mayor,title,translate,выборный глава города
 десятник,sergeant,title,translate,младший командир десятка
@@ -18,6 +18,6 @@ term_ru,term_en,type,rule,note
 Тихая Гать,Tikhaya Gat,place,transliterate,гать — дорога-настил по болоту
 Северный Двор,Severny Dvor,place,transliterate,
 Старая мельница,the Old Mill,place,translate,
-Бродская сеча,Battle of the Ford,event,translate,
+сражение у Каменного Брода,Battle of Kamenny Brod,event,translate+transliterate,название уточнено владельцем 2026-11-14
 Белоречь,Belorech,place,transliterate,столица
 нечисть,the unclean,folk term,translate,слово персонажа; не классификация

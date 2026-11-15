@@ -9,8 +9,8 @@ session on primary `main` (`47c60e0`) at the owner's request: «Подготов
 ## Owner decisions (authority)
 
 Quoted 2026-10-07, recorded in
-[m1-spec §18](../wiki/m1-spec.md#18-battle-brothers-направление-и-этапы--2026-10-03)
-and [combat](../wiki/combat.md#урон-в-ближнем-бою--решение-владельца-2026-10-07):
+[m1-spec §18](../../specs/001-warwrit-m1/spec.md#overview-and-scope)
+and [combat](../wiki/mechanics/melee.md):
 
 1. «Урон в ближнем бою должен быть всегда (кроме новобранцев или боя с
    призраками) — игра должна быть логичнее xcom в этом плане».

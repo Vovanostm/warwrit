@@ -1,5 +1,15 @@
 # M1 characters — real-time 3D with swappable equipment (2026-10-06)
 
+## Current scope — reconciled 2026-11-13
+
+AFTER M1, per the November 9 owner answer «Спрайты в M1, 3D после».
+M1 uses full static sprites. Preserve the W01 rig, animation and modular-kit
+experiments for later use. Their historical evidence remains in
+[the character pipeline](../wiki/character-3d-pipeline.md).
+The historical steps below describe that experiment. Future 3D work starts
+from its latest evidence and an owner-selected slice.
+[Decision source](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/wiki/m1-open-questions.md).
+
 Status: **proposed plan, not active.** Step 0 is an owner gate. Written by the
 Claude Code session on primary `main 47c60e0` after reviewing Codex thread
 `01a10c2a-67d4-75e3-84a3-8cc54891823e` (worktree `skeletal-characters`).

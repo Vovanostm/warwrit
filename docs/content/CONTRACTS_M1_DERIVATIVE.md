@@ -1,9 +1,9 @@
-# M1 contract catalogue: authored derivative
+# M1 contract sources and released FIRST HUNT profile
 
-This is the source note for the static CT01 edition `ct-m1-authored-v1`. It is
-new authored derivative content (`D`), not a recovered copy of the unavailable
-original `narrative_manifest.json` or source ZIP. Original archive concordance
-remains `NOT_RUN`.
+Current ordinary terms belong to [M1-CONTRACT-TERMS](../work-packages/M1-CONTRACT-TERMS.md).
+The [M1 specification](../../specs/001-warwrit-m1/spec.md) defines current party
+and battle capacity. The FIRST HUNT sections below record a released bounded
+profile used for storage/replay compatibility. Runtime changes use a versioned path.
 
 ## Source labels
 
@@ -93,56 +93,6 @@ versioned working profile where authorized; this static edition deliberately
 does not select payout terms. The existing unresolved helper leave/kick,
 cancellation and post-proof rights cases remain for the owning activation task.
 Neither this document nor the catalogue answers them by implication.
-
-## Historical participation and claim boundary — before 2026-10-02
-
-The dated owner amendments below supersede this earlier unresolved boundary
-for ordinary payouts, participation, retained proof and combat profiles.
-Read unresolved rows only where no later owner decision resolves them.
-
-Status labels: **ACCEPTED** is fixed by RC-P3-A and its compatible v1.2
-amendment; **PROPOSED** is only a lead in `C / RC-v1`; **UNRESOLVED** means the
-named owner must decide before the affected CT02/CT06 transition is enabled.
-Across every row, a right already earned under the terms then in force cannot be
-retrospectively erased. This is the assigned invariant, grounded in the accepted
-fixed-terms rule and the proposal's explicit no-erasure rule; it does not create
-a right that accepted terms never granted.
-
-| Transition                      | Source and authority                                                                                                                                                                                                                                         | Observable contract change                                                                                                                                                                                                                                                                                       | Claim and custody that remain                                                                                                                                                                                                                                                                                                                                                      | Future producer / consumer boundary                                                                                                                                                                                                                                                        |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Accept / helper join            | **ACCEPTED:** RC-P3-A §5 (`rechIKj0hsvfXIvFU`, 2026-09-07) and lore v1.2 D06 (`recQNKqYfwoJpCXVu`): one owner company and at most one opt-in helper; show fixed terms before joining.                                                                        | CT02 records an authentic local-issuer acceptance; helper participation begins only by opt-in to the visible terms. Persisting an agreement/revision digest is an engineering contract, not a source-mandated storage shape.                                                                                     | Joining does not mint a second full reward. The ordinary split is not frozen: 80:20 is provisional. No physical item or captive changes hands merely by accepting or joining.                                                                                                                                                                                                      | CT02 owns issuer/owner/helper acceptance after ID03, W06 and its named I02a consumer subset. JOIN01–03 own later physical presence and encounter binding; acceptance alone is not arrival. Exact ordinary-share entitlement remains **UNRESOLVED** until visible instance terms define it. |
-| Disconnect                      | **PROPOSED only:** `recA4VT0YX9x0LuO1`, C / RC-v1 says disconnect does not cancel membership, evidence or earnings. Q-N02 (`recd7TUgPxdMoQGX4`) requires disconnect/idempotency cases but leaves the rule In Progress.                                       | Contract membership and offline-period participation consequences are **UNRESOLVED**. A connection loss is not, by itself, an accepted cancellation or terminal outcome.                                                                                                                                         | Earned rights remain. Whether an offline helper keeps eligibility for future, unearned ordinary claims is **UNRESOLVED**. Items, proof and captives stay with their actual current custodian; disconnect does not establish transfer or delivery.                                                                                                                                  | Auth/session and RT reconnect producers report connectivity; CT02 must consume an explicit policy before changing participation or claims. H owns durable receipts/retry; JOIN owns encounter participation. No missing disconnect handler may be treated as success.                      |
-| Intentional leave               | **PROPOSED only:** the same NARRATIVE proposal says leaving does not erase past claims or teleport cargo/captives. RC-P3-A accepts fixed terms and the no-second-mint boundary, not a complete leave rule.                                                   | Whether leaving ends membership immediately, after a current encounter, or only prospectively is **UNRESOLVED**. It cannot be represented as physical departure, delivery, or custody transfer without the corresponding world/physical fact.                                                                    | Earned rights remain. Current item/captive custody and location remain factual; no teleport or automatic reassignment. Future participation and unearned claims after leaving are **UNRESOLVED**.                                                                                                                                                                                  | CT02 owns the membership/claim decision; W06 and JOIN01–03 produce actual movement, reservation and release. Physical inventory/custody and captive producers remain their own authorities.                                                                                                |
-| Kick                            | Q-N02 (`recd7TUgPxdMoQGX4`) explicitly leaves kick cases for this packet; NARRATIVE labels exact kick policy pending.                                                                                                                                        | Who may kick, allowed cause, notice/consent, effective time and membership result are **UNRESOLVED**. Do not infer a kick from disconnect or a terminal battle result.                                                                                                                                           | Earned rights remain; a kick cannot rewrite accepted terms or transfer property/captive custody. Effects on unearned claims and active encounter participation are **UNRESOLVED**.                                                                                                                                                                                                 | CT02 must own authorized kick admission and any membership transition; H persists it atomically with its receipt. JOIN/W06 separately release real reservations or movement only through their actual producers.                                                                           |
-| Terms revision                  | **ACCEPTED:** terms are fixed and visible before helper opt-in (RC-P3-A §5). **PROPOSED:** NARRATIVE's `termsRevision` / `termsDigest` fields are a data-shape lead, not an accepted policy.                                                                 | No silent or retrospective change to the terms accepted by a participant. Whether an instance may receive a later revision, whose consent is required, and which prospective obligations it can change are **UNRESOLVED**.                                                                                       | Earned rights under the prior terms remain. An instance's ordinary share and any unearned rights cannot be inferred from provisional 80:20. Actual item custody is independent of a terms revision.                                                                                                                                                                                | CT02 owns any authorized revision/consent transition; H stores the exact accepted terms and receipts; CT06 consumes those terms for payment. CT01's immutable definition edition and existing-instance binding do not themselves answer participant consent.                               |
-| Cancellation                    | **ACCEPTED:** the introductory mill chain has no arbitrary expiry (RC-P3-A §5). **UNRESOLVED:** explicit cancellation authority, allowed causes, helper consent and claim consequences (Q-N02; `recA4VT0YX9x0LuO1` marks exact cancellation policy pending). | No automatic expiry may stand in for a cancellation decision. Until policy exists, CT02 cannot report a successful cancellation transition. Distinction from FAILED/EXPIRED terminal facts must be explicit.                                                                                                     | Earned rights remain. Cancellation cannot invent, move or destroy physical proof/captive custody. Effect on unearned rights and active-world/encounter reservations is **UNRESOLVED**.                                                                                                                                                                                             | CT02 owns the policy gate and contract result; W06/JOIN release actual world reservations, and CT03–05 own authentic objective/proof facts. H persists any eventual transition atomically.                                                                                                 |
-| Terminal outcome                | The assigned SPEC-CONTRACTS contract and WP-07 (`reciBCn5YABhSb1b4`) require deterministic fact binding; this derivative says source slots are not facts. `recA4VT0YX9x0LuO1` is a proposal, not outcome authority.                                          | CT02 may present a terminal result only from committed, authentic source facts and applicable accepted terms. A scene choice, text, battle victory, or static slot declaration alone is not proof or payment. Exact terminal-to-ordinary-claim mapping and cancellation/failure consequences are **UNRESOLVED**. | Previously earned rights remain. The terminal projection cannot fabricate a witness, death, success, proof, payment, or custody change. A terminal result does not mint a second reward.                                                                                                                                                                                           | CT03 consumes genuine accessible observations; CT04/05 consume actual captive/hunt/custody producers; JOIN03 supplies physical encounter effects. CT02 selects/persists the fact-bound outcome; CT06 alone settles an eligible claim. H provides the durable transaction/receipt boundary. |
-| Proof presentation / settlement | **ACCEPTED:** approved 72A in `rechIKj0hsvfXIvFU` §5 and lore v1.2 D06 (`recQNKqYfwoJpCXVu`): the whole declared unique-bearer reward goes to the actual authorized physical presenter once.                                                                 | CT06 accepts only actual source-bound proof in current custody under governing terms, then records one settlement/claim receipt. Repeating or presenting the same unique source through another company/issuer cannot pay again.                                                                                 | The entire unique-bearer bounty is one claim, not owner base plus bearer bonus. Custody is not implied by proof text or presentation intent. Whether the physical trophy is consumed, retained, or otherwise usable after settlement is **UNRESOLVED**; the source-level claim remains consumed. Ordinary-pool shares remain governed by exact visible terms, not a default 80:20. | CT04/05 plus JOIN/world/inventory produce authentic proof origin, pickup and current custody; CT06 checks global claim uniqueness and commits claim, finance and receipts atomically; H owns durable commit/replay.                                                                        |
-
-### Explicit unresolved decisions and activation gates
-
-- **CT02:** define participant continuity after disconnect; voluntary leave's
-  effective boundary and future claim rights; kick authority/cause/consent and
-  effects; whether/how accepted terms can be revised; explicit cancellation
-  authority and its effect on unearned rights. Do not enable these transitions
-  by copying the NARRATIVE proposal into production.
-- **CT02 / CT06:** assign each ordinary instance's visible fixed terms and
-  ordinary claim distribution; the provisional 80:20 profile is not a frozen
-  entitlement. Define whether settled proof items remain, are consumed, or have
-  another source-backed custody outcome. Do not infer either from the claim
-  receipt.
-- **Producers:** WP-07's source-bound contract facts and CT03–05's observation,
-  captive, hunt and proof producers must exist; WP-08/JOIN must provide actual
-  arrival, participation and release. CT01's static validator cannot supply
-  these facts. H must persist policy transitions and receipts before CT02/CT06
-  can be called durable.
-
-The scope choice and unique-bearer policy are accepted; the unresolved items
-above are finite activation work, not a request to reopen RC-P3 or invent a
-second reward policy. Source state: M1 index `recZhUoTiwT7kIc8s`; accepted
-RC-P3-A `rechIKj0hsvfXIvFU`; compatible lore v1.2 `recQNKqYfwoJpCXVu`;
-proposal `C / RC-v1` `recA4VT0YX9x0LuO1`; Q-N02 `recd7TUgPxdMoQGX4`; WP-07
-`reciBCn5YABhSb1b4`; WP-08 `recFPRsfysghnBhT2`.
 
 ## Accepted FIRST HUNT runtime amendment — 2026-09-30
 
@@ -289,59 +239,12 @@ Working amounts (provisional balance 0.1, same profile style as FIRST HUNT):
 | `ci.m1.wolf-trail.01`      | HUNT        | 80              |
 | `ci.m1.raider-standard.01` | HUNT        | 100 (unchanged) |
 
-## Owner decisions — participation, trophies and combat profiles, 2026-10-02
-
-- **Leave, cancel and term changes (all M1 contracts):** the FIRST HUNT rules
-  apply to every instance. Offered terms are immutable; the owner has no
-  cancel or leave; a helper may withdraw before encounter activation; no
-  contract `LEAVE` during an active encounter; after terminal release a helper
-  leaves prospectively with already earned rights and actual custody.
-- **Trophy after ordinary presentation:** the physical proof stays with its
-  actual bearer in durable `REDEEMED` state, as in FIRST HUNT; it cannot be
-  presented again.
-- **Unarmed and incapacitated members:** every member of a joining party is
-  admitted. A member with no weapon fights with a weak unarmed (fists) profile;
-  an incapacitated member is present but may only wait or retreat. A party is
-  no longer refused combat because one member is unarmed.
-
-## Owner decision — provisional fists and independent retreat, 2026-10-20
-
-The owner accepted the bounded #164 profile: fists range 1, base damage 6,
-cost 2 AP / 8 stamina, no armour penetration and no weapon-skill XP.
-Unarmed means genuinely absent weapon equipment, never a fallback for an invalid
-loadout. Every actual joining member remains represented; no free gear is created.
-
-An immobile member cannot move or retreat independently and remains on the field.
-Rescue and assisted transport are explicitly unresolved; no automatic carrying,
-teleportation, death or capture follows from this gap. The earlier wait/retreat
-rule is capability-qualified. The condition-to-incapacitated mapping is a separate
-pending decision; travel denial alone does not prove inability to attack/defend.
-
-[Direct owner reply recorded on #164](https://github.com/Vovanostm/warwrit/issues/164#issuecomment-6277245952).
-These are provisional accepted rules, not a statement that code or player acceptance
-has been delivered. Historical replay and equipped binding behavior must remain intact.
-
-## Owner decision — critical bleeding and first tactical bridge, 2026-10-20
-
-The owner directly approved attack and defence for a critically bleeding member;
-movement and independent retreat remain forbidden. This resolves the critical-bleed
-classification question above without defining another incapacitating condition.
-The existing projection3 capability matrix already matches this decision. Fists,
-historical rules and the unresolved rescue/transport boundary stay unchanged.
-
-For #165, the owner approved the first persistent journey using the existing wolf
-hunt and actual company roster. Abilities without an accepted campaign-to-tactical
-mapping remain unavailable. Unsupported surrender outcomes retain pending effects
-and cannot produce completion proof or payment. This does not approve invented
-six-hostile content, skill ranks, custody or transport rules. Implementation and
-journey acceptance remain separate from this decision.
-
 ## Owner decision — ordinary contract working profile, 2026-10-02
 
 The owner accepted («Принять профиль») this bounded runtime profile for the
 seven non-FIRST-HUNT instances as a provisional working variant; lore details
-may be revised later. The lore lines are provisional content. Common rules follow the owner
-decisions above: offer, ACCEPT/HELP, payout and trophies as in FIRST HUNT.
+may be revised later. The lore lines are provisional content. Current ordinary terms, leave and trophy transfer follow
+[M1-CONTRACT-TERMS](../work-packages/M1-CONTRACT-TERMS.md).
 Each step is a command that needs the company's party standing still at the
 named area. Facts come only from these commands and from encounters.
 
@@ -359,39 +262,3 @@ Killing the beast does not establish guilt for the grain theft; the
 grain-cart tracks stay an open observation. A person in custody who is not
 delivered stays with the company; a company that ends its run releases no
 one automatically.
-
-## Terminal policy source review — 2026-11-06 (#376)
-
-The [owning outcome specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
-records current reachability, source-defined consequences and the finite proposed
-M1 hostile-retreat policy. This is a LOCAL source/specification result, not an
-accepted amendment: the owner question is pending. The 2026-10-20 pending rule
-continues until an explicit replacement is recorded. Surrender does not itself
-supply a captor/custody fact, and tactical victory does not supply proof of a kill.
-The existing ordinary rescue gates require actual deaths. Preserve all accepted
-reward/custody terms; #377/#378 implementation and new capture/transport rules
-are outside #376. The original archive-concordance limitation is unchanged.
-
-## Accepted hostile-retreat policy — 2026-11-06
-
-Owner answer to the #376 M1 policy proposal: «Принять; плен определить отдельно
-(рекомендую)». This supersedes the preceding pending-decision status for hostile
-retreat only; the original 2026-10-20 surrender residual remains applicable.
-
-- An escaped hostile remains alive in the same contract area with its actual
-  wounds and remaining pools. Retreat does not create a kill, capture or travel
-  to another area. The company is released after all actual terminal consequences
-  commit atomically; existing mobility and leadership constraints still apply.
-- No trophy or reward comes from an escaped living objective. Tactical victory
-  alone cannot complete the hunt; actual objective/proof/custody conditions govern.
-  Existing rescue death gates and unique-bearer payout terms remain unchanged.
-- The unfinished contract permits a later physical attempt against the same
-  survivors with their retained pools, without resurrection or free healing.
-  This requires a separate repeat-admission storage step, preserving old attempts.
-- Define surrender/captive ownership separately before #377 activation. No new
-  ransom, interrogation, confiscation, carrying or rescue rule is accepted here.
-
-The [owning feature specification](../wiki/mechanics/retreat.md#терминальные-исходы--спецификация-376-2026-11-06)
-contains behavior, architecture, small steps and verification. #378's source gate
-is resolved; gameplay implementation/real-encounter acceptance remain NOT_RUN.
-This records an owner decision, not delivery of its implementation.

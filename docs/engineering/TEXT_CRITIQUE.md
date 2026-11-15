@@ -1,5 +1,10 @@
 # Text critique rubric
 
+Owner amendment — 2026-11-07: this rubric is optional. No critic launch, score,
+approval or repeat-review cycle is required for completion or delivery.
+The procedure below applies only when a scored critique is requested. Use
+direct player checks under [AGENTS.md](../../AGENTS.md#player-focused-checks).
+
 Owner request — 2026-10-07: agent tasks need critique so that the result meets
 the expected quality. This rubric applies to every substantive player-facing
 text: contract briefs and scenes, dialogue, findings, mission stories, the

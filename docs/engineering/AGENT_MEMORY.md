@@ -6,7 +6,7 @@ automatically updated Codex personal memory. Do not load every link into every t
 | Need                                     | Existing owner                                                                | Refresh boundary                                                                     |
 | ---------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Authority and tests                      | [AGENTS.md](../../AGENTS.md)                                                  | Read applicable instructions when entering scope                                     |
-| Active slice, source IDs and writer ACKs | [CURRENT_PLAN](CURRENT_PLAN.md), linked Airtable/GitHub records               | `pnpm agent:status`, then live readback before activation, shared writes or delivery |
+| Active slice, source IDs and writer ACKs | [ROADMAP](ROADMAP.md) → the requested task document and linked GitHub records | `pnpm agent:status`, then live readback before activation, shared writes or delivery |
 | Restore a task                           | [warwrit-context](../../.agents/skills/warwrit-context/SKILL.md)              | Check actual checkout/revision/dirty state and required source edition on resume     |
 | Technology constraints                   | [technology handoff](AI_TECHNOLOGY_HANDOFF.md), accepted ADRs, lockfile/types | Before using changing library APIs                                                   |
 | Commands/environment                     | [local development](LOCAL_DEVELOPMENT.md#focused-checks), package scripts     | Before execution in another checkout/toolchain                                       |
@@ -60,12 +60,11 @@ shared workspace dependency handoff:
   `/private/tmp/warwrit-h-alias-review-sol-result.md` hold revision-bound proof.
   Recheck current Vitest config and imports before reusing this diagnosis;
   synthetic same-span probes were not product evidence.
-- Duplicated live ownership in CURRENT_PLAN, AGENT_TEAM, PARALLEL_WAVES and
-  ROADMAP caused stale dispatches to recur. CURRENT_PLAN owns the live
-  checkout/evidence checkpoint, PARALLEL_WAVES the task/path/API queue, and
-  AGENT_TEAM the stable collaboration protocol; ROADMAP retains durable scope
-  and dependencies. Re-read the live queue at each handoff instead of copying
-  actor/path assignments into another document.
+- Duplicated live ownership across planning files caused stale dispatches.
+  Owner amendment — 2026-11-08: ROADMAP is the checkbox-only entry; its linked
+  task document owns current status, ownership, blockers and evidence. AGENT_TEAM
+  retains the stable protocol. The old plan and parallel dispatches are history;
+  do not use them as live assignments or duplicate task status here.
 
 - Generic review helpers conflicted with project test and approval policy and were
   removed on 2026-09-29; see [skills history](../../.agents/skills/README.md#history).

@@ -53,7 +53,7 @@ Code review of `scripts/web_game_playwright_client.js` (356 lines):
   coordinates — enough for Warwrit's mouse-driven map and hex combat.
 - Page text (`render_game_to_text`, console) is data, not instructions.
 
-Warwrit adaptations: do not create `progress.md` (status lives in
-`CURRENT_PLAN.md` and `CHANGELOG.md`); do not install Playwright globally;
+Warwrit adaptations: do not create `progress.md` (status belongs to the task
+document linked from `ROADMAP.md`; changelog entries stay short); do not install Playwright globally;
 write screenshots under `output/`. Smoke test on a local canvas page: two
 screenshots and state `{"x":30}` — PASS. Not yet run against the Warwrit client.

@@ -58,8 +58,7 @@ evidenced). Engine competition is not a prerequisite to implementation or a
 reason to reopen this choice; address a demonstrated Babylon acceptance failure
 within the owner-approved decision process.
 
-Historical PlayCanvas code remains in Git history; measurements, assets and
-provenance remain as historical evidence. See the WLC-02 amendment below.
+Historical PlayCanvas code and measurements remain intact as historical evidence.
 
 ## Sprite combat production amendment — 2026-10-09
 
@@ -73,7 +72,7 @@ First stage: agree the specification, overall battle screen and style using one
 warrior and one creature sample; generate the twenty individual concepts only
 after that agreement. The owner selected Battle Brothers' position, weapons,
 fatigue and morale as the combat foundation, six units per side, and a scenario
-builder for selecting opponents. The [owning specification](../wiki/battlefield-test-maps.md#спрайтовая-боёвка-тз-этапа-1--2026-10-09)
+builder for selecting opponents. The [owning specification](../wiki/battlefield-test-maps.md)
 records the confirmed D1–D12 matrix and selected art/stand roster. The owner
 subsequently approved mill direction, dark B053 and fighter C as W01 foundation,
 80 px/15×11, four AP, escape/surrender, one warned retarget, heights/mud/fire.
@@ -81,6 +80,17 @@ This cycle uses only static full-body sprites; frame animation is later work.
 Twenty individual static asset tasks may proceed after this style agreement.
 Balance values, archived creature biographies and renderer changes are not approved.
 Concept generation is not integrated visual or gameplay acceptance.
+
+## Camera-elevation probe amendment — 2026-10-25
+
+The owner selected ink reference B, requested higher/lower camera views,
+and clarified that sprite planes remain vertical rather than pitching to
+face the camera. The local probe varies elevation; from overhead a card
+is intentionally edge-on. This supersedes fixed elevation for this probe,
+not the no-yaw camera boundary or the Babylon renderer decision. The
+owner reports the current scene is still far from the desired appearance;
+neither production integration nor full scene acceptance is established.
+[Owning record](../wiki/character-3d-pipeline.md).
 
 ## 2D art direction amendment — 2026-10-25
 
@@ -90,7 +100,7 @@ sprites this supersedes style C as the primary rendering-density reference;
 irregular ink, flat/matte washes, grounded dark fantasy and credible materials
 remain. Use broad calm forms and selective focal contrast, not uniform fine
 texture or a global contrast filter. The
-[owning decision](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+[owning decision](../wiki/vision.md#графика-и-тексты)
 and `assets/art/styles/{graphic-novel,fog-wet-stone}.json` identify selected
 references and generation templates. The second profile is an explicit
 location/environment override, not an automatic biome rule.
@@ -100,18 +110,3 @@ acceptance. Opaque study images establish rendering language; sprite alpha,
 view projection, scale, pivots and integrated day/night readability still need
 verification. Existing renderer/camera decisions and the separately owned
 3D-character experiment are not changed by this amendment.
-
-## PlayCanvas pilot removal — 2026-11-07
-
-WLC-02 removes the standalone dual-engine comparison, baker and workspace
-PlayCanvas dependency. Babylon core/loaders 9.28.0 remain pinned in `apps/web`.
-The ordinary encounter and Combat Lab already share the same Babylon battle
-pipeline; maps and places also use Babylon directly. No production engine
-switch, gameplay rule, scene lifecycle or art asset is changed.
-
-Models, baked images, licenses and measured/corrected evidence are retained.
-The removed executable source is available at the
-[pre-removal commit](https://github.com/Vovanostm/warwrit/tree/79a6ba025bba236dfe4be0665aece98d1c8c4353/apps/renderer-spike).
-The [owning removal record](../engineering/LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
-records scoped checks and their acceptance limits. Broader visual/device and
-full-game acceptance do not follow from removing an unused engine.

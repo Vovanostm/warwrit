@@ -5,15 +5,13 @@
 Contract: [B4](../engineering/briefs/2026-10-07/B4-story-missions.md),
 [00-common](../engineering/briefs/2026-10-07/00-common.md) and AGENTS.md.
 Owner decision, 2026-10-07, verbatim **«Одобряю»**: revision 6 of
-[«Кто выдал тайник»](../wiki/world/porechye.md#кто-выдал-тайник--2026-10-07)
-at `874b8fc` is approved. **AC-1 PASS**; approval covers that story, not
-an unspecified reward amount or completed gameplay.
+[«Кто выдал тайник»](../wiki/world/porechye.md#кто-выдал-тайник)
+at `874b8fc` is approved. **AC-1 PASS**; the story text is approved. The October 8 owner decision fixes the E01 reward
+at 40 crowns. Gameplay implementation and funding verification remain separate.
 
-Single writer: `codex/b4-story-missions`, worktree
-`/Users/vovanostm/.codex/worktrees/b4-story-missions`; base
-`b7ffefcdfa699d2feb587059eb926480ae891dcb` after PR #152.
-Step 2 is documentation only. Steps 3–5 are **NOT_RUN**, awaiting D1 below.
-No publication, PR, merge or deployment is authorized.
+Current status: SPECIFIED / LOCAL for this contract. Steps 3–5 require their
+own source and runtime checks. Funding verification belongs to T033; implementation
+to T034. Delivery permissions follow AGENTS.md and the owning mission.
 
 ## First playable result
 
@@ -67,8 +65,8 @@ The serializable definition owns:
   object/place, producing choice and prerequisites. Their content is the
   approved finding table, not a second editable narrative.
 - Outcomes: accused actor, whether proved, categorical consequences and
-  payout eligibility. The amount remains unset until D1; no zero-value
-  placeholder may activate a mission whose ending says it paid.
+  payout eligibility. E01 pays the approved 40 crowns after D1 verifies the real funding source
+  and the transaction commits. Unpaid and unproved outcomes retain their own policy.
 
 Persisted world state owns the mission revision, definition version,
 eligibility source and at most one terminal outcome. A terminal outcome
@@ -195,13 +193,13 @@ Shortest integration: an available story entry beside existing contracts in
 the physically accessible place view, opening Story panels over the current
 yard art. Shared location, speaker portrait, dialogue, guarded choices,
 finding journal and confirmation stay in one desktop layout. Use the existing
-portrait treatment; any new portrait first needs visual ACCEPT on one sample.
-Do not introduce a new art pipeline or generate a batch before that acceptance.
+portrait treatment. Check a new portrait in one consuming-scene sample against
+the selected style and actual display scale before expanding the batch.
 
 Server acknowledgement determines learned facts, available choices and the
 terminal screen. Refresh after conflicts; failed commands keep an actionable
 scene and never show a paid ending. Display the approved fixed amount visibly
-before acceptance once D1 is resolved. Journal source/time are explicit;
+before acceptance after funding verification in T033. Journal source/time are explicit;
 catalogues translate line IDs, not authoritative state or invented conclusions.
 Reuse the approved RU/EN player order, optional branches, confirmations and
 late variants; parameters only, no concatenated sentences.
@@ -210,46 +208,40 @@ Day/night use existing place art/light. Preserve map controls, readable targets,
 keyboard focus, return/Escape and remote-preview restrictions. Mobile stays
 the desktop interface scaled in landscape, with no portrait/reflow scope.
 
-## D1: proven payment — owner decision required
+<a id="d1-proven-payment--owner-decision-required"></a>
 
-The story says Kondrat pays once for E01, but assigns no amount. The
-[ordinary payout decision](../content/CONTRACTS_M1_DERIVATIVE.md#owner-decision--ordinary-payouts-2026-10-02)
-requires a fixed visible funded reward. Its approved 40-crown investigation
-profiles name `road-tracks` and `missing-herbs`; the bounded seven-instance
-profile does not assign B4's new reward. Under common §8, do not silently
-extend those balance numbers or activate an unpaid E01.
+## D1 — proven payment
 
-**Recommended proposal, not approved:** 40 crowns (`40000000 q`) for E01 only,
-debited from Kondrat's existing `wallet.steward.severny-dvor.01` funding in the
-`ci.m1.mill-worker.01` row; no additional genesis funds. The current rescue
-profile initializes 160 crowns and pays 80. An untouched post-rescue balance
-would therefore be 80, but actual locked funds, not that arithmetic, authorize
-payment. E02/E03 and unproved Ulita receive nothing. No numeric trust changes.
+The owner decision recorded on October 8 fixes the E01 reward at 40 crowns
+(`40000000 q`). Its source is the named B4 reward decision in
+[the recorded owner decision](../engineering/CURRENT_PLAN_HISTORY_2026-11-08.md#b4-reward-40-crowns).
 
-Options: approve this amount/source (recommended); specify another fixed amount
-and funding source; defer B4. This is the only current owner decision blocker.
-Implementation, tests and runtime may resume after the decision is recorded;
-the story approval is already complete and need not be requested again.
+T033 verifies the actual issuer wallet and available funds before paid activation.
+The existing Kondrat wallet is `wallet.steward.severny-dvor.01`; its balance
+and applicability are verified through the real persistent boundary. Do not mint
+extra genesis money or infer available funds from a hypothetical post-rescue balance.
+The transaction locks the actual wallet and commits payment with the terminal
+mission outcome and receipt. E02/E03 and unproved Ulita have no reward.
 
 ## Ordered delivery and acceptance
 
-| Step                | Done criterion                                                                                         | Current result                                                                   |
-| ------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| 1 — story           | Manuscript text ACCEPT and owner AC-1 approval                                                         | PASS; owner «Одобряю» for revision 6 at `874b8fc`.                               |
-| 2 — contract        | Model, guards/choices/outcomes, reducer, persistence, UI and AC recorded; documentation checks; commit | Documentation complete; checks below; D1 remains a separate implementation gate. |
-| 3 — core            | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | NOT_RUN, pending D1.                                                             |
-| 4 — server/web      | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | NOT_RUN.                                                                         |
-| 5 — journey/critics | Play proven and false endings; final critics ACCEPT; final checks; commit/handoff                      | NOT_RUN.                                                                         |
+| Step               | Done criterion                                                                                         | Current result                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| 1 — story          | Manuscript text ACCEPT and owner AC-1 approval                                                         | PASS; owner «Одобряю» for revision 6 at `874b8fc`.                       |
+| 2 — contract       | Model, guards/choices/outcomes, reducer, persistence, UI and AC recorded; documentation checks; commit | Contract specified. Reward fixed at 40 crowns, funding verified by T033. |
+| 3 — core           | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | NOT_RUN; use T033/T034.                                                  |
+| 4 — server/web     | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | NOT_RUN.                                                                 |
+| 5 — player journey | Play proven and false endings; verify final text and presentation; focused checks; delivery record     | NOT_RUN.                                                                 |
 
-| Brief AC | Direct evidence required                                                                                            | Current result                                                     |
-| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| AC-1     | Approval quote and approved story revision                                                                          | PASS: «Одобряю», 2026-10-07, revision 6, `874b8fc`.                |
-| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | NOT_RUN.                                                           |
-| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | NOT_RUN.                                                           |
-| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | NOT_RUN.                                                           |
-| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | NOT_RUN.                                                           |
-| AC-6     | Full final in-game RU/EN text critic ACCEPT                                                                         | NOT_RUN; manuscript-only historical ACCEPT scores 2/3/2/2/3/3/2/2. |
-| AC-7     | Integrated panel/portraits day/night visual critic ACCEPT                                                           | NOT_RUN.                                                           |
+| Brief AC | Direct evidence required                                                                                            | Current result                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| AC-1     | Approval quote and approved story revision                                                                          | PASS: «Одобряю», 2026-10-07, revision 6, `874b8fc`.    |
+| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | NOT_RUN.                                               |
+| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | NOT_RUN.                                               |
+| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | NOT_RUN.                                               |
+| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | NOT_RUN.                                               |
+| AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | NOT_RUN in game; manuscript approval recorded in AC-1. |
+| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | NOT_RUN.                                               |
 
 Additional targeted checks: deterministic rejection/preparation without mutation;
 same-command retry once; conflicting retry rejection; concurrent confirmations
@@ -258,34 +250,22 @@ investigation and pending accusation; rescuer/nonrescuer offer and following-nig
 eligibility; wrong E02 after F11 retains private confession. No test-count,
 coverage target or catalogue snapshots.
 
-Use common §6 focused commands for each code step, sequentially. Step 5 runs
-the final typecheck/unit gate once, plus migration checks when persistence is
-added. Play in actual authenticated game worlds, not a story-only diagnostic.
+Use focused checks for concrete changed behavior under AGENTS.md.
+Record actual results and skipped checks in the acceptance matrix.
+Play in actual authenticated game worlds, not a story-only diagnostic.
 Take the atomic game-stack `mkdir` lock before db/dev; own .env from
 .env.example with standard ports; hold at most 45 minutes, then stop own dev,
 db:down and remove the lock. Preserve player storage and other worktrees.
 
-Fresh independent critique allowance: three rounds each for code/journey
-reviewer, final text critic and visual critic; reuse each read-only critic.
-Provide frozen diff/test outputs, full RU/EN player order/mechanics and actual
-journey/reference/day/night images, not author conclusions. Any criterion
-stuck at 1 or below twice requires an approach change. Record full rounds;
-no ACCEPT after round three is a common §8 stop.
+Independent code, text and visual critique is optional under AGENTS.md.
+When used, give the reviewer the scoped changes and applicable player/reference
+material. Resolve concrete defects in logic, access, money, saved state and
+readability through focused checks. Record actual findings and fixes in this
+contract. Gameplay acceptance follows the criteria above and the owner's result.
 
 ## Step-2 result and limits — 2026-10-07
 
-This page records the finite engineering contract and D1; Porechye records
-the exact story approval without changing accepted player text. Initial Prettier
-check: **FAIL** on this new page's table formatting; corrected with Prettier.
-Final Prettier for both changed documents, local tracked links and
-`git diff --check`: **PASS**.
-Scoped diff and updated sections read back. Logs stay local under `output/B4/`.
-Code/tests/typecheck/build/migrations/new critics/runtime/journey: **NOT_RUN**,
-documentation-only proportional verification. Normal Markdown commit skips
-the code audit: **NOT_RUN**, not a bypass or a code-quality acceptance.
-Balance/game enjoyment: **NOT_MEASURED**. No stack lock or player-state writes.
-
-Local branch only, **NOT_MERGED**. Parent-owned files are untouched; exact
-CHANGELOG/CURRENT_PLAN additions and the consolidated D1 question are in
-`output/B4/step-2-handoff.md`. One next step: owner decides D1, then the single
-B4 writer implements step 3 without reopening AC-1.
+Current checks for gameplay implementation, persistence and scene journeys:
+NOT_RUN in this documentation normalization. Balance and enjoyment: NOT_MEASURED.
+Next action: T033 verifies funding, then T034 implements and exercises the accepted
+story through its public entry points. Record evidence against the matrix above.

@@ -97,7 +97,7 @@ owns strict roundtrip compatibility for its additive optional nickname fields.
 The [consumer evidence](evidence/F01-CONSUMER-20260929.md) includes the corrected
 public-projection alias. Genuine deed production and finite cultural content
 remain open; full F01 is not delivered by this consumer. Follow the
-[current packet queue](PARALLEL_WAVES.md#current-queue-after-pr127). Full M1 and its
+[current packet queue](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/engineering/PARALLEL_WAVES.md). Full M1 and its
 launcher/manual-test journey remain incomplete.
 
 **Current dispatch after PR124, 2026-09-29:** parent verified actual main
@@ -115,7 +115,7 @@ owns the F01 trusted-deed nickname consumer in a separate worktree. H01/H02 requ
 integrated G10; F01 may land before it if ready, but cannot delay H activation.
 H reads the actually merged versioned lifecycle shape. Full F01 still requires
 the finite content mapping and a real deed producer. H is not activated by this
-plan. See the [current queue](PARALLEL_WAVES.md#current-queue-after-pr124).
+plan. See the [current queue](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/engineering/PARALLEL_WAVES.md).
 
 The resumed host exposes two child slots. Fresh Luna/Sol agents replaced the
 unavailable retained agents; no additional concurrency or measured speedup is
@@ -134,7 +134,7 @@ farewell/physical-combat run passed. G10 remains unmerged; the seven unchanged p
 at `66697cf51cb19ccb10e7f03b5dbee98dc8a87e90`. ART05 B2 finite sampling has Sol
 source review and parent browser evidence; see the [scout scope](evidence/ART05-B2-SCOUT-20260929.md).
 Clean delivery is pending; Luna now owns CAPTIVE, the parent delivers ART and
-Sol reviews frozen results. The [current dispatch queue](PARALLEL_WAVES.md#current-queue-after-pr123)
+Sol reviews frozen results. The [current dispatch queue](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/engineering/PARALLEL_WAVES.md)
 rotates the retained Luna writer between domain and independent art packets while
 Sol reviews frozen results and the parent verifies/integrates. Full persistent
 M1, animated ART05 and the final launcher remain incomplete.
@@ -152,7 +152,7 @@ remain pending. Full ART05, the persistent alpha and its launcher remain incompl
 **Dispatch checkpoint after PR122, 2026-09-29:** merged main is
 `b5433612a8fc607b4eeef68d1ac9c00aa56e5318`; parent audited its actual-main
 CI36532083132 full verify/stress/real-migration gate. The
-[current packet queue](PARALLEL_WAVES.md#current-queue-after-pr122) assigns Luna
+[current packet queue](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/engineering/PARALLEL_WAVES.md) assigns Luna
 G10 terminal leadership, then an independent ART05 sprite consumer while Sol
 reviews the frozen domain result. Departure/social/learning and CAPTIVE composition
 remain queued before H. Parent owns integration, planning files and shared services.
@@ -186,7 +186,7 @@ the existing verify/stress/real-migration gates. CT01 now supplies the static
 versioned eight-contract/three-template/eleven-scene catalogue; runtime contract
 acceptance, proof and payment remain future work. PR118 already corrected the
 renderer evidence. Historical checkpoints below retain their original scope.
-Follow the [restored-session dispatch amendment](PARALLEL_WAVES.md#restored-session-dispatch-amendment--2026-09-29)
+Follow the [restored-session dispatch amendment](https://github.com/Vovanostm/warwrit/blob/ba1272da64f57ef72196d5b16bf6e9c2e83b08b7/docs/engineering/PARALLEL_WAVES.md)
 for current ownership. The restored host rejected additional/archived agent
 launches, so the parent reuses the retained Luna writer and Sol reviewer with
 explicit handoffs; completion does not guarantee a released thread slot.

@@ -21,3 +21,9 @@ output/
 .claude/worktrees/
 .worktree-ports
 .orca/
+
+.tools/
+
+.studioigor/captures/
+
+.studioigor/decision-service/

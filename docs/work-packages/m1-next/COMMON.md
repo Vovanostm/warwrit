@@ -3,6 +3,24 @@
 Read this with exactly one N-specification and the current repository AGENTS.md.
 It defines execution procedure, not new game policy.
 
+## Source reconciliation — 2026-11-13
+
+The owner's follow-up retains the graphic-novel direction, fixes accepted
+ordinary-contract terms through settlement with permitted pre-battle withdrawal,
+and chooses unknown/explored/currently visible atlas presentation with dated
+old markers. Read the [recorded decisions](../../engineering/roadmap/design-review.md#решения-владельца--2026-11-13)
+and the affected contract/map owner before implementing their acceptance rows.
+
+Read the [current M1 amendment](../../../specs/001-warwrit-m1/spec.md#overview-and-scope)
+before selecting an acceptance row. The November 9 owner answers supersede
+older package assumptions about battle capacity, 3D scope, eight-contract M1
+completion, camp controls, incapacitation and ordinary contract terms. N01 is
+DONE / MERGED at the verified main `87e785d5`; preserve its exact fallback and
+evidence limits. PR432 remains OPEN at `ba1272da`, while its recorded owner
+answers supply current product decisions. The five corresponding feature
+specifications are linked from ROADMAP. Scope each selected package to those
+decisions and verify actual executable conformance before accepting a row.
+
 ## Authority and operating philosophy
 
 Latest explicit owner decision > repository decisions/GDD > accepted ADRs >

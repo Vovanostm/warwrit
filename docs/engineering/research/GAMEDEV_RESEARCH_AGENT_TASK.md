@@ -38,13 +38,13 @@ and reasoning settings. Do not switch models or buy access to improve a comparis
 ## Context and authority
 
 Follow root and applicable nested AGENTS.md. Authority remains: latest explicit owner
-decision > canonical Airtable decisions/GDD > accepted ADRs > active work-package
+decision > repository decisions/GDD > accepted ADRs > active work-package
 contract > executable specifications > implementation > historical drafts.
 External research informs engineering choices; it never approves a game rule.
 
 Read these entry documents, then only relevant linked detail:
 
-1. [CURRENT_PLAN](../CURRENT_PLAN.md), [ADR-0003](../../architecture/0003-m0-m1-technology-baseline.md)
+1. [ROADMAP](../ROADMAP.md) and the requested task document, [ADR-0003](../../architecture/0003-m0-m1-technology-baseline.md)
    and [technology handoff](../AI_TECHNOLOGY_HANDOFF.md).
 2. [Preparation plan](../AGENT_DEVELOPMENT_PREPARATION.md), [agent team](../AGENT_TEAM.md),
    [memory index](../AGENT_MEMORY.md), [research basis](AGENT_TEAM_RESEARCH.md).
@@ -52,10 +52,10 @@ Read these entry documents, then only relevant linked detail:
    or delivery guidance only for the responsibility being studied. Generic
    `code-review`/`code-simplifier` follow their repository precedence note.
 
-Retrieve full Notes/Purpose amendments and named sources for any active contract on
-which a recommendation depends. Use canonical Airtable base `apph3bj1NyVrfJeLM` and
-the available Empirical `Warwrit` checkpoint as instructed by the repository. GitHub
-owns live refs/CI/merge state. Do not treat cached statuses or role prompts as authority.
+Read the full repository contract and applicable dated owner amendments for any
+recommendation. The task document owns recorded progress; Git/GitHub prove actual checkout,
+live refs/CI/merge state. Historical external references do not require connector
+reads or checkpoint writes. Do not treat cached statuses or role prompts as authority.
 
 Verify actual root, branch, HEAD/tree and dirty changes first; preserve unrelated work.
 Keep the pure deterministic modular monolith, public package boundaries and accepted
@@ -222,7 +222,7 @@ excerpts and links, not a mirrored library of copyrighted tutorials or private s
 
 Propose one small memory amendment only when a new reusable verified lesson exists.
 Keep it inside RUN_DIR with source, revision/date and refresh trigger; do not apply it
-to AGENT_MEMORY, Airtable, Empirical or personal Codex memories in this task.
+to AGENT_MEMORY, external services or personal Codex memories in this task.
 
 Final owner response: status; main findings; chosen/deferred additions; artifact links;
 actual verification and gaps; one next action. Report research time/cost only when

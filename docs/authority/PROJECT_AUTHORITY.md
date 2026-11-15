@@ -7,7 +7,7 @@ This document prevents implementation convenience, an old draft, or an agent sug
 ## Source hierarchy
 
 1. Latest explicit decision by the product owner.
-2. Canonical decision register and Master GDD.
+2. Repository decisions, wiki/GDD and recorded owner amendments under AGENTS.md.
 3. Accepted architecture decision records.
 4. Active work-package implementation contract.
 5. Versioned schemas, executable tests, and generated evidence.
@@ -27,7 +27,9 @@ Material product decisions use explicit states:
 - `REJECTED` — considered and not selected;
 - `SUPERSEDED` — replaced by a newer append-only decision.
 
-Approved decisions are not rewritten in place. A replacement record identifies what it supersedes and why.
+Current rules are updated in their owning document with the owner decision date.
+Superseded drafts and competing versions are removed from working documentation.
+Git and original delivery records retain decision and permission provenance.
 
 ## Engineering interpretation
 
@@ -45,4 +47,6 @@ Do not infer game design from generic genre conventions.
 - ADRs control accepted architecture.
 - Work-package documents control scope and evidence.
 - Tests demonstrate implementation behavior but do not by themselves authorize new product behavior.
-- CI is the merge gate for reproducibility and structural integrity.
+- CI and broad audits are advisory under the November 8 AGENTS.md amendment.
+  Player-facing outcomes and focused checks own behavioral evidence. Merge
+  follows explicit owner authority and current expected-head protection.

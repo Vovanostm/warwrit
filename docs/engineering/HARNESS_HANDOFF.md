@@ -2,20 +2,13 @@
 
 Status: 2026-09-30 checkpoint of the Claude Code sessions that delivered PRs
 #125–#132 and opened #133. It covers only agent tooling, quality gates and their evidence. The M1
-product lane (Codex/Luna/Sol) continues from [CURRENT_PLAN](CURRENT_PLAN.md) and
-Codex's own session handoff; this page does not assign product work or ownership.
-
-## Historical checkpoint
-
-The September instructions below are retained history. Current work starts in
-[CURRENT_PLAN](CURRENT_PLAN.md). The [2026-11-04 cleanup](AGENT_TEAM.md#harness-cleanup--2026-11-04)
-supersedes local audit-on-commit, duplicate Claude gates and automatic remote
-inventory at session start. Do not execute the historical H1/H2 briefs as new work.
+product lane continues from [ROADMAP](ROADMAP.md) and the requested task document;
+this page does not assign product work or ownership.
 
 ## Start
 
-1. In September, Claude SessionStart ran both `pnpm agent:preflight` and
-   `pnpm agent:status`. Current startup behavior is defined above.
+1. Run `pnpm agent:preflight` and `pnpm agent:status` (the Claude `SessionStart`
+   hook does this; confirm its output is in context). Refresh every fact below.
 2. The primary checkout `/Users/vovanostm/learn/warwrit` may hold another agent's
    uncommitted work (observed 2026-09-30: Codex planning edits, a new orchestrator
    role, M1 plan and handoff drafts). Never stage, reset or switch branches there;
@@ -101,8 +94,8 @@ run in parallel. Acceptance is the observable result, not a document saying so.
 
 ### H4. Canonical checkpoint for #125–#133
 
-- Needs Airtable access (base `apph3bj1NyVrfJeLM`, Empirical tag `Warwrit`);
-  until then `NOT_RUN`. Record merged PRs, main SHA and CI run with readback.
+- Record merged PRs, main SHA and actual CI results with GitHub readback
+  in the owning task document; change the roadmap checkbox only when done.
 
 ### H5. Refresh the Codex `pb*` worktrees (their writers, not this lane)
 
