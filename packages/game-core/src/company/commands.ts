@@ -292,6 +292,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     ownershipReceiptId: optional(id),
     splitItemId: optional(id),
   }),
+  SellItem: command('PLAYER', { siteId: id, itemId: id, shopRevision: unsigned }),
   EquipItem: command('PLAYER', {
     characterId: id,
     itemId: id,

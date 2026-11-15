@@ -848,6 +848,7 @@ function financeMovementsShape(finance: Record<string, unknown>): boolean {
         'REPAIR',
         'PRESENTATION',
         'LEARNING',
+        'SALE',
       ].includes(movement['purpose'] as string)
     )
       return false;

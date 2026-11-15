@@ -241,7 +241,8 @@ export interface CashMovement {
     | 'FOOD'
     | 'REPAIR'
     | 'PRESENTATION'
-    | 'LEARNING';
+    | 'LEARNING'
+    | 'SALE';
   readonly atTick: CampaignTick;
 }
 export interface FarewellGrant {
