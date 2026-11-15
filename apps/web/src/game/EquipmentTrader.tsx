@@ -169,8 +169,7 @@ export function EquipmentTrader(props: {
         body: JSON.stringify(attempt),
         signal: controller.signal,
       });
-      if (!response.ok) throw new Error('Ответ торговца неизвестен. Повторите ту же продажу.');
-      const result = readSaleResponse(await response.json(), attempt.commandId);
+      const result = await readResolvedSaleResponse(response, attempt.commandId);
       if (!result) throw new Error('Ответ торговца неизвестен. Повторите ту же продажу.');
       if (controller.signal.aborted || scopeKeyRef.current !== scopeKey) return;
       clearAttempt();
@@ -193,7 +192,6 @@ export function EquipmentTrader(props: {
 
   return (
     <section className="panel equipment-trader" aria-label="Скупка снаряжения">
-      <p className="eyebrow">Каменный Брод · торговец</p>
       <h2 className="panel-title">Скупка снаряжения</h2>
       {activeMarket.status === 'ready' && (
         <p className="equipment-trader-funds">
@@ -347,6 +345,24 @@ function readSaleResponse(value: unknown, commandId: string): EquipmentSaleRespo
     publicRevision: value['publicRevision'],
     code: value['code'] as Extract<EquipmentSaleResponseDto, { ok: false }>['code'],
   };
+}
+
+async function readResolvedSaleResponse(
+  response: Response,
+  commandId: string,
+): Promise<EquipmentSaleResponseDto | undefined> {
+  let value: unknown;
+  try {
+    value = await response.json();
+  } catch {
+    return undefined;
+  }
+  const result = readSaleResponse(value, commandId);
+  if (response.ok) return result?.ok ? result : undefined;
+  if (response.status === 403)
+    return result && !result.ok && result.code === 'NOT_AUTHORIZED' ? result : undefined;
+  if (response.status === 409) return result && !result.ok ? result : undefined;
+  return undefined;
 }
 
 function readStoredAttempt(storageKey: string): EquipmentSaleRequestDto | undefined {

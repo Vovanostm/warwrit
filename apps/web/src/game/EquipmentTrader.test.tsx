@@ -143,6 +143,62 @@ it('explains insufficient merchant funds without offering the sale', async () =>
   expect(button('Продать').disabled).toBe(true);
 });
 
+it('clears a structured 409 rejection, refreshes the quote, and permits a new sale attempt', async () => {
+  const bodies: string[] = [];
+  const refreshCompany = vi.fn();
+  let quotes = 0;
+  let sales = 0;
+  vi.stubGlobal('fetch', async (input: string, init?: RequestInit) => {
+    if (input.endsWith('/sell')) {
+      const body = String(init?.body);
+      bodies.push(body);
+      sales += 1;
+      const request = JSON.parse(body);
+      if (sales === 1)
+        return Response.json(
+          {
+            commandId: request.commandId,
+            ok: false,
+            publicRevision: '19',
+            code: 'STALE_REVISION',
+          },
+          { status: 409 },
+        );
+      return Response.json({ commandId: request.commandId, ok: true, publicRevision: '20' });
+    }
+    quotes += 1;
+    return Response.json(
+      market({
+        publicRevision: quotes === 1 ? '18' : '19',
+        revision: quotes === 1 ? '5' : '6',
+      }),
+    );
+  });
+
+  await mount(scopeA, refreshCompany);
+  await act(async () => button('Продать').click());
+
+  expect(container?.textContent).toContain(
+    'Состояние компании или торговца изменилось. Выберите предмет снова.',
+  );
+  expect(container?.textContent).not.toContain('Повторить ту же продажу');
+  expect(window.sessionStorage.length).toBe(0);
+  expect(quotes).toBe(2);
+  expect(refreshCompany).toHaveBeenCalledTimes(1);
+
+  await act(async () => button('Продать').click());
+
+  expect(bodies).toHaveLength(2);
+  expect(JSON.parse(bodies[1]!)).toMatchObject({
+    expectedRevision: '19',
+    itemId: 'loot-sword-1',
+    shopRevision: '6',
+  });
+  expect(JSON.parse(bodies[1]!).commandId).not.toBe(JSON.parse(bodies[0]!).commandId);
+  expect(window.sessionStorage.length).toBe(0);
+  expect(refreshCompany).toHaveBeenCalledTimes(2);
+});
+
 it('retains and retries the same request when the reply is lost and quotes are unavailable', async () => {
   const bodies: string[] = [];
   let failFirstQuote = false;
