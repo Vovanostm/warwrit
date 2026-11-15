@@ -36,7 +36,7 @@ at source; a command existing in core is not proof of an enabled user journey.
 | S1/#168      | Real local F1 provider, explicit eligible entry, accepted amendment and exit, truthful earned food/lodging/pay coverage; no surplus, debt forgiveness or automatic offline activation | Actual source-backed provider/access/terms                                 |
 | L1/#373      | One genuine offered course: inspect prerequisite/cost/time, start, observe progress, explicitly stop and complete in valid separate attempts; exact money/practice/progress           | Complete required producers and interruption effects before exposing Start |
 | L2/#374      | Access loss, movement/duty/casualty or other accepted interruption preserves legitimately earned learning and settles required costs once                                             | L1's complete transaction interfaces                                       |
-| L3/#375      | One permitted retraining retains the original skill until accepted completion; stop/interruption never gives both or an early replacement                                             | L2 and accepted retraining catalogue/terms                                 |
+| L3/#375      | One permitted retraining retains the original specialization until accepted completion; stop/interruption never gives both or an early replacement                                             | L2 and accepted retraining catalogue/terms                                 |
 | N1/#172      | Real eligible deed → lawful proposal → player consent/refusal → nickname/history persists with observer-appropriate witnesses                                                         | Genuine deed/evidence and source-backed proposal                           |
 | I1/#171/#8   | Reconcile remaining required roster/inventory/command effects against actually enabled API/UI; one concrete missing required action at a time                                         | Existing producer/consumer and exact requirement                           |
 
@@ -111,6 +111,25 @@ course formula. This is an implementer-chosen playtest parameter. The existing
 guard contact supplies the provider and mentor identity. Any distinct tuition
 wallet starts at zero and receives only actual company transfers. The provider's
 new canonical representation is part of implementing the approved offer.
+
+## Retraining and earned nickname — owner decision 2026-11-15
+
+The owner approved the first retraining case as a specialization replacement
+within sword skill (`blades`), at milestone 25. The existing catalogue pair is
+`blades-25-a` (accuracy) ↔ `blades-25-b` (initiative). The Kamenny Brod guard
+provides it for three Campaign Days at five crowns per Campaign Day. The original
+specialization remains effective until accepted completion. Explicit stop and
+accepted interruption preserve it. Only elapsed accepted time is charged.
+This decision clarifies the earlier wording about replacing a skill.
+
+The owner also approved the first earned nickname, «Живучий». A living company
+fighter who ends a victorious battle at no more than one quarter of maximum
+health becomes eligible for a proposal. The saved battle result identifies the
+fighter and deed. The player may accept or reject the proposal. The existing
+consent, source history and observer-appropriate knowledge rules apply.
+
+Both rules were accepted in this implementation chat on 2026-11-15. Their
+producer, ordinary controls and gameplay checks are still in progress.
 
 ## Decisions and checks
 

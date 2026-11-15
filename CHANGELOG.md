@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Changed: accept the first sword-specialization retraining and
+  the earned nickname «Живучий», preserving explicit player consent.
+  [Owner-approved conditions](docs/work-packages/m1-next/06-company-capabilities.md#retraining-and-earned-nickname--owner-decision-2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: a persistent return report with observed events, settled
   food and payroll facts, explicit acknowledgement and safe lost-response retry.
   [Verified behavior and compatibility choice](docs/work-packages/M1-OFFLINE-REPORT.md#current-result--2026-11-15). LOCAL.
