@@ -6,7 +6,12 @@ import type {
   PlaygroundScenario,
 } from '@warwrit/protocol';
 import { createEmptyTiles } from '../combat-lab/editor-model.js';
-import { isEditableScenario, MultisideBattleEditor } from './SandboxSetup.js';
+import {
+  isEditableScenario,
+  MultisideBattleEditor,
+  paintMultisideBattleTile,
+  parseRetreatHexes,
+} from './SandboxSetup.js';
 
 const battle: CombatLabBattleConfigV2 = {
   version: 2,
@@ -94,4 +99,29 @@ it('keeps a complete v2 scenario editable and displays all side, party and unit 
   ]) {
     expect(html).toContain(id);
   }
+});
+
+it('rejects malformed v2 retreat/controller fields before mounting the editor', () => {
+  const missingRetreats = JSON.parse(JSON.stringify(scenario)) as Record<string, unknown>;
+  (missingRetreats['initial'] as Record<string, unknown>)['sides'] = [{ id: 'side-a' }];
+  expect(isEditableScenario(missingRetreats)).toBe(false);
+
+  const malformedController = JSON.parse(JSON.stringify(scenario)) as Record<string, unknown>;
+  const initial = malformedController['initial'] as Record<string, unknown>;
+  (initial['parties'] as Record<string, unknown>[])[0]!['controllerId'] = { id: 'owner' };
+  expect(isEditableScenario(malformedController)).toBe(false);
+});
+
+it('paints one map tile while preserving all side, party, unit and retreat metadata', () => {
+  const painted = paintMultisideBattleTile(battle, { q: 4, r: 4 }, { terrain: 'mud' });
+  expect(painted.sides).toEqual(battle.sides);
+  expect(painted.parties).toEqual(battle.parties);
+  expect(painted.units).toEqual(battle.units);
+  expect(painted.map.tiles.find((tile) => tile.q === 4 && tile.r === 4)?.terrain).toBe('mud');
+  expect(painted.map.tiles).toHaveLength(165);
+});
+
+it('keeps incomplete retreat coordinates invalid until the whole pair is entered', () => {
+  expect(parseRetreatHexes('1,')).toBeNull();
+  expect(parseRetreatHexes('14,10')).toEqual([{ q: 14, r: 10 }]);
 });
