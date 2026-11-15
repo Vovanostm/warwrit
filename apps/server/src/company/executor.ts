@@ -1864,45 +1864,51 @@ export async function catchUpStationaryCompany(input: {
     payload: { toTick: input.atTick, authoritativeInputs: [] },
   });
   if (!parsed.ok) return undefined;
-  const prepared = await prepareTrustedCompanyCommand({
-    transaction: input.transaction,
-    accountId: input.accountId,
-    lockedPriorState: previous,
-    command: parsed.command,
-    stableRequestKey: stableCompanyRequestKey({
-      kind: 'WORLD_REQUEST',
-      worldId: lifecycle.worldId,
-      companyId: lifecycle.companyId,
-      commandId,
-      requestKey: canonicalJson({ kind: input.requestKind }),
-    }),
-    expectedPublicRevision: lifecycle.knowledge.revision,
-    travelMode: 'DEPARTURE',
-    travelFoodRouteBoundary: {
-      kind: 'DEPARTURE',
-      partyId: party.partyId,
-      location: party.location,
-      settledThroughTick: input.atTick,
-    },
-    context: {
-      worldId: lifecycle.worldId,
-      companyId: lifecycle.companyId,
-      principal: { kind: 'SYSTEM', id: 'world-travel' },
-      publicRevision: lifecycle.knowledge.revision,
-      canonicalRevision: lifecycle.revision,
-      atTick: campaignTick(input.atTick),
-      completeGraph: true,
-      contactIds: [],
-      internalGrant: { commandId, sourceEventId, canonicalRequest: canonicalJson(parsed.command) },
-      facts: [],
-      financeFacts: [],
-      physicalFacts: [],
-      practiceFacts: [],
-      trustedTransitSegments: [],
-    },
-  });
-  if (prepared.kind !== 'PREPARED') return undefined;
-  const next = prepared.prepared.nextState;
+  if (
+    (await findOwnedCompanyId(input.transaction, lifecycle.worldId, input.accountId)) !==
+    lifecycle.companyId
+  )
+    return undefined;
+  const locked = await lockCompanyAggregate(
+    input.transaction,
+    lifecycle.worldId,
+    lifecycle.companyId,
+  );
+  if (!locked || canonicalStateJson(locked) !== canonicalStateJson(previous)) return undefined;
+  const food = prepareStationaryFoodFacts(previous, input.atTick, commandId);
+  if (food.kind !== 'PREPARED') return undefined;
+  const context: EconomyContext & Pick<PracticeContext, 'practiceFacts'> = {
+    worldId: lifecycle.worldId,
+    companyId: lifecycle.companyId,
+    principal: { kind: 'SYSTEM', id: 'world-travel' },
+    publicRevision: lifecycle.knowledge.revision,
+    canonicalRevision: lifecycle.revision,
+    atTick: campaignTick(input.atTick),
+    completeGraph: true,
+    contactIds: [],
+    internalGrant: { commandId, sourceEventId, canonicalRequest: canonicalJson(parsed.command) },
+    facts: [],
+    financeFacts: [],
+    physicalFacts: food.facts,
+    practiceFacts: [],
+    trustedTransitSegments: [],
+  };
+  const prepared = prepareCompanyEconomy(previous.economy, parsed.command, context);
+  if (
+    prepared.kind !== 'PREPARED' ||
+    prepared.replayed ||
+    prepared.receipt.requirements.length !== 0 ||
+    !prepared.next.physical
+  )
+    return undefined;
+  const next = readCompanyCombatAggregateState({ ...previous, economy: prepared.next });
+  const response: CompanyCommandAcceptedDto = {
+    commandId,
+    ok: true,
+    publicRevision: next.economy.lifecycle.knowledge.revision,
+  };
+  const sourceKey = companySourceKey(parsed.command);
+  if (sourceKey === null) return undefined;
   await updateCompanyAggregateWithReceipt(
     input.transaction,
     lifecycle.revision,
@@ -1911,16 +1917,23 @@ export async function catchUpStationaryCompany(input: {
     {
       receipt: {
         receiptId: randomUUID(),
-        commandId: prepared.prepared.command.commandId,
-        sourceKey: prepared.prepared.sourceKey,
-        requestKey: prepared.prepared.stableRequestKey,
-        response: prepared.prepared.response,
+        commandId,
+        sourceKey,
+        requestKey: stableCompanyRequestKey({
+          kind: 'WORLD_REQUEST',
+          worldId: lifecycle.worldId,
+          companyId: lifecycle.companyId,
+          commandId,
+          requestKey: canonicalJson({ kind: input.requestKind }),
+        }),
+        response,
         resultingRevision: next.economy.lifecycle.revision,
       },
-      command: prepared.prepared.command,
-      auditEvents: prepared.prepared.events.map((event) => ({
-        ...event,
+      command: parsed.command,
+      auditEvents: prepared.receipt.events.map((event) => ({
+        eventId: event.id,
         revision: next.economy.lifecycle.revision,
+        event,
       })),
     },
   );
