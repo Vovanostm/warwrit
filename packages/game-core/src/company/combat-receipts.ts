@@ -1,5 +1,6 @@
 import { applyCombatCommand } from '../combat/engine.js';
 import { startBattleV2 } from '../combat/runtime-v2.js';
+import { startBattleV3 } from '../combat/runtime-v3.js';
 import type { CombatCommand, CombatEvent, CombatTransition } from '../combat/types.js';
 import type { CompanyCommand } from './commands.js';
 import { EconomyViolation, requireEconomy } from './economy-state.js';
@@ -66,7 +67,12 @@ export function createCombatReceiptJournal(
       id.read(frozen.setup.battleId) &&
       frozen.participants.some((person) => person.companyId === companyId) &&
       frozen.lastAppliedRevision === frozen.initial.state.revision &&
-      canonicalJson(frozen.initial) === canonicalJson(startBattleV2(frozen.setup)),
+      canonicalJson(frozen.initial) ===
+        canonicalJson(
+          frozen.setup.schemaVersion === 3
+            ? startBattleV3(frozen.setup)
+            : startBattleV2(frozen.setup),
+        ),
     'INVALID_SOURCE',
   );
   return Object.freeze({
