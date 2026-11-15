@@ -222,6 +222,9 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ct.m1.lost-scout.v1',
     'ct.m1.wolf-trail.v1',
     'ct.m1.raider-standard.v1',
+    'ct.m1.not-one-pack.v1',
+    'ct.m1.tracks-over-tracks.kosars.v1',
+    'ct.m1.tracks-over-tracks.bandits.v1',
   ];
   const originalInstanceIds = [
     'ci.m1.mill-worker.01',
@@ -232,6 +235,8 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ci.m1.lost-scout.01',
     'ci.m1.wolf-trail.01',
     'ci.m1.raider-standard.01',
+    'ci.m1.not-one-pack.01',
+    'ci.m1.tracks-over-tracks.01',
   ];
   const originalSceneIds = [
     'MILL-01',
@@ -241,6 +246,9 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'HUNT-01',
     'HUNT-02',
     'HUNT-03',
+    'HUNT-04',
+    'INVEST-06-KOSARS',
+    'INVEST-06-BANDITS',
     'INVEST-01',
     'INVEST-02',
     'RESCUE-01',

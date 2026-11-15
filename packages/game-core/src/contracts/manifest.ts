@@ -92,11 +92,14 @@ const missingHerbsId = 'ct.m1.missing-herbs.v1';
 const cellarRescueId = 'ct.m1.cellar-rescue.v1';
 const lostScoutId = 'ct.m1.lost-scout.v1';
 const wolfTrailId = 'ct.m1.wolf-trail.v1';
+const notOnePackId = 'ct.m1.not-one-pack.v1';
 const raiderStandardId = 'ct.m1.raider-standard.v1';
 const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 const twoReceiptsId = 'ct.m1.two-receipts.v1';
 const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
+const tracksOverTracksKosarsId = 'ct.m1.tracks-over-tracks.kosars.v1';
+const tracksOverTracksBanditsId = 'ct.m1.tracks-over-tracks.bandits.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -250,6 +253,50 @@ const definitions: readonly ContractDefinition[] = [
     'UNIQUE_PHYSICAL_TROPHY',
     ['HUNT-03'],
   ),
+  definition(
+    notOnePackId,
+    'HUNT',
+    'woodland-village-caller',
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'not-one-pack-terminal-result',
+      'not-one-pack-proof-pickup',
+      'not-one-pack-presenter-custody',
+    ],
+    'UNIQUE_PHYSICAL_TROPHY',
+    ['HUNT-04'],
+    ['ACCEPTED_POLICY', 'PROVISIONAL_LORE', 'AUTHORED_DERIVATIVE'],
+  ),
+  definition(
+    tracksOverTracksKosarsId,
+    'INVESTIGATE',
+    'city-watch-contact',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'tracks-over-tracks-kosars-fresh-traces',
+      'tracks-over-tracks-kosars-old-stand',
+      'tracks-over-tracks-kosars-report',
+      'tracks-over-tracks-kosars-no-findings',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-06-KOSARS'],
+    ['ACCEPTED_POLICY', 'PROVISIONAL_LORE', 'AUTHORED_DERIVATIVE'],
+  ),
+  definition(
+    tracksOverTracksBanditsId,
+    'INVESTIGATE',
+    'city-watch-contact',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'tracks-over-tracks-bandits-fresh-traces',
+      'tracks-over-tracks-bandits-old-stand',
+      'tracks-over-tracks-bandits-report',
+      'tracks-over-tracks-bandits-no-findings',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-06-BANDITS'],
+    ['ACCEPTED_POLICY', 'PROVISIONAL_LORE', 'AUTHORED_DERIVATIVE'],
+  ),
 ];
 
 const slots: ContractSourceSlot[] = [
@@ -289,6 +336,17 @@ const slots: ContractSourceSlot[] = [
   source('empty-watch-sack-handed-over', emptyWatchRecordId, 'REPORT'),
   source('empty-watch-proof-destroyed', emptyWatchRecordId, 'REPORT'),
   source('empty-watch-old-ford-revealed', emptyWatchRecordId, 'OBSERVATION'),
+  source('not-one-pack-terminal-result', notOnePackId, 'TERMINAL_RESULT'),
+  source('not-one-pack-proof-pickup', notOnePackId, 'PHYSICAL_PICKUP'),
+  source('not-one-pack-presenter-custody', notOnePackId, 'PHYSICAL_PICKUP'),
+  source('tracks-over-tracks-kosars-fresh-traces', tracksOverTracksKosarsId, 'OBSERVATION'),
+  source('tracks-over-tracks-kosars-old-stand', tracksOverTracksKosarsId, 'OBSERVATION'),
+  source('tracks-over-tracks-kosars-report', tracksOverTracksKosarsId, 'REPORT'),
+  source('tracks-over-tracks-kosars-no-findings', tracksOverTracksKosarsId, 'REPORT'),
+  source('tracks-over-tracks-bandits-fresh-traces', tracksOverTracksBanditsId, 'OBSERVATION'),
+  source('tracks-over-tracks-bandits-old-stand', tracksOverTracksBanditsId, 'OBSERVATION'),
+  source('tracks-over-tracks-bandits-report', tracksOverTracksBanditsId, 'REPORT'),
+  source('tracks-over-tracks-bandits-no-findings', tracksOverTracksBanditsId, 'REPORT'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -613,6 +671,76 @@ const standaloneScenes: ContractScene[] = [
       ),
     ],
   ),
+  scene(
+    'HUNT-04',
+    notOnePackId,
+    location('tikhaya-gat', 'tikhaya-gat-bank'),
+    [
+      'not-one-pack-terminal-result',
+      'not-one-pack-proof-pickup',
+      'not-one-pack-presenter-custody',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ALL_PRESENT', [
+          'not-one-pack-terminal-result',
+          'not-one-pack-proof-pickup',
+          'not-one-pack-presenter-custody',
+        ]),
+      ),
+      outcome(
+        'PENDING',
+        gate('ANY_ABSENT', [
+          'not-one-pack-terminal-result',
+          'not-one-pack-proof-pickup',
+          'not-one-pack-presenter-custody',
+        ]),
+      ),
+    ],
+  ),
+  scene(
+    'INVEST-06-KOSARS',
+    tracksOverTracksKosarsId,
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'tracks-over-tracks-kosars-fresh-traces',
+      'tracks-over-tracks-kosars-old-stand',
+      'tracks-over-tracks-kosars-report',
+      'tracks-over-tracks-kosars-no-findings',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', [
+          'tracks-over-tracks-kosars-report',
+          'tracks-over-tracks-kosars-no-findings',
+        ]),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
+    'INVEST-06-BANDITS',
+    tracksOverTracksBanditsId,
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'tracks-over-tracks-bandits-fresh-traces',
+      'tracks-over-tracks-bandits-old-stand',
+      'tracks-over-tracks-bandits-report',
+      'tracks-over-tracks-bandits-no-findings',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', [
+          'tracks-over-tracks-bandits-report',
+          'tracks-over-tracks-bandits-no-findings',
+        ]),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
 ];
 
 const editionDraft: ContractEdition = {
@@ -630,6 +758,10 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),
     binding('ci.m1.raider-standard.01', raiderStandardId),
+    binding('ci.m1.not-one-pack.01', notOnePackId),
+    binding('ci.m1.tracks-over-tracks.01', tracksOverTracksKosarsId, [
+      tracksOverTracksBanditsId,
+    ]),
   ],
   scenes: [...millWorkerScenes, ...standaloneScenes],
   sourceSlots: slots,

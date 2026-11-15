@@ -40,6 +40,26 @@ function world(
 }
 
 describe('canonical hostile gear', () => {
+  it('registers the approved Savva hunt on its own profile and unique trophy', () => {
+    const profile = HUNT_PROFILES.find((entry) => entry.instanceId === 'ci.m1.not-one-pack.01');
+    expect(profile).toMatchObject({
+      profileId: 'ct.m1.not-one-pack.v1',
+      issuerId: 'npc.woodland-village-caller.savva-krivonos.01',
+      issuerLocation: { siteId: 'bereznyak', areaId: 'bereznyak-green' },
+      objectiveLocation: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+      walletId: 'wallet.savva-krivonos.bereznyak.01',
+      genesisWalletQ: '60000000',
+      rewardQ: '60000000',
+      proofId: 'proof.not-one-pack.pack-leader.01',
+      proofDefinitionId: 'wolf-pelt-trophy',
+    });
+    expect(profile?.hostiles.map((hostile) => hostile.entityId)).toEqual([
+      'world.wolf.krivonos.leader.01',
+      'world.wolf.krivonos.02',
+      'world.wolf.krivonos.03',
+    ]);
+  });
+
   it('keeps legacy absent gear absent until a new validated V6 admission', () => {
     const legacy = world();
     expect(legacy.hostiles.every((hostile) => hostile.gear === undefined)).toBe(true);

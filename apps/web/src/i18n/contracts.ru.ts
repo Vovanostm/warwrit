@@ -158,6 +158,33 @@ export const contractsRu = {
   'contract.ci.m1.empty-watch-record.01.report.proof-destroyed':
     'Мешок бросили в реку. Шалаши остались, а Прокоп рассказал о старом броде у ив.',
 
+  'contract.ci.m1.tracks-over-tracks.01.title': 'Свежие следы на дороге',
+  'contract.ci.m1.tracks-over-tracks.01.issuer': 'Гордей Лапа, командир городской стражи',
+  'contract.ci.m1.tracks-over-tracks.01.brief':
+    'На дороге рядом со старыми следами банды Обуха появились свежие. Это наши косари или снова бандиты? Косари ждут ответа.',
+  'contract.ci.m1.tracks-over-tracks.01.step.follow-mowers': 'Осмотреть свежие следы на лугу',
+  'contract.ci.m1.tracks-over-tracks.01.step.inspect-old-stand': 'Проверить старую стоянку у брода',
+  'contract.ci.m1.tracks-over-tracks.01.step.report-tracks': 'Доложить Гордею о свежих следах',
+  'contract.ci.m1.tracks-over-tracks.01.step.report-no-findings':
+    'Доложить Гордею, что следов не нашли',
+  'contract.ci.m1.tracks-over-tracks.01.done': 'Гордей решил, пускать ли косарей на луг.',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.kosars-fresh-traces':
+    'На краю луга скошена полоса на пробу. Трава ещё не завяла.',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.bandits-fresh-traces':
+    'Поверх следов лаптей отпечатались вчерашние подкованные сапоги, как в старых следах банды.',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.old-stand':
+    'Стоянка у брода старая, зола холодная.',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.kosars-report':
+    'Гордей тут же посылает за старшим косарём. — Свои это. Завтра выходите.',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.bandits-report':
+    'Гордей долго молчит. — Косарей держу дома. Вы кому-нибудь ещё сказали?',
+  'contract.ci.m1.tracks-over-tracks.01.result.tracks-over-tracks.no-findings':
+    '— Никого не встретили — это про вас, а не про дорогу, — говорит Гордей.',
+
+  'contract.ci.m1.not-one-pack.01.title': 'Вожак с рваным ухом',
+  'contract.ci.m1.not-one-pack.01.brief':
+    'Волки опять ходят к моему пастбищу. Это не та стая, что у Тихона: у вожака рваное ухо. Убейте их.',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',
@@ -170,6 +197,7 @@ export const contractsRu = {
 
   'npc.city-watch-contact.kamenny-brod.01': 'Гордей Лапа, десятник стражи',
   'npc.woodland-village-caller.bereznyak.01': 'Тихон Бортник, староста Березняка',
+  'npc.woodland-village-caller.savva-krivonos.01': 'Савва Кривонос, сосед Тихона Бортника',
   'npc.local-warning-keeper.tikhaya-gat.01': 'Фрол Звонарь, смотритель Тихой Гати',
 
   'person.cellar-captive.01': 'Демьян Перевозчик',

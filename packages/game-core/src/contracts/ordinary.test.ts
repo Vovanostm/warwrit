@@ -132,6 +132,71 @@ describe('ordinary contract transitions', () => {
     ).toMatchObject({ kind: 'PREPARED', payout: { rewardQ: '25000000' } });
   });
 
+  it('seals the tracks truth in the accepted scenario and requires matching report evidence', () => {
+    const bereznyak: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const gat: ContractPlace = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
+    for (const [definitionId, freshSlot] of [
+      ['ct.m1.tracks-over-tracks.kosars.v1', 'tracks-over-tracks-kosars-fresh-traces'],
+      ['ct.m1.tracks-over-tracks.bandits.v1', 'tracks-over-tracks-bandits-fresh-traces'],
+    ] as const) {
+      const scenario = ordinaryContractProfileVersion('ci.m1.tracks-over-tracks.01', definitionId)!;
+      expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+      const apply = (
+        state: OrdinaryContractState,
+        companyId: string,
+        standingAt: ContractPlace,
+        command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+      ) =>
+        prepareOrdinaryContractCommand(scenario, state, command, {
+          companyId,
+          standingAt,
+          atTick: '10',
+          expectedRevision: state.revision,
+          sourceEventId: `tracks-${definitionId}-${state.revision}`,
+          gates,
+        });
+      const take = (
+        state: OrdinaryContractState,
+        companyId: string,
+        standingAt: ContractPlace,
+        command: Parameters<typeof prepareOrdinaryContractCommand>[2],
+      ) => {
+        const result = apply(state, companyId, standingAt, command);
+        if (result.kind !== 'PREPARED') throw new Error(`expected PREPARED, got ${result.code}`);
+        return result.next;
+      };
+
+      const companyId = `tracks-${definitionId}`;
+      let state = take(ordinaryContractGenesis(scenario), companyId, CITY, { type: 'ACCEPT' });
+      state = take(state, companyId, bereznyak, { type: 'STEP', stepId: 'follow-mowers' });
+      expect(state.facts.map((fact) => fact.slotId)).toContain(freshSlot);
+      state = take(state, companyId, gat, { type: 'STEP', stepId: 'inspect-old-stand' });
+      expect(
+        apply(state, companyId, CITY, { type: 'STEP', stepId: 'report-no-findings' }),
+      ).toMatchObject({ kind: 'REJECTED', code: 'CONDITION_NOT_MET' });
+      const paid = apply(state, companyId, CITY, { type: 'STEP', stepId: 'report-tracks' });
+      if (paid.kind !== 'PREPARED') throw new Error(`expected paid report, got ${paid.code}`);
+      expect(paid.payout).toEqual({ companyId, rewardQ: '40000000' });
+      expect(paid.next.outcome?.kind).toBe('SUCCESS');
+
+      let emptyState = take(ordinaryContractGenesis(scenario), `${companyId}-empty`, CITY, {
+        type: 'ACCEPT',
+      });
+      emptyState = take(emptyState, `${companyId}-empty`, gat, {
+        type: 'STEP',
+        stepId: 'inspect-old-stand',
+      });
+      const noFindings = apply(emptyState, `${companyId}-empty`, CITY, {
+        type: 'STEP',
+        stepId: 'report-no-findings',
+      });
+      if (noFindings.kind !== 'PREPARED')
+        throw new Error(`expected no-findings report, got ${noFindings.code}`);
+      expect(noFindings.payout).toBeNull();
+      expect(noFindings.next.outcome?.kind).toBe('SUCCESS');
+    }
+  });
+
   it('requires the complete receipt chain and saves the chosen report recipient', () => {
     expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
     const receipts = ordinaryContractProfile('ci.m1.two-receipts.01')!;

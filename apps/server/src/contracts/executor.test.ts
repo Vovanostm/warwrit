@@ -418,6 +418,22 @@ describe('ordinary hunt proof presentation', () => {
       false,
     );
   });
+
+  it('presents the not-one-pack leader trophy through the authoritative proof path', () => {
+    const profile = HUNT_PROFILES.find((entry) => entry.instanceId === 'ci.m1.not-one-pack.01')!;
+    const { previous, sourceId } = ordinaryProofState(profile);
+    const prepared = prepareOrdinaryHuntProofPresentation({ previous, profile, sourceId });
+    expect(prepared?.physical.items.filter((item) => item.itemId === profile.proofId)).toHaveLength(
+      1,
+    );
+    expect(
+      prepared?.physical.containers.find((entry) => entry.containerId === prepared.containerId),
+    ).toMatchObject({
+      kind: 'STATIC',
+      custodian: { kind: 'WORLD', id: previous.economy.lifecycle.worldId },
+      location: { kind: 'AT', ...profile.issuerLocation },
+    });
+  });
 });
 
 function pickupState(capacityG: number): CompanyCombatAggregateState {
