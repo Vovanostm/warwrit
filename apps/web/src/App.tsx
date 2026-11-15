@@ -16,6 +16,7 @@ import {
   refreshedCompanyCreatePayload,
 } from './company-create-attempt.js';
 import { GameShell } from './game/GameShell.js';
+import { ReturnReport } from './game/ReturnReport.js';
 import { useCompanyAction } from './game/use-company-action.js';
 import {
   clearBrowserCompanyRosterAttempt,
@@ -1687,24 +1688,31 @@ export function App() {
           </>
         )}
         battleSlot={
-          <Suspense
-            key={`${scope.accountId}:${scope.companyId}:${encounterGeneration}`}
-            fallback={<p className="state-note">Открываем сводку боя…</p>}
-          >
-            <EncounterPanel
-              hideWhenIdle
-              unitNames={Object.fromEntries(
-                journey.company.characters.map((character) => [
-                  character.characterId,
-                  character.name,
-                ]),
-              )}
+          <>
+            <ReturnReport
+              key={`${scope.accountId}\u0000${scope.companyId}`}
               scope={scope}
-              onUnauthorized={() => void restoreJourney()}
-              onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
-              onReturn={() => void restoreJourney()}
+              companyCharacters={journey.company.characters}
             />
-          </Suspense>
+            <Suspense
+              key={`${scope.accountId}:${scope.companyId}:${encounterGeneration}`}
+              fallback={<p className="state-note">Открываем сводку боя…</p>}
+            >
+              <EncounterPanel
+                hideWhenIdle
+                unitNames={Object.fromEntries(
+                  journey.company.characters.map((character) => [
+                    character.characterId,
+                    character.name,
+                  ]),
+                )}
+                scope={scope}
+                onUnauthorized={() => void restoreJourney()}
+                onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
+                onReturn={() => void restoreJourney()}
+              />
+            </Suspense>
+          </>
         }
       />
     );
