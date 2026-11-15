@@ -65,6 +65,7 @@ export interface StoryCompanyState {
   readonly currentSceneId: StorySceneId;
   readonly pendingAccusation: { readonly actorId: StoryActorId; readonly proven: boolean } | null;
   readonly receiptsInspected: boolean;
+  readonly cacheReasonAsked: boolean;
   readonly metActors: readonly StoryActorId[];
   readonly facts: readonly StoryFact[];
 }
