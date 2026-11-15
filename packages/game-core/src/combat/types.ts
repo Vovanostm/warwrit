@@ -34,7 +34,8 @@ export type CombatRulesetId =
   | 'm1-domain-bridge-v2'
   | 'm1-domain-bridge-v3'
   | 'm1-domain-bridge-v4'
-  | 'm1-domain-bridge-v5';
+  | 'm1-domain-bridge-v5'
+  | 'm1-domain-bridge-v6';
 export type WeaponId = (typeof M0_WEAPON_IDS)[number] | 'fists';
 export interface CombatCapabilities {
   readonly move: boolean;
@@ -66,6 +67,13 @@ export interface CombatTile extends Hex {
 export interface CombatSideSetup {
   readonly id: SideId;
   readonly retreatHexes: readonly Hex[];
+}
+
+export interface CombatParty {
+  readonly id: string;
+  readonly sideId: SideId;
+  readonly kind: 'player' | 'npc';
+  readonly controllerId?: string;
 }
 
 export interface UnitAttributes {
@@ -113,6 +121,7 @@ export interface CombatWound {
 }
 
 export interface CombatUnitState extends CombatUnitSetup {
+  readonly partyId?: string;
   readonly health: number;
   readonly armor: number;
   readonly stamina: number;
@@ -166,7 +175,8 @@ export interface BattleState {
   readonly rulesetId: CombatRulesetId;
   readonly seed: number;
   readonly map: CombatMap;
-  readonly sides: readonly [CombatSideSetup, CombatSideSetup];
+  readonly sides: readonly [CombatSideSetup, CombatSideSetup, ...CombatSideSetup[]];
+  readonly parties?: readonly CombatParty[];
   readonly units: readonly CombatUnitState[];
   readonly random: RandomState;
   readonly round: number;

@@ -8,6 +8,7 @@ import {
   replayCombat,
   startBattle,
   startBattleV2,
+  startBattleV3,
   type VersionedCombatReplay,
 } from '../index.js';
 import { releasedBowReplays } from './tests/bow-replay-baseline.js';
@@ -28,7 +29,9 @@ describe('released ordinary bow replay compatibility', () => {
       const initial =
         replay.schemaVersion === 1
           ? startBattle(replay.setup).state
-          : startBattleV2(replay.setup).state;
+          : replay.schemaVersion === 2
+            ? startBattleV2(replay.setup).state
+            : startBattleV3(replay.setup).state;
       const to = { q: 0, r: 0 };
       if (replay.schemaVersion === 1)
         expect(previewCombatMovement(initial)).toContainEqual(

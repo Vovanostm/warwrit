@@ -10,6 +10,8 @@ import { applyCombatCommand, assertBattleState, startBattle } from './engine.js'
 import { compareHex } from './hex.js';
 import { isSpritePrototypeRuleset, compareCombatUnitIds } from './rules.js';
 import { startBattleV2 } from './runtime-v2.js';
+import { startBattleV3 } from './runtime-v3.js';
+import { COMBAT_V3_SCHEMA_VERSION, type BattleSetupV3 } from './setup-v3.js';
 import { COMBAT_V2_SCHEMA_VERSION, type BattleSetupV2 } from './setup-v2.js';
 import { COMBAT_SCHEMA_VERSION } from './types.js';
 import type {
@@ -28,7 +30,13 @@ export interface CombatReplayV2 {
   readonly commands: readonly CombatCommand[];
 }
 
-export type VersionedCombatReplay = CombatReplay | CombatReplayV2;
+export interface CombatReplayV3 {
+  readonly schemaVersion: typeof COMBAT_V3_SCHEMA_VERSION;
+  readonly setup: BattleSetupV3;
+  readonly commands: readonly CombatCommand[];
+}
+
+export type VersionedCombatReplay = CombatReplay | CombatReplayV2 | CombatReplayV3;
 
 function canonicalUnit(unit: CombatUnitState) {
   return {
@@ -65,6 +73,14 @@ export function canonicalCombatState(state: BattleState): string {
       id: side.id,
       retreatHexes: side.retreatHexes.toSorted(compareHex),
     })),
+    ...(state.rulesetId === 'm1-domain-bridge-v6'
+      ? {
+          parties: state.parties,
+          unitParties: state.units
+            .map(({ id, partyId }) => ({ id, partyId }))
+            .toSorted((a, b) => compareCombatUnitIds(state.rulesetId, a.id, b.id)),
+        }
+      : {}),
     units: state.units
       .toSorted((left, right) => compareCombatUnitIds(state.rulesetId, left.id, right.id))
       .map((unit) => ({
@@ -111,6 +127,9 @@ function startReplay(replay: VersionedCombatReplay): CombatTransition {
   }
   if (replay.schemaVersion === COMBAT_V2_SCHEMA_VERSION) {
     return startBattleV2(replay.setup);
+  }
+  if (replay.schemaVersion === COMBAT_V3_SCHEMA_VERSION) {
+    return startBattleV3(replay.setup);
   }
   const version = (replay as { readonly schemaVersion: unknown }).schemaVersion;
   invariant(false, `Unsupported combat replay schemaVersion: ${String(version)}`);

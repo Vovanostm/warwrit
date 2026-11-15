@@ -23,6 +23,7 @@ export const M1_DOMAIN_BRIDGE_V3_RULESET_ID = 'm1-domain-bridge-v3' as const;
 
 export const M1_DOMAIN_BRIDGE_V4_RULESET_ID = 'm1-domain-bridge-v4' as const;
 export const M1_DOMAIN_BRIDGE_V5_RULESET_ID = 'm1-domain-bridge-v5' as const;
+export const M1_DOMAIN_BRIDGE_V6_RULESET_ID = 'm1-domain-bridge-v6' as const;
 
 export function validateCombatCapabilities(
   value: CombatCapabilities | undefined,
@@ -31,7 +32,8 @@ export function validateCombatCapabilities(
   if (
     rulesetId !== M1_DOMAIN_BRIDGE_V3_RULESET_ID &&
     rulesetId !== M1_DOMAIN_BRIDGE_V4_RULESET_ID &&
-    rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID
+    rulesetId !== M1_DOMAIN_BRIDGE_V5_RULESET_ID &&
+    rulesetId !== 'm1-domain-bridge-v6'
   ) {
     invariant(value === undefined, 'Capabilities require bridge-v3');
     return;
