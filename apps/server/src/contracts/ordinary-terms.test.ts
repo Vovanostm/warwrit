@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  MILL_DESCENT_KIT_INITIAL_STOCK,
+  MILL_DESCENT_KIT_PRICE_Q,
   ordinaryContractGenesis,
   ordinaryContractProfile,
   ordinaryContractProfileVersion,
@@ -36,6 +38,33 @@ function acceptedState() {
 }
 
 describe('ordinary accepted term projection', () => {
+  it('exposes the finite price and stock only on the new quiet-rescue terms', () => {
+    const current = ordinaryContractProfile('ci.m1.voice-under-boards.01')!;
+    const legacy = ordinaryContractProfileVersion(
+      'ci.m1.voice-under-boards.01',
+      'ct.m1.voice-under-boards.v1',
+    )!;
+    const stock = {
+      revision: '0',
+      quantity: MILL_DESCENT_KIT_INITIAL_STOCK,
+      priceQ: MILL_DESCENT_KIT_PRICE_Q,
+    };
+    expect(
+      contractView(current, ordinaryContractGenesis(current), undefined, null, gates, false, stock)
+        .materialOffer,
+    ).toEqual({
+      itemId: 'mill-descent-kit',
+      contents: 'lantern-rope-support-boards',
+      priceQ: MILL_DESCENT_KIT_PRICE_Q,
+      stock: MILL_DESCENT_KIT_INITIAL_STOCK,
+      revision: '0',
+    });
+    expect(
+      contractView(legacy, ordinaryContractGenesis(legacy), undefined, null, gates, false, stock)
+        .materialOffer,
+    ).toBeUndefined();
+  });
+
   it('keeps both light-sack scenarios indistinguishable before their clues', () => {
     const stepProjections = [
       'ct.m1.light-sack.measure-error.v1',

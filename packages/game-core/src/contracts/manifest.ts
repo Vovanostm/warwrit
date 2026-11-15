@@ -97,7 +97,7 @@ const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 const twoReceiptsId = 'ct.m1.two-receipts.v1';
 const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
-const voiceUnderBoardsId = 'ct.m1.voice-under-boards.v1';
+const voiceUnderBoardsId = 'ct.m1.voice-under-boards.v2';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -259,6 +259,8 @@ const definitions: readonly ContractDefinition[] = [
     [
       'voice-under-boards-cellar',
       'voice-under-boards-tracks',
+      'voice-under-boards-kit-purchased',
+      'voice-under-boards-quiet-release',
       'voice-under-boards-person-source',
       'voice-under-boards-living-release',
       'voice-under-boards-delivery',
@@ -325,6 +327,8 @@ const slots: ContractSourceSlot[] = [
   source('raider-standard-presenter-custody', raiderStandardId, 'PHYSICAL_PICKUP'),
   source('voice-under-boards-cellar', voiceUnderBoardsId, 'OBSERVATION'),
   source('voice-under-boards-tracks', voiceUnderBoardsId, 'OBSERVATION'),
+  source('voice-under-boards-kit-purchased', voiceUnderBoardsId, 'PHYSICAL_PICKUP'),
+  source('voice-under-boards-quiet-release', voiceUnderBoardsId, 'REPORT'),
   source('voice-under-boards-person-source', voiceUnderBoardsId, 'LIVING_PERSON'),
   source('voice-under-boards-living-release', voiceUnderBoardsId, 'LIVING_PERSON'),
   source('voice-under-boards-delivery', voiceUnderBoardsId, 'LIVING_PERSON'),
@@ -596,6 +600,8 @@ const standaloneScenes: ContractScene[] = [
     [
       'voice-under-boards-cellar',
       'voice-under-boards-tracks',
+      'voice-under-boards-kit-purchased',
+      'voice-under-boards-quiet-release',
       'voice-under-boards-person-source',
       'voice-under-boards-living-release',
       'voice-under-boards-delivery',

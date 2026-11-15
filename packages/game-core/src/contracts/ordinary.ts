@@ -26,7 +26,7 @@ export type OrdinaryStepGate = 'DAYLIGHT' | 'RAIDERS_DEFEATED' | 'BEAST_DEFEATED
 
 export interface OrdinaryStepDefinition {
   readonly stepId: string;
-  readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
+  readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER' | 'BUY';
   readonly place: ContractPlace;
   /** Source slots the acting company must already hold. */
   readonly requires: readonly string[];
@@ -222,7 +222,7 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
   },
   {
     instanceId: 'ci.m1.voice-under-boards.01',
-    definitionId: 'ct.m1.voice-under-boards.v1',
+    definitionId: 'ct.m1.voice-under-boards.v2',
     template: 'RESCUE',
     issuerRoleId: 'woodland-village-caller',
     issuerPlace: TIKHAYA_GAT,
@@ -249,6 +249,15 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         resultTextKey: 'voice-under-boards.tracks',
       },
       {
+        stepId: 'buy-descent-kit',
+        action: 'BUY',
+        place: TIKHAYA_GAT,
+        requires: [],
+        gates: [],
+        produces: ['voice-under-boards-kit-purchased'],
+        resultTextKey: 'voice-under-boards.kit-purchased',
+      },
+      {
         stepId: 'release-ostap',
         action: 'RELEASE',
         place: MILL_YARD,
@@ -256,6 +265,24 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         gates: ['RAIDERS_DEFEATED', 'BEAST_DEFEATED'],
         produces: ['voice-under-boards-person-source', 'voice-under-boards-living-release'],
         takesCustodyOf: 'person.ostap',
+      },
+      {
+        stepId: 'release-ostap-quiet',
+        action: 'RELEASE',
+        place: MILL_YARD,
+        requires: [
+          'voice-under-boards-cellar',
+          'voice-under-boards-tracks',
+          'voice-under-boards-kit-purchased',
+        ],
+        gates: ['RAIDERS_DEFEATED'],
+        produces: [
+          'voice-under-boards-person-source',
+          'voice-under-boards-living-release',
+          'voice-under-boards-quiet-release',
+        ],
+        takesCustodyOf: 'person.ostap',
+        resultTextKey: 'voice-under-boards.quiet-release',
       },
       {
         stepId: 'deliver-ostap',
@@ -547,6 +574,17 @@ const lightSackDampRyeProfile: OrdinaryContractProfile = freeze({
 
 export const ORDINARY_CONTRACT_PROFILE_VERSIONS: readonly OrdinaryContractProfile[] = freeze([
   ...ORDINARY_CONTRACT_PROFILES,
+  freeze({
+    ...ORDINARY_CONTRACT_PROFILES.find(
+      (profile) => profile.instanceId === 'ci.m1.voice-under-boards.01',
+    )!,
+    definitionId: 'ct.m1.voice-under-boards.v1',
+    steps: ORDINARY_CONTRACT_PROFILES.find(
+      (profile) => profile.instanceId === 'ci.m1.voice-under-boards.01',
+    )!.steps.filter(
+      (step) => step.stepId !== 'buy-descent-kit' && step.stepId !== 'release-ostap-quiet',
+    ),
+  }),
   lightSackDampRyeProfile,
 ]);
 
@@ -987,7 +1025,7 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
       ].includes(key),
     ) &&
     typeof value['stepId'] === 'string' &&
-    ['INSPECT', 'ASK', 'SEARCH', 'RELEASE', 'REPORT', 'DELIVER'].includes(
+    ['INSPECT', 'ASK', 'SEARCH', 'RELEASE', 'REPORT', 'DELIVER', 'BUY'].includes(
       value['action'] as string,
     ) &&
     isPlace(value['place']) &&

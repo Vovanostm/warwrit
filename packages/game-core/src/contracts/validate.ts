@@ -222,7 +222,7 @@ function validateEdition(edition: ContractEdition, issues: string[]): void {
     'ct.m1.lost-scout.v1',
     'ct.m1.wolf-trail.v1',
     'ct.m1.raider-standard.v1',
-    'ct.m1.voice-under-boards.v1',
+    'ct.m1.voice-under-boards.v2',
   ];
   const originalInstanceIds = [
     'ci.m1.mill-worker.01',

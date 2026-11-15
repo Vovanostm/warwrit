@@ -327,6 +327,13 @@ export interface DatabaseSchema {
     readonly rations: number;
     readonly cash_q: string;
   };
+  readonly mill_descent_kit_stock: {
+    readonly world_id: string;
+    readonly revision: string;
+    readonly quantity: number;
+    readonly price_q: string;
+    readonly cash_q: string;
+  };
   readonly engineering_schema_probe: EngineeringSchemaProbeTable;
   readonly schema_migrations: SchemaMigrationsTable;
   readonly identity_accounts: IdentityAccountTable;

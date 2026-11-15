@@ -107,7 +107,7 @@ remaining quest checks are NOT_RUN;
 broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
 merge are NOT_RUN.
 
-### «Голос из-под пола» — implementation slice, 2026-11-15
+### «Голос из-под пола» — implementation result, 2026-11-16
 
 **Player goal:** free Василиса's husband Остап from the cellar under the old
 mill and bring him alive to Тихая Гать.
@@ -121,21 +121,30 @@ and delivers him to Василиса. The delivery pays 120 crowns from her fini
 custody and delivery; the existing mill hunt supplies the beast's real terminal
 state and its route transport.
 
-**Alternative and remaining scope:** the approved quiet descent is not exposed
-yet. Its text requires using a lantern and supports and consuming materials;
-there is no available inventory-backed source for those materials in the current
-catalogue and supply paths. Do not display it as a free second rescue route.
-Failure/retry: a living beast blocks release; observations and custody remain
-unfinished, and ordinary command receipts protect accepted steps and delivery.
+**Quiet descent implemented:** at the contract's Тихая Гать offer, the company
+can buy one lantern, rope and support-board kit for 15 crowns. Stock is finite:
+two kits per world. The purchase debits the company wallet, transfers the kit to
+party supplies, updates shared stock and records a receipt and audit event in
+the ordinary command transaction. At the mill, after recording both
+observations and defeating the existing beast hunt, the company can use the kit
+to release Остап quietly. The item is consumed into a saved tombstone when he
+enters contract custody. The original beast-first release remains available.
 
-**Saved outcome and simplest try:** inspect the accepted contract after the
-banner proof is presented, complete the existing beast hunt, then rescue and
-deliver Остап. The owner contract, custody, hunt outcome and payment remain
-saved. Native playthrough and player acceptance are NOT_RUN / NOT_MEASURED; the
-quiet-material branch remains unimplemented.
+**Failure/retry and saved outcome:** a purchase fails without partial changes if
+the party lacks funds, supply capacity or stock; the ordinary command receipt
+protects accepted purchases and steps from duplicate execution. The quiet release
+requires the purchase fact and an owned, unconsumed kit. The accepted contract
+version is v2; accepted v1 saves retain their original terms and dangerous-route
+eligibility. Both endings preserve the owner contract, custody, hunt outcome and
+payment. The simplest try is to present the banner proof, buy the kit at Тихая
+Гать, complete the existing mill-beast hunt, choose either release step, then
+deliver Остап.
 
-Focused game-core ordinary-contract tests and core/server typechecks passed.
-The web typecheck still reports the four existing `EquipmentTrader.tsx` DTO
-mismatches recorded above. The approved Russian source text was checked with
-`check_text.py` (0 issues). This partial slice is LOCAL; publication and merge
-are NOT_RUN.
+Focused game-core, protocol and server builds passed; server typecheck passed;
+focused game-core, server and web tests passed (30/30); the isolated PostgreSQL
+purchase/release/delivery integration case passed (1/1), using the integration
+clone harness; static migration checks, Russian text checker (0 issues),
+formatting and `git diff --check` passed.
+The web typecheck reports the four existing `EquipmentTrader.tsx` DTO mismatches
+recorded above. Native playthrough and player acceptance are NOT_RUN /
+NOT_MEASURED. This slice is LOCAL; publication and merge are NOT_RUN.

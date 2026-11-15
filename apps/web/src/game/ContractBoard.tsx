@@ -174,6 +174,13 @@ export function ContractConversation(props: ConversationProps) {
           <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
             <summary>Что произошло?</summary>
             <p className="contract-brief">{brief}</p>
+            {contract.materialOffer && (
+              <p>
+                Комплект для спуска: фонарь, верёвка и подпорки. Цена —{' '}
+                {formatCrowns(contract.materialOffer.priceQ)} кр.; в запасе —{' '}
+                {contract.materialOffer.stock}.
+              </p>
+            )}
           </details>
           <details className="contract-conversation">
             <summary>Что нужно для оплаты?</summary>
