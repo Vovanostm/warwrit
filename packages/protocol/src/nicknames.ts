@@ -8,14 +8,19 @@ export interface CompanyNicknameProposalDto {
   readonly proposedAt: string;
 }
 
-/** Accepted nickname history known to this company observer. */
+/** Resolved nickname decisions known to this company observer. */
 export interface CompanyNicknameHistoryDto {
   readonly proposalId: string;
   readonly characterId: string;
   readonly characterName: string | null;
+  readonly sourceEventId: string;
   readonly textKey: string;
   readonly reasonKey: string;
-  readonly acceptedAt: string;
+  readonly proposedAt: string | null;
+  readonly resolution: 'ACCEPTED' | 'REJECTED';
+  readonly decidedAt: string;
+  /** Compatibility field for accepted nickname history. Null for refusals. */
+  readonly acceptedAt: string | null;
 }
 
 export interface CompanyNicknamesDto {

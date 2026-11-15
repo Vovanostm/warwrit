@@ -230,15 +230,19 @@ export function validateLifecycleGraph(state: LifecycleState, context: Lifecycle
   );
   for (const known of knownNicknameHistory) {
     const actual = nicknameProposals.find((proposal) => proposal.proposalId === known.proposalId);
+    const resolution = known.resolution ?? 'ACCEPTED';
+    const decidedAt = known.decidedAt ?? known.acceptedAt;
     requireLifecycle(
-      actual?.resolution === 'ACCEPTED' &&
-        actual.resolvedAt === known.acceptedAt &&
+      (resolution === 'ACCEPTED' || resolution === 'REJECTED') &&
+        actual?.resolution === resolution &&
+        actual.resolvedAt === decidedAt &&
         actual.characterId === known.characterId &&
         actual.sourceEventId === known.sourceEventId &&
         actual.cultureId === known.cultureId &&
         actual.deedKind === known.deedKind &&
         actual.reasonKey === known.reasonKey &&
-        actual.textKey === known.textKey,
+        actual.textKey === known.textKey &&
+        (known.proposedAt === undefined || actual.proposedAt === known.proposedAt),
       'INVALID_STATE',
     );
   }
@@ -668,8 +672,21 @@ function lifecycleNicknameViewShape(value: unknown): boolean {
   );
 }
 function lifecycleNicknameHistoryShape(value: unknown): boolean {
-  return (
-    record(value, [
+  if (
+    !record(
+      value,
+      [
+        'proposalId',
+        'characterId',
+        'sourceEventId',
+        'cultureId',
+        'deedKind',
+        'reasonKey',
+        'textKey',
+      ],
+      ['proposedAt', 'resolution', 'decidedAt', 'acceptedAt'],
+    ) ||
+    ![
       'proposalId',
       'characterId',
       'sourceEventId',
@@ -677,19 +694,22 @@ function lifecycleNicknameHistoryShape(value: unknown): boolean {
       'deedKind',
       'reasonKey',
       'textKey',
-      'acceptedAt',
-    ]) &&
-    [
-      'proposalId',
-      'characterId',
-      'sourceEventId',
-      'cultureId',
-      'deedKind',
-      'reasonKey',
-      'textKey',
-    ].every((key) => isEntityId(value[key])) &&
-    isExactInteger(value['acceptedAt'])
-  );
+    ].every((key) => isEntityId((value as Record<string, unknown>)[key]))
+  )
+    return false;
+  const history = value as Record<string, unknown>;
+  const legacyAccepted =
+    history['resolution'] === undefined &&
+    history['decidedAt'] === undefined &&
+    isExactInteger(history['acceptedAt']);
+  const decision =
+    (history['resolution'] === 'ACCEPTED' || history['resolution'] === 'REJECTED') &&
+    isExactInteger(history['decidedAt']) &&
+    isExactInteger(history['proposedAt']) &&
+    (history['resolution'] === 'ACCEPTED'
+      ? history['acceptedAt'] === undefined || history['acceptedAt'] === history['decidedAt']
+      : history['acceptedAt'] === undefined);
+  return legacyAccepted || decision;
 }
 function bypassShape(value: unknown): boolean {
   if (!record(value, ['crisisId', 'eventId', 'heirId', 'leaderId', 'happenedAt', 'notification']))

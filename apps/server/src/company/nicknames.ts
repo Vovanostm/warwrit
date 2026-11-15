@@ -32,15 +32,15 @@ export function proposeResilientNicknames(input: {
   const { before, finalState } = input;
   let state = input.after;
   const companyId = before.economy.lifecycle.companyId;
-  const lifecycle = state.economy.lifecycle;
+  const initialLifecycle = state.economy.lifecycle;
   const binding = before.encounter.active?.binding;
   const winnerSideId = finalState.outcome?.winnerSideId;
   if (
     finalState.status !== 'resolved' ||
     !winnerSideId ||
     finalState.battleId !== binding?.setup.battleId ||
-    companyId !== lifecycle.companyId ||
-    lifecycle.company?.runStatus !== 'ACTIVE'
+    companyId !== initialLifecycle.companyId ||
+    initialLifecycle.company?.runStatus !== 'ACTIVE'
   )
     return { state, sourceEventIds: [] };
 
@@ -48,6 +48,7 @@ export function proposeResilientNicknames(input: {
   for (const participant of binding.participants) {
     if (participant.companyId !== companyId || participant.sideId !== winnerSideId) continue;
     const unit = finalState.units.find((entry) => entry.id === participant.unitId);
+    const lifecycle = state.economy.lifecycle;
     const character = lifecycle.characters.find(
       (entry) => entry.identity.characterId === participant.projection.characterId,
     );
@@ -56,12 +57,10 @@ export function proposeResilientNicknames(input: {
     );
     if (
       !unit ||
-      unit.status !== 'active' ||
-      unit.health <= 0 ||
+      unit.status === 'dead' ||
       !character ||
       character.presence.availability === 'DEAD' ||
       !vitals ||
-      vitals.currentHealth <= 0 ||
       !Number.isSafeInteger(participant.vitals.maximumHealth) ||
       participant.vitals.maximumHealth <= 0 ||
       unit.health * 4 > participant.vitals.maximumHealth

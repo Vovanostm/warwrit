@@ -53,6 +53,47 @@ describe('resilient nickname producer', () => {
     expect(retry.state.economy.lifecycle.nicknameProposals).toHaveLength(1);
   });
 
+  it('retains proposals for every eligible fighter and supports living zero-health retreaters', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const before = fixture.begun.next;
+    const binding = fixture.begun.binding;
+    const candidates = binding.participants.filter(
+      (participant) =>
+        participant.companyId === before.economy.lifecycle.companyId &&
+        participant.sideId === binding.participants[0]?.sideId,
+    );
+    expect(candidates.length).toBeGreaterThanOrEqual(2);
+    const winningSideId = candidates[0]!.sideId;
+    const finalState = {
+      ...binding.initial.state,
+      status: 'resolved' as const,
+      outcome: { reason: 'last-side-standing' as const, winnerSideId: winningSideId },
+      units: binding.initial.state.units.map((unit) =>
+        candidates.some((participant) => participant.unitId === unit.id)
+          ? { ...unit, health: 0, status: 'retreated' as const }
+          : unit,
+      ),
+    };
+
+    const first = proposeResilientNicknames({
+      before,
+      after: before,
+      finalState,
+      atTick: '1000',
+    });
+    expect(first.sourceEventIds).toHaveLength(candidates.length);
+    expect(first.state.economy.lifecycle.nicknameProposals).toHaveLength(candidates.length);
+
+    const retry = proposeResilientNicknames({
+      before,
+      after: first.state,
+      finalState,
+      atTick: '1000',
+    });
+    expect(retry.sourceEventIds).toEqual([]);
+    expect(retry.state.economy.lifecycle.nicknameProposals).toHaveLength(candidates.length);
+  });
+
   it('does not propose for a defeated side, a dead fighter, or health above one quarter', () => {
     const fixture = createCompanyCombatAggregateFixture();
     const before = fixture.begun.next;

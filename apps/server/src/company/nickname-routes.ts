@@ -36,7 +36,6 @@ import {
   readCompanyCommandReceipt,
   updateCompanyAggregateWithReceipt,
 } from './repository.js';
-import { readWorldClock } from '../world/clock.js';
 
 export interface CompanyNicknameRoutesOptions {
   readonly database: Kysely<DatabaseSchema>;
@@ -68,9 +67,13 @@ export function companyNicknamesView(
       proposalId: nickname.proposalId,
       characterId: nickname.characterId,
       characterName: names.get(nickname.characterId) ?? null,
+      sourceEventId: nickname.sourceEventId,
       textKey: nickname.textKey,
       reasonKey: nickname.reasonKey,
-      acceptedAt: nickname.acceptedAt,
+      proposedAt: nickname.proposedAt ?? null,
+      resolution: nickname.resolution ?? 'ACCEPTED',
+      decidedAt: nickname.decidedAt ?? nickname.acceptedAt!,
+      acceptedAt: nickname.acceptedAt ?? null,
     })),
   };
 }
@@ -124,6 +127,12 @@ export function prepareNicknameResolution(input: {
     return {
       kind: 'REJECTED',
       error: prepared.error,
+      publicRevision: lifecycle.knowledge.revision,
+    };
+  if (prepared.receipt.requirements.length > 0)
+    return {
+      kind: 'REJECTED',
+      error: 'UNSUPPORTED_ACTION',
       publicRevision: lifecycle.knowledge.revision,
     };
   try {
@@ -191,7 +200,7 @@ export function registerCompanyNicknameRoutes(
       if (!previous) throw new Error('Owned company snapshot is unavailable');
       const lifecycle = previous.economy.lifecycle;
 
-      // Exact retries are answered before revision freshness and clock sampling.
+      // Exact retries are answered before revision freshness or any simulation work.
       const prior = await readCompanyCommandReceipt(
         transaction,
         worldId,
@@ -204,20 +213,27 @@ export function registerCompanyNicknameRoutes(
         const replay = acceptedReceipt(prior.response, input.commandId);
         return replay
           ? { kind: 'REPLAY' as const, response: replay }
-          : { kind: 'INVALID' as const, publicRevision: lifecycle.knowledge.revision };
+          : {
+              kind: 'INVALID' as const,
+              publicRevision: lifecycle.knowledge.revision,
+              code: 'INVALID_COMMAND' as const,
+            };
       }
       if (input.expectedPublicRevision !== lifecycle.knowledge.revision)
         return { kind: 'STALE' as const, publicRevision: lifecycle.knowledge.revision };
 
-      const clock = await readWorldClock(transaction, worldId, new Date(), true);
       const prepared = prepareNicknameResolution({
         state: previous,
         request: input,
         accountId,
-        atTick: clock.tick,
+        atTick: lifecycle.campaignTick,
       });
       if (prepared.kind !== 'PREPARED')
-        return { kind: 'INVALID' as const, publicRevision: lifecycle.knowledge.revision };
+        return {
+          kind: 'INVALID' as const,
+          publicRevision: lifecycle.knowledge.revision,
+          code: commandRejectionCode(prepared.error),
+        };
       const next = prepared.state;
       const response = {
         commandId: input.commandId,
@@ -272,10 +288,21 @@ export function registerCompanyNicknameRoutes(
         commandId: input.commandId,
         ok: false,
         publicRevision: result.publicRevision,
-        code: 'INVALID_COMMAND',
+        code: result.code,
       } satisfies CompanyCommandRejectionDto);
     return result.response;
   });
+}
+
+function commandRejectionCode(error: string): CompanyCommandRejectionDto['code'] {
+  if (
+    error === 'STALE_REVISION' ||
+    error === 'UNSUPPORTED_ACTION' ||
+    error === 'IDEMPOTENCY_CONFLICT' ||
+    error === 'NOT_AUTHORIZED'
+  )
+    return error;
+  return 'INVALID_COMMAND';
 }
 
 function acceptedReceipt(value: unknown, commandId: string): CompanyCommandAcceptedDto | undefined {

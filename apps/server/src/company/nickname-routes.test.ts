@@ -42,14 +42,16 @@ describe('company nickname view', () => {
         ],
         nicknameHistory: [
           {
-            proposalId: 'accepted-proposal',
+            proposalId: 'rejected-proposal',
             characterId,
-            sourceEventId: 'accepted-source',
+            sourceEventId: 'rejected-source',
             cultureId: 'culture-north',
             deedKind: 'SURVIVED_NEAR_DEATH',
             reasonKey: 'nickname.reason.survived_near_death',
             textKey: 'nickname.resilient',
-            acceptedAt: state.campaignTick,
+            proposedAt: state.campaignTick,
+            resolution: 'REJECTED' as const,
+            decidedAt: state.campaignTick,
           },
         ],
       },
@@ -66,7 +68,15 @@ describe('company nickname view', () => {
           textKey: 'nickname.resilient',
         },
       ],
-      history: [{ proposalId: 'accepted-proposal', characterId, textKey: 'nickname.resilient' }],
+      history: [
+        {
+          proposalId: 'rejected-proposal',
+          characterId,
+          textKey: 'nickname.resilient',
+          resolution: 'REJECTED',
+          sourceEventId: 'rejected-source',
+        },
+      ],
     });
   });
 
@@ -135,7 +145,12 @@ describe('company nickname view', () => {
         )?.nickname,
       ).toEqual({ proposalId: proposal.proposalId, textKey: 'nickname.resilient' });
       expect(accepted.state.economy.lifecycle.knowledge.nicknameHistory).toMatchObject([
-        { proposalId: proposal.proposalId, textKey: 'nickname.resilient' },
+        {
+          proposalId: proposal.proposalId,
+          textKey: 'nickname.resilient',
+          resolution: 'ACCEPTED',
+          decidedAt: lifecycle.campaignTick,
+        },
       ]);
     }
 
@@ -148,7 +163,13 @@ describe('company nickname view', () => {
     expect(rejected.kind).toBe('PREPARED');
     if (rejected.kind === 'PREPARED') {
       expect(rejected.state.economy.lifecycle.nicknameProposals?.[0]?.resolution).toBe('REJECTED');
-      expect(rejected.state.economy.lifecycle.knowledge.nicknameHistory).toEqual([]);
+      expect(rejected.state.economy.lifecycle.knowledge.nicknameHistory).toMatchObject([
+        {
+          proposalId: proposal.proposalId,
+          resolution: 'REJECTED',
+          decidedAt: lifecycle.campaignTick,
+        },
+      ]);
     }
 
     const stale = prepareNicknameResolution({

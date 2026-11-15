@@ -90,19 +90,19 @@ function resolveNickname(
     resolvedAt: context.atTick,
   };
   const nextProposals = proposals.map((item, at) => (at === index ? resolved : item));
-  const acceptedAt = context.atTick;
-  const accepted = command.payload.accept
-    ? {
-        proposalId: proposal.proposalId,
-        characterId: proposal.characterId,
-        sourceEventId: proposal.sourceEventId,
-        cultureId: proposal.cultureId,
-        deedKind: proposal.deedKind,
-        reasonKey: proposal.reasonKey,
-        textKey: proposal.textKey,
-        acceptedAt,
-      }
-    : null;
+  const decision = {
+    proposalId: proposal.proposalId,
+    characterId: proposal.characterId,
+    sourceEventId: proposal.sourceEventId,
+    cultureId: proposal.cultureId,
+    deedKind: proposal.deedKind,
+    reasonKey: proposal.reasonKey,
+    textKey: proposal.textKey,
+    proposedAt: proposal.proposedAt,
+    resolution: resolved.resolution,
+    decidedAt: context.atTick,
+    ...(command.payload.accept ? { acceptedAt: context.atTick } : {}),
+  };
   const characters = command.payload.accept
     ? state.characters.map((character) =>
         character.identity.characterId === proposal.characterId
@@ -124,14 +124,12 @@ function resolveNickname(
     revision: publicRevision((BigInt(state.knowledge.revision) + 1n).toString()),
     eventIds: [...state.knowledge.eventIds, resolvedEvent.id],
     nicknameProposals: observed.filter((item) => item.proposalId !== proposal.proposalId),
-    nicknameHistory: accepted
-      ? [
-          ...(state.knowledge.nicknameHistory ?? []).filter(
-            (item) => item.proposalId !== proposal.proposalId,
-          ),
-          accepted,
-        ]
-      : (state.knowledge.nicknameHistory ?? []),
+    nicknameHistory: [
+      ...(state.knowledge.nicknameHistory ?? []).filter(
+        (item) => item.proposalId !== proposal.proposalId,
+      ),
+      decision,
+    ],
     characters: command.payload.accept
       ? state.knowledge.characters.map((known) =>
           known.identity.characterId === proposal.characterId
