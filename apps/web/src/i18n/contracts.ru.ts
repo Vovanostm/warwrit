@@ -224,6 +224,37 @@ export const contractsRu = {
   'contract.ci.m1.foul-well.01.world.herbs-available': 'У торговца по-прежнему есть травы Агафьи.',
   'contract.ci.m1.foul-well.01.world.herbs-removed': 'Травы Агафьи сняли с продажи.',
 
+  'contract.ci.m1.dragged-sack.01.title': 'Мешок у дороги',
+  'contract.ci.m1.dragged-sack.01.issuer': 'Ерёма из Северного Двора, ездит с телегой в город',
+  'contract.ci.m1.dragged-sack.01.brief':
+    'С телеги пропал мешок муки. Найдите и верните его мне в Северный Двор в течение дня после принятия поручения.',
+  'contract.ci.m1.dragged-sack.01.step.trace-flour': 'Проследить полосу муки',
+  'contract.ci.m1.dragged-sack.01.step.find-boys': 'Осмотреть ивы у развилки',
+  'contract.ci.m1.dragged-sack.01.step.leave-flour': 'Оставить мальчишкам по шапке муки',
+  'contract.ci.m1.dragged-sack.01.step.return-full-sack': 'Вернуть мешок Ерёме',
+  'contract.ci.m1.dragged-sack.01.step.return-short-sack': 'Вернуть мешок Ерёме',
+  'contract.ci.m1.dragged-sack.01.step.return-cargo-after-withdrawal':
+    'Вернуть мешок заказчику без выплаты',
+  'contract.ci.m1.dragged-sack.01.done': 'Ерёма снова повёз муку в город.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.flour-trail':
+    'Из угла мешка сыпалась мука: белая полоса тянется от города и обрывается на развилке у ив. Колесо прыгает на корнях; на земле осталось белое пятно. От него к ивам мешок волокли по траве. Рядом две пары детских следов.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.boys-found':
+    'В ивах двое мальчишек, белые от муки, насыпают её в шапки. — Он сам упал, — говорит старший. — Значит, ничей.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.flour-shared':
+    'Младший провожает вас до развилки и уже там говорит: — А дядька ваш спал. Лошадь сама его везла, мы видели.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.returned-full':
+    'Старший молча вытряхивает свою шапку обратно в мешок. Ерёма находит дыру в углу и долго на неё смотрит. — Мыши, — говорит он. — Так старосте и скажу.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.returned-short':
+    'Ерёма отдаёт деньги и не торгуется.',
+  'contract.ci.m1.dragged-sack.01.result.dragged-sack.returned-after-withdrawal':
+    'Ерёма забирает мешок. Платить он не будет: вы отказались от поручения.',
+  'contract.ci.m1.dragged-sack.01.world.grain-full': 'В амбар вернули целый мешок муки.',
+  'contract.ci.m1.dragged-sack.01.world.grain-short':
+    'В амбар вернули не всю муку: мальчишкам оставили по шапке.',
+  'contract.ci.m1.dragged-sack.01.world.yerema-slept':
+    'Вы знаете: Ерёма заснул на телеге. Лошадь сама довезла его домой.',
+  'contract.ci.m1.dragged-sack.01.cargo.dragged-sack.01': 'мешок с мукой',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',

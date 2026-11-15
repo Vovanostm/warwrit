@@ -20,7 +20,9 @@ const herbs: OrdinaryContractDto = {
   canAccept: false,
   canHelp: false,
   canWithdraw: true,
+  canReturnCargo: false,
   yourCustody: [],
+  yourCargo: [],
   steps: [
     {
       stepId: 'inspect-green',
@@ -243,4 +245,141 @@ it('shows shared empty-watch camp and watchman state only after the world choice
     'Под мостом шалаши. В них живут семь семей с того берега, из Полесского герцогства.',
     'Прокоп остаётся на службе.',
   ]);
+});
+
+it('shows returned sack custody and the saved grain and company knowledge consequences', () => {
+  const draggedSack: OrdinaryContractDto = {
+    ...herbs,
+    instanceId: 'ci.m1.dragged-sack.01',
+    issuerRoleId: 'northern-grain-hauler',
+    issuerLocation: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+    deadlineTicks: '1000',
+    yourCargo: ['dragged-sack.01'],
+  };
+  const activeSackView = render(
+    draggedSack,
+    { siteId: 'severny-dvor', building: 'elder' },
+    'severny-dvor',
+  );
+  expect(activeSackView).toContain('мешок с мукой');
+  expect(activeSackView).toContain('один день кампании с момента принятия поручения');
+
+  const withdrawnCargo: OrdinaryContractDto = {
+    ...draggedSack,
+    canReturnCargo: true,
+    yourRole: 'NONE',
+    state: 'OFFERED',
+  };
+  const issuerView = render(
+    withdrawnCargo,
+    { siteId: 'severny-dvor', building: 'elder' },
+    'severny-dvor',
+  );
+  expect(issuerView).toContain('Отнесите мешок заказчику в Северный Двор.');
+  expect(issuerView).toContain('Вернуть мешок заказчику без выплаты');
+  expect(render(withdrawnCargo, null, 'kamenny-brod')).not.toContain(
+    'Вернуть мешок заказчику без выплаты',
+  );
+
+  const expiredCargo: OrdinaryContractDto = {
+    ...draggedSack,
+    state: 'EXPIRED',
+    deadlineTicks: '1000',
+    canWithdraw: false,
+    canReturnCargo: true,
+  };
+  const expiredView = render(
+    expiredCargo,
+    { siteId: 'severny-dvor', building: 'elder' },
+    'severny-dvor',
+  );
+  expect(expiredView).toContain('срок истёк без выплаты');
+  expect(expiredView).toContain('Вернуть мешок заказчику без выплаты');
+  expect(expiredView).not.toContain('один день с момента принятия поручения');
+
+  const shortReturn: OrdinaryContractDto = {
+    ...draggedSack,
+    yourCargo: [],
+    state: 'COMPLETED',
+    terminalPayout: 'NO_PAYOUT',
+    terminalFindingTextKey:
+      'contract.ci.m1.dragged-sack.01.result.dragged-sack.returned-after-withdrawal',
+    publicConsequences: {
+      kind: 'DRAGGED_SACK',
+      northernDvorGrain: 'SHORT_SACK',
+      yourCompanyKnowsYeremaSlept: true,
+    },
+  };
+  expect(
+    render(shortReturn, { siteId: 'severny-dvor', building: 'elder' }, 'severny-dvor'),
+  ).toContain('Ерёма забирает мешок. Платить он не будет: вы отказались от поручения.');
+  expect(contractPlaceFacts([shortReturn])).toEqual([
+    {
+      instanceId: 'ci.m1.dragged-sack.01',
+      siteId: 'severny-dvor',
+      text: 'Ерёма снова повёз муку в город.',
+    },
+    {
+      instanceId: 'ci.m1.dragged-sack.01:grain',
+      siteId: 'severny-dvor',
+      text: 'В амбар вернули не всю муку: мальчишкам оставили по шапке.',
+    },
+    {
+      instanceId: 'ci.m1.dragged-sack.01:sleep',
+      siteId: 'severny-dvor',
+      text: 'Вы знаете: Ерёма заснул на телеге. Лошадь сама довезла его домой.',
+    },
+  ]);
+  const otherCompanyFacts = contractPlaceFacts([
+    {
+      ...shortReturn,
+      publicConsequences: {
+        kind: 'DRAGGED_SACK',
+        northernDvorGrain: 'SHORT_SACK',
+        yourCompanyKnowsYeremaSlept: false,
+      },
+    },
+  ]);
+  expect(otherCompanyFacts).toHaveLength(2);
+  expect(otherCompanyFacts.map((fact) => fact.instanceId)).not.toContain(
+    'ci.m1.dragged-sack.01:sleep',
+  );
+});
+
+it('shows a physical unpaid return action for a withdrawn rescue holder', () => {
+  const issuer = { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
+  const returnedPerson: OrdinaryContractDto = {
+    ...herbs,
+    instanceId: 'ci.m1.lost-scout.01',
+    template: 'RESCUE',
+    issuerRoleId: 'city-watch-contact',
+    issuerLocation: issuer,
+    rewardQ: '80000000',
+    yourRole: 'NONE',
+    state: 'ACTIVE',
+    canWithdraw: false,
+    yourCustody: ['person.lost-scout.01'],
+    steps: [
+      {
+        stepId: 'deliver',
+        action: 'DELIVER',
+        location: issuer,
+        doneByYou: false,
+        blocker: null,
+        completes: true,
+      },
+    ],
+  };
+  const issuerVisit = { siteId: issuer.siteId, building: 'watch' as const };
+  const activeMarkup = render(returnedPerson, issuerVisit, issuer.siteId);
+  expect(activeMarkup).toContain('Верните человека заказчику; за этот возврат платить не будут.');
+  expect(activeMarkup).toContain('Отвести человека заказчику без выплаты');
+  expect(activeMarkup).not.toContain('Отказаться от поручения');
+
+  const completed = render(
+    { ...returnedPerson, state: 'COMPLETED', terminalPayout: 'NO_PAYOUT', yourCustody: [] },
+    issuerVisit,
+    issuer.siteId,
+  );
+  expect(completed).toContain('выполнен без выплаты');
 });

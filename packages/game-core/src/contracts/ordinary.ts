@@ -15,7 +15,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.two-receipts.01'
   | 'ci.m1.empty-watch-record.01'
   | 'ci.m1.tracks-over-tracks.01'
-  | 'ci.m1.foul-well.01';
+  | 'ci.m1.foul-well.01'
+  | 'ci.m1.dragged-sack.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -36,12 +37,22 @@ export interface OrdinaryStepDefinition {
   readonly gates: readonly OrdinaryStepGate[];
   /** Source slots this step records for the acting company. */
   readonly produces: readonly string[];
+  /** A branch is unavailable once this company has recorded any excluded finding. */
+  readonly excludes?: readonly string[];
   /** Localized result shown only after this company records the observation. */
   readonly resultTextKey?: string;
   /** A person who travels with the acting company from now on. */
   readonly takesCustodyOf?: string;
   /** Needs the acting company to hold this person; ends custody. */
   readonly needsCustodyOf?: string;
+  /** Contract-owned cargo enters or leaves one company's custody through a real step. */
+  readonly takesCargoId?: string;
+  readonly needsCargoId?: string;
+  readonly deliversCargoId?: string;
+  /** The produced fact that receipts this step's cargo transition. */
+  readonly cargoReceiptSlotId?: string;
+  /** Allows the former holder to return cargo after withdrawing, without completing for pay. */
+  readonly returnsCargoAfterWithdrawal?: true;
   /** Completes the contract. By default the full reward is paid to the acting company. */
   readonly completes?: true;
   /** A terminal finding may close the contract without paying its advertised full reward. */
@@ -57,6 +68,8 @@ export interface OrdinaryContractProfile {
   readonly walletId: string;
   readonly genesisWalletQ: string;
   readonly rewardQ: string;
+  /** Campaign ticks from acceptance until the deadline, if this offer is time-limited. */
+  readonly deadlineTicks?: string;
   /** Slot recorded for the owner when it accepts, if the contract has one. */
   readonly acceptanceSlot?: string;
   readonly steps: readonly OrdinaryStepDefinition[];
@@ -69,6 +82,10 @@ export interface OrdinaryContractTerms {
   readonly issuerRoleId: string;
   readonly issuerPlace: ContractPlace;
   readonly rewardQ: string;
+  /** Frozen duration and absolute end of the half-open acceptance interval. */
+  readonly deadlineTicks?: string;
+  readonly acceptedAtTick?: string;
+  readonly deadlineAtTick?: string;
   readonly walletId: string;
   readonly acceptanceSlot?: string;
   readonly steps: readonly OrdinaryStepDefinition[];
@@ -485,6 +502,92 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
     ],
   },
   {
+    instanceId: 'ci.m1.dragged-sack.01',
+    definitionId: 'ct.m1.dragged-sack.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'northern-grain-hauler',
+    issuerPlace: SEVERNY_DVOR,
+    walletId: 'wallet.yerema.severny-dvor.01',
+    genesisWalletQ: CROWNS(50),
+    rewardQ: CROWNS(25),
+    deadlineTicks: '1000',
+    acceptanceSlot: 'dragged-sack-contract-acceptance',
+    steps: [
+      {
+        stepId: 'trace-flour',
+        action: 'INSPECT',
+        place: KAMENNY_BROD,
+        requires: [],
+        gates: [],
+        produces: ['dragged-sack-flour-trail'],
+        resultTextKey: 'dragged-sack.flour-trail',
+      },
+      {
+        stepId: 'find-boys',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: ['dragged-sack-flour-trail'],
+        gates: [],
+        produces: ['dragged-sack-found'],
+        takesCargoId: 'dragged-sack.01',
+        cargoReceiptSlotId: 'dragged-sack-found',
+        resultTextKey: 'dragged-sack.boys-found',
+      },
+      {
+        stepId: 'leave-flour',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['dragged-sack-found'],
+        gates: [],
+        produces: ['dragged-sack-flour-shared', 'dragged-sack-yerema-slept'],
+        needsCargoId: 'dragged-sack.01',
+        resultTextKey: 'dragged-sack.flour-shared',
+      },
+      {
+        stepId: 'return-full-sack',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: ['dragged-sack-found'],
+        excludes: ['dragged-sack-flour-shared'],
+        gates: [],
+        produces: ['dragged-sack-delivered-full'],
+        needsCargoId: 'dragged-sack.01',
+        deliversCargoId: 'dragged-sack.01',
+        cargoReceiptSlotId: 'dragged-sack-delivered-full',
+        resultTextKey: 'dragged-sack.returned-full',
+        completes: true,
+      },
+      {
+        stepId: 'return-short-sack',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: ['dragged-sack-found', 'dragged-sack-flour-shared'],
+        gates: [],
+        produces: ['dragged-sack-delivered-short'],
+        needsCargoId: 'dragged-sack.01',
+        deliversCargoId: 'dragged-sack.01',
+        cargoReceiptSlotId: 'dragged-sack-delivered-short',
+        resultTextKey: 'dragged-sack.returned-short',
+        completes: true,
+      },
+      {
+        stepId: 'return-cargo-after-withdrawal',
+        action: 'DELIVER',
+        place: SEVERNY_DVOR,
+        requires: [],
+        gates: [],
+        produces: ['dragged-sack-returned-after-withdrawal'],
+        needsCargoId: 'dragged-sack.01',
+        deliversCargoId: 'dragged-sack.01',
+        cargoReceiptSlotId: 'dragged-sack-returned-after-withdrawal',
+        returnsCargoAfterWithdrawal: true,
+        resultTextKey: 'dragged-sack.returned-after-withdrawal',
+        payoutPolicy: 'NO_PAYOUT',
+        completes: true,
+      },
+    ],
+  },
+  {
     instanceId: 'ci.m1.two-receipts.01',
     definitionId: 'ct.m1.two-receipts.v1',
     template: 'INVESTIGATE',
@@ -704,13 +807,23 @@ export function ordinaryContractProfileVersion(
 }
 
 /** Build the immutable terms offered by this version of a profile. */
-export function ordinaryContractTerms(profile: OrdinaryContractProfile): OrdinaryContractTerms {
+export function ordinaryContractTerms(
+  profile: OrdinaryContractProfile,
+  acceptedAtTick?: string,
+): OrdinaryContractTerms {
   return freeze({
     profileId: profile.definitionId,
     template: profile.template,
     issuerRoleId: profile.issuerRoleId,
     issuerPlace: { ...profile.issuerPlace },
     rewardQ: profile.rewardQ,
+    ...(profile.deadlineTicks && acceptedAtTick !== undefined
+      ? {
+          deadlineTicks: profile.deadlineTicks,
+          acceptedAtTick,
+          deadlineAtTick: (BigInt(acceptedAtTick) + BigInt(profile.deadlineTicks)).toString(),
+        }
+      : {}),
     walletId: profile.walletId,
     ...(profile.acceptanceSlot ? { acceptanceSlot: profile.acceptanceSlot } : {}),
     steps: profile.steps.map((step) => ({
@@ -738,6 +851,16 @@ export interface OrdinaryContractState {
   readonly helperCompanyId: string | null;
   readonly facts: readonly OrdinaryContractFact[];
   readonly custody: readonly { readonly personId: string; readonly companyId: string }[];
+  readonly cargoCustody: readonly {
+    readonly cargoId: string;
+    /** Null means the accepted issuer has received the delivered cargo. */
+    readonly companyId: string | null;
+    readonly pickupCompanyId: string;
+    readonly pickupSourceEventId: string;
+    readonly pickupAtTick: string;
+    readonly sourceEventId: string;
+    readonly atTick: string;
+  }[];
   /** Null while offered. Legacy accepted v1 saves hydrate from their retained v1 profile. */
   readonly acceptedTerms: OrdinaryContractTerms | null;
   readonly lastWithdrawal: null | {
@@ -745,12 +868,22 @@ export interface OrdinaryContractState {
     readonly sourceEventId: string;
     readonly atTick: string;
   };
-  readonly outcome: null | {
-    readonly kind: 'SUCCESS';
-    readonly companyId: string;
-    readonly sourceEventId: string;
-    readonly atTick: string;
-  };
+  readonly outcome:
+    | null
+    | {
+        readonly kind: 'SUCCESS';
+        readonly companyId: string;
+        readonly sourceEventId: string;
+        readonly atTick: string;
+        readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
+      }
+    | {
+        readonly kind: 'EXPIRED';
+        readonly companyId: string;
+        readonly sourceEventId: string;
+        readonly atTick: string;
+        readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
+      };
 }
 
 export function ordinaryContractGenesis(profile: OrdinaryContractProfile): OrdinaryContractState {
@@ -762,6 +895,7 @@ export function ordinaryContractGenesis(profile: OrdinaryContractProfile): Ordin
     helperCompanyId: null,
     facts: [],
     custody: [],
+    cargoCustody: [],
     acceptedTerms: null,
     lastWithdrawal: null,
     outcome: null,
@@ -806,12 +940,34 @@ export type OrdinaryContractPreparation =
 const samePlace = (left: ContractPlace | null, right: ContractPlace) =>
   left !== null && left.siteId === right.siteId && left.areaId === right.areaId;
 
+function contractDeadlinePassed(state: OrdinaryContractState, atTick: string): boolean {
+  const deadlineAtTick = state.acceptedTerms?.deadlineAtTick;
+  return deadlineAtTick !== undefined && BigInt(atTick) >= BigInt(deadlineAtTick);
+}
+
 export function companyHoldsSlot(
   state: OrdinaryContractState,
   companyId: string,
   slotId: string,
 ): boolean {
   return state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId);
+}
+
+function isWithdrawnCustodyDelivery(
+  state: OrdinaryContractState,
+  companyId: string,
+  step: OrdinaryStepDefinition,
+): boolean {
+  const personId = step.needsCustodyOf;
+  return (
+    personId !== undefined &&
+    step.action === 'DELIVER' &&
+    step.completes === true &&
+    state.acceptedTerms !== null &&
+    state.lastWithdrawal !== null &&
+    (state.ownerCompanyId === null || state.lastWithdrawal.companyId === companyId) &&
+    state.custody.some((entry) => entry.personId === personId && entry.companyId === companyId)
+  );
 }
 
 /** Why a step is not available to this company now, or null when it can be taken. */
@@ -824,8 +980,18 @@ export function ordinaryStepBlocker(
   >,
 ): Exclude<OrdinaryContractRejection, 'STALE_REVISION'> | null {
   const { companyId } = context;
-  if (state.outcome !== null) return 'NOT_AVAILABLE';
-  if (companyId !== state.ownerCompanyId && companyId !== state.helperCompanyId)
+  const expiredReturn =
+    state.outcome?.kind === 'EXPIRED' &&
+    step.returnsCargoAfterWithdrawal === true &&
+    state.ownerCompanyId === companyId;
+  const withdrawnCustodyDelivery = isWithdrawnCustodyDelivery(state, companyId, step);
+  if (state.outcome !== null && !expiredReturn) return 'NOT_AVAILABLE';
+  if (
+    companyId !== state.ownerCompanyId &&
+    companyId !== state.helperCompanyId &&
+    !step.returnsCargoAfterWithdrawal &&
+    !withdrawnCustodyDelivery
+  )
     return 'NOT_A_PARTICIPANT';
   if (step.produces.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
     return 'ALREADY_DONE';
@@ -834,6 +1000,19 @@ export function ordinaryStepBlocker(
     state.custody.some((entry) => entry.personId === step.takesCustodyOf)
   )
     return 'ALREADY_DONE';
+  if (
+    step.takesCargoId !== undefined &&
+    state.cargoCustody.some((entry) => entry.cargoId === step.takesCargoId)
+  )
+    return 'ALREADY_DONE';
+  if (step.takesCargoId !== undefined && state.ownerCompanyId !== companyId)
+    return 'NOT_A_PARTICIPANT';
+  if (
+    step.returnsCargoAfterWithdrawal &&
+    state.lastWithdrawal?.companyId !== companyId &&
+    !expiredReturn
+  )
+    return 'NOT_AVAILABLE';
   if (!step.requires.every((slotId) => companyHoldsSlot(state, companyId, slotId)))
     return 'MISSING_EVIDENCE';
   if (step.forbids?.some((slotId) => companyHoldsSlot(state, companyId, slotId)))
@@ -845,6 +1024,15 @@ export function ordinaryStepBlocker(
     )
   )
     return 'MISSING_EVIDENCE';
+  if (
+    step.needsCargoId !== undefined &&
+    !state.cargoCustody.some(
+      (entry) => entry.cargoId === step.needsCargoId && entry.companyId === companyId,
+    )
+  )
+    return 'MISSING_EVIDENCE';
+  if (step.excludes?.some((slotId) => companyHoldsSlot(state, companyId, slotId)))
+    return 'NOT_AVAILABLE';
   if (!samePlace(context.standingAt, step.place)) return 'WRONG_PLACE';
   if (!step.gates.every((gate) => context.gates[gate])) return 'CONDITION_NOT_MET';
   return null;
@@ -873,9 +1061,14 @@ export function prepareOrdinaryContractCommand(
     const isHelper = state.helperCompanyId === context.companyId;
     if (
       state.outcome !== null ||
+      contractDeadlinePassed(state, context.atTick) ||
       (!isOwner && !isHelper) ||
       context.battleStarted === true ||
-      state.custody.length > 0
+      state.custody.some((entry) => entry.companyId !== context.companyId) ||
+      (isOwner &&
+        state.cargoCustody.some(
+          (entry) => entry.companyId !== null && entry.companyId !== context.companyId,
+        ))
     )
       return {
         kind: 'REJECTED',
@@ -889,7 +1082,7 @@ export function prepareOrdinaryContractCommand(
         revision,
         ownerCompanyId: isOwner ? null : state.ownerCompanyId,
         helperCompanyId: isOwner || isHelper ? null : state.helperCompanyId,
-        acceptedTerms: isOwner ? null : state.acceptedTerms,
+        acceptedTerms: isOwner && state.custody.length === 0 ? null : state.acceptedTerms,
         lastWithdrawal: {
           companyId: context.companyId,
           sourceEventId: context.sourceEventId,
@@ -900,12 +1093,15 @@ export function prepareOrdinaryContractCommand(
   }
 
   if (command.type !== 'STEP') {
-    if (state.outcome !== null) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+    if (state.outcome !== null || contractDeadlinePassed(state, context.atTick))
+      return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
     if (!samePlace(context.standingAt, state.acceptedTerms?.issuerPlace ?? profile.issuerPlace))
       return { kind: 'REJECTED', code: 'WRONG_PLACE' };
     const open =
       command.type === 'ACCEPT'
-        ? state.ownerCompanyId === null
+        ? state.ownerCompanyId === null &&
+          !state.cargoCustody.some((entry) => entry.companyId !== null) &&
+          state.custody.length === 0
         : state.ownerCompanyId !== null &&
           state.helperCompanyId === null &&
           state.ownerCompanyId !== context.companyId;
@@ -919,7 +1115,9 @@ export function prepareOrdinaryContractCommand(
         ownerCompanyId: command.type === 'ACCEPT' ? context.companyId : state.ownerCompanyId,
         helperCompanyId: command.type === 'HELP' ? context.companyId : state.helperCompanyId,
         acceptedTerms:
-          command.type === 'ACCEPT' ? ordinaryContractTerms(profile) : state.acceptedTerms,
+          command.type === 'ACCEPT'
+            ? ordinaryContractTerms(profile, context.atTick)
+            : state.acceptedTerms,
         facts:
           command.type === 'ACCEPT' && profile.acceptanceSlot !== undefined
             ? [...state.facts, fact(profile.acceptanceSlot)]
@@ -932,7 +1130,23 @@ export function prepareOrdinaryContractCommand(
     (entry) => entry.stepId === command.stepId,
   );
   if (!step) return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
-  const blocker = ordinaryStepBlocker(state, step, context);
+  const withdrawnCustodyDelivery = isWithdrawnCustodyDelivery(state, context.companyId, step);
+  const expired = contractDeadlinePassed(state, context.atTick);
+  if (expired && !step.returnsCargoAfterWithdrawal)
+    return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
+  const blockerState =
+    expired && state.outcome === null
+      ? freeze({
+          ...state,
+          outcome: {
+            kind: 'EXPIRED' as const,
+            companyId: state.ownerCompanyId!,
+            sourceEventId: `system:ordinary-contract-expiry:${state.instanceId}:${state.acceptedTerms!.deadlineAtTick}`,
+            atTick: state.acceptedTerms!.deadlineAtTick!,
+          },
+        })
+      : state;
+  const blocker = ordinaryStepBlocker(blockerState, step, context);
   if (blocker !== null) return { kind: 'REJECTED', code: blocker };
 
   const custody = state.custody
@@ -942,10 +1156,37 @@ export function prepareOrdinaryContractCommand(
         ? []
         : [{ personId: step.takesCustodyOf, companyId: context.companyId }],
     );
+  const cargoCustody = state.cargoCustody
+    .filter((entry) => entry.cargoId !== step.deliversCargoId)
+    .concat(
+      step.takesCargoId === undefined
+        ? []
+        : [
+            {
+              cargoId: step.takesCargoId,
+              companyId: context.companyId,
+              pickupCompanyId: context.companyId,
+              pickupSourceEventId: context.sourceEventId,
+              pickupAtTick: context.atTick,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+            },
+          ],
+      step.deliversCargoId === undefined
+        ? []
+        : state.cargoCustody
+            .filter((entry) => entry.cargoId === step.deliversCargoId)
+            .map((entry) => ({
+              ...entry,
+              companyId: null,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+            })),
+    );
   return {
     kind: 'PREPARED',
     payout:
-      step.completes && step.payoutPolicy !== 'NO_PAYOUT'
+      step.completes && step.payoutPolicy !== 'NO_PAYOUT' && !withdrawnCustodyDelivery
         ? { companyId: context.companyId, rewardQ: state.acceptedTerms?.rewardQ ?? profile.rewardQ }
         : null,
     next: freeze({
@@ -958,14 +1199,30 @@ export function prepareOrdinaryContractCommand(
           .map(fact),
       ],
       custody,
+      cargoCustody,
       outcome: step.completes
-        ? {
-            kind: 'SUCCESS',
-            companyId: context.companyId,
-            sourceEventId: context.sourceEventId,
-            atTick: context.atTick,
-          }
+        ? expired && step.returnsCargoAfterWithdrawal
+          ? {
+              kind: 'EXPIRED',
+              companyId: context.companyId,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+              payoutPolicy: 'NO_PAYOUT',
+            }
+          : {
+              kind: 'SUCCESS',
+              companyId: context.companyId,
+              sourceEventId: context.sourceEventId,
+              atTick: context.atTick,
+              ...(withdrawnCustodyDelivery || step.payoutPolicy === 'NO_PAYOUT'
+                ? { payoutPolicy: 'NO_PAYOUT' as const }
+                : {}),
+            }
         : null,
+      acceptedTerms:
+        step.completes && withdrawnCustodyDelivery && state.ownerCompanyId === null
+          ? null
+          : state.acceptedTerms,
     }),
   };
 }
@@ -986,23 +1243,45 @@ export function readOrdinaryContractState(
     typeof entry === 'string' && /^(0|[1-9][0-9]*)$/u.test(entry);
   const facts = record['facts'];
   const custody = record['custody'];
+  const cargoCustody = record['cargoCustody'] ?? [];
   const outcome = record['outcome'];
   const ownerCompanyId = record['ownerCompanyId'];
   const acceptedTerms = record['acceptedTerms'];
   const lastWithdrawal = record['lastWithdrawal'];
+  const acceptedAtTickFor = (acceptedProfile: OrdinaryContractProfile): string | undefined => {
+    if (!acceptedProfile.acceptanceSlot || !Array.isArray(facts)) return undefined;
+    const acceptance = facts.find(
+      (entry) =>
+        isRecord(entry) &&
+        entry['slotId'] === acceptedProfile.acceptanceSlot &&
+        entry['companyId'] === ownerCompanyId &&
+        isTick(entry['atTick']),
+    );
+    return isRecord(acceptance) ? (acceptance['atTick'] as string) : undefined;
+  };
   const readAcceptedTerms = (): OrdinaryContractTerms | null => {
     if (acceptedTerms === undefined) {
       // State v1 predates the snapshot; hydrate from its explicitly retained profile version.
       if (ownerCompanyId === null) return null;
       const legacyProfile = ordinaryContractProfileVersion(profile.instanceId, storedProfileId);
-      return legacyProfile ? ordinaryContractTerms(legacyProfile) : fail();
+      return legacyProfile
+        ? ordinaryContractTerms(legacyProfile, acceptedAtTickFor(legacyProfile))
+        : fail();
     }
     if (acceptedTerms === null) return null;
     if (!acceptedTerms || typeof acceptedTerms !== 'object' || Array.isArray(acceptedTerms))
       return fail();
     const terms = acceptedTerms as Record<string, unknown>;
+    const termsProfile = ordinaryContractProfileVersion(
+      profile.instanceId,
+      terms['profileId'] as string,
+    );
+    const hasDeadline =
+      terms['deadlineTicks'] !== undefined ||
+      terms['acceptedAtTick'] !== undefined ||
+      terms['deadlineAtTick'] !== undefined;
     if (
-      !ordinaryContractProfileVersion(profile.instanceId, terms['profileId'] as string) ||
+      !termsProfile ||
       !['INVESTIGATE', 'RESCUE'].includes(terms['template'] as string) ||
       !isText(terms['issuerRoleId']) ||
       !isText(terms['walletId']) ||
@@ -1012,6 +1291,14 @@ export function readOrdinaryContractState(
       (terms['acceptanceSlot'] !== undefined && !isText(terms['acceptanceSlot'])) ||
       !Array.isArray(terms['steps']) ||
       !terms['steps'].every((step) => isStep(step)) ||
+      (hasDeadline &&
+        (terms['deadlineTicks'] !== termsProfile.deadlineTicks ||
+          typeof terms['acceptedAtTick'] !== 'string' ||
+          !isTick(terms['acceptedAtTick']) ||
+          typeof terms['deadlineAtTick'] !== 'string' ||
+          !isTick(terms['deadlineAtTick']) ||
+          BigInt(terms['deadlineAtTick']) !==
+            BigInt(terms['acceptedAtTick']) + BigInt(terms['deadlineTicks'] as string))) ||
       Object.keys(terms).some(
         (key) =>
           ![
@@ -1021,13 +1308,29 @@ export function readOrdinaryContractState(
             'issuerPlace',
             'rewardQ',
             'walletId',
+            'deadlineTicks',
+            'acceptedAtTick',
+            'deadlineAtTick',
             'acceptanceSlot',
             'steps',
           ].includes(key),
       )
     )
       return fail();
-    return freeze(JSON.parse(JSON.stringify(terms)) as OrdinaryContractTerms);
+    const retained = JSON.parse(JSON.stringify(terms)) as OrdinaryContractTerms;
+    const acceptedAtTick = acceptedAtTickFor(termsProfile);
+    return freeze(
+      !hasDeadline && termsProfile.deadlineTicks && acceptedAtTick !== undefined
+        ? {
+            ...retained,
+            deadlineTicks: termsProfile.deadlineTicks,
+            acceptedAtTick,
+            deadlineAtTick: (
+              BigInt(acceptedAtTick) + BigInt(termsProfile.deadlineTicks)
+            ).toString(),
+          }
+        : retained,
+    );
   };
   const normalizedTerms = readAcceptedTerms();
   const slots = new Set([
@@ -1040,6 +1343,29 @@ export function readOrdinaryContractState(
     ...profile.steps.flatMap((step) => step.takesCustodyOf ?? []),
     ...(normalizedTerms?.steps.flatMap((step) => step.takesCustodyOf ?? []) ?? []),
   ]);
+  const cargoReceipts = [profile, ...(normalizedTerms ? [normalizedTerms] : [])].flatMap((source) =>
+    source.steps.flatMap((step) => [
+      ...(step.takesCargoId
+        ? [
+            {
+              cargoId: step.takesCargoId,
+              slotId: step.cargoReceiptSlotId!,
+              transition: 'PICKUP',
+            },
+          ]
+        : []),
+      ...(step.deliversCargoId
+        ? [
+            {
+              cargoId: step.deliversCargoId,
+              slotId: step.cargoReceiptSlotId!,
+              transition: 'DELIVERY',
+            },
+          ]
+        : []),
+    ]),
+  );
+  const cargos = new Set(cargoReceipts.map((receipt) => receipt.cargoId));
   const normalizedWithdrawal =
     lastWithdrawal === undefined || lastWithdrawal === null
       ? null
@@ -1049,6 +1375,69 @@ export function readOrdinaryContractState(
           isTick(lastWithdrawal['atTick'])
         ? { ...lastWithdrawal }
         : fail();
+  const activeTerms = normalizedTerms ?? profile;
+  const cargoFacts = Array.isArray(facts) ? (facts as OrdinaryContractFact[]) : [];
+  const cargoCustodyRecords = Array.isArray(cargoCustody)
+    ? (cargoCustody as OrdinaryContractState['cargoCustody'])
+    : [];
+  const expectedCargoCustody: OrdinaryContractState['cargoCustody'][number][] = [];
+  let validCargoHistory = true;
+  for (const cargoId of cargos) {
+    const pickupStep = activeTerms.steps.find((step) => step.takesCargoId === cargoId);
+    const deliveryStep = activeTerms.steps.find((step) => step.deliversCargoId === cargoId);
+    if (!pickupStep) {
+      validCargoHistory = false;
+      break;
+    }
+    const pickupSlots = cargoReceipts
+      .filter((receipt) => receipt.cargoId === cargoId && receipt.transition === 'PICKUP')
+      .map((receipt) => receipt.slotId);
+    const pickupFacts = cargoFacts.filter((fact) => pickupSlots.includes(fact.slotId));
+    if (pickupFacts.length > 1) {
+      validCargoHistory = false;
+      break;
+    }
+    const pickupFact = pickupFacts[0];
+    if (!pickupFact) continue;
+    const deliverySlots = cargoReceipts
+      .filter((receipt) => receipt.cargoId === cargoId && receipt.transition === 'DELIVERY')
+      .map((receipt) => receipt.slotId);
+    const deliveryFacts = deliveryStep
+      ? cargoFacts.filter((fact) => deliverySlots.includes(fact.slotId))
+      : [];
+    if (
+      deliveryFacts.length > 1 ||
+      (deliveryFacts[0] !== undefined && deliveryFacts[0].companyId !== pickupFact.companyId)
+    ) {
+      validCargoHistory = false;
+      break;
+    }
+    const lastCargoFact = deliveryFacts[0] ?? pickupFact;
+    expectedCargoCustody.push({
+      cargoId,
+      companyId: deliveryFacts[0] ? null : pickupFact.companyId,
+      pickupCompanyId: pickupFact.companyId,
+      pickupSourceEventId: pickupFact.sourceEventId,
+      pickupAtTick: pickupFact.atTick,
+      sourceEventId: lastCargoFact.sourceEventId,
+      atTick: lastCargoFact.atTick,
+    });
+  }
+  const cargoStateMatchesHistory =
+    validCargoHistory &&
+    cargoCustodyRecords.length === expectedCargoCustody.length &&
+    expectedCargoCustody.every((expected) =>
+      cargoCustodyRecords.some(
+        (actual) =>
+          actual.cargoId === expected.cargoId &&
+          actual.companyId === expected.companyId &&
+          actual.pickupCompanyId === expected.pickupCompanyId &&
+          actual.pickupSourceEventId === expected.pickupSourceEventId &&
+          actual.pickupAtTick === expected.pickupAtTick &&
+          actual.sourceEventId === expected.sourceEventId &&
+          actual.atTick === expected.atTick,
+      ),
+    );
   if (
     record['version'] !== 1 ||
     record['instanceId'] !== profile.instanceId ||
@@ -1057,6 +1446,7 @@ export function readOrdinaryContractState(
     !(record['helperCompanyId'] === null || isText(record['helperCompanyId'])) ||
     !Array.isArray(facts) ||
     !Array.isArray(custody) ||
+    !Array.isArray(cargoCustody) ||
     !facts.every(
       (fact: Record<string, unknown>) =>
         fact &&
@@ -1069,19 +1459,92 @@ export function readOrdinaryContractState(
       (entry: Record<string, unknown>) =>
         entry && persons.has(entry['personId'] as string) && isText(entry['companyId']),
     ) ||
+    !cargoCustody.every((entry: Record<string, unknown>) => {
+      if (
+        !entry ||
+        !cargos.has(entry['cargoId'] as string) ||
+        !(entry['companyId'] === null || isText(entry['companyId'])) ||
+        !isText(entry['pickupCompanyId']) ||
+        !isText(entry['pickupSourceEventId']) ||
+        !isTick(entry['pickupAtTick']) ||
+        !isText(entry['sourceEventId']) ||
+        !isTick(entry['atTick'])
+      )
+        return false;
+      const receipts = cargoReceipts.filter((receipt) => receipt.cargoId === entry['cargoId']);
+      const pickup = receipts.find((receipt) => receipt.transition === 'PICKUP');
+      const pickupIsRecorded =
+        pickup !== undefined &&
+        facts.some(
+          (fact: Record<string, unknown>) =>
+            fact['slotId'] === pickup.slotId &&
+            fact['companyId'] === entry['pickupCompanyId'] &&
+            fact['sourceEventId'] === entry['pickupSourceEventId'] &&
+            fact['atTick'] === entry['pickupAtTick'],
+        );
+      const currentIsRecorded =
+        entry['companyId'] === null
+          ? receipts.some(
+              (receipt) =>
+                receipt.transition === 'DELIVERY' &&
+                facts.some(
+                  (fact: Record<string, unknown>) =>
+                    fact['slotId'] === receipt.slotId &&
+                    fact['companyId'] === entry['pickupCompanyId'] &&
+                    fact['sourceEventId'] === entry['sourceEventId'] &&
+                    fact['atTick'] === entry['atTick'],
+                ),
+            )
+          : entry['companyId'] === entry['pickupCompanyId'] &&
+            entry['sourceEventId'] === entry['pickupSourceEventId'] &&
+            entry['atTick'] === entry['pickupAtTick'];
+      return pickupIsRecorded && currentIsRecorded;
+    }) ||
+    new Set(cargoCustody.map((entry: Record<string, unknown>) => entry['cargoId'])).size !==
+      cargoCustody.length ||
+    !cargoStateMatchesHistory ||
     !(
       outcome === null ||
       (typeof outcome === 'object' &&
         (outcome as Record<string, unknown>)['kind'] === 'SUCCESS' &&
         isText((outcome as Record<string, unknown>)['companyId']) &&
         isText((outcome as Record<string, unknown>)['sourceEventId']) &&
-        isTick((outcome as Record<string, unknown>)['atTick']))
+        isTick((outcome as Record<string, unknown>)['atTick']) &&
+        ((outcome as Record<string, unknown>)['payoutPolicy'] === undefined ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'FULL_REWARD' ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'NO_PAYOUT')) ||
+      (typeof outcome === 'object' &&
+        (outcome as Record<string, unknown>)['kind'] === 'EXPIRED' &&
+        isText((outcome as Record<string, unknown>)['companyId']) &&
+        isText((outcome as Record<string, unknown>)['sourceEventId']) &&
+        isTick((outcome as Record<string, unknown>)['atTick']) &&
+        ((outcome as Record<string, unknown>)['payoutPolicy'] === undefined ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'FULL_REWARD' ||
+          (outcome as Record<string, unknown>)['payoutPolicy'] === 'NO_PAYOUT'))
     )
   )
     return fail();
-  if ((ownerCompanyId === null) !== (normalizedTerms === null)) return fail();
+  const retainedForHeldPerson =
+    ownerCompanyId === null &&
+    normalizedTerms !== null &&
+    normalizedWithdrawal !== null &&
+    Array.isArray(custody) &&
+    custody.some(
+      (entry: Record<string, unknown>) =>
+        isRecord(entry) &&
+        entry['companyId'] === normalizedWithdrawal['companyId'] &&
+        normalizedTerms.steps.some(
+          (step) =>
+            step.action === 'DELIVER' &&
+            step.completes === true &&
+            step.needsCustodyOf === entry['personId'],
+        ),
+    );
+  if ((ownerCompanyId === null) !== (normalizedTerms === null) && !retainedForHeldPerson)
+    return fail();
   return freeze({
     ...JSON.parse(JSON.stringify(record)),
+    cargoCustody,
     acceptedTerms: normalizedTerms,
     lastWithdrawal: normalizedWithdrawal,
   } as OrdinaryContractState);
@@ -1116,9 +1579,15 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'forbids',
         'gates',
         'produces',
+        'excludes',
         'resultTextKey',
         'takesCustodyOf',
         'needsCustodyOf',
+        'takesCargoId',
+        'needsCargoId',
+        'deliversCargoId',
+        'cargoReceiptSlotId',
+        'returnsCargoAfterWithdrawal',
         'completes',
         'payoutPolicy',
       ].includes(key),
@@ -1139,12 +1608,30 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
     ) &&
     Array.isArray(value['produces']) &&
     value['produces'].every((slot) => typeof slot === 'string' && slot !== '') &&
+    (value['excludes'] === undefined ||
+      (Array.isArray(value['excludes']) &&
+        value['excludes'].every((slot) => typeof slot === 'string' && slot !== ''))) &&
     (value['resultTextKey'] === undefined ||
       (typeof value['resultTextKey'] === 'string' && value['resultTextKey'] !== '')) &&
     (value['takesCustodyOf'] === undefined ||
       (typeof value['takesCustodyOf'] === 'string' && value['takesCustodyOf'] !== '')) &&
     (value['needsCustodyOf'] === undefined ||
       (typeof value['needsCustodyOf'] === 'string' && value['needsCustodyOf'] !== '')) &&
+    (value['takesCargoId'] === undefined ||
+      (typeof value['takesCargoId'] === 'string' && value['takesCargoId'] !== '')) &&
+    (value['needsCargoId'] === undefined ||
+      (typeof value['needsCargoId'] === 'string' && value['needsCargoId'] !== '')) &&
+    (value['deliversCargoId'] === undefined ||
+      (typeof value['deliversCargoId'] === 'string' && value['deliversCargoId'] !== '')) &&
+    (value['cargoReceiptSlotId'] === undefined ||
+      (typeof value['cargoReceiptSlotId'] === 'string' &&
+        value['produces'].includes(value['cargoReceiptSlotId']))) &&
+    (value['takesCargoId'] === undefined && value['deliversCargoId'] === undefined) ===
+      (value['cargoReceiptSlotId'] === undefined) &&
+    (value['returnsCargoAfterWithdrawal'] === undefined ||
+      value['returnsCargoAfterWithdrawal'] === true) &&
+    (value['deliversCargoId'] === undefined ||
+      value['needsCargoId'] === value['deliversCargoId']) &&
     (value['completes'] === undefined || value['completes'] === true) &&
     (value['payoutPolicy'] === undefined ||
       value['payoutPolicy'] === 'FULL_REWARD' ||

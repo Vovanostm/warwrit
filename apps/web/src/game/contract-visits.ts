@@ -14,6 +14,7 @@ const ISSUER_BUILDINGS: Readonly<Record<string, BuildingType>> = {
   'ci.m1.mill-beast.01': 'inn',
   'ci.m1.light-sack.01': 'market',
   'ci.m1.empty-watch-record.01': 'market',
+  'ci.m1.dragged-sack.01': 'elder',
   'ci.m1.not-one-pack.01': 'elder',
   'ci.m1.tracks-over-tracks.01': 'watch',
   'ci.m1.foul-well.01': 'chapel',
@@ -95,6 +96,28 @@ export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): C
             instanceId: `${contract.instanceId}:${suffix}`,
             siteId: 'bereznyak',
             text,
+          });
+      }
+    }
+    if (contract.publicConsequences?.kind === 'DRAGGED_SACK') {
+      const grainText = lookup(
+        contract.publicConsequences.northernDvorGrain === 'FULL_SACK'
+          ? 'contract.ci.m1.dragged-sack.01.world.grain-full'
+          : 'contract.ci.m1.dragged-sack.01.world.grain-short',
+      );
+      if (grainText !== undefined)
+        facts.push({
+          instanceId: `${contract.instanceId}:grain`,
+          siteId: 'severny-dvor',
+          text: grainText,
+        });
+      if (contract.publicConsequences.yourCompanyKnowsYeremaSlept) {
+        const sleepText = lookup('contract.ci.m1.dragged-sack.01.world.yerema-slept');
+        if (sleepText !== undefined)
+          facts.push({
+            instanceId: `${contract.instanceId}:sleep`,
+            siteId: 'severny-dvor',
+            text: sleepText,
           });
       }
     }

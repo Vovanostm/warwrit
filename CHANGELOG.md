@@ -73,6 +73,20 @@ requests.
   medical-unit stock from Агафья's trader until her delayed exile.
   [Quest checkpoint](docs/work-packages/M1-QUESTS.md#грязный-колодец-implementation-checkpoint--2026-11-15).
   Branch `codex/m1-quest-well-20261115`. LOCAL.
+- 2026-11-16, `codex/m1-quest-road-20261115` — Changed: preserve a rescued
+  person's custody when the holder withdraws before battle, then allow only that
+  holder to return the person to the frozen issuer without payment.
+  [Held-person return result](docs/work-packages/M1-CONTRACT-TERMS.md#held-person-return-after-withdrawal--2026-11-16). LOCAL.
+
+- 2026-11-16 — Changed: give «Мешок у дороги» one Campaign Day from acceptance
+  and allow an expired holder to return the sack without payment.
+  [Deadline decision and result](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-deadline-decision-and-implementation--2026-11-16). LOCAL.
+
+- 2026-11-15 — Added: implement «Мешок у дороги» with tracked sack custody,
+  full or short delivery, no-pay return after withdrawal, Northern Dvor grain
+  state and company-private knowledge that Ерёма slept. Deadline expiry awaits
+  the owner’s clock decision.
+  [Quest checkpoint](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-implementation--2026-11-15). LOCAL.
 - 2026-11-15 — Fixed: show a no-payout contract ending without implying a
   reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement «Обход, которого не было» with a paid

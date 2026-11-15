@@ -75,3 +75,52 @@ and was separately reread for meaning and rhythm.
 The native two-company ordinary hunt, helper presentation and full NEXT-2–NEXT-6
 sequence remain NOT_RUN. T012–T014 remain open until their complete paths are
 verified. All changes are local on `codex/m1-completion-20261115`.
+## Held-person return after withdrawal — 2026-11-16
+
+The integration candidate combines this rule with the dragged-sack custody and
+1,000-tick accepted deadline. Game-core/protocol builds, server/web typechecks
+and43 focused tests across six files pass. The merge preserves frozen issuer
+terms, unpaid return, the delayed Prokop observation and foul-well consequences.
+Normal browser withdrawal/delivery and the complete two-company proof journey
+remain pending.
+
+### Player outcome
+
+When a company has recovered a person but withdraws before its linked battle
+starts, it can still return that person to the contract's frozen issuer. The
+person stays with the same company, accepted terms remain saved while custody is
+held, and the issuer return completes without payment. Another company cannot
+accept the contract while the person remains in custody.
+
+- Normal path: accept an existing rescue → recover the person → withdraw before
+  battle → travel to the frozen issuer → return the person without payment.
+- Choice: continue the contract under its accepted terms, or withdraw and finish
+  only the physical return.
+- Failure/retry: battle-started withdrawal and returns by a company without
+  custody are rejected; exact command receipts continue to own replay behavior.
+- Saved consequences: the pickup fact and source remain unchanged, custody is
+  cleared only by delivery at the issuer, and the terminal outcome records
+  `NO_PAYOUT`.
+
+Observable outcome: the holder sees the return step at the issuer and a completed
+contract marked without payment; a stranger cannot return the person or accept
+the contract while custody remains.
+
+Simplest try: use the existing lost-scout profile, search for the scout, withdraw
+before battle, then deliver at Kamenny Brod and read back the no-payment outcome.
+
+### Local implementation result
+
+The transition and projection are implemented generically for the existing
+cellar-rescue and lost-scout profiles; no quest-specific person or return text
+was added. The same holder must complete the issuer delivery. Terms are retained
+only while a withdrawn person remains in matching custody, then cleared when
+that return completes. The saved outcome's optional `payoutPolicy` preserves old
+state readers while explicitly recording a no-payout success.
+
+Focused core, server-projection and board tests passed (33 tests); game-core and
+server typechecks passed. Scoped lint and Prettier checks passed after correction.
+The web typecheck remains blocked by existing `EquipmentTrader.tsx` references
+to `EquipmentMarketDto.publicRevision` and `EquipmentMarketItemDto.interruptsLearning`;
+these files are outside this slice. Browser/native play and database checks are
+NOT_RUN. This is local evidence, not player acceptance or full M1 acceptance.

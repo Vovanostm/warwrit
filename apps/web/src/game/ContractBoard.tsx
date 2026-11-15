@@ -168,7 +168,23 @@ export function ContractConversation(props: ConversationProps) {
             : contract.completedByYou
               ? ' · выполнен, оплачен вам'
               : ' · выполнен')}
+        {contract.state === 'EXPIRED' && ' · срок истёк без выплаты'}
       </p>
+      {contract.deadlineTicks && contract.state !== 'EXPIRED' && (
+        <p className="state-note">Срок — один день кампании с момента принятия поручения.</p>
+      )}
+      {contract.yourRole === 'NONE' &&
+        contract.template === 'RESCUE' &&
+        contract.steps.some(
+          (step) => step.action === 'DELIVER' && step.completes && step.blocker === null,
+        ) && (
+          <p className="state-note">
+            Верните человека заказчику; за этот возврат платить не будут.
+          </p>
+        )}
+      {contract.terminalFindingTextKey && (
+        <p className="contract-result">{lookup(contract.terminalFindingTextKey)}</p>
+      )}
       {atIssuer ? (
         <>
           <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
@@ -201,7 +217,7 @@ export function ContractConversation(props: ConversationProps) {
           {contract.canAccept ? 'Договориться и взять поручение' : 'Предложить помощь'}
         </button>
       )}
-      {contract.yourRole !== 'NONE' && (
+      {(contract.yourRole !== 'NONE' || contract.yourCustody.length > 0) && (
         <ol className="contract-steps">
           {contract.steps.map((step) => (
             <ContractStep key={step.stepId} {...props} step={step} />
@@ -218,10 +234,31 @@ export function ContractConversation(props: ConversationProps) {
           Отказаться от поручения
         </button>
       )}
+      {contract.canReturnCargo && (
+        <button
+          type="button"
+          className="quiet-action"
+          disabled={props.busy}
+          onClick={() => props.onCommand('STEP', 'return-cargo-after-withdrawal')}
+        >
+          {stepText(contract.instanceId, 'return-cargo-after-withdrawal')}
+        </button>
+      )}
       {contract.yourCustody.length > 0 && (
         <p className="contract-custody">
           С отрядом: {contract.yourCustody.map(personName).join(', ')}
         </p>
+      )}
+      {contract.yourCargo.length > 0 && (
+        <p className="contract-custody">
+          С отрядом:{' '}
+          {contract.yourCargo
+            .map((cargoId) => lookup(`contract.${contract.instanceId}.cargo.${cargoId}`) ?? 'груз')
+            .join(', ')}
+        </p>
+      )}
+      {contract.yourCargo.length > 0 && contract.yourRole === 'NONE' && (
+        <p className="contract-custody">Отнесите мешок заказчику в Северный Двор.</p>
       )}
     </article>
   );
@@ -238,7 +275,7 @@ function ContractStep(
     <li className={step.doneByYou ? 'contract-step-done' : ''}>
       <span>{stepText(contract.instanceId, step.stepId) ?? step.stepId}</span>
       {step.doneByYou && finding && <span className="contract-finding">{finding}</span>}
-      {!step.doneByYou && contract.state !== 'COMPLETED' && <ContractStepAction {...props} />}
+      {!step.doneByYou && contract.state === 'ACTIVE' && <ContractStepAction {...props} />}
     </li>
   );
 }
@@ -262,7 +299,11 @@ function ContractStepAction(
         onClick={() => props.onCommand('STEP', step.stepId)}
       >
         {step.completes
-          ? 'Передать результат заказчику'
+          ? contract.yourRole === 'NONE' &&
+            contract.template === 'RESCUE' &&
+            step.action === 'DELIVER'
+            ? 'Отвести человека заказчику без выплаты'
+            : 'Передать результат заказчику'
           : (stepText(contract.instanceId, step.stepId) ?? 'Продолжить')}
       </button>
     );
