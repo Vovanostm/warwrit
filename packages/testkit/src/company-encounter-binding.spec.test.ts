@@ -7,6 +7,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
   applyCombatCommand,
   battleId,
   canonicalCombatState,
@@ -28,6 +29,7 @@ import {
   unitId,
 } from '@warwrit/game-core';
 import type {
+  BattleSetupV2,
   CombatCommand,
   CombatReceiptContext,
   CombatReceiptJournal,
@@ -171,7 +173,11 @@ describe('G05 — whole-candidate real participant binding', () => {
     Reflect.set(sources[0]!.root.physical.items.at(-1)!, 'equipped', null);
     expect(JSON.stringify(binding)).toBe(serialized);
     const reloaded = JSON.parse(serialized) as typeof binding;
-    const replay = replayCombat({ schemaVersion: 2, setup: reloaded.setup, commands: [] });
+    const replay = replayCombat({
+      schemaVersion: 2,
+      setup: reloaded.setup as BattleSetupV2,
+      commands: [],
+    });
     expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(binding.initial.state));
     expect(Object.hasOwn(binding, 'worldParticipants')).toBe(false);
     expect(binding.version).toBe(ENCOUNTER_BINDING_VERSION);
@@ -261,7 +267,11 @@ describe('G05 — whole-candidate real participant binding', () => {
         position: { q: 2, r: -1 },
         initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
       });
-      const replay = replayCombat({ schemaVersion: 2, setup: binding.setup, commands: [] });
+      const replay = replayCombat({
+        schemaVersion: 2,
+        setup: binding.setup as BattleSetupV2,
+        commands: [],
+      });
       expect(canonicalCombatState(replay.state)).toBe(canonicalCombatState(binding.initial.state));
       expect(
         isOpposingEncounterSide(
@@ -281,7 +291,11 @@ describe('G05 — whole-candidate real participant binding', () => {
       const legacy = prepareEncounterBinding(f.sources, f.request, f.evidence);
       expect(Object.hasOwn(legacy, 'worldParticipants')).toBe(false);
       expect(legacy.version).toBe(ENCOUNTER_BINDING_VERSION);
-      const legacyReplay = replayCombat({ schemaVersion: 2, setup: legacy.setup, commands: [] });
+      const legacyReplay = replayCombat({
+        schemaVersion: 2,
+        setup: legacy.setup as BattleSetupV2,
+        commands: [],
+      });
       expect(canonicalCombatState(legacyReplay.state)).toBe(
         canonicalCombatState(legacy.initial.state),
       );
@@ -350,6 +364,126 @@ describe('G05 — whole-candidate real participant binding', () => {
       expect(() => readCompanyCombatAggregateState(mismatchedWorldUnit)).toThrow(TypeError);
     },
   );
+
+  it('derives bridge-v6 parties from company sources and round-trips the frozen binding', () => {
+    const f = fixture();
+    const alliedSideId = sideId('allied-side');
+    const firstNpcSideId = sideId('first-npc-side');
+    const secondNpcSideId = sideId('second-npc-side');
+    const worldParticipants = [
+      {
+        moralePolicy: 'human' as const,
+        entityId: 'world-first-npc',
+        sourceId: 'world-first-npc-source',
+        unitId: unitId('world-first-npc'),
+        sideId: firstNpcSideId,
+        position: { q: 2, r: -1 },
+        weaponId: 'raider' as const,
+        attributes: {
+          accuracy: 55,
+          armor: 20,
+          defense: 40,
+          health: 60,
+          initiative: 40,
+          morale: 60,
+          stamina: 70,
+        },
+        initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
+      },
+      {
+        moralePolicy: 'human' as const,
+        entityId: 'world-second-npc',
+        sourceId: 'world-second-npc-source',
+        unitId: unitId('world-second-npc'),
+        sideId: secondNpcSideId,
+        position: { q: 0, r: 2 },
+        weaponId: 'raider' as const,
+        attributes: {
+          accuracy: 55,
+          armor: 20,
+          defense: 40,
+          health: 60,
+          initiative: 40,
+          morale: 60,
+          stamina: 70,
+        },
+        initialPools: { health: 55, armor: 15, stamina: 60, morale: 60 },
+      },
+    ];
+    const evidence: EncounterPositionEvidence = {
+      ...f.evidence,
+      version: FIRST_HUNT_WORLD_BINDING_VERSION,
+      setup: {
+        schemaVersion: 3,
+        battleId: f.request.battleId,
+        rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+        seed: 23,
+        map: { hexes: f.evidence.setup.map.hexes, blocked: [] },
+        sides: [
+          {
+            id: alliedSideId,
+            retreatHexes: f.evidence.setup.map.hexes.filter(({ q }) => q === -2),
+          },
+          {
+            id: firstNpcSideId,
+            retreatHexes: f.evidence.setup.map.hexes.filter(({ q }) => q === 2),
+          },
+          {
+            id: secondNpcSideId,
+            retreatHexes: f.evidence.setup.map.hexes.filter(({ r }) => r === 2),
+          },
+        ],
+      },
+      parties: f.evidence.parties.map((party) => ({ ...party, sideId: alliedSideId })),
+      worldParticipants,
+    };
+    const binding = prepareEncounterBinding(f.sources, f.request, evidence);
+    const setup = binding.setup;
+    if (setup.schemaVersion !== 3) throw new Error('Expected V3 setup');
+    expect(setup.sides).toHaveLength(3);
+    expect(setup.parties).toHaveLength(4);
+    expect(setup.units.filter((unit) => unit.sideId === alliedSideId)).toHaveLength(3);
+    expect(setup.units.filter((unit) => unit.sideId === firstNpcSideId)).toHaveLength(1);
+    expect(setup.units.filter((unit) => unit.sideId === secondNpcSideId)).toHaveLength(1);
+    expect(
+      setup.parties
+        .filter((party) => party.kind === 'player')
+        .map((party) => party.controllerId)
+        .sort(),
+    ).toEqual(['a-company', 'b-company']);
+    const journal = createCombatReceiptJournal(binding, f.sources[0]!.root.lifecycle.companyId);
+    expect(journal.binding.setup).toEqual(setup);
+
+    const state = {
+      economy: f.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    };
+    const begun = prepareBeginCombatAggregate(state, f.sources, f.request, evidence);
+    if (begun.kind !== 'PREPARED') throw new Error(begun.error);
+    expect(readCompanyCombatAggregateState(JSON.parse(JSON.stringify(begun.next)))).toEqual(
+      begun.next,
+    );
+    const unknownCombatParty = JSON.parse(JSON.stringify(begun.next)) as Record<string, unknown>;
+    const encounter = unknownCombatParty['encounter'] as Record<string, unknown>;
+    const active = encounter['active'] as Record<string, unknown>;
+    const savedBinding = active['binding'] as Record<string, unknown>;
+    const savedSetup = savedBinding['setup'] as Record<string, unknown>;
+    const savedUnits = savedSetup['units'] as Array<Record<string, unknown>>;
+    savedUnits[0]!['partyId'] = 'unknown-party';
+    active['bindingDigest'] = canonicalJson(savedBinding);
+    expect(() => readCompanyCombatAggregateState(unknownCombatParty)).toThrow(TypeError);
+
+    expect(() => prepareEncounterBinding(f.sources.slice(0, 1), f.request, evidence)).toThrow();
+    const duplicatedMember: EncounterPositionEvidence = {
+      ...evidence,
+      parties: evidence.parties.map((party, index) =>
+        index === 0 ? { ...party, members: [...party.members, party.members[0]!] } : party,
+      ),
+    };
+    expect(() => prepareEncounterBinding(f.sources, f.request, duplicatedMember)).toThrow();
+  });
 
   type Fixture = ReturnType<typeof fixture>;
   const failures: readonly [string, (f: Fixture) => object, string, unknown][] = [
@@ -490,7 +624,11 @@ describe('G06 — trusted sequential receipt preparation, not applied effects', 
     expect(journal.binding.lastAppliedRevision).toBe(f.binding.initial.state.revision);
     expect(JSON.stringify(f.sources)).toBe(before);
     const commands = journal.receipts.flatMap((r) => (r.kernelCommand ? [r.kernelCommand] : []));
-    const replay = replayCombat({ schemaVersion: 2, setup: f.binding.setup, commands });
+    const replay = replayCombat({
+      schemaVersion: 2,
+      setup: f.binding.setup as BattleSetupV2,
+      commands,
+    });
     expect(replay.state).toEqual(journal.receipts.at(-1)!.transition.state);
   });
 

@@ -3,6 +3,7 @@ import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
 } from '../combat/setup-v2.js';
 import type { WeaponId, CombatCapabilities } from '../combat/types.js';
 import { COMPANY_CATALOGUE } from './definitions.js';
@@ -99,16 +100,26 @@ export interface CharacterCombatProjectionV5 extends Omit<
   readonly combatRulesetId: typeof M1_DOMAIN_BRIDGE_V5_RULESET_ID;
 }
 
+export interface CharacterCombatProjectionV6 extends Omit<
+  CharacterCombatProjectionV5,
+  'schemaVersion' | 'combatRulesetId'
+> {
+  readonly schemaVersion: 6;
+  readonly combatRulesetId: typeof M1_DOMAIN_BRIDGE_V6_RULESET_ID;
+}
+
 function owned<T>(value: T): T {
   const copy = snapshotJson(value);
   requirePhysical(copy !== undefined, 'INVALID_STATE');
   return copy as T;
 }
 
-function tacticalProjectionVersion(version: 4 | 5) {
-  return version === 5
-    ? { schemaVersion: 5 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V5_RULESET_ID }
-    : { schemaVersion: 4 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V4_RULESET_ID };
+function tacticalProjectionVersion(version: 4 | 5 | 6) {
+  return version === 6
+    ? { schemaVersion: 6 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID }
+    : version === 5
+      ? { schemaVersion: 5 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V5_RULESET_ID }
+      : { schemaVersion: 4 as const, combatRulesetId: M1_DOMAIN_BRIDGE_V4_RULESET_ID };
 }
 
 function equippedArmor(
@@ -180,21 +191,31 @@ export function projectCharacterCombat(
 export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
-  version: 3 | 4 | 5,
-): CharacterCombatProjectionV3 | CharacterCombatProjectionV4 | CharacterCombatProjectionV5;
+  version: 6,
+): CharacterCombatProjectionV6;
 export function projectCharacterCombat(
   root: MaterializedCompanyState,
   characterId: string,
-  version?: 3 | 4 | 5,
+  version: 3 | 4 | 5 | 6,
+):
+  | CharacterCombatProjectionV3
+  | CharacterCombatProjectionV4
+  | CharacterCombatProjectionV5
+  | CharacterCombatProjectionV6;
+export function projectCharacterCombat(
+  root: MaterializedCompanyState,
+  characterId: string,
+  version?: 3 | 4 | 5 | 6,
 ):
   | CharacterCombatProjection
   | CharacterCombatProjectionV3
   | CharacterCombatProjectionV4
-  | CharacterCombatProjectionV5 {
+  | CharacterCombatProjectionV5
+  | CharacterCombatProjectionV6 {
   const character = person(root.lifecycle, characterId);
   const weapon = equippedWeaponContext(root, characterId);
   const unarmed =
-    (version === 3 || version === 4 || version === 5) &&
+    (version === 3 || version === 4 || version === 5 || version === 6) &&
     !root.physical.items.some(
       (item) =>
         item.tombstone === null &&
@@ -268,7 +289,7 @@ export function projectCharacterCombat(
       stamina: Math.min(vitals.currentStamina, maximumStamina),
     },
   };
-  if (version === 3 || version === 4 || version === 5) {
+  if (version === 3 || version === 4 || version === 5 || version === 6) {
     const immobile = conditions.some(({ definition }) => definition.id === 'critical-bleed');
     const projected: CharacterCombatProjectionV3 = {
       ...base,
@@ -283,7 +304,7 @@ export function projectCharacterCombat(
       },
       capabilities: { move: !immobile, attack: true, defend: true, retreat: !immobile },
     };
-    return version === 4 || version === 5
+    return version === 4 || version === 5 || version === 6
       ? owned({
           ...projected,
           ...tacticalProjectionVersion(version),

@@ -1,17 +1,29 @@
 import { startBattleV2 } from '../combat/runtime-v2.js';
+import { startBattleV3 } from '../combat/runtime-v3.js';
 import {
   M1_DOMAIN_BRIDGE_V3_RULESET_ID,
   M1_DOMAIN_BRIDGE_V4_RULESET_ID,
   M1_DOMAIN_BRIDGE_V5_RULESET_ID,
+  M1_DOMAIN_BRIDGE_V6_RULESET_ID,
   type BattleSetupV2,
 } from '../combat/setup-v2.js';
-import type { BattleId, Hex, SideId, UnitId } from '../combat/types.js';
+import type { BattleSetupV3, CombatPartySetupV3 } from '../combat/setup-v3.js';
+import type {
+  BattleId,
+  CombatMap,
+  CombatSideSetup,
+  CombatTransition,
+  Hex,
+  SideId,
+  UnitId,
+} from '../combat/types.js';
 import {
   projectCharacterCombatWithMorale,
   type CharacterCombatMoraleProjection,
   type CharacterCombatMoraleProjectionV3,
   type CharacterCombatMoraleProjectionV4,
   type CharacterCombatMoraleProjectionV5,
+  type CharacterCombatMoraleProjectionV6,
 } from './combat-morale.js';
 import { canPerform, sameLocation, validateLifecycleGraph } from './lifecycle-state.js';
 import type { AtLocation, LifecycleContext } from './lifecycle-types.js';
@@ -35,6 +47,15 @@ export interface EncounterCompanySource {
   readonly context: LifecycleContext;
 }
 /** Trusted world placement, never deserialized from a player's encounter command. */
+export interface EncounterSetupEvidence {
+  readonly schemaVersion: 2 | 3;
+  readonly battleId: BattleId;
+  readonly rulesetId: BattleSetupV2['rulesetId'] | typeof M1_DOMAIN_BRIDGE_V6_RULESET_ID;
+  readonly seed: number;
+  readonly map: CombatMap;
+  readonly sides: readonly CombatSideSetup[];
+}
+
 interface EncounterPositionEvidenceBase {
   readonly id: string;
   readonly sourceEventId: string;
@@ -42,7 +63,7 @@ interface EncounterPositionEvidenceBase {
   readonly worldId: string;
   readonly atTick: CampaignTick;
   readonly location: AtLocation;
-  readonly setup: Omit<BattleSetupV2, 'units'>;
+  readonly setup: EncounterSetupEvidence;
   readonly parties: readonly {
     readonly companyId: string;
     readonly partyId: string;
@@ -99,14 +120,15 @@ type FrozenBindingBase = {
       | CharacterCombatMoraleProjection
       | CharacterCombatMoraleProjectionV3
       | CharacterCombatMoraleProjectionV4
-      | CharacterCombatMoraleProjectionV5;
+      | CharacterCombatMoraleProjectionV5
+      | CharacterCombatMoraleProjectionV6;
     readonly vitals: ReturnType<typeof physicalVitals>;
     readonly equipment: readonly ReturnType<
       typeof ownPhysical<MaterializedCompanyState['physical']['items'][number]>
     >[];
   }[];
-  readonly setup: BattleSetupV2;
-  readonly initial: ReturnType<typeof startBattleV2>;
+  readonly setup: BattleSetupV2 | BattleSetupV3;
+  readonly initial: CombatTransition;
   readonly lastAppliedRevision: number;
 };
 
@@ -125,8 +147,20 @@ function claim(ids: Set<string>, id: string): void {
   ids.add(id);
 }
 
-function isTacticalBridgeRuleset(ruleset: BattleSetupV2['rulesetId']): boolean {
-  return ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID || ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+function isTacticalBridgeRuleset(ruleset: string): boolean {
+  return (
+    ruleset === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    ruleset === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+    ruleset === M1_DOMAIN_BRIDGE_V6_RULESET_ID
+  );
+}
+
+function playerCombatPartyId(companyId: string, partyId: string): string {
+  return `player:${JSON.stringify([companyId, partyId])}`;
+}
+
+function npcCombatPartyId(sideId: string): string {
+  return `npc:${JSON.stringify(sideId)}`;
 }
 
 /** G05: one detached candidate; no locks, root writes, settlement or public activation. */
@@ -145,6 +179,10 @@ export function prepareEncounterBinding(
       isEntityId(request.bindingId) &&
       evidence.bindingId === request.bindingId &&
       evidence.setup.battleId === request.battleId &&
+      ((evidence.setup.schemaVersion === 3 &&
+        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID) ||
+        (evidence.setup.schemaVersion === 2 &&
+          evidence.setup.rulesetId !== M1_DOMAIN_BRIDGE_V6_RULESET_ID)) &&
       evidence.location.kind === 'AT',
     'INVALID_SOURCE',
   );
@@ -199,7 +237,8 @@ export function prepareEncounterBinding(
       claim(units, placement.unitId);
       const v4 =
         evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+        evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID;
       const v3 = evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V3_RULESET_ID || v4;
       requirePhysical(
         v3
@@ -213,7 +252,13 @@ export function prepareEncounterBinding(
         ? projectCharacterCombatWithMorale(
             root,
             characterId,
-            evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID ? 5 : v4 ? 4 : 3,
+            evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID
+              ? 6
+              : evidence.setup.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID
+                ? 5
+                : v4
+                  ? 4
+                  : 3,
           )
         : projectCharacterCombatWithMorale(root, characterId);
       const equipment = root.physical.items.filter(
@@ -264,6 +309,15 @@ export function prepareEncounterBinding(
     evidence.version !== FIRST_HUNT_WORLD_BINDING_VERSION || worldParticipants.length > 0,
     'INVALID_SOURCE',
   );
+  if (evidence.setup.schemaVersion === 3) {
+    requirePhysical(
+      participants.every((participant) => participant.projection.schemaVersion === 6) &&
+        worldParticipants.every((participant) =>
+          ['human', 'beast', 'steady'].includes(participant.moralePolicy ?? ''),
+        ),
+      'INVALID_SOURCE',
+    );
+  }
   const companyUnits = participants.map((participant) => ({
     id: participant.unitId,
     sideId: participant.sideId,
@@ -271,7 +325,9 @@ export function prepareEncounterBinding(
     weaponId: participant.projection.weapon.profileId,
     attributes: participant.projection.attributes,
     initialPools: participant.projection.current,
-    ...(participant.projection.schemaVersion === 4 || participant.projection.schemaVersion === 5
+    ...(participant.projection.schemaVersion === 4 ||
+    participant.projection.schemaVersion === 5 ||
+    participant.projection.schemaVersion === 6
       ? {
           skillRanks: participant.projection.skillRanks,
           moralePolicy: participant.projection.moralePolicy,
@@ -279,7 +335,8 @@ export function prepareEncounterBinding(
       : {}),
     ...(participant.projection.schemaVersion === 3 ||
     participant.projection.schemaVersion === 4 ||
-    participant.projection.schemaVersion === 5
+    participant.projection.schemaVersion === 5 ||
+    participant.projection.schemaVersion === 6
       ? { capabilities: participant.projection.capabilities }
       : {}),
   }));
@@ -287,6 +344,9 @@ export function prepareEncounterBinding(
   const worldUnits = worldParticipants.map((participant) => ({
     id: participant.unitId,
     sideId: participant.sideId,
+    ...(evidence.setup.schemaVersion === 3
+      ? { partyId: npcCombatPartyId(participant.sideId) }
+      : {}),
     position: participant.position,
     weaponId: participant.weaponId,
     attributes: participant.attributes,
@@ -296,14 +356,61 @@ export function prepareEncounterBinding(
       ? { capabilities: { move: true, attack: true, defend: true, retreat: true } }
       : {}),
   }));
-  const setup: BattleSetupV2 = {
-    ...evidence.setup,
-    units: [...companyUnits, ...worldUnits].toSorted((a, b) =>
-      a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
-    ),
-  };
-  // G02 validates the whole setup and applies current pools BEFORE ordering initiative.
-  const initial = startBattleV2(setup);
+  let setup: BattleSetupV2 | BattleSetupV3;
+  let initial: CombatTransition;
+  if (evidence.setup.schemaVersion === 3) {
+    const parties = new Map<string, CombatPartySetupV3>();
+    for (const entry of evidence.parties) {
+      const id = playerCombatPartyId(entry.companyId, entry.partyId);
+      parties.set(id, {
+        id,
+        sideId: entry.sideId,
+        kind: 'player',
+        controllerId: entry.companyId,
+      });
+    }
+    for (const participant of worldParticipants) {
+      const id = npcCombatPartyId(participant.sideId);
+      parties.set(id, { id, sideId: participant.sideId, kind: 'npc' });
+    }
+    const units: BattleSetupV3['units'] = [
+      ...companyUnits.map((unit, index) => ({
+        ...unit,
+        partyId: playerCombatPartyId(participants[index]!.companyId, participants[index]!.partyId),
+        capabilities: unit.capabilities!,
+        skillRanks: unit.skillRanks!,
+        moralePolicy: unit.moralePolicy!,
+      })),
+      ...worldUnits.map((unit) => ({
+        ...unit,
+        partyId: npcCombatPartyId(unit.sideId),
+        capabilities: unit.capabilities!,
+        skillRanks: unit.skillRanks!,
+        moralePolicy: unit.moralePolicy!,
+      })),
+    ].toSorted((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    const v3Setup: BattleSetupV3 = {
+      schemaVersion: 3,
+      battleId: evidence.setup.battleId,
+      rulesetId: M1_DOMAIN_BRIDGE_V6_RULESET_ID,
+      seed: evidence.setup.seed,
+      map: evidence.setup.map,
+      sides: evidence.setup.sides,
+      parties: [...parties.values()],
+      units,
+    };
+    setup = v3Setup;
+    initial = startBattleV3(v3Setup);
+  } else {
+    const v2Setup: BattleSetupV2 = {
+      ...(evidence.setup as Omit<BattleSetupV2, 'units'>),
+      units: [...companyUnits, ...worldUnits].toSorted((a, b) =>
+        a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
+      ),
+    };
+    setup = v2Setup;
+    initial = startBattleV2(v2Setup);
+  }
   const fields = {
     bindingId: request.bindingId,
     worldId: evidence.worldId,
