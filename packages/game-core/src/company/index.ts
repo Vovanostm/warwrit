@@ -103,3 +103,5 @@ export {
   SUPPLY_INITIAL_RATIONS,
 } from './supplies.js';
 export type { SettlementSupplies } from './supplies.js';
+export { prepareEquipmentSale } from './equipment-sale.js';
+export type { EquipmentSale } from './equipment-sale.js';
