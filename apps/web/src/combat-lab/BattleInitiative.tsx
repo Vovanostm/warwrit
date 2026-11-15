@@ -4,6 +4,7 @@ import { Portrait, UnitStates } from './BattleUnitCard.js';
 import { unitStatus } from './battle-hud-format.js';
 import { UnitVitals } from './UnitVitals.js';
 import { battleUnitMarker } from './battle-framing.js';
+import { battleSideColor } from './battle-side-color.js';
 
 interface Props {
   view: BattlePresentationView;
@@ -135,7 +136,7 @@ function InitiativeUnit({
 }: Props & { id: string; index: number; round: number; forecast?: boolean }) {
   const unit = view.units.find((candidate) => candidate.id === id);
   if (unit?.status !== 'active') return null;
-  const side = unit.sideId === view.controlledSideId ? 'Союзник' : 'Противник';
+  const side = unit.sideId === view.controlledSideId ? 'Союзник' : `Сторона ${unit.sideId}`;
   const current = !forecast && view.activation?.actorId === id;
   const attackable = isAttackable(unit);
   const label = initiativeLabel({ unit, forecast, round, index, side, attackable });
@@ -146,6 +147,16 @@ function InitiativeUnit({
       type="button"
       data-unit-id={id}
       data-side={unit.sideId === view.controlledSideId ? 'human' : 'opponent'}
+      data-side-id={unit.sideId}
+      style={
+        {
+          '--battle-side-color': battleSideColor(
+            unit.sideId,
+            view.sides?.map((side) => side.id),
+          ),
+        } as React.CSSProperties
+      }
+      title={`Сторона ${unit.sideId}${unit.partyId ? ` · отряд ${unit.partyId}` : ''}`}
       data-forecast={forecast || undefined}
       aria-label={`${label} · Метка ${battleUnitMarker(view.units, id)}`}
       aria-current={currentStep}

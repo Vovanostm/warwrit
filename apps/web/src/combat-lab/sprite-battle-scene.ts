@@ -18,6 +18,7 @@ import {
 } from '@babylonjs/core';
 import type { CombatLabAction, CombatLabHex, CombatLabSkillId } from '@warwrit/protocol';
 import type { BattlePresentationView, Unit as BattleUnit } from './battle-presentation.js';
+import { battleSideColor } from './battle-side-color.js';
 import { acquireCanvasEngine, releaseCanvasEngine } from '../renderer/canvas-engine.js';
 import { mountThreeQuarterCamera } from '../renderer/three-quarter-camera.js';
 import {
@@ -988,7 +989,11 @@ export async function mountSpriteBattleScene(
       clearActorMarker();
       retainedActorKey = key;
       if (descriptor) {
-        actorMarker = createActorMarker(scene, descriptor, currentView.controlledSideId);
+        actorMarker = createActorMarker(
+          scene,
+          descriptor,
+          currentView.sides?.map((side) => side.id),
+        );
         actorMarkerLabels.push(actorMarker.badge);
       }
     }
@@ -1494,9 +1499,9 @@ function applyActorBadgePlacement(
 function createActorMarker(
   scene: Scene,
   descriptor: NonNullable<ReturnType<typeof markerPlan>['actor']>,
-  controlledSideId: string,
+  sideIds: readonly string[] = [],
 ) {
-  const side = descriptor.sideId === controlledSideId ? '#9bb9c2' : '#cf927c';
+  const side = battleSideColor(descriptor.sideId, sideIds);
   const badgeTexture = new DynamicTexture('actor-name', { width: 1024, height: 68 }, scene, false);
   const context = badgeTexture.getContext() as unknown as CanvasRenderingContext2D;
   context.font = 'bold 28px sans-serif';
