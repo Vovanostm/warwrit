@@ -1,5 +1,16 @@
 import { expect, it } from 'vitest';
 import { readSupplyPurchaseResult, supplyPurchaseQuote } from './supply-purchase.js';
+import { formatRations } from './format.js';
+
+it.each([
+  [1, '1 рацион'],
+  [2, '2 рациона'],
+  [5, '5 рационов'],
+  [11, '11 рационов'],
+  [21, '21 рацион'],
+])('declines %i rations in the visible quantity', (quantity, text) =>
+  expect(formatRations(quantity)).toBe(text),
+);
 
 it('keeps an uncertain request until the server identifies its definitive receipt', () => {
   expect(

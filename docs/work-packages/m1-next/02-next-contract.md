@@ -1,11 +1,31 @@
 # N02 — Finish the same company's next contract
 
-## Current result — 2026-11-08
+## Current result — 2026-11-15
 
-SPECIFIED / LOCAL; fresh gameplay NOT_RUN. WLC-08 reports the same company
-accepted «Когда молчит мельница» after its first paid hunt; completion is unproved.
-Next: locate the retained stand through its owner, then inspect ordinary journal
-and lawful access. [Common contract](COMMON.md). [Prompt](prompts/02-next-contract.md).
+IN_PROGRESS / LOCAL. T002 provenance is established on the owned restored N02
+copy in `codex/m1-completion-20261115`. Company
+`eb855f6f-ab02-42ca-9eef-a82b2c6830bf` (Дозор N01) belongs to the original
+local fixture account in `world.porechye.atlas-v1`. The retained N02 final dump
+was restored into the isolated `warwrit-m1-20261115` resources. The ordinary
+mill rescue is already completed/paid and HUNT-01 is completed; the old claim
+that the mill objective is unfinished is superseded by the actual saved state.
+
+The next lawful action was resupply through Severny Dvor's Granary. Its original
+food refusal preserved revision 178, 850 crowns and 41 rations. Under the owner's
+November 15 recovery decision, the same company bought one ration for four crowns
+through the ordinary interface. Canonical readback at revision 182/tick 28510
+records 41 consumed rations, 36020 unfed person-ticks, 81 recovery food records,
+one newly purchased ration, and merchant stock 279/cash 84 crowns. Company cash
+is 846 crowns. Later opened food appears as funded coverage rather than a closed
+ration stack; the independent browser observed 0 rations with 0.5 days remaining.
+
+A second executor logged in normally, inspected the same three people,
+equipment and paid contracts, then used «Разбить лагерь» and «Свернуть лагерь».
+Both commands were confirmed. Treasury remained 846 crowns, equipment remained
+visible and Rell's health advanced from 78/100 to 89/100. Retained screenshots
+and snapshots are `output/playwright/r5-recovery-*`. No SQL state repair or
+replacement company was used. The same-company continuation branch is proved;
+this does not close NEXT-2–NEXT-6 for the next newly selected contract.
 
 ## Player goal and normal journey
 
@@ -72,7 +92,7 @@ their owner. Preserve receipts and historical content/replay definitions.
 
 ## Acceptance / DoD
 
-- [ ] NEXT-1 The identified retained company is continued without state edits,
+- [x] NEXT-1 The identified retained company is continued without state edits,
       reset, replacement company or fabricated prerequisites.
 - [ ] NEXT-2 All objectives of its next contract finish from normal entry with
       actual observations, combat/custody and return where required.

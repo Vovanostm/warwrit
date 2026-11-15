@@ -825,20 +825,18 @@ function custodyShape(value: unknown): boolean {
 }
 function foodShape(value: unknown): boolean {
   return (
-    shapeObject(value, [
-      'sourceId',
-      'membershipId',
-      'fromTick',
-      'toTick',
-      'channel',
-      'unitsConsumed',
-    ]) &&
+    shapeObject(
+      value,
+      ['sourceId', 'membershipId', 'fromTick', 'toTick', 'channel', 'unitsConsumed'],
+      ['uncoveredTickUnits'],
+    ) &&
     isEntityId(value['sourceId']) &&
     isEntityId(value['membershipId']) &&
     isExactInteger(value['fromTick']) &&
     isExactInteger(value['toTick']) &&
     ['STOCK', 'PROVIDER'].includes(value['channel'] as string) &&
-    isExactInteger(value['unitsConsumed'])
+    isExactInteger(value['unitsConsumed']) &&
+    (!Object.hasOwn(value, 'uncoveredTickUnits') || isExactInteger(value['uncoveredTickUnits']))
   );
 }
 
@@ -862,6 +860,10 @@ function validateFoodHistory(lifecycle: LifecycleState, physical: CompanyPhysica
           isExactInteger(entry.fromTick) &&
           isExactInteger(entry.toTick) &&
           BigInt(entry.toTick) > BigInt(entry.fromTick) &&
+          isExactInteger(entry.uncoveredTickUnits ?? '0') &&
+          BigInt(entry.uncoveredTickUnits ?? '0') >= 0n &&
+          BigInt(entry.uncoveredTickUnits ?? '0') <=
+            BigInt(entry.toTick) - BigInt(entry.fromTick) &&
           isExactInteger(entry.unitsConsumed) &&
           ['STOCK', 'PROVIDER'].includes(entry.channel),
         'INVALID_STATE',
@@ -873,12 +875,13 @@ function validateFoodHistory(lifecycle: LifecycleState, physical: CompanyPhysica
     for (const entry of entries) {
       const from = BigInt(entry.fromTick);
       const to = BigInt(entry.toTick);
+      const uncovered = BigInt(entry.uncoveredTickUnits ?? '0');
       requirePhysical(from >= end, 'INVALID_STATE');
       end = to;
       if (entry.channel === 'STOCK') {
-        demand += (to - from) * rate;
+        demand += (to - from - uncovered) * rate;
         debited += BigInt(entry.unitsConsumed);
-      } else requirePhysical(entry.unitsConsumed === '0', 'INVALID_STATE');
+      } else requirePhysical(entry.unitsConsumed === '0' && uncovered === 0n, 'INVALID_STATE');
     }
     const carry =
       physical.foodCarry.find((entry) => entry.membershipId === membershipId)?.tickUnits ?? '0';

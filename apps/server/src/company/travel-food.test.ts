@@ -23,7 +23,11 @@ import type {
   ItemInstance,
   PhysicalContainer,
 } from '@warwrit/game-core';
-import { prepareEncounterFoodFacts, prepareTravelFoodFacts } from './travel-food.js';
+import {
+  prepareEncounterFoodFacts,
+  prepareStationaryFoodFacts,
+  prepareTravelFoodFacts,
+} from './travel-food.js';
 
 function encounterState(): CompanyCombatAggregateState {
   const fixture = createCompanyCombatAggregateFixture();
@@ -101,6 +105,7 @@ function advanceCompanySource(
   source: EncounterCompanySource,
   toTick: string,
   commandSuffix: string,
+  stationary = false,
 ): EncounterCompanySource {
   const root = source.root;
   const parsed = parseCompanyCommand({
@@ -126,12 +131,14 @@ function advanceCompanySource(
   });
   const party = root.lifecycle.parties[0];
   if (!party || party.location.kind !== 'AT') throw new Error('Fixture party is not at a site');
-  const food = prepareTravelFoodFacts(aggregate, toTick, command.commandId, {
-    kind: 'DEPARTURE',
-    partyId: party.partyId,
-    location: party.location,
-    settledThroughTick: toTick,
-  });
+  const food = stationary
+    ? prepareStationaryFoodFacts(aggregate, toTick, command.commandId)
+    : prepareTravelFoodFacts(aggregate, toTick, command.commandId, {
+        kind: 'DEPARTURE',
+        partyId: party.partyId,
+        location: party.location,
+        settledThroughTick: toTick,
+      });
   if (food.kind !== 'PREPARED')
     throw new Error(`Fixture food could not be settled: ${food.reason}`);
   const context: EconomyContext = {
@@ -666,5 +673,135 @@ describe('departure food preparation', () => {
       kind: 'REJECTED',
       reason: 'INSUFFICIENT_ITEMS',
     });
+  });
+});
+
+describe('stationary food recovery', () => {
+  it('wraps backed food carry to zero at an exact day boundary without opening another ration', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const halfway = advanceCompanySource(fixture.f.sources[0]!, '1500', 'food-carry-halfway');
+    const aggregate = withoutFoodStock(
+      readCompanyCombatAggregateState({
+        economy: halfway.root,
+        learning: createCompanyLearningState(),
+        social: createSocialState(),
+        encounter: createCombatEncounterApplication(),
+      }),
+    );
+    expect(aggregate.economy.physical!.foodCarry.some((entry) => entry.tickUnits === '500')).toBe(
+      true,
+    );
+    const source = {
+      ...halfway,
+      root: { ...halfway.root, physical: aggregate.economy.physical! },
+    };
+
+    const advanced = advanceCompanySource(source, '2000', 'food-carry-wrap', true);
+    const boundaryFood = advanced.root.physical!.food.filter(
+      (entry) => entry.fromTick === '1500' && entry.toTick === '2000',
+    );
+    expect(boundaryFood.length).toBeGreaterThan(0);
+    expect(boundaryFood.every((entry) => entry.unitsConsumed === '0')).toBe(true);
+    expect(boundaryFood.every((entry) => entry.uncoveredTickUnits === undefined)).toBe(true);
+    expect(advanced.root.physical!.foodCarry.every((entry) => entry.tickUnits === '0')).toBe(true);
+  });
+
+  it('records an uncovered interval with no stock while travel remains strict', () => {
+    const state = readCompanyCombatAggregateState(withoutFoodStock(departureState()));
+    const toTick = (BigInt(state.economy.lifecycle.campaignTick) + 1000n).toString();
+    const stationary = prepareStationaryFoodFacts(state, toTick, 'stationary-empty-food');
+    expect(stationary.kind).toBe('PREPARED');
+    if (stationary.kind === 'PREPARED') {
+      expect(stationary.facts.length).toBeGreaterThan(0);
+      expect(stationary.facts.every((fact) => fact.uncoveredTickUnits === '1000')).toBe(true);
+    }
+    const party = state.economy.lifecycle.parties[0]!;
+    expect(
+      prepareTravelFoodFacts(state, toTick, 'travel-empty-food', {
+        kind: 'DEPARTURE',
+        partyId: party.partyId,
+        location: party.location,
+        settledThroughTick: toTick,
+      }),
+    ).toEqual({ kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' });
+  });
+
+  it('debits the remaining ration once and records the other members’ shortfall', () => {
+    const fixture = createCompanyCombatAggregateFixture();
+    const original = fixture.f.sources[0]!;
+    const aggregate = withoutFoodStock(
+      readCompanyCombatAggregateState({
+        economy: original.root,
+        learning: createCompanyLearningState(),
+        social: createSocialState(),
+        encounter: createCombatEncounterApplication(),
+      }),
+    );
+    const party = aggregate.economy.lifecycle.parties[0]!;
+    if (party.location.kind !== 'AT') throw new Error('Expected a party at a site');
+    const stocked = appendStock(
+      aggregate,
+      {
+        containerId: 'stationary-last-ration',
+        kind: 'STATIC',
+        location: party.location,
+        custodian: { kind: 'COMPANY', id: aggregate.economy.lifecycle.companyId },
+        carrier: null,
+        capacityG: 50000,
+        access: 'COMPANY',
+        closed: null,
+      },
+      1,
+    );
+    const source = {
+      ...original,
+      root: { ...original.root, physical: stocked.economy.physical! },
+    };
+    const toTick = (BigInt(source.root.lifecycle.campaignTick) + 1000n).toString();
+    const advanced = advanceCompanySource(source, toTick, 'stationary-shortfall-settle', true);
+    const food = advanced.root.physical!.food;
+    expect(food.length).toBeGreaterThan(0);
+    expect(food.filter((entry) => entry.unitsConsumed === '1')).toHaveLength(1);
+    expect(food.filter((entry) => entry.uncoveredTickUnits === '1000')).toHaveLength(2);
+    expect(advanced.root.physical!.foodCarry.every((entry) => entry.tickUnits === '0')).toBe(true);
+    const settled = readCompanyCombatAggregateState({
+      economy: advanced.root,
+      learning: createCompanyLearningState(),
+      social: createSocialState(),
+      encounter: createCombatEncounterApplication(),
+    });
+    expect(prepareStationaryFoodFacts(settled, toTick, 'stationary-repeat')).toEqual({
+      kind: 'PREPARED',
+      facts: [],
+    });
+  });
+
+  it('spends stock across accessible containers before leaving later intervals uncovered', () => {
+    let state = readCompanyCombatAggregateState(withoutFoodStock(departureState()));
+    const party = state.economy.lifecycle.parties[0]!;
+    if (party.location.kind !== 'AT') throw new Error('Expected party at a site');
+    const makeContainer = (containerId: string): PhysicalContainer => ({
+      containerId,
+      kind: 'STATIC',
+      location: party.location,
+      custodian: { kind: 'COMPANY', id: state.economy.lifecycle.companyId },
+      carrier: null,
+      capacityG: 50000,
+      access: 'COMPANY',
+      closed: null,
+    });
+    state = appendStock(state, makeContainer('stationary-ration-a'), 1);
+    state = appendStock(state, makeContainer('stationary-ration-b'), 1);
+    state = readCompanyCombatAggregateState(state);
+    const toTick = (
+      BigInt(state.economy.lifecycle.campaignTick) + BigInt(COMPANY_RULES.ticksPerDay)
+    ).toString();
+    const result = prepareStationaryFoodFacts(state, toTick, 'stationary-split-food');
+    expect(result.kind).toBe('PREPARED');
+    if (result.kind === 'PREPARED') {
+      expect(result.facts[0]?.containerId).toBe('stationary-ration-a');
+      expect(result.facts[1]?.containerId).toBe('stationary-ration-b');
+      expect(result.facts.slice(2).every((fact) => fact.uncoveredTickUnits === '1000')).toBe(true);
+    }
   });
 });

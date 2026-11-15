@@ -99,6 +99,7 @@ function prepareStockFoodFacts(
   requirements: readonly FoodRequirement[],
   resolveAccess: FoodAccessResolver,
   factId: FoodFactId,
+  allowShortfall = false,
 ): TravelFoodPreparation {
   const { lifecycle, physical } = state.economy;
   if (!physical) return { kind: 'REJECTED', reason: 'INVALID_STATE' };
@@ -162,21 +163,66 @@ function prepareStockFoodFacts(
       assessPhysicalFoodStock(physicalWithCarry, [requirement], [], lifecycle.companyId)
         .requiredUnits,
     );
-    const source = sources.find(
-      (candidate) =>
-        candidate.availableUnits - (reservedUnitsByContainer.get(candidate.containerId) ?? 0n) >=
-        requiredUnits,
-    );
-    if (!source && requiredUnits > 0n) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
-    if (source) {
-      reservedUnitsByContainer.set(
-        source.containerId,
-        (reservedUnitsByContainer.get(source.containerId) ?? 0n) + requiredUnits,
-      );
+    const availableByContainer = sources.map((candidate) => ({
+      ...candidate,
+      availableUnits:
+        candidate.availableUnits - (reservedUnitsByContainer.get(candidate.containerId) ?? 0n),
+    }));
+    const availableUnits = allowShortfall
+      ? availableByContainer.reduce((sum, entry) => sum + entry.availableUnits, 0n)
+      : availableByContainer.reduce(
+          (best, entry) => (entry.availableUnits > best ? entry.availableUnits : best),
+          0n,
+        );
+    if (!allowShortfall && availableUnits < requiredUnits)
+      return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
+    const coveredDemand = (demand: bigint) =>
+      demand === 0n
+        ? 0n
+        : (priorCarry + demand + BigInt(COMPANY_RULES.ticksPerDay) - 1n) /
+            BigInt(COMPANY_RULES.ticksPerDay) -
+          (priorCarry > 0n ? 1n : 0n);
+    let fedTickUnits = BigInt(requirement.tickUnits);
+    if (allowShortfall && coveredDemand(fedTickUnits) > availableUnits) {
+      let low = 0n;
+      let high = fedTickUnits;
+      while (low < high) {
+        const middle = (low + high + 1n) / 2n;
+        if (coveredDemand(middle) <= availableUnits) low = middle;
+        else high = middle - 1n;
+      }
+      fedTickUnits = low;
     }
+    const unitsToReserve = coveredDemand(fedTickUnits);
+    let remainingToReserve = unitsToReserve;
+    const selectedContainerIds: string[] = [];
+    const allocation = allowShortfall
+      ? availableByContainer
+      : availableByContainer.filter((entry) => entry.availableUnits >= unitsToReserve).slice(0, 1);
+    if (!allowShortfall && unitsToReserve === 0n && allocation[0])
+      selectedContainerIds.push(allocation[0].containerId);
+    for (const candidate of allocation) {
+      if (remainingToReserve === 0n) break;
+      const take =
+        candidate.availableUnits < remainingToReserve
+          ? candidate.availableUnits
+          : remainingToReserve;
+      if (take <= 0n) continue;
+      selectedContainerIds.push(candidate.containerId);
+      reservedUnitsByContainer.set(
+        candidate.containerId,
+        (reservedUnitsByContainer.get(candidate.containerId) ?? 0n) + take,
+      );
+      remainingToReserve -= take;
+    }
+    if (remainingToReserve > 0n) return { kind: 'REJECTED', reason: 'INSUFFICIENT_ITEMS' };
+    const uncoveredDemand = BigInt(requirement.tickUnits) - fedTickUnits;
+    const rate = BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay);
+    if (uncoveredDemand % rate !== 0n) return { kind: 'REJECTED', reason: 'INVALID_STATE' };
+    const uncoveredTickUnits = uncoveredDemand / rate;
     carryByMembership.set(
       requirement.membershipId,
-      (priorCarry + BigInt(requirement.tickUnits)) % BigInt(COMPANY_RULES.ticksPerDay),
+      (priorCarry + fedTickUnits) % BigInt(COMPANY_RULES.ticksPerDay),
     );
 
     const sourceEventId = factId(requirement, ordinal);
@@ -195,18 +241,23 @@ function prepareStockFoodFacts(
       toTick: requirement.toTick,
       channel: 'STOCK',
       location: access.location,
-      ...(source ? { containerId: source.containerId } : {}),
+      ...(selectedContainerIds.length === 1 ? { containerId: selectedContainerIds[0] } : {}),
+      ...(selectedContainerIds.length > 1 ? { containerIds: selectedContainerIds } : {}),
+      ...(uncoveredTickUnits > 0n
+        ? { uncoveredTickUnits: uncoveredTickUnits.toString() as typeof physical.processedTick }
+        : {}),
     });
   }
   return { kind: 'PREPARED', facts };
 }
 
 /** Derive only the exact food intervals produced by the finance owner for this command. */
-export function prepareTravelFoodFacts(
+function prepareFoodFacts(
   state: CompanyCombatAggregateState,
   toTick: string,
   commandId: string,
   routeBoundary?: TravelFoodRouteBoundary,
+  allowStationaryShortfall = false,
 ): TravelFoodPreparation {
   const { lifecycle, finance, physical } = state.economy;
   if (
@@ -408,7 +459,17 @@ export function prepareTravelFoodFacts(
         String(ordinal),
         PHYSICAL_POLICY_VERSION,
       ]),
+    allowStationaryShortfall,
   );
+}
+
+export function prepareTravelFoodFacts(
+  state: CompanyCombatAggregateState,
+  toTick: string,
+  commandId: string,
+  routeBoundary?: TravelFoodRouteBoundary,
+): TravelFoodPreparation {
+  return prepareFoodFacts(state, toTick, commandId, routeBoundary);
 }
 
 /** Settle frozen-party stock and already-backed meals for other company members. */
@@ -614,10 +675,16 @@ export function prepareStationaryFoodFacts(
   const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
   if (party?.location.kind !== 'AT' && party?.location.kind !== 'TERRAIN')
     return { kind: 'REJECTED', reason: 'INVALID_STATE' };
-  return prepareTravelFoodFacts(state, toTick, commandId, {
-    kind: 'DEPARTURE',
-    partyId: party.partyId,
-    location: party.location,
-    settledThroughTick: toTick,
-  });
+  return prepareFoodFacts(
+    state,
+    toTick,
+    commandId,
+    {
+      kind: 'DEPARTURE',
+      partyId: party.partyId,
+      location: party.location,
+      settledThroughTick: toTick,
+    },
+    true,
+  );
 }

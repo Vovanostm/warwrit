@@ -4,7 +4,7 @@ import {
   type CompanySummaryDto,
   type SupplyShopDto,
 } from '@warwrit/protocol';
-import { formatCrowns } from './format.js';
+import { formatCrowns, formatRations } from './format.js';
 import { readSupplyPurchaseAttempt } from './supply-purchase-attempt.js';
 import {
   sendSupplyPurchase,
@@ -139,7 +139,8 @@ function supplyError(error: unknown): string {
   return error instanceof Error ? error.message : 'Связь прервалась. Повторите эту же покупку.';
 }
 function purchaseMessage(result: SupplyPurchaseResult, attempt: Purchase): string {
-  if (result.ok) return `Куплено ${attempt.payload.quantity} рационов. Они в обозе.`;
+  if (result.ok)
+    return `Покупка завершена. ${formatRations(attempt.payload.quantity)} теперь в обозе.`;
   return rejectionText[result.code] ?? 'Покупка отклонена. Данные отряда обновлены.';
 }
 type ShopDetailsProps = {
@@ -210,7 +211,7 @@ function CurrentSupplies(props: { readonly supplies: CompanyHoldingsDto['supplie
   if (!props.supplies) return null;
   return (
     <p>
-      Сейчас: {props.supplies.rations} рационов · на{' '}
+      Сейчас: {formatRations(props.supplies.rations)} · на{' '}
       {props.supplies.days.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} игровых дней.
     </p>
   );
@@ -233,7 +234,7 @@ function PendingPurchase(props: { readonly attempt: Purchase | undefined }) {
   if (!props.attempt) return null;
   return (
     <p className="state-note">
-      Незавершённая покупка: {props.attempt.payload.quantity} рационов. Сначала уточним её
+      Незавершённая покупка: {formatRations(props.attempt.payload.quantity)}. Сначала уточним её
       результат.
     </p>
   );

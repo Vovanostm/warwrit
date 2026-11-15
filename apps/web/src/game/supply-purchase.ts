@@ -4,7 +4,7 @@ import type {
   SupplyShopDto,
 } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
-import { formatCrowns } from './format.js';
+import { formatCrowns, formatRations } from './format.js';
 
 export type SupplyPurchaseAttempt = Extract<
   OrdinaryPlayerCompanyCommandV2Dto,
@@ -59,7 +59,7 @@ export function supplyPurchaseQuote(
   const { valid, costQ, affordable, days } = supplyQuantityQuote(shop, holdings, quantity);
   const canPurchase =
     Boolean(pending) || Boolean(active && shop && valid && quantity <= shop.rations && affordable);
-  let buttonText = `Купить ${valid ? quantity : ''} рационов · ${formatCrowns(costQ)} кр.`;
+  let buttonText = `Купить ${valid ? formatRations(quantity) : 'рационы'} · ${formatCrowns(costQ)} кр.`;
   if (pending) buttonText = 'Повторить эту же покупку';
   if (!active && !pending) buttonText = 'Компания завершила свой путь';
   if (busy) buttonText = 'Покупаем…';

@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Fixed: reuse terminal combat markers and bound live Playground
+  diagnostics while retaining complete replay export.
+  [Observed crash and checks](docs/work-packages/m1-next/10-desktop-performance.md#current-result--2026-11-15). LOCAL.
+- 2026-11-15 — Added: source-backed surrender gear transfer and V6 NPC intentions;
+  retain living company membership and versioned historical readers.
+  [Outcome progress](docs/work-packages/m1-next/08-battle-outcomes.md#current-result--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: persist three-side combat setups, 36-figure Playground
   scenarios and versioned replays; admit new wolf-trail battles with separate
   company control and durable terminal effects.
@@ -16,7 +23,7 @@ requests.
 - 2026-11-15 — Changed: accept stationary food-shortfall recovery, recording actual
   consumption and missing food before further purchases.
   [Owner decision](docs/work-packages/M1-SUPPLIES.md#food-shortfall--owner-decision-2026-11-15).
-  Implementation IN_PROGRESS / LOCAL.
+  Same-company purchase and independent camp/uncamp continuation passed locally.
 
 - 2026-11-15 — Added: start M1 implementation on current main in an isolated
   integration branch, reserving combat ownership and restoring the retained company copy.

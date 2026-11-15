@@ -61,10 +61,20 @@ the settled interval once. A subsequent purchase supplies future time. Repeating
 the same settlement or purchase preserves the recorded result and finite stock.
 The hunger consequences remain a separate task requiring its own rules.
 
-Implementation is IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`.
-The retained refusal case preserves company revision178, 850 crowns and41 rations,
-and merchant revision2, 280 rations and80 crowns. Recovery acceptance and the next
-ordinary command remain NOT_RUN until the owning transaction is implemented.
+Recovery is implemented and checked locally on `codex/m1-completion-20261115`.
+The unchanged refusal baseline had 850 crowns/41 rations and merchant 280 rations/
+80 crowns. The same company then bought one ration through its ordinary Granary
+control for four crowns. Readback at revision182 records 41 actual rations consumed,
+36020 unfed person-ticks in 81 new food records and the new purchased ration.
+The merchant has 279 rations/84 crowns and the company 846 crowns. Money and stock
+are conserved. A separate executor subsequently logged in and completed camp /
+uncamp through ordinary controls with the retained people, equipment and journal.
+
+The first real attempt exposed a carry exactly equal to a full day. Correcting
+the zero-debit carry modulo the day and adding its regression made the retained
+company advance legally. The 15 focused food tests, existing physical/combat
+regressions and real PostgreSQL supply exchange passed. Full M1 is unfinished.
+See [same-company continuation](m1-next/02-next-contract.md#current-result--2026-11-15).
 
 Verification result — 2026-10-04:
 
@@ -219,5 +229,5 @@ remain. Final map screenshot: `output/playwright/supplies-main-map.jpg`.
 ### Follow-up hunger consequences
 
 - [ ] Define the gameplay consequences of recorded food shortfalls and implement
-  them as a separate owner-approved task. Recovery above preserves the shortfall
-  history needed by that future rule.
+      them as a separate owner-approved task. Recovery above preserves the shortfall
+      history needed by that future rule.

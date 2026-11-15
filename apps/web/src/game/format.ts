@@ -1,6 +1,17 @@
 import type { CompanySummaryDto } from '@warwrit/protocol';
 
 const Q_PER_CROWN = 1_000_000n;
+const russianQuantity = new Intl.PluralRules('ru-RU');
+
+export function formatRations(quantity: number): string {
+  const nouns: Partial<Record<Intl.LDMLPluralRule, string>> = {
+    one: 'рацион',
+    few: 'рациона',
+    many: 'рационов',
+    other: 'рациона',
+  };
+  return `${quantity.toLocaleString('ru-RU')} ${nouns[russianQuantity.select(quantity)]}`;
+}
 
 /** Exact q amount rendered as crowns; never rounds money away. */
 export function formatCrowns(cashQ: string): string {

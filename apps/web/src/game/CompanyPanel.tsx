@@ -1,6 +1,6 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
-import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { conditionLabel, formatCrowns, formatRations, itemLabel, statusLabel } from './format.js';
 import { ItemTransferPanel } from './ItemTransferPanel.js';
 import { PayrollPanel } from './PayrollPanel.js';
 import { CompanyCarePanel } from './CompanyCarePanel.js';
@@ -43,7 +43,7 @@ export function CompanyPanel(props: {
         <h3>Припасы</h3>
         {holdings?.supplies && (
           <p>
-            {holdings.supplies.rations} рационов · на{' '}
+            {formatRations(holdings.supplies.rations)} · на{' '}
             {holdings.supplies.days.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} игровых
             дней для {holdings.supplies.people} чел.
           </p>
