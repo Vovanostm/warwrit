@@ -132,6 +132,104 @@ describe('ordinary contract transitions', () => {
     ).toMatchObject({ kind: 'PREPARED', payout: { rewardQ: '25000000' } });
   });
 
+  it('requires the complete receipt chain and saves the chosen report recipient', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const receipts = ordinaryContractProfile('ci.m1.two-receipts.01')!;
+    expect(receipts.walletId).toBe('wallet.tikhon-bortnik.bereznyak.01');
+    expect(receipts.genesisWalletQ).toBe('120000000');
+    expect(receipts.rewardQ).toBe('60000000');
+    const bereznyak: ContractPlace = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const city = CITY;
+    const take = (
+      state: OrdinaryContractState,
+      stepId: string,
+      companyId = 'receipts-company',
+      standingAt: ContractPlace = bereznyak,
+    ) => {
+      const result = prepareOrdinaryContractCommand(
+        receipts,
+        state,
+        { type: 'STEP', stepId },
+        {
+          companyId,
+          standingAt,
+          atTick: '10',
+          expectedRevision: state.revision,
+          sourceEventId: `receipts-${state.revision}`,
+          gates,
+        },
+      );
+      return result;
+    };
+
+    let state = prepared(
+      prepareOrdinaryContractCommand(
+        receipts,
+        ordinaryContractGenesis(receipts),
+        { type: 'ACCEPT' },
+        {
+          companyId: 'receipts-company',
+          standingAt: bereznyak,
+          atTick: '10',
+          expectedRevision: '0',
+          sourceEventId: 'receipts-accept',
+          gates,
+        },
+      ),
+    ).next;
+    expect(take(state, 'ask-ledger', 'receipts-company', city)).toMatchObject({
+      kind: 'REJECTED',
+      code: 'MISSING_EVIDENCE',
+    });
+
+    state = prepared(take(state, 'inspect-receipt')).next;
+    state = prepared(take(state, 'ask-ledger', 'receipts-company', city)).next;
+    expect(take(state, 'report-tikhon')).toMatchObject({
+      kind: 'REJECTED',
+      code: 'MISSING_EVIDENCE',
+    });
+    state = prepared(take(state, 'ask-gordey', 'receipts-company', city)).next;
+    const completion = prepared(take(state, 'report-tikhon'));
+    expect(completion.payout).toEqual({ companyId: 'receipts-company', rewardQ: '60000000' });
+    expect(completion.next.outcome?.kind).toBe('SUCCESS');
+    expect(completion.next.facts.map((fact) => fact.slotId)).toContain(
+      'two-receipts-reported-to-tikhon',
+    );
+    expect(completion.next.facts.map((fact) => fact.slotId)).not.toContain(
+      'two-receipts-reported-to-both',
+    );
+
+    let other = prepared(
+      prepareOrdinaryContractCommand(
+        receipts,
+        ordinaryContractGenesis(receipts),
+        { type: 'ACCEPT' },
+        {
+          companyId: 'other-company',
+          standingAt: bereznyak,
+          atTick: '10',
+          expectedRevision: '0',
+          sourceEventId: 'other-receipts-accept',
+          gates,
+        },
+      ),
+    ).next;
+    for (const [stepId, place] of [
+      ['inspect-receipt', bereznyak],
+      ['ask-ledger', city],
+      ['ask-gordey', city],
+    ] as const) {
+      other = prepared(take(other, stepId, 'other-company', place)).next;
+    }
+    const shared = prepared(take(other, 'report-both', 'other-company', bereznyak));
+    expect(shared.payout).toEqual({ companyId: 'other-company', rewardQ: '60000000' });
+    expect(shared.next.facts.map((fact) => fact.slotId)).toContain('two-receipts-reported-to-both');
+    expect(shared.next.facts.map((fact) => fact.slotId)).not.toContain(
+      'two-receipts-reported-to-tikhon',
+    );
+    expect(shared.next.facts.every((fact) => fact.companyId === 'other-company')).toBe(true);
+  });
+
   it('pays the delivering company exactly once and only for a person it holds', () => {
     let state = prepared(
       act(ordinaryContractGenesis(profile), 'owner', CITY, { type: 'ACCEPT' }),

@@ -95,6 +95,7 @@ const wolfTrailId = 'ct.m1.wolf-trail.v1';
 const raiderStandardId = 'ct.m1.raider-standard.v1';
 const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
+const twoReceiptsId = 'ct.m1.two-receipts.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -162,6 +163,21 @@ const definitions: readonly ContractDefinition[] = [
     ['light-sack-dry-grain-clue', 'light-sack-wet-sacks-clue', 'light-sack-damp-rye-report'],
     'ACCESSIBLE_OBSERVATION_SET',
     ['INVEST-03-DAMP-RYE'],
+  ),
+  definition(
+    twoReceiptsId,
+    'INVESTIGATE',
+    'woodland-village-caller',
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'two-receipts-smudged-seal',
+      'two-receipts-empty-ledger',
+      'two-receipts-stolen-badge',
+      'two-receipts-reported-to-tikhon',
+      'two-receipts-reported-to-both',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-04-TWO-RECEIPTS'],
   ),
   definition(
     cellarRescueId,
@@ -241,6 +257,11 @@ const slots: ContractSourceSlot[] = [
   source('light-sack-wet-sacks-clue', lightSackDampRyeId, 'OBSERVATION'),
   source('light-sack-measure-report', lightSackMeasureId, 'REPORT'),
   source('light-sack-damp-rye-report', lightSackDampRyeId, 'REPORT'),
+  source('two-receipts-smudged-seal', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-empty-ledger', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-stolen-badge', twoReceiptsId, 'OBSERVATION'),
+  source('two-receipts-reported-to-tikhon', twoReceiptsId, 'REPORT'),
+  source('two-receipts-reported-to-both', twoReceiptsId, 'REPORT'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -430,6 +451,25 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-04-TWO-RECEIPTS',
+    twoReceiptsId,
+    location('bereznyak', 'bereznyak-green'),
+    [
+      'two-receipts-smudged-seal',
+      'two-receipts-empty-ledger',
+      'two-receipts-stolen-badge',
+      'two-receipts-reported-to-tikhon',
+      'two-receipts-reported-to-both',
+    ],
+    [
+      outcome('SUCCESS', {
+        kind: 'ANY_PRESENT',
+        sourceSlotGroups: [['two-receipts-reported-to-tikhon', 'two-receipts-reported-to-both']],
+      }),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -535,6 +575,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.road-tracks.01', roadTracksId),
     binding('ci.m1.missing-herbs.01', missingHerbsId),
     binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
+    binding('ci.m1.two-receipts.01', twoReceiptsId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

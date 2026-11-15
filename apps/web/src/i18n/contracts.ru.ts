@@ -99,6 +99,28 @@ export const contractsRu = {
   'contract.ci.m1.light-sack.01.result.light-sack.damp-rye-result':
     'Нил растирает зерно между пальцами и нюхает. — Усушка, — говорит он. — Так сборщику и запишу. Это слово он знает.',
 
+  'contract.ci.m1.two-receipts.01.title': 'Чужая расписка',
+  'contract.ci.m1.two-receipts.01.issuer': 'Тихон Бортник, староста Березняка',
+  'contract.ci.m1.two-receipts.01.brief':
+    'Мы отдали сборщику Полесского герцогства шесть мешков налога, у меня есть расписка. А он говорит, что ничего не получал. Узнайте, кто врёт.',
+  'contract.ci.m1.two-receipts.01.step.inspect-receipt': 'Проверить печать на расписке',
+  'contract.ci.m1.two-receipts.01.step.ask-ledger': 'Сверить книгу сборщика в Каменном Броде',
+  'contract.ci.m1.two-receipts.01.step.ask-gordey': 'Расспросить Гордея Лапу о бляхе',
+  'contract.ci.m1.two-receipts.01.step.report-tikhon': 'Рассказать только Тихону',
+  'contract.ci.m1.two-receipts.01.step.report-both': 'Рассказать и Тихону, и сборщику',
+  'contract.ci.m1.two-receipts.01.done':
+    'Тихон знает установленную цепочку. Требование сборщика остаётся.',
+  'contract.ci.m1.two-receipts.01.result.two-receipts.smudged-seal':
+    'Печать на расписке смазана, букв не разобрать.',
+  'contract.ci.m1.two-receipts.01.result.two-receipts.empty-ledger':
+    'Березняк в этом году не платил. В книге пусто.',
+  'contract.ci.m1.two-receipts.01.result.two-receipts.stolen-badge':
+    'Бляху с отбитым краем люди Обуха забрали у сборщика, которого ограбили осенью.',
+  'contract.ci.m1.two-receipts.01.result.two-receipts.tikhon-only':
+    'Тихон разглаживает расписку на колене, будто от этого она станет настоящей. — Значит, рожь у Обуха. А платить опять нам.',
+  'contract.ci.m1.two-receipts.01.result.two-receipts.tikhon-and-collector':
+    'Сборщик слушает про Обуха, не поднимая головы от книги. — Это ваше дело. Шесть мешков — до первого снега.',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',

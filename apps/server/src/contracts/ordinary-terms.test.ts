@@ -122,6 +122,56 @@ describe('ordinary accepted term projection', () => {
     expect(stranger.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
   });
 
+  it('shows two-receipts findings only to the company that recorded them', () => {
+    const receipts = ordinaryContractProfile('ci.m1.two-receipts.01')!;
+    const genesis = ordinaryContractGenesis(receipts);
+    const bereznyak = { siteId: 'bereznyak', areaId: 'bereznyak-green' };
+    const accepted = prepareOrdinaryContractCommand(
+      receipts,
+      genesis,
+      { type: 'ACCEPT' },
+      {
+        companyId: 'company-a',
+        standingAt: bereznyak,
+        atTick: '10',
+        expectedRevision: genesis.revision,
+        sourceEventId: 'accept-two-receipts',
+        gates,
+      },
+    );
+    if (accepted.kind !== 'PREPARED') throw new Error('expected accepted receipt inquiry');
+    const beforeClue = contractView(receipts, accepted.next, 'company-a', bereznyak, gates, false);
+    expect(beforeClue.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+
+    const clue = prepareOrdinaryContractCommand(
+      receipts,
+      accepted.next,
+      { type: 'STEP', stepId: 'inspect-receipt' },
+      {
+        companyId: 'company-a',
+        standingAt: bereznyak,
+        atTick: '11',
+        expectedRevision: accepted.next.revision,
+        sourceEventId: 'inspect-two-receipts',
+        gates,
+      },
+    );
+    if (clue.kind !== 'PREPARED') throw new Error('expected receipt clue');
+    expect(
+      contractView(receipts, clue.next, 'company-a', bereznyak, gates, false).steps.find(
+        (step) => step.stepId === 'inspect-receipt',
+      ),
+    ).toMatchObject({
+      doneByYou: true,
+      findingTextKey: 'contract.ci.m1.two-receipts.01.result.two-receipts.smudged-seal',
+    });
+    expect(
+      contractView(receipts, clue.next, 'company-b', bereznyak, gates, false).steps.every(
+        (step) => step.findingTextKey === undefined,
+      ),
+    ).toBe(true);
+  });
+
   it('projects the saved terms after an offer is changed and reloads an old v1 save', () => {
     const accepted = acceptedState();
     const oldSave = structuredClone(accepted) as unknown as Record<string, unknown>;

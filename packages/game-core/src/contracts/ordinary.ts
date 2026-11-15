@@ -11,7 +11,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.cellar-rescue.01'
   | 'ci.m1.lost-scout.01'
   | 'ci.m1.mill-worker.01'
-  | 'ci.m1.light-sack.01';
+  | 'ci.m1.light-sack.01'
+  | 'ci.m1.two-receipts.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -263,6 +264,73 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         gates: [],
         produces: ['mill-worker-delivery'],
         needsCustodyOf: 'person.mill-worker.01',
+        completes: true,
+      },
+    ],
+  },
+  {
+    instanceId: 'ci.m1.two-receipts.01',
+    definitionId: 'ct.m1.two-receipts.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'woodland-village-caller',
+    issuerPlace: BEREZNYAK,
+    walletId: 'wallet.tikhon-bortnik.bereznyak.01',
+    genesisWalletQ: CROWNS(120),
+    rewardQ: CROWNS(60),
+    steps: [
+      {
+        stepId: 'inspect-receipt',
+        action: 'INSPECT',
+        place: BEREZNYAK,
+        requires: [],
+        gates: [],
+        produces: ['two-receipts-smudged-seal'],
+        resultTextKey: 'two-receipts.smudged-seal',
+      },
+      {
+        stepId: 'ask-ledger',
+        action: 'ASK',
+        place: KAMENNY_BROD,
+        requires: ['two-receipts-smudged-seal'],
+        gates: [],
+        produces: ['two-receipts-empty-ledger'],
+        resultTextKey: 'two-receipts.empty-ledger',
+      },
+      {
+        stepId: 'ask-gordey',
+        action: 'ASK',
+        place: KAMENNY_BROD,
+        requires: ['two-receipts-empty-ledger'],
+        gates: [],
+        produces: ['two-receipts-stolen-badge'],
+        resultTextKey: 'two-receipts.stolen-badge',
+      },
+      {
+        stepId: 'report-tikhon',
+        action: 'REPORT',
+        place: BEREZNYAK,
+        requires: [
+          'two-receipts-smudged-seal',
+          'two-receipts-empty-ledger',
+          'two-receipts-stolen-badge',
+        ],
+        gates: [],
+        produces: ['two-receipts-reported-to-tikhon'],
+        resultTextKey: 'two-receipts.tikhon-only',
+        completes: true,
+      },
+      {
+        stepId: 'report-both',
+        action: 'REPORT',
+        place: BEREZNYAK,
+        requires: [
+          'two-receipts-smudged-seal',
+          'two-receipts-empty-ledger',
+          'two-receipts-stolen-badge',
+        ],
+        gates: [],
+        produces: ['two-receipts-reported-to-both'],
+        resultTextKey: 'two-receipts.tikhon-and-collector',
         completes: true,
       },
     ],
