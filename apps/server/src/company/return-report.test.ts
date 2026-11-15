@@ -1,5 +1,5 @@
 import { campaignTick, moneyQ } from '@warwrit/game-core';
-import type { CompanyCombatAggregateState } from '@warwrit/game-core';
+import type { CompanyCombatAggregateState, OrdinaryContractState } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import { describe, expect, it } from 'vitest';
 import {
@@ -8,6 +8,7 @@ import {
   consumedReturnReportRations,
   hasReturnReportFacts,
   projectReturnReportEvent,
+  projectEmptyWatchReturnOutcome,
   returnReportElapsedDays,
   settledMovementCount,
   settledReturnReportTick,
@@ -239,6 +240,79 @@ describe('company return report facts', () => {
         'offered-id',
       ),
     ).toBe('CURRENT');
+  });
+
+  it('projects either saved empty-watch outcome only to its company and report interval', () => {
+    const project = (slotId: string, companyId: string) => {
+      const sourceEventId = `contract:${slotId}`;
+      const state = {
+        outcome: {
+          kind: 'SUCCESS',
+          companyId: 'company-a',
+          sourceEventId,
+          atTick: '20',
+        },
+        facts: [
+          {
+            slotId,
+            companyId: 'company-a',
+            sourceEventId,
+            atTick: '20',
+          },
+        ],
+      } as unknown as OrdinaryContractState;
+      return projectEmptyWatchReturnOutcome(state, companyId, '15', '25');
+    };
+
+    expect(project('empty-watch-sack-handed-over', 'company-a')).toEqual([
+      {
+        instanceId: 'ci.m1.empty-watch-record.01',
+        outcome: 'PROKOP_HANDED_OVER',
+        atTick: '20',
+      },
+    ]);
+    expect(project('empty-watch-proof-destroyed', 'company-a')).toEqual([
+      {
+        instanceId: 'ci.m1.empty-watch-record.01',
+        outcome: 'PROOF_DESTROYED_OLD_FORD_REVEALED',
+        atTick: '20',
+      },
+    ]);
+    expect(project('empty-watch-proof-destroyed', 'company-b')).toEqual([]);
+    const proofDestroyed = {
+      outcome: {
+        kind: 'SUCCESS',
+        companyId: 'company-a',
+        sourceEventId: 'contract:empty-watch-proof-destroyed',
+        atTick: '20',
+      },
+      facts: [
+        {
+          slotId: 'empty-watch-proof-destroyed',
+          companyId: 'company-a',
+          sourceEventId: 'contract:empty-watch-proof-destroyed',
+          atTick: '20',
+        },
+      ],
+    } as unknown as OrdinaryContractState;
+    const beforeInterval = project('empty-watch-proof-destroyed', 'company-a');
+    expect(projectEmptyWatchReturnOutcome(proofDestroyed, 'company-a', '20', '25')).toEqual([
+      {
+        instanceId: 'ci.m1.empty-watch-record.01',
+        outcome: 'PROOF_DESTROYED_OLD_FORD_REVEALED',
+        atTick: '20',
+      },
+    ]);
+    expect(
+      projectEmptyWatchReturnOutcome(
+        proofDestroyed,
+        'company-a',
+        '20',
+        '25',
+        new Set(['ci.m1.empty-watch-record.01:contract:empty-watch-proof-destroyed']),
+      ),
+    ).toEqual([]);
+    expect(beforeInterval).toHaveLength(1);
   });
 
   it('hides allowlisted audit events until the lifecycle observer knows their IDs and subjects', () => {

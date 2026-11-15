@@ -20,6 +20,56 @@ import {
 } from '../world-lab/cartography-store.js';
 import { huntTerms } from './first-hunt-runtime.js';
 
+export const emptyWatchFordMarkerSnapshot = () => {
+  const contact = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'kamenny-brod');
+  if (!contact) throw new TypeError('Empty-watch contact is missing from the painted atlas');
+  return {
+    siteId: 'quest.m1.empty-watch-record.old-ford',
+    name: 'Старый брод у ив · примерное направление',
+    icon: 'bridge',
+    point: {
+      xMicroFp: String(contact.anchorFp.xFp * 65_536),
+      zMicroFp: String(contact.anchorFp.zFp * 65_536),
+    },
+  };
+};
+
+/** The testimony identifies an approximate area from its Kamenny Brod contact, not a route. */
+export async function grantEmptyWatchOldFordMarker(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+  companyId: string,
+  grantedAt: Date,
+): Promise<void> {
+  if (worldId !== PAINTED_GAME_WORLD_ID) return;
+  const identity = cartographyIdentity(worldId, companyId);
+  const mapId = 'quest.empty-watch-record.old-ford';
+  const edition = `${PAINTED_ATLAS_REGION.mapEdition}.marker-v1`;
+  await registerCartographyMap(transaction, {
+    mapId,
+    edition,
+    regionId: identity.regionId,
+    gridEdition: identity.gridEdition,
+    columns: sightField.columns,
+    rows: sightField.rows,
+    originXQ: String(sightField.origin.xFp * 65_536),
+    originZQ: String(sightField.origin.zFp * 65_536),
+    cellSizeFp: String(sightField.cellSizeFp),
+    coverageSnapshot: new Uint8Array(Math.ceil((sightField.columns * sightField.rows) / 8)),
+    siteSnapshot: [emptyWatchFordMarkerSnapshot()],
+  });
+  await grantCompanyMap(transaction, {
+    worldId,
+    companyId,
+    sourceRef: 'quest.empty-watch-record.old-ford',
+    mapId,
+    edition,
+    sourceKind: 'QUEST_MARKER',
+    receiptId: null,
+    grantedAt,
+  });
+}
+
 /** The accepting company learns the destination, with no terrain or current sight grant. */
 export async function grantHuntObjective(
   transaction: Transaction<DatabaseSchema>,

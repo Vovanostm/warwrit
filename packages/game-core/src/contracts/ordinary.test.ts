@@ -230,6 +230,115 @@ describe('ordinary contract transitions', () => {
     expect(shared.next.facts.every((fact) => fact.companyId === 'other-company')).toBe(true);
   });
 
+  it('settles either empty-watch ending once, paying only when the sack is handed over', () => {
+    expect(validateContractCatalogue(CONTRACT_M1_CATALOGUE).valid).toBe(true);
+    const emptyWatch = ordinaryContractProfile('ci.m1.empty-watch-record.01')!;
+    expect(emptyWatch.rewardQ).toBe('65000000');
+    expect(emptyWatch.walletId).toBe('wallet.city-treasury.kamenny-brod.01');
+
+    const finish = (endingStepId: 'hand-sack-to-evsey' | 'throw-sack-in-river') => {
+      let state = prepared(
+        prepareOrdinaryContractCommand(
+          emptyWatch,
+          ordinaryContractGenesis(emptyWatch),
+          { type: 'ACCEPT' },
+          {
+            companyId: endingStepId,
+            standingAt: CITY,
+            atTick: '10',
+            expectedRevision: '0',
+            sourceEventId: `${endingStepId}:accept`,
+            gates,
+          },
+        ),
+      ).next;
+      expect(
+        prepareOrdinaryContractCommand(
+          emptyWatch,
+          state,
+          { type: 'STEP', stepId: endingStepId },
+          {
+            companyId: endingStepId,
+            standingAt: CITY,
+            atTick: '11',
+            expectedRevision: state.revision,
+            sourceEventId: `${endingStepId}:premature`,
+            gates,
+          },
+        ),
+      ).toMatchObject({ kind: 'REJECTED', code: 'MISSING_EVIDENCE' });
+      for (const stepId of [
+        'read-watch-log',
+        'ask-bridge-watchman',
+        'find-camp',
+        'inspect-sack',
+        'ask-prokop',
+      ]) {
+        state = prepared(
+          prepareOrdinaryContractCommand(
+            emptyWatch,
+            state,
+            { type: 'STEP', stepId },
+            {
+              companyId: endingStepId,
+              standingAt: CITY,
+              atTick: String(BigInt(state.revision) + 11n),
+              expectedRevision: state.revision,
+              sourceEventId: `${endingStepId}:${stepId}`,
+              gates,
+            },
+          ),
+        ).next;
+      }
+      return prepared(
+        prepareOrdinaryContractCommand(
+          emptyWatch,
+          state,
+          { type: 'STEP', stepId: endingStepId },
+          {
+            companyId: endingStepId,
+            standingAt: CITY,
+            atTick: '20',
+            expectedRevision: state.revision,
+            sourceEventId: `${endingStepId}:finish`,
+            gates,
+          },
+        ),
+      );
+    };
+
+    const handedOver = finish('hand-sack-to-evsey');
+    expect(handedOver.payout).toEqual({
+      companyId: 'hand-sack-to-evsey',
+      rewardQ: '65000000',
+    });
+    expect(handedOver.next.outcome?.kind).toBe('SUCCESS');
+    expect(handedOver.next.facts.map((fact) => fact.slotId)).toContain(
+      'empty-watch-sack-handed-over',
+    );
+    expect(handedOver.next.facts.map((fact) => fact.slotId)).not.toContain(
+      'empty-watch-proof-destroyed',
+    );
+
+    const destroyed = finish('throw-sack-in-river');
+    expect(destroyed.payout).toBeNull();
+    expect(destroyed.next.outcome?.kind).toBe('SUCCESS');
+    expect(destroyed.next.facts.map((fact) => fact.slotId)).toContain(
+      'empty-watch-proof-destroyed',
+    );
+    expect(destroyed.next.facts.map((fact) => fact.slotId)).toContain(
+      'empty-watch-old-ford-revealed',
+    );
+    const reloaded = readOrdinaryContractState(
+      emptyWatch,
+      JSON.parse(JSON.stringify(destroyed.next)) as OrdinaryContractState,
+      emptyWatch.definitionId,
+    );
+    expect(
+      reloaded.acceptedTerms?.steps.find((step) => step.stepId === 'throw-sack-in-river'),
+    ).toHaveProperty('payoutPolicy', 'NO_PAYOUT');
+  });
+
   it('pays the delivering company exactly once and only for a person it holds', () => {
     let state = prepared(
       act(ordinaryContractGenesis(profile), 'owner', CITY, { type: 'ACCEPT' }),

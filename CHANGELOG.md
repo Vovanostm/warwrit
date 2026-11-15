@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: implement «Обход, которого не было» with a paid
+  hand-over or no-payment proof-destruction ending and saved town, atlas and
+  return-report consequences. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: a persistent return report with observed events, settled
   food and payroll facts, explicit acknowledgement and safe lost-response retry.
   [Verified behavior and compatibility choice](docs/work-packages/M1-OFFLINE-REPORT.md#current-result--2026-11-15). LOCAL.

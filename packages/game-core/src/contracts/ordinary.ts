@@ -12,7 +12,8 @@ export type OrdinaryContractInstanceId =
   | 'ci.m1.lost-scout.01'
   | 'ci.m1.mill-worker.01'
   | 'ci.m1.light-sack.01'
-  | 'ci.m1.two-receipts.01';
+  | 'ci.m1.two-receipts.01'
+  | 'ci.m1.empty-watch-record.01';
 
 export interface ContractPlace {
   readonly siteId: string;
@@ -37,8 +38,10 @@ export interface OrdinaryStepDefinition {
   readonly takesCustodyOf?: string;
   /** Needs the acting company to hold this person; ends custody. */
   readonly needsCustodyOf?: string;
-  /** Completes the contract and pays the reward to the acting company. */
+  /** Completes the contract. By default the full reward is paid to the acting company. */
   readonly completes?: true;
+  /** A terminal finding may close the contract without paying its advertised full reward. */
+  readonly payoutPolicy?: 'FULL_REWARD' | 'NO_PAYOUT';
 }
 
 export interface OrdinaryContractProfile {
@@ -265,6 +268,84 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         produces: ['mill-worker-delivery'],
         needsCustodyOf: 'person.mill-worker.01',
         completes: true,
+      },
+    ],
+  },
+  {
+    instanceId: 'ci.m1.empty-watch-record.01',
+    definitionId: 'ct.m1.empty-watch-record.v1',
+    template: 'INVESTIGATE',
+    issuerRoleId: 'city-notice-clerk',
+    issuerPlace: KAMENNY_BROD,
+    walletId: 'wallet.city-treasury.kamenny-brod.01',
+    genesisWalletQ: CROWNS(130),
+    rewardQ: CROWNS(65),
+    steps: [
+      {
+        stepId: 'read-watch-log',
+        action: 'INSPECT',
+        place: KAMENNY_BROD,
+        requires: [],
+        gates: [],
+        produces: ['empty-watch-log'],
+        resultTextKey: 'empty-watch-record.watch-log',
+      },
+      {
+        stepId: 'ask-bridge-watchman',
+        action: 'ASK',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-log'],
+        gates: [],
+        produces: ['empty-watch-bridge-witness'],
+        resultTextKey: 'empty-watch-record.bridge-witness',
+      },
+      {
+        stepId: 'find-camp',
+        action: 'SEARCH',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-bridge-witness'],
+        gates: [],
+        produces: ['empty-watch-refugee-camp'],
+        resultTextKey: 'empty-watch-record.refugee-camp',
+      },
+      {
+        stepId: 'inspect-sack',
+        action: 'INSPECT',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-refugee-camp'],
+        gates: [],
+        produces: ['empty-watch-city-marked-sack'],
+        resultTextKey: 'empty-watch-record.city-marked-sack',
+      },
+      {
+        stepId: 'ask-prokop',
+        action: 'ASK',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-city-marked-sack'],
+        gates: [],
+        produces: ['empty-watch-prokop-confession'],
+        resultTextKey: 'empty-watch-record.prokop-confession',
+      },
+      {
+        stepId: 'hand-sack-to-evsey',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-city-marked-sack', 'empty-watch-prokop-confession'],
+        gates: [],
+        produces: ['empty-watch-sack-handed-over'],
+        resultTextKey: 'empty-watch-record.sack-handed-over',
+        completes: true,
+      },
+      {
+        stepId: 'throw-sack-in-river',
+        action: 'REPORT',
+        place: KAMENNY_BROD,
+        requires: ['empty-watch-city-marked-sack', 'empty-watch-prokop-confession'],
+        gates: [],
+        produces: ['empty-watch-proof-destroyed', 'empty-watch-old-ford-revealed'],
+        resultTextKey: 'empty-watch-record.proof-destroyed',
+        completes: true,
+        payoutPolicy: 'NO_PAYOUT',
       },
     ],
   },
@@ -676,9 +757,10 @@ export function prepareOrdinaryContractCommand(
     );
   return {
     kind: 'PREPARED',
-    payout: step.completes
-      ? { companyId: context.companyId, rewardQ: state.acceptedTerms?.rewardQ ?? profile.rewardQ }
-      : null,
+    payout:
+      step.completes && step.payoutPolicy !== 'NO_PAYOUT'
+        ? { companyId: context.companyId, rewardQ: state.acceptedTerms?.rewardQ ?? profile.rewardQ }
+        : null,
     next: freeze({
       ...state,
       revision,
@@ -850,6 +932,7 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'takesCustodyOf',
         'needsCustodyOf',
         'completes',
+        'payoutPolicy',
       ].includes(key),
     ) &&
     typeof value['stepId'] === 'string' &&
@@ -871,6 +954,9 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
       (typeof value['takesCustodyOf'] === 'string' && value['takesCustodyOf'] !== '')) &&
     (value['needsCustodyOf'] === undefined ||
       (typeof value['needsCustodyOf'] === 'string' && value['needsCustodyOf'] !== '')) &&
-    (value['completes'] === undefined || value['completes'] === true)
+    (value['completes'] === undefined || value['completes'] === true) &&
+    (value['payoutPolicy'] === undefined ||
+      value['payoutPolicy'] === 'FULL_REWARD' ||
+      value['payoutPolicy'] === 'NO_PAYOUT')
   );
 }

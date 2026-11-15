@@ -96,6 +96,7 @@ const raiderStandardId = 'ct.m1.raider-standard.v1';
 const lightSackMeasureId = 'ct.m1.light-sack.measure-error.v1';
 const lightSackDampRyeId = 'ct.m1.light-sack.damp-rye.v1';
 const twoReceiptsId = 'ct.m1.two-receipts.v1';
+const emptyWatchRecordId = 'ct.m1.empty-watch-record.v1';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -180,6 +181,24 @@ const definitions: readonly ContractDefinition[] = [
     ['INVEST-04-TWO-RECEIPTS'],
   ),
   definition(
+    emptyWatchRecordId,
+    'INVESTIGATE',
+    'city-notice-clerk',
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'empty-watch-log',
+      'empty-watch-bridge-witness',
+      'empty-watch-refugee-camp',
+      'empty-watch-city-marked-sack',
+      'empty-watch-prokop-confession',
+      'empty-watch-sack-handed-over',
+      'empty-watch-proof-destroyed',
+      'empty-watch-old-ford-revealed',
+    ],
+    'ACCESSIBLE_OBSERVATION_SET',
+    ['INVEST-05-EMPTY-WATCH-RECORD'],
+  ),
+  definition(
     cellarRescueId,
     'RESCUE',
     'river-village-caller',
@@ -262,6 +281,14 @@ const slots: ContractSourceSlot[] = [
   source('two-receipts-stolen-badge', twoReceiptsId, 'OBSERVATION'),
   source('two-receipts-reported-to-tikhon', twoReceiptsId, 'REPORT'),
   source('two-receipts-reported-to-both', twoReceiptsId, 'REPORT'),
+  source('empty-watch-log', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-bridge-witness', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-refugee-camp', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-city-marked-sack', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-prokop-confession', emptyWatchRecordId, 'OBSERVATION'),
+  source('empty-watch-sack-handed-over', emptyWatchRecordId, 'REPORT'),
+  source('empty-watch-proof-destroyed', emptyWatchRecordId, 'REPORT'),
+  source('empty-watch-old-ford-revealed', emptyWatchRecordId, 'OBSERVATION'),
   source('cellar-captive-source', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-living-release', cellarRescueId, 'LIVING_PERSON'),
   source('cellar-captive-delivery', cellarRescueId, 'LIVING_PERSON'),
@@ -470,6 +497,28 @@ const standaloneScenes: ContractScene[] = [
     ],
   ),
   scene(
+    'INVEST-05-EMPTY-WATCH-RECORD',
+    emptyWatchRecordId,
+    location('kamenny-brod', 'kamenny-brod-market'),
+    [
+      'empty-watch-log',
+      'empty-watch-bridge-witness',
+      'empty-watch-refugee-camp',
+      'empty-watch-city-marked-sack',
+      'empty-watch-prokop-confession',
+      'empty-watch-sack-handed-over',
+      'empty-watch-proof-destroyed',
+      'empty-watch-old-ford-revealed',
+    ],
+    [
+      outcome(
+        'SUCCESS',
+        gate('ANY_PRESENT', ['empty-watch-sack-handed-over', 'empty-watch-proof-destroyed']),
+      ),
+      outcome('PENDING', gate('ALWAYS')),
+    ],
+  ),
+  scene(
     'RESCUE-01',
     cellarRescueId,
     location('staraya-melnitsa', 'staraya-melnitsa-yard'),
@@ -576,6 +625,7 @@ const editionDraft: ContractEdition = {
     binding('ci.m1.missing-herbs.01', missingHerbsId),
     binding('ci.m1.light-sack.01', lightSackMeasureId, [lightSackDampRyeId]),
     binding('ci.m1.two-receipts.01', twoReceiptsId),
+    binding('ci.m1.empty-watch-record.01', emptyWatchRecordId),
     binding('ci.m1.cellar-rescue.01', cellarRescueId),
     binding('ci.m1.lost-scout.01', lostScoutId),
     binding('ci.m1.wolf-trail.01', wolfTrailId),

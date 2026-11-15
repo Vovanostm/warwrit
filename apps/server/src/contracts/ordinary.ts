@@ -32,6 +32,7 @@ import type { Kysely, Transaction } from 'kysely';
 
 import { resolveSessionAccount } from '../auth/session.js';
 import { persistContractRewardPayment } from '../company/contract-payout.js';
+import { grantEmptyWatchOldFordMarker } from './cartography.js';
 import { catchUpStationaryCompany } from '../company/executor.js';
 import {
   findOwnedCompanyId,
@@ -149,6 +150,28 @@ export function contractView(
   const atIssuer =
     standingAt?.siteId === terms.issuerPlace.siteId &&
     standingAt.areaId === terms.issuerPlace.areaId;
+  const terminalFact = state.facts.find(
+    (fact) =>
+      fact.companyId === state.outcome?.companyId &&
+      fact.sourceEventId === state.outcome?.sourceEventId &&
+      fact.atTick === state.outcome?.atTick,
+  );
+  const emptyWatchPublicConsequences =
+    profile.instanceId === 'ci.m1.empty-watch-record.01' &&
+    terminalFact?.slotId === 'empty-watch-sack-handed-over'
+      ? {
+          kind: 'EMPTY_WATCH_RECORD' as const,
+          refugeeCamp: 'REMOVED' as const,
+          watchman: 'IN_CUSTODY' as const,
+        }
+      : profile.instanceId === 'ci.m1.empty-watch-record.01' &&
+          terminalFact?.slotId === 'empty-watch-proof-destroyed'
+        ? {
+            kind: 'EMPTY_WATCH_RECORD' as const,
+            refugeeCamp: 'PRESENT' as const,
+            watchman: 'ON_DUTY' as const,
+          }
+        : undefined;
   return {
     instanceId: profile.instanceId,
     template: terms.template,
@@ -159,7 +182,11 @@ export function contractView(
     yourRole: role,
     helperSlot: state.helperCompanyId === null ? 'AVAILABLE' : 'OCCUPIED',
     state: state.outcome ? 'COMPLETED' : state.ownerCompanyId ? 'ACTIVE' : 'OFFERED',
-    completedByYou: state.outcome !== null && state.outcome.companyId === companyId,
+    completedByYou:
+      state.outcome !== null &&
+      state.outcome.companyId === companyId &&
+      terminalFact?.slotId !== 'empty-watch-proof-destroyed',
+    ...(emptyWatchPublicConsequences ? { publicConsequences: emptyWatchPublicConsequences } : {}),
     canAccept:
       companyId !== undefined &&
       state.outcome === null &&
@@ -322,6 +349,19 @@ async function executeOrdinaryCommand(
     },
   );
   if (prepared.kind === 'REJECTED') return reject(prepared.code);
+
+  if (
+    profile.instanceId === 'ci.m1.empty-watch-record.01' &&
+    request.type === 'STEP' &&
+    request.stepId === 'throw-sack-in-river'
+  ) {
+    await grantEmptyWatchOldFordMarker(
+      transaction,
+      worldId,
+      companyId,
+      new Date(Number(clock.nowMs)),
+    );
+  }
 
   let walletQ = BigInt(row.wallet_q);
   if (prepared.payout) {

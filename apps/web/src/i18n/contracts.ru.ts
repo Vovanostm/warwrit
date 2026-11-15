@@ -121,6 +121,43 @@ export const contractsRu = {
   'contract.ci.m1.two-receipts.01.result.two-receipts.tikhon-and-collector':
     'Сборщик слушает про Обуха, не поднимая головы от книги. — Это ваше дело. Шесть мешков — до первого снега.',
 
+  'contract.ci.m1.empty-watch-record.01.title': 'Обход, которого не было',
+  'contract.ci.m1.empty-watch-record.01.issuer': 'Евсей Пыжов, писарь при доске объявлений',
+  'contract.ci.m1.empty-watch-record.01.brief':
+    'Из городского амбара за три ночи пропали четыре мешка ржи. В журнале караула все три ночи обход. Узнайте, куда делась рожь. — Запись аккуратная. Почерк караульного Прокопа Сенцова. — А сторож на мосту? — Говорит, чужих не видел. Сторож пьёт, но ночью не спит.',
+  'contract.ci.m1.empty-watch-record.01.step.read-watch-log': 'Сверить журнал караула',
+  'contract.ci.m1.empty-watch-record.01.step.ask-bridge-watchman': 'Расспросить сторожа на мосту',
+  'contract.ci.m1.empty-watch-record.01.step.find-camp': 'Осмотреть шалаши под мостом',
+  'contract.ci.m1.empty-watch-record.01.step.inspect-sack': 'Осмотреть пустой мешок',
+  'contract.ci.m1.empty-watch-record.01.step.ask-prokop': 'Расспросить Прокопа Сенцова',
+  'contract.ci.m1.empty-watch-record.01.step.hand-sack-to-evsey': 'Отдать мешок Евсею',
+  'contract.ci.m1.empty-watch-record.01.step.throw-sack-in-river': 'Бросить мешок в реку',
+  'contract.ci.m1.empty-watch-record.01.done': 'Евсей знает, чем кончился обход.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.watch-log':
+    'Запись аккуратная. Почерк караульного Прокопа Сенцова.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.bridge-witness':
+    'Чужих не было. Прокоп ходил, так он по службе.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.refugee-camp':
+    'Под мостом шалаши. В них живут семь семей с того берега, из Полесского герцогства.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.city-marked-sack':
+    'У шалашей лежит пустой мешок с городским клеймом.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.prokop-confession':
+    'Прокоп признаётся: «Три ночи носил им рожь. Четыре мешка. Обход не ходил — не успевал».',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.sack-handed-over':
+    'Евсей кладёт мешок на стол, разглаживает клеймо ладонью и долго, красиво выводит в книге имя Прокопа. — Распишитесь вот тут. Через два дня под мостом остаются только чёрные круги от костров.',
+  'contract.ci.m1.empty-watch-record.01.result.empty-watch-record.proof-destroyed':
+    'Мешок не сразу идёт ко дну: сначала его несёт, раздутый, к опорам моста. — Ничего? — Евсей вздыхает и закрывает книгу. — Значит, деньги остаются в казне. Через несколько дней Прокоп сам находит вас у моста. — Беженцы с того берега ходят старым бродом у ив. Там никто не сторожит. Говорит и уходит, не дожидаясь ответа.',
+  'contract.ci.m1.empty-watch-record.01.world.camp-removed':
+    'Через два дня под мостом остаются только чёрные круги от костров.',
+  'contract.ci.m1.empty-watch-record.01.world.camp-present':
+    'Под мостом шалаши. В них живут семь семей с того берега, из Полесского герцогства.',
+  'contract.ci.m1.empty-watch-record.01.world.watchman-in-custody': 'Прокопа посадили под замок.',
+  'contract.ci.m1.empty-watch-record.01.world.watchman-on-duty': 'Прокоп остаётся на службе.',
+  'contract.ci.m1.empty-watch-record.01.report.handed-over':
+    'Мешок отдали Евсею. Прокоп под замком, шалаши убраны.',
+  'contract.ci.m1.empty-watch-record.01.report.proof-destroyed':
+    'Мешок бросили в реку. Шалаши остались, а Прокоп рассказал о старом броде у ив.',
+
   'contract.ci.m1.raider-standard.01.title': 'Знамя Харитона Обуха',
   'contract.ci.m1.raider-standard.01.brief':
     'У мельницы стоит банда Харитона Обуха под обрезанным житным знаменем. Принесите знамя. Головы не надо — знамя.',

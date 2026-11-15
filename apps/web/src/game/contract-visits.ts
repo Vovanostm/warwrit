@@ -31,18 +31,47 @@ const completedFact = (instanceId: string) => lookup(`contract.${instanceId}.don
 
 /** Only established, company-known completion; never general prosperity or a new witness. */
 export function contractPlaceFacts(contracts: readonly OrdinaryContractDto[]): ContractPlaceFact[] {
-  return contracts
-    .filter(
-      (contract) =>
-        contract.yourRole !== 'NONE' &&
-        contract.state === 'COMPLETED' &&
-        completedFact(contract.instanceId) !== undefined,
-    )
-    .map((contract) => ({
-      instanceId: contract.instanceId,
-      siteId: contract.issuerLocation.siteId,
-      text: completedFact(contract.instanceId)!,
-    }));
+  return contracts.flatMap((contract) => {
+    const facts: ContractPlaceFact[] = [];
+    const completion = completedFact(contract.instanceId);
+    if (
+      contract.yourRole !== 'NONE' &&
+      contract.state === 'COMPLETED' &&
+      completion !== undefined
+    ) {
+      facts.push({
+        instanceId: contract.instanceId,
+        siteId: contract.issuerLocation.siteId,
+        text: completion,
+      });
+    }
+    if (contract.publicConsequences?.kind === 'EMPTY_WATCH_RECORD') {
+      const { refugeeCamp, watchman } = contract.publicConsequences;
+      const campKey =
+        refugeeCamp === 'REMOVED'
+          ? 'contract.ci.m1.empty-watch-record.01.world.camp-removed'
+          : 'contract.ci.m1.empty-watch-record.01.world.camp-present';
+      const watchmanKey =
+        watchman === 'IN_CUSTODY'
+          ? 'contract.ci.m1.empty-watch-record.01.world.watchman-in-custody'
+          : 'contract.ci.m1.empty-watch-record.01.world.watchman-on-duty';
+      const camp = lookup(campKey);
+      const watchmanText = lookup(watchmanKey);
+      if (camp !== undefined)
+        facts.push({
+          instanceId: `${contract.instanceId}:camp`,
+          siteId: contract.issuerLocation.siteId,
+          text: camp,
+        });
+      if (watchmanText !== undefined)
+        facts.push({
+          instanceId: `${contract.instanceId}:watchman`,
+          siteId: contract.issuerLocation.siteId,
+          text: watchmanText,
+        });
+    }
+    return facts;
+  });
 }
 
 export interface ContractVisitProps {
@@ -78,6 +107,17 @@ export function oldMillVisit(visit: ContractVisit, objectiveSiteId: string) {
 /** Conversations and hand-ins use a meeting point; field work stays at its real site. */
 export function ordinaryStepVenue(instanceId: string, action: string, stepId: string) {
   if (stepId === 'ask-keeper') return 'inn';
+  if (
+    instanceId === 'ci.m1.empty-watch-record.01' &&
+    [
+      'ask-bridge-watchman',
+      'find-camp',
+      'inspect-sack',
+      'ask-prokop',
+      'throw-sack-in-river',
+    ].includes(stepId)
+  )
+    return 'watch';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'inspect-granary') return 'granary';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'ask-gate') return 'watch';
   if (action === 'ASK' || action === 'REPORT' || action === 'DELIVER')

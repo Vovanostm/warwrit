@@ -304,8 +304,14 @@ export interface OrdinaryContractDto {
   readonly yourRole: 'OWNER' | 'HELPER' | 'NONE';
   readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
   readonly state: 'OFFERED' | 'ACTIVE' | 'COMPLETED';
-  /** True when the viewer's company was paid for this contract. */
+  /** True when the viewer's company received a reward for completing this contract. */
   readonly completedByYou: boolean;
+  /** Public only after a terminal choice has been recorded in the shared world contract. */
+  readonly publicConsequences?: {
+    readonly kind: 'EMPTY_WATCH_RECORD';
+    readonly refugeeCamp: 'PRESENT' | 'REMOVED';
+    readonly watchman: 'ON_DUTY' | 'IN_CUSTODY';
+  };
   readonly canAccept: boolean;
   readonly canHelp: boolean;
   readonly canWithdraw: boolean;

@@ -7,7 +7,11 @@ import {
   campaignTick,
   canonicalRevision,
   moneyQ,
+  ordinaryContractGenesis,
+  ordinaryContractProfile,
+  ordinaryContractTerms,
   publicRevision,
+  readOrdinaryContractState,
 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
@@ -422,6 +426,81 @@ describe('company return report (PostgreSQL)', () => {
           })
         ).json(),
       ).toEqual({ ok: true, duplicate: false });
+      expect(
+        (
+          await app.inject({
+            method: 'GET',
+            url: '/company/return-report',
+            headers: ownerHeaders,
+          })
+        ).json(),
+      ).toEqual({ report: null });
+
+      const emptyWatch = ordinaryContractProfile('ci.m1.empty-watch-record.01')!;
+      const terminalSourceEventId = 'empty-watch-after-same-tick-ack';
+      const terminalState = readOrdinaryContractState(emptyWatch, {
+        ...ordinaryContractGenesis(emptyWatch),
+        revision: '8',
+        ownerCompanyId: companyId,
+        acceptedTerms: ordinaryContractTerms(emptyWatch),
+        facts: [
+          {
+            slotId: 'empty-watch-proof-destroyed',
+            companyId,
+            sourceEventId: terminalSourceEventId,
+            atTick: '2000',
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId,
+          sourceEventId: terminalSourceEventId,
+          atTick: '2000',
+        },
+      });
+      await database
+        .insertInto('ordinary_contracts')
+        .values({
+          world_id: worldId,
+          instance_id: emptyWatch.instanceId,
+          profile_id: emptyWatch.definitionId,
+          revision: terminalState.revision,
+          wallet_id: emptyWatch.walletId,
+          wallet_q: emptyWatch.genesisWalletQ,
+          state: terminalState,
+        })
+        .execute();
+
+      const sameTickReport = await app.inject({
+        method: 'GET',
+        url: '/company/return-report',
+        headers: ownerHeaders,
+      });
+      const terminalReport = sameTickReport.json().report;
+      expect(terminalReport).toMatchObject({
+        fromTick: '2000',
+        toTick: '2000',
+        contractOutcomes: [
+          {
+            instanceId: 'ci.m1.empty-watch-record.01',
+            outcome: 'PROOF_DESTROYED_OLD_FORD_REVEALED',
+            atTick: '2000',
+          },
+        ],
+      });
+      const repeatSameTickReport = await app.inject({
+        method: 'GET',
+        url: '/company/return-report',
+        headers: ownerHeaders,
+      });
+      expect(repeatSameTickReport.json()).toEqual({ report: terminalReport });
+      const terminalAck = await app.inject({
+        method: 'POST',
+        url: '/company/return-report/ack',
+        headers: ownerPostHeaders,
+        payload: { schemaVersion: 1, reportId: terminalReport.reportId },
+      });
+      expect(terminalAck.json()).toEqual({ ok: true, duplicate: false });
       expect(
         (
           await app.inject({

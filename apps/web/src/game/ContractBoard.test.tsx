@@ -171,3 +171,53 @@ it('shows place memory only for established completion known to the company', ()
     },
   ]);
 });
+
+it('shows shared empty-watch camp and watchman state only after the world choice', () => {
+  const emptyWatch: OrdinaryContractDto = {
+    ...herbs,
+    instanceId: 'ci.m1.empty-watch-record.01',
+    issuerRoleId: 'city-notice-clerk',
+    issuerLocation: { siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' },
+    yourRole: 'NONE',
+    state: 'COMPLETED',
+  };
+  expect(contractPlaceFacts([emptyWatch])).toEqual([]);
+  expect(
+    contractPlaceFacts([
+      {
+        ...emptyWatch,
+        publicConsequences: {
+          kind: 'EMPTY_WATCH_RECORD',
+          refugeeCamp: 'REMOVED',
+          watchman: 'IN_CUSTODY',
+        },
+      },
+    ]),
+  ).toEqual([
+    {
+      instanceId: 'ci.m1.empty-watch-record.01:camp',
+      siteId: 'kamenny-brod',
+      text: 'Через два дня под мостом остаются только чёрные круги от костров.',
+    },
+    {
+      instanceId: 'ci.m1.empty-watch-record.01:watchman',
+      siteId: 'kamenny-brod',
+      text: 'Прокопа посадили под замок.',
+    },
+  ]);
+  expect(
+    contractPlaceFacts([
+      {
+        ...emptyWatch,
+        publicConsequences: {
+          kind: 'EMPTY_WATCH_RECORD',
+          refugeeCamp: 'PRESENT',
+          watchman: 'ON_DUTY',
+        },
+      },
+    ]).map((fact) => fact.text),
+  ).toEqual([
+    'Под мостом шалаши. В них живут семь семей с того берега, из Полесского герцогства.',
+    'Прокоп остаётся на службе.',
+  ]);
+});

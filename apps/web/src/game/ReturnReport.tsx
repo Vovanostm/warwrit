@@ -9,6 +9,7 @@ import {
   WORLD_EXPECTED_COMPANY_ID_HEADER,
 } from '@warwrit/protocol';
 import { formatCrowns } from './format.js';
+import { lookup } from '../i18n/index.js';
 import './ReturnReport.css';
 
 type ReturnReportEvent = Pick<CompanyReturnReportEventDto, 'atTick' | 'subjectIds'> & {
@@ -276,6 +277,20 @@ export function ReturnReport(props: {
                 </ul>
               </div>
             )}
+            {(visibleState.report.contractOutcomes?.length ?? 0) > 0 && (
+              <div className="return-report-events">
+                <h2>Итоги поручений</h2>
+                <ul>
+                  {visibleState.report.contractOutcomes!.map((outcome) => (
+                    <li key={`${outcome.instanceId}:${outcome.atTick}`}>
+                      {outcome.outcome === 'PROKOP_HANDED_OVER'
+                        ? lookup('contract.ci.m1.empty-watch-record.01.report.handed-over')
+                        : lookup('contract.ci.m1.empty-watch-record.01.report.proof-destroyed')}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {visibleState.ackError && (
               <p className="return-report-error" role="alert">
                 {visibleState.ackError}
@@ -335,7 +350,17 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
     !isMoney(report['wages']['currentOwedQ']) ||
     !isRecord(report['debt']) ||
     !isMoney(report['debt']['currentQ']) ||
-    !Array.isArray(report['events'])
+    !Array.isArray(report['events']) ||
+    (Object.hasOwn(report, 'contractOutcomes') &&
+      (!Array.isArray(report['contractOutcomes']) ||
+        !report['contractOutcomes'].every(
+          (outcome) =>
+            isRecord(outcome) &&
+            outcome['instanceId'] === 'ci.m1.empty-watch-record.01' &&
+            (outcome['outcome'] === 'PROKOP_HANDED_OVER' ||
+              outcome['outcome'] === 'PROOF_DESTROYED_OLD_FORD_REVEALED') &&
+            isTick(outcome['atTick']),
+        )))
   )
     return undefined;
 
@@ -380,6 +405,13 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
     },
     debt: { currentQ: report['debt']['currentQ'] },
     events,
+    ...(Array.isArray(report['contractOutcomes'])
+      ? {
+          contractOutcomes: report['contractOutcomes'] as NonNullable<
+            CompanyReturnReportDto['contractOutcomes']
+          >,
+        }
+      : {}),
   };
 }
 

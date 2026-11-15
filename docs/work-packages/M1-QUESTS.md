@@ -1,8 +1,9 @@
 # M1 quests — at least 20, four with moral choices
 
-Status: **SPECIFIED / LOCAL**. The quest list, dilemma frames and eleven new
-Russian texts were approved by the owner on November 13. Draft rewards retain
-their balance status. Fresh implementation/gameplay checks are NOT_RUN.
+Status: **IN PROGRESS / LOCAL**. The quest list, dilemma frames and eleven new
+Russian texts were approved by the owner on November 13. «Обход, которого не
+было» is implemented; remaining quests and full M1 gameplay checks are NOT_RUN.
+Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
 [writing](../wiki/world/writing.md).
@@ -61,8 +62,8 @@ consumer. No hidden outcome is shown before the player can observe it.
 | «Девочка в синем платке» (road to Северный Двор) | Carry the child and the wounded deserter: slower travel, extra rations; the deserter becomes a recruit candidate                                 | Carry only the child: on-time delivery, full reward; the deserter's death is recorded                                                   | persons alive/dead, recruit offer, travel time — recruitment panel, report               |
 | «Грязный колодец» (Березняк / Каменный Брод)     | Tell the truth (battle at Kamenny Brod graves above the spring fouled the well): the old-faith herbalist stays; the church raises its care price | Give the priest his culprit: reward paid; the herbalist is exiled; herbs leave the trader                                               | herbalist present/exiled, care price, trader stock — care panel, trader, report          |
 
-Next: implement the approved texts and saved consequence consumers. Parameters
-(rewards, price deltas, durations) are set in the implementing slice.
+Next: implement the remaining approved texts and saved consequence consumers.
+Parameters (rewards, price deltas, durations) are set in each implementing slice.
 
 ## Texts — 2026-11-13
 
@@ -75,3 +76,29 @@ Russian only; no English translation unless the owner asks (2026-11-13). Orderin
 after «Пропавшие травы»; «Человек на обочине» only while Агафья stays;
 «Голос из-под пола» after «Знамя Харитона Обуха». The foul-well cause is the battle at Kamenny Brod graves above the spring;
 the owner chose this over the church tannery on 2026-11-13 (studioigor #18).
+
+## Implementation checkpoint — 2026-11-15
+
+Implemented the approved [«Обход, которого не было» text](../wiki/economy-quests/m1-quest-texts.md#обход-которого-не-было)
+as `ci.m1.empty-watch-record.01`, an ordinary INVESTIGATE offer at Каменный Брод.
+The offer advertises a 65-crown trial reward. Handing the sack to Евсей pays it,
+records Прокоп in the book, removes the refugee camp and puts Прокоп in custody.
+Destroying the proof completes with no payment, leaves the camp and watchman in
+place, and preserves Прокоп's later disclosure about the old ford.
+
+Evidence stays company-private. After resolution, the shared contract board and
+town visit show the camp and watchman status. The no-payment ending grants only
+the acting company an approximate atlas marker at Каменный Брод; the testimony
+does not establish exact ford geography or a route benefit. The return report
+shows either ending to that company. Report cursor details are in
+[M1-OFFLINE-REPORT](M1-OFFLINE-REPORT.md#same-tick-contract-outcome-cursor--2026-11-15).
+
+Focused game-core, protocol, server and web consumer tests passed before the
+same-tick cursor correction. After that correction, server typecheck and 8
+return-report unit tests passed; the focused PostgreSQL return-report API case
+passed 1/1 in a disposable clone with migration 0029 applied. Scoped ESLint,
+Prettier, migration guard and `git diff --check` passed. The full web typecheck
+still reports four existing `EquipmentTrader.tsx` DTO mismatches. Normal in-game
+playthrough, native player acceptance and remaining quest checks are NOT_RUN;
+broader player acceptance is NOT_MEASURED. This slice is LOCAL; publication and
+merge are NOT_RUN.

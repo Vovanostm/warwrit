@@ -4,6 +4,7 @@ import {
   ordinaryContractGenesis,
   ordinaryContractProfile,
   ordinaryContractProfileVersion,
+  ordinaryContractTerms,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
 } from '@warwrit/game-core';
@@ -170,6 +171,54 @@ describe('ordinary accepted term projection', () => {
         (step) => step.findingTextKey === undefined,
       ),
     ).toBe(true);
+  });
+
+  it('publishes the resolved empty-watch camp state without publishing its private evidence', () => {
+    const emptyWatch = ordinaryContractProfile('ci.m1.empty-watch-record.01')!;
+    const genesis = ordinaryContractGenesis(emptyWatch);
+    expect(contractView(emptyWatch, genesis, 'company-b', issuer, gates, false)).not.toHaveProperty(
+      'publicConsequences',
+    );
+
+    const projectOutcome = (slotId: string, viewer = 'company-b') => {
+      const sourceEventId = `empty-watch:${slotId}`;
+      const state = readOrdinaryContractState(emptyWatch, {
+        ...genesis,
+        revision: '8',
+        ownerCompanyId: 'company-a',
+        acceptedTerms: ordinaryContractTerms(emptyWatch),
+        facts: [
+          {
+            slotId,
+            companyId: 'company-a',
+            sourceEventId,
+            atTick: '20',
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId: 'company-a',
+          sourceEventId,
+          atTick: '20',
+        },
+      });
+      return contractView(emptyWatch, state, viewer, issuer, gates, false);
+    };
+
+    expect(projectOutcome('empty-watch-sack-handed-over', 'company-a').completedByYou).toBe(true);
+    expect(projectOutcome('empty-watch-sack-handed-over').publicConsequences).toEqual({
+      kind: 'EMPTY_WATCH_RECORD',
+      refugeeCamp: 'REMOVED',
+      watchman: 'IN_CUSTODY',
+    });
+    const spared = projectOutcome('empty-watch-proof-destroyed');
+    expect(spared.publicConsequences).toEqual({
+      kind: 'EMPTY_WATCH_RECORD',
+      refugeeCamp: 'PRESENT',
+      watchman: 'ON_DUTY',
+    });
+    expect(spared.steps.every((step) => step.findingTextKey === undefined)).toBe(true);
+    expect(projectOutcome('empty-watch-proof-destroyed', 'company-a').completedByYou).toBe(false);
   });
 
   it('projects the saved terms after an offer is changed and reloads an old v1 save', () => {
