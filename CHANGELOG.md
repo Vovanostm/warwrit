@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: refuse migration 0031 rollback after kit stock, price,
+  revision or purchase cash changes, preserving per-world shop state. [Quest slice](docs/work-packages/M1-QUESTS.md).
+  LOCAL.
 - 2026-11-16 — Added: the finite 15-crown lantern, rope and support-board kit
   and quiet rescue route for «Голос из-под пола», with transactional purchase,
   consumption, custody and delivery. [Quest slice](docs/work-packages/M1-QUESTS.md).

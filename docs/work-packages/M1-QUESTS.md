@@ -309,10 +309,11 @@ the party lacks funds, supply capacity or stock; the ordinary command receipt
 protects accepted purchases and steps from duplicate execution. The quiet release
 requires the purchase fact and an owned, unconsumed kit. The accepted contract
 version is v2; accepted v1 saves retain their original terms and dangerous-route
-eligibility. Both endings preserve the owner contract, custody, hunt outcome and
-payment. The simplest try is to present the banner proof, buy the kit at Тихая
-Гать, complete the existing mill-beast hunt, choose either release step, then
-deliver Остап.
+eligibility. Migration 0031 allows rollback from untouched genesis stock and
+refuses to drop stock, price, revision or cash changed by purchases. Both endings
+preserve the owner contract, custody, hunt outcome and payment. The simplest try
+is to present the banner proof, buy the kit at Тихая Гать, complete the existing
+mill-beast hunt, choose either release step, then deliver Остап.
 
 Focused game-core, protocol and server builds passed; server typecheck passed;
 focused game-core, server and web tests passed (30/30); the isolated PostgreSQL
@@ -322,3 +323,8 @@ formatting and `git diff --check` passed.
 The web typecheck reports the four existing `EquipmentTrader.tsx` DTO mismatches
 recorded above. Native playthrough and player acceptance are NOT_RUN /
 NOT_MEASURED. This slice is LOCAL; publication and merge are NOT_RUN.
+
+Rollback follow-up (2026-11-16): the 0031 guard passed an empty down/up cycle
+and refused rollback after a populated one-purchase stock/cash fixture, retaining
+the row and applied migration record. The migration test ran on the disposable
+per-file integration clone; no source database was migrated.
