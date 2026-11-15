@@ -179,7 +179,7 @@ export function ordinaryStepVenue(instanceId: string, action: string, stepId: st
     return 'watch';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'inspect-granary') return 'granary';
   if (instanceId === 'ci.m1.light-sack.01' && stepId === 'ask-gate') return 'watch';
-  if (action === 'ASK' || action === 'REPORT' || action === 'DELIVER')
+  if (action === 'ASK' || action === 'REPORT' || action === 'DELIVER' || action === 'BUY')
     return issuerBuilding(instanceId);
   return undefined;
 }

@@ -87,16 +87,27 @@ export const contractsRu = {
     'Муж пошёл на старую мельницу за железом с колеса. Отвечает из-под пола, выбраться не может. Вытащите его.',
   'contract.ci.m1.voice-under-boards.01.step.inspect-cellar': 'Осмотреть обгоревший пол мельницы',
   'contract.ci.m1.voice-under-boards.01.step.inspect-tracks': 'Осмотреть след у спуска',
+  'contract.ci.m1.voice-under-boards.01.step.buy-descent-kit': 'Купить комплект для тихого спуска',
   'contract.ci.m1.voice-under-boards.01.step.release-ostap': 'Убить зверя и вытащить Остапа',
+  'contract.ci.m1.voice-under-boards.01.step.release-ostap-quiet':
+    'Подпереть балку и спуститься тихо',
   'contract.ci.m1.voice-under-boards.01.step.deliver-ostap':
     'Привести Остапа к Василисе в Тихую Гать',
   'contract.ci.m1.voice-under-boards.01.result.voice-under-boards.cellar':
     'Под обгоревшим полом мельницы погреб. Балка придавила Остапу ногу.',
   'contract.ci.m1.voice-under-boards.01.result.voice-under-boards.tracks':
     'У спуска свежий след: большой, на четырёх лапах.',
+  'contract.ci.m1.voice-under-boards.01.result.voice-under-boards.kit-purchased':
+    'Отряд купил в Тихой Гати фонарь, верёвку и доски для подпорок. За комплект отдали 15 крон.',
+  'contract.ci.m1.voice-under-boards.01.result.voice-under-boards.quiet-release':
+    'На свету Остап первым делом оглядывается на мельницу. — А железо? — Железо там и осталось, — отвечает Василиса.',
   'contract.ci.m1.voice-under-boards.01.result.voice-under-boards.delivery':
     'Василиса усаживает Остапа на лавку и только потом бьёт его ладонью по спине, раз и другой. — Потом расскажешь, где был.',
   'contract.ci.m1.voice-under-boards.01.condition.release-ostap': 'зверь у мельницы ещё жив',
+  'contract.ci.m1.voice-under-boards.01.condition.release-ostap-quiet':
+    'у отряда нет оплаченного комплекта для спуска',
+  'contract.ci.m1.voice-under-boards.01.condition.buy-descent-kit':
+    'комплектов больше нет в запасе',
   'contract.ci.m1.voice-under-boards.01.done': 'Остап вернулся к Василисе в Тихую Гать.',
 
   'contract.ci.m1.light-sack.01.title': 'Мешок легче накладной',

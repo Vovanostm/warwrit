@@ -286,6 +286,7 @@ export const COMPANY_CATALOGUE: CompanyCatalogue = freezeRegistry({
         stackMax: 100,
         repairArmorPoints: 5,
       },
+      { id: 'mill-descent-kit', kind: 'consumable', weightG: 1000, stackMax: 1 },
       {
         id: 'study-book-medicine',
         kind: 'book',

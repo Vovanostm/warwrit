@@ -41,6 +41,126 @@ function prepared(result: ReturnType<typeof act>) {
 }
 
 describe('ordinary contract transitions', () => {
+  it('supports both the beast-first rescue and a kit-backed quiet rescue', () => {
+    const rescue = ordinaryContractProfile('ci.m1.voice-under-boards.01')!;
+    const command = (
+      state: OrdinaryContractState,
+      companyId: string,
+      standingAt: ContractPlace,
+      stepId: string | null,
+      values: { readonly raiders: boolean; readonly beast: boolean },
+    ) =>
+      prepareOrdinaryContractCommand(
+        rescue,
+        state,
+        stepId === null ? { type: 'ACCEPT' } : { type: 'STEP', stepId },
+        {
+          companyId,
+          standingAt,
+          atTick: '10',
+          expectedRevision: state.revision,
+          sourceEventId: `${stepId ?? 'accept'}-${state.revision}`,
+          gates: { DAYLIGHT: true, RAIDERS_DEFEATED: values.raiders, BEAST_DEFEATED: values.beast },
+        },
+      );
+    const prep = (result: ReturnType<typeof command>) => {
+      if (result.kind !== 'PREPARED') throw new Error(`expected PREPARED, got ${result.code}`);
+      return result.next;
+    };
+
+    let quiet = prep(
+      command(ordinaryContractGenesis(rescue), 'quiet', BANK, null, {
+        raiders: false,
+        beast: false,
+      }),
+    );
+    expect(
+      command(quiet, 'quiet', CITY, 'buy-descent-kit', { raiders: false, beast: false }),
+    ).toMatchObject({ kind: 'REJECTED', code: 'WRONG_PLACE' });
+    quiet = prep(
+      command(quiet, 'quiet', BANK, 'buy-descent-kit', { raiders: false, beast: false }),
+    );
+    quiet = prep(
+      command(
+        quiet,
+        'quiet',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'inspect-cellar',
+        { raiders: true, beast: false },
+      ),
+    );
+    quiet = prep(
+      command(
+        quiet,
+        'quiet',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'inspect-tracks',
+        { raiders: true, beast: false },
+      ),
+    );
+    quiet = prep(
+      command(
+        quiet,
+        'quiet',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'release-ostap-quiet',
+        { raiders: true, beast: false },
+      ),
+    );
+    expect(quiet.custody).toEqual([{ personId: 'person.ostap', companyId: 'quiet' }]);
+    const delivered = command(quiet, 'quiet', BANK, 'deliver-ostap', {
+      raiders: true,
+      beast: false,
+    });
+    expect(delivered.kind).toBe('PREPARED');
+    if (delivered.kind === 'PREPARED')
+      expect(delivered.payout).toEqual({ companyId: 'quiet', rewardQ: rescue.rewardQ });
+
+    let beast = prep(
+      command(ordinaryContractGenesis(rescue), 'beast', BANK, null, {
+        raiders: false,
+        beast: false,
+      }),
+    );
+    beast = prep(
+      command(
+        beast,
+        'beast',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'inspect-cellar',
+        { raiders: true, beast: false },
+      ),
+    );
+    beast = prep(
+      command(
+        beast,
+        'beast',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'inspect-tracks',
+        { raiders: true, beast: false },
+      ),
+    );
+    expect(
+      command(
+        beast,
+        'beast',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'release-ostap',
+        { raiders: true, beast: false },
+      ),
+    ).toMatchObject({ kind: 'REJECTED', code: 'CONDITION_NOT_MET' });
+    beast = prep(
+      command(
+        beast,
+        'beast',
+        { siteId: 'staraya-melnitsa', areaId: 'staraya-melnitsa-yard' },
+        'release-ostap',
+        { raiders: true, beast: true },
+      ),
+    );
+    expect(beast.custody).toEqual([{ personId: 'person.ostap', companyId: 'beast' }]);
+  });
+
   it('lets the holder return a rescued person after pre-battle withdrawal without payment', () => {
     const mill: ContractPlace = {
       siteId: 'staraya-melnitsa',
@@ -414,10 +534,10 @@ describe('ordinary contract transitions', () => {
       edition.initialInstances.find(
         (instance) => instance.instanceId === 'ci.m1.voice-under-boards.01',
       )?.definitionId,
-    ).toBe('ct.m1.voice-under-boards.v1');
+    ).toBe('ct.m1.voice-under-boards.v2');
     expect(
       edition.definitions.find(
-        (definition) => definition.definitionId === 'ct.m1.voice-under-boards.v1',
+        (definition) => definition.definitionId === 'ct.m1.voice-under-boards.v2',
       )?.prerequisiteDefinitionIds,
     ).toEqual(['ct.m1.raider-standard.v1']);
 

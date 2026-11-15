@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: the finite 15-crown lantern, rope and support-board kit
+  and quiet rescue route for «Голос из-под пола», with transactional purchase,
+  consumption, custody and delivery. [Quest slice](docs/work-packages/M1-QUESTS.md).
+  LOCAL.
 - 2026-11-16 — Fixed: select routes only through observer-known segments, allowing
   a slower known path when a faster road crosses unexplored terrain.
   [N07 known-route search](docs/work-packages/m1-next/07-world.md#known-route-search--2026-11-16). LOCAL.
@@ -91,10 +95,6 @@ requests.
   state and company-private knowledge that Ерёма slept. Deadline expiry awaits
   the owner’s clock decision.
   [Quest checkpoint](docs/work-packages/M1-QUESTS.md#мешок-у-дороги-implementation--2026-11-15). LOCAL.
-- 2026-11-15 — Added: «Голос из-под пола» as a gated ordinary RESCUE through
-  the existing beast hunt, custody, travel, delivery and finite 120-crown purse.
-  The approved quiet descent remains unavailable until its material source is
-  implemented. [Quest slice](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-15 — Fixed: show a no-payout contract ending without implying a
   reward was paid to another company. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.
 - 2026-11-15 — Added: implement «Обход, которого не было» with a paid

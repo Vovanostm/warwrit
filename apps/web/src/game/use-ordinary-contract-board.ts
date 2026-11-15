@@ -26,6 +26,9 @@ const REJECTION_TEXT: Readonly<Record<string, string>> = {
   MISSING_EVIDENCE: 'Сначала выполните предыдущие шаги.',
   CONDITION_NOT_MET: 'Условие ещё не выполнено.',
   INSUFFICIENT_FUNDS: 'У заказчика нет денег на выплату.',
+  INSUFFICIENT_PURCHASE_FUNDS: 'У отряда не хватает денег на покупку комплекта.',
+  OUT_OF_STOCK: 'Комплектов больше нет в запасе.',
+  CAPACITY: 'В отряде нет места для комплекта.',
   NOT_AUTHORIZED: 'Сеанс не подтверждён. Войдите снова.',
   INVALID_COMMAND: 'Сервер отклонил запрос.',
 };

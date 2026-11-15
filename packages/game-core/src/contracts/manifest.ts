@@ -102,7 +102,7 @@ const draggedSackId = 'ct.m1.dragged-sack.v1';
 const tracksOverTracksKosarsId = 'ct.m1.tracks-over-tracks.kosars.v1';
 const tracksOverTracksBanditsId = 'ct.m1.tracks-over-tracks.bandits.v1';
 const foulWellId = 'ct.m1.foul-well.v1';
-const voiceUnderBoardsId = 'ct.m1.voice-under-boards.v1';
+const voiceUnderBoardsId = 'ct.m1.voice-under-boards.v2';
 
 const definitions: readonly ContractDefinition[] = [
   definition(
@@ -338,6 +338,8 @@ const definitions: readonly ContractDefinition[] = [
     [
       'voice-under-boards-cellar',
       'voice-under-boards-tracks',
+      'voice-under-boards-kit-purchased',
+      'voice-under-boards-quiet-release',
       'voice-under-boards-person-source',
       'voice-under-boards-living-release',
       'voice-under-boards-delivery',
@@ -429,6 +431,8 @@ const slots: ContractSourceSlot[] = [
   source('raider-standard-presenter-custody', raiderStandardId, 'PHYSICAL_PICKUP'),
   source('voice-under-boards-cellar', voiceUnderBoardsId, 'OBSERVATION'),
   source('voice-under-boards-tracks', voiceUnderBoardsId, 'OBSERVATION'),
+  source('voice-under-boards-kit-purchased', voiceUnderBoardsId, 'PHYSICAL_PICKUP'),
+  source('voice-under-boards-quiet-release', voiceUnderBoardsId, 'REPORT'),
   source('voice-under-boards-person-source', voiceUnderBoardsId, 'LIVING_PERSON'),
   source('voice-under-boards-living-release', voiceUnderBoardsId, 'LIVING_PERSON'),
   source('voice-under-boards-delivery', voiceUnderBoardsId, 'LIVING_PERSON'),
@@ -746,6 +750,8 @@ const standaloneScenes: ContractScene[] = [
     [
       'voice-under-boards-cellar',
       'voice-under-boards-tracks',
+      'voice-under-boards-kit-purchased',
+      'voice-under-boards-quiet-release',
       'voice-under-boards-person-source',
       'voice-under-boards-living-release',
       'voice-under-boards-delivery',

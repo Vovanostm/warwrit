@@ -4,6 +4,7 @@ import { randomInt, randomUUID } from 'node:crypto';
 
 import {
   canonicalJson,
+  canonicalStateJson,
   canPerform,
   huntProfile,
   ORDINARY_CONTRACT_PROFILES,
@@ -13,6 +14,14 @@ import {
   ordinaryContractProfileVersion,
   ordinaryContractTerms,
   ordinaryStepBlocker,
+  MILL_DESCENT_KIT_ID,
+  MILL_DESCENT_KIT_INITIAL_STOCK,
+  MILL_DESCENT_KIT_PRICE_Q,
+  MILL_DESCENT_KIT_SITE,
+  prepareMillDescentKitPurchase,
+  consumeMillDescentKit,
+  materializeCompanyPhysicalState,
+  readCompanyCombatAggregateState,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
   type CompanyCombatAggregateState,
@@ -29,10 +38,11 @@ import type {
 } from '@warwrit/protocol';
 import { isOrdinaryContractCommand } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
-import type { Kysely, Transaction } from 'kysely';
+import { sql, type Kysely, type Transaction } from 'kysely';
 
 import { resolveSessionAccount } from '../auth/session.js';
 import { persistContractRewardPayment } from '../company/contract-payout.js';
+import { readCarriedSupplyPurse } from '../company/supplies.js';
 import { grantEmptyWatchOldFordMarker } from './cartography.js';
 import { catchUpStationaryCompany } from '../company/executor.js';
 import {
@@ -71,6 +81,75 @@ async function voiceUnderBoardsUnlocked(
 }
 
 type Rejection = Extract<OrdinaryContractCommandResponseDto, { ok: false }>['code'];
+
+async function persistOrdinaryCompanyChange(
+  transaction: Transaction<DatabaseSchema>,
+  previous: CompanyCombatAggregateState,
+  nextValue: unknown,
+  input: {
+    readonly commandId: string;
+    readonly requestKey: string;
+    readonly response: OrdinaryContractCommandResponseDto;
+    readonly event: Readonly<Record<string, unknown>>;
+  },
+): Promise<CompanyCombatAggregateState> {
+  const next = readCompanyCombatAggregateState(nextValue);
+  const life = previous.economy.lifecycle;
+  const nextLife = next.economy.lifecycle;
+  const locked = await transaction
+    .selectFrom('company_snapshots')
+    .select(['canonical_revision', 'public_revision', 'state'])
+    .where('world_id', '=', life.worldId)
+    .where('company_id', '=', life.companyId)
+    .forUpdate()
+    .executeTakeFirst();
+  if (
+    !locked ||
+    locked.canonical_revision !== life.revision ||
+    locked.public_revision !== life.knowledge.revision ||
+    canonicalStateJson(readCompanyCombatAggregateState(locked.state)) !==
+      canonicalStateJson(previous)
+  )
+    throw new Error('Company root changed before ordinary contract materials were persisted');
+  const updated = await transaction
+    .updateTable('company_snapshots')
+    .set({
+      canonical_revision: nextLife.revision,
+      public_revision: nextLife.knowledge.revision,
+      state: next,
+      updated_at: sql<Date>`now()`,
+    })
+    .where('world_id', '=', life.worldId)
+    .where('company_id', '=', life.companyId)
+    .where('canonical_revision', '=', life.revision)
+    .where('public_revision', '=', life.knowledge.revision)
+    .executeTakeFirst();
+  if (Number(updated.numUpdatedRows) !== 1) throw new Error('Company root CAS failed');
+  await transaction
+    .insertInto('company_receipts')
+    .values({
+      world_id: life.worldId,
+      company_id: life.companyId,
+      receipt_id: randomUUID(),
+      command_id: input.commandId,
+      source_key: null,
+      request_key: input.requestKey,
+      response: input.response,
+      resulting_revision: nextLife.revision,
+    })
+    .execute();
+  await transaction
+    .insertInto('company_audit_events')
+    .values({
+      world_id: life.worldId,
+      company_id: life.companyId,
+      revision: nextLife.revision,
+      event_id: `${input.commandId}:ordinary-contract-material`,
+      event: input.event,
+    })
+    .execute();
+  return next;
+}
 
 /** Where the company's single field party stands still, or null while moving or fighting. */
 function standingPlace(state: CompanyCombatAggregateState): ContractPlace | null {
@@ -139,6 +218,36 @@ async function ensureOrdinaryGenesis(
       if (!scenarioProfile) throw new TypeError('Track-investigation scenario profile is missing');
       profile = scenarioProfile;
     }
+    if (offeredProfile.instanceId === VOICE_UNDER_BOARDS) {
+      const existing = await transaction
+        .selectFrom('ordinary_contracts')
+        .select(['profile_id', 'state'])
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', offeredProfile.instanceId)
+        .executeTakeFirst();
+      if (existing?.profile_id === 'ct.m1.voice-under-boards.v1') {
+        const previousProfile = ordinaryContractProfileVersion(
+          offeredProfile.instanceId,
+          existing.profile_id,
+        );
+        if (!previousProfile) throw new TypeError('Legacy mill rescue profile is missing');
+        const previousState = readOrdinaryContractState(
+          previousProfile,
+          existing.state,
+          existing.profile_id,
+        );
+        if (previousState.ownerCompanyId === null && previousState.outcome === null)
+          await transaction
+            .updateTable('ordinary_contracts')
+            .set({ profile_id: offeredProfile.definitionId })
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', offeredProfile.instanceId)
+            .where('profile_id', '=', existing.profile_id)
+            .execute();
+        continue;
+      }
+      if (existing) continue;
+    }
     await transaction
       .insertInto('ordinary_contracts')
       .values({
@@ -153,6 +262,17 @@ async function ensureOrdinaryGenesis(
       .onConflict((conflict) => conflict.columns(['world_id', 'instance_id']).doNothing())
       .execute();
   }
+  await transaction
+    .insertInto('mill_descent_kit_stock')
+    .values({
+      world_id: worldId,
+      revision: '0',
+      quantity: MILL_DESCENT_KIT_INITIAL_STOCK,
+      price_q: MILL_DESCENT_KIT_PRICE_Q,
+      cash_q: '0',
+    })
+    .onConflict((conflict) => conflict.column('world_id').doNothing())
+    .execute();
 }
 
 /** World conditions read from authoritative state; never from the client. */
@@ -181,6 +301,7 @@ export function contractView(
   battleStarted: boolean,
   currentTick = '0',
   prerequisiteMet = true,
+  kitStock?: { readonly revision: string; readonly quantity: number; readonly priceQ: string },
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const deadlineTicks =
@@ -311,6 +432,19 @@ export function contractView(
     issuerRoleId: terms.issuerRoleId,
     issuerLocation: terms.issuerPlace,
     rewardQ: terms.rewardQ,
+    ...(profile.instanceId === VOICE_UNDER_BOARDS &&
+    kitStock &&
+    terms.steps.some((step) => step.action === 'BUY')
+      ? {
+          materialOffer: {
+            itemId: MILL_DESCENT_KIT_ID,
+            contents: 'lantern-rope-support-boards' as const,
+            priceQ: kitStock.priceQ,
+            stock: kitStock.quantity,
+            revision: kitStock.revision,
+          },
+        }
+      : {}),
     revision: state.revision,
     yourRole: role,
     helperSlot: state.helperCompanyId === null ? 'AVAILABLE' : 'OCCUPIED',
@@ -396,7 +530,11 @@ export function contractView(
           blocker:
             companyId === undefined
               ? 'NOT_A_PARTICIPANT'
-              : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates }),
+              : profile.instanceId === VOICE_UNDER_BOARDS &&
+                  step.stepId === 'buy-descent-kit' &&
+                  kitStock?.quantity === 0
+                ? 'CONDITION_NOT_MET'
+                : ordinaryStepBlocker(projectedState, step, { companyId, standingAt, gates }),
           completes: step.completes === true,
         };
       }),
@@ -590,6 +728,113 @@ async function executeOrdinaryCommand(
   if (prepared.kind === 'REJECTED') return reject(prepared.code);
 
   if (
+    profile.instanceId === VOICE_UNDER_BOARDS &&
+    request.type === 'STEP' &&
+    request.stepId === 'buy-descent-kit'
+  ) {
+    const stockRow = await transaction
+      .selectFrom('mill_descent_kit_stock')
+      .selectAll()
+      .where('world_id', '=', worldId)
+      .forUpdate()
+      .executeTakeFirst();
+    if (!stockRow) throw new TypeError('Mill descent kit stock is not initialized');
+    const bought = prepareMillDescentKitPurchase(
+      materializeCompanyPhysicalState(company.economy),
+      {
+        commandId: request.commandId,
+        siteId: MILL_DESCENT_KIT_SITE,
+        shopRevision: String(stockRow.revision),
+      },
+      {
+        worldId,
+        revision: String(stockRow.revision),
+        quantity: stockRow.quantity,
+        priceQ: String(stockRow.price_q),
+        cashQ: String(stockRow.cash_q),
+      },
+      await readCarriedSupplyPurse(transaction, worldId, companyId, accountId),
+    );
+    if (bought.kind !== 'PREPARED')
+      return reject(
+        bought.code === 'OUT_OF_STOCK'
+          ? 'OUT_OF_STOCK'
+          : bought.code === 'CAPACITY'
+            ? 'CAPACITY'
+            : bought.code === 'INSUFFICIENT_FUNDS'
+              ? 'INSUFFICIENT_PURCHASE_FUNDS'
+              : 'NOT_AVAILABLE',
+      );
+    const response: OrdinaryContractCommandResponseDto = {
+      schemaVersion: 1,
+      commandId: request.commandId,
+      ok: true,
+      revision: prepared.next.revision,
+      rewardQ: null,
+    };
+    const nextCompany = readCompanyCombatAggregateState({ ...company, economy: bought.next });
+    await persistOrdinaryCompanyChange(transaction, company, nextCompany, {
+      commandId: request.commandId,
+      requestKey,
+      response,
+      event: {
+        type: 'MillDescentKitPurchased',
+        itemId: bought.itemId,
+        priceQ: stockRow.price_q,
+        stockRevision: (BigInt(stockRow.revision) + 1n).toString(),
+      },
+    });
+    const updatedStock = await transaction
+      .updateTable('mill_descent_kit_stock')
+      .set({
+        revision: bought.stock.revision,
+        quantity: bought.stock.quantity,
+        cash_q: bought.stock.cashQ,
+      })
+      .where('world_id', '=', worldId)
+      .where('revision', '=', stockRow.revision)
+      .executeTakeFirst();
+    if (Number(updatedStock.numUpdatedRows) !== 1)
+      throw new Error('Mill descent kit stock changed before purchase');
+  }
+
+  if (
+    profile.instanceId === VOICE_UNDER_BOARDS &&
+    request.type === 'STEP' &&
+    request.stepId === 'release-ostap-quiet'
+  ) {
+    const root = materializeCompanyPhysicalState(company.economy);
+    const kit = root.physical.items.find(
+      (item) =>
+        item.definitionId === MILL_DESCENT_KIT_ID &&
+        item.owner.kind === 'COMPANY' &&
+        item.owner.id === companyId &&
+        item.tombstone === null,
+    );
+    if (!kit) return reject('MISSING_EVIDENCE');
+    const consumed = consumeMillDescentKit(
+      root,
+      kit.itemId,
+      request.commandId,
+      root.lifecycle.campaignTick,
+    );
+    const response: OrdinaryContractCommandResponseDto = {
+      schemaVersion: 1,
+      commandId: request.commandId,
+      ok: true,
+      revision: prepared.next.revision,
+      rewardQ: null,
+    };
+    const nextCompany = readCompanyCombatAggregateState({ ...company, economy: consumed });
+    await persistOrdinaryCompanyChange(transaction, company, nextCompany, {
+      commandId: request.commandId,
+      requestKey,
+      response,
+      event: { type: 'MillDescentKitConsumed', itemId: kit.itemId, personId: 'person.ostap' },
+    });
+  }
+
+  if (
     profile.instanceId === 'ci.m1.empty-watch-record.01' &&
     request.type === 'STEP' &&
     request.stepId === 'throw-sack-in-river'
@@ -684,6 +929,16 @@ export function registerOrdinaryContractRoutes(
         : undefined;
       const clock = await readWorldClock(transaction, worldId);
       const gates = await readGates(transaction, worldId);
+      const kitStockRow = await transaction
+        .selectFrom('mill_descent_kit_stock')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const kitStock = {
+        revision: String(kitStockRow.revision),
+        quantity: kitStockRow.quantity,
+        priceQ: String(kitStockRow.price_q),
+      };
       const rows = await transaction
         .selectFrom('ordinary_contracts')
         .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
@@ -746,6 +1001,7 @@ export function registerOrdinaryContractRoutes(
             await ordinaryBattleStarted(transaction, worldId, profileVersion),
             clock.tick,
             prerequisiteMet,
+            profile.instanceId === VOICE_UNDER_BOARDS ? kitStock : undefined,
           ),
         );
       }

@@ -1,6 +1,22 @@
 import { expect, it } from 'vitest';
 
-import { enumerateSimpleWorldRouteCandidates, SEROE_PORECHYE } from './index.js';
+import {
+  enumerateSimpleWorldRouteCandidates,
+  isDangerousRouteContract,
+  SEROE_PORECHYE,
+} from './index.js';
+
+it('retains dangerous-route eligibility for both accepted mill-rescue profile versions', () => {
+  expect(
+    isDangerousRouteContract('ci.m1.voice-under-boards.01', 'ct.m1.voice-under-boards.v1'),
+  ).toBe(true);
+  expect(
+    isDangerousRouteContract('ci.m1.voice-under-boards.01', 'ct.m1.voice-under-boards.v2'),
+  ).toBe(true);
+  expect(isDangerousRouteContract('ci.m1.voice-under-boards.01', 'ct.m1.cellar-rescue.v1')).toBe(
+    false,
+  );
+});
 
 it('enumerates an authored multi-edge itinerary in traversal order without repeating sites', () => {
   const candidates = enumerateSimpleWorldRouteCandidates(SEROE_PORECHYE, 'severny-dvor');

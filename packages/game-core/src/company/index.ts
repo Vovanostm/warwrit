@@ -118,3 +118,12 @@ export {
 export type { SettlementSupplies } from './supplies.js';
 export { prepareEquipmentSale, equipmentSaleQuote } from './equipment-sale.js';
 export type { EquipmentSale } from './equipment-sale.js';
+export {
+  MILL_DESCENT_KIT_ID,
+  MILL_DESCENT_KIT_INITIAL_STOCK,
+  MILL_DESCENT_KIT_PRICE_Q,
+  MILL_DESCENT_KIT_SITE,
+  prepareMillDescentKitPurchase,
+  consumeMillDescentKit,
+} from './rescue-kit.js';
+export type { MillDescentKitPurchase, MillDescentKitStock } from './rescue-kit.js';

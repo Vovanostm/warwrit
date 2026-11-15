@@ -63,6 +63,35 @@ function render(
 }
 
 describe('contract conversation and journal boundaries', () => {
+  it('shows the finite kit quote and makes its purchase step actionable at the issuer', () => {
+    const voice: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.voice-under-boards.01',
+      issuerRoleId: 'woodland-village-caller',
+      issuerLocation: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+      materialOffer: {
+        itemId: 'mill-descent-kit',
+        contents: 'lantern-rope-support-boards',
+        priceQ: '15000000',
+        stock: 2,
+        revision: '0',
+      },
+      steps: [
+        {
+          stepId: 'buy-descent-kit',
+          action: 'BUY',
+          location: { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' },
+          doneByYou: false,
+          blocker: null,
+          completes: false,
+        },
+      ],
+    };
+    const markup = render(voice, { siteId: 'tikhaya-gat', building: 'elder' });
+    expect(markup).toContain('Цена — 15 кр.; в запасе — 2.');
+    expect(markup).toContain('Купить комплект для тихого спуска');
+  });
+
   it('says a no-payout ending paid nobody for both the owner and other companies', () => {
     const resolvedWithoutPayout: OrdinaryContractDto = {
       ...herbs,

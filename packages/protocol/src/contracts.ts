@@ -301,6 +301,13 @@ export interface OrdinaryContractDto {
   readonly issuerRoleId: string;
   readonly issuerLocation: { readonly siteId: string; readonly areaId: string };
   readonly rewardQ: string;
+  readonly materialOffer?: {
+    readonly itemId: 'mill-descent-kit';
+    readonly contents: 'lantern-rope-support-boards';
+    readonly priceQ: string;
+    readonly stock: number;
+    readonly revision: string;
+  };
   readonly revision: string;
   readonly yourRole: 'OWNER' | 'HELPER' | 'NONE';
   readonly helperSlot: 'AVAILABLE' | 'OCCUPIED';
@@ -339,7 +346,7 @@ export interface OrdinaryContractDto {
   readonly canReturnCargo: boolean;
   readonly steps: readonly {
     readonly stepId: string;
-    readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER';
+    readonly action: 'INSPECT' | 'ASK' | 'SEARCH' | 'RELEASE' | 'REPORT' | 'DELIVER' | 'BUY';
     readonly location: { readonly siteId: string; readonly areaId: string };
     readonly doneByYou: boolean;
     /** Localized clue/outcome key, present only after this company records the result. */
@@ -397,7 +404,10 @@ export type OrdinaryContractCommandResponseDto =
         | 'ALREADY_DONE'
         | 'MISSING_EVIDENCE'
         | 'CONDITION_NOT_MET'
-        | 'INSUFFICIENT_FUNDS';
+        | 'INSUFFICIENT_FUNDS'
+        | 'INSUFFICIENT_PURCHASE_FUNDS'
+        | 'OUT_OF_STOCK'
+        | 'CAPACITY';
     };
 
 export function isOrdinaryContractCommand(value: unknown): value is OrdinaryContractCommandDto {
