@@ -18,6 +18,7 @@ import { COMPANY_CATALOGUE } from './definitions.js';
 import { canPerform } from './lifecycle-state.js';
 import type { CapabilitySubject } from './lifecycle-state.js';
 import { readLearningTaskState } from './learning-task.js';
+import { learningStartResourceIds } from './learning-task.js';
 import type { CommandOf } from './lifecycle-types.js';
 import type { MaintenanceAgreement } from './economy-types.js';
 import type { ConditionSourceEvidence, MissingResolutionEvidence } from './physical-types.js';
@@ -48,7 +49,7 @@ const courseAttendanceInput = object({
   providerId: id,
   mentorId: id,
   skillId: id,
-  resourceIds: array(id, 1, 1000, true),
+  resourceIds: array(id, 0, 1000, true),
   location: atLocation,
   fromTick: unsigned,
   toTick: unsigned,
@@ -326,11 +327,15 @@ function validateCourseAttendance(
       source.sourceVersion === task.start.quote.sourceVersion,
   );
   const source = sources[0];
-  requireEconomy(sources.length === 1 && source?.kind === 'COURSE', 'INVALID_SOURCE');
+  requireEconomy(
+    sources.length === 1 && source?.kind === (task.start.retraining ? 'RETRAINING' : 'COURSE'),
+    'INVALID_SOURCE',
+  );
   const start = task.start.command;
   const providerId = source.providerId;
   const mentorId = source.mentorId;
   const location = source.location;
+  const resourceIds = learningStartResourceIds(task.start);
   requireEconomy(
     providerId !== undefined &&
       mentorId !== undefined &&
@@ -340,8 +345,11 @@ function validateCourseAttendance(
       source.atTick === start.campaignTick &&
       BigInt(interval.fromTick) >= BigInt(source.atTick) &&
       source.skillId === inputs.skillId &&
-      sameIds(source.resourceIds, start.payload.resourceIds) &&
-      sameIds(attendance.resourceIds, start.payload.resourceIds) &&
+      (!task.start.retraining ||
+        (source.oldPerkId === task.start.retraining.oldPerkId &&
+          source.newPerkId === task.start.retraining.newPerkId)) &&
+      sameIds(source.resourceIds, resourceIds) &&
+      sameIds(attendance.resourceIds, resourceIds) &&
       attendance.sourceId === source.id &&
       attendance.sourceVersion === source.sourceVersion &&
       attendance.taskId === task.start.taskId &&

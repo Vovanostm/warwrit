@@ -112,6 +112,46 @@ guard contact supplies the provider and mentor identity. Any distinct tuition
 wallet starts at zero and receives only actual company transfers. The provider's
 new canonical representation is part of implementing the approved offer.
 
+## Learning implementation checkpoint — 2026-11-15
+
+PARTIAL / LOCAL on `codex/m1-completion-20261115`. The guard course now has a
+server-owned offer, ordinary StartLearning/StopLearning commands, saved learning
+tasks, elapsed-time settlement and a guard-house panel. The source and quote
+bind the owned company, learner, local provider, accessible practice items and
+actual wallet. Optional legacy finance learning fields remain readable.
+
+The retained N01 company `eb855f6f-ab02-42ca-9eef-a82b2c6830bf` enrolled its leader
+through Каменный Брод → Караульня. The first attempt accepted 1,055 ticks and
+charged 5.275 crowns before an explicit stop. A second attempt stopped after one
+tick for 0.005 crowns. Its successful server response was deliberately dropped.
+The UI retained command `c9e4cc00-70df-4701-b735-90b4fae93e6a` and retried the
+identical body, receiving the saved result without another charge.
+
+A third enrollment completed all 3,000 ticks for exactly 15 crowns. The ordinary
+panel and a page reload retained the completed course, skill level9 and treasury
+748.72 crowns. Time was accelerated through the existing isolated-world QA clock
+in Playground, using three +1,000-tick controls. The earlier attempt used one
++1,000-tick control. These checks establish the control and persistence path,
+while elapsed real time supplied the small additional fractions in stopped runs.
+
+The pure retraining composition stores its original command and specialization
+pair. It preserves skill XP, grants no additional skill XP and replaces the old
+specialization only after the full 3,000 accepted ticks. A five-crown starting
+balance authorizes the agreed maximum cost but pays only for 1,000 actual ticks,
+then ends with FUNDING_SHORTFALL and the original specialization. The maximum
+authorization creates no money or reservation. Adapter/UI integration and native
+retraining acceptance remain in progress.
+
+Native practice items use legitimate legacy JSON-shaped IDs. The shared protocol
+entity-ID guard now accepts these IDs within the canonical 256-codepoint bound,
+and course, trader and deceased-payroll readers use it. Item labels show their
+known name and carrier. The focused learning/task/ID/course/trader/deceased-panel
+union passes 49 tests. Game-core and protocol builds and server/web typechecks
+pass. A real SQL retraining check exposed a stale known-perk projection, now
+corrected at successful completion with a public revision bump and pure
+regression. Its SQL rerun remains pending. Access/movement/duty/casualty checks
+and full CAP-3 closure remain open until their individual results are recorded.
+
 ## Retraining and earned nickname — owner decision 2026-11-15
 
 The owner approved the first retraining case as a specialization replacement

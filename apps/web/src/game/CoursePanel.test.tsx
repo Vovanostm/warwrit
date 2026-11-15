@@ -44,7 +44,7 @@ const holdings = {
       slot: 'MAIN_HAND' as const,
     },
     {
-      itemId: 'blade-two',
+      itemId: '["legacy-opening","character-two","spear"]',
       definitionId: 'spear',
       quantity: 1,
       currentCondition: 1,
@@ -71,7 +71,11 @@ function offer(overrides: Record<string, unknown> = {}) {
       status: 'AVAILABLE',
       learners: [
         { characterId: 'character-one', currentLevel: 0, resourceIds: ['blade-one'] },
-        { characterId: 'character-two', currentLevel: 1, resourceIds: ['blade-two'] },
+        {
+          characterId: 'character-two',
+          currentLevel: 1,
+          resourceIds: ['["legacy-opening","character-two","spear"]'],
+        },
       ],
       ...overrides,
     },
@@ -162,7 +166,7 @@ it('shows course terms, starts with a selected offered learner and resource, the
     select.value = 'character-two';
     select.dispatchEvent(new Event('change', { bubbles: true }));
   });
-  expect(container?.textContent).toContain('Копьё · blade-two');
+  expect(container?.textContent).toContain('Копьё · в обозе');
   const checkbox = container!.querySelector('input[type="checkbox"]') as HTMLInputElement;
   expect(checkbox.checked).toBe(true);
 
@@ -182,11 +186,11 @@ it('shows course terms, starts with a selected offered learner and resource, the
     payload: {
       courseId: 'course.kamenny-brod-guard.blades',
       characterId: 'character-two',
-      resourceIds: ['blade-two'],
+      resourceIds: ['["legacy-opening","character-two","spear"]'],
     },
   });
   expect(refresh).toHaveBeenCalledTimes(2);
-  expect(container?.textContent).toContain('Учится: Борис');
+  expect(container?.textContent).toContain('Ученик: Борис');
   expect(container?.textContent).toContain('пройдено 1 из 3 игровых дней');
   expect(container?.textContent).toContain('уже списано 5 кр.');
   expect(button('Остановить обучение').disabled).toBe(false);

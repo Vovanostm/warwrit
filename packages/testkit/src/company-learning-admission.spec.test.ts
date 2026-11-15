@@ -7,6 +7,7 @@ import {
   createStudyAccessState,
   initialSkillProgress,
   prepareCompanyEconomy,
+  prepareLearningComposition,
   quoteLearningTask,
   readLearningTaskInputs,
   startLearningTask,
@@ -15,8 +16,10 @@ import {
 } from '@warwrit/game-core';
 import type {
   CommandOf,
+  CompanyEconomyState,
   LearningQuoteContext,
   LearningTaskAdmission,
+  LearningTimeInterval,
   MaterializedCompanyState,
 } from '@warwrit/game-core';
 import {
@@ -32,6 +35,9 @@ import {
 import { addItem, item, itemAccess } from './company-physical-fixture.js';
 
 type Start = ReturnType<typeof command> & CommandOf<'StartLearning'>;
+type Advance = ReturnType<typeof command> & CommandOf<'AdvanceCampaign'>;
+type Stop = ReturnType<typeof command> & CommandOf<'StopLearning'>;
+const learningCommand = (f: Fixture) => f.request.command as CommandOf<'StartLearning'>;
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first', at = '10') {
   let loaded = economy([1n], 7_000_000n, 10);
@@ -111,6 +117,68 @@ function setup(course = false, learner = 'leader', copy = 'book-1', tag = 'first
   return { root, ctx, request };
 }
 type Fixture = ReturnType<typeof setup>;
+function retrainingFixture(): Fixture {
+  const fixture = setup(true, 'leader', 'book-1', 'retraining', '10');
+  const learner = fixture.root.lifecycle.characters.find(
+    (entry) => entry.identity.characterId === 'leader',
+  )!;
+  Object.assign(
+    fixture.root.finance.wallets.find((wallet) => wallet.walletId === 'purse')!,
+    { cashQ: cash(20_000_000) },
+  );
+  Object.assign(learner, {
+    skills: { ...learner.skills, blades: initialSkillProgress(25, 'retraining-fixture') },
+    aptitudeBySkill: { ...learner.aptitudeBySkill, blades: 10000 },
+    perks: ['blades-25-a'],
+  });
+  Object.assign(
+    fixture.root.lifecycle.knowledge.characters.find(
+      (entry) => entry.identity.characterId === 'leader',
+    )!,
+    { skills: { ...learner.skills }, perks: ['blades-25-a'] },
+  );
+  const retraining = command(
+    fixture.root,
+    'StartRetraining',
+    {
+      characterId: 'leader',
+      oldPerkId: 'blades-25-a',
+      newPerkId: 'blades-25-b',
+      mentorEvidenceId: 'guard-mentor',
+      budgetPoolId: 'local',
+    },
+    'retraining-start',
+    'PLAYER',
+    tick(10),
+  ) as CommandOf<'StartRetraining'>;
+  fixture.request = { taskId: 'retraining', command: retraining };
+  fixture.ctx = {
+    ...fixture.ctx,
+    learningFacts: [
+      {
+        ...scope(fixture.root, 'guard-mentor'),
+        sourceVersion: 'guard-v1',
+        expiresAt: tick(510),
+        learnerId: 'leader',
+        location: place,
+        resourceIds: [],
+        kind: 'RETRAINING',
+        methodId: 'funded-practice',
+        skillId: 'blades',
+        oldPerkId: 'blades-25-a',
+        newPerkId: 'blades-25-b',
+        providerId: 'provider',
+        mentorId: 'provider',
+        poolId: 'local',
+        providerWalletId: 'wallet-provider',
+        moneyAccessEvidenceId: 'money-access',
+        costQPerDay: cash(5_000_000),
+        maxTicks: '3000',
+      },
+    ],
+  };
+  return fixture;
+}
 const empty = () => ({ state: createLearningTaskState(), studyAccess: createStudyAccessState() });
 function run(f: Fixture, owners = empty()) {
   return admitLearningTask(owners.state, owners.studyAccess, f.root, f.ctx, f.request);
@@ -122,6 +190,305 @@ function rejects(f: Fixture, owners = empty(), error?: string) {
 }
 
 describe('C04b — real admission composition', () => {
+  it('admits the approved blades retraining terms and stores its real command', () => {
+    const fixture = retrainingFixture();
+    const admitted = run(fixture);
+    expect(admitted.task.start.command).toEqual(fixture.request.command);
+    expect(admitted.task.start.retraining).toEqual({
+      oldPerkId: 'blades-25-a',
+      newPerkId: 'blades-25-b',
+    });
+    expect(admitted.task.start.quote).toMatchObject({
+      maxTicks: '3000',
+      funding: {
+        costQPerDay: { numerator: '5000000', denominator: '1' },
+      },
+    });
+    const composed = prepareLearningComposition(
+      fixture.root,
+      empty().state,
+      empty().studyAccess,
+      null,
+      fixture.ctx,
+      [],
+      {
+        kind: 'START',
+        taskId: 'retraining',
+        effectId: 'retraining-start-effect',
+        admission: fixture.request,
+      },
+    );
+    expect(composed.tasks.tasks[0]?.start.command).toEqual(fixture.request.command);
+    expect(
+      composed.state.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ,
+    ).toBe(fixture.root.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ);
+  });
+
+  it('settles one and three elapsed days, preserves the old perk on interruption, swaps on completion, and short-funds retraining', () => {
+    const fixture = retrainingFixture();
+    const owners = empty();
+    const start = prepareLearningComposition(
+      fixture.root,
+      owners.state,
+      owners.studyAccess,
+      null,
+      fixture.ctx,
+      [],
+      {
+        kind: 'START',
+        taskId: 'retraining',
+        effectId: 'retraining-start-effect',
+        admission: fixture.request,
+      },
+    );
+    expect(start.tasks.tasks[0]?.start.retraining).toEqual({
+      oldPerkId: 'blades-25-a',
+      newPerkId: 'blades-25-b',
+    });
+    const advance = (
+      advanceFixture: Fixture,
+      studyAccess: typeof start.studyAccess,
+      baseState: CompanyEconomyState,
+      taskState: typeof start.tasks,
+      from: number,
+      to: number,
+    ) => {
+      const state = reload(baseState);
+      Object.assign(state.lifecycle, { campaignTick: tick(to) });
+      Object.assign(state.finance, { processedTick: tick(to) });
+      if (state.physical) Object.assign(state.physical, { processedTick: tick(to) });
+      const source = advanceFixture.ctx.learningFacts[0]!;
+      const task = taskState.tasks[0]!;
+      const membership = state.lifecycle.memberships.find(
+        (entry) => entry.characterId === 'leader' && entry.endedAt === null,
+      )!;
+      const participantIds = [...new Set(['leader', source.providerId!, source.mentorId!])];
+      const attendanceId = `attendance-${from}-${to}`;
+      const observations = participantIds.map((characterId) => {
+        const person = state.lifecycle.characters.find(
+          (entry) => entry.identity.characterId === characterId,
+        )!;
+        const location = person.presence.location;
+        if (location.kind !== 'AT') throw new Error('Expected local person');
+        return {
+          observationId: `observation-${characterId}-${from}-${to}`,
+          characterId,
+          fromTick: String(from),
+          toTick: String(to),
+          location,
+          assignment: person.presence.assignment,
+          availability: person.presence.availability,
+          encounterBindingId: person.presence.encounterBindingId,
+          conditionIds: person.conditionIds,
+        };
+      });
+      const interval: LearningTimeInterval = {
+        intervalId: `interval-${from}-${to}`,
+        taskId: task.start.taskId,
+        commandId: 'bound-by-test',
+        ownerIntervalId: task.start.quote.sourceId,
+        companyId: state.lifecycle.companyId,
+        worldId: state.lifecycle.worldId,
+        characterId: 'leader',
+        fromTick: String(from),
+        toTick: String(to),
+        kind: 'ELIGIBLE',
+        courseAttendance: {
+          attendanceId,
+          sourceId: source.id,
+          sourceVersion: source.sourceVersion,
+          taskId: task.start.taskId,
+          companyId: source.companyId,
+          worldId: source.worldId,
+          learnerId: 'leader',
+          providerId: source.providerId!,
+          mentorId: source.mentorId!,
+          skillId: 'blades',
+          resourceIds: [],
+          location: source.location,
+          fromTick: String(from),
+          toTick: String(to),
+          membership: {
+            membershipId: membership.membershipId,
+            companyId: membership.companyId,
+            characterId: membership.characterId,
+            startedAt: membership.startedAt,
+            endedAt: membership.endedAt,
+          },
+          observations,
+        },
+      };
+      const evidenceIds = [
+        interval.intervalId,
+        interval.ownerIntervalId,
+        attendanceId,
+        membership.membershipId,
+        ...observations.map((entry) => entry.observationId),
+      ];
+      const cmd = command(
+        state,
+        'AdvanceCampaign',
+        { toTick: String(to), authoritativeInputs: evidenceIds },
+        `retraining-advance-${to}`,
+        'SYSTEM',
+        tick(to),
+      ) as Advance;
+      const advanceContext: LearningQuoteContext = {
+        ...context(state, cmd, [access(state, tick(to))]),
+        learningFacts: advanceFixture.ctx.learningFacts,
+      };
+      const boundInterval = { ...interval, commandId: cmd.commandId };
+      return prepareLearningComposition(
+        state,
+        taskState,
+        studyAccess,
+        null,
+        advanceContext,
+        [boundInterval],
+        {
+          kind: 'ADVANCE',
+          taskId: task.start.taskId,
+          effectId: `retraining-effect-${to}`,
+          command: cmd,
+          manifest: {
+            companyId: state.lifecycle.companyId,
+            worldId: state.lifecycle.worldId,
+            commandId: cmd.commandId,
+            taskId: task.start.taskId,
+            ownerIntervalId: task.start.quote.sourceId,
+            targetTick: String(to),
+            evidenceIds,
+          },
+        },
+      );
+    };
+    const firstDay = advance(fixture, start.studyAccess, start.state, start.tasks, 10, 1010);
+    expect(firstDay.appliedElapsedTicks).toBe('1000');
+    expect(
+      firstDay.state.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ,
+    ).toBe(cash(15_000_000));
+    expect(
+      firstDay.state.finance.wallets.find((wallet) => wallet.walletId === 'wallet-provider')?.cashQ,
+    ).toBe(cash(5_000_000));
+    expect(
+      firstDay.state.lifecycle.characters.find((entry) => entry.identity.characterId === 'leader')
+        ?.perks,
+    ).toEqual(['blades-25-a']);
+    expect(
+      firstDay.state.lifecycle.knowledge.characters.find(
+        (entry) => entry.identity.characterId === 'leader',
+      )?.perks,
+    ).toEqual(['blades-25-a']);
+    const stopState = reload(firstDay.state);
+    const stopCommand = command(
+      stopState,
+      'StopLearning',
+      { taskId: 'retraining', reason: 'PREREQUISITES' },
+      'retraining-stop',
+      'SYSTEM',
+      tick(1010),
+    ) as Stop;
+    const stopContext: LearningQuoteContext = {
+      ...context(stopState, stopCommand, [access(stopState, tick(1010))]),
+      learningFacts: fixture.ctx.learningFacts,
+    };
+    const stopped = prepareLearningComposition(
+      stopState,
+      firstDay.tasks,
+      firstDay.studyAccess,
+      null,
+      stopContext,
+      [],
+      {
+        kind: 'STOP',
+        taskId: 'retraining',
+        effectId: 'retraining-stop-effect',
+        command: stopCommand,
+        intervals: [],
+        manifest: {
+          companyId: stopState.lifecycle.companyId,
+          worldId: stopState.lifecycle.worldId,
+          commandId: stopCommand.commandId,
+          taskId: 'retraining',
+          ownerIntervalId: firstDay.tasks.tasks[0]!.start.quote.sourceId,
+          targetTick: '1010',
+          evidenceIds: ['retraining'],
+        },
+      },
+    );
+    expect(stopped.tasks.tasks[0]?.stop).toEqual(stopCommand);
+    expect(
+      stopped.state.lifecycle.characters.find((entry) => entry.identity.characterId === 'leader')
+        ?.perks,
+    ).toEqual(['blades-25-a']);
+    const finish = advance(
+      fixture,
+      firstDay.studyAccess,
+      firstDay.state,
+      firstDay.tasks,
+      1010,
+      3010,
+    );
+    expect(finish.appliedElapsedTicks).toBe('2000');
+    expect(finish.tasks.tasks[0]?.terminal?.kind).toBe('GOAL_REACHED');
+    expect(finish.state.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ).toBe(
+      cash(5_000_000),
+    );
+    expect(
+      finish.state.finance.wallets.find((wallet) => wallet.walletId === 'wallet-provider')?.cashQ,
+    ).toBe(cash(15_000_000));
+    expect(
+      finish.state.lifecycle.characters.find((entry) => entry.identity.characterId === 'leader')
+        ?.perks,
+    ).toEqual(['blades-25-b']);
+    expect(
+      finish.state.lifecycle.knowledge.characters.find(
+        (entry) => entry.identity.characterId === 'leader',
+      )?.perks,
+    ).toEqual(['blades-25-b']);
+    expect(BigInt(finish.state.lifecycle.knowledge.revision)).toBe(
+      BigInt(firstDay.state.lifecycle.knowledge.revision) + 1n,
+    );
+
+    const shortFixture = retrainingFixture();
+    Object.assign(
+      shortFixture.root.finance.wallets.find((wallet) => wallet.walletId === 'purse')!,
+      { cashQ: cash(5_000_000) },
+    );
+    const shortStart = prepareLearningComposition(
+      shortFixture.root,
+      empty().state,
+      empty().studyAccess,
+      null,
+      shortFixture.ctx,
+      [],
+      {
+        kind: 'START',
+        taskId: 'retraining',
+        effectId: 'short-retraining-start-effect',
+        admission: shortFixture.request,
+      },
+    );
+    expect(shortStart.tasks.tasks[0]?.start.quote).toMatchObject({
+      maxTicks: '3000',
+      funding: { authorizedBudgetQ: cash(15_000_000) },
+    });
+    const shortfall = advance(
+      shortFixture,
+      shortStart.studyAccess,
+      shortStart.state,
+      shortStart.tasks,
+      10,
+      3010,
+    );
+    expect(shortfall.appliedElapsedTicks).toBe('1000');
+    expect(shortfall.tasks.tasks[0]?.terminal?.kind).toBe('FUNDING_SHORTFALL');
+    expect(
+      shortfall.state.lifecycle.characters.find((entry) => entry.identity.characterId === 'leader')
+        ?.perks,
+    ).toEqual(['blades-25-a']);
+  });
+
   it.each([false, true])('composes real owners without settlement (%s)', (course) => {
     const f = setup(course);
     const before = reload(f);
@@ -156,7 +523,7 @@ describe('C04b — real admission composition', () => {
 
   it('binds optional sections and exact large ticks', () => {
     const f = setup(false, 'leader', 'book-1', 'large', '9007199254740993');
-    Object.assign(f.request.command.payload.goal, { sectionId: 'wound-care-basics-1' });
+    Object.assign(learningCommand(f).payload.goal, { sectionId: 'wound-care-basics-1' });
     expect(run(f).studyAccess.intervals[0]).toMatchObject({
       fromTick: '9007199254740993',
       toTick: '9007199254741893',
@@ -165,8 +532,8 @@ describe('C04b — real admission composition', () => {
 
   it('rejects mismatched book bindings and unavailable copies without mutation', () => {
     const changes: ((f: Fixture) => void)[] = [
-      (f) => Object.assign(f.request.command.payload.goal, { workId: 'small-unit-service' }),
-      (f) => Object.assign(f.request.command.payload.goal, { sectionId: 'other' }),
+      (f) => Object.assign(learningCommand(f).payload.goal, { workId: 'small-unit-service' }),
+      (f) => Object.assign(learningCommand(f).payload.goal, { sectionId: 'other' }),
       (f) => Object.assign(f.ctx.learningFacts[0]!, { sectionId: 'other' }),
       (f) => Object.assign(f.ctx.learningFacts[0]!, { learnerId: 'worker-0' }),
       (f) => Object.assign(f.ctx.learningFacts[0]!, { expiresAt: '10' }),
@@ -250,8 +617,8 @@ describe('C04b — real admission composition', () => {
     expect(result.state.tasks).toHaveLength(1);
     expect(result.studyAccess).toEqual(first.studyAccess);
     expect(Object.isFrozen(result.task.start.quote.coefficients.task)).toBe(true);
-    Object.assign(f.request.command.payload.goal, { maxTicks: '99999' });
-    (f.request.command.payload.resourceIds as string[])[0] = 'rewritten';
+    Object.assign(learningCommand(f).payload.goal, { maxTicks: '99999' });
+    (learningCommand(f).payload.resourceIds as string[])[0] = 'rewritten';
     if (f.request.study) Object.assign(f.request.study, { itemId: 'rewritten' });
     expect(result.task.start).toEqual(first.task.start);
     expect(result.studyAccess).toEqual(first.studyAccess);
@@ -264,7 +631,7 @@ describe('C04b — real admission composition', () => {
       (f) => Object.assign(f.request.command, { commandId: 'other' }),
       (f) => Object.assign(f.request.command, { sourceEventId: 'other' }),
       (f) => Object.assign(f.request.command, { campaignTick: tick(11) }),
-      (f) => Object.assign(f.request.command.payload.goal, { maxTicks: '999' }),
+      (f) => Object.assign(learningCommand(f).payload.goal, { maxTicks: '999' }),
       (f) => Object.assign(f.request.command.payload, { maxBudgetQ: '1' }),
       (f) => Object.assign(f.request.study!, { intervalId: 'other' }),
       (f) => Object.assign(f.request.study!, { itemId: 'book-2' }),

@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: guard-house sword course with saved progress, exact elapsed
+  tuition, explicit stop and lost-response retry. Native completion retains the
+  full three-day result. Retraining composition preserves the original perk on
+  short funding. [Learning result and pending checks](docs/work-packages/m1-next/06-company-capabilities.md#learning-implementation-checkpoint--2026-11-15). LOCAL.
+- 2026-11-15 — Added: owned-company deceased-wage settlement controls and atomic
+  command dispatch. [Current evidence and remaining payment case](docs/work-packages/m1-next/04-deceased-payroll.md#implementation-checkpoint--2026-11-15). LOCAL.
+
 - 2026-11-15 — Added: town equipment buyback with finite trader funds, exact
   custody and retry. A native shield sale and reload preserve the recorded result.
   [Current sale and remaining loot journey](docs/work-packages/M1-LOOT-SALE.md#current-implementation--2026-11-15). LOCAL.

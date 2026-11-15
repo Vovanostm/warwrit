@@ -4,7 +4,7 @@ import type {
   EquipmentSaleRequestDto,
   EquipmentSaleResponseDto,
 } from '@warwrit/protocol';
-import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
+import { WORLD_EXPECTED_COMPANY_ID_HEADER, isCompanyEntityId } from '@warwrit/protocol';
 import { formatCrowns, itemLabel } from './format.js';
 import './EquipmentTrader.css';
 
@@ -12,8 +12,6 @@ const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const SITE_ID = 'kamenny-brod';
 const REVISION = /^(0|[1-9][0-9]{0,127})$/u;
 const AMOUNT = /^(0|[1-9][0-9]{0,127})$/u;
-const IDENTIFIER = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0 && [...value].length <= 256;
 const RESULT_CODES = new Set([
   'INVALID_COMMAND',
   'NOT_AUTHORIZED',
@@ -410,7 +408,7 @@ function isAmount(value: unknown): value is string {
 }
 
 function isIdentifier(value: unknown): value is string {
-  return IDENTIFIER(value);
+  return isCompanyEntityId(value);
 }
 
 function displayItemName(definitionId: string): string {

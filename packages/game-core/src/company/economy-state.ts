@@ -1059,8 +1059,11 @@ function legacyLearningStartShape(value: unknown): boolean {
   );
 }
 function currentLearningStartShape(value: unknown): boolean {
-  if (!shape(value, ['taskId', 'command', 'quote'], ['inputs', 'studyIntervalId'])) return false;
-  if (!plainObject(value['command'])) return false;
+  if (
+    !shape(value, ['taskId', 'command', 'quote'], ['inputs', 'studyIntervalId', 'retraining']) ||
+    !plainObject(value['command'])
+  )
+    return false;
   const quote = value['quote'];
   if (
     !shape(quote, [
@@ -1074,10 +1077,10 @@ function currentLearningStartShape(value: unknown): boolean {
     !isEntityId(quote['sourceId']) ||
     !isEntityId(quote['sourceVersion']) ||
     !(quote['mentorId'] === null || isEntityId(quote['mentorId'])) ||
-    !isExactInteger(quote['maxTicks'])
+    !isExactInteger(quote['maxTicks']) ||
+    !plainObject(quote['coefficients'])
   )
     return false;
-  if (!plainObject(quote['coefficients'])) return false;
   const funding = quote['funding'];
   if (
     funding !== null &&
@@ -1094,35 +1097,51 @@ function currentLearningStartShape(value: unknown): boolean {
   )
     return false;
   const inputs = value['inputs'];
-  if (inputs === undefined) return true;
-  if (!plainObject(inputs)) return false;
-  const common = [
-    'kind',
-    'schemaVersion',
-    'rulesVersion',
-    'skillId',
-    'levelAtStart',
-    'aptitudeAtStartBps',
-  ];
-  if (inputs['kind'] === 'BOOK')
-    return shape(inputs, [
-      ...common,
-      'workId',
-      'workVersion',
-      'sectionId',
-      'durationTicks',
-      'finiteMilliXp',
-      'factId',
-    ]);
-  if (inputs['kind'] === 'COURSE')
-    return (
-      shape(
-        inputs,
-        [...common, 'ticksPerDay', 'baseMilliXpPerDay', 'challengeLevel', 'challengeBps', 'outcomeBps'],
-        ['coursePolicyVersion'],
-      ) && isExactInteger(inputs['ticksPerDay'])
-    );
-  return false;
+  const validInputs =
+    inputs === undefined ||
+    (plainObject(inputs) &&
+      (inputs['kind'] === 'BOOK'
+        ? shape(inputs, [
+            'kind',
+            'schemaVersion',
+            'rulesVersion',
+            'skillId',
+            'levelAtStart',
+            'aptitudeAtStartBps',
+            'workId',
+            'workVersion',
+            'sectionId',
+            'durationTicks',
+            'finiteMilliXp',
+            'factId',
+          ])
+        : inputs['kind'] === 'COURSE' &&
+          shape(
+            inputs,
+            [
+              'kind',
+              'schemaVersion',
+              'rulesVersion',
+              'skillId',
+              'levelAtStart',
+              'aptitudeAtStartBps',
+              'ticksPerDay',
+              'baseMilliXpPerDay',
+              'challengeLevel',
+              'challengeBps',
+              'outcomeBps',
+            ],
+            ['coursePolicyVersion'],
+          ) &&
+          isExactInteger(inputs['ticksPerDay'])));
+  const retraining = value['retraining'];
+  return (
+    validInputs &&
+    (retraining === undefined ||
+      (shape(retraining, ['oldPerkId', 'newPerkId']) &&
+        isEntityId(retraining['oldPerkId']) &&
+        isEntityId(retraining['newPerkId'])))
+  );
 }
 function economyRequirementShape(value: unknown): boolean {
   if (!plainObject(value)) return false;

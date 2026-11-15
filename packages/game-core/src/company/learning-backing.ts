@@ -122,7 +122,10 @@ function buildObligation(
   }
   requireEconomy(admission.funding !== null, 'INVALID_ARGUMENT');
   const { source, funding } = admission;
-  requireEconomy(source.kind === 'COURSE' && source.providerId, 'INVALID_SOURCE');
+  requireEconomy(
+    (source.kind === 'COURSE' || source.kind === 'RETRAINING') && source.providerId,
+    'INVALID_SOURCE',
+  );
   const payer = poolWallet(state.finance, quote.funding.poolId);
   const recipient = walletFor(state.finance, quote.funding.providerWalletId);
   requireEconomy(
@@ -300,7 +303,7 @@ export function prepareLearningBacking(
   requireEconomy(
     task.start.command.companyId === context.companyId &&
       task.start.command.worldId === context.worldId &&
-      (guarded.command.type !== 'StartLearning' ||
+      (!['StartLearning', 'StartRetraining'].includes(guarded.command.type) ||
         canonicalJson(guarded.command) === canonicalJson(task.start.command)) &&
       (guarded.command.type !== 'StopLearning' ||
         guarded.command.payload.taskId === task.start.taskId) &&
@@ -324,9 +327,13 @@ export function prepareLearningBacking(
       return accepted > maximum ? accepted : maximum;
     }, 0n);
   let obligation = existing ?? buildObligation(task, state, context, guarded.command);
-  if (existing || guarded.command.type !== 'StartLearning') {
+  if (
+    existing ||
+    (guarded.command.type !== 'StartLearning' && guarded.command.type !== 'StartRetraining')
+  ) {
     requireEconomy(
       guarded.command.type !== 'StartLearning' &&
+        guarded.command.type !== 'StartRetraining' &&
         checkFreshCompanyRevision(guarded.command, context) &&
         guarded.command.campaignTick === context.atTick &&
         (guarded.command.type !== 'StopLearning' ||

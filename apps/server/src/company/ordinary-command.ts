@@ -4,7 +4,10 @@ import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
 import { KAMENNY_BROD_GUARD_COURSE } from './courses.js';
 
-type OrdinaryRequest = Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'BuySupplies' }>;
+type OrdinaryRequest = Exclude<
+  OrdinaryPlayerCompanyCommandV2Dto,
+  { type: 'BuySupplies' | 'PayDeceasedWages' }
+>;
 type PreparedEconomy = Extract<EconomyResult, { kind: 'PREPARED' }>;
 type OrdinaryIds = {
   readonly partyId: string | undefined;

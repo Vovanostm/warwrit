@@ -3,7 +3,7 @@ import { requireEconomy } from './economy-state.js';
 import { parseCompanyCommand } from './commands.js';
 import type { CompanyEconomyState } from './economy-types.js';
 import type { LearningTaskState } from './learning-task.js';
-import { readLearningTaskState } from './learning-task.js';
+import { learningStartResourceIds, readLearningTaskState } from './learning-task.js';
 import type { StudyAccessState } from './study-access.js';
 import {
   closeStudyAccessForItems,
@@ -157,7 +157,7 @@ export function recordLearningDutyChange(
         interval.characterId === command.payload.characterId &&
         interval.workId === task.start.inputs.workId &&
         interval.sectionId === task.start.inputs.sectionId &&
-        task.start.command.payload.resourceIds.includes(interval.itemId),
+        learningStartResourceIds(task.start).includes(interval.itemId),
       'INVALID_SOURCE',
     );
     const at = BigInt(command.campaignTick);
@@ -272,7 +272,7 @@ export function recordBookTransfer(
       !entry.stop &&
       (!entry.terminal || entry.terminal.commandId === command.commandId) &&
       entry.start.inputs?.kind === 'BOOK' &&
-      entry.start.command.payload.resourceIds.includes(oldItem.itemId) &&
+      learningStartResourceIds(entry.start).includes(oldItem.itemId) &&
       hasStudyAccessOwner(learning.studyAccess.intervals, {
         intervalId: entry.start.studyIntervalId,
         itemId: oldItem.itemId,

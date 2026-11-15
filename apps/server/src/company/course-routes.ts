@@ -25,11 +25,7 @@ import {
 } from './repository.js';
 import type { CompanyRoutesOptions } from './routes.js';
 import { prepareStationaryFoodFacts } from './travel-food.js';
-import {
-  KAMENNY_BROD_GUARD_COURSE,
-  prepareCourseAdvance,
-  courseResourceIds,
-} from './courses.js';
+import { KAMENNY_BROD_GUARD_COURSE, prepareCourseAdvance, courseResourceIds } from './courses.js';
 import { localCompanyContacts } from './recruitment.js';
 
 export function registerCompanyCourseRoutes(
@@ -108,7 +104,11 @@ async function advanceCourseToClock(
   if (!parsed.ok || parsed.command.type !== 'AdvanceCampaign') return undefined;
   const food = prepareStationaryFoodFacts(state, toTick, commandId);
   if (food.kind !== 'PREPARED') return undefined;
-  const prepared = prepareCourseAdvance({ state, command: parsed.command, physicalFacts: food.facts });
+  const prepared = prepareCourseAdvance({
+    state,
+    command: parsed.command,
+    physicalFacts: food.facts,
+  });
   if (prepared.kind !== 'PREPARED') return undefined;
   const next = prepared.next;
   const response = {
@@ -157,20 +157,18 @@ function courseView(
   const otherLearning = state.learning.tasks.tasks.some(
     (task) => !task.stop && !task.terminal && task !== active,
   );
-  const completed = courseTasks.find(
-    (task) =>
-      task.terminal?.kind === 'GOAL_REACHED' ||
-      (task.terminal?.kind === 'QUOTE_LIMIT' &&
-        task.completedTicks === KAMENNY_BROD_GUARD_COURSE.durationTicks),
-  );
-  const stopped = [...courseTasks].reverse().find((task) => task.stop !== undefined);
-  const interrupted = [...courseTasks]
-    .reverse()
-    .find((task) => task.terminal !== undefined && task !== completed);
-  const visibleTask = active ?? completed ?? stopped ?? interrupted;
+  const lastTask = courseTasks.at(-1);
+  const completed =
+    lastTask &&
+    (lastTask.terminal?.kind === 'GOAL_REACHED' ||
+      (lastTask.terminal?.kind === 'QUOTE_LIMIT' &&
+        lastTask.completedTicks === KAMENNY_BROD_GUARD_COURSE.durationTicks))
+      ? lastTask
+      : undefined;
+  const visibleTask = active ?? lastTask;
   const resources = courseResourceIds(state);
   const learners =
-    !local || active || otherLearning || completed || resources.length === 0
+    !local || active || otherLearning || resources.length === 0
       ? []
       : state.economy.lifecycle.characters.flatMap((character) => {
           const characterId = character.identity.characterId;
@@ -206,7 +204,7 @@ function courseView(
         ? 'IN_PROGRESS'
         : completed
           ? 'COMPLETE'
-        : local && learners.length
+          : local && learners.length
             ? 'AVAILABLE'
             : 'UNAVAILABLE',
       ...(!local
@@ -215,10 +213,9 @@ function courseView(
           ? { unavailableReason: 'NO_RESOURCE' as const }
           : learners.length === 0 && !active && !completed
             ? {
-                unavailableReason:
-                  otherLearning
-                    ? ('OTHER_LEARNING' as const)
-                    : ('NO_ELIGIBLE_LEARNER' as const),
+                unavailableReason: otherLearning
+                  ? ('OTHER_LEARNING' as const)
+                  : ('NO_ELIGIBLE_LEARNER' as const),
               }
             : {}),
       learners,
@@ -229,8 +226,7 @@ function courseView(
               learnerId: visibleTask.start.command.payload.characterId,
               acceptedTicks: visibleTask.completedTicks,
               remainingTicks: (
-                BigInt(KAMENNY_BROD_GUARD_COURSE.durationTicks) -
-                BigInt(visibleTask.completedTicks)
+                BigInt(KAMENNY_BROD_GUARD_COURSE.durationTicks) - BigInt(visibleTask.completedTicks)
               ).toString(),
               chargedQ: (state.economy.finance.learningEffects ?? [])
                 .filter((effect) => effect.taskId === visibleTask.start.taskId)

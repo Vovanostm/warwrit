@@ -94,3 +94,19 @@ Use the canonical transaction for claim/wallet/receipt; no partial disposal.
 Use current public-boundary payroll tests and a real DB transaction if changing
 payment/access. Browser evidence must include the actual deceased obligation.
 Pure source review alone can close triage, not PAY-3/PAY-5 or this package.
+
+## Implementation checkpoint — 2026-11-15
+
+PARTIAL / LOCAL. The ordinary owned-company panel now reads known historical
+members' actual predeath wage debt and offers its accepted settlement at Каменный
+Брод. The authenticated command binds the caller, catches up stationary time,
+consumes available company cash into the accepted sink and records its exact
+receipt atomically. Rejected payment rolls back its catch-up savepoint. Existing
+estate ownership remains with its canonical owner.
+
+The retained N01 company has no deceased wage account. Living former member Mora
+does not supply a death-payment case. Its UI can therefore establish the empty
+state only. Actual PostgreSQL settlement/retry/refusal coverage is being prepared
+in an isolated clone. Native eligible settlement, restart and PAY-3/PAY-5 remain
+NOT_RUN. The shared entity-ID reader accepts historical JSON-shaped IDs within
+the existing canonical bound.

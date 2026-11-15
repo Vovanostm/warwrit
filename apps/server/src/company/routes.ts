@@ -42,6 +42,8 @@ import { readWorldClock } from '../world/clock.js';
 import { executeOrdinaryPlayerCompanyCommand } from './executor.js';
 import { readSupplyShop } from './supplies.js';
 import { registerCompanyReturnReportRoutes } from './return-report.js';
+import { parsePayDeceasedWagesRequest } from './deceased-wages-routes.js';
+import { executePayDeceasedWages } from './deceased-wages.js';
 import { projectCompanyHoldings } from './holdings.js';
 import { isPayrollPayload } from './payroll-intent.js';
 import {
@@ -421,6 +423,7 @@ function parseOrdinaryCompanyCommandV2(
   value: unknown,
 ): OrdinaryPlayerCompanyCommandV2Dto | undefined {
   if (!isRecord(value)) return undefined;
+  if (value['type'] === 'PayDeceasedWages') return parsePayDeceasedWagesRequest(value);
   if (
     canonicalJson(Object.keys(value).sort()) !==
       canonicalJson(['commandId', 'expectedPublicRevision', 'payload', 'schemaVersion', 'type']) ||
@@ -640,17 +643,19 @@ async function executeOrdinaryCompanyRequest(
       publicRevision: '0',
       code: 'INVALID_COMMAND',
     });
-  const result = await database.transaction().execute((transaction) =>
-    executeOrdinaryPlayerCompanyCommand({
+  const result = await database.transaction().execute((transaction) => {
+    const context = {
       transaction,
       accountId,
       expectedCompanyId: readExpectedCompanyId(request.raw.rawHeaders),
       worldId,
-      request: ordinary,
       requestKey: canonicalJson(ordinary),
       now: new Date(),
-    }),
-  );
+    };
+    return ordinary.type === 'PayDeceasedWages'
+      ? executePayDeceasedWages({ ...context, request: ordinary })
+      : executeOrdinaryPlayerCompanyCommand({ ...context, request: ordinary });
+  });
   return reply.code(result.kind === 'COMMITTED' ? 200 : result.statusCode).send(result.response);
 }
 

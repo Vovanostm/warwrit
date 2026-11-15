@@ -1581,7 +1581,7 @@ function withCareState(
 
 async function executeOrdinary(
   scenario: Scenario,
-  request: OrdinaryPlayerCompanyCommandV2Dto,
+  request: Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'PayDeceasedWages' }>,
   accountId = scenario.ownerAccountId,
   now = new Date(0),
 ) {
@@ -1624,7 +1624,10 @@ async function readOrdinaryPersistence(scenario: Scenario) {
   return { snapshot, state: readCompanyCombatAggregateState(snapshot.state), receipts, audit };
 }
 
-async function commitOrdinary(scenario: Scenario, request: OrdinaryPlayerCompanyCommandV2Dto) {
+async function commitOrdinary(
+  scenario: Scenario,
+  request: Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'PayDeceasedWages' }>,
+) {
   const result = await executeOrdinary(scenario, request);
   const stored = await readOrdinaryPersistence(scenario);
   expect(result).toEqual({
@@ -1646,7 +1649,7 @@ async function commitOrdinary(scenario: Scenario, request: OrdinaryPlayerCompany
 
 async function rejectOrdinaryUnchanged(
   scenario: Scenario,
-  request: OrdinaryPlayerCompanyCommandV2Dto,
+  request: Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'PayDeceasedWages' }>,
   code: string,
   accountId = scenario.ownerAccountId,
   statusCode = 409,

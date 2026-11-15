@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   WORLD_EXPECTED_COMPANY_ID_HEADER,
+  isCompanyEntityId,
   type CompanySummaryDto,
   type DeceasedWageQuoteDto,
   type OrdinaryPlayerCompanyCommandV2Dto,
@@ -10,7 +11,6 @@ import './deceased-payroll.css';
 
 const API_BASE_URL = (import.meta.env['VITE_API_BASE_URL'] ?? '/api').replace(/\/$/u, '');
 const STORAGE_PREFIX = 'warwrit:deceased-wages:v1';
-const ID = /^[A-Za-z0-9][A-Za-z0-9:_./-]{0,255}$/u;
 const REVISION = /^(0|[1-9][0-9]{0,127})$/u;
 const REJECTION_CODES = new Set([
   'INVALID_COMMAND',
@@ -304,7 +304,7 @@ function readQuote(value: unknown): DeceasedWageQuoteDto | undefined {
   for (const person of value['people']) {
     if (
       !record(person) ||
-      !identifier(person['characterId']) ||
+      !isCompanyEntityId(person['characterId']) ||
       typeof person['name'] !== 'string' ||
       person['name'].trim().length === 0 ||
       [...person['name']].length > 120 ||
@@ -337,10 +337,10 @@ function readAttempt(key: string, accountId: string, companyId: string): StoredA
     if (
       request['schemaVersion'] === 2 &&
       request['type'] === 'PayDeceasedWages' &&
-      identifier(request['commandId']) &&
+      isCompanyEntityId(request['commandId']) &&
       revision(request['expectedPublicRevision']) &&
       record(payload) &&
-      identifier(payload['characterId'])
+      isCompanyEntityId(payload['characterId'])
     )
       return { accountId, companyId, request: request as unknown as PayRequest };
     return undefined;
@@ -369,9 +369,6 @@ function classifyCommand(status: number, value: unknown, commandId: string): Com
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-function identifier(value: unknown): value is string {
-  return typeof value === 'string' && ID.test(value);
 }
 function revision(value: unknown): value is string {
   return typeof value === 'string' && value.length <= 128 && REVISION.test(value);

@@ -11,6 +11,7 @@ import {
   isEntityId,
   isExactInteger,
   materializeCompanyPhysicalState,
+  learningStartResourceIds,
   parseCompanyCommand,
   prepareCompanyEconomy,
   prepareEquipmentSale,
@@ -135,7 +136,7 @@ export function registerEquipmentMarketRoutes(
             (task) =>
               !task.stop &&
               !task.terminal &&
-              task.start.command.payload.resourceIds.includes(item.itemId),
+              learningStartResourceIds(task.start).includes(item.itemId),
           );
           if (candidate.kind === 'PREPARED')
             items.push({
@@ -401,7 +402,7 @@ export function registerEquipmentMarketRoutes(
           (task) =>
             !task.stop &&
             !task.terminal &&
-            task.start.command.payload.resourceIds.includes(requestDto.itemId),
+            learningStartResourceIds(task.start).includes(requestDto.itemId),
         );
         let next = postSale;
         let courseInterruptionEvents: readonly Readonly<object>[] = [];

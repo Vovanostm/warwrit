@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   WORLD_EXPECTED_COMPANY_ID_HEADER,
+  isCompanyEntityId,
   type CompanyCourseResponseDto,
   type CompanyHoldingsDto,
   type OrdinaryPlayerCompanyCommandV2Dto,
@@ -12,7 +13,6 @@ import './course-panel.css';
 const API_BASE_URL = (import.meta.env['VITE_API_BASE_URL'] ?? '/api').replace(/\/$/u, '');
 const SITE_ID = 'kamenny-brod';
 const STORAGE_PREFIX = 'warwrit:company-course:v1';
-const ID = /^[A-Za-z0-9][A-Za-z0-9:_./-]{0,255}$/u;
 const REVISION = /^(0|[1-9][0-9]{0,127})$/u;
 const REJECTION_CODES = new Set([
   'INVALID_COMMAND',
@@ -249,10 +249,10 @@ export function CoursePanel(props: {
           <p className="state-note">
             Плата начисляется только за прошедшее время. Обучение можно остановить в любой момент.
           </p>
-          {course.status === 'IN_PROGRESS' && course.progress && (
+          {course.progress && (
             <div className="course-panel-progress">
               <p>
-                Учится: {characterName(props.company, course.progress.learnerId)} · пройдено{' '}
+                Ученик: {characterName(props.company, course.progress.learnerId)} · пройдено{' '}
                 {formatGameDays(course.progress.acceptedTicks)} из{' '}
                 {formatGameDays(course.durationTicks)} игровых дней.
               </p>
@@ -261,23 +261,24 @@ export function CoursePanel(props: {
                 {gameDayUnit(course.progress.remainingTicks)} · уже списано{' '}
                 {formatCrowns(course.progress.chargedQ)} кр.
               </p>
-              <button
-                type="button"
-                className="action action-quiet"
-                disabled={busy || Boolean(pending)}
-                onClick={stop}
-              >
-                Остановить обучение
-              </button>
+              {course.status === 'IN_PROGRESS' && (
+                <button
+                  type="button"
+                  className="action action-quiet"
+                  disabled={busy || Boolean(pending)}
+                  onClick={stop}
+                >
+                  Остановить обучение
+                </button>
+              )}
             </div>
           )}
-          {course.status === 'COMPLETE' && (
-            <p className="state-note">Обучение завершено. Новое занятие пока недоступно.</p>
-          )}
+          {course.status === 'COMPLETE' && <p className="state-note">Курс завершён.</p>}
           {course.status === 'UNAVAILABLE' && (
             <p className="state-note">{unavailableText(course.unavailableReason)}</p>
           )}
-          {course.status === 'AVAILABLE' && (
+          {(course.status === 'AVAILABLE' ||
+            (course.status === 'COMPLETE' && course.learners.length > 0)) && (
             <div className="course-panel-choice">
               {course.learners.length === 0 ? (
                 <p className="state-note">Сейчас в отряде нет подходящего ученика.</p>
@@ -319,7 +320,7 @@ export function CoursePanel(props: {
                             )
                           }
                         />
-                        <span>{resourceName(props.holdings, resourceId)}</span>
+                        <span>{resourceName(props.company, props.holdings, resourceId)}</span>
                       </label>
                     ))}
                   </fieldset>
@@ -360,9 +361,9 @@ function readCourseResponse(value: unknown): CourseView | undefined {
   if (!record(value) || !record(value['course'])) return undefined;
   const course = value['course'];
   if (
-    !identifier(course['courseId']) ||
-    !identifier(course['providerId']) ||
-    !identifier(course['skillId']) ||
+    !isCompanyEntityId(course['courseId']) ||
+    !isCompanyEntityId(course['providerId']) ||
+    !isCompanyEntityId(course['skillId']) ||
     !revision(course['durationTicks']) ||
     BigInt(course['durationTicks']) <= 0n ||
     !amount(course['costQPerDay']) ||
@@ -375,11 +376,11 @@ function readCourseResponse(value: unknown): CourseView | undefined {
   for (const learner of course['learners']) {
     if (
       !record(learner) ||
-      !identifier(learner['characterId']) ||
+      !isCompanyEntityId(learner['characterId']) ||
       !Number.isSafeInteger(learner['currentLevel']) ||
       (learner['currentLevel'] as number) < 0 ||
       !Array.isArray(learner['resourceIds']) ||
-      !learner['resourceIds'].every(identifier)
+      !learner['resourceIds'].every(isCompanyEntityId)
     )
       return undefined;
     learners.push({
@@ -399,8 +400,8 @@ function readCourseResponse(value: unknown): CourseView | undefined {
     const value = course['progress'];
     if (
       !record(value) ||
-      !identifier(value['taskId']) ||
-      !identifier(value['learnerId']) ||
+      !isCompanyEntityId(value['taskId']) ||
+      !isCompanyEntityId(value['learnerId']) ||
       !revision(value['acceptedTicks']) ||
       !revision(value['remainingTicks']) ||
       !amount(value['chargedQ'])
@@ -442,21 +443,21 @@ function readAttempt(key: string, accountId: string, companyId: string): StoredA
     const request = value['request'];
     if (
       request['schemaVersion'] !== 2 ||
-      !identifier(request['commandId']) ||
+      !isCompanyEntityId(request['commandId']) ||
       !revision(request['expectedPublicRevision']) ||
       !record(request['payload'])
     )
       return undefined;
     if (
       request['type'] === 'StartLearning' &&
-      identifier(request['payload']['courseId']) &&
-      identifier(request['payload']['characterId']) &&
+      isCompanyEntityId(request['payload']['courseId']) &&
+      isCompanyEntityId(request['payload']['characterId']) &&
       Array.isArray(request['payload']['resourceIds']) &&
       request['payload']['resourceIds'].length > 0 &&
-      request['payload']['resourceIds'].every(identifier)
+      request['payload']['resourceIds'].every(isCompanyEntityId)
     )
       return { accountId, companyId, request: request as unknown as CourseCommand };
-    if (request['type'] === 'StopLearning' && identifier(request['payload']['taskId']))
+    if (request['type'] === 'StopLearning' && isCompanyEntityId(request['payload']['taskId']))
       return { accountId, companyId, request: request as unknown as CourseCommand };
     return undefined;
   } catch {
@@ -485,9 +486,6 @@ function classifyCommand(status: number, value: unknown, commandId: string): Com
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
-function identifier(value: unknown): value is string {
-  return typeof value === 'string' && ID.test(value);
-}
 function revision(value: unknown): value is string {
   return typeof value === 'string' && value.length <= 128 && REVISION.test(value);
 }
@@ -500,9 +498,16 @@ function characterName(company: CompanySummaryDto, characterId: string): string 
     'участник'
   );
 }
-function resourceName(holdings: CompanyHoldingsDto | undefined, resourceId: string): string {
+function resourceName(
+  company: CompanySummaryDto,
+  holdings: CompanyHoldingsDto | undefined,
+  resourceId: string,
+): string {
   const item = holdings?.items.find((entry) => entry.itemId === resourceId);
-  return item ? `${itemLabel(item.definitionId)} · ${resourceId}` : `Предмет ${resourceId}`;
+  if (!item) return 'Снаряжение для занятий';
+  const carrierId = item.equippedBy ?? item.carrierCharacterId;
+  const location = carrierId ? characterName(company, carrierId) : 'в обозе';
+  return `${itemLabel(item.definitionId)} · ${location}`;
 }
 function skillName(skillId: string): string {
   return skillId === 'blades' ? 'Клинки' : skillId;

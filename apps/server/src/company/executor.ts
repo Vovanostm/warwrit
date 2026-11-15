@@ -212,7 +212,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
   readonly accountId: string;
   readonly expectedCompanyId: string | undefined;
   readonly worldId: string;
-  readonly request: OrdinaryPlayerCompanyCommandV2Dto;
+  readonly request: Exclude<OrdinaryPlayerCompanyCommandV2Dto, { type: 'PayDeceasedWages' }>;
   readonly requestKey: string;
   readonly now: Date;
 }): Promise<OrdinaryCompanyCommandExecution> {
@@ -414,9 +414,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     );
   let foodFacts = courseInterruptedBeforeMovement ? [] : food.facts;
 
-  let courseStart:
-    | { readonly walletId: string; readonly accessEvidenceId: string }
-    | undefined;
+  let courseStart: { readonly walletId: string; readonly accessEvidenceId: string } | undefined;
   if (input.request.type === 'StartLearning') {
     const location = KAMENNY_BROD_GUARD_COURSE.location;
     const offeredResources = courseResourceIds(state);
@@ -1006,7 +1004,10 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
 async function commitOrdinaryCourseCommand(input: {
   readonly transaction: Transaction<DatabaseSchema>;
   readonly previousRevision: string;
-  readonly request: Extract<OrdinaryPlayerCompanyCommandV2Dto, { type: 'StartLearning' | 'StopLearning' }>;
+  readonly request: Extract<
+    OrdinaryPlayerCompanyCommandV2Dto,
+    { type: 'StartLearning' | 'StopLearning' }
+  >;
   readonly requestKey: string;
   readonly command: Extract<CompanyCommand, { type: 'StartLearning' | 'StopLearning' }>;
   readonly state: CompanyCombatAggregateState;
@@ -2175,7 +2176,11 @@ export async function catchUpStationaryCompany(input: {
   let next: CompanyCombatAggregateState;
   let advancementEvents: readonly Readonly<object>[];
   if (hasActiveCourse) {
-    const course = prepareCourseAdvance({ state: previous, command: parsed.command, physicalFacts: food.facts });
+    const course = prepareCourseAdvance({
+      state: previous,
+      command: parsed.command,
+      physicalFacts: food.facts,
+    });
     if (course.kind !== 'PREPARED') return undefined;
     next = course.next;
     advancementEvents = course.events;

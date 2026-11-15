@@ -483,6 +483,8 @@ function argumentsValid(command: CompanyCommand): boolean {
         old !== undefined &&
         next !== undefined &&
         old.id !== next.id &&
+        ((old.id === 'blades-25-a' && next.id === 'blades-25-b') ||
+          (old.id === 'blades-25-b' && next.id === 'blades-25-a')) &&
         old.skillId === next.skillId &&
         old.milestone === next.milestone
       );

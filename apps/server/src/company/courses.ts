@@ -160,6 +160,7 @@ export function learningSourceForCourseTask(task: LearningTask): LearningSourceE
   const sourceId = task.start.quote.sourceId;
   const funding = task.start.quote.funding;
   if (
+    command.type !== 'StartLearning' ||
     !funding ||
     task.start.inputs?.kind !== 'COURSE' ||
     command.payload.methodId !== 'funded-practice'

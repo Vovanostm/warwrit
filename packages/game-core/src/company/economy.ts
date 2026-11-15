@@ -92,6 +92,7 @@ import {
   recordBookTransfer,
   type CompanyLearningState,
 } from './learning-state.js';
+import { learningStartResourceIds } from './learning-task.js';
 
 type PracticeEconomyContext = EconomyContext & Pick<PracticeContext, 'practiceFacts'>;
 
@@ -344,10 +345,10 @@ function affectedLearningTasks(
     return active.filter(
       (task) =>
         task.start.inputs?.kind === 'BOOK' &&
-        task.start.command.payload.resourceIds.some((id) => itemIds.has(id)) &&
+        learningStartResourceIds(task.start).some((id) => itemIds.has(id)) &&
         hasStudyAccessOwner(learning.studyAccess.intervals, {
           intervalId: task.start.studyIntervalId,
-          itemId: [...itemIds].find((id) => task.start.command.payload.resourceIds.includes(id))!,
+          itemId: [...itemIds].find((id) => learningStartResourceIds(task.start).includes(id))!,
           characterId: task.start.command.payload.characterId,
         }) &&
         (command.type === 'TransferItem' ||
@@ -824,13 +825,17 @@ function prepareEconomyCandidate(
       if (
         command.type === 'TransferItem' ||
         (learningInput &&
-          ['AdvanceCampaign', 'SetAssignment', 'StartLearning', 'StopLearning'].includes(
-            command.type,
-          ))
+          [
+            'AdvanceCampaign',
+            'SetAssignment',
+            'StartLearning',
+            'StartRetraining',
+            'StopLearning',
+          ].includes(command.type))
       )
         timed = { ...timed, lifecycle: { ...timed.lifecycle, campaignTick: target } };
       if (learningInput) {
-        if (command.type === 'StartLearning') {
+        if (command.type === 'StartLearning' || command.type === 'StartRetraining') {
           requireEconomy(learningInput.taskId, 'INVALID_ARGUMENT');
           requireEconomy(
             learningInput.intervals.length === 0 &&
