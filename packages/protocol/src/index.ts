@@ -64,6 +64,7 @@ export * from './contracts.js';
 export * from './story.js';
 export * from './encounter.js';
 export * from './combat-lab.js';
+export * from './nicknames.js';
 export type {
   WorldFreeMovementV2RequestDto,
   WorldFreeMovementV2ResponseDto,
