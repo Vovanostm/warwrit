@@ -1,5 +1,6 @@
 import {
   COMPANY_CATALOGUE,
+  HUNT_PROFILES,
   M1_DOMAIN_BRIDGE_V6_RULESET_ID,
   canonicalJson,
   isEntityId,
@@ -57,6 +58,32 @@ export function initializeHostileGearForNewV6Admission(input: {
       }),
     };
   });
+}
+
+/** Reconcile terminal combat pools into the retained canonical gear instances. */
+export function reconcileHostileGearPools(
+  worldId: string,
+  hostile: FirstHuntHostileState,
+  newPools: Readonly<Record<string, number>>,
+): FirstHuntHostileState {
+  if (!isPool(newPools, hostile.attributes))
+    throw new TypeError('Verified hostile pools are invalid');
+  const next: FirstHuntHostileState = { ...hostile, currentPools: newPools };
+  if (!hostile.gear) return next;
+
+  const profile = HUNT_PROFILES.find((entry) =>
+    entry.hostiles.some((unit) => unit.entityId === hostile.entityId),
+  );
+  if (!profile) throw new TypeError('Hostile gear profile is unavailable');
+  validateFirstHuntHostileGear(worldId, profile, hostile, hostile.gear);
+  const items = hostile.gear.items.map((item, index) =>
+    index === 1
+      ? { ...item, currentCondition: Math.min(hostile.armorCondition, newPools['armor']!) }
+      : item,
+  );
+  const gear: FirstHuntHostileGearState = { ...hostile.gear, items };
+  validateFirstHuntHostileGear(worldId, profile, { ...next, gear }, gear);
+  return { ...next, gear };
 }
 
 /** Ground the stored gear after the caller verifies the terminal battle surrender. */
@@ -197,7 +224,12 @@ export function validateFirstHuntHostileGear(
     if (!isRecord(item)) throw new TypeError('Hostile gear item is invalid');
     const definition = itemDefinitions[index]!;
     const condition =
-      index === 0 ? hostileValue['weaponCondition'] : hostileValue['armorCondition'];
+      index === 0
+        ? hostileValue['weaponCondition']
+        : Math.min(
+            Number(hostileValue['armorCondition']),
+            Number((hostileValue['currentPools'] as Record<string, unknown>)['armor']),
+          );
     const maximumCondition = definition.maxArmor ?? 10000;
     if (
       !exactKeys(item, [
@@ -266,7 +298,10 @@ function createHostileGear(input: {
     owner: { kind: 'WORLD', id: input.worldId },
     containerId,
     quantity: 1,
-    currentCondition: ordinal === 0 ? input.hostile.weaponCondition : input.hostile.armorCondition,
+    currentCondition:
+      ordinal === 0
+        ? input.hostile.weaponCondition
+        : Math.min(input.hostile.armorCondition, input.hostile.currentPools['armor']!),
     maximumCondition: definition.maxArmor ?? 10000,
     contentRevision: '0',
     provenance: { sourceId, parentItemId: null, ordinal },
@@ -332,6 +367,23 @@ function validDispositionAndPool(value: Record<string, unknown>): boolean {
     isRecord(value['currentPools']) &&
     Number.isSafeInteger(value['currentPools']['health']) &&
     (value['disposition'] !== 'surrendered' || Number(value['currentPools']['health']) > 0)
+  );
+}
+
+function isPool(
+  value: Readonly<Record<string, number>>,
+  maximums: Readonly<Record<string, number>>,
+): boolean {
+  const keys = ['armor', 'health', 'morale', 'stamina'];
+  return (
+    Object.keys(value).toSorted().join('\0') === keys.join('\0') &&
+    keys.every(
+      (key) =>
+        Number.isSafeInteger(value[key]) &&
+        Number.isSafeInteger(maximums[key]) &&
+        value[key]! >= 0 &&
+        value[key]! <= maximums[key]!,
+    )
   );
 }
 
