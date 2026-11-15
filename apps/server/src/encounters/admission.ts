@@ -7,6 +7,7 @@ import {
   campaignTick,
   canonicalRevision,
   canonicalJson,
+  companySourceKey,
   parseCompanyCommand,
 } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState, EncounterCompanySource } from '@warwrit/game-core';
@@ -21,6 +22,7 @@ import { updateCompanyAggregateWithReceipt } from '../company/repository.js';
 import { prepareTrustedCompanyCommand, stableCompanyRequestKey } from '../company/executor.js';
 import { readHuntAttempt } from './hunt-attempt.js';
 import { travelAdvanceSourceEventId } from '../company/travel-food.js';
+import { prepareCourseInterruption } from '../company/courses.js';
 
 const HUMAN_DEADLINE_MS = 30_000;
 const HUMAN_DEADLINE_POLICY = 'first-hunt-human-deadline-v1';
@@ -93,6 +95,15 @@ export async function admitFirstHuntInTransaction(input: {
       { readonly kind: 'PREPARED' }
     >['prepared'];
   }[] = [];
+  const courseStops = new Map<
+    string,
+    {
+      readonly previous: CompanyCombatAggregateState;
+      readonly command: Extract<ReturnType<typeof prepareCourseInterruption>, { kind: 'PREPARED' }>['command'];
+      readonly next: CompanyCombatAggregateState;
+      readonly events: readonly Readonly<object>[];
+    }
+  >();
   const orderedCompanies = joinRows.toSorted((a, b) => compareCodeUnits(a.companyId, b.companyId));
   for (const join of orderedCompanies) {
     const previous = companyStates.get(join.companyId);
@@ -181,6 +192,26 @@ export async function admitFirstHuntInTransaction(input: {
       if (prepared.kind !== 'PREPARED') return undefined;
       state = prepared.prepared.nextState;
       campaignAdvances.push({ previous, prepared: prepared.prepared });
+    }
+
+    if (state.learning.tasks.tasks.some((task) => !task.stop && !task.terminal)) {
+      if (state !== previous) return undefined;
+      const interruption = prepareCourseInterruption({
+        state,
+        commandId: `course-encounter-stop-${contract.instance_id}-${join.companyId}-${atTick}`,
+        sourceEventId: `course-encounter-stop-event-${contract.instance_id}-${join.companyId}-${atTick}`,
+        atTick,
+        reason: 'PREREQUISITES',
+        physicalFacts: [],
+      });
+      if (interruption.kind !== 'PREPARED') return undefined;
+      state = interruption.next;
+      courseStops.set(join.companyId, {
+        previous,
+        command: interruption.command,
+        next: interruption.next,
+        events: interruption.events,
+      });
     }
 
     // JOIN records durable player consent. Its original revision and tick identify that
@@ -523,6 +554,43 @@ export async function admitFirstHuntInTransaction(input: {
           })),
         },
       );
+    } else {
+      const stop = courseStops.get(source.root.lifecycle.companyId);
+      if (stop) {
+        const sourceKey = companySourceKey(stop.command);
+        if (sourceKey === null) throw new TypeError('FIRST HUNT course stop source is invalid');
+        await updateCompanyAggregateWithReceipt(
+          transaction,
+          stop.previous.economy.lifecycle.revision,
+          stop.next.economy.lifecycle.revision,
+          stop.next,
+          {
+            command: stop.command,
+            receipt: {
+              receiptId: randomUUID(),
+              commandId: stop.command.commandId,
+              sourceKey,
+              requestKey: canonicalJson({
+                kind: 'FIRST_HUNT_COURSE_INTERRUPTION',
+                encounterId,
+                companyId: stop.next.economy.lifecycle.companyId,
+                atTick,
+              }),
+              response: {
+                commandId: stop.command.commandId,
+                ok: true,
+                publicRevision: stop.next.economy.lifecycle.knowledge.revision,
+              },
+              resultingRevision: stop.next.economy.lifecycle.revision,
+            },
+            auditEvents: stop.events.map((event) => ({
+              eventId: randomUUID(),
+              revision: stop.next.economy.lifecycle.revision,
+              event,
+            })),
+          },
+        );
+      }
     }
     await persistFirstHuntBinding(transaction, {
       previous: statesAtTick.get(source.root.lifecycle.companyId)!,
