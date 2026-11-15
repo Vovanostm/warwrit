@@ -122,7 +122,14 @@ export function recordWhoseWolvesFinding(
     return undefined;
   const nextCompany = {
     ...company,
-    findings: [...company.findings, { ...input }],
+    findings: [
+      ...company.findings,
+      {
+        findingId: input.findingId,
+        sourceEventId: input.sourceEventId,
+        atTick: input.atTick,
+      },
+    ],
   };
   return replaceCompany(state, nextCompany);
 }

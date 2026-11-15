@@ -14,6 +14,23 @@ import {
 } from './whose-wolves.js';
 
 describe('whose-wolves quest state', () => {
+  it('persists only the canonical finding fields', () => {
+    const finding = {
+      companyId: 'company-a',
+      findingId: 'bones-and-fish-guts' as const,
+      sourceEventId: 'a-bones',
+      atTick: '100',
+      displayText: 'adapter-only data',
+    };
+
+    const recorded = recordWhoseWolvesFinding(emptyWhoseWolvesQuestState(), finding)!;
+
+    expect(recorded.companies[0]?.findings).toEqual([
+      { findingId: 'bones-and-fish-guts', sourceEventId: 'a-bones', atTick: '100' },
+    ]);
+    expect(readWhoseWolvesQuestState(JSON.parse(JSON.stringify(recorded)))).toEqual(recorded);
+  });
+
   it('keeps findings company-private and requires both findings before sparing and exposing Efim', () => {
     const initial = emptyWhoseWolvesQuestState();
     expect(
