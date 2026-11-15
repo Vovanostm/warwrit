@@ -155,6 +155,28 @@ it('keeps Place at the actual settlement after a distant map selection', async (
   expect(ui.element.querySelector('.place-panel h2')?.textContent).toBe('Северный Двор');
 });
 
+it('opens the story from the stationary Severny Dvor place view only', async () => {
+  const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>(
+    async () => new Response(JSON.stringify({ error: 'story unavailable' }), { status: 404 }),
+  );
+  vi.stubGlobal('fetch', fetchMock);
+  const ui = await mount();
+  await ui.click('Место');
+  expect(ui.element.querySelector('#story-entry')).not.toBeNull();
+  await ui.click('История у Кондрата · «Кто выдал тайник»');
+  expect(fetchMock.mock.calls[0]?.[0]).toBe('/api/story');
+  expect(fetchMock.mock.calls[0]?.[1]?.credentials).toBe('same-origin');
+  expect(ui.element.querySelector('.story-panel')?.textContent).toContain(
+    'Сейчас разговор недоступен.',
+  );
+  await ui.click('Выбрать Березняк на карте');
+  await ui.rerender({
+    world: { ...props.world, party: { ...props.world.party!, location: 'bereznyak' } },
+  });
+  await ui.click('Место');
+  expect(ui.element.querySelector('#story-entry')).toBeNull();
+});
+
 it.each([
   ['STATIONARY_TERRAIN', 'Здания и услуги доступны после прибытия'],
   [null, 'Сверяем положение отряда'],

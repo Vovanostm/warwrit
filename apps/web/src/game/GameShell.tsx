@@ -32,6 +32,8 @@ import { WorldMapCanvas } from './WorldMapCanvas.js';
 import { BUILDINGS, placeBuildings, type BuildingType } from './place-buildings.js';
 import type { ContractPlaceFact, ContractVisit, ContractVisitProps } from './contract-visits.js';
 import { FreeMovementPanel } from './FreeMovementPanel.js';
+import { StoryPanel } from './StoryPanel.js';
+import { lookup } from '../i18n/index.js';
 import { PlaceScene } from './PlaceScene.js';
 import type { FreeMovementAction, FreeMovementScope } from '../world-free-movement-attempt.js';
 
@@ -105,6 +107,7 @@ export function GameShell(props: {
   const [focusSiteId, setFocusSiteId] = useState<string | null>(null);
   const [placeFacts, setPlaceFacts] = useState<readonly ContractPlaceFact[]>([]);
   const [buildingVisit, setBuildingVisit] = useState<ContractVisit | null>(null);
+  const [storyOpen, setStoryOpen] = useState(false);
   useEffect(() => {
     setPlaceFacts([]);
   }, [props.company.companyId]);
@@ -262,7 +265,14 @@ export function GameShell(props: {
     <div
       className={`game-shell${light.phase === 'NIGHT' ? ' game-night' : ''}`}
       onKeyDown={(event) => {
-        if (event.key !== 'Escape' || !contractVisit) return;
+        if (event.key !== 'Escape') return;
+        if (storyOpen) {
+          event.stopPropagation();
+          setStoryOpen(false);
+          requestAnimationFrame(() => document.getElementById('story-entry')?.focus());
+          return;
+        }
+        if (!contractVisit) return;
         event.stopPropagation();
         const building = contractVisit.building;
         setBuildingVisit(null);
@@ -562,6 +572,23 @@ export function GameShell(props: {
                     {currentSite.danger === 'DANGEROUS' ? ' · опасно' : ''}
                   </p>
                   <p className="state-note">Ваш отряд здесь.</p>
+                  {currentSite.siteId === 'severny-dvor' &&
+                    canVisit &&
+                    !contractVisit &&
+                    party?.location === 'severny-dvor' && (
+                      <button
+                        id="story-entry"
+                        className="quiet-action story-entry"
+                        type="button"
+                        aria-expanded={storyOpen}
+                        aria-controls="cache-disclosure-story"
+                        onClick={() => setStoryOpen((open) => !open)}
+                      >
+                        {lookup(
+                          `story.sm.m1.cache-disclosure.01.ui.${storyOpen ? 'close' : 'open'}`,
+                        )}
+                      </button>
+                    )}
                   {!travelling && party?.location === currentSite.siteId && (
                     <div className="camp-row">
                       {props.holdings?.fieldCamp ? (
@@ -640,6 +667,25 @@ export function GameShell(props: {
                 onVisitIssuer: visitIssuer,
                 onJournal: openJournal,
               })}
+              {storyOpen &&
+                currentSite?.siteId === 'severny-dvor' &&
+                canVisit &&
+                !contractVisit &&
+                party?.location === 'severny-dvor' && (
+                  <div id="cache-disclosure-story">
+                    <StoryPanel
+                      key={`${props.freeMovementScope.accountId}:${props.freeMovementScope.companyId}`}
+                      scope={props.freeMovementScope}
+                      onRefreshCompany={props.onRefreshCompany}
+                      onClose={() => {
+                        setStoryOpen(false);
+                        requestAnimationFrame(() =>
+                          document.getElementById('story-entry')?.focus(),
+                        );
+                      }}
+                    />
+                  </div>
+                )}
             </div>
           </div>
           <div hidden={tab !== 'company'}>
