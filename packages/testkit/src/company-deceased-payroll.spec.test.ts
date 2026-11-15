@@ -3,11 +3,13 @@ import {
   DECEASED_KIN_WAGE_SINK_ID,
   payDeceasedWages,
   parseCompanyCommand,
+  prepareCompanyEconomy,
   entityId,
   type CompanyCommand,
   type CompanyEconomyState,
   type FinanceEvidence,
   type LocalMoneyAccess,
+  type PhysicalEvidence,
 } from '@warwrit/game-core';
 import {
   access,
@@ -16,6 +18,10 @@ import {
   command,
   context,
   economy,
+  observation,
+  physicalScope,
+  prepared,
+  scope,
   tick,
 } from './company-economy-fixture.js';
 
@@ -32,14 +38,30 @@ function deceasedState(balance = 5000n): CompanyEconomyState {
       ...state.lifecycle,
       characters: state.lifecycle.characters.map((character) =>
         character.identity.characterId === characterId
-          ? { ...character, presence: { ...character.presence, availability: 'DEAD' } }
+          ? {
+              ...character,
+              presence: {
+                ...character.presence,
+                availability: 'DEAD',
+                assignment: 'NONE',
+                fieldPartyId: null,
+              },
+            }
           : character,
       ),
       knowledge: {
         ...state.lifecycle.knowledge,
         characters: state.lifecycle.knowledge.characters.map((character) =>
           character.identity.characterId === characterId
-            ? { ...character, presence: { ...character.presence, availability: 'DEAD' } }
+            ? {
+                ...character,
+                presence: {
+                  ...character.presence,
+                  availability: 'DEAD',
+                  assignment: 'NONE',
+                  fieldPartyId: null,
+                },
+              }
             : character,
         ),
       },
@@ -85,6 +107,7 @@ function atKamennyBrod(state: CompanyEconomyState): CompanyEconomyState {
     ...state,
     lifecycle: {
       ...state.lifecycle,
+      parties: state.lifecycle.parties.map((party) => ({ ...party, location: kamennyBrod })),
       characters: state.lifecycle.characters.map((character) => ({
         ...character,
         presence: { ...character.presence, location: kamennyBrod },
@@ -128,6 +151,147 @@ function run(state: CompanyEconomyState, cmd = request(state), facts?: FinanceEv
 }
 
 describe('N04 finite deceased wage settlement', () => {
+  it('settles the debt after an ordinary RecordDeath and company observation', () => {
+    let state = claims(economy([1n, 1n], 5000n, 1000), [5n, 1n]);
+    const currentMembership = state.lifecycle.memberships.find(
+      (membership) => membership.membershipId === 'service-worker-0',
+    )!;
+    const oldMembership = {
+      ...currentMembership,
+      membershipId: entityId<'Membership'>('service-worker-0-old-real'),
+      startedAt: tick(800),
+      endedAt: tick(900),
+      basis: 'FOUNDER' as const,
+      wageScheduleId: null,
+    };
+    const oldAccount = {
+      ...state.finance.accounts.find((account) => account.membershipId === 'service-worker-0')!,
+      membershipId: oldMembership.membershipId,
+      schedule: null,
+      known: true,
+      knownDeath: false,
+      death: null,
+    };
+    const oldClaim = {
+      ...state.finance.claims.find((claim) => claim.membershipId === 'service-worker-0')!,
+      claimId: entityId<'WageClaim'>('service-worker-0-old-claim'),
+      membershipId: oldMembership.membershipId,
+      fromTick: tick(890),
+      toTick: tick(900),
+      dailyWageMilli: '2',
+      earned: [
+        { fromTick: tick(890), toTick: tick(900), dailyWageMilli: '2', maintenanceId: null },
+      ],
+      reportedQ: cash(1),
+    };
+    state = {
+      ...state,
+      lifecycle: {
+        ...state.lifecycle,
+        memberships: [
+          ...state.lifecycle.memberships.map((membership) =>
+            membership.membershipId === currentMembership.membershipId
+              ? { ...membership, startedAt: tick(950) }
+              : membership,
+          ),
+          oldMembership,
+        ],
+      },
+      finance: {
+        ...state.finance,
+        accounts: [...state.finance.accounts, oldAccount],
+        claims: state.finance.claims
+          .map((claim) =>
+            claim.membershipId === 'service-worker-0'
+              ? {
+                  ...claim,
+                  fromTick: tick(994),
+                  toTick: tick(1000),
+                  earned: [
+                    {
+                      fromTick: tick(994),
+                      toTick: tick(1000),
+                      dailyWageMilli: '1',
+                      maintenanceId: null,
+                    },
+                  ],
+                  reportedQ: cash(1),
+                }
+              : claim,
+          )
+          .concat(oldClaim),
+      },
+    };
+    state = atKamennyBrod(state);
+    const deathCommand = command(
+      state,
+      'RecordDeath',
+      {
+        receiptId: 'death-finance-receipt',
+        characterId: 'worker-0',
+        actualDeathTick: tick(1000),
+        causeId: 'fatal-battle',
+        custodyOutcomeId: 'death-physical-outcome',
+      },
+      'record-worker-death',
+      'OUTCOME_RECEIPT',
+    );
+    const financeFact: FinanceEvidence = {
+      ...scope(state, 'death-finance-receipt'),
+      sourceEventId: deathCommand.sourceEventId!,
+      kind: 'FINANCIAL_DEATH',
+      characterId: 'worker-0',
+      actualDeathTick: tick(1000),
+      recipient: { kind: 'ESTATE', id: 'worker-0' },
+      causeId: 'fatal-battle',
+      custodyOutcomeId: 'death-physical-outcome',
+    };
+    const physicalFact: PhysicalEvidence = {
+      ...physicalScope(state, 'death-physical-outcome'),
+      sourceEventId: deathCommand.sourceEventId!,
+      kind: 'DEATH_OUTCOME',
+      characterId: 'worker-0',
+      actualDeathTick: tick(1000),
+      causeId: 'fatal-battle',
+      location: kamennyBrod,
+      corpseContainerId: 'worker-corpse',
+    };
+    const dead = prepared(
+      prepareCompanyEconomy(
+        state,
+        deathCommand,
+        context(state, deathCommand, [financeFact], [], [physicalFact]),
+      ),
+    ).next;
+    const observed = observation(dead, 'worker-0').result.next;
+    const originalEstate = observed.finance.accounts.find(
+      (account) => account.membershipId === 'service-worker-0',
+    )!.death!.recipient;
+    const settlement = run(observed);
+
+    expect(
+      observed.finance.claims.find((claim) => claim.membershipId === 'service-worker-0'),
+    ).toMatchObject({ reportedQ: '6', paidQ: '0' });
+    expect(settlement.settlement.amountQ).toBe('26');
+    expect(settlement.settlement.claimAllocations).toMatchObject([
+      { claimId: 'claim-0', amountQ: '6' },
+      { claimId: 'service-worker-0-old-claim', amountQ: '20' },
+    ]);
+    expect(
+      settlement.next.finance.claims.find((claim) => claim.membershipId === 'service-worker-0'),
+    ).toMatchObject({ reportedQ: '6', paidQ: '6' });
+    expect(
+      settlement.next.finance.claims.find(
+        (claim) => claim.membershipId === 'service-worker-0-old-real',
+      ),
+    ).toMatchObject({ reportedQ: '20', paidQ: '20' });
+    expect(
+      settlement.next.finance.accounts.find(
+        (account) => account.membershipId === 'service-worker-0',
+      )?.death?.recipient,
+    ).toEqual(originalEstate);
+  });
+
   it('debits only actual earned debt to the stable kin sink, clears its backed hold, and preserves the estate receipt', () => {
     const state = deceasedState();
     const claim = state.finance.claims[0]!;
@@ -193,7 +357,7 @@ describe('N04 finite deceased wage settlement', () => {
     const oldAccount = {
       ...state.finance.accounts.find((account) => account.membershipId === 'service-worker-0')!,
       membershipId: oldMembership.membershipId,
-      known: false,
+      known: true,
       knownDeath: false,
       death: null,
     };
@@ -316,7 +480,33 @@ describe('N04 finite deceased wage settlement', () => {
   });
 
   it('cannot spend unrelated held cash and refuses insufficient local funds', () => {
-    const state = deceasedState(5000n);
+    const base = deceasedState(5000n);
+    const unrelatedClaim = base.finance.claims[1]!;
+    const state = {
+      ...base,
+      finance: {
+        ...base.finance,
+        claims: base.finance.claims.map((claim) =>
+          claim.claimId === unrelatedClaim.claimId
+            ? {
+                ...claim,
+                fromTick: tick(0),
+                toTick: tick(999),
+                dailyWageMilli: '5',
+                earned: [
+                  {
+                    fromTick: tick(0),
+                    toTick: tick(999),
+                    dailyWageMilli: '5',
+                    maintenanceId: null,
+                  },
+                ],
+                reportedQ: cash(4995),
+              }
+            : claim,
+        ),
+      },
+    };
     const claim = state.finance.claims[0]!;
     const heldAndAvailable = {
       ...state,
@@ -326,7 +516,7 @@ describe('N04 finite deceased wage settlement', () => {
           {
             reservationId: 'other-claim',
             walletId: 'purse',
-            claimId: state.finance.claims[1]!.claimId,
+            claimId: unrelatedClaim.claimId,
             amountQ: cash(4995),
             purpose: 'PRE_ENTRY' as const,
           },
@@ -345,7 +535,7 @@ describe('N04 finite deceased wage settlement', () => {
       availableResult.next.finance.wallets.find((wallet) => wallet.walletId === 'purse')?.cashQ,
     ).toBe('4995');
     expect(availableResult.next.finance.reservations).toMatchObject([
-      { claimId: state.finance.claims[1]!.claimId, amountQ: '4995' },
+      { claimId: unrelatedClaim.claimId, amountQ: '4995' },
     ]);
 
     const heldElsewhere = {
@@ -356,7 +546,7 @@ describe('N04 finite deceased wage settlement', () => {
           {
             reservationId: 'other-claim',
             walletId: 'purse',
-            claimId: state.finance.claims[1]!.claimId,
+            claimId: unrelatedClaim.claimId,
             amountQ: cash(4998),
             purpose: 'PRE_ENTRY' as const,
           },
