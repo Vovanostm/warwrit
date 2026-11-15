@@ -133,6 +133,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     mode: choice('DEFAULT', 'TARGETED'),
     payeeId: optional(id),
   }),
+  PayDeceasedWages: command('PLAYER', { characterId: id }),
   GrantFarewell: command('PLAYER', {
     membershipId: id,
     quoteRevision: unsigned,
