@@ -16,6 +16,7 @@ import type {
   WorldFreeMovementTargetDto,
   WorldLabCartographyDto,
   WorldLabKnownSiteDto,
+  WorldLabObservationDateDto,
 } from '@warwrit/protocol';
 import type { Transaction } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
@@ -121,7 +122,7 @@ export function projectKnownSite(
   snapshot: Readonly<Record<string, unknown>>,
   source: 'CHART' | 'OBSERVED',
   visited: boolean,
-  lastObservedAt?: { readonly campaignDay: string; readonly tick: string },
+  lastObservedAt?: WorldLabObservationDateDto,
 ): WorldLabKnownSiteDto {
   const point = snapshot['point'] as WorldLabKnownSiteDto['point'] | undefined;
   if (
@@ -159,6 +160,15 @@ export function campaignObservationDate(
     campaignDay: (absoluteTick / ticksPerDay + 1n).toString(),
     tick: (absoluteTick % ticksPerDay).toString(),
   };
+}
+
+export function observationDate(
+  observedAt: Date,
+  clock: Pick<WorldClockReading, 'epochMs' | 'startingTick'>,
+): WorldLabObservationDateDto {
+  if (BigInt(observedAt.getTime()) < BigInt(clock.epochMs))
+    return { kind: 'TIMESTAMP', timestamp: observedAt.toISOString() };
+  return { kind: 'CAMPAIGN', ...campaignObservationDate(observedAt, clock) };
 }
 
 export function siteIsVisible(site: WorldLabKnownSiteDto, visible: Uint8Array): boolean {
@@ -207,7 +217,7 @@ export async function readWorldLabCartography(
       observation.knownSnapshot,
       'OBSERVED',
       observation.firstVisitedAt !== null,
-      campaignObservationDate(observation.lastObservedAt, clock),
+      observationDate(observation.lastObservedAt, clock),
     );
     sites.set(site.siteId, { ...site, questMarker: sites.get(site.siteId)?.questMarker === true });
   }

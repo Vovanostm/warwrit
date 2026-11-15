@@ -313,7 +313,13 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
   const lastObservedAt = site.lastObservedAt;
   const lastSeen =
     site.source === 'OBSERVED' && site.currentlyVisible === false && lastObservedAt
-      ? `Последнее наблюдение: день ${lastObservedAt.campaignDay} · такт ${lastObservedAt.tick}`
+      ? lastObservedAt.kind === 'CAMPAIGN'
+        ? `Видели в день ${lastObservedAt.campaignDay} · такт ${lastObservedAt.tick}`
+        : `Видели ${new Intl.DateTimeFormat('ru-RU', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            timeZone: 'UTC',
+          }).format(new Date(lastObservedAt.timestamp))} UTC`
       : undefined;
   const sourceLabel = site.source === 'CHART' ? 'По карте' : 'По наблюдению';
   return (
@@ -328,6 +334,7 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
       role={actionable ? 'button' : 'img'}
       tabIndex={actionable ? 0 : undefined}
       aria-label={site.name}
+      aria-description={lastSeen}
       onClick={actionable ? () => onSelectSite(site.siteId) : undefined}
       onKeyDown={
         actionable
@@ -357,7 +364,7 @@ function PaintedSiteMarker({ site, sheet, actionable, onSelectSite }: PaintedSit
       </text>
       {lastSeen && lastObservedAt && (
         <text className="site-last-seen" textAnchor="middle" y="-36">
-          {`Видели: день ${lastObservedAt.campaignDay} · такт ${lastObservedAt.tick}`}
+          {lastSeen}
         </text>
       )}
     </g>

@@ -4,6 +4,7 @@ import type { WorldLabCartographyDto } from '@warwrit/protocol';
 import {
   campaignObservationDate,
   cartographyKnowsSegment,
+  observationDate,
   projectKnownSite,
   siteIsVisible,
 } from './cartography.js';
@@ -36,6 +37,25 @@ it('dates observed places from their stored simulation time in the authoritative
   );
 });
 
+it('preserves pre-epoch stored observations as timestamps without exposing snapshot fields', () => {
+  const snapshot = {
+    siteId: 'legacy-place',
+    name: 'Legacy Place',
+    icon: 'village',
+    point: { xMicroFp: '65536', zMicroFp: '-65536' },
+    hiddenOwnerId: 'private-company',
+  };
+  const lastObservedAt = observationDate(new Date(0), { epochMs: '1', startingTick: '0' });
+  const observed = projectKnownSite(snapshot, 'OBSERVED', false, lastObservedAt);
+
+  expect(lastObservedAt).toEqual({
+    kind: 'TIMESTAMP',
+    timestamp: '1970-01-01T00:00:00.000Z',
+  });
+  expect(observed.lastObservedAt).toEqual(lastObservedAt);
+  expect(observed).not.toHaveProperty('hiddenOwnerId');
+});
+
 it('keeps chart grants undated and projects observations without private snapshot fields', () => {
   const snapshot = {
     siteId: 'known-place',
@@ -46,6 +66,7 @@ it('keeps chart grants undated and projects observations without private snapsho
   };
   const charted = projectKnownSite(snapshot, 'CHART', false);
   const observed = projectKnownSite(snapshot, 'OBSERVED', true, {
+    kind: 'CAMPAIGN',
     campaignDay: '3',
     tick: '17',
   });
@@ -55,7 +76,7 @@ it('keeps chart grants undated and projects observations without private snapsho
   expect(observed).toMatchObject({
     source: 'OBSERVED',
     visited: true,
-    lastObservedAt: { campaignDay: '3', tick: '17' },
+    lastObservedAt: { kind: 'CAMPAIGN', campaignDay: '3', tick: '17' },
   });
   expect(observed).not.toHaveProperty('hiddenOwnerId');
 });

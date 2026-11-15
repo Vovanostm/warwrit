@@ -30,12 +30,14 @@ actual travel/restart, using explicitly accelerated QA time.
 ### Dated marker presentation — 2026-11-16
 
 LOCAL — the authorized cartography DTO now carries optional current visibility
-and a campaign day/tick derived from each stored `lastObservedAt`. Chart grants
-remain chart-sourced and undated. Stale observed markers show their last-seen
-campaign date and keep their accessible site name; chart markers identify the
-map as their source. The existing map hint now names wheel zoom.
+and a campaign day/tick derived from each stored `lastObservedAt`. Observations
+before world genesis retain their original timestamp instead of failing the
+map projection or receiving an invented campaign day. Chart grants remain
+chart-sourced and undated. Stale observed markers show their last-seen date and
+keep their accessible site name; chart markers identify the map as their source.
+The existing map hint now names wheel zoom.
 
-PASS — focused cartography and rendered-markup tests (5 tests); core/protocol
+PASS — focused cartography and rendered-markup tests (6 tests); core/protocol
 builds, server-projection and web type checks; Prettier and `git diff --check`.
 Full server typecheck was attempted but could not resolve missing `pngjs` and
 testkit packages in the available dependency tree. Two-observer/native day-night

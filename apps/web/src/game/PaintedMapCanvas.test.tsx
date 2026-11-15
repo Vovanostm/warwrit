@@ -26,7 +26,7 @@ const cartography: WorldLabCartographyDto & { readonly mapEdition: string } = {
       source: 'OBSERVED',
       visited: true,
       currentlyVisible: false,
-      lastObservedAt: { campaignDay: '4', tick: '230' },
+      lastObservedAt: { kind: 'CAMPAIGN', campaignDay: '4', tick: '230' },
     },
     {
       siteId: 'charted-place',
@@ -45,7 +45,17 @@ const cartography: WorldLabCartographyDto & { readonly mapEdition: string } = {
       source: 'OBSERVED',
       visited: false,
       currentlyVisible: true,
-      lastObservedAt: { campaignDay: '4', tick: '230' },
+      lastObservedAt: { kind: 'CAMPAIGN', campaignDay: '4', tick: '230' },
+    },
+    {
+      siteId: 'legacy-place',
+      name: 'Старая метка',
+      point,
+      icon: 'village',
+      source: 'OBSERVED',
+      visited: true,
+      currentlyVisible: false,
+      lastObservedAt: { kind: 'TIMESTAMP', timestamp: '1970-01-01T00:00:00.000Z' },
     },
   ],
   imageTileSize: 384,
@@ -73,11 +83,12 @@ it('shows dates only for stale observed markers and preserves map controls and s
   );
 
   expect(markup).toContain('aria-label="Старая застава"');
-  expect(markup).toContain('Последнее наблюдение: день 4 · такт 230');
-  expect(markup).toContain('Видели: день 4 · такт 230');
+  expect(markup).toContain('aria-description="Видели в день 4 · такт 230"');
+  expect(markup).toContain('Видели в день 4 · такт 230');
+  expect(markup).toContain('Видели 1 янв. 1970 г., 00:00 UTC');
   expect(markup).toContain('По карте: Соседний двор');
   expect(markup).toContain('По наблюдению: Текущий двор');
-  expect(markup.match(/class="site-last-seen"/gu)).toHaveLength(1);
+  expect(markup.match(/class="site-last-seen"/gu)).toHaveLength(2);
   expect(markup).toContain('колесо мыши меняет масштаб');
   expect(markup).toContain('data-visible="false"');
   expect(markup).toContain('data-visible="true"');
