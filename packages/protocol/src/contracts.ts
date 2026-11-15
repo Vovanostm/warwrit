@@ -424,6 +424,8 @@ export interface OrdinaryContractDto {
         readonly northernDvorGrain: 'FULL_SACK' | 'SHORT_SACK';
         readonly yourCompanyKnowsYeremaSlept: boolean;
       };
+  /** True only for the company whose next offer from this issuer was refused. */
+  readonly issuerRefusedOffer?: true;
   readonly canAccept: boolean;
   readonly canHelp: boolean;
   readonly canWithdraw: boolean;

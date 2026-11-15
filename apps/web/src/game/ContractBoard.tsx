@@ -194,6 +194,11 @@ export function ContractConversation(props: ConversationProps) {
       )}
       {atIssuer ? (
         <>
+          {contract.issuerRefusedOffer && (
+            <p className="contract-message" role="status">
+              Кондрат не поручит вашей компании это дело.
+            </p>
+          )}
           <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
             <summary>Что произошло?</summary>
             <p className="contract-brief">{brief}</p>

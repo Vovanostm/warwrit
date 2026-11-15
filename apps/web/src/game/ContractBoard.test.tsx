@@ -92,6 +92,39 @@ describe('contract conversation and journal boundaries', () => {
     expect(markup).toContain('Купить комплект для тихого спуска');
   });
 
+  it('shows Kondrat’s refusal only to the refused company and hides acceptance', () => {
+    const millWorker: OrdinaryContractDto = {
+      ...herbs,
+      instanceId: 'ci.m1.mill-worker.01',
+      template: 'RESCUE',
+      issuerRoleId: 'local-village-steward',
+      issuerLocation: { siteId: 'severny-dvor', areaId: 'severny-dvor-yard' },
+      yourRole: 'NONE',
+      state: 'OFFERED',
+      canAccept: false,
+      issuerRefusedOffer: true,
+      canHelp: false,
+      canWithdraw: false,
+      steps: [],
+    };
+    const refused = render(
+      millWorker,
+      { siteId: 'severny-dvor', building: 'elder' },
+      'severny-dvor',
+    );
+    expect(refused).toContain('Кондрат не поручит вашей компании это дело.');
+    expect(refused).not.toContain('Договориться и взять поручение');
+
+    const { issuerRefusedOffer: _refusal, ...availableContract } = millWorker;
+    const available = render(
+      { ...availableContract, canAccept: true },
+      { siteId: 'severny-dvor', building: 'elder' },
+      'severny-dvor',
+    );
+    expect(available).not.toContain('Кондрат не поручит вашей компании');
+    expect(available).toContain('Договориться и взять поручение');
+  });
+
   it('says a no-payout ending paid nobody for both the owner and other companies', () => {
     const resolvedWithoutPayout: OrdinaryContractDto = {
       ...herbs,

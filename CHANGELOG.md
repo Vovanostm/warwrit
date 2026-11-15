@@ -76,9 +76,10 @@ requests.
   the earned nickname «Живучий», preserving explicit player consent.
   [Owner-approved conditions](docs/work-packages/m1-next/06-company-capabilities.md#retraining-and-earned-nickname--owner-decision-2026-11-15). LOCAL.
 - 2026-11-16 — Added: «Чьи волки» records company-private findings, the spared
-  choice and one later Кондрат offer refusal; a kill settles with pelt payment
-  and a delayed raid. Ефим's guide is limited to the informed company travelling
-  from Тихая Гать to Северный Двор; its revised line is «Быстрее доберётесь».
+  choice and one later Кондрат offer refusal through ordinary-contract ACCEPT;
+  a kill settles with pelt payment and a delayed raid. Ефим's guide is limited
+  to the informed company travelling from Тихая Гать to Северный Двор; its
+  revised line is «Быстрее доберётесь». Canonical finding fields survive reload.
   [Quest checkpoint](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-15 — Fixed: delay the empty-watch camp and old-ford outcomes until
   their campaign timing and local Prokop read are satisfied. [Quest checkpoint](docs/work-packages/M1-QUESTS.md#implementation-checkpoint--2026-11-15). LOCAL.

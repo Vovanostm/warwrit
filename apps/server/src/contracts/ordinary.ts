@@ -26,6 +26,10 @@ import {
   readCompanyCombatAggregateState,
   prepareOrdinaryContractCommand,
   readOrdinaryContractState,
+  refuseNextWhoseWolvesIssuerOffer,
+  whoseWolvesOfferWasRefused,
+  WHOSE_WOLVES_ISSUER_ID,
+  WHOSE_WOLVES_INSTANCE_ID,
   type CompanyCombatAggregateState,
   type ContractPlace,
   type OrdinaryContractContext,
@@ -65,6 +69,9 @@ import {
 import {
   ensureFirstHuntGenesisInTransaction,
   ensureHuntGenesisInTransaction,
+  selectHuntWorldRow,
+  readHuntWorldState,
+  updateHuntWorldRow,
   type FirstHuntHostileState,
 } from './first-hunt-runtime.js';
 
@@ -83,6 +90,10 @@ async function voiceUnderBoardsUnlocked(
     .executeTakeFirst();
   return proof?.redemption_receipt_id !== null && proof?.redemption_receipt_id !== undefined;
 }
+
+const ordinaryIssuerNpcByRole: Readonly<Record<string, string>> = Object.freeze({
+  'local-village-steward': WHOSE_WOLVES_ISSUER_ID,
+});
 
 type Rejection = Extract<OrdinaryContractCommandResponseDto, { ok: false }>['code'];
 
@@ -328,6 +339,7 @@ export function contractView(
   prerequisiteMet = true,
   kitStock?: { readonly revision: string; readonly quantity: number; readonly priceQ: string },
   terrainPosition?: OrdinaryContractContext['terrainPosition'],
+  issuerRefusedOffer = false,
 ): OrdinaryContractDto {
   const terms = state.acceptedTerms ?? ordinaryContractTerms(profile);
   const deadlineTicks =
@@ -510,7 +522,9 @@ export function contractView(
       state.ownerCompanyId === null &&
       !state.cargoCustody.some((entry) => entry.companyId !== null) &&
       state.custody.length === 0 &&
-      atIssuer,
+      atIssuer &&
+      !issuerRefusedOffer,
+    ...(issuerRefusedOffer ? { issuerRefusedOffer: true } : {}),
     canHelp:
       companyId !== undefined &&
       projectedState.outcome === null &&
@@ -770,6 +784,53 @@ async function executeOrdinaryCommand(
   );
   if (prepared.kind === 'REJECTED') return reject(prepared.code);
 
+  const issuerNpcId = ordinaryIssuerNpcByRole[profile.issuerRoleId];
+  if (request.type === 'ACCEPT' && issuerNpcId === WHOSE_WOLVES_ISSUER_ID) {
+    const whoseWolvesProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+    if (whoseWolvesProfile) {
+      const row = await selectHuntWorldRow(transaction, worldId, whoseWolvesProfile);
+      if (row) {
+        const world = readHuntWorldState(worldId, whoseWolvesProfile, row);
+        const questState = world.questState;
+        if (questState && whoseWolvesOfferWasRefused(questState, companyId, profile.instanceId))
+          return reject('NOT_AVAILABLE');
+        const refused = questState
+          ? refuseNextWhoseWolvesIssuerOffer(questState, {
+              companyId,
+              instanceId: profile.instanceId,
+              issuerId: issuerNpcId,
+            })
+          : undefined;
+        if (refused) {
+          await updateHuntWorldRow(transaction, world, {
+            revision: (BigInt(world.revision) + 1n).toString(),
+            questState: refused,
+          });
+          const response: OrdinaryContractCommandResponseDto = {
+            schemaVersion: 1,
+            commandId: request.commandId,
+            ok: true,
+            revision: state.revision,
+            rewardQ: null,
+          };
+          await transaction
+            .insertInto('ordinary_contract_receipts')
+            .values({
+              world_id: worldId,
+              company_id: companyId,
+              command_id: request.commandId,
+              instance_id: profile.instanceId,
+              request_key: requestKey,
+              response,
+              simulation_at_ms: null,
+            })
+            .execute();
+          return response;
+        }
+      }
+    }
+  }
+
   if (
     profile.instanceId === VOICE_UNDER_BOARDS &&
     request.type === 'STEP' &&
@@ -987,6 +1048,15 @@ export function registerOrdinaryContractRoutes(
         .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
         .where('world_id', '=', worldId)
         .execute();
+      const whoseWolvesProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+      const whoseWolvesRow =
+        companyId && whoseWolvesProfile
+          ? await selectHuntWorldRow(transaction, worldId, whoseWolvesProfile, false)
+          : undefined;
+      const whoseWolvesState =
+        whoseWolvesRow && whoseWolvesProfile
+          ? readHuntWorldState(worldId, whoseWolvesProfile, whoseWolvesRow).questState
+          : undefined;
       const contracts = [] as OrdinaryContractDto[];
       for (const profile of ORDINARY_CONTRACT_PROFILES) {
         if (
@@ -1053,6 +1123,10 @@ export function registerOrdinaryContractRoutes(
             prerequisiteMet,
             profile.instanceId === VOICE_UNDER_BOARDS ? kitStock : undefined,
             standingTerrainPosition(projectedCompany),
+            companyId !== undefined &&
+              whoseWolvesState !== undefined &&
+              ordinaryIssuerNpcByRole[profileVersion.issuerRoleId] === WHOSE_WOLVES_ISSUER_ID &&
+              whoseWolvesOfferWasRefused(whoseWolvesState, companyId, profile.instanceId),
           ),
         );
       }

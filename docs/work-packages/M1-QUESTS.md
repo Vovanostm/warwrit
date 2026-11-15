@@ -398,11 +398,13 @@ Implemented `ci.m1.whose-wolves.01` as one finite HUNT offer with six wolves
 and an 80-crown issuer wallet. The owner can record the two ordered findings at
 Тихая Гать. Before any encounter, the company can return to Кондрат and expose
 Ефим; that rejects the reward and binds one later Кондрат offer refusal to the
-same company. Its denied instance ID stays recorded, so a fresh ACCEPT command
-cannot bypass that refusal. Killing the pack settles `PACK_KILLED` only with the actual pelt
-presentation and payment transaction. The public raid fact materializes on a
-read at or after 7,000 campaign ticks. Findings and the refused offer instance
-remain company-private.
+same company. The refusal now runs through the ordinary-contract ACCEPT command,
+stores its exact receipt with the denied instance atomically, and hides that
+offer only from the affected company. Its denied instance ID stays recorded, so
+a fresh ACCEPT command cannot bypass that refusal. Killing the pack settles
+`PACK_KILLED` only with the actual pelt presentation and payment transaction.
+The public raid fact materializes on a read at or after 7,000 campaign ticks.
+Findings and the refused offer instance remain company-private.
 
 The owner approved the revised Efim line and a 25% travel-time reduction from
 Тихая Гать to Северный Двор. A pure guide-entitlement accessor binds the effect
@@ -411,9 +413,16 @@ movement-plan consumer and finite stacking profiles are being integrated by
 the movement slice; guide travel is not yet player-verified.
 
 The HUNT screen now offers clue inspection, the issuer report choice and
-branch feedback. Text check: 0 issues. Game-core, protocol and server
-typechecks passed. Web typecheck reports the four pre-existing
-`EquipmentTrader.tsx` DTO errors. Game tests and PostgreSQL integration are
-NOT_RUN. Prettier, scoped ESLint, migration guard and `git diff --check` passed.
+branch feedback. Text check: 0 issues. The canonical finding reader now stores
+only its three persisted fields; its regression checks saved-state roundtrip.
+Focused game-core, HUNT and contract-board tests passed (31). Game-core,
+protocol and server typechecks passed. Web typecheck still reports
+the four existing `EquipmentTrader.tsx` DTO errors. A PostgreSQL endpoint case
+passed 1/1 on the per-file isolated database harness, covering ordered private
+findings, report replay, the later ordinary offer, receipt replay, no payout,
+retry rejection, saved denial and the other company's view; the harness disposed
+the database after the test. The Russian text checker reported 0 issues for the
+contract board. Prettier, scoped ESLint and `git diff --check` passed; the
+migration guard is NOT_RUN because no migration changed in this follow-up.
 Normal playthrough and player acceptance are NOT_RUN; enjoyment is NOT_MEASURED.
 This slice is LOCAL; publication and merge are NOT_RUN.
