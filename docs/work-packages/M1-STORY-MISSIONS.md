@@ -295,8 +295,7 @@ A review correction makes Ulita's grain answer visible only after the company
 actually asks that question. E01 emits 40-crown payout eligibility; the server
 transaction still owns actual issuer debit and company credit.
 
-The authenticated SQL adapter, ordinary interface, concurrent finish/retry and
-real player journey remain unfinished. T034 stays open.
+T034 stays open until the ordinary player journey is finished.
 
 The server now has authenticated reads/commands, private journals, frozen delivery
 clock provenance and transactional issuer debit/company credit. Migration 0026
@@ -304,4 +303,8 @@ was applied on the owned restored copy after correcting its new account foreign
 key to UUID. Six PostgreSQL cases passed on author revision `eb15a6a0`, covering
 auth/private knowledge, E01 funds, E02, rollback, exact replay after movement,
 conflicting replay, concurrent finish and availability integrity. Integration
-verification and the ordinary interface journey remain open.
+verification passed all six story cases together with26 encounter cases.
+The migration launcher passed up/down and retained-story rollback protection
+on its disposable database. The ordinary interface is connected at Severny Dvor,
+and the retained company has accepted the story and begun interviewing the three
+characters. Its final accusation, payout and reload remain open.

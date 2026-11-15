@@ -169,6 +169,9 @@ export function projectCombatLabView(
       return {
         id: unit.id,
         ...(unit.partyId === undefined ? {} : { partyId: unit.partyId }),
+        ...(!combat.canTakeCombatActivation(unit, state.rulesetId) && unit.status === 'active'
+          ? { incapacitated: true }
+          : {}),
         ...(label === undefined ? {} : { name: label.name, profileId: label.profileId }),
         sideId: unit.sideId,
         weaponId: labWeaponId(unit.weaponId),

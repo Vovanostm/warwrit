@@ -91,6 +91,7 @@ async function readPlaygroundSnapshot(database: Kysely<DatabaseSchema>, owner: s
           receipts: combat.receipts,
           rejections: combat.rejections,
           events: combat.events,
+          historyLimit: combat.historyLimit,
         }
       : {}),
     audit: audit.rows.map(({ response }) => response.receipt),

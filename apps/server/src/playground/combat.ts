@@ -9,6 +9,8 @@ import { projectCombatLabView } from '../combat-lab/projection.js';
 import { createCombatLabPresentation } from '../combat-lab/presentation.js';
 import { createPlaygroundSetup } from './scenario.js';
 
+const INSPECTION_HISTORY_LIMIT = 128;
+
 export async function activateSandboxEncounter(
   transaction: Transaction<DatabaseSchema>,
   sandboxId: string,
@@ -42,6 +44,7 @@ export async function readSandboxEncounter(
   database: Kysely<DatabaseSchema> | Transaction<DatabaseSchema>,
   sandboxId: string,
   scenario: PlaygroundScenario,
+  completeHistory = false,
 ) {
   const row = (
     await sql<EncounterStoredRow>`select * from playground.encounters where sandbox_id = ${sandboxId}::uuid`.execute(
@@ -49,6 +52,7 @@ export async function readSandboxEncounter(
     )
   ).rows[0];
   if (!row) return null;
+  const historyLimit = completeHistory ? sql`` : sql`limit ${INSPECTION_HISTORY_LIMIT}`;
   const events = (
     await sql<{
       event: combat.CombatEvent;
@@ -59,24 +63,30 @@ export async function readSandboxEncounter(
   const commands = (
     await sql<{
       command: combat.CombatCommand;
-    }>`select command from playground.encounter_commands where encounter_id = ${row.id}::uuid order by revision`.execute(
+    }>`select command from playground.encounter_commands where encounter_id = ${row.id}::uuid order by revision desc ${historyLimit}`.execute(
       database,
     )
-  ).rows.map((item) => item.command);
+  ).rows
+    .reverse()
+    .map((item) => item.command);
   const receipts = (
     await sql<{
       response: unknown;
-    }>`select response from playground.encounter_receipts where encounter_id = ${row.id}::uuid order by resulting_revision`.execute(
+    }>`select response from playground.encounter_receipts where encounter_id = ${row.id}::uuid order by resulting_revision desc ${historyLimit}`.execute(
       database,
     )
-  ).rows.map((item) => item.response);
+  ).rows
+    .reverse()
+    .map((item) => item.response);
   const rejections = (
     await sql<{
       response: unknown;
-    }>`select response from playground.encounter_rejections where encounter_id = ${row.id}::uuid order by created_at, command_id`.execute(
+    }>`select response from playground.encounter_rejections where encounter_id = ${row.id}::uuid order by created_at desc, command_id desc ${historyLimit}`.execute(
       database,
     )
-  ).rows.map((item) => item.response);
+  ).rows
+    .reverse()
+    .map((item) => item.response);
   // The sandbox owner controls its authored participants on every side.
   const side =
     row.state.units.find((unit) => unit.id === row.state.activation?.unitId)?.sideId ??
@@ -86,7 +96,8 @@ export async function readSandboxEncounter(
     commands,
     receipts,
     rejections,
-    events,
+    events: completeHistory ? events : events.slice(-INSPECTION_HISTORY_LIMIT),
+    historyLimit: INSPECTION_HISTORY_LIMIT,
     view: projectCombatLabView(row.id, side, row.state, events, scenario.initial),
   };
 }
@@ -102,7 +113,7 @@ export async function sandboxReplay(
   const stored = await database
     .transaction()
     .setIsolationLevel('repeatable read')
-    .execute(async (transaction) => readSandboxEncounter(transaction, sandboxId, scenario));
+    .execute(async (transaction) => readSandboxEncounter(transaction, sandboxId, scenario, true));
   if (!stored || stored.row.setup.schemaVersion === 1) throw new Error('SANDBOX_NOT_ACTIVE');
   const versioned: combat.VersionedCombatReplay =
     stored.row.setup.schemaVersion === combat.COMBAT_V3_SCHEMA_VERSION

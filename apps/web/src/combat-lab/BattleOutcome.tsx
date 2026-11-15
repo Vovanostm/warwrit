@@ -60,8 +60,8 @@ function outcomeDescription(view: BattlePresentationView) {
   if (view.viewerSideKnown === false)
     return 'Победившая сторона определена; принадлежность вашей компании неизвестна.';
   return view.outcome?.winnerSideId === view.controlledSideId
-    ? 'У противника не осталось бойцов в строю.'
-    : 'В вашем отряде не осталось бойцов в строю.';
+    ? 'Все противники выбыли из боя.'
+    : 'Все бойцы вашей стороны выбыли из боя.';
 }
 
 function outcomeSideIds(view: BattlePresentationView): (string | undefined)[] {
@@ -85,7 +85,7 @@ function OutcomeSide({
     view.viewerSideKnown === false
       ? `Сторона ${sideId ?? 'неизвестна'}`
       : sideId === view.controlledSideId
-        ? `Ваш отряд · ${sideId}`
+        ? `Ваша сторона · ${sideId}`
         : `Сторона ${sideId ?? 'неизвестна'}`;
   return (
     <div>

@@ -14,6 +14,8 @@ import type { Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import type { FirstHuntWorldState } from '../contracts/first-hunt-runtime.js';
+import { isAvailableHuntHostile, updateHuntWorldRow } from '../contracts/first-hunt-runtime.js';
+import { initializeHostileGearForNewV6Admission } from '../contracts/first-hunt-gear.js';
 import { persistFirstHuntBinding } from '../contracts/repository.js';
 import { updateCompanyAggregateWithReceipt } from '../company/repository.js';
 import { prepareTrustedCompanyCommand, stableCompanyRequestKey } from '../company/executor.js';
@@ -65,7 +67,7 @@ export async function admitFirstHuntInTransaction(input: {
 
   const attempt = await readHuntAttempt(transaction, world);
   const attemptNo = attempt.joinAttemptNo;
-  const survivors = world.hostiles.filter((hostile) => hostile.currentPools['health']! > 0);
+  const survivors = world.hostiles.filter(isAvailableHuntHostile);
   if (!attemptNo || survivors.length === 0 || contract.owner_join_attempt_no !== attemptNo)
     return undefined;
   if (contract.helper_company_id !== null && contract.helper_join_attempt_no !== attemptNo)
@@ -236,12 +238,11 @@ export async function admitFirstHuntInTransaction(input: {
       ).length
     );
   }, 0);
-  const multiSideRules = profile.instanceId === 'ci.m1.wolf-trail.01';
   if (
     totalMembers > profile.alliedSlots.length ||
-    (multiSideRules
-      ? totalMembers > 12 || survivors.length > 12 || totalMembers + survivors.length > 36
-      : totalMembers + survivors.length > 12)
+    totalMembers > 12 ||
+    survivors.length > 12 ||
+    totalMembers + survivors.length > 36
   )
     return undefined;
 
@@ -293,7 +294,15 @@ export async function admitFirstHuntInTransaction(input: {
       morale: hostile.attributes['morale']!,
       stamina: hostile.attributes['stamina']!,
     },
-    ...(profile.instanceId === 'ci.m1.wolf-trail.01' ? { moralePolicy: 'beast' as const } : {}),
+    moralePolicy:
+      hostile.armorItemId === 'padded-coat'
+        ? ('human' as const)
+        : hostile.weaponItemId === 'wolf-fangs'
+          ? ('beast' as const)
+          : ('steady' as const),
+    ...(profile.instanceId === 'ci.m1.mill-beast.01'
+      ? { threatProfile: 'mill-slam' as const }
+      : {}),
     initialPools: {
       health: hostile.currentPools['health']!,
       armor: hostile.currentPools['armor']!,
@@ -313,13 +322,9 @@ export async function admitFirstHuntInTransaction(input: {
       ...profile.objectiveLocation,
     },
     setup: {
-      schemaVersion: multiSideRules
-        ? combat.COMBAT_V3_SCHEMA_VERSION
-        : combat.COMBAT_V2_SCHEMA_VERSION,
+      schemaVersion: combat.COMBAT_V3_SCHEMA_VERSION,
       battleId: combat.battleId(encounterId),
-      rulesetId: multiSideRules
-        ? combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID
-        : combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID,
+      rulesetId: combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID,
       seed: world.seed,
       map: profile.combatMap,
       sides: [
@@ -376,6 +381,18 @@ export async function admitFirstHuntInTransaction(input: {
   const accountId = activatedAccount ? companyAccounts.get(activatedAccount) : undefined;
   const deadlineAt = activatedHostile ? null : new Date(now.getTime() + HUMAN_DEADLINE_MS);
   const aiWakeAt = activatedHostile ? now : null;
+
+  const hostilesWithGear = initializeHostileGearForNewV6Admission({
+    world,
+    encounterId,
+    rulesetId: binding.setup.rulesetId,
+    location: evidence.location,
+  });
+  if (combat.canonicalJson(hostilesWithGear) !== combat.canonicalJson(world.hostiles))
+    await updateHuntWorldRow(transaction, world, {
+      revision: (BigInt(world.revision) + 1n).toString(),
+      hostiles: hostilesWithGear,
+    });
 
   await transaction
     .insertInto('encounters')

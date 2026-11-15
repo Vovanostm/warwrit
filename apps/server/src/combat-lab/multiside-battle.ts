@@ -297,7 +297,10 @@ export function createMultisideBattleSetup(
       ...(controllerId ? { controllerId } : {}),
     })),
     units: config.units.map((unit) => ({
-      ...createCombatLabProfiledUnitSetup(unit),
+      ...createCombatLabProfiledUnitSetup(
+        unit,
+        config.parties.find((party) => party.id === unit.partyId)!.kind === 'npc',
+      ),
       partyId: unit.partyId,
     })),
   };

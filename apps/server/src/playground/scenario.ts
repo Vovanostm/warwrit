@@ -272,6 +272,9 @@ function playgroundUnit<T extends combat.CombatUnitSetup>(unit: T, scenario: Pla
   const pools = scenario.resources.find((value) => value.unitId === unit.id);
   return {
     ...rest,
+    ...(scenario.initial.version === 2 && unit.threatProfile !== undefined
+      ? { threatProfile: unit.threatProfile }
+      : {}),
     weaponId: scenario.equipment.find((item) => item.unitId === unit.id)?.weaponId ?? unit.weaponId,
     skillRanks: {},
     capabilities: { move: true, attack: true, defend: true, retreat: true },

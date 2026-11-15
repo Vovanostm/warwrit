@@ -120,6 +120,9 @@ export function toEncounterPublicProjection(
         id: unit.id,
         sideId: unit.sideId,
         ...(unit.partyId === undefined ? {} : { partyId: unit.partyId }),
+        ...(!combat.canTakeCombatActivation(unit, state.rulesetId) && unit.status === 'active'
+          ? { incapacitated: true }
+          : {}),
         q: unit.position.q,
         r: unit.position.r,
         health: unit.health,

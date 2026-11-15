@@ -2,6 +2,7 @@ import type { Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 import type { FirstHuntWorldState } from '../contracts/first-hunt-runtime.js';
+import { isAvailableHuntHostile } from '../contracts/first-hunt-runtime.js';
 
 /** The caller holds the contract lock when using this result to accept JOIN. */
 export async function readHuntAttempt(
@@ -40,7 +41,7 @@ export async function readHuntAttempt(
     admission.effects_source_id ===
       `first-hunt-terminal:${admission.encounter_id}:${admission.terminal_revision}` &&
     proof === undefined &&
-    world.hostiles.some((hostile) => hostile.currentPools['health']! > 0);
+    world.hostiles.some(isAvailableHuntHostile);
   return {
     admission,
     repeatAvailable,

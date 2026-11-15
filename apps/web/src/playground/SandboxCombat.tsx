@@ -40,6 +40,7 @@ export function SandboxCombat({
   const [discardNext, setDiscardNext] = useState(false);
   const discardReply = useRef(false);
   const [report, setReport] = useState<PlaygroundReplayReport | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const locked = useRef(false);
   const auto = useRef(false);
   const abort = useRef(new AbortController());
@@ -362,25 +363,29 @@ export function SandboxCombat({
           />
         </BattleView>
       </div>
-      <details>
+      <details onToggle={(event) => setHistoryOpen(event.currentTarget.open)}>
         <summary>
+          {inspection.historyLimit &&
+            `Последние записи · до ${inspection.historyLimit} каждого типа · `}
           Events · {inspection.events?.length ?? 0} / commands · {inspection.commands?.length ?? 0}{' '}
           / receipts · {inspection.receipts?.length ?? 0} / rejections ·{' '}
           {inspection.rejections?.length ?? 0}
         </summary>
-        <pre>
-          {JSON.stringify(
-            {
-              events: inspection.events,
-              commands: inspection.commands,
-              receipts: inspection.receipts,
-              rejections: inspection.rejections,
-              result: view.outcome,
-            },
-            null,
-            2,
-          )}
-        </pre>
+        {historyOpen && (
+          <pre>
+            {JSON.stringify(
+              {
+                events: inspection.events,
+                commands: inspection.commands,
+                receipts: inspection.receipts,
+                rejections: inspection.rejections,
+                result: view.outcome,
+              },
+              null,
+              2,
+            )}
+          </pre>
+        )}
       </details>
     </section>
   );

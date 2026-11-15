@@ -11,6 +11,7 @@ import type {
 } from '@warwrit/protocol';
 import { SandboxSetup, isEditableScenario } from './SandboxSetup.js';
 import { SandboxCombat } from './SandboxCombat.js';
+import { downloadJson } from '../combat-lab/BattleEditor.js';
 import './playground.css';
 
 const api = `${import.meta.env['VITE_API_BASE_URL'] ?? '/api'}/dev/playground/api`;
@@ -61,6 +62,44 @@ export function Playground() {
   const locked = useRef(false);
   const mapMode = window.location.pathname.replace(/\/$/u, '').endsWith('/maps');
   const sandbox = inspection?.sandbox;
+
+  async function importScenario(file: File) {
+    const signal = controller.current?.signal;
+    if (
+      !signal ||
+      locked.current ||
+      busy ||
+      pending ||
+      combatPending ||
+      sandbox?.status === 'active'
+    )
+      return;
+    setBusy(true);
+    locked.current = true;
+    try {
+      const text = await file.text();
+      if (signal.aborted) return;
+      const value: unknown = JSON.parse(text);
+      if (!isEditableScenario(value))
+        throw new Error('Файл не содержит поддерживаемый сценарий Playground.');
+      setDraft(pretty(value));
+      setMessage('Сценарий импортирован. Сохраните черновик.');
+    } catch (error) {
+      if (!signal.aborted)
+        setMessage(
+          error instanceof SyntaxError
+            ? 'Файл содержит ошибку JSON. Проверьте его и повторите импорт.'
+            : error instanceof Error
+              ? error.message
+              : 'Не удалось прочитать сценарий.',
+        );
+    } finally {
+      if (!signal.aborted) {
+        locked.current = false;
+        setBusy(false);
+      }
+    }
+  }
 
   async function refresh(signal: AbortSignal, id?: string) {
     const next = await getJson<PlaygroundBootstrap>('', signal);
@@ -448,6 +487,25 @@ export function Playground() {
               </button>
               <details>
                 <summary>Scenario JSON · schema {parsed?.schemaRevision ?? '?'}</summary>
+                <button
+                  disabled={blocked || !isEditableScenario(parsed)}
+                  onClick={() => downloadJson('warwrit-playground.json', parsed)}
+                >
+                  Экспортировать сценарий
+                </button>
+                <label>
+                  Импортировать сценарий
+                  <input
+                    type="file"
+                    accept=".json,application/json"
+                    disabled={blocked || sandbox.status === 'active'}
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0];
+                      event.currentTarget.value = '';
+                      if (file) void importScenario(file);
+                    }}
+                  />
+                </label>
                 <label className="playground-draft">
                   Scenario JSON
                   <textarea

@@ -9,13 +9,32 @@ O5's remaining captivity/property-policy questions must be assessed separately
 from the accepted tactical surrender behavior. Carrying wounded follows M1.
 Fresh executable and terminal-path checks in this reconciliation are NOT_RUN.
 
-## Current result — 2026-11-08
+## Current result — 2026-11-15
 
-SPECIFIED / LOCAL. Hostile-retreat settlement PR408 and repeat-admission PR416
-are already merged; native first hostile escape remained unproved in their owning
-record. Surrender/captivity#377 is deferred/source-blocked, not approved here.
-Next: read current retreat policy, reachable outcomes and actual terminal worker.
-[Common contract](COMMON.md). [Prompt](prompts/08-battle-outcomes.md).
+IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`. New schema3/bridge-v6
+admission, replay, independent company control, terminal effects and release
+have passed the real PostgreSQL wolf-trail scenarios. Historical readers retain
+their versioned behavior.
+
+The latest owner rule in M1-CAMPAIGN-BATTLE accepts surrender with gear left on
+the field. Captivity, ransom and prisoner transport remain post-M1. The earlier
+O5 source deferral is superseded for this accepted surrender behavior.
+Company gear transfer and finalization now have a focused verified-journal
+regression. It preserves living members, prior presence, exact item IDs and an
+idempotent finalization. This is invariant evidence from a constructed source,
+not a native campaign surrender. Canonical hostile gear and surrender disposition
+now persist through terminal settlement. Equipment condition reflects actual
+remaining armor. Surrendered living enemies are excluded from later admissions.
+Ordinary loot pickup and sale remain open under T022.
+
+All three newly admitted hunt profiles use bridge-v6. Incapacitated living units
+skip activations and render prone while preserving selection and targeting.
+The final integrated encounter PostgreSQL suite passed26 tests. Focused company
+finalization, projection, scene and terminal-view checks also passed. Native
+surrender and ordinary campaign UI continuation remain unverified.
+
+Native hostile escape/surrender, browser continuation and the remaining outcome
+rows keep their direct acceptance criteria below.
 
 ## Player goal and ordinary path
 
@@ -31,21 +50,20 @@ N01; [retreat and dated policy](../../wiki/mechanics/retreat.md),
 [physical effects](../WP-02.4.md), current encounter effects/terminal evidence.
 Existing#364/#377/#378/#409/#392, not new duplicates.
 
-No surrender/capture/transport/rescue/reward policy may be inferred from the
-existence of a Capture consumer. Owner-deferred captivity remains OUT.
-If newly exposed executable content reaches that unsupported state, identify
-the exposure and propose a bounded prevention/source decision; do not remove a
-guard and falsely settle it as a victory.
+Surrender follows the latest gear-drop rule above. Captivity, transport, rescue
+and reward retain their separately accepted policies. A Capture consumer alone
+provides no new outcome authority. Inventory any exposed unsupported custody
+state and retain its source refusal until its policy is defined.
 
 ## Outcome rows and choices
 
-| Row                            | Actual behavior to prove                                                                                                         |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| O1 Victory                     | Lawful physical casualties/proof eligibility, released companies and once-only effects                                           |
-| O2 Company withdrawal          | Actual eligible exit cells/units, preserved dead/withdrawn members, no false victory/proof; player can find and use the control  |
-| O3 Hostile escape/retry        | Real living enemy survivors persist; unfinished hunt is retryable under fresh consent and saved attempt history; no false trophy |
-| O4 Death/incapacity/leadership | Capability and actual succession/game-over follow accepted rules; no emergency heir/resurrection or stranded canonical binding   |
-| O5 Deferred policy exposure    | Unsupported surrender/captivity is inventoried and stays unactivated; any necessary new activation waits for owner policy        |
+| Row                            | Actual behavior to prove                                                                                                            |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| O1 Victory                     | Lawful physical casualties/proof eligibility, released companies and once-only effects                                              |
+| O2 Company withdrawal          | Actual eligible exit cells/units, preserved dead/withdrawn members, no false victory/proof; player can find and use the control     |
+| O3 Hostile escape/retry        | Real living enemy survivors persist; unfinished hunt is retryable under fresh consent and saved attempt history; no false trophy    |
+| O4 Death/incapacity/leadership | Capability and actual succession/game-over follow accepted rules; no emergency heir/resurrection or stranded canonical binding      |
+| O5 Surrender                   | Surrender leaves real gear and exits combat; living identity, source and once-only consequences persist. Captivity remains post-M1. |
 
 Manual/autoplay handoff and timely player return must be clear. A retreat button
 must explain current eligibility. A loss summary names actual outcomes, not a
@@ -70,7 +88,7 @@ Reserve exact paths; no combat AI/skill rewrite, new balance or captivity system
 ## Work plan
 
 1. Inventory reachable outcomes from current actors/rules and map accepted sources.
-   Separate O5 source refusal from implementation gaps.
+   Separate accepted surrender work from deferred captivity.
 2. Reuse merged/current passing evidence; select the first uncovered enabled row.
 3. Attempt the native ordinary scenario, recording choices and actual casualties.
    Do not force enemy state/rolls or repair a failed company to get the desired run.
@@ -84,7 +102,7 @@ Reserve exact paths; no combat AI/skill rewrite, new balance or captivity system
 ## Acceptance / DoD
 
 - [ ] OUT-1 Every currently enabled reachable outcome has accepted source and
-      terminal/result/continuation coverage; O5 remains explicitly deferred.
+      terminal/result/continuation coverage; captivity remains deferred.
 - [ ] OUT-2 O1–O4 apply truthful people/items/condition/knowledge effects and
       release all participating companies atomically, including retry/restart.
 - [ ] OUT-3 A native hostile escape and ordinary retry use actual saved survivors,

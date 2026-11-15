@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-15 — Added: apply trusted V6 intentions to new hunt admissions, show
+  incapacitated fighters prone and preserve full scenario file roundtrips.
+  [Integrated combat checks](docs/work-packages/M1-CAMPAIGN-BATTLE.md#current-result). LOCAL.
 - 2026-11-15 — Fixed: reuse terminal combat markers and bound live Playground
   diagnostics while retaining complete replay export.
   [Observed crash and checks](docs/work-packages/m1-next/10-desktop-performance.md#current-result--2026-11-15). LOCAL.

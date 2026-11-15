@@ -1,4 +1,5 @@
 import type { BattleState } from '../combat/types.js';
+import { M1_DOMAIN_BRIDGE_V6_RULESET_ID } from '../combat/setup-v3.js';
 import { canonicalCombatState } from '../combat/replay.js';
 import { canonicalJson, canonicalStateJson, id } from './input.js';
 import { EconomyViolation, recordSource, validateEconomy } from './economy-state.js';
@@ -26,6 +27,8 @@ import type {
   TrustedCombatPracticeCredit,
 } from './combat-practice.js';
 import type { PhysicalEvidence } from './physical-types.js';
+import { PHYSICAL_POLICY_VERSION } from './physical-types.js';
+import { dropSurrenderedCharacterGear } from './physical-items.js';
 import { deriveCombatReceiptDomainCommands } from './combat-consequences.js';
 import { applyCombatInitialReceipt, applyCombatPhysicalReceipt } from './combat-physical.js';
 import { persistentMoraleAfterCombat } from './combat-morale.js';
@@ -1246,6 +1249,44 @@ export function prepareFinalizeCombatAggregate(
             },
           }),
         };
+        if (final.rulesetId === M1_DOMAIN_BRIDGE_V6_RULESET_ID && unit.status === 'surrendered') {
+          const surrenderEvents = journal.receipts.flatMap((receipt) =>
+            receipt.transition.events.flatMap((event, ordinal) =>
+              event.type === 'unit.surrendered' && event.unitId === participant.unitId
+                ? [{ sourceEventId: receipt.sourceEventIds[ordinal]!, ordinal }]
+                : [],
+            ),
+          );
+          requirePhysical(surrenderEvents.length === 1, 'INVALID_SOURCE');
+          const surrendered = surrenderEvents[0]!;
+          const fact = {
+            kind: 'SURRENDER_GEAR_OUTCOME' as const,
+            version: PHYSICAL_POLICY_VERSION,
+            id: `${surrendered.sourceEventId}:gear`,
+            sourceEventId: surrendered.sourceEventId,
+            ordinal: surrendered.ordinal,
+            worldId: input.context.worldId,
+            companyId: input.context.companyId,
+            revision: input.context.canonicalRevision,
+            atTick: input.terminal.atTick,
+            characterId,
+            unitId: participant.unitId,
+            location: active.binding.location,
+          };
+          root = {
+            ...root,
+            physical: dropSurrenderedCharacterGear(
+              root.physical,
+              {
+                receiptId: fact.id,
+                sourceEventId: fact.sourceEventId,
+                characterId,
+                unitId: participant.unitId,
+              },
+              { ...input.context, physicalFacts: [fact] },
+            ),
+          };
+        }
       }
       const vitals = root.physical.vitals.find((entry) => entry.characterId === characterId);
       requirePhysical(vitals && unit, 'INVALID_STATE');

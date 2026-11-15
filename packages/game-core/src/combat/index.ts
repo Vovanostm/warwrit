@@ -1,4 +1,5 @@
 export * from './ai.js';
+export * from './activation-capabilities.js';
 export * from './engine.js';
 export * from './hex.js';
 export * from './map-connectivity.js';

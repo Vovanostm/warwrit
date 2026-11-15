@@ -311,7 +311,7 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   );
   expect(html).toContain('aria-label="Результат боя"');
   expect(html).toContain('<h2>Победа</h2>');
-  expect(html).toContain('У противника не осталось бойцов в строю.');
+  expect(html).toContain('Все противники выбыли из боя.');
   expect(html).not.toContain('aria-label="Действующий боец"');
   expect(html).not.toContain('aria-label="Состояние: Волк"');
   expect(html).toContain('Сдались <b>1</b>');
@@ -358,8 +358,8 @@ it('explains defeat from the controlled side while enemies remain active', () =>
     units: [{ ...view.units[0]!, status: 'retreated' }, view.units[1]!],
   });
   expect(html).toContain('<h2>Поражение</h2>');
-  expect(html).toContain('В вашем отряде не осталось бойцов в строю.');
-  expect(html).not.toContain('У противника не осталось бойцов в строю.');
+  expect(html).toContain('Все бойцы вашей стороны выбыли из боя.');
+  expect(html).not.toContain('Все противники выбыли из боя.');
 });
 
 it('keeps terminal outcome neutral when the viewer side is not known', () => {
@@ -384,7 +384,7 @@ it('keeps terminal outcome neutral when the viewer side is not known', () => {
     'Победившая сторона определена; принадлежность вашей компании неизвестна.',
   );
   expect(html).not.toContain('<h2>Поражение</h2>');
-  expect(html).not.toContain('В вашем отряде не осталось бойцов в строю.');
+  expect(html).not.toContain('Все бойцы вашей стороны выбыли из боя.');
 });
 
 it('keeps acting authority independent of the inspected enemy and accepts parent commands/menu', () => {

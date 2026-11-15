@@ -201,7 +201,7 @@ No permission to merge, deploy or provision paid resources was granted here.
 
 ## Current result
 
-IN_PROGRESS / LOCAL. T001/T003/T004/T005/T008 complete on
+IN_PROGRESS / LOCAL. T001/T003/T004/T005/T006/T008/T009 complete on
 `codex/m1-completion-20261115`. Setup/replay schema3 with bridge-v6 retains
 runtime state schema1 and the historical setup1/2 execution paths. The new
 validator preserves all sides/parties/controller references and enforces the
@@ -213,13 +213,16 @@ executor. Old content/config1 remain readable. SQL storage already accepts the
 versioned JSON envelopes, so this slice needs no migration. Cookie session,
 developer allowlist, origin and sandbox ownership guard the normal entry.
 
-New wolf-trail admissions use schema3/bridge-v6 with player parties derived from
+New admissions for the three existing hunts use schema3/bridge-v6 with player parties derived from
 trusted company membership and NPC parties from world sources. The actual SQL
 JOIN scenario admits two companies, verifies separate grants and metadata, moves
 an owned bow fighter, shoots, retries the saved command through a new connection,
 settles the real terminal battle and releases each company. Both clock-offset
 cases pass. The hostile-retreat/retry scenario also passes with saved survivors,
-rollback probe and one payout. Other authored hunts retain their released path.
+rollback probe and one payout. Previously admitted battles retain their recorded rules.
+Humanoid and wolf morale use their trusted source profiles. The mill beast's
+existing slam intention is supplied by the trusted NPC profile. Incapacitated
+living figures remain targetable and lie down while their activations are skipped.
 
 Checks completed on the integrated sources:
 
@@ -228,7 +231,10 @@ Checks completed on the integrated sources:
   replay, legacy replay, S4 reaction/fire movement and incapacity.
 - Server/protocol builds and server typecheck passed before the final metadata
   assertion was added. The assertion uses the existing controllableUnitIds DTO.
-- 29 adapter/projection tests passed. 26 encounter PostgreSQL tests passed.
+- 29 adapter/projection tests passed. The final union passed all 26 encounter
+  PostgreSQL tests together with all six story PostgreSQL cases. Two terminal
+  fixtures now freeze participant identities and public-opening skill seed, so
+  their intended supported victory/carry scenarios have reproducible inputs.
   The two Playground replay-view failures introduced by a presentation-only
   control-list override were fixed by preserving its existing side projection;
   the subsequent nine Playground PostgreSQL tests passed.
@@ -236,9 +242,17 @@ Checks completed on the integrated sources:
   started it. All three sides appear in the field and initiative. Day/night and
   Home overview were inspected at 1200×757 CSS px, DPR 2, with no document overflow.
   Artifacts are retained in `output/playwright/m1-multiside-*`.
+- The same sandbox resolved at revision513, round11, with south the winner.
+  Native replay export reproduced MATCH. Replay revision330 retains all three
+  sides after middle is eliminated while north and south remain active.
+- Native scenario export → file import → save → reload → native export preserves
+  the complete scenario, including36 figures, three sides and four parties.
+  Malformed JSON shows a Russian error and preserves the whole prior draft.
+- Server/web typechecks and64 focused company-surrender, projection, sprite,
+  terminal-view and story-interface tests passed on the integrated sources.
 
-T006 remains open for a source-backed S4 monster-intention mapping in the new
-format. T007 still needs surrender-world disposition and gear consequences.
-T009/T010 retain final editor import/reload, combined campaign UI acceptance and
-remaining ordinary terminal checks. MULTI-7 ordinary browser continuation and
-full N10 measurement/acceptance remain open. Capacity/performance are NOT_MEASURED.
+T007/T010 retain native surrender and combined campaign UI acceptance.
+Canonical hostile equipment is reconciled with actual remaining armor and grounded
+after verified surrender. Ordinary loot pickup/sale belongs to T022 and remains
+unfinished. MULTI-7 ordinary browser continuation and full N10 measurement and
+acceptance remain open. Capacity/performance are NOT_MEASURED.

@@ -7,8 +7,7 @@ copy in `codex/m1-completion-20261115`. Company
 `eb855f6f-ab02-42ca-9eef-a82b2c6830bf` (Дозор N01) belongs to the original
 local fixture account in `world.porechye.atlas-v1`. The retained N02 final dump
 was restored into the isolated `warwrit-m1-20261115` resources. The ordinary
-mill rescue is already completed/paid and HUNT-01 is completed; the old claim
-that the mill objective is unfinished is superseded by the actual saved state.
+mill rescue is completed/paid and HUNT-01 is completed in the restored state.
 
 The next lawful action was resupply through Severny Dvor's Granary. Its original
 food refusal preserved revision 178, 850 crowns and 41 rations. Under the owner's
@@ -23,9 +22,8 @@ A second executor logged in normally, inspected the same three people,
 equipment and paid contracts, then used «Разбить лагерь» and «Свернуть лагерь».
 Both commands were confirmed. Treasury remained 846 crowns, equipment remained
 visible and Rell's health advanced from 78/100 to 89/100. Retained screenshots
-and snapshots are `output/playwright/r5-recovery-*`. No SQL state repair or
-replacement company was used. The same-company continuation branch is proved;
-this does not close NEXT-2–NEXT-6 for the next newly selected contract.
+and snapshots are `output/playwright/r5-recovery-*`. NEXT-1 passed through the
+retained company. NEXT-2–NEXT-6 remain open for the next newly selected contract.
 
 ## Player goal and normal journey
 

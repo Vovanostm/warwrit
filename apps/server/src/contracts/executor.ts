@@ -53,11 +53,13 @@ import {
 } from './terminal-evidence-types.js';
 import {
   huntTerms,
+  isAvailableHuntHostile,
   readHuntWorldState,
   selectHuntWorldRow,
   updateHuntWorldRow,
   type FirstHuntHostileState,
 } from './first-hunt-runtime.js';
+import { groundSurrenderedHostileGear, reconcileHostileGearPools } from './first-hunt-gear.js';
 
 const COMPANY_SIDE_ID = 'first-hunt-companies';
 const HOSTILE_SIDE_ID = 'first-hunt-hostiles';
@@ -559,7 +561,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   )
     throw new TypeError('FIRST HUNT terminal encounter replay is invalid');
 
-  const admittedHostiles = world.hostiles.filter((hostile) => hostile.currentPools['health']! > 0);
+  const admittedHostiles = world.hostiles.filter(isAvailableHuntHostile);
   const hostileIds = new Set(admittedHostiles.map((hostile) => hostile.entityId));
   const hostileUnits = setup.units.filter((unit) => hostileIds.has(unit.id));
   if (
@@ -600,7 +602,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
     throw new TypeError('FIRST HUNT terminal hostile pool set is incomplete');
 
   const hostiles: readonly FirstHuntHostileState[] = world.hostiles.map((hostile) => {
-    if (hostile.currentPools['health'] === 0) return hostile;
+    if (!isAvailableHuntHostile(hostile)) return hostile;
     const pools = terminalPools.get(String(hostile.entityId));
     if (
       !pools ||
@@ -614,7 +616,20 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
       pools.morale > hostile.attributes['morale']!
     )
       throw new TypeError('FIRST HUNT terminal hostile pools are invalid');
-    return { ...hostile, currentPools: pools };
+    const unit = state.units.find((unit) => unit.id === hostile.entityId)!;
+    const reconciled = hostile.gear
+      ? reconcileHostileGearPools(input.worldId, hostile, pools)
+      : { ...hostile, currentPools: pools };
+    if (unit.status !== 'surrendered') return reconciled;
+    if (setup.schemaVersion !== COMBAT_V3_SCHEMA_VERSION || !hostile.gear)
+      throw new TypeError('Surrendered hostile is missing its admitted canonical gear');
+    return groundSurrenderedHostileGear({
+      worldId: input.worldId,
+      profile: hunt,
+      hostile: { ...reconciled, disposition: 'surrendered' },
+      terminalSourceId: proofSourceId,
+      location: { kind: 'AT', ...hunt.objectiveLocation },
+    });
   });
 
   const released = [] as {

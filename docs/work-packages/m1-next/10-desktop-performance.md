@@ -1,11 +1,31 @@
 # N10 — Coherent desktop presentation and measured performance
 
-## Current result — 2026-11-08
+## Current result — 2026-11-15
 
-SPECIFIED / LOCAL. WLC-08's measured native viewport 568×853 does not prove the
-target desktop layout. FPS/RAM/heap/server capacity remain NOT_MEASURED.
-Next: reserve the actual MacBook/Chrome device or name the missing target input.
-[Common contract](COMMON.md). [Prompt](prompts/10-desktop-performance.md).
+IN_PROGRESS / LOCAL. The 36-figure Playground was inspected by day/night at
+1200×757 CSS px, DPR 2. Canvas CSS bounds were 1136×740 and document scroll width
+matched the 1200px viewport. Home overview, all three side markers and initiative
+were visible. Screenshots are retained under `output/playwright/m1-multiside-*`.
+
+The autoplay tab crashed after its last observed revision199. Ordinary re-entry
+loaded the same sandbox at revision305. The console records a Chromium page
+crash, with no renderer stack. Source review found repeated terminal-status label
+texture/material/mesh allocation and complete diagnostics serialization on every
+revision, even with the panel closed. Marker reconciliation has a passing six-test
+NullEngine lifecycle regression. Live diagnostics now return a bounded recent
+history and mount JSON only while open. Replay export reads every command.
+A real SQL 130-command regression proves the 128-record inspection boundary, the
+complete 130-command replay and the exact historical retry.
+
+The resumed native autoplay completed at revision513, round11, winner south.
+The normal Replay button reported MATCH. Native replay export retains all513
+commands. Revision330 proves that north and south continue after middle is
+eliminated, with all three side identities retained. The editor's native scenario
+file roundtrip also preserves the entire36-figure scenario after save/reload.
+
+These are partial diagnostic results. The complete DESK route remains open.
+FPS, memory, resource totals and
+server capacity remain NOT_MEASURED. Performance acceptance awaits the owner budget.
 
 ## Player goal and trial
 

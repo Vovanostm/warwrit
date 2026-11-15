@@ -214,6 +214,7 @@ export interface EncounterPublicUnitDto {
   readonly id: string;
   readonly sideId: string;
   readonly partyId?: string;
+  readonly incapacitated?: boolean;
   readonly q: number;
   readonly r: number;
   readonly health: number;

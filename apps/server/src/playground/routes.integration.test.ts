@@ -322,7 +322,9 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
     ).json();
     expect(exported.matches).toBe(true);
     expect(exported.expectedDigest).toBe(exported.actualDigest);
-    expect(combat.replayCombat(exported.replay).events).toEqual(inspected.events);
+    expect(
+      combat.replayCombat(exported.replay).events.slice(-(inspected.historyLimit ?? Infinity)),
+    ).toEqual(inspected.events);
     expect(projectCombatLabReplay(exported.replay)).toEqual(inspected.view);
     expect((await post(first)).json()).toEqual(accepted.json());
     // Corrupt only our sandbox's stored state: the UI must report actual divergence.
@@ -445,6 +447,22 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
       actorId: inspected.view!.activation!.actorId,
     };
     expect((await post(second)).statusCode).toBe(200);
+    for (let revision = 2; revision < 130; revision += 1) {
+      inspected = await read();
+      const waited = await post({
+        ...first,
+        commandId: randomUUID(),
+        expectedRevision: inspected.view!.viewRevision,
+        activationId: inspected.view!.activation!.id,
+        actorId: inspected.view!.activation!.actorId,
+      });
+      expect(waited.statusCode).toBe(200);
+    }
+    inspected = await read();
+    expect(inspected.historyLimit).toBe(128);
+    expect(inspected.commands).toHaveLength(128);
+    expect(inspected.receipts).toHaveLength(128);
+    expect(inspected.events).toHaveLength(128);
     expect((await post(first)).json()).toEqual(accepted.json());
     const exported = (
       await app.inject({
@@ -453,15 +471,16 @@ describe.skipIf(!url)('playground real PostgreSQL authorization and isolated lif
       })
     ).json();
     expect(exported).toMatchObject({ matches: true, replay: { schemaVersion: 3 } });
+    expect(exported.replay.commands).toHaveLength(130);
     expect(exported.replay.setup.sides).toEqual(
       scenario.initial.version === 2 ? scenario.initial.sides : [],
     );
     const reconstructed = projectCombatLabReplay(exported.replay);
     expect(reconstructed.units).toHaveLength(36);
     expect(reconstructed.parties).toEqual(inspected.view!.parties);
-    expect(reconstructed.viewRevision).toBe(2);
+    expect(reconstructed.viewRevision).toBe(130);
     await send(command('delete', current));
-  });
+  }, 60000);
 
   it('accepts a one-AP move then a three-AP shot and rejects blocked movement atomically', async () => {
     let current = (await send(command('create'))).json<PlaygroundResult>();

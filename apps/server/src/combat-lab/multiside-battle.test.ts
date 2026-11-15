@@ -43,6 +43,18 @@ describe('multiside combat lab configuration', () => {
     expect(isMultisideBattle(copy)).toBe(false);
   });
 
+  it('maps the existing mill-slam profile only for NPC parties', () => {
+    const config = maximumMultisideBattle();
+    const setup = createMultisideBattleSetup('npc-mill-slam', config);
+    const millUnits = config.units.filter((unit) => unit.profileId === 'B053');
+    expect(millUnits).toHaveLength(3);
+    for (const source of millUnits) {
+      const party = config.parties.find((party) => party.id === source.partyId)!;
+      const unit = setup.units.find((unit) => unit.id === source.id)!;
+      expect(unit.threatProfile).toBe(party.kind === 'npc' ? 'mill-slam' : undefined);
+    }
+  });
+
   it('rejects authored ranks that the V6 campaign bridge cannot execute', () => {
     const copy = mutable(defaultMultisideBattle());
     copy.units = copy.units.map((unit, index) =>

@@ -314,6 +314,7 @@ export interface CombatLabView extends CombatLabViewRequest {
     readonly weaponId: 'bow' | 'great-weapon' | 'raider' | 'spear' | 'sword-shield';
     readonly position: CombatLabHex;
     readonly status: 'active' | 'dead' | 'retreated' | 'surrendered';
+    readonly incapacitated?: boolean;
     /** Inspection reach ignores turn/AP/stamina; attackPreview alone admits a current target. */
     readonly weaponReach?: {
       readonly minimumRange: number;

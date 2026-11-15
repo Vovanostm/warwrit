@@ -91,6 +91,7 @@ export interface PlaygroundBootstrap {
 }
 
 export interface PlaygroundInspection {
+  readonly historyLimit?: number;
   readonly validationError?: 'CONTENT_REVISION_MISMATCH';
   readonly sandbox: PlaygroundSandbox;
   readonly view: CombatLabView | null;

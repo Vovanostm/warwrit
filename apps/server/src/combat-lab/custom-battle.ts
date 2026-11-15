@@ -247,6 +247,7 @@ export function isCustomBattle(value: unknown): value is CombatLabBattleConfig {
 
 export function createCombatLabProfiledUnitSetup(
   unit: CombatLabBattleConfigV2['units'][number],
+  npcParty = false,
 ): Omit<combat.CombatUnitSetupV3, 'partyId'> {
   const profile = combatLabProfiles.find((row) => row.id === unit.profileId);
   combat.invariant(profile !== undefined, 'Unknown prototype profile');
@@ -259,6 +260,7 @@ export function createCombatLabProfiledUnitSetup(
     position: combat.hex(unit.position.q, unit.position.r),
     weaponId: row[2],
     skillRanks: {},
+    ...(npcParty && unit.profileId === 'B053' ? { threatProfile: 'mill-slam' as const } : {}),
     moralePolicy: unit.profileId.startsWith('W')
       ? 'human'
       : ['B001', 'B002', 'B003'].includes(unit.profileId)

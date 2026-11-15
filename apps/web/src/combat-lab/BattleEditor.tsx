@@ -53,7 +53,7 @@ function tileClass(tile: CombatLabTile): string {
   return `battle-editor-cell terrain-${tile.terrain}${tile.blocked ? ' blocked' : ''} height-${tile.height}`;
 }
 
-function downloadJson(filename: string, value: unknown): void {
+export function downloadJson(filename: string, value: unknown): void {
   const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

@@ -393,8 +393,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
 
   if (
     (kernelState.rulesetId === combat.M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
-      kernelState.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
-      kernelState.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID) &&
+      kernelState.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID) &&
     kernelState.units.some((unit) => unit.status === 'surrendered')
   )
     return notReady('TERMINAL_DISPOSITION_EVIDENCE_MISSING');

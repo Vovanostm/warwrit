@@ -66,6 +66,10 @@ export interface FirstHuntHostileState {
   readonly disposition?: 'surrendered';
 }
 
+export function isAvailableHuntHostile(hostile: FirstHuntHostileState): boolean {
+  return hostile.currentPools['health']! > 0 && hostile.disposition !== 'surrendered';
+}
+
 export interface FirstHuntHostileGearState {
   readonly schemaVersion: 1;
   readonly sourceId: string;

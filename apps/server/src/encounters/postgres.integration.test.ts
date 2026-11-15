@@ -401,6 +401,7 @@ function openingBowSkills(actor: FirstHuntJoinActor) {
   const issued = issueOpeningOption(new Date(), lifecycle.worldId, lifecycle.campaignTick);
   const evidence = {
     ...issued.evidence,
+    seed: 17,
     companyId: lifecycle.companyId,
     leaderId,
     partyId: actor.partyId,
@@ -458,7 +459,10 @@ function openingBowSkills(actor: FirstHuntJoinActor) {
 
 // Lawful pre-admission fixture: retained item owners/IDs, a two-hand bow in place of
 // the leader's sword, their shield stowed, and normal supplies at the wolf objective.
-function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
+function bowHuntActor(
+  actor: FirstHuntJoinActor,
+  location = { kind: 'AT' as const, siteId: 'bereznyak', areaId: 'bereznyak-green' },
+): FirstHuntJoinActor {
   const physical = actor.initial.economy.physical!;
   const loadout = (items: typeof physical.items) =>
     items.map((item) => {
@@ -490,11 +494,7 @@ function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
   });
   return {
     ...actor,
-    initial: relocateFirstHuntJoinCompany(initial, {
-      kind: 'AT',
-      siteId: 'bereznyak',
-      areaId: 'bereznyak-green',
-    }),
+    initial: relocateFirstHuntJoinCompany(initial, location),
   };
 }
 
@@ -507,6 +507,7 @@ async function seedFirstHuntJoinScenario(
   helperCarriedPartyRations?: number,
   wolfHunt = false,
   createId: () => string = randomUUID,
+  bowParties = wolfHunt,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
@@ -521,8 +522,11 @@ async function seedFirstHuntJoinScenario(
     helperCarriedPartyRations,
     createId,
   );
-  const owner = wolfHunt ? bowHuntActor(ownerFixture) : ownerFixture;
-  const helper = wolfHunt ? bowHuntActor(helperFixture) : helperFixture;
+  const bowLocation = wolfHunt
+    ? undefined
+    : { kind: 'AT' as const, ...combat.FIRST_HUNT_ENCOUNTER_LOCATION };
+  const owner = bowParties ? bowHuntActor(ownerFixture, bowLocation) : ownerFixture;
+  const helper = bowParties ? bowHuntActor(helperFixture, bowLocation) : helperFixture;
   for (const [actor, subject] of [
     [owner, 'owner'],
     [helper, 'helper'],
@@ -673,7 +677,7 @@ async function playFirstHuntToVictory(
       url: '/encounters/commands',
       headers: controller.headers,
       payload: {
-        version: 1,
+        version: state.rulesetId === combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID ? 2 : 1,
         encounterId,
         commandId: randomUUID(),
         expectedRevision: state.revision,
@@ -1070,11 +1074,18 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
     async () => {
       const database = databases[0];
       if (database === undefined) throw new Error('database missing');
+      let identityIndex = 0;
+      const createFixtureId = () =>
+        `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`;
       const scenario = await seedFirstHuntJoinScenario(
         database,
         false,
         'first-hunt-terminal-lifecycle-equality',
         true,
+        true,
+        undefined,
+        false,
+        createFixtureId,
         true,
       );
       const { owner, helper, worldId, app } = scenario;
@@ -1146,7 +1157,31 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           });
 
         await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
-        expect(await applyPendingFirstHuntTerminalEffects(database)).toContain(encounterId);
+        let applied = await applyPendingFirstHuntTerminalEffects(database);
+        if (!applied.includes(encounterId)) {
+          for (const actor of [owner, helper]) {
+            const leadership = await app.inject({
+              url: `/encounters/${encounterId}/leadership`,
+              headers: actor.headers,
+            });
+            expect(leadership.statusCode, leadership.body).toBe(200);
+            const choice = leadership.json();
+            if (!choice.required) continue;
+            const selected = await app.inject({
+              method: 'POST',
+              url: `/encounters/${encounterId}/leadership`,
+              headers: actor.headers,
+              payload: {
+                version: 1,
+                candidateId: choice.candidates[0].characterId,
+                mode: 'PERMANENT',
+              },
+            });
+            expect(selected.statusCode, selected.body).toBe(202);
+          }
+          applied = await applyPendingFirstHuntTerminalEffects(database);
+        }
+        expect(applied).toContain(encounterId);
         expect(await applyPendingFirstHuntTerminalEffects(database)).not.toContain(encounterId);
 
         const settled = await database.transaction().execute(async (transaction) => {
@@ -1277,6 +1312,9 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
     async () => {
       const database = databases[0];
       if (database === undefined) throw new Error('database missing');
+      let identityIndex = 0;
+      const createFixtureId = () =>
+        `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`;
       const scenario = await seedFirstHuntJoinScenario(
         database,
         false,
@@ -1284,6 +1322,9 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         true,
         true,
         30,
+        false,
+        createFixtureId,
+        true,
       );
       const { owner, helper, worldId, app } = scenario;
       let restoreCampaignClock: (() => void) | undefined;
@@ -3660,8 +3701,8 @@ it.skipIf(connectionString === undefined)(
         .selectAll()
         .where('id', '=', admission.encounter_id)
         .executeTakeFirstOrThrow();
-      const setup = encounter.setup as unknown as BattleSetupV2;
-      expect(setup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V3_RULESET_ID);
+      const setup = encounter.setup as unknown as combat.BattleSetupV3;
+      expect(setup.rulesetId).toBe(combat.M1_DOMAIN_BRIDGE_V6_RULESET_ID);
       expect(setup.units).toHaveLength(9);
       expect(setup.units.filter((unit) => unit.weaponId === 'fists')).toHaveLength(1);
       expect(setup.units.filter((unit) => unit.capabilities?.move === false)).toHaveLength(1);
@@ -3680,12 +3721,16 @@ it.skipIf(connectionString === undefined)(
           'id',
           'maximumHealth',
           'morale',
+          'panicking',
+          'partyId',
           'q',
           'r',
           'sideId',
           'stamina',
           'status',
+          'threat',
           'weaponId',
+          ...(unit.weaponReach === undefined ? [] : ['weaponReach']),
         ]);
       }
       const unarmedSetupUnit = setup.units.find((unit) => unit.weaponId === 'fists');
