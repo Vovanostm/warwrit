@@ -36,6 +36,13 @@ describe('protocol foundation', () => {
       type: 'ChoosePerk',
       payload: { characterId: 'leader', perkId: 'leadership-25-a', milestone: 25 },
     };
+    const deceasedWages: OrdinaryPlayerCompanyCommandV2Dto = {
+      schemaVersion: 2,
+      commandId: 'pay-deceased-wages',
+      expectedPublicRevision: '0',
+      type: 'PayDeceasedWages',
+      payload: { characterId: 'fallen-worker' },
+    };
 
     const mismatched: OrdinaryPlayerCompanyCommandV2Dto = {
       schemaVersion: 2,
@@ -46,9 +53,10 @@ describe('protocol foundation', () => {
       payload: { name: 'Not a perk selection', bannerId: 'ashen-banner' },
     };
 
-    expect([rename.type, choosePerk.type, mismatched.type]).toEqual([
+    expect([rename.type, choosePerk.type, deceasedWages.type, mismatched.type]).toEqual([
       'RenameCompany',
       'ChoosePerk',
+      'PayDeceasedWages',
       'ChoosePerk',
     ]);
   });

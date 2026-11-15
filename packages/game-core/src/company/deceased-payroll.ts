@@ -1,16 +1,21 @@
 import { canonicalJson } from './input.js';
 import { sameLocation } from './lifecycle-state.js';
+import { companySemanticKey, companySourceKey } from './guards.js';
 import {
   actualOwedQ,
+  claimCoveredQ,
+  claimEarnedQ,
   economyId,
   poolWallet,
   q,
   requireEconomy,
   requirePoolAccess,
   spendableQ,
+  validateEconomy,
 } from './economy-state.js';
 import type { CompanyCommand } from './commands.js';
-import type { CompanyEconomyState, EconomyContext } from './economy-types.js';
+import type { CompanyEconomyState, EconomyContext, EconomyReceipt } from './economy-types.js';
+import { canonicalRevision, publicRevision } from './values.js';
 import type { CampaignTick, MoneyQ } from './values.js';
 
 export const DECEASED_KIN_WAGE_SINK_ID = economyId('deceased-kin-wages', 'kamenny-brod');
@@ -89,6 +94,7 @@ export function payDeceasedWages(
   const accounts = finance.accounts.filter((account) => membershipIds.has(account.membershipId));
   requireEconomy(
     accounts.length === memberships.length &&
+      accounts.every((account) => account.known) &&
       memberships.every(
         (membership) =>
           accounts.filter((account) => account.membershipId === membership.membershipId).length ===
@@ -156,7 +162,7 @@ export function payDeceasedWages(
       amountQ: q(claim.amount),
     })),
   });
-  const claimIds = new Set(claimAllocations.map((claim) => claim.claimId));
+  const settledMembershipClaimIds = new Set(claims.map((claim) => claim.claimId));
   for (const allocation of claimAllocations) {
     const reservations = finance.reservations.filter(
       (reservation) => reservation.claimId === allocation.claimId,
@@ -188,10 +194,18 @@ export function payDeceasedWages(
   // unrelated wage and learning reservations remain protected from this settlement.
   let nextFinance = {
     ...finance,
-    reservations: finance.reservations.filter((reservation) => !claimIds.has(reservation.claimId)),
+    reservations: finance.reservations.filter(
+      (reservation) => !settledMembershipClaimIds.has(reservation.claimId),
+    ),
     claims: finance.claims.map((claim) => {
       const allocation = claimAllocations.find((candidate) => candidate.claimId === claim.claimId);
-      return allocation ? { ...claim, paidQ: q(BigInt(claim.paidQ) + allocation.amount) } : claim;
+      if (!membershipIds.has(claim.membershipId)) return claim;
+      return {
+        ...claim,
+        reportedQ: q(claimEarnedQ(claim)),
+        reportedCoveredQ: q(claimCoveredQ(claim)),
+        ...(allocation ? { paidQ: q(BigInt(claim.paidQ) + allocation.amount) } : {}),
+      };
     }),
     sourceEffects: [...finance.sourceEffects, { key: sourceKey, requestKey }],
   };
@@ -234,8 +248,39 @@ export function payDeceasedWages(
     };
   }
 
+  const receipt: EconomyReceipt = {
+    commandId: command.commandId,
+    requestKey: canonicalJson(command),
+    semanticKey: companySemanticKey(command),
+    sourceKey: companySourceKey(command),
+    lifecycleReceipt: null,
+    events: [],
+    requirements: [],
+    allocations: claimAllocations.map((claim) => ({
+      claimId: claim.claimId,
+      amountQ: q(claim.amount),
+      channel: 'CASH',
+    })),
+  };
+  const next = {
+    ...state,
+    lifecycle: {
+      ...lifecycle,
+      revision: canonicalRevision((BigInt(lifecycle.revision) + 1n).toString()),
+      knowledge: {
+        ...lifecycle.knowledge,
+        revision: publicRevision((BigInt(lifecycle.knowledge.revision) + 1n).toString()),
+      },
+    },
+    finance: { ...nextFinance, applied: [...nextFinance.applied, receipt] },
+  };
+  validateEconomy(next, {
+    ...context,
+    canonicalRevision: next.lifecycle.revision,
+    publicRevision: next.lifecycle.knowledge.revision,
+  });
   return {
-    next: { ...state, finance: nextFinance },
+    next,
     settlement: {
       kind: 'DECEASED_WAGES_SETTLED',
       characterId,

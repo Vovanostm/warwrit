@@ -250,6 +250,7 @@ export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
   'SetAssignment',
   'RequestDeparture',
   'PayClaims',
+  'PayDeceasedWages',
   'GrantFarewell',
   'TransferFunds',
   'BeginFieldCamp',
@@ -294,6 +295,8 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly quantity: number;
     readonly shopRevision: string;
   };
+  /** Settle a known deceased member's earned wages to the accepted local external sink. */
+  readonly PayDeceasedWages: { readonly characterId: string };
   readonly RenameCompany: {
     readonly name: string;
     readonly bannerId: string;
