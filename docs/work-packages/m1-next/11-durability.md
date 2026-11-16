@@ -26,6 +26,44 @@ typecheck and `git diff --check` pass. NOT_RUN: the full integration file, an OS
 process restart, R1/R3–R5, backup/restore and full T029. This is focused R2 evidence,
 not completion of N11 or T029.
 
+## R5 current-copy restore follow-up — 2026-11-16
+
+LOCAL / PARTIAL. Read-only source `m1_completion` was dumped from its existing
+`warwrit-m1-20261115-postgres-1` PostgreSQL 17.11 container with the matching
+17.11 client; host `pg_dump` 14.24
+refused the server version. The private, ignored custom dump
+`output/m1_restore_current_20261116.dump` is 1,160,670 bytes, mode 0600. Dump
+window: 00:57:38.054–00:57:38.305 UTC. It was restored with `pg_restore` 17.11
+into the new `m1_restore_current_20261116` database using source-matching UTF8 /
+`en_US.utf8` settings; restore window: 00:58:40.921–00:58:41.409 UTC. The source
+database and its container were not written. The source battle joined at
+00:57:52 UTC, after the dump; that battle is absent from the restored copy and is
+not claimed as restored.
+
+The fresh Playwright CLI session `restore-followup` signed in through the normal
+Dex form as the source company's player-one owner. The restored UI showed company
+Дозор N01 (`eb855f6f-ab02-42ca-9eef-a82b2c6830bf`), 318.71 crowns, 32 rations,
+three members with equipment, the helper, known map markers, accepted HUNT-03 and
+the pending return report. The report was closed through its ordinary control.
+API readiness and web entry returned 200 on ports 3035 and 5335; realtime is on
+3036. Read-only SQL showed company snapshot schema 1 at public/canonical revisions
+707/718, the current resolved mill-beast encounter with terminal effects applied,
+and an ARRIVED route row (`free-atlas-walk-v1` / `porechye-atlas-lab-v1`). After
+the initial “Сверяем положение отряда…” state, `/api/world/free-movement` returned
+200 with `STATIONARY_SITE`, no plan and a current position at the Old Mill.
+
+The Place panel exposed «Разбить лагерь», but its normal
+`BeginFieldCamp` command was rejected with HTTP 409 `UNSUPPORTED_ACTION` at
+public revision 709; the UI continued to show the camp action. No new camp or
+battle was started; the rejected camp command was the only gameplay command
+attempted. The restored copy is authenticated and its saved company, route and
+encounter can be read, but R5
+playability and the required lawful continuation remain BLOCKED on this command
+path. This is not a full row-by-row source/target comparison, another executor's
+successful continuation, full T029, or SC-008 acceptance. RPO/RTO and capacity
+remain NOT_MEASURED. Private credentials, dump and browser captures remain outside
+Git.
+
 ## Player goal and ordinary result
 
 An interruption cannot duplicate money, erase people or trap a company.

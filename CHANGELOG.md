@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the current PostgreSQL backup/restore and normal
+  owner login; the restored place action still rejects its camp command.
+  [R5 restore follow-up](docs/work-packages/m1-next/11-durability.md#r5-current-copy-restore-follow-up--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: reconcile the quest summary with the integrated eleven
   implementations and explicit remaining report/playthrough checks. [Quest status](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-16 — Rehearsed the production server against an isolated database:
