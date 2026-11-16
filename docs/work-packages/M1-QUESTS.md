@@ -482,3 +482,12 @@ and the affected 17-test file passing. The subsequent catalogue/ordinary/UI
 run passed 50/50, and food/return-report checks passed 41/41. Migration 0032
 was applied to the owned stand. Native combined quests and full T032
 acceptance remain NOT_RUN. LOCAL.
+
+### Web build dependency — 2026-11-16
+
+The ordinary hunt UI imports public game-core constants. Added the existing
+workspace package as an explicit web dependency, so recursive production builds
+wait for its declarations instead of racing their generation. Regenerated the
+single pnpm lockfile with the owning package manager in offline mode. Web
+typecheck passed. The independent release rehearsal owns the full build result.
+LOCAL.

@@ -151,6 +151,9 @@ importers:
       '@colyseus/sdk':
         specifier: 0.18.4
         version: 0.18.4(@colyseus/core@0.18.17)(typescript@5.9.3)(zod@4.6.5)
+      '@warwrit/game-core':
+        specifier: workspace:*
+        version: link:../../packages/game-core
       '@warwrit/protocol':
         specifier: workspace:*
         version: link:../../packages/protocol

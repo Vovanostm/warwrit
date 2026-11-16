@@ -7,6 +7,7 @@
     "@babylonjs/core": "9.28.0",
     "@babylonjs/loaders": "9.28.0",
     "@colyseus/sdk": "0.18.4",
+    "@warwrit/game-core": "workspace:*",
     "@warwrit/protocol": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

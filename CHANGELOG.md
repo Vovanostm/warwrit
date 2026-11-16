@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: declare the hunt UI’s game-core workspace dependency so
+  production builds follow the actual import order. [Build dependency](docs/work-packages/M1-QUESTS.md#web-build-dependency--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the retained desktop place-view pacing and
   browser heap sample with its device/build limits. [Partial measurements](docs/work-packages/m1-next/10-desktop-performance.md#current-result--2026-11-15). LOCAL.
 
