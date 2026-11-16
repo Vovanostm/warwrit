@@ -14,6 +14,11 @@
 - Do not run setup, services, databases or cleanup without assigned resources and
   permission. One named validation owner runs proportional checks per revision;
   no duplicate validate/full gate. Hooks and required CI remain unchanged.
+- After a browser check, close the task's named session with
+  `bash scripts/agent-cleanup.sh <session>`. Stop only services and stands assigned
+  to this task; stopping a shared combat lab requires the matching coordinator
+  grant `WARWRIT_LAB_OWNER=<session>`. Never close all sessions or kill shared
+  browser processes. Report any cleanup failure.
 - Reuse unchanged sources and applicable checks. Get complete relevant errors;
   do not treat truncation, zero tests, missing proof or tool failure as PASS.
 - Never merge, publish or call Orca; the wrapper reports. Follow AGENTS' narrow

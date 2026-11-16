@@ -54,8 +54,10 @@ Append [common rules](prompts/common.md) to every worker brief, including review
 evaluation and critics. Role-specific read-only/resource limits still apply.
 Workers do not call Orca. When explicitly activated,
 headless workers use `scripts/orca-start-worker.sh` and
-`scripts/orca-codex-worker.sh`; logs are `.orca/runs/<task-id>/` and structured
-results follow `worker-result.schema.json`. Do not use interactive TUI workers,
+`scripts/orca-codex-worker.sh`; workers disable unused overrideable MCP servers,
+use a task-named headless browser session and clean up that session on exit. Logs
+are `.orca/runs/<task-id>/` and structured results follow
+`worker-result.schema.json`. Do not use interactive TUI workers,
 approval bypass flags or terminal interrupts that can suspend a process/lock DB.
 
 ## One bounded tick

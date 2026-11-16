@@ -235,6 +235,26 @@ Subagents, independent reviews and critic scores are optional; self-review is re
   task or explicit owner request. CI, coverage and static audits are advisory for
   final delivery. [Focused commands](docs/engineering/LOCAL_DEVELOPMENT.md#focused-checks).
 
+<a id="browsers-mcp-servers-and-test-stands"></a>
+<a id="cleanup-dev-server-and-browser"></a>
+
+## Browsers, MCP servers and test stands
+
+- Stop development servers, preview processes and Chrome DevTools MCP servers or
+  sessions started for the work. Close opened browser windows, tabs and automated
+  sessions when checks finish. Do not stop or disconnect resources owned by another
+  task; report cleanup failures.
+- For browser checks, use one headless, task-named `playwright-cli` session. Close
+  that session with `bash scripts/agent-cleanup.sh <session>`. Stop the combat lab
+  only when the coordinator grants the matching `WARWRIT_LAB_OWNER=<session>`;
+  never use `close-all` or `kill-all` on the shared browser daemon.
+- Headless pipeline workers use `scripts/codex-lean-mcp.sh` to disable unused,
+  overrideable MCP servers for that invocation. It fails closed on discovery or
+  verification errors and does not change global configuration.
+- Start with the lightest applicable stand in
+  [LOCAL_DEVELOPMENT](docs/engineering/LOCAL_DEVELOPMENT.md#test-stands). Keep a
+  stand running only when the owner requests it, and report how to stop it.
+
 ## Persistence and operations
 
 - Add ordered up/down migrations. Never edit released migrations. Canonical writes

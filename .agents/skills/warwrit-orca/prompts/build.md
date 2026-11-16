@@ -19,7 +19,10 @@ The assignment must name execution mode, resource and validation owners.
    changes. Branch owner commits finished steps; delegated editor returns the diff.
 5. For gameplay/visual work, play the actual affected journey with explicitly
    assigned private resources. Capture required desktop/day/night evidence and
-   stop only your resources. Tooling/docs work needs no invented game journey.
+   stop only your resources. Close any named browser session with
+   `bash scripts/agent-cleanup.sh <session>`; stop a shared lab only with the
+   matching `WARWRIT_LAB_OWNER=<session>` grant. Tooling/docs work needs no
+   invented game journey.
 6. For changed player text prepare `.orca/{{SLICE}}/text.md`: lines in player
    order, screen/speaker, required localizations and established mechanic facts.
 7. Write `.orca/{{SLICE}}/report.md`: criteria and proof, revision/dirty delta,

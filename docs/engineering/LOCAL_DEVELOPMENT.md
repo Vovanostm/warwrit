@@ -478,6 +478,25 @@ Normal unit mode skips this scenario. After an observation, load the current
 persisted aggregate before a fixture edit; restoring an old genesis state can
 mismatch the row's newer revisions. [Observed recovery failure](HARNESS_EVAL.md#fresh-recovery-consumer-check).
 
+## Test stands
+
+Use the lightest stand that exercises the affected behavior; move up only when a
+lower stand cannot expose the defect.
+
+| Stand                      | Use it for                                                | Resource cost             |
+| -------------------------- | --------------------------------------------------------- | ------------------------- |
+| Focused Vitest             | Domain rules, protocol and server handlers                | No browser or service     |
+| Component rendered in Node | HUD and component output                                  | No browser or service     |
+| Existing browser app       | Affected controls, layout and interaction                 | One named browser session |
+| Full development stack     | Persistence, authentication or a complete company journey | Database, API and browser |
+
+For browser work, use one headless `playwright-cli` session named for the task,
+batch checks, save needed screenshots and close that session with
+`bash scripts/agent-cleanup.sh <session>`. Only the assigned runtime owner may
+stop a shared stand using the matching `WARWRIT_LAB_OWNER=<session>` grant. Never
+close all sessions or kill shared browser processes. Stop other services started
+for the check when it ends and report cleanup failures.
+
 ## Proportional local validation
 
 Owner amendment — 2026-10-25: one assigned check owner runs

@@ -9,6 +9,18 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17, `claude/agent-resource-hygiene` — Fixed: copied the new lean-MCP
+  helper into the coordinator fixture and made its Codex stub return an empty MCP
+  list, addressing CI runs 1004/1005 after `main` integration. Local regression
+  rerun NOT_RUN; new-head CI pending. [PR #298 integration record](.orca/infra-resource-hygiene/report.md#pr-298-main-integration-and-clean-checkout-regression--2026-11-17). PUBLISHED.
+
+- 2026-11-17, `claude/agent-resource-hygiene` — Changed: integrated `main`
+  `4a9c3af9` into PR #298, keeping current repository policy and restoring the
+  task's browser/MCP cleanup, stand-selection and lean-MCP guidance. The roadmap
+  scope is unchanged; #297 remains open and blocked, and this branch update does
+  not merge the PR. Diff, shell syntax and Prettier checks PASS; regression suite
+  and new-head CI NOT_RUN. [PR #298](https://github.com/Vovanostm/warwrit/pull/298). PUBLISHED.
+
 - 2026-11-14, `claude/m1-quest-texts` — Added: eleven M1 quest texts in Russian,
   approved by the owner 2026-11-13 ([texts](docs/wiki/economy-quests/m1-quest-texts.md),
   [task](docs/work-packages/M1-QUESTS.md)); the `warwrit-writer` skill with quest
@@ -20,20 +32,6 @@ requests.
 - 2026-11-09 — Changed: finish N01 with the owner-authorized new-save fallback;
   migrated restore, ordinary entry/command/restart and production isolation pass.
   [Result and merge receipt](docs/work-packages/m1-next/01-integration.md). MERGED (PR430).
-
-### Integrate consolidation and verify the ordinary company loop (WLC-08)
-
-- 2026-11-08, `codex/wlc-08-integration`, PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), NOT_MERGED.
-  Integrate WLC-02–07, remove stale guidance/global visual gating, fix migration
-  expectations and development-env leakage into the production web build.
-  Add owner-requested guarded Playground time steps with atomic receipts and
-  migrations0024–25; correct movement and combat-receipt clock mismatches.
-  Ordinary co-op victory/proof/one reward/rest/payroll/next contract/restart/OIDC
-  re-entry PASS; failed runs and broader M1 gaps remain explicit. Full local checks
-  PASS on executable0c0aae83; no merge/deployment/full-M1 acceptance.
-  [Exact results, versions, failures and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
-- 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
-  existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
 
 ### Consolidate Combat Lab (WLC-06)
 
@@ -3363,6 +3361,73 @@ requests.
   sandbox controls are preserved (guard comment corrected only).
   Independent review pending; gameplay pilot/full game suites/publication/merge
   NOT_RUN, savings NOT_MEASURED. No automation, runtime, DB or GitHub writes.
+
+### Accept #297 review and start #310 framing — 2026-10-24, PUBLISHED
+
+- `Vovanostm/infra-297-resource-review`, [PR #298](https://github.com/Vovanostm/warwrit/pull/298):
+  independent review 4 ACCEPT at `85685ee5`; syntax and 101 isolated assertions
+  PASS, fixture processes directly confirmed absent. Prior coordinator validation
+  PASS retained; CI was still running at readback. Inherited issue/PR blocks and
+  2/2 history stay; no merge. Live cleanup/full wave NOT_RUN, savings NOT_MEASURED.
+- Under the existing owner delegation, [#310](https://github.com/Vovanostm/warwrit/issues/310)
+  moves from accepted contract to one bounded builder with exclusive focused
+  checks/private runtime. No parent budget reset or player acceptance claimed.
+
+### Complete the targeted #297 settlement repair — 2026-10-24, PUBLISHED
+
+- PR #298 source `0b7f593e` replaces stale shell settlement snapshots with a
+  finite Python lifecycle owner. Cleanup and complete result decoding precede
+  the cancellation-aware local decision; transport uncertainty remains nonzero
+  without retry. Owner-authorized targeted repair retains original 2/2 history.
+- Author syntax, 101 assertions, normal commit audit and 267/300 scope PASS.
+  Coordinator validation passed after a records-only format correction. Live
+  cleanup/full wave NOT_RUN; resource savings NOT_MEASURED. Not merged.
+
+### Allocate #297 source preparation alongside #209 — 2026-10-24, PUBLISHED
+
+- Owner permission «Разрешить адресные исправления» supplements the exhausted
+  2/2 budget for a bounded late-signal settlement repair. Review 3 REWORK and
+  inherited `agent:blocked` labels remained; fresh validation and review were
+  required. Tests/validate and resource savings were NOT_RUN/NOT_MEASURED then.
+
+### Retain #297 freeze after recovery assessment — 2026-10-23, PUBLISHED
+
+- Read-only recovery found no independent split that grants a new implementation
+  budget. Coordinator retained source `d2272625`, review 3 REWORK and consumed
+  2/2 reworks; issue and PR were blocked. Source and game behavior did not change.
+
+### Reconcile pipeline and #297 resource ownership — 2026-10-23, PUBLISHED
+
+- PR #298 rework 1 fixed five reviewer failure paths: explicit lab ownership,
+  failed inspection/cleanup settlement, fail-closed MCP setup and signal
+  finalization. Author reported 56 isolated assertions, bash syntax and normal
+  commit audit PASS. Review 2 later found an `lsof` diagnostic false-CLEAN case;
+  resource savings remained NOT_MEASURED and a real Orca wave NOT_RUN.
+
+### Agents close browsers, skip idle MCP servers and use the lightest stand — 2026-10-22, PUBLISHED
+
+- PR #298 / issue #297 records the owner request to close browsers and MCP after
+  checks and use lightweight stands. The 2026-10-22 measurement found three
+  forgotten `playwright-cli` browsers (about 2 GB) and 46 idle
+  `chrome-devtools-mcp` processes (about 2.4 GB).
+- `scripts/agent-cleanup.sh` closes one named browser session and its lab;
+  `scripts/codex-lean-mcp.sh` disables unused overrideable MCP servers for
+  headless `codex exec`. Cleanup, lean-run, bash syntax and Prettier checks passed
+  then; shellcheck and a full Orca wave were NOT_RUN.
+
+### Integrate consolidation and verify the ordinary company loop (WLC-08)
+
+- 2026-11-08, `codex/wlc-08-integration`, PUBLISHED [PR430](https://github.com/Vovanostm/warwrit/pull/430), NOT_MERGED.
+  Integrate WLC-02–07, remove stale guidance/global visual gating, fix migration
+  expectations and development-env leakage into the production web build.
+  Add owner-requested guarded Playground time steps with atomic receipts and
+  migrations0024–25; correct movement and combat-receipt clock mismatches.
+  Ordinary co-op victory/proof/one reward/rest/payroll/next contract/restart/OIDC
+  re-entry PASS; failed runs and broader M1 gaps remain explicit. Full local checks
+  PASS on executable0c0aae83; no merge/deployment/full-M1 acceptance.
+  [Exact results, versions, failures and limits](docs/engineering/WLC_08_ACCEPTANCE.md).
+- 2026-11-08 — Changed: authorize the owner-requested PR428 merge, preserving
+  existing combat checks and advisory CI limits; [details](docs/engineering/COMBAT_LAB_CONSOLIDATION.md#owner-authorized-integration--2026-11-08). PUBLISHED.
 
 ### Accept #319 local payroll preparation gates — 2026-10-24, PUBLISHED
 
