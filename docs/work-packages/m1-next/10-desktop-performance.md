@@ -1,6 +1,6 @@
 # N10 — Coherent desktop presentation and measured performance
 
-## Current result — 2026-11-15
+## Current result — 2026-11-16
 
 IN_PROGRESS / LOCAL. The 36-figure Playground was inspected by day/night at
 1200×757 CSS px, DPR 2. Canvas CSS bounds were 1136×740 and document scroll width
@@ -34,7 +34,8 @@ over 1014.1ms had median 8.3ms and p95 10.2ms. It measures callback pacing in th
 place view, with no claim about battle render time or the target performance
 budget. Capture is `output/playwright/m1-old-mill-owner-before-battle-20261115.png`.
 Comparable whole-journey load/resource measurements and server capacity remain
-NOT_MEASURED. Performance acceptance awaits the owner budget.
+NOT_MEASURED. The owner budget accepted on 2026-11-16 is recorded below;
+compliance with it remains unmeasured.
 
 ## Player goal and trial
 
@@ -70,10 +71,10 @@ requires the accepted explicit location override. No renderer competition or ful
   repeat the same workload and report before/after with functional result.
   No speedup claim from different scenes or unrecorded hardware.
 
-No numerical FPS/memory/capacity target is invented here. Existing accepted
-thresholds, if present in the owning feature, remain binding. If absent, provide
-the measured baseline and propose a player-impact target for owner adoption;
-baseline collection can finish without it, a performance acceptance claim cannot.
+The owner accepted a minimum of 60 FPS on MacBook + Chrome on 2026-11-16 for
+the atlas, settlements and battles up to 36 figures. Measure the representative
+whole journey against that budget. Load-time, memory and capacity thresholds
+remain unset; record those observations without inventing additional limits.
 A broad load campaign belongs to N12, not the game VM running coding agents.
 
 ## Scope and architecture
@@ -134,3 +135,25 @@ sample had a different scene and context workload, so no before/after memory or
 rendering improvement is claimed. Whole-journey production performance,
 renderer-resource counts, target-device acceptance and the owner-selected budget
 remain NOT_MEASURED/NOT_RUN under DESK-1–DESK-6.
+
+## Performance budget — owner decision 2026-11-16
+
+The owner selected «Минимум 60 FPS» for M1 on MacBook in Chrome, covering the
+atlas, settlements and combat with up to 36 figures. This is the accepted
+performance requirement for T028, DESK-6 and SC-009. Previous short callback
+samples and development-context heap values do not establish compliance.
+
+Next: record the actual MacBook/browser, production build, viewport and workload,
+measure the comparable complete atlas → place → battle/result → re-entry path,
+and check the 60-FPS minimum. Frame callbacks alone do not measure battle render
+time. A failed or absent measurement keeps acceptance open; no lower threshold
+is implied. Current whole-journey compliance is NOT_MEASURED.
+
+### Actual host identification — 2026-11-16
+
+Read-only host queries identify a MacBook Pro, model `Mac15,6`, Apple M3 Pro,
+36 GB RAM and macOS 26.7.1, confirmed through `sysctl`, `sw_vers` and
+`system_profiler SPHardwareDataType -json`. The earlier browser samples report
+Chrome 157.0.0.0 and its user-agent
+OS string. This names the local target hardware. GPU/browser rendering mode,
+production whole-journey performance and 60-FPS compliance remain unmeasured.

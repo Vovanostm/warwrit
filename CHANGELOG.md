@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the owner's minimum 60-FPS budget for MacBook
+  Chrome across atlas, settlements and combat up to 36 figures. Compliance awaits
+  full-session measurement. [N10](docs/work-packages/m1-next/10-desktop-performance.md#performance-budget--owner-decision-2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: expand the accepted twenty-quest table to individual
   stable IDs and map the eleven original narrative scenes to N05 leaves.
   [Quest matrix](docs/work-packages/M1-QUESTS.md#twenty-quest-rows-and-eleven-original-scenes--2026-11-16). LOCAL.
