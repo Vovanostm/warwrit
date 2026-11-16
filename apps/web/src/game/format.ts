@@ -35,6 +35,7 @@ const ITEM_LABELS: Readonly<Record<string, string>> = {
   ration: 'Паёк',
   'medical-unit': 'Перевязочный набор',
   'repair-unit': 'Ремонтный набор',
+  'beast-claw-trophy': 'Коготь зверя',
   'raider-standard-trophy': 'Знамя налётчиков',
 };
 

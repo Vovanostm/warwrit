@@ -8,6 +8,8 @@ import {
 } from './game/contract-visits.js';
 import { lookup } from './i18n/index.js';
 import { NpcPortrait } from './game/NpcPortrait.js';
+import { TrophyArt } from './game/TrophyArt.js';
+import { itemLabel } from './game/format.js';
 
 import {
   isFirstHuntReadResponse,
@@ -88,6 +90,10 @@ const HUNT_ISSUER_PORTRAITS: Readonly<Record<string, string>> = {
   'ci.m1.raider-standard.01': 'npc.city-watch-contact.kamenny-brod.01',
   'ci.m1.wolf-trail.01': 'npc.woodland-village-caller.bereznyak.01',
   'ci.m1.mill-beast.01': 'npc.local-warning-keeper.tikhaya-gat.01',
+};
+const HUNT_PROOF_DEFINITIONS: Readonly<Record<string, string>> = {
+  'ci.m1.raider-standard.01': 'raider-standard-trophy',
+  'ci.m1.mill-beast.01': 'beast-claw-trophy',
 };
 
 export function FirstHunt(
@@ -325,6 +331,10 @@ export function FirstHunt(
     expectedIssuerPortrait && expectedIssuerPortrait === contract?.terms.issuerId
       ? expectedIssuerPortrait
       : undefined;
+  const publicProofDefinition =
+    contract?.yourRole !== 'NONE' && contract?.knownState !== 'SETTLED'
+      ? HUNT_PROOF_DEFINITIONS[contract?.instanceId ?? '']
+      : undefined;
   const atIssuer = contract
     ? visitingIssuer(props.visit, contract.instanceId, contract.terms.issuerLocation.siteId)
     : false;
@@ -465,6 +475,12 @@ export function FirstHunt(
                   Помощь второй компании добровольна; выплата не делится. Принятые условия
                   фиксированы.
                 </p>
+                {publicProofDefinition && (
+                  <p className="trophy-proof-target">
+                    <TrophyArt definitionId={publicProofDefinition} />
+                    <span>Подлинный трофей: {itemLabel(publicProofDefinition)}.</span>
+                  </p>
+                )}
               </details>
             )}
           <dl>
@@ -485,13 +501,16 @@ export function FirstHunt(
           </dl>
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
-            <p className="state-note">
-              Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
-              {contract.yourProof.redemption === 'REDEEMED'
-                ? lookup('journey.hunt.redeemed')
-                : 'ещё не предъявлен'}
-              .
-            </p>
+            <div className="trophy-proof-target state-note">
+              <TrophyArt definitionId={HUNT_PROOF_DEFINITIONS[contract.instanceId] ?? ''} />
+              <span>
+                Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
+                {contract.yourProof.redemption === 'REDEEMED'
+                  ? lookup('journey.hunt.redeemed')
+                  : 'ещё не предъявлен'}
+                .
+              </span>
+            </div>
           )}
           <div className="first-hunt-actions">
             {atIssuer && availableActions.includes('ACCEPT') && (
