@@ -19,6 +19,7 @@ it('keeps the same-command retry inside the fullscreen live lane', () => {
       status="reconnecting"
       statusLabel="Связь прервана · восстанавливаем подключение"
       battleActive
+      turnNotice="Ход другого участника · Волк · осталось 30 с"
       resumePending={false}
       commandPending={false}
       retryAvailable={false}
@@ -29,9 +30,12 @@ it('keeps the same-command retry inside the fullscreen live lane', () => {
   );
 
   expect(html).toMatch(
-    /<div class="encounter-live-lane"><span[^>]*>Связь прервана · восстанавливаем подключение<\/span><div class="encounter-command-pending" role="status">/,
+    /<div class="encounter-live-lane"><span[^>]*>Связь прервана · восстанавливаем подключение<\/span>.*<div class="encounter-command-pending" role="status">/,
   );
   expect(html).toContain('Повтор отправит тот же запрос с тем же ID.');
+  expect(html).toContain(
+    'class="encounter-live-turn" role="status">Ход другого участника · Волк · осталось 30 с</p>',
+  );
   expect(html).toContain(
     '<button class="quiet-action" type="button" disabled="">Повторить команду</button>',
   );

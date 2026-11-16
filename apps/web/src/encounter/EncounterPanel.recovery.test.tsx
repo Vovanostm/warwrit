@@ -11,6 +11,7 @@ import type {
 
 const harness = vi.hoisted(() => ({
   observers: [] as Array<Record<string, (...args: never[]) => void>>,
+  battleActs: [] as Array<(intent: unknown) => void>,
   stop: vi.fn(),
 }));
 
@@ -26,11 +27,17 @@ vi.mock('./connection.js', () => ({
 }));
 
 vi.mock('../combat-lab/BattleView.js', () => ({
-  BattleView: ({ children }: { children?: ReactNode }) => children ?? null,
+  BattleView: ({ children, onAct }: { children?: ReactNode; onAct?: (intent: never) => void }) => {
+    if (onAct) harness.battleActs.push(onAct as (intent: unknown) => void);
+    return children ?? null;
+  },
 }));
 
 import { EncounterPanel } from '../EncounterPanel.js';
-import { encounterCommandAttemptStorageKey } from './command-attempt-storage.js';
+import {
+  encounterCommandAttemptStorageKey,
+  writeEncounterCommandAttempt,
+} from './command-attempt-storage.js';
 
 const scope = { accountId: 'account-a', companyId: 'company-a' };
 const encounterId = '11111111-1111-4111-8111-111111111111';
@@ -106,6 +113,7 @@ describe('EncounterPanel command recovery', () => {
     container = undefined;
     sessionStorage.clear();
     harness.observers.length = 0;
+    harness.battleActs.length = 0;
     harness.stop.mockClear();
   });
 
@@ -255,22 +263,132 @@ describe('EncounterPanel command recovery', () => {
     expect(sender).toHaveBeenCalledTimes(1);
     expect(sender.mock.calls[0]![0].intent).toEqual({ type: 'retreat' });
 
+    const waitingProjection = { ...projection, revision: 5 };
+    const waitingGrant = { ...tacticalGrant, revision: 5 };
     await connectCurrentPanel(
       sender,
       {
-        ...projection,
+        ...waitingProjection,
         units: [{ ...projection.units[0]!, q: -3, r: 0 }],
       },
       {
-        ...tacticalGrant,
+        ...waitingGrant,
         actorActions: {
-          ...tacticalGrant.actorActions,
+          ...waitingGrant.actorActions,
           permittedIntents: ['wait'],
         },
       },
     );
+    await act(async () => container!.querySelector<HTMLButtonElement>('.encounter-unit')!.click());
     expect(retreat().disabled).toBe(true);
-    await connectCurrentPanel(sender, projection, grant);
+    await connectCurrentPanel(sender, waitingProjection, { ...grant, revision: 5 });
     expect(retreat().disabled).toBe(true);
+  });
+
+  it('waits for the accepted projection and its matching grant before fresh commands', async () => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+    container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () => mount(root!));
+    const sender = vi.fn(async (command: EncounterCommandDto) => response(command));
+    await connectCurrentPanel(sender, {
+      ...projection,
+      deadlineAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+    expect(container.textContent).toMatch(/Ваш ход · .* · осталось \d+ с/);
+    const wait = () => container!.querySelector<HTMLButtonElement>('[aria-label="Завершить ход"]');
+    expect(wait()?.disabled).toBe(false);
+    const staleAction = harness.battleActs.at(-1)!;
+    await act(async () => wait()!.click());
+    expect(sender).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain('Ждём обновления сводки боя до 5');
+    expect(wait()).toBeNull();
+    await act(async () => staleAction({ type: 'wait' } as never));
+    expect(sender).toHaveBeenCalledTimes(1);
+
+    const observer = harness.observers.at(-1)!;
+    const nextProjection = { ...projection, revision: 5 };
+    await act(async () => observer['onProjection']!(nextProjection as never));
+    expect(wait()).toBeNull();
+    await act(async () => observer['onControlGrant']!({ ...grant, revision: 5 } as never));
+    await act(async () => container!.querySelector<HTMLButtonElement>('.encounter-unit')!.click());
+    expect(wait()?.disabled).toBe(false);
+    await act(async () => wait()!.click());
+    expect(sender).toHaveBeenCalledTimes(2);
+    expect(sender.mock.calls[1]![0].expectedRevision).toBe(5);
+  });
+
+  it('does not wait again when the accepted projection arrives before its response', async () => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+    let resolveCommand: ((value: EncounterCommandResponse) => void) | undefined;
+    container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () => mount(root!));
+    const sender = vi.fn(
+      (_command: EncounterCommandDto) =>
+        new Promise<EncounterCommandResponse>((resolve) => {
+          resolveCommand = resolve;
+        }),
+    );
+    await connectCurrentPanel(sender);
+    const wait = () => container!.querySelector<HTMLButtonElement>('[aria-label="Завершить ход"]');
+    await act(async () => wait()!.click());
+    const observer = harness.observers.at(-1)!;
+    await act(async () => {
+      observer['onProjection']!({ ...projection, revision: 5 } as never);
+      observer['onControlGrant']!({ ...grant, revision: 5 } as never);
+    });
+    await act(async () => container!.querySelector<HTMLButtonElement>('.encounter-unit')!.click());
+    await act(async () => {
+      resolveCommand!(response(sender.mock.calls[0]![0]));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(container.textContent).not.toContain('Ждём обновления сводки боя');
+    expect(wait()?.disabled).toBe(false);
+  });
+
+  it('clears a historical retry without waiting for a revision already projected', async () => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+    const historicalCommand: EncounterCommandDto = {
+      version: 1,
+      encounterId,
+      commandId: 'command-historical',
+      expectedRevision: 4,
+      activationId: 'activation-a',
+      actorId: 'fighter-a',
+      intent: { type: 'wait' },
+    };
+    writeEncounterCommandAttempt(sessionStorage, scope, historicalCommand);
+    container = document.createElement('div');
+    document.body.append(container);
+    root = createRoot(container);
+    await act(async () => mount(root!));
+    const sender = vi.fn(async (command: EncounterCommandDto) => response(command));
+    const observer = harness.observers.at(-1)!;
+    await act(async () => {
+      observer['onStatus']!('connected' as never);
+      observer['onProjection']!({ ...projection, revision: 5 } as never);
+      observer['onControlGrant']!({ ...grant, revision: 5 } as never);
+      observer['onCommandSender']!(sender as never);
+    });
+    const retry = [...container.querySelectorAll('button')].find((button) =>
+      button.textContent?.includes('Повторить команду'),
+    );
+    expect(retry).toBeDefined();
+    await act(async () => retry!.click());
+    expect(sender).toHaveBeenCalledWith(historicalCommand);
+    expect(container.textContent).not.toContain('Ждём обновления сводки боя');
+    expect(container.querySelector('[aria-label="Завершить ход"]')?.hasAttribute('disabled')).toBe(
+      false,
+    );
   });
 });

@@ -48,6 +48,7 @@ interface EncounterPanelState {
   readonly commandPending?: boolean;
   readonly commandStorageBlocked?: boolean;
   readonly resumePending?: boolean;
+  readonly awaitingProjectionRevision?: { readonly encounterId: string; readonly revision: number };
   readonly message?: string;
 }
 
@@ -100,6 +101,9 @@ export function EncounterPanel(props: {
   const commandSenderRef = useRef<EncounterCommandSender | undefined>(undefined);
   const pendingCommandRef = useRef<EncounterCommandDto | undefined>(undefined);
   const pendingAttemptRef = useRef<EncounterCommandAttempt | undefined>(undefined);
+  const awaitingProjectionRevisionRef = useRef<
+    { readonly encounterId: string; readonly revision: number } | undefined
+  >(undefined);
   const retryButtonRef = useRef<HTMLButtonElement>(null);
   const commandSending = useRef(false);
   const commandGeneration = useRef(0);
@@ -113,6 +117,7 @@ export function EncounterPanel(props: {
     const scopeKey = `${props.scope.accountId}:${props.scope.companyId}`;
     pendingCommandRef.current = undefined;
     pendingAttemptRef.current = undefined;
+    awaitingProjectionRevisionRef.current = undefined;
     commandSending.current = false;
     const updateSelection = (next: string | null) => {
       selectedRef.current = next;
@@ -144,6 +149,13 @@ export function EncounterPanel(props: {
             setState({ scopeKey, status: 'failed' });
             return;
           }
+          const requiredRevision = awaitingProjectionRevisionRef.current;
+          if (
+            requiredRevision &&
+            (requiredRevision.encounterId !== projection.encounterId ||
+              projection.revision >= requiredRevision.revision)
+          )
+            awaitingProjectionRevisionRef.current = undefined;
           const nextSelection = retainedSelection(
             selectedRef.current,
             projection,
@@ -162,11 +174,23 @@ export function EncounterPanel(props: {
             pendingCommandRef.current = undefined;
           }
           setState((current) => {
-            const { message: _message, pendingCommand: _pending, ...rest } = current;
+            const {
+              message: _message,
+              pendingCommand: _pending,
+              awaitingProjectionRevision: _awaiting,
+              ...rest
+            } = current;
+            const awaitingProjectionRevision = awaitingProjectionRevisionRef.current;
             return {
               ...rest,
               scopeKey,
               projection,
+              ...(awaitingProjectionRevision
+                ? {
+                    awaitingProjectionRevision,
+                    message: `Команда принята. Ждём обновления сводки боя до ${awaitingProjectionRevision.revision}.`,
+                  }
+                : {}),
               ...(storedAttempt.kind === 'FOUND'
                 ? { pendingCommand: storedAttempt.attempt.command }
                 : {}),
@@ -258,6 +282,9 @@ export function EncounterPanel(props: {
     scopedState.commandSender !== undefined &&
     scopedState.commandPending !== true &&
     scopedState.pendingCommand === undefined &&
+    (scopedState.awaitingProjectionRevision === undefined ||
+      scopedState.awaitingProjectionRevision.encounterId !== projection.encounterId ||
+      projection.revision >= scopedState.awaitingProjectionRevision.revision) &&
     scopedState.commandStorageBlocked !== true;
   const actorIsOurs =
     projection !== undefined &&
@@ -278,6 +305,15 @@ export function EncounterPanel(props: {
   const actorLabel = actorUnit
     ? encounterUnitLabel(actorUnit, ourNames)
     : 'участник вне открытой сводки';
+  const turnNotice = projection
+    ? projection.status !== 'active'
+      ? 'Бой завершён; команды недоступны.'
+      : actorUnitId === null
+        ? 'Сервер пока не назначил следующий ход.'
+        : actorIsOurs
+          ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
+          : `Ход другого участника · ${actorLabel}`
+    : undefined;
   const presentation = projection
     ? toEncounterBattlePresentation(
         projection,
@@ -400,6 +436,7 @@ export function EncounterPanel(props: {
           {...(scopedState?.grant !== undefined ? { grant: scopedState.grant } : {})}
           resumePending={scopedState?.resumePending === true}
           commandPending={scopedState?.commandPending === true}
+          {...(turnNotice !== undefined ? { turnNotice } : {})}
           retryAvailable={
             scopedState?.status === 'connected' && scopedState.commandSender !== undefined
           }
@@ -418,15 +455,11 @@ export function EncounterPanel(props: {
             {projection.round} · обновление {projection.revision}
           </p>
           {!presentation && leadershipChoice}
-          <p className="encounter-turn" role="status">
-            {projection.status !== 'active'
-              ? 'Бой завершён; команды недоступны.'
-              : actorUnitId === null
-                ? 'Сервер пока не назначил следующий ход.'
-                : actorIsOurs
-                  ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
-                  : `Ход другого участника · ${actorLabel}`}
-          </p>
+          {!presentation && turnNotice && (
+            <p className="encounter-turn" role="status">
+              {turnNotice}
+            </p>
+          )}
           {presentation && (
             <BattleView
               view={presentation}
@@ -639,6 +672,15 @@ export function EncounterPanel(props: {
     const sender = commandSenderRef.current;
     const generation = commandGeneration.current;
     const retry = 'commandId' in intentOrCommand;
+    const awaitingRevision = awaitingProjectionRevisionRef.current;
+    if (
+      !retry &&
+      projection !== undefined &&
+      awaitingRevision !== undefined &&
+      awaitingRevision.encounterId === projection.encounterId &&
+      projection.revision < awaitingRevision.revision
+    )
+      return;
     const command = createEncounterCommand({
       value: intentOrCommand,
       projection,
@@ -722,14 +764,45 @@ export function EncounterPanel(props: {
       }
       pendingCommandRef.current = undefined;
       pendingAttemptRef.current = undefined;
+      let awaitingProjectionRevision = awaitingProjectionRevisionRef.current;
+      if (response.status === 'accepted') {
+        const currentProjection = projectionRef.current;
+        const projectionCaughtUp =
+          currentProjection?.encounterId === response.encounterId &&
+          currentProjection.revision >= response.revision;
+        if (
+          awaitingProjectionRevision &&
+          currentProjection?.encounterId === awaitingProjectionRevision.encounterId &&
+          currentProjection.revision >= awaitingProjectionRevision.revision
+        )
+          awaitingProjectionRevision = undefined;
+        if (!projectionCaughtUp) {
+          awaitingProjectionRevision = {
+            encounterId: response.encounterId,
+            revision: Math.max(
+              awaitingProjectionRevision?.encounterId === response.encounterId
+                ? awaitingProjectionRevision.revision
+                : 0,
+              response.revision,
+            ),
+          };
+        }
+      }
+      awaitingProjectionRevisionRef.current = awaitingProjectionRevision;
       setState((current) => {
-        const { pendingCommand: _pending, ...rest } = current;
+        const {
+          pendingCommand: _pending,
+          awaitingProjectionRevision: _awaiting,
+          ...rest
+        } = current;
         return {
           ...rest,
           commandPending: false,
           commandStorageBlocked: false,
-          message:
-            response.status === 'accepted'
+          ...(awaitingProjectionRevision ? { awaitingProjectionRevision } : {}),
+          message: awaitingProjectionRevision
+            ? `Команда принята. Ждём обновления сводки боя до ${awaitingProjectionRevision.revision}.`
+            : response.status === 'accepted'
               ? 'Команда принята сервером. Обновляем состояние боя.'
               : response.code === 'CONFLICT'
                 ? 'Состояние хода изменилось. Сверяем бой перед новой командой.'

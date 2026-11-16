@@ -696,6 +696,12 @@
   background: var(--panel);
 }
 
+.encounter-panel--fullscreen .encounter-live-lane > .encounter-live-turn {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
 .encounter-panel--fullscreen .encounter-live-lane > .state-note {
   padding: 0;
   border: 0;

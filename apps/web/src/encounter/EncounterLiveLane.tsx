@@ -6,6 +6,7 @@ export function EncounterLiveLane({
   statusLabel,
   battleActive,
   message,
+  turnNotice,
   grant,
   resumePending,
   commandPending,
@@ -18,6 +19,7 @@ export function EncounterLiveLane({
   readonly statusLabel: string;
   readonly battleActive: boolean;
   readonly message?: string;
+  readonly turnNotice?: string;
   readonly grant?: EncounterControlGrantDto;
   readonly resumePending: boolean;
   readonly commandPending: boolean;
@@ -34,6 +36,11 @@ export function EncounterLiveLane({
       {message && (
         <p className="encounter-message" role="status">
           {message}
+        </p>
+      )}
+      {turnNotice && (
+        <p className="encounter-live-turn" role="status">
+          {turnNotice}
         </p>
       )}
       <ParticipantActivity status={status} active={battleActive} selfAfk={grant?.selfAfk} />
