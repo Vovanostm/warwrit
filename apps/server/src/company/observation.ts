@@ -240,6 +240,89 @@ function payrollObservationDue(
   );
 }
 
+function deathObservationDue(state: CompanyCombatAggregateState, characterId: string): boolean {
+  const { lifecycle, finance } = state.economy;
+  const person = lifecycle.characters.find((entry) => entry.identity.characterId === characterId);
+  if (person?.presence.availability !== 'DEAD') return false;
+  const known = lifecycle.knowledge.characters.find(
+    (entry) => entry.identity.characterId === characterId,
+  );
+  if (known?.presence.availability !== 'DEAD') return true;
+  const membershipIds = new Set<string>(
+    lifecycle.memberships
+      .filter(
+        (entry) => entry.companyId === lifecycle.companyId && entry.characterId === characterId,
+      )
+      .map((entry) => entry.membershipId),
+  );
+  return finance.accounts.some(
+    (account) => membershipIds.has(account.membershipId) && (!account.known || !account.knownDeath),
+  );
+}
+
+function locallyObservableDeadMembers(
+  state: CompanyCombatAggregateState,
+  place: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string },
+): readonly string[] {
+  const { lifecycle, finance, physical } = state.economy;
+  if (!physical) return [];
+  const companyMembershipIds = new Set<string>(
+    lifecycle.memberships
+      .filter((entry) => entry.companyId === lifecycle.companyId)
+      .map((entry) => entry.membershipId),
+  );
+  const atPlace = (location: {
+    readonly kind: string;
+    readonly siteId?: string;
+    readonly areaId?: string;
+  }) =>
+    location.kind === 'AT' && location.siteId === place.siteId && location.areaId === place.areaId;
+  const corpseIsHere = physical.containers.some(
+    (container) =>
+      container.kind === 'CORPSE' &&
+      container.custodian.kind === 'WORLD' &&
+      container.custodian.id === lifecycle.worldId &&
+      atPlace(container.location),
+  );
+  if (!corpseIsHere) return [];
+
+  return lifecycle.characters
+    .filter((person) => {
+      const characterId = person.identity.characterId;
+      if (person.presence.availability !== 'DEAD' || !atPlace(person.presence.location))
+        return false;
+      const memberships = lifecycle.memberships.filter(
+        (entry) =>
+          entry.companyId === lifecycle.companyId &&
+          entry.characterId === characterId &&
+          companyMembershipIds.has(entry.membershipId),
+      );
+      if (memberships.length === 0) return false;
+      return finance.accounts.some((account) => {
+        const death = account.death;
+        if (
+          !companyMembershipIds.has(account.membershipId) ||
+          !memberships.some((membership) => membership.membershipId === account.membershipId) ||
+          !death
+        )
+          return false;
+        return (
+          finance.sourceEffects.some(
+            (effect) =>
+              effect.key === canonicalJson(['FINANCIAL_DEATH', death.sourceId, characterId]),
+          ) &&
+          physical.sourceEffects.some(
+            (effect) =>
+              effect.key ===
+              canonicalJson(['DEATH_OUTCOME', death.sourceId, ['character', characterId]]),
+          )
+        );
+      });
+    })
+    .map((person) => person.identity.characterId)
+    .sort();
+}
+
 function prepareObservationDraft(
   state: CompanyCombatAggregateState,
   characterId: string,
@@ -433,9 +516,14 @@ export async function observeLocalCompanyConditions(
       presence.location.siteId === place.siteId &&
       presence.location.areaId === place.areaId,
   );
+  const deadAtPlace = locallyObservableDeadMembers(state, place);
+  const observationSubjects = [
+    ...local.map((person) => person.identity.characterId),
+    ...deadAtPlace,
+  ];
   const changed = local.some(({ identity }) => characterChanged(state, identity.characterId));
   const recovering = local.find(({ presence }) => presence.assignment === 'RECOVERY');
-  if (local.length === 0) return state;
+  if (observationSubjects.length === 0) return state;
   const clock = await readWorldClock(transaction, lifecycle.worldId, now, true);
   if (
     BigInt(clock.tick) < BigInt(lifecycle.campaignTick) ||
@@ -447,13 +535,15 @@ export async function observeLocalCompanyConditions(
   const payrollDue = local.some(({ identity }) =>
     payrollObservationDue(state, identity.characterId, clock.tick),
   );
-  if (!changed && !recoveryDue && !payrollDue) return state;
+  const deathDue = deadAtPlace.some((characterId) => deathObservationDue(state, characterId));
+  if (!changed && !recoveryDue && !payrollDue && !deathDue) return state;
 
   const prepared = prepareLocalCharacterObservations(
     state,
     local.map((person) => person.identity.characterId),
     clock.tick,
     recoveryDue ? recovering.identity.characterId : undefined,
+    observationSubjects,
   );
   if (!prepared) return state;
   for (const write of prepared.writes) {
@@ -485,19 +575,22 @@ function prepareLocalCharacterObservations(
   contactIds: readonly string[],
   tick: string,
   recoverySubjectId: string | undefined,
+  observationSubjects: readonly string[] = contactIds,
 ) {
   // Prepare every observation before writing any, so an unavailable prerequisite
   // preserves all prior knowledge. Food and recovery use the actual current tick.
   let next = state;
   const writes = [];
-  for (let observedCount = 0; observedCount < contactIds.length; observedCount += 1) {
+  for (let observedCount = 0; observedCount < observationSubjects.length; observedCount += 1) {
     // The first observation settles elapsed time for everyone. Each local payee
     // still needs their own observation to disclose newly earned wages. Recheck
     // changed characters too, preserving the same read's recovery and skill updates.
     const subject =
-      contactIds.find(
+      observationSubjects.find(
         (characterId) =>
-          characterChanged(next, characterId) || payrollObservationDue(next, characterId, tick),
+          characterChanged(next, characterId) ||
+          payrollObservationDue(next, characterId, tick) ||
+          deathObservationDue(next, characterId),
       ) ?? (observedCount === 0 ? recoverySubjectId : undefined);
     if (!subject) break;
     const draft = prepareObservationDraft(next, subject, contactIds, tick);
