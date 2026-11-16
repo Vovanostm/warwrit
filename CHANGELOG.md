@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the retained N01 battle's two deaths, two
+  surrenders, released companies and intermittent control. Preserve the failed
+  journey and corrected driver pause. [N08](docs/work-packages/m1-next/08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: rest assignments after travel locate the opening-attested
   carried purse before funding access. The retained helper now rests and returns
   at full health and 50 morale. [N06](docs/work-packages/m1-next/06-company-capabilities.md#rest-contact-refusal-on-the-retained-copy--2026-11-16). LOCAL.

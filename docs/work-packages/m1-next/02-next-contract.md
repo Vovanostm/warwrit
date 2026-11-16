@@ -35,7 +35,10 @@ databases retain those failed outcomes. Ordinary owner OIDC re-entry restored
 equipped raider weapon/coat, and the unfinished HUNT-03 with its existing helper.
 Camp and three rest assignments succeeded through the UI. Local runtime and
 helper-fixture recovery details belong to [N12](12-release-preparation.md#current-local-runtime-pointers--2026-11-16).
-The persistent two-browser battle check is pending. T014 stays open.
+The persistent two-browser attempt ended with two deaths and two surrenders.
+Both companies retain one living founder and released bindings. HUNT-03 remains
+unfinished. [N08](08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16)
+owns the actual control, staging and terminal evidence. T014 stays open.
 
 ### Earlier restore checkpoint — 2026-11-15
 

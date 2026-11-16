@@ -208,7 +208,7 @@ No permission to merge, deploy or provision paid resources was granted here.
 
 ## Current result
 
-IN_PROGRESS / LOCAL. T001/T003/T004/T005/T006/T008/T009 complete on
+IN_PROGRESS / LOCAL. T001/T003/T004/T005/T006/T007/T008/T009 complete on
 `codex/m1-completion-20261115`. Setup/replay schema3 with bridge-v6 retains
 runtime state schema1 and the historical setup1/2 execution paths. The new
 validator preserves all sides/parties/controller references and enforces the
@@ -258,8 +258,11 @@ Checks completed on the integrated sources:
 - Server/web typechecks and64 focused company-surrender, projection, sprite,
   terminal-view and story-interface tests passed on the integrated sources.
 
-T007/T010 retain native surrender and combined campaign UI acceptance.
+T007 is complete. T010 retains combined campaign UI acceptance. The latest
+retained-N01 attempt shows native surrender and applied terminal consequences,
+but interrupted control and defeat leave the full journey open under
+[N08](m1-next/08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16).
 Canonical hostile equipment is reconciled with actual remaining armor and grounded
-after verified surrender. Ordinary loot pickup/sale belongs to T022 and remains
-unfinished. MULTI-7 ordinary browser continuation and full N10 measurement and
+after verified surrender. Ordinary loot pickup/sale is complete under T022.
+MULTI-7 ordinary browser continuation and full N10 measurement and
 acceptance remain open. Capacity/performance are NOT_MEASURED.

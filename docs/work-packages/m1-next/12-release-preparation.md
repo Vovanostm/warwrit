@@ -52,7 +52,10 @@ then restored the expected helper account/company with 800 crowns, 20 rations
 and its founder at 36 health/16 morale. Camp succeeded. A fresh rest assignment
 exposed the carried-purse location defect; [N06](06-company-capabilities.md#rest-contact-refusal-on-the-retained-copy--2026-11-16)
 owns its correction and the subsequent successful recovery to 100 health and
-50 morale, FIELD return and camp closure. The next battle remains pending.
+50 morale, FIELD return and camp closure. The subsequent battle resolved with
+two allied deaths and two surrenders. Both companies remain ACTIVE with one
+living founder and no encounter binding. [N08](08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16)
+owns the outcome, false-positive driver pause and retained evidence.
 
 Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
 not run.

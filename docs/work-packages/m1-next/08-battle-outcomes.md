@@ -2,12 +2,62 @@
 
 ## Current result — 2026-11-16
 
-PARTIAL / LOCAL. Recorded defeats preserve their actual casualties and release
-their bindings. The restored companies continued through paid quests, property
-recovery, trade and safe-camp rest. Their latest retry ended with all four
-remaining fighters dead after the client lost usable battle control. Both
-companies are now GAME_OVER. The dated result below owns that failure and its
-follow-up. Hostile escape and successful ordinary hunt continuation remain open.
+PARTIAL / LOCAL. Recorded defeats preserve actual casualties and release their
+bindings. The latest isolated N01 continuation ended with two deaths and two
+surrenders. Both companies remain ACTIVE with one living member each. The retained
+source database still has its earlier GAME_OVER outcome. The new run accepted
+account actions from both companies, but delayed requests and interrupted control
+leave tactical acceptance open. Hostile escape and a victorious ordinary hunt
+continuation remain unverified.
+
+## Retained N01 control attempt — 2026-11-16
+
+FAILED JOURNEY / LOCAL at source revision ef92c5b1. The isolated copy and local
+fixture configuration are recorded in [N12](12-release-preparation.md#current-local-runtime-pointers--2026-11-16).
+All four living allies entered after ordinary fed safe-camp rest restored their
+company health to 100/100 and morale to 50. Ordinary travel spent two stamina.
+The two founders recovered and equipped their own sword, shield, helmet and coat.
+Kest retained his raider equipment. Rell had a coat and fought unarmed. Admission
+rejected his sword without its required shield pair, so the parent transferred
+that sword to the caravan with ordinary command 4117b81a-f910-4181-8902-a59116a41a20.
+No spare owner-company shield was available. This was an author staging choice.
+
+Ordinary JOIN commands fadc741d-5be3-4253-b93d-a386460ea75b and
+d6091c83-8bd8-4ad5-aaf5-7e759f9eda81 created encounter
+2afde259-a974-49c2-9e7e-533da4f70b52. A persistent two-browser driver used visible
+Defend, one-action autoplay, Resume and exact retry controls. Its initial 35-second
+watchdog paused verified API PID 73283 at revision 24, about three seconds into a
+fresh owner activation. The watchdog had omitted an accepted Resume from its
+activity accounting. That pause was a driver false positive. The corrected driver
+counts Resume/retry, accepts the actual EndTurn label and uses 120 seconds. The
+same API process resumed. No canonical state or deadline was edited. Wall time
+continued during the pause.
+
+The battle resolved at revision 83, round 12, with 26 account commands, 35 AI
+commands and 22 timeout commands. Four recorded orders were Defend. Rell and Kest
+died, both founders surrendered. The enemy archer died; the axe raider survived at
+56/60 with 21 armor. The heavy raider's prior death remains part of the retained
+source history. Terminal effects applied at 18:29:19.454Z. Read-only aggregate
+checks confirmed both companies ACTIVE, zero bound members and no active encounter.
+The owner's founder has 60/100 company health and 14 morale, the helper's 39/100
+and 20 morale. Their cash remains 398.71 and800 crowns. HUNT-03 remains unfinished.
+The battle summary showed the actual two deaths/two surrenders. Helper Return to
+company and owner ordinary reload reached the company interface.
+
+Control was intermittent. The owner spent part of the run on the discovering
+screen and later returned to the field. Resource timings include long API and
+atlas-tile requests, with the deliberate pause contributing to elapsed durations.
+The driver timing failure and the product control symptoms require separate diagnosis.
+[N09](09-player-experience.md) owns the remaining diagnosis. Continuous tactical control and a victorious contract journey remain unverified.
+T010/T014/T021/T027 remain open.
+
+Logs are output/m1-n01-controls-20261116.{log,jsonl}; read-only saved-state output
+is output/m1-n01-after-control-20261116.json. The mode 0600 pre-control dump exists
+at output/m1-n01-before-control-20261116.dump. No restore of that dump was performed.
+QA clock acceleration, automated input, the isolated-copy source and API pause
+are diagnostic assistance. Prior failed saves remain intact. Full-suite checks
+for this evidence record are NOT_RUN. Whole-route 60 FPS compliance and human
+acceptance remain NOT_MEASURED.
 
 ## Native control loss and fourth defeat — 2026-11-16
 

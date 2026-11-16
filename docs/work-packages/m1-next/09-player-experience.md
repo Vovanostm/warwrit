@@ -5,8 +5,10 @@
 PARTIAL / LOCAL. Native preparation, camp, supplies, recovery and sale controls
 have the recorded N02/N06 journeys. The latest battle exposed loss of manual
 control while valid private grants and public revisions were out of sync.
-The correction and checks below are implemented. Native tactical control on
-the final correction and agreed-player observation remain NOT_RUN. Enjoyment
+The correction and checks below are implemented. The subsequent retained-N01 attempt accepted orders from both accounts but
+still showed interrupted control and long requests. Its defeat and driver
+assistance are recorded in [N08](08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16).
+Continuous tactical control remains unverified. Agreed-player observation is NOT_RUN. Enjoyment
 and comprehension remain NOT_MEASURED. T027 stays open.
 
 ## Private grant and public projection synchronization — 2026-11-16
