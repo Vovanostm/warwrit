@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: complete Demyan's native rescue after the real raider
+  defeat, retain living custody through reload and receive Marfa's 80-crown
+  payment after return. [C05](docs/work-packages/m1-next/05-contracts.md#c05-native-living-rescue-and-paid-re-entry--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: complete native two-company HUNT-03, redeem its real
   standard for 100 crowns, retain the result after compiled restart and buy
   supplies. [T010/T014](docs/work-packages/m1-next/02-next-contract.md#native-hunt-03-completion--2026-11-16). LOCAL.

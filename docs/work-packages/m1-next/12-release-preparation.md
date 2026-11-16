@@ -12,17 +12,23 @@ open. No deployment, paid provisioning or pilot audience/size is authorized.
 
 ### Current local runtime pointers — 2026-11-16
 
-The active continuation now runs compiled production artifacts from source
-revision 1e607f39 against m1_n01_control_20261116, API 3031/realtime 3032/web 5331.
-The development runtime stopped through its owned terminal. Private mode 0600
-output/m1-n01-production-runtime-20261116.env retains the same DB/OIDC settings
-and removes development Playground/fixture flags. API and preview terminals are
-24255/24348, listeners 39642/39674 at this checkpoint. Append-preserved logs are
-output/m1-n01-production-{api,web}-20261116.log. Liveness, readiness and web return 200. Both ordinary re-entries load index-8OLqHrqc.js and retain the paid HUNT-03,
-released companies, actual people and equipment. The owner subsequently bought
-one ration in the compiled interface. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
-owns the full result. The prior development private file remains for a deliberate
-future return to the owned development runtime, with its log preserved.
+The active continuation has returned to the owned development runtime on
+m1_n01_control_20261116, API 3031/realtime 3032/web 5331. Its private mode 0600
+configuration is output/m1-n01-control-runtime-20261116.env, terminal 13226, API
+listener 41584 and web 41573 at this checkpoint. The append-preserved log remains
+output/m1-n01-control-dev-20261116.log. Source execution is unchanged since 1e607f39.
+This return enabled the existing protected clock controls for the next native
+C05 journey, which now completes and pays 80 crowns under [N05](05-contracts.md#c05-native-living-rescue-and-paid-re-entry--2026-11-16).
+
+The compiled production rehearsal passed first. It used private mode 0600
+output/m1-n01-production-runtime-20261116.env with the same DB/OIDC settings and
+without development Playground/fixture flags. Its API/preview terminals 24255/24348
+and listeners 39642/39674 were stopped through their owned terminals before the
+development restart. Append-preserved logs are
+output/m1-n01-production-{api,web}-20261116.log. Liveness, readiness and web returned 200. Both ordinary re-entries loaded index-8OLqHrqc.js and retained the paid HUNT-03,
+released companies, actual people and equipment. A subsequent compiled supply
+purchase succeeded. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
+owns that result. The production private file and artifacts remain available.
 
 The preserved source remains m1_restore_current_20261116 on API 3035,
 realtime 3036 and web 5335. Its original guard-worktree private env disappeared

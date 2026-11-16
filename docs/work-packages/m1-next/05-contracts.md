@@ -21,8 +21,10 @@ receipt details remain separate gaps. C04 now has a paid native two-clue journey
 and reload. C01 now has the native victory, unique standard, physical return,
 once-only 100-crown payout, compiled restart and subsequent supply purchase under
 [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16). Its saved proof
-source is the actual terminal encounter. C05's ordinary journey and the recorded
-source/refusal gaps remain open. Next: continue C05 through Marfa's ordinary offer.
+source is the actual terminal encounter. C05 now has a native living rescue,
+custody re-entry, physical delivery, 80-crown payment and paid re-entry below.
+The recorded C03/C06/C07–C09 source/refusal gaps and unavailable/dead-target
+branches remain open. Next: resolve those finite rows without inventing sources.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Player goal and normal path
@@ -245,6 +247,44 @@ Captures are `.playwright-cli/c04-herbs-paid-reloaded.png`,
 `.playwright-cli/c04-herbs-final-squad.png` and their corresponding txt snapshots.
 The ordinary C05 rescue and the remaining original source branches retain their
 own T031 criteria. Full M1 acceptance remains open.
+
+## C05 native living rescue and paid re-entry — 2026-11-16
+
+LOCAL / SUCCESS PATH PASSED. The same Dozor N01 company continued after the
+recorded genuine HUNT-03 victory. The owned development runtime resumed after
+its compiled production restart check. Ordinary movement reached Tikhaya Gat;
+one known STALE_REVISION refusal was followed by a fresh deliberate movement
+intent. The player entered the inn and opened both Marfa's story and payment
+conditions. ACCEPT 360beaf7-0234-4c8f-b965-140042bc02bb saved the 80-crown terms.
+
+Ordinary travel then reached the Old Mill yard. All three actual raiders were
+dead across the retained attempts. Release 71f0e1d5-558e-43a4-9942-49b1c5a59ddd
+succeeded and produced the live-captive source/release facts at tick 93774. The UI
+said Demyan was alive and travelling with the company. It exposed no delivery
+action while away from Tikhaya Gat. Ordinary reload retained the living custody,
+then actual travel returned him to Marfa at the inn.
+
+Delivery 31e4a742-18ba-45e3-8f73-303459f28119 succeeded at tick 93888, revision 3,
+with reward 80000000Q. The card shows completed/paid to this company. Custody
+cleared and owner cash increased 494.71→574.71 crowns. Another ordinary reload
+retained that paid result and removed the travelling-captive line. A scoped
+read-only transaction confirms SUCCESS, empty custody, the actual release and
+delivery source IDs, three once-only command receipts, company ACTIVE and no
+encounter binding at Tikhaya Gat bank.
+
+Protected UI clock advances of 100 ticks shortened the actual accepted journeys;
+no company, NPC, contract or receipt rows were repaired or fabricated. This is
+native live-path evidence. The preceding authenticated regression supplies the
+stranger/helper refusals, unchanged rejected state, holder-only payment, exact
+replay and reopened completion. It does not supply a captive-death event. The
+authored death-report slot has no existing runtime producer or approved causal
+trigger in this M1 profile, so that source/branch remains NOT_RUN. The initial
+C05 captive source is now demonstrated by the real post-raider release.
+
+Logs are output/m1-c05-*.log. The final contract/receipt/company read-only result
+is output/m1-c05-final-readback-20261116.json. No production code changed during
+this journey. Full suites and owner acceptance are NOT_RUN. The remaining N05
+rows keep T031 open; RC-GAP-MACHINE-01 retains its separate archive limitation.
 
 ## C05 authenticated delivery authority — 2026-11-16
 
