@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: complete native B4 E02 on an isolated real-save restore,
+  retaining zero reward, private findings and readable day/night final portraits.
+  [T034](docs/work-packages/M1-STORY-MISSIONS.md#native-e02-and-t034-completion--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: accept physical recovery of owned dropped gear after
   combat, including places with surviving enemies. Existing transfer controls
   will implement the rule. [N06](docs/work-packages/m1-next/06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16). LOCAL.

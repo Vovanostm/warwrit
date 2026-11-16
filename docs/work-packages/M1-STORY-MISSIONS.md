@@ -9,9 +9,11 @@ Owner decision, 2026-10-07, verbatim **«Одобряю»**: revision 6 of
 at `874b8fc` is approved. **AC-1 PASS**; the story text is approved. The October 8 owner decision fixes the E01 reward
 at 40 crowns. Gameplay implementation and funding verification remain separate.
 
-Current status: IN_PROGRESS / LOCAL. Core, persistent server and interface are
-implemented, with the native E01 journey checked. Funding verification belongs to T033, implementation
-to T034. Delivery permissions follow AGENTS.md and the owning mission.
+Current status: COMPLETED / LOCAL for T033/T034. Core, persistent server and
+interface have native E01 and isolated restored-world E02 journeys, saved journal
+re-entry, day/night final portraits and existing private/two-company invariant
+checks. Full M1 acceptance belongs to T036. Delivery permissions follow AGENTS.md
+and the owning mission.
 
 ## First playable result
 
@@ -213,8 +215,8 @@ the desktop interface scaled in landscape, with no portrait/reflow scope.
 ## D1 — proven payment
 
 The owner decision recorded on October 8 fixes the E01 reward at 40 crowns
-(`40000000 q`). Its source is the named B4 reward decision in
-[the recorded owner decision](../engineering/CURRENT_PLAN_HISTORY_2026-11-08.md#b4-reward-40-crowns).
+(`40000000 q`). The accepted amount is also recorded in the
+[owning B4 brief](../engineering/briefs/2026-10-07/B4-story-missions.md).
 
 T033 verifies the actual issuer wallet and available funds before paid activation.
 The existing Kondrat wallet is `wallet.steward.severny-dvor.01`; its balance
@@ -225,23 +227,23 @@ mission outcome and receipt. E02/E03 and unproved Ulita have no reward.
 
 ## Ordered delivery and acceptance
 
-| Step               | Done criterion                                                                                         | Current result                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| 1 — story          | Manuscript text ACCEPT and owner AC-1 approval                                                         | PASS; owner «Одобряю» for revision 6 at `874b8fc`.                       |
-| 2 — contract       | Model, guards/choices/outcomes, reducer, persistence, UI and AC recorded; documentation checks; commit | Contract specified. Reward fixed at 40 crowns, funding verified by T033. |
-| 3 — core           | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | Focused tests and types PASS locally. |
-| 4 — server/web     | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | SQL6, interface tests and native E01 PASS locally. |
-| 5 — player journey | Play proven and false endings; verify final text and presentation; focused checks; delivery record     | E01 passed. Native false ending and final portraits remain open. |
+| Step               | Done criterion                                                                                         | Current result                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| 1 — story          | Manuscript text ACCEPT and owner AC-1 approval                                                         | PASS; owner «Одобряю» for revision 6 at `874b8fc`.                                     |
+| 2 — contract       | Model, guards/choices/outcomes, reducer, persistence, UI and AC recorded; documentation checks; commit | Contract specified. Reward fixed at 40 crowns, funding verified by T033.               |
+| 3 — core           | Model/reducer/validator; focused invariant tests; lint/format; commit                                  | Focused tests and types PASS locally.                                                  |
+| 4 — server/web     | Authenticated persistent playable scenes, journal and accusation; focused checks; commit               | SQL6, interface tests and native E01 PASS locally.                                     |
+| 5 — player journey | Play proven and false endings; verify final text and presentation; focused checks; delivery record     | Native E01 and restored-world E02/reload passed; final portraits checked by day/night. |
 
-| Brief AC | Direct evidence required                                                                                            | Current result                                         |
-| -------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| AC-1     | Approval quote and approved story revision                                                                          | PASS: «Одобряю», 2026-10-07, revision 6, `874b8fc`.    |
-| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | Native E01 and reload PASS. Wrong ending browser NOT_RUN. |
-| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | Focused core and real PG checks PASS. |
-| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | Real PG private journals/concurrent finish PASS. Native second company NOT_RUN. |
-| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | Focused validator tests PASS. |
-| AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | RU E01 route read in game. Choice labels and disclosure timing corrected. EN browser NOT_RUN. |
-| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | Day interviews/night E01 inspected. Six portraits integrated locally. Final scene/day/night portrait checks remain open. |
+| Brief AC | Direct evidence required                                                                                            | Current result                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| AC-1     | Approval quote and approved story revision                                                                          | PASS: «Одобряю», 2026-10-07, revision 6, `874b8fc`.                                    |
+| AC-2     | Running-game offer → interviews → confirmation → E01 and a wrong ending, captures                                   | Native E01 and isolated restored-world E02/reload PASS.                                |
+| AC-3     | Public-boundary tests: only personally met suspects; incomplete proof never pays; E02/E03 never pay                 | Focused core and real PG checks PASS.                                                  |
+| AC-4     | Two authenticated companies: private findings isolated before/after closure and reload; late public projection only | Real PG private journals/concurrent finish PASS. Native second company NOT_RUN.        |
+| AC-5     | Validator tests reject unreachable scenes, missing/unreachable endings and inconsistent truth/payment               | Focused validator tests PASS.                                                          |
+| AC-6     | Final in-game RU/EN text matches the accepted manuscript, with meaning, logic and flow reviewed                     | RU E01/E02 read in game against the manuscript. EN browser NOT_RUN.                    |
+| AC-7     | Integrated panel and portraits are readable by day/night and follow selected references                             | Day interviews/night E01 and E02 final Senka/Kondrat portraits inspected by day/night. |
 
 Additional targeted checks: deterministic rejection/preparation without mutation;
 same-command retry once; conflicting retry rejection; concurrent confirmations
@@ -298,8 +300,8 @@ Accusation and confirmation buttons now resolve their scene-specific labels.
 The final source-focused story/interface/surrender run passed 20 tests, with web
 typecheck passing.
 
-T034 stays open for the native wrong-ending route and final portrait/presentation
-checks recorded in the matrix above.
+At this checkpoint T034 stayed open for the native wrong-ending route and
+final portrait/presentation checks. Their completion is recorded below.
 
 The server now has authenticated reads/commands, private journals, frozen delivery
 clock provenance and transactional issuer debit/company credit. Migration 0026
@@ -364,3 +366,47 @@ The portrait/story/hunt component union passes 19 tests, web typecheck passes,
 and content validation accepts all136 assets after registering the new content
 revision. Native B4 wrong ending, second company and the final scene/day/night
 matrix remain NOT_RUN for this portrait step.
+
+## Native E02 and T034 completion — 2026-11-16
+
+COMPLETED / LOCAL for T034. The original source and R5 copy retain their world
+E01. For the required false ending, the independent executor restored the actual
+pre-story-schema archive
+`/Users/vovanostm/learn/warwrit/.claude/worktrees/n02-next-contract/output/n02-continuation-final.dump`
+into a new isolated `m1_b4_false_20261116` and applied migrations 0026–0032. The
+saved original mill-worker success, delivery receipt, company binding and North
+Yard location remained present, with 850 crowns. Its nonzero QA offset was
+retained. Existing `LEGACY_FULL_CYCLE_ELAPSED` eligibility used the genuine old
+receipt and elapsed real Light cycle; no reconstructed exact timestamp was
+needed. The completed old rescue is the accepted actual prerequisite.
+
+Through ordinary Dex login and the running production UI, the retained owner
+accepted B4, met Senka, returned to Kondrat, selected Senka, read the warning and
+confirmed «Обвинить при всех». The resulting E02 persisted through normal
+reload and reopening the story/journal. Read-only verification found
+`endingId=E02`, `accusedActor=SENKA`, `proven=false`, one private F05 finding
+and no F11 confession. The company purse stayed at 850,000,000 Q and the issuer
+wallet at 80,000,000 Q. The source and R5 databases still contain E01.
+
+The executor and parent inspected final E02 day/night captures at 1200×757 CSS
+pixels, DPR 2. Senka/Kondrat portraits are distinct at 32px, dialogue and the
+unproved/no-payment conclusion are readable, and the private journal retains
+only the observed bread-trip admission. Meaning and logic match the accepted
+ending: the accusation is the company's claim and the scene reports Kondrat's
+response. The approved prose remains the text source. Captures are
+`output/t034-b4-e02-day-ending.png`, `output/t034-b4-e02-night-ending.png` and
+`output/t034-b4-e02-night-final.png`.
+
+Existing core and six PostgreSQL story cases supply private findings for two
+authenticated companies, E02/E03 no-payment policy, funded E01, concurrent once-
+only finish, rollback and exact retry. Combined with native E01 and this native
+false ending, they close T034's bounded implementation and presentation checks.
+Native second-company and EN-browser checks remain NOT_RUN; broader player
+judgement and full M1 acceptance retain their own rows.
+
+The executor closed its isolated browser, stopped only its target application
+processes and restored source development against `m1_restore_current_20261116`.
+Final source API PID 26368, web PID 26449; live/ready/web returned 200. Logs are
+`output/t034-source-restored-20261116.log` and
+`output/t034-source-web-restored-20261116.log`. The independent E02 database is
+retained for review. Publication, merge and deployment are NOT_RUN.

@@ -133,8 +133,8 @@ median callback spacing was 8.3 ms, p95 10.2 ms, range 6.4–16.8 ms.
 These are callback-pacing and shared-context heap samples. The earlier Old Mill
 sample had a different scene and context workload, so no before/after memory or
 rendering improvement is claimed. Whole-journey production performance,
-renderer-resource counts, target-device acceptance and the owner-selected budget
-remain NOT_MEASURED/NOT_RUN under DESK-1–DESK-6.
+renderer-resource counts, target-device acceptance and compliance with the
+accepted 60-FPS budget remain NOT_MEASURED/NOT_RUN under DESK-1–DESK-6.
 
 ## Performance budget — owner decision 2026-11-16
 
