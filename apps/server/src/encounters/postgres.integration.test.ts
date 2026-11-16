@@ -4753,7 +4753,7 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
 );
 
 it.skipIf(connectionString === undefined)(
-  'repeats a settled wolf retreat with exact survivors, durable history and one payout',
+  'repeats a settled wolf retreat and preserves failed admission and proof receipts',
   async () => {
     const database = databases[0]!;
     let identityIndex = 1000;
@@ -4974,6 +4974,44 @@ it.skipIf(connectionString === undefined)(
             .execute(),
         ).toHaveLength(1);
         // The second company's failure after current switches rolls back every binding and row.
+        const failedHelperRevision = (await readContract(helper)).publicRevision;
+        const failedHelperCommandId = randomUUID();
+        const readAdmissionState = () =>
+          reopened!.transaction().execute(async (transaction) => ({
+            contract: await transaction
+              .selectFrom('contract_instances')
+              .select([
+                'revision',
+                'owner_join',
+                'helper_join',
+                'owner_join_attempt_no',
+                'helper_join_attempt_no',
+              ])
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+              .executeTakeFirstOrThrow(),
+            roots: await transaction
+              .selectFrom('company_snapshots')
+              .select(['company_id', 'canonical_revision', 'public_revision', 'state'])
+              .where('world_id', '=', worldId)
+              .where('company_id', 'in', [owner.companyId, helper.companyId])
+              .orderBy('company_id')
+              .execute(),
+            admissions: await transaction
+              .selectFrom('encounter_admissions')
+              .select(['encounter_id', 'attempt_no', 'is_current'])
+              .where('world_id', '=', worldId)
+              .execute(),
+            receipts: await transaction
+              .selectFrom('company_receipts')
+              .select(['company_id', 'command_id', 'receipt_id', 'resulting_revision'])
+              .where('world_id', '=', worldId)
+              .where('company_id', 'in', [owner.companyId, helper.companyId])
+              .orderBy('company_id')
+              .orderBy('command_id')
+              .execute(),
+          }));
+        const beforeFailedAdmission = await readAdmissionState();
         await sql`create function reject_repeat_admission() returns trigger language plpgsql as $$ begin if NEW.attempt_no > 1 then raise exception 'repeat rollback probe'; end if; return NEW; end $$`.execute(
           reopened,
         );
@@ -4981,9 +5019,10 @@ it.skipIf(connectionString === undefined)(
           reopened,
         );
         try {
-          expect((await join(helper, (await readContract(helper)).publicRevision)).statusCode).toBe(
+          expect((await join(helper, failedHelperRevision, failedHelperCommandId)).statusCode).toBe(
             500,
           );
+          expect(await readAdmissionState()).toEqual(beforeFailedAdmission);
           expect((await readContract(owner)).contract.encounterId).toBe(encounterId);
           expect(
             (
@@ -4996,9 +5035,11 @@ it.skipIf(connectionString === undefined)(
           await sql`drop trigger reject_repeat_admission on encounter_admissions`.execute(reopened);
           await sql`drop function reject_repeat_admission()`.execute(reopened);
         }
-        const revision = (await readContract(helper)).publicRevision;
-        const raced = await Promise.all([join(helper, revision), join(helper, revision)]);
-        expect(raced.filter((reply) => reply.statusCode === 200)).toHaveLength(1);
+        const retriedJoin = await join(helper, failedHelperRevision, failedHelperCommandId);
+        expect(retriedJoin.statusCode, retriedJoin.body).toBe(200);
+        const replayedJoin = await join(helper, failedHelperRevision, failedHelperCommandId);
+        expect(replayedJoin.statusCode, replayedJoin.body).toBe(200);
+        expect(replayedJoin.json()).toEqual(retriedJoin.json());
         const second = await reopened
           .selectFrom('encounter_admissions')
           .selectAll()
@@ -5106,21 +5147,92 @@ it.skipIf(connectionString === undefined)(
           type: 'PRESENT',
           payload: { instanceId: 'ci.m1.wolf-trail.01' },
         };
-        const paid = await app.inject({
-          method: 'POST',
-          url: '/contracts/commands',
-          headers: owner.headers,
-          payload: presentPayload,
-        });
-        expect(paid.statusCode, paid.body).toBe(200);
+        const competingPresentPayload = { ...presentPayload, commandId: randomUUID() };
+        const presentationRace = await Promise.all(
+          [presentPayload, competingPresentPayload].map(async (payload) => ({
+            payload,
+            response: await app.inject({
+              method: 'POST',
+              url: '/contracts/commands',
+              headers: owner.headers,
+              payload,
+            }),
+          })),
+        );
+        const acceptedPresentations = presentationRace.filter(
+          (attempt) => attempt.response.statusCode === 200,
+        );
+        const refusedPresentations = presentationRace.filter(
+          (attempt) => attempt.response.statusCode === 409,
+        );
+        expect(acceptedPresentations).toHaveLength(1);
+        expect(refusedPresentations).toHaveLength(1);
+        const paid = acceptedPresentations[0]!.response;
+        const paidPayload = acceptedPresentations[0]!.payload;
+        expect(paid.json()).toMatchObject({ ok: true, commandId: paidPayload.commandId });
+        const unreceiptedPayload = refusedPresentations[0]!.payload;
+        expect(
+          await reopened
+            .selectFrom('company_receipts')
+            .select('command_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', owner.companyId)
+            .where('command_id', '=', unreceiptedPayload.commandId)
+            .execute(),
+        ).toEqual([]);
         const paidAgain = await app.inject({
           method: 'POST',
           url: '/contracts/commands',
           headers: owner.headers,
-          payload: presentPayload,
+          payload: paidPayload,
         });
         expect(paidAgain.json()).toEqual(paid.json());
         expect((await readContract(owner)).contract.knownState).toBe('SETTLED');
+        const outsiderAccountId = randomUUID();
+        const outsiderToken = randomUUID();
+        const outsiderTokenDigest = createHash('sha256').update(outsiderToken).digest();
+        await database
+          .insertInto('identity_accounts')
+          .values({
+            id: outsiderAccountId,
+            issuer: `first-hunt-proof-outsider-${outsiderAccountId}`,
+            subject: 'outsider',
+          })
+          .execute();
+        await database
+          .insertInto('identity_sessions')
+          .values({
+            token_digest: outsiderTokenDigest,
+            account_id: outsiderAccountId,
+            expires_at: new Date(Date.now() + 60_000),
+          })
+          .execute();
+        try {
+          const foreignReceiptLookup = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: {
+              cookie: `warwrit_session=${outsiderToken}`,
+              origin: 'http://127.0.0.1:3108',
+            },
+            payload: paidPayload,
+          });
+          expect(foreignReceiptLookup.statusCode).toBe(403);
+          expect(foreignReceiptLookup.json()).toMatchObject({
+            ok: false,
+            code: 'NOT_AUTHORIZED',
+          });
+          expect(foreignReceiptLookup.json()).not.toHaveProperty('receiptId');
+        } finally {
+          await database
+            .deleteFrom('identity_sessions')
+            .where('token_digest', '=', outsiderTokenDigest)
+            .execute();
+          await database
+            .deleteFrom('identity_accounts')
+            .where('id', '=', outsiderAccountId)
+            .execute();
+        }
         const walletAfterPay = await reopened
           .selectFrom('world_hunt_states')
           .select('wallet_q')
@@ -5158,6 +5270,22 @@ it.skipIf(connectionString === undefined)(
           effects: 'APPLIED',
           hostileRetreated: !allDead,
         });
+        const paidAfterLaterChange = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: paidPayload,
+        });
+        expect(paidAfterLaterChange.statusCode, paidAfterLaterChange.body).toBe(200);
+        expect(paidAfterLaterChange.json()).toEqual(paid.json());
+        expect(
+          await reopened
+            .selectFrom('world_hunt_states')
+            .select('wallet_q')
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+            .executeTakeFirstOrThrow(),
+        ).toEqual(walletAfterPay);
         const after = await reopened
           .selectFrom('company_snapshots')
           .selectAll()

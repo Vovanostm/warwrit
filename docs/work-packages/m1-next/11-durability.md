@@ -64,6 +64,42 @@ successful continuation, full T029, or SC-008 acceptance. RPO/RTO and capacity
 remain NOT_MEASURED. Private credentials, dump and browser captures remain outside
 Git.
 
+## R1/R3/R4 boundary evidence — 2026-11-16
+
+LOCAL. The real PostgreSQL FIRST HUNT retreat/repeat case now snapshots both
+company roots, JOIN intent and contract revision, admissions, and company receipts
+before a trigger rejects the second admission. The whole snapshot remains equal
+after the failed completing JOIN. Retrying the same command ID, revision and body
+then creates the second admission, and an identical replay returns that accepted
+response. The existing independent-pool JOIN lock case also passes: a SQL
+transaction holds the owner's account before the joining request reaches the
+company lock; admission completes once, exact retry returns the saved response,
+conflicting reuse is rejected, and both roots stay unchanged afterward.
+
+The same retreat/repeat route case races two distinct PRESENT command IDs for the
+same proof and revision. One request settles the proof and 80,000,000 Q payout;
+the other is refused without a receipt. An outsider reusing the accepted body's
+command ID receives only `NOT_AUTHORIZED` (403), with no receipt ID. After the
+helper later leaves, the authorized owner retries the original accepted body and
+receives the same response; the world wallet remains unchanged. This is real
+route-level PostgreSQL evidence for the unique claim, authorization order and
+historical replay.
+
+Unchanged R4 evidence also passed: `company-transition.integration.test.ts`
+injects a transaction rollback after writing the retained proof/payment transition,
+checks company, wallet and proof-claim rows remain at pre-state, then commits the
+transition once and rejects a conflicting repeat. `hostile-loot.integration.test.ts`
+uses concurrent route requests from two companies, transfers the source item once,
+then retries the accepted command after a later claim advances state and rejects a
+changed body under the reused command ID.
+
+Selected checks passed sequentially using the per-file disposable integration
+harness: the two named encounter JOIN/retreat cases (2 passed, 27 skipped), the
+company-transition case (1 passed), and hostile-loot case (1 passed). The harness
+disposed each cloned database. The full encounter/contract integration files,
+backup/restore (R5), and full T029 remain `NOT_RUN`. R5 and backup/playable-restore
+acceptance remain open; this evidence does not complete N11.
+
 ## Player goal and ordinary result
 
 An interruption cannot duplicate money, erase people or trap a company.
@@ -143,7 +179,7 @@ production ops, rewriting migrations or deleting failing worlds.
 
 ## Acceptance / DoD
 
-- [ ] DUR-1 R1–R4 have actual applicable commit-boundary/concurrency/exact-retry
+- [x] DUR-1 R1–R4 have actual applicable commit-boundary/concurrency/exact-retry
       evidence with atomic effects, authorized readback and no duplicate reward.
 - [ ] DUR-2 Restart recovers actual active route/encounter and releases completed
       work; public UI handles uncertain outcome without a fresh duplicate intent.
