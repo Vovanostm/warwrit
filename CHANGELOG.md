@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Fixed: hunt meeting, pickup and return hints use direct Russian
+  instructions, correcting the observed «в Тихая Гать» destination.
+  [N09](docs/work-packages/m1-next/09-player-experience.md#hunt-return-wording--2026-11-17). LOCAL.
+
 - 2026-11-17 — Changed: record Gat's first scroll window at 45 FPS and a warmed
   repeat at 90 FPS minimum; the first-scroll cause remains under investigation.
   [N10](docs/work-packages/m1-next/10-desktop-performance.md#production-atlas-and-terminal-samples--2026-11-17). LOCAL.

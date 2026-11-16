@@ -23,12 +23,15 @@ terminal 87509 stopped normally. Its private configuration remains available.
 Both pre-existing QA3/QA4 sessions restored their actual companies and consent in
 `index-CFWbcjwC.js`. This is session restoration using the local QA identities.
 N05 owns the successful real HUNT-01, living worker release and pending return.
-N10 owns the measured atlas/result intervals for this exact artifact. The current
-preview now serves the subsequently built `index-DBR1Y_I3.js` after the leadership
-poll correction. A fresh native terminal check on that later client is NOT_RUN.
+N10 owns the measured atlas/result intervals for this exact artifact. The preview
+subsequently served `index-DBR1Y_I3.js` after the leadership poll correction. A
+fresh native terminal check on that later client is NOT_RUN.
 Ordinary QA3 reload on `index-DBR1Y_I3.js` now retains completed HUNT-01,
 890 crowns and living Senka at Gat. The helper keeps its already loaded client
-until ordinary reload.
+until ordinary reload. The current focused web build is `index-DHU6DWGG.js` after
+the three hunt-guidance wording corrections. Web types/build and six existing
+components pass; the build log is `output/m1-hunt-copy-web-build-20261117.log`.
+The canonical server artifact comes from the preceding successful root build.
 
 The active continuation has returned to the owned development runtime on
 m1_n01_control_20261116, API 3031/realtime 3032/web 5331. Its private mode 0600

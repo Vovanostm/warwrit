@@ -776,7 +776,7 @@ export function firstHuntGuidance(
     case 'OFFERED':
       return currentSiteId === issuer
         ? 'Условия показаны до принятия; примите контракт у заказчика, когда будете готовы.'
-        : `Чтобы принять предложение, вернитесь к заказчику в ${locationLabel(issuer)}.`;
+        : 'Встретьтесь с заказчиком, чтобы взять поручение.';
     case 'ACTIVE':
       return activeHuntGuidance(contract, currentSiteId);
     case 'ENCOUNTER_ACTIVE':
@@ -784,13 +784,13 @@ export function firstHuntGuidance(
     case 'PROOF_AVAILABLE':
       return currentSiteId === objective
         ? 'Выберите контейнер, предложенный сервером, чтобы забрать трофей.'
-        : `Вернитесь к месту боя: ${locationLabel(objective)}.`;
+        : 'Заберите трофей на месте боя.';
     case 'PROOF_HELD':
       if (!contract.yourProof)
         return 'Трофей удерживается текущим носителем; вы не можете предъявить его от имени другой компании.';
       return currentSiteId === issuer
         ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
-        : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
+        : 'Принесите трофей заказчику.';
     case 'SETTLED':
       return lookup('journey.hunt.settled-guidance');
   }

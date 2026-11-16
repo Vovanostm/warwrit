@@ -36,6 +36,21 @@ Prettier and diff checks pass. The complete root production build passes with
 repetition on that artifact is NOT_RUN. The preceding native victory proves the trigger
 and saved release. Agreed-player observation remains open under T027.
 
+## Hunt return wording — 2026-11-17
+
+FIXED / LOCAL. The actual held-claw card said «Вернитесь к заказчику в Тихая
+Гать». Its destination used the place's nominative label. The three nearby
+meeting/pickup/return instructions now use direct verbs, with the established
+issuer/objective location supplied by the card's existing lines. The held-proof
+instruction is «Принесите трофей заказчику».
+
+The three revised sentences pass the writing checker with zero findings. Meaning,
+word compatibility and reading rhythm were reviewed together with their adjacent
+conditions. Existing payment/portrait components pass 6/6. The focused web
+build/typecheck passes in 4m42s as `index-DHU6DWGG.js`, retaining the large-chunk
+advisory. Logs are `output/m1-hunt-copy-components-20261117.log` and
+`output/m1-hunt-copy-web-build-20261117.log`.
+
 ## Stalled encounter lookup recovery — 2026-11-16
 
 FIXED / LOCAL. A controlled native browser check held the surviving company's
