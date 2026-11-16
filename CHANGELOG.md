@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the fresh QA defeat caused by expired browser
+  controllers across JOIN and preserve its failed save. Native control remains
+  unverified. [N09](docs/work-packages/m1-next/09-player-experience.md#fresh-qa-attempt-and-controller-coordination-failure--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: synchronize authenticated battle grants with their public
   room revision and coalesce delayed client requests. The native retry still
   ended in four deaths before the final fix. [N09](docs/work-packages/m1-next/09-player-experience.md#private-grant-and-public-projection-synchronization--2026-11-16). LOCAL.

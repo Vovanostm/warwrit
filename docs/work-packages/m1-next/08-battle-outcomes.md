@@ -243,6 +243,17 @@ carried-purse access defect tracked in N04. Full OUT-3 and fresh native combat
 with the later accepted-revision UI gate remain NOT_RUN. These results preserve
 both defeats and do not establish native hostile escape or victory.
 
+### Separate fresh QA defeat — 2026-11-16
+
+The development-login Wolf Trail attempt
+`dd0da47c-a03e-457c-9e0f-2278245b7837` in the isolated control-sync database
+ended in round 15 with six allied deaths and three surviving wolves. The
+parent's controller expired before the helper's JOIN completed, and subsequent
+coordination did not restore continuous control. No account battle action was
+accepted. Preserve this failed save. [N09](09-player-experience.md#fresh-qa-attempt-and-controller-coordination-failure--2026-11-16)
+owns the controller failure and the pending persistent-driver check. Native
+victory, hostile escape/retry and final control verification remain open.
+
 ## T007 outcome-composition completion — 2026-11-16
 
 COMPLETED / LOCAL for T007. The integrated editor/replay evidence retains all

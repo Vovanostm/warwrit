@@ -27,7 +27,11 @@ Its source log is append-preserved output/m1-fresh-control-dev-20261116.log.
 The existing development quick-login created «Тестовая компания 1» with its
 configured 800 crowns and 30 rations. This is a fresh QA company, with provenance
 distinct from ordinary character creation and the preserved failed campaigns.
-Its native control check is in progress. Further native results belong to N09.
+Its Wolf Trail attempt with fresh company 2 ended in six allied deaths after
+the parent failed to keep the browser controllers active across JOIN. The
+failed companies and source saves are preserved. Fresh companies 3 and 4 now
+hold HUNT-04 and are scouting to its objective. Neither has joined another
+battle. Further native results belong to N09.
 
 Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
 not run.

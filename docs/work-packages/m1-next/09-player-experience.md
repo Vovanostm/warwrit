@@ -42,6 +42,30 @@ native client-only correction failed to restore usable control before the four
 fighters died. The final combined correction still requires a fresh native
 campaign check and agreed-player observation.
 
+### Fresh QA attempt and controller coordination failure — 2026-11-16
+
+After the combined correction, fresh development-login companies 1 and 2
+attempted Wolf Trail in the separate `m1_control_sync_20261116` database.
+Encounter `dd0da47c-a03e-457c-9e0f-2278245b7837` ended in round 15 with
+all six allies dead and all three wolves alive. No account battle action was
+accepted. The helper briefly displayed two controlled units.
+
+The parent's 30-second UI loop expired while waiting for the helper's JOIN.
+Parent/subagent follow-ups failed to keep either controller running when combat
+started. This run therefore leaves native control verification open. It does
+not isolate a failure in the combined correction. The deaths remain saved.
+
+A persistent two-browser driver is prepared at
+`output/m1-qa-controls-20261116.py`. It starts both loops before JOIN and uses
+visible manual defend and one-action autoplay controls. It verifies company
+identity and can pause only its verified owned QA API when control is unavailable.
+It has passed Python syntax compilation but has not yet run a battle.
+Fresh development-login companies 3 and 4 have accepted HUNT-04. They are
+scouting toward its actual Gat-bank objective through ordinary map controls.
+Neither has joined a new battle. Their default resources, QA time acceleration
+and automated control remain disclosed diagnostic conditions. They have distinct
+provenance from N01's accepted source company.
+
 ## Earlier result — 2026-11-08
 
 SPECIFIED / LOCAL; new-player comprehension, enjoyment and retention
