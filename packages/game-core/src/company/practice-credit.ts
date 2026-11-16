@@ -2,7 +2,7 @@ import { companySourceKey } from './guards.js';
 import { canonicalJson } from './input.js';
 import { admitPractice } from './practice-admission.js';
 import { creditProgression } from './progression.js';
-import { readSkillProgress } from './skill-progress.js';
+import { initialSkillProgress, readSkillProgress } from './skill-progress.js';
 import { requireEconomy } from './economy-state.js';
 import type { EconomyContext } from './economy-types.js';
 import type { CommandOf } from './lifecycle-types.js';
@@ -20,7 +20,13 @@ export function preparePracticeCredit(
     (entry) => entry.identity.characterId === command.payload.characterId,
   );
   requireEconomy(character, 'INVALID_SOURCE');
-  const stored = character.skills[command.payload.skillId];
+  let stored = character.skills[command.payload.skillId];
+  if (
+    stored === undefined &&
+    admitted.source.levelAtStart === 0 &&
+    character.aptitudeBySkill[command.payload.skillId] !== undefined
+  )
+    stored = initialSkillProgress(0, admitted.source.sourceEventId);
   requireEconomy(stored !== undefined, 'INVALID_STATE');
   const progress = readSkillProgress(stored);
   requireEconomy(typeof progress !== 'number', 'INVALID_STATE');

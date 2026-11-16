@@ -245,3 +245,34 @@ world containers. Native pickup and reload returned Dozor's existing sword,
 shield and helmet at Old Mill while the hostiles remained alive. Focused checks,
 compatibility and remaining campaign work belong to
 [N06](06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16).
+
+## Fresh native retry and effect recovery — 2026-11-16
+
+PARTIAL / LOCAL. After normal recovery and equipping of both founders' existing
+swords/shields, both companies submitted HUNT-03 JOIN through the visible cards.
+The first simultaneous attempt left the owner ready and the helper unconfirmed.
+A fresh helper click admitted the two companies. The browser runner then used
+seven visible one-action autoplay clicks, one available manual defend and
+one request to resume control. Automation supplies agent/browser evidence. Human tactical acceptance remains
+NOT_RUN.
+
+Encounter `36dc7e1a-a73e-43b6-aa12-9d7a96d7c83c` resolved in round 3 at revision 24.
+Its durable commands contain four flee actions, one defend, two moves, nine waits
+and eight attacks. Four allies retreated, Ratko died, and the hostile heavy-weapon
+raider died. Two hostile raiders remain alive. The hostile side won. The four
+retreating fighters retained low tactical morale (10/14/14/16) from prior saved
+outcomes. The parent checked health and equipment but overlooked that morale
+before this retry. This attempt is a further defeat, with its actual consequences
+preserved. The owner subsequently accepted fed safe-camp recovery at 10 morale per day
+up to 50, recorded in N06. Its implementation is in progress.
+
+The terminal result initially retained pending effects because the helper's
+first defense practice failed under the physical residual. The correction and
+native automatic recovery are recorded in
+[N11](11-durability.md#native-retry-pending-on-first-skill-practice--2026-11-16).
+Both company effects now apply and release their bindings. Both remain ACTIVE.
+The saved finite diagnostic input is
+`output/m1-native-third-pending-state-20261116.json` (mode 0600).
+The UI driver evidence is `output/m1-two-player-controls-20261116.jsonl` and
+`output/m1-two-player-controls-summary-20261116.log`. Effects are APPLIED. Hunt payment, gear pickup and subsequent
+continuation remain NOT_RUN for this attempt.

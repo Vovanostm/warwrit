@@ -480,3 +480,37 @@ private environment and ports 3035/3036/5335. The first temporary target startup
 used port 5331 and failed on the existing listener; an explicit environment
 passed to the child processes started the intended 5335 runtime. These local
 startup failures did not change player state.
+
+## Native retry pending on first skill practice — 2026-11-16
+
+FIXED / LOCAL. The fresh HUNT-03 encounter ended at revision 24 with its
+terminal result retained. Its initially pending company effects have recovered. The finite saved input is
+recorded in N08. A pure diagnostic replay isolates the helper rejection at receipt
+8, before Ratko's later wound/death. The actual failure is INVALID_STATE in
+preparePracticeCredit because the newly recruited Ratko has a defense aptitude
+and a trusted level-zero defense interaction, but his sparse starting skills
+contain only blades and medicine. The physical residual masks this practice
+failure. The owner's company independently prepares READY.
+
+The correction lets an absent skill with a recorded aptitude begin at its first
+trusted level-zero practice source. The existing constructor binds exact zero
+XP to that source before crediting the demonstrated practice. Exact stored XP/
+carry keeps its original binding. Legacy numeric skills, absent aptitude and
+missing nonzero history retain their refusal. The first-practice regression
+failed with INVALID_STATE before the correction and passes afterward, including
+late replay and refusal of unproved nonzero history.
+
+A pure replay of the saved finite input now prepares READY for both companies.
+After the game-core build, the ordinary pending worker replayed the original
+commands and applied the terminal transaction at 2026-11-16T12:07:37.545Z with
+source first-hunt-terminal:36dc7e1a-a73e-43b6-aa12-9d7a96d7c83c:24.
+Both bindings are released. Both companies remain ACTIVE. The owner has three
+completed encounters, the helper two, and Ratko is canonically DEAD. Existing
+outcomes and their command history remain retained.
+
+The practice-credit and terminal-evidence suites pass 13/13. Game-core build,
+scoped lint/format and diff checks pass. The testkit-wide typecheck fails in
+supply and branded-ID fixtures, with zero diagnostics in the changed practice
+file. Its log is output/m1-first-practice-testkit-types-20261116.log.
+Focused logs are output/m1-first-practice-before-20261116.log and
+output/m1-first-practice-after-20261116.log. Publication and merge are NOT_RUN.

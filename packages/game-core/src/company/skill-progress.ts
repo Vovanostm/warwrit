@@ -64,7 +64,7 @@ export function bindLegacySkillProgress(
 ): ExactSkillProgress {
   return bind(level, amount, { kind: 'LEGACY_EXACT', sourceId });
 }
-/** New-person grant only: the opening explicitly credits its configured level's threshold. */
+/** Credits a configured starting level, or zero for an eligible skill's first practice. */
 export function initialSkillProgress(level: number, sourceId: string): ExactSkillProgress {
   return bind(
     level,

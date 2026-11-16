@@ -99,6 +99,38 @@ function rejectUnchanged(
 }
 
 describe('A03.2 — exact practice credit through the root preparer', () => {
+  it('starts an eligible unused skill from its first trusted zero-level practice', () => {
+    const state = economy([1n, 1n]);
+    const character = state.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === 'worker-0',
+    )!;
+    Object.assign(character, {
+      aptitudeBySkill: { ...character.aptitudeBySkill, defense: 10000 },
+    });
+    const { cmd, ctx } = practice(state, 'worker-0', 'defense', 'guard-interaction');
+    const before = canonicalJson(state);
+    const result = prepared(prepareCompanyEconomy(state, cmd, ctx));
+    const progress = readSkillProgress(skill(result.next, 'worker-0', 'defense'));
+    if (typeof progress === 'number') throw new Error('First practice must retain exact XP');
+    expect(progress.binding).toEqual({ kind: 'INITIAL_CREDIT', sourceId: cmd.sourceEventId });
+    expect(BigInt(progress.amount.milliXp)).toBeGreaterThan(0n);
+    const replay = prepared(prepareCompanyEconomy(result.next, cmd, ctx));
+    expect(replay.replayed).toBe(true);
+    expect(replay.next).toEqual(result.next);
+    expect(canonicalJson(state)).toBe(before);
+
+    const missingHistory = practice(
+      state,
+      'worker-0',
+      'defense',
+      'guard-interaction',
+      'inexact-first-practice',
+      undefined,
+      1,
+    );
+    rejectUnchanged(state, missingHistory.cmd, missingHistory.ctx, 'INVALID_STATE');
+  });
+
   it('credits historical work, retains its source and replays after reload', () => {
     const state = exact(economy([1n, 1n]), [['worker-0', 'archery']]);
     Object.assign(state.lifecycle.company!, { runStatus: 'GAME_OVER' });

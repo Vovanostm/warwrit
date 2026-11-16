@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: first trusted practice can initialize an eligible absent
+  zero-level skill. The saved native battle now applies its pending effects and
+  releases both companies. [N11](docs/work-packages/m1-next/11-durability.md#native-retry-pending-on-first-skill-practice--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: authenticated missing-herbs regression for daylight,
   missing-clue refusal, funded once-only reporting and private findings.
   [N05 C04](docs/work-packages/m1-next/05-contracts.md#c04-daylight-and-report-regression--2026-11-16). LOCAL.
