@@ -1,8 +1,10 @@
 # M1 quests — at least 20, four with moral choices
 
-Status: **IN PROGRESS / LOCAL**. The quest list, dilemma frames and eleven new
-Russian texts were approved by the owner on November 13. «Обход, которого не
-было» is implemented; remaining quests and full M1 gameplay checks are NOT_RUN.
+Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
+quests have local domain, server and UI implementations. The combined branch
+has focused checks and migrations through 0032. The twenty-quest native matrix,
+four paired moral outcomes and full M1 player acceptance remain open. Return
+report consumers for «Чьи волки» and «Грязный колодец» are being completed.
 Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
@@ -70,8 +72,9 @@ revised line is «Быстрее доберётесь». The guide is a saved, c
 source and cannot shorten travel to other destinations. Movement profiles may
 combine it with carrying burdens only through finite approved modifiers.
 
-Next: implement the remaining approved texts and saved consequence consumers.
-Parameters (rewards, price deltas, durations) are set in each implementing slice.
+Next, complete the remaining report consumers and verify the combined quests
+through their ordinary entries, including each moral outcome and saved effect.
+Trial rewards, price changes and durations are recorded in their owning slices.
 
 ## Asset implementation checkpoint — 2026-11-15
 
