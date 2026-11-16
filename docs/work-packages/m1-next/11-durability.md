@@ -71,7 +71,10 @@ company roots, JOIN intent and contract revision, admissions, and company receip
 before a trigger rejects the second admission. The whole snapshot remains equal
 after the failed completing JOIN. Retrying the same command ID, revision and body
 then creates the second admission, and an identical replay returns that accepted
-response. The existing independent-pool JOIN lock case also passes: a SQL
+response. Before the failure probe, two distinct helper JOIN command IDs at the
+same revision race to complete the encounter; one succeeds and the other receives
+409 without a receipt. The accepted JOIN remains available for the later exact
+retry checks. The existing independent-pool JOIN lock case also passes: a SQL
 transaction holds the owner's account before the joining request reaches the
 company lock; admission completes once, exact retry returns the saved response,
 conflicting reuse is rejected, and both roots stay unchanged afterward.

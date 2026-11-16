@@ -4765,7 +4765,7 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
 );
 
 it.skipIf(connectionString === undefined)(
-  'repeats a settled wolf retreat and preserves failed admission and proof receipts',
+  'races completing JOINs and preserves failed admission and proof receipts',
   async () => {
     const database = databases[0]!;
     let identityIndex = 1000;
@@ -4786,28 +4786,72 @@ it.skipIf(connectionString === undefined)(
       body: string;
     }[] = [];
     try {
-      for (const actor of [owner, helper]) {
-        const read = await app.inject({
-          method: 'GET',
-          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
-          headers: actor.headers,
-        });
-        const payload = {
-          schemaVersion: 1,
-          commandId: randomUUID(),
-          expectedPublicRevision: read.json().publicRevision,
-          type: 'JOIN',
-          payload: { instanceId: 'ci.m1.wolf-trail.01' },
-        };
-        const joined = await app.inject({
-          method: 'POST',
-          url: '/contracts/commands',
-          headers: actor.headers,
+      const ownerRead = await app.inject({
+        method: 'GET',
+        url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+        headers: owner.headers,
+      });
+      const ownerPayload = {
+        schemaVersion: 1,
+        commandId: randomUUID(),
+        expectedPublicRevision: ownerRead.json().publicRevision,
+        type: 'JOIN',
+        payload: { instanceId: 'ci.m1.wolf-trail.01' },
+      };
+      const ownerJoined = await app.inject({
+        method: 'POST',
+        url: '/contracts/commands',
+        headers: owner.headers,
+        payload: ownerPayload,
+      });
+      expect(ownerJoined.statusCode, ownerJoined.body).toBe(200);
+      firstJoins.push({ actor: owner, payload: ownerPayload, body: ownerJoined.body });
+
+      const helperRead = await app.inject({
+        method: 'GET',
+        url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+        headers: helper.headers,
+      });
+      const helperPayloads = [randomUUID(), randomUUID()].map((commandId) => ({
+        schemaVersion: 1,
+        commandId,
+        expectedPublicRevision: helperRead.json().publicRevision,
+        type: 'JOIN',
+        payload: { instanceId: 'ci.m1.wolf-trail.01' },
+      }));
+      const helperRace = await Promise.all(
+        helperPayloads.map(async (payload) => ({
           payload,
-        });
-        firstJoins.push({ actor, payload, body: joined.body });
-        expect(joined.statusCode, joined.body).toBe(200);
-      }
+          response: await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: helper.headers,
+            payload,
+          }),
+        })),
+      );
+      const acceptedHelperJoins = helperRace.filter(
+        (attempt) => attempt.response.statusCode === 200,
+      );
+      const rejectedHelperJoins = helperRace.filter(
+        (attempt) => attempt.response.statusCode === 409,
+      );
+      expect(acceptedHelperJoins).toHaveLength(1);
+      expect(rejectedHelperJoins).toHaveLength(1);
+      firstJoins.push({
+        actor: helper,
+        payload: acceptedHelperJoins[0]!.payload,
+        body: acceptedHelperJoins[0]!.response.body,
+      });
+      expect(
+        await database
+          .selectFrom('company_receipts')
+          .select('command_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', helper.companyId)
+          .where('command_id', '=', rejectedHelperJoins[0]!.payload.commandId)
+          .execute(),
+      ).toEqual([]);
       const admission = await database
         .selectFrom('encounter_admissions')
         .selectAll()
