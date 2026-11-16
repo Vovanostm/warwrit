@@ -2,32 +2,79 @@
 
 ## Current result — 2026-11-16
 
-IN_PROGRESS / LOCAL. The original HUNT-03 attempt ended with all six allied
-fighters dead. Its terminal effects have now applied and both companies are
-GAME_OVER, with no active binding. That database remains preserved. The separate
-pre-JOIN restored copy also lost its battle, with two deaths, three surrenders
-and one retreat. Both restored companies remain ACTIVE and their bindings are
-released at that checkpoint. The restored attempt included manual account orders from both players
-and one-action autoplay, alongside timeout and reconnect handling.
+COMPLETE / LOCAL. T014 and NEXT-1–NEXT-6 pass on the isolated retained N01
+continuation. The same Dozor company and its saved helper completed HUNT-03
+through ordinary participation, victory, unique standard pickup, physical return
+and funded payment. Both remained ACTIVE after restarting into compiled production
+artifacts. The owner then bought one ration for four crowns. Earlier failed saves
+and their losses remain retained. Full M1 and N05's other gaps remain open.
 
-On that restored copy, the owner completed «Пропавший разведчик» through normal
-search, living custody, physical return and issuer delivery, receiving 80 crowns.
-The same company then camped in Каменный Брод, rested its three survivors and
-returned them to FIELD at 100/100. It subsequently completed «Следы на дороге»
-for 40 crowns and retained both paid results after reload and runtime return.
-HUNT-03 remains unfinished. Full hunt reward/proof, helper retry and native
-control acceptance keep their individual criteria below.
+### Native HUNT-03 completion — 2026-11-16
 
-Latest continuation: the subsequent 0fb84685-22e9-4e9c-871e-cd281d3e74be retry
-lost all four remaining fighters after unusable client control. Both restored
-companies are now GAME_OVER, with effects applied and bindings released.
-[N08](08-battle-outcomes.md#native-control-loss-and-fourth-defeat--2026-11-16)
-records the retained outcome. Further play on that database is unavailable. T014
-and the remaining success criteria stay open.
+At source revision 1e607f39, each company had one surviving founder. Both recovered
+their own surrendered sword, shield, helmet and coat through ordinary TransferItem
+and EquipItem at the mill while the axe raider remained. They travelled to Brod,
+pitched camp and entered RECOVERY. Four protected QA advances of 1000 campaign ticks
+restored each to 100/100 health, 100 stamina and 50 morale. They returned to FIELD,
+closed camp and travelled to the mill. One owner camp-closure intent was rejected
+STALE_REVISION after the immediately preceding assignment; an ordinary refresh and
+fresh closure succeeded. Travel and rest used actual saved resources and debts.
+
+The owner/helper JOINs created encounter f12740b3-9e17-4e4c-836a-9aca5cdd333f,
+attempt 3. Both ordinary contract cards showed the existing helper and fresh
+readiness before admission. The corrected persistent UI driver starts both loops
+before JOIN, recognizes an actual field projection, and includes the existing
+lookup-retry control. This run used no API pause. It resolved victorious at
+revision 14, round 3. Both founders survived, the retained axe raider died. There
+were nine accepted account orders: five by the owner for its founder, four by
+the helper for its founder. Each used manual Defend, then visible one-action
+autoplay produced movement, attack and wait orders. Five AI orders and zero timeout
+orders completed the history. No account controlled the other company's fighter.
+
+Company vitals became 60/100 at admission. This is the existing authenticated
+revision-zero pool clamp, explicitly covered by company-combat-physical's initial
+clamp regression. Both ended combat at 60/60 without health damage. Morale stayed 50.
+Owner battle armor was 0 and helper armor 48, reflecting retained equipment
+condition. Recovered equipment was equipped as saved; no repair was performed.
+Prior deaths, worn gear and the pre-existing victory-source history were retained.
+
+Pickup 414ee976-3e94-4c5d-9fe0-f3658de4b725 put the genuine unique standard in the
+owner's caravan. Both founders physically returned to Brod. The owner entered
+Караульня and used Present b504d724-c141-45ea-8e92-73b10d13ed0e. Receipt
+017ed8e5-0740-473c-b370-c02612c15a5a redeemed proof.raider-standard.old-mill.01 from
+that encounter's terminal revision 14. The owner received the whole 100 crowns,
+398.71→498.71. The helper stayed at 800 crowns. The card reads SETTLED/REDEEMED and
+offers no second presentation. Initial post-command DOM text briefly retained the
+previous state; the ordinary card refresh confirmed the saved settled result.
+
+The full root production build passed. The development runtime stopped normally;
+compiled API and web preview restarted on the same isolated database and ports.
+Both ordinary company re-entries load the production asset index-8OLqHrqc.js,
+retain people, equipment, money and released encounter bindings, and show the
+paid contract. BuySupplies d461d708-38c4-4fc2-b0c2-1ebcf3101679 then bought one
+ration at the bazaar for four crowns. The visible quote showed the price, stock,
+caravan destination and duration. Owner cash is 494.71, helper cash 800. Both are at
+Brod market, ACTIVE, with no active encounter or bound people.
+
+New native evidence covers the complete success journey and normal restart.
+Unchanged authenticated proof-refusal, exact retry, authority and once-only
+payment regressions recorded below remain inherited evidence. No payout response
+was deliberately lost in this run. Source copying, protected QA clock acceleration,
+automated battle input, the earlier local helper-password recovery and prior losses
+remain disclosed diagnostic conditions. Native nickname eligibility was absent
+because neither winner finished at quarter health. Human acceptance and full-route
+60-FPS compliance remain open under T027/T028/T036.
+
+Logs are output/m1-n01-survivor-_, output/m1-n01-standard-_ and
+output/m1-integrated-build-after-control-20261116.log. The final scoped read-only
+receipt/proof/company result is output/m1-n01-standard-final-readback-20261116.json.
+[N12](12-release-preparation.md#current-local-runtime-pointers--2026-11-16)
+owns the active runtime configuration. [N05](05-contracts.md) reuses this C01
+success; the original source-archive limitation remains recorded there.
 
 ### Isolated retained-save continuation — 2026-11-16
 
-The separate `m1_n01_control_20261116` copy now supplies another continuation of
+Earlier checkpoint, before the native completion above. The separate `m1_n01_control_20261116` copy now supplies another continuation of
 the naturally created Dozor N01 save under N01's accepted fallback. It was copied
 from the retained R5 restore, before the later source defeats. The earlier source
 databases retain those failed outcomes. Ordinary owner OIDC re-entry restored
@@ -192,15 +239,15 @@ their owner. Preserve receipts and historical content/replay definitions.
 
 - [x] NEXT-1 The identified retained company is continued without state edits,
       reset, replacement company or fabricated prerequisites.
-- [ ] NEXT-2 All objectives of its next contract finish from normal entry with
+- [x] NEXT-2 All objectives of its next contract finish from normal entry with
       actual observations, combat/custody and return where required.
-- [ ] NEXT-3 Proof/claim/reward are lawful and once-only; helper terms and unique
+- [x] NEXT-3 Proof/claim/reward are lawful and once-only; helper terms and unique
       ownership hold, including the relevant refusal or retry.
-- [ ] NEXT-4 Actual casualties, food, money, payroll/obligations and task outcome
+- [x] NEXT-4 Actual casualties, food, money, payroll/obligations and task outcome
       persist after API restart and ordinary login; no stale encounter lock.
-- [ ] NEXT-5 The player can perform a lawful subsequent action and understands
+- [x] NEXT-5 The player can perform a lawful subsequent action and understands
       whether the next available choice is work, recovery, resupply or a refusal.
-- [ ] NEXT-6 Scoped fixes, source ownership, checks and inherited-vs-new evidence
+- [x] NEXT-6 Scoped fixes, source ownership, checks and inherited-vs-new evidence
       are recorded. A successful next contract does not close all eight M1 instances.
 
 ## Verification and unresolved inputs

@@ -2,15 +2,14 @@
 
 ## Current result — 2026-11-16
 
-PARTIAL / LOCAL. Native preparation, camp, supplies, recovery and sale controls
-have the recorded N02/N06 journeys. The latest battle exposed loss of manual
-control while valid private grants and public revisions were out of sync.
-The correction and checks below are implemented. The subsequent retained-N01 attempt accepted orders from both accounts but
-still showed interrupted control and long requests. Its defeat and driver
-assistance are recorded in [N08](08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16).
-Stalled lookup recovery now passes the controlled native check below.
-Continuous tactical control remains unverified. Agreed-player observation is NOT_RUN. Enjoyment
-and comprehension remain NOT_MEASURED. T027 stays open.
+PARTIAL / LOCAL. Native preparation, recovery, trade and contract controls have
+saved journeys under N02/N06. The corrected lookup now exposes retry after a
+stalled request. A subsequent ordinary two-account HUNT-03 run accepts manual
+Defend and one-action autoplay from both companies, with nine account orders and
+zero timeout orders, then wins and returns to a paid persistent company. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
+owns that complete journey and its diagnostic assistance. Agreed-player
+observation, subjective comprehension/enjoyment and full tactical handoff
+acceptance remain NOT_RUN/NOT_MEASURED. T027 stays open.
 
 ## Stalled encounter lookup recovery — 2026-11-16
 

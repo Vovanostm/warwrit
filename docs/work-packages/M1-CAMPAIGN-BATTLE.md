@@ -145,20 +145,20 @@ complete its own normal entry and direct check before its checkbox is closed.
 
 ## Direct acceptance
 
-- [ ] MULTI-1 One player party admits at most six fighters. A seventh is rejected
+- [x] MULTI-1 One player party admits at most six fighters. A seventh is rejected
       without partial state, while a side may reach twelve through valid membership.
-- [ ] MULTI-2 Two-side and three-side new setups work, including 12+12+12.
+- [x] MULTI-2 Two-side and three-side new setups work, including 12+12+12.
       A thirteenth fighter on one side, a fourth side, unknown/duplicate side
       membership and overlapping positions are rejected atomically.
-- [ ] MULTI-3 All three sides retain IDs, positions, retreat areas and control
+- [x] MULTI-3 All three sides retain IDs, positions, retreat areas and control
       attribution through setup, projection, save/reload and editor import/export.
-- [ ] MULTI-4 AI, attacks, reactions, intentions, initiative and previews account
+- [x] MULTI-4 AI, attacks, reactions, intentions, initiative and previews account
       for each hostile side. One allied player's units cannot command another's.
-- [ ] MULTI-5 Elimination of one side leaves the other two fighting. Final
+- [x] MULTI-5 Elimination of one side leaves the other two fighting. Final
       resolution and released bindings follow actual remaining participants.
-- [ ] MULTI-6 Repeated identical input/seed yields the same accepted replay.
+- [x] MULTI-6 Repeated identical input/seed yields the same accepted replay.
       Existing released two-side replays and stored-state checks remain valid.
-- [ ] MULTI-7 Real campaign joins preserve party ownership, physical presence,
+- [x] MULTI-7 Real campaign joins preserve party ownership, physical presence,
       consequences, trophy custody and once-only payment through reconnect/restart.
 - [ ] MULTI-8 The actual desktop HUD/field/result is readable by day/night at
       thirty-six figures. Device, viewport, frame-time and memory are recorded.
@@ -208,7 +208,7 @@ No permission to merge, deploy or provision paid resources was granted here.
 
 ## Current result
 
-IN_PROGRESS / LOCAL. T001/T003/T004/T005/T006/T007/T008/T009 complete on
+IN_PROGRESS / LOCAL. T001/T003/T004/T005/T006/T007/T008/T009/T010 complete on
 `codex/m1-completion-20261115`. Setup/replay schema3 with bridge-v6 retains
 runtime state schema1 and the historical setup1/2 execution paths. The new
 validator preserves all sides/parties/controller references and enforces the
@@ -258,11 +258,14 @@ Checks completed on the integrated sources:
 - Server/web typechecks and64 focused company-surrender, projection, sprite,
   terminal-view and story-interface tests passed on the integrated sources.
 
-T007 is complete. T010 retains combined campaign UI acceptance. The latest
-retained-N01 attempt shows native surrender and applied terminal consequences,
-but interrupted control and defeat leave the full journey open under
-[N08](m1-next/08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16).
-Canonical hostile equipment is reconciled with actual remaining armor and grounded
-after verified surrender. Ordinary loot pickup/sale is complete under T022.
-MULTI-7 ordinary browser continuation and full N10 measurement and
-acceptance remain open. Capacity/performance are NOT_MEASURED.
+T007/T010 are complete. MULTI-1–MULTI-6 use the unchanged focused and native
+editor/replay evidence above. MULTI-7 now passes the two-company ordinary HUNT-03
+journey under [N02](m1-next/02-next-contract.md#native-hunt-03-completion--2026-11-16).
+Nine account orders retain each company's actor ownership, both founders survive,
+terminal effects release their bindings, and the real standard pays its lawful
+bearer once. The compiled restart preserves that result and a normal subsequent
+purchase succeeds. Earlier defeats remain under N08. This campaign used two
+founders against one retained raider; the 36-figure three-side exercise remains
+separate diagnostic/editor evidence. Ordinary loot pickup/sale is complete under
+T022. MULTI-8 and full N10 measurement/acceptance remain open. Whole-route 60-FPS
+compliance and human tactical acceptance remain NOT_MEASURED/NOT_RUN.

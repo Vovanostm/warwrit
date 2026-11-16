@@ -18,8 +18,11 @@ ordinary paid journeys; C02 reuses unchanged WLC-08 wolf-proof/payment evidence.
 N02's restored state retains completed/paid mill rescue and completed HUNT-01,
 so C07–C09 success is inherited saved-state evidence. Their source/branch and
 receipt details remain separate gaps. C04 now has a paid native two-clue journey
-and reload. C01 victory/payout and the C05 ordinary journey remain open.
-Next: recover morale, finish the remaining raid and continue C05.
+and reload. C01 now has the native victory, unique standard, physical return,
+once-only 100-crown payout, compiled restart and subsequent supply purchase under
+[N02](02-next-contract.md#native-hunt-03-completion--2026-11-16). Its saved proof
+source is the actual terminal encounter. C05's ordinary journey and the recorded
+source/refusal gaps remain open. Next: continue C05 through Marfa's ordinary offer.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Player goal and normal path

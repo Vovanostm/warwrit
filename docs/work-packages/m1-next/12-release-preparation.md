@@ -12,6 +12,18 @@ open. No deployment, paid provisioning or pilot audience/size is authorized.
 
 ### Current local runtime pointers — 2026-11-16
 
+The active continuation now runs compiled production artifacts from source
+revision 1e607f39 against m1_n01_control_20261116, API 3031/realtime 3032/web 5331.
+The development runtime stopped through its owned terminal. Private mode 0600
+output/m1-n01-production-runtime-20261116.env retains the same DB/OIDC settings
+and removes development Playground/fixture flags. API and preview terminals are
+24255/24348, listeners 39642/39674 at this checkpoint. Append-preserved logs are
+output/m1-n01-production-{api,web}-20261116.log. Liveness, readiness and web return 200. Both ordinary re-entries load index-8OLqHrqc.js and retain the paid HUNT-03,
+released companies, actual people and equipment. The owner subsequently bought
+one ration in the compiled interface. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
+owns the full result. The prior development private file remains for a deliberate
+future return to the owned development runtime, with its log preserved.
+
 The preserved source remains m1_restore_current_20261116 on API 3035,
 realtime 3036 and web 5335. Its original guard-worktree private env disappeared
 externally. A replacement private 0600 file now owns its actual database and
@@ -28,7 +40,7 @@ terminal before another battle began. Its append-preserved log is
 `output/m1-fresh-control-dev-20261116.log`. [N09](09-player-experience.md)
 owns the failed controller attempt and the known-water feedback correction.
 
-The active continuation runtime now uses `m1_n01_control_20261116`, an isolated
+The continuation database `m1_n01_control_20261116` is an isolated
 PostgreSQL template copy of retained `m1_r5_restore_guard_20261116`. The source
 had zero other sessions and the new name was absent before creation. Bounded
 company, contract, inventory, map and route readback matched. The copy retains
@@ -198,6 +210,14 @@ A failed advisory full suite is reported honestly; it does not justify a silent
 scope cut or force another infrastructure project before useful local work.
 
 ## Current integrated production build — 2026-11-16
+
+The latest root pnpm build passes at source revision 1e607f39, including the carried
+purse and encounter-read deadline corrections. All workspace production artifacts
+completed. Web compilation took 1m7s and reports the existing large-chunk advisory,
+with index-8OLqHrqc.js at 7,819.12 kB (gzip 1,788.34 kB). The log is
+output/m1-integrated-build-after-control-20261116.log. Native compiled re-entry and
+supply purchase pass on the active isolated N01 continuation. Whole-route 60-FPS
+compliance remains NOT_MEASURED. Earlier integrated build evidence follows.
 
 LOCAL. A single root `pnpm build` completed successfully in the integration
 worktree after all tracked art was present. The source includes the founder

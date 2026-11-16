@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: complete native two-company HUNT-03, redeem its real
+  standard for 100 crowns, retain the result after compiled restart and buy
+  supplies. [T010/T014](docs/work-packages/m1-next/02-next-contract.md#native-hunt-03-completion--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: stalled battle lookup and projection reads now abort after
   ten seconds and offer the existing retry. Native held-request recovery passes.
   [N09](docs/work-packages/m1-next/09-player-experience.md#stalled-encounter-lookup-recovery--2026-11-16). LOCAL.

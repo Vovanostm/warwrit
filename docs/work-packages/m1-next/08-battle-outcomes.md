@@ -2,13 +2,13 @@
 
 ## Current result — 2026-11-16
 
-PARTIAL / LOCAL. Recorded defeats preserve actual casualties and release their
-bindings. The latest isolated N01 continuation ended with two deaths and two
-surrenders. Both companies remain ACTIVE with one living member each. The retained
-source database still has its earlier GAME_OVER outcome. The new run accepted
-account actions from both companies, but delayed requests and interrupted control
-leave tactical acceptance open. Hostile escape and a victorious ordinary hunt
-continuation remain unverified.
+PARTIAL / LOCAL. The latest isolated N01 continuation won HUNT-03 with both
+founders alive, applied actual consequences and released both companies. The
+standard was redeemed once after physical return and the paid result survives a
+compiled production restart. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
+owns the full journey, control orders, resource conversion and diagnostic
+conditions. The previous failed attempts remain below. OUT-3 hostile escape/retry
+and agreed-player tactical acceptance remain open.
 
 ## Retained N01 control attempt — 2026-11-16
 
