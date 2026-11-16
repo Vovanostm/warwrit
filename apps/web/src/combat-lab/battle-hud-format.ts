@@ -12,6 +12,24 @@ export const poolLabels = {
   stamina: 'Силы',
   morale: 'Мораль',
 };
+
+/** Player-facing side name; stable order follows the already-rendered side list. */
+export function battleSideLabel(view: BattlePresentationView, sideId: string | undefined): string {
+  const sideIds = [
+    ...new Set([
+      ...(view.sides ?? []).map((side) => side.id),
+      ...view.units.map((unit) => unit.sideId),
+    ]),
+  ];
+  const index = sideIds.indexOf(sideId ?? '');
+  if (view.viewerSideKnown === false) return index < 0 ? 'Сторона' : `Сторона ${index + 1}`;
+  if (sideId === view.controlledSideId) return 'Ваша сторона';
+  const opponents = sideIds.filter((id) => id !== view.controlledSideId);
+  if (opponents.length === 1) return 'Противник';
+  const opponentIndex = opponents.indexOf(sideId ?? '');
+  return opponentIndex < 0 ? 'Противник' : `Противник ${opponentIndex + 1}`;
+}
+
 const eventLabels: Record<string, string> = {
   'skill.used': 'Приём применён',
   'battle.started': 'Бой начался',

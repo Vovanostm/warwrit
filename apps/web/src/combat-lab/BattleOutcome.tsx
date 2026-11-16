@@ -1,4 +1,5 @@
 import type { BattlePresentationView } from './battle-presentation.js';
+import { battleSideLabel } from './battle-hud-format.js';
 export function BattleOutcome({
   view,
   busy,
@@ -81,15 +82,9 @@ function OutcomeSide({
   view: BattlePresentationView;
 }) {
   const units = view.units.filter((unit) => unit.sideId === sideId);
-  const label =
-    view.viewerSideKnown === false
-      ? `Сторона ${sideId ?? 'неизвестна'}`
-      : sideId === view.controlledSideId
-        ? `Ваша сторона · ${sideId}`
-        : `Сторона ${sideId ?? 'неизвестна'}`;
   return (
-    <div>
-      <strong>{label}</strong>
+    <div data-side-id={sideId}>
+      <strong>{battleSideLabel(view, sideId)}</strong>
       <span>
         В строю <b>{units.filter((unit) => unit.status === 'active').length}</b>
       </span>

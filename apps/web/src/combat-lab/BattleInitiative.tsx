@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BattlePresentationView, Unit } from './battle-presentation.js';
 import { Portrait, UnitStates } from './BattleUnitCard.js';
-import { unitStatus } from './battle-hud-format.js';
+import { battleSideLabel, unitStatus } from './battle-hud-format.js';
 import { UnitVitals } from './UnitVitals.js';
 import { battleUnitMarker } from './battle-framing.js';
 import { battleSideColor } from './battle-side-color.js';
@@ -136,7 +136,7 @@ function InitiativeUnit({
 }: Props & { id: string; index: number; round: number; forecast?: boolean }) {
   const unit = view.units.find((candidate) => candidate.id === id);
   if (unit?.status !== 'active') return null;
-  const side = unit.sideId === view.controlledSideId ? 'Союзник' : `Сторона ${unit.sideId}`;
+  const side = battleSideLabel(view, unit.sideId);
   const current = !forecast && view.activation?.actorId === id;
   const attackable = isAttackable(unit);
   const label = initiativeLabel({ unit, forecast, round, index, side, attackable });
@@ -156,7 +156,7 @@ function InitiativeUnit({
           ),
         } as React.CSSProperties
       }
-      title={`Сторона ${unit.sideId}${unit.partyId ? ` · отряд ${unit.partyId}` : ''}`}
+      title={side}
       data-forecast={forecast || undefined}
       aria-label={`${label} · Метка ${battleUnitMarker(view.units, id)}`}
       aria-current={currentStep}

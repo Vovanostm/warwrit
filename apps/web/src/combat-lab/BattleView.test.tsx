@@ -315,7 +315,10 @@ it('distinguishes surrendered from dead and shows a visible terminal result with
   expect(html).not.toContain('aria-label="Действующий боец"');
   expect(html).not.toContain('aria-label="Состояние: Волк"');
   expect(html).toContain('Сдались <b>1</b>');
-  expect(html).toContain('Сторона third');
+  expect(html).toContain('Ваша сторона');
+  expect(html).toContain('Противник 1');
+  expect(html).toContain('Противник 2');
+  expect(html).toContain('data-side-id="third"');
   expect(html).toContain('Начать заново');
   expect(html).toContain('К редактору');
   expect(html).toContain('Вернуться к отряду');
@@ -385,6 +388,30 @@ it('keeps terminal outcome neutral when the viewer side is not known', () => {
   );
   expect(html).not.toContain('<h2>Поражение</h2>');
   expect(html).not.toContain('Все бойцы вашей стороны выбыли из боя.');
+  expect(html).toContain('Сторона 1');
+  expect(html).toContain('Сторона 2');
+});
+
+it('uses readable side names in initiative tooltips without exposing party identifiers', () => {
+  const partyId = 'f2e31151-bdb6-478e-a130-70eadb85f38c';
+  const html = renderToStaticMarkup(
+    <BattleView
+      view={{
+        ...fromCombatLabView(view),
+        units: fromCombatLabView(view).units.map((unit) =>
+          unit.id === 'B001' ? { ...unit, partyId } : unit,
+        ),
+      }}
+      selectedUnitId={null}
+      selectedHex={null}
+      onSelectUnit={() => {}}
+      onSelectHex={() => {}}
+    />,
+  );
+  expect(html).toContain('title="Ваша сторона"');
+  expect(html).toContain('title="Противник"');
+  expect(html).toContain('data-side-id="opponent"');
+  expect(html).not.toContain(partyId);
 });
 
 it('keeps acting authority independent of the inspected enemy and accepts parent commands/menu', () => {
