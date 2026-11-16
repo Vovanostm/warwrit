@@ -1,13 +1,13 @@
 # M1 quests — at least 20, four with moral choices
 
-Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
-quests have local domain, server and UI implementations. T032 is complete on
-the recorded public-boundary outcome evidence below. The combined branch
-has focused checks and migrations through 0032. Aggregate consequence/art
-checks and full M1 player acceptance remain open. All four
-moral pairs have domain/report rules and saved-consumer PostgreSQL evidence.
-Some PostgreSQL cases seed terminal states; their full native producer journeys
-and ordinary combined re-entry remain unverified.
+Status **PARTIAL / LOCAL**, checked 2026-11-16. All eleven approved new
+quests have local domain, server and UI implementations. T032 and T035 are
+complete against their recorded implementation, branch/consumer and asset-use
+criteria. The combined branch has focused checks and migrations through 0032.
+The original eight-contract normal-entry matrix remains under N05/T031.
+Full native producer journeys, combined re-entry, night presentation and owner
+acceptance retain their separate T028/T036 criteria. Some PostgreSQL consequence
+checks seed terminal states, as identified in the evidence matrix below.
 Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
@@ -82,9 +82,9 @@ revised line is «Быстрее доберётесь». The guide is a saved, c
 source and cannot shorten travel to other destinations. Movement profiles may
 combine it with carrying burdens only through finite approved modifiers.
 
-Next, complete the T035 consequence matrix, art checks and native M1
-acceptance. Trial rewards, price changes and durations are recorded in
-their owning slices.
+T035's consequence and asset-use result is recorded below. Continue the
+original-contract journeys under T031 and the native M1 acceptance under T036.
+Trial rewards, price changes and durations retain their owning slices.
 
 ## Asset implementation checkpoint — 2026-11-15
 
@@ -661,3 +661,37 @@ which the table continues to mark unrun. No additional requirement for eight
 fresh paired browser journeys is introduced here. The original-contract branch
 matrix remains under T031/N05; T035 retains remaining consequence/art checks and
 full M1 acceptance remains under T036.
+
+### T035 completion — 2026-11-16
+
+COMPLETED / LOCAL on the M1 completion integration. The eight rows in the
+[moral-branch matrix](#t035-moral-branch-consequence-matrix--2026-11-16) cover
+both outcomes of each approved choice, saved consequences and their named
+board, travel, service, recruitment or report consumers. The recorded focused
+PostgreSQL checks exercise those consumers, including company scope, maturity
+boundaries and receipt replay. The table identifies seeded terminal snapshots
+and the full native producer journeys still awaiting acceptance.
+
+The selected-twenty table and the eleven-scene reconciliation above provide the
+required content mapping. Asset-use evidence covers four settlement backgrounds
+through place-buildings, six issuer portraits through NpcPortrait, and two proof
+images through TrophyArt. The three original enemy archetypes have the following
+manifest-to-renderer mapping.
+
+| Archetype    | Manifest asset            | Existing render key / consumer |
+| ------------ | ------------------------- | ------------------------------ |
+| Wolf         | `art.m1.battle.unit-wolf` | `B001` in sprite-art           |
+| Human raider | `art.combat.w02.sprite`   | `W02` in sprite-art            |
+| Mill beast   | `art.combat.b053.sprite`  | `B053` in sprite-art           |
+
+EncounterPanel uses BattleView and its sprite scene for the campaign consumers.
+The registered assets retain their source, licence and adaptation records.
+The native daytime proof images were already inspected at their actual 64-pixel
+UI size. No concrete missing asset remains in T035's required counts or mapping.
+
+This reconciliation reuses the unchanged source and recorded focused results.
+New game/SQL/browser checks for this documentation-only closeout are NOT_RUN.
+Night presentation and complete desktop traversal remain T028 work. Native
+original-contract production remains T031 work. Human interpretation, aesthetic
+judgement and aggregate M1 acceptance remain T036 work. These limits preserve
+the historical unrun observations above and keep the complete M1 status open.

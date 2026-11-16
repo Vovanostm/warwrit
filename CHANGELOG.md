@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: complete T035 with the eight moral-outcome consumer
+  checks, twenty quest rows, eleven scenes and required asset-use mapping.
+  [Quest result](docs/work-packages/M1-QUESTS.md#t035-completion--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: recover owned ground/corpse equipment through local
   transfer controls, preserving ownership, condition and once-only receipts.
   Native pickup/reload and focused checks pass. [N06](docs/work-packages/m1-next/06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16). LOCAL.
