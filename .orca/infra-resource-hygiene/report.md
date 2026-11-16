@@ -233,12 +233,13 @@ the feature roadmap, so its state remains owned by GitHub. The Unreleased change
 records the integration and retains the earlier blocked/review history.
 
 Hosted CI run 43978322124 on the synthetic merge checkout failed in
-`Check agent harness regressions`: `scripts/codex-lean-mcp.sh` now asks the Codex
-fixture for `mcp list --json`, while the existing stub returned no JSON. The
-fixture stub now returns an empty MCP list for that command without adding a
-`codex` dispatch-log entry, preserving the workflow assertions. Local execution
-of the regression script is NOT_RUN in this continuation; push the fix and inspect
-CI for its exact new head. PR #298 remains open and unmerged; the independent
+`Check agent harness regressions`. The first fix taught the Codex stub to return
+an empty MCP list, but CI run 43979264488 showed the fixture's separate
+coordinator worktree lacked `scripts/codex-lean-mcp.sh` itself. The fixture now
+copies that helper into its coordinator worktree; the Codex stub answers
+`mcp list --json` without adding a `codex` dispatch-log entry. Local execution of
+the regression script is NOT_RUN in this continuation; inspect CI for the latest
+head after publication. PR #298 remains open and unmerged; the independent
 Tier D REWORK and consumed 2/2 source reworks remain unresolved, so this CI fix
 does not remove `agent:blocked` from #297 or authorize merge.
 

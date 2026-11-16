@@ -9,10 +9,10 @@ requests.
 
 ## Unreleased
 
-- 2026-11-17, `claude/agent-resource-hygiene` — Fixed: made the Codex fixture
-  return an empty MCP list for `codex mcp list --json`, fixing CI run 1004's
-  clean-checkout harness regression after the `main` integration. Local regression
-  rerun NOT_RUN; new-head CI pending. [PR #298 integration record](.orca/infra-resource-hygiene/report.md#pr-298-main-integration-and-clean-checkout-regression--2026-11-17). LOCAL.
+- 2026-11-17, `claude/agent-resource-hygiene` — Fixed: copied the new lean-MCP
+  helper into the coordinator fixture and made its Codex stub return an empty MCP
+  list, addressing CI runs 1004/1005 after `main` integration. Local regression
+  rerun NOT_RUN; new-head CI pending. [PR #298 integration record](.orca/infra-resource-hygiene/report.md#pr-298-main-integration-and-clean-checkout-regression--2026-11-17). PUBLISHED.
 
 - 2026-11-17, `claude/agent-resource-hygiene` — Changed: integrated `main`
   `4a9c3af9` into PR #298, keeping current repository policy and restoring the

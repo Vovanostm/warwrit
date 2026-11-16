@@ -45,6 +45,7 @@ cat > "$fixture/bin/caffeinate" <<'STUB'
 #!/usr/bin/env bash
 printf 'caffeinate\n' >> "$FIXTURE_LOG"
 STUB
+cp "$root/scripts/codex-lean-mcp.sh" "$fixture/coord/scripts/"
 chmod +x "$fixture/bin/"*
 printf 'exit 0\n' > "$fixture/coord/scripts/orca-checkpoint-compact.sh"
 printf 'echo fixture-state\n' > "$fixture/coord/scripts/orca-state-digest.sh"
