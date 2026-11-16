@@ -2,17 +2,19 @@
 
 ## Current status — 2026-11-16
 
-LOCAL / PARTIAL. DUR-1 and DUR-6 meet their recorded criteria. R1–R4 have
-applicable real-PostgreSQL boundary, concurrency or exact-retry evidence below;
-RPO/RTO and capacity remain `NOT_MEASURED`. A restored copy accepted a normal
-owner login and lawful item transfer, and the selected baseline values checked
-below remain present. R5/#397 and DUR-3 remain open because the comparison is
-bounded to selected tables and snapshot histories, not the complete canonical
-state. DUR-4 has a separate executor's login and continuation, but the evidence
-does not show that the executor followed a complete prepared restore runbook or
-complete SC-008 access/isolation coverage. DUR-5 remains open pending that
-runbook. DUR-2 is partial: an actual API process restart preserved a helper's
-active movement, but arrival and public uncertain-outcome handling are pending.
+LOCAL / PARTIAL. DUR-1, DUR-3, DUR-5 and DUR-6 meet their recorded criteria.
+R1–R4 have applicable real-PostgreSQL boundary, concurrency or exact-retry
+evidence below; RPO/RTO and capacity remain `NOT_MEASURED`. A current consistent
+17.11 dump restored into a fresh separate database with exact schema and full
+table/value equality before any app writer connected. R5's full
+data-conservation criterion is met. The prior independent normal login and lawful
+transfer remain valid evidence on `m1_restore_current_20261116`. This rehearsal's
+newer target was left disconnected; DUR-4 / end-to-end SC-008 evidence on that
+target remains open, pending an owner-coordinated use of an existing runtime. No
+gameplay result is claimed for the new target; overall R5 remains PARTIAL pending
+that playable check. DUR-2 is partial:
+the restarted helper route arrived and returned without losses, while public UI
+uncertain-outcome handling remains unverified.
 
 ## Earlier status — 2026-11-08
 
@@ -45,10 +47,11 @@ It is focused R2 evidence, not completion of N11 or T029.
 LOCAL / PARTIAL. An actual source-triggered OS process restart during helper
 movement replaced the API process PID 85080 with 88928. `/health/ready` returned
 200 after restart. Read-only state retained the same `MOVING` route epoch 61 and
-public revision 193; the campaign tick advanced from 81466 to 81468. Arrival is
-still pending the owner's check. This demonstrates recovery of the active route
-through the API restart; it does not yet demonstrate arrival handling, release of
-completed work or the public UI's handling of an uncertain command outcome.
+public revision 193; the campaign tick advanced from 81466 to 81468. The owner
+later confirmed the helper arrived at the Old Mill and returned normally to
+Kamenny Brod after 1,000 QA-clock units, without route losses. This demonstrates
+recovery and completion of the active route through the API restart. Public UI
+handling of an uncertain command outcome remains unverified, so DUR-2 stays open.
 
 ## R1/R3/R4 boundary evidence — 2026-11-16
 
@@ -231,44 +234,87 @@ company place-observation site IDs remain; four same-key observations update
 remain exact. This value check does not compare every other mutable snapshot field
 or public tables omitted from the 32-table extract.
 
-## R1/R3/R4 boundary evidence — 2026-11-16
+### Fresh current-copy restore runbook and full-value rehearsal — 2026-11-16
 
-LOCAL. The real PostgreSQL FIRST HUNT retreat/repeat case now snapshots both
-company roots, JOIN intent and contract revision, admissions, and company receipts
-before a trigger rejects the second admission. The whole snapshot remains equal
-after the failed completing JOIN. Retrying the same command ID, revision and body
-then creates the second admission, and an identical replay returns that accepted
-response. Before the failure probe, two distinct helper JOIN command IDs at the
-same revision race to complete the encounter; one succeeds and the other receives
-409 without a receipt. The accepted JOIN remains available for the later exact
-retry checks. The existing independent-pool JOIN lock case also passes: a SQL
-transaction holds the owner's account before the joining request reaches the
-company lock; admission completes once, exact retry returns the saved response,
-conflicting reuse is rejected, and both roots stay unchanged afterward.
+`LOCAL_DEVELOPMENT.md` describes local setup and migrations but has no isolated
+R5 restore procedure. Use a new database name for every rehearsal. First inspect
+the private `output/restore-current.env` without printing its values; confirm it
+identifies the intended source. Confirm the target name is absent and record the
+source encoding/collation. If the target already exists, stop and choose a new
+name: never drop or clean an existing database. Do not point an application at the
+target until comparison passes.
 
-The same retreat/repeat route case races two distinct PRESENT command IDs for the
-same proof and revision. One request settles the proof and 80,000,000 Q payout;
-the other is refused without a receipt. An outsider reusing the accepted body's
-command ID receives only `NOT_AUTHORIZED` (403), with no receipt ID. After the
-helper later leaves, the authorized owner retries the original accepted body and
-receives the same response; the world wallet remains unchanged. This is real
-route-level PostgreSQL evidence for the unique claim, authorization order and
-historical replay.
+For this rehearsal the source was `m1_restore_current_20261116`; the new target is
+`m1_r5_restore_guard_20261116`. Both used PostgreSQL 17.11 tools, UTF8 and
+`en_US.utf8`. With `output/` ignored and mode 0600, the safe sequence was:
 
-Unchanged R4 evidence also passed: `company-transition.integration.test.ts`
-injects a transaction rollback after writing the retained proof/payment transition,
-checks company, wallet and proof-claim rows remain at pre-state, then commits the
-transition once and rejects a conflicting repeat. `hostile-loot.integration.test.ts`
-uses concurrent route requests from two companies, transfers the source item once,
-then retries the accepted command after a later claim advances state and rejects a
-changed body under the reused command ID.
+```sh
+umask 077
+docker exec warwrit-m1-20261115-postgres-1 sh -lc \
+  'PGPASSWORD="$POSTGRES_PASSWORD" exec pg_dump -U "$POSTGRES_USER" \
+    --format=custom --no-owner --no-privileges \
+    --dbname=m1_restore_current_20261116' \
+  > output/r5_restore_guard_20261116.dump
+chmod 600 output/r5_restore_guard_20261116.dump
 
-Selected checks passed sequentially using the per-file disposable integration
-harness: the two named encounter JOIN/retreat cases (2 passed, 27 skipped), the
-company-transition case (1 passed), and hostile-loot case (1 passed). The harness
-disposed each cloned database. The full encounter/contract integration files,
-backup/restore (R5), and full T029 remain `NOT_RUN`. R5 and backup/playable-restore
-acceptance remain open; this evidence does not complete N11.
+# Only after a read-only catalog check confirms this fresh name is absent:
+docker exec warwrit-m1-20261115-postgres-1 sh -lc \
+  'PGPASSWORD="$POSTGRES_PASSWORD" exec createdb -U "$POSTGRES_USER" \
+    --template=template0 --encoding=UTF8 --locale=en_US.utf8 \
+    m1_r5_restore_guard_20261116'
+
+# Restore to that new empty database. Never add --clean or --create.
+docker exec -i warwrit-m1-20261115-postgres-1 sh -lc \
+  'PGPASSWORD="$POSTGRES_PASSWORD" exec pg_restore -U "$POSTGRES_USER" \
+    --exit-on-error --no-owner --no-privileges \
+    --dbname=m1_r5_restore_guard_20261116' \
+  < output/r5_restore_guard_20261116.dump
+```
+
+Before any application connects, extract data from the private archive with
+`pg_restore --data-only --no-owner --no-privileges` and extract target data with
+`pg_dump --data-only --no-owner --no-privileges`. Compare relation and column
+lists, then compare decoded COPY rows as multisets per relation (`\N` is SQL
+NULL); compare all non-COPY statements, sequence state and large-object statements
+too. Compare archive schema output with target `pg_dump --schema-only` output,
+normalizing only the generated `\restrict` / `\unrestrict` guard token. Keep
+extracts private and mode 0600. The source-database URL, credentials and raw saved
+rows must not appear in terminal output or Git. `--no-owner --no-privileges`
+intentionally does not prove database role/grant parity; keep the target
+disconnected unless the owner coordinates an application-access check.
+
+The 03:44:40.973–03:44:41.234 UTC dump was 1,349,202 bytes (mode 0600). Restore
+completed at 03:45:17.392 UTC after starting at 03:45:16.965. The canonicalized
+schema DDL matched. All 56 COPY relation sections across `public` and `playground`
+matched exactly by column list and row multiset: 6,072 rows, zero missing, added
+or changed values. Both non-COPY statements (`setval` sequence state and
+`set_config`) matched exactly; neither dump contained large-object statements.
+This included all 32 migration rows, 41 identity accounts, 41 company-owner
+bindings, 41 company snapshots, three map editions and both encounter rows. The
+source had 44 public tables; schema equality covered
+empty tables as well. A post-check found zero target sessions. No application,
+gameplay or source-database writes occurred; the target is a separate database on
+the existing PostgreSQL instance, remains disconnected from the game runtime and
+is retained. These local dump/restore durations are not RPO/RTO or capacity metrics.
+
+At this dump snapshot, Дозор N01 was active at public/canonical revisions 822/837
+with seven characters, three memberships, 20 item rows/48 units and two completed
+encounters. The helper company was active at 206/211 with six characters, three
+memberships, 12 item rows/36 units and one completed encounter. All three saved
+route rows were `ARRIVED`. These target values match the source snapshot exactly;
+the parent later confirmed the helper arrived and returned normally without losses.
+
+For the coordinated normal-use check, `output/restore-r5-guard-target.env` was
+prepared mode 0600 and ignored, retaining every source setting except
+`DATABASE_URL`, which points at the new target. The file is unused so far; no
+application has connected to the target.
+
+The earlier successful independent login and medical-kit round trip remains the
+normal-use evidence for `m1_restore_current_20261116`; this fresh full-value target
+was not connected to the game runtime. Under the literal DUR-4 sequence, the
+remaining step is one normal login, lawful action and readback against this target
+through the existing runtime and Dex setup. That requires owner coordination; no
+new listener or auth configuration was created here.
 
 ## Player goal and ordinary result
 
@@ -353,14 +399,14 @@ production ops, rewriting migrations or deleting failing worlds.
       evidence with atomic effects, authorized readback and no duplicate reward.
 - [ ] DUR-2 Restart recovers actual active route/encounter and releases completed
       work; public UI handles uncertain outcome without a fresh duplicate intent.
-- [ ] DUR-3 An actual consistent backup restores into a separate owned DB with
+- [x] DUR-3 An actual consistent backup restores into a separate owned DB with
       compatible migrations/content/replay and complete conserved canonical state.
 - [ ] DUR-4 Another executor follows the prepared runbook to restore a separate
       owned DB, sign in normally and perform one lawful restored continuation.
       Record the executor and result for SC-008, including conserved state,
       access controls and isolation from the source world's writer. Ordinary login
       and continuation work without manual state repair or leaked private data.
-- [ ] DUR-5 Runbook names source/target isolation, access, prerequisites, actual
+- [x] DUR-5 Runbook names source/target isolation, access, prerequisites, actual
       elapsed results and remaining recovery limits; no dump/secret is committed.
 - [x] DUR-6 Current evidence, inherited unchanged evidence and missing coverage
       are distinct. RPO/RTO/capacity are measured or explicitly NOT_MEASURED.
