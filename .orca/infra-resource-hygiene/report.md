@@ -224,3 +224,24 @@ live cleanup/full wave NOT_RUN and savings NOT_MEASURED. This is author proof,
 not independent acceptance. Original 2/2, review 3 REWORK and inherited blocked
 labels remain; coordinator validate, fresh Tier D review and CI are still required.
 No shared-record edits, publication or merge are part of this continuation.
+
+## PR #298 main integration and clean-checkout regression — 2026-11-17
+
+Integrated `main` at `4a9c3af9` into PR #298 (merge commit `987e185b`). Roadmap
+review found no #297 checkbox or task link to change; the support issue is outside
+the feature roadmap, so its state remains owned by GitHub. The Unreleased changelog
+records the integration and retains the earlier blocked/review history.
+
+Hosted CI run 43978322124 on the synthetic merge checkout failed in
+`Check agent harness regressions`: `scripts/codex-lean-mcp.sh` now asks the Codex
+fixture for `mcp list --json`, while the existing stub returned no JSON. The
+fixture stub now returns an empty MCP list for that command without adding a
+`codex` dispatch-log entry, preserving the workflow assertions. Local execution
+of the regression script is NOT_RUN in this continuation; push the fix and inspect
+CI for its exact new head. PR #298 remains open and unmerged; the independent
+Tier D REWORK and consumed 2/2 source reworks remain unresolved, so this CI fix
+does not remove `agent:blocked` from #297 or authorize merge.
+
+Issue #179 is unrelated: it tracks combat hex scaling and remains blocked on its
+separate acceptance/review history. PR #298 closes #297, the agent resource-hygiene
+issue.

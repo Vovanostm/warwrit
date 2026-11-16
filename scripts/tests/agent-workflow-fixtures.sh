@@ -33,6 +33,10 @@ esac
 STUB
 cat > "$fixture/bin/codex" <<'STUB'
 #!/usr/bin/env bash
+if [[ "$*" == 'mcp list --json' ]]; then
+  printf '[]\n'
+  exit 0
+fi
 printf 'codex\n' >> "$FIXTURE_LOG"
 [[ "${FIXTURE_STOP_AFTER_TICK:-}" == 1 ]] && touch "$FIXTURE_COORD/.orca/pipeline/STOPPED_BY_OWNER"
 exit 0
