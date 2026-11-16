@@ -1,6 +1,6 @@
 ---
 name: warwrit-visual-critic
-description: Independent read-only art-direction critic for Warwrit visuals (characters, places, map, UI art). Scores current screenshots against the approved references with the VISUAL_CRITIQUE rubric and returns ACCEPT, REJECT or BLOCKED. Never edits.
+description: Independent read-only art-direction critic for Warwrit visuals (characters, places, map, UI art). Checks affected presentation and journeys with the VISUAL_CRITIQUE rubric and returns scoped ACCEPT, REWORK or NOT_RUN. Never edits.
 tools: Read, Grep, Glob, Bash
 ---
 

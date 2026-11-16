@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "transport": "real loopback HTTP",
+  "database": "isolated PostgreSQL 17",
+  "anonymous": 401,
+  "owner": 200,
+  "otherAccount": "empty company view",
+  "exactQ": {
+    "estimated": "1001",
+    "cashPaid": "5",
+    "maintenance": "3",
+    "pending": "7",
+    "owed": "993",
+    "duePayable": "986"
+  },
+  "publicRevisionMatches": true,
+  "repeatedGetIdentical": true,
+  "storedRootUnchanged": true,
+  "limitations": ["No browser or payment-command journey; those remain #167"]
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Старая мельница · Warwrit</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Объёмная сцена Старой мельницы" tabindex="0"></canvas>
+    <img
+      id="reference-image"
+      alt="Исходное изображение всего поля боя, переданное в image-to-3dlab"
+      hidden
+    />
+    <header>
+      <p class="eyebrow">WARWRIT / ИССЛЕДОВАНИЕ ЛОКАЦИИ</p>
+      <h1>Старая мельница</h1>
+      <p class="subtitle">Единая 3D-сцена поля боя</p>
+    </header>
+    <aside class="controls" aria-label="Осмотр сцены">
+      <div class="control-row">
+        <button id="yard">Всё поле</button><button id="close">Ближе к мельнице</button
+        ><button id="reset">Исходный вид</button>
+      </div>
+      <div class="control-row">
+        <button id="light" aria-pressed="false">Ночь</button
+        ><button id="reference" aria-pressed="false">Исходное изображение</button>
+      </div>
+      <label class="angle"
+        >Высота взгляда <input id="angle" type="range" min="0" max="45" value="40" /><output
+          id="angle-value"
+          >40°</output
+        ></label
+      >
+      <p class="hint">Тяните мышью — поворот · Колесо — масштаб<br />Правая кнопка — смещение</p>
+    </aside>
+    <footer>
+      <span id="status" role="status">Загрузка единой 3D-сцены…</span
+      ><span>Осмотр карты · без боевой симуляции</span>
+    </footer>
+    <script type="module" src="/src/mill-preview/main.ts"></script>
+  </body>
+</html>

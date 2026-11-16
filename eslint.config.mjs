@@ -49,7 +49,14 @@ const deterministicCoreGlobals = [
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/coverage/**', '**/node_modules/**', '**/*.d.ts', 'artifacts/**'],
+    ignores: [
+      '**/dist/**',
+      '**/coverage/**',
+      '**/node_modules/**',
+      '**/*.d.ts',
+      'artifacts/**',
+      '.claude/worktrees/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -102,15 +109,6 @@ export default tseslint.config(
   },
   {
     files: ['scripts/**/*.mjs', 'eslint.config.mjs', 'prettier.config.mjs'],
-    languageOptions: {
-      globals: globals.node,
-    },
-    rules: {
-      'no-console': 'off',
-    },
-  },
-  {
-    files: ['apps/renderer-spike/scripts/**/*.mjs'],
     languageOptions: {
       globals: globals.node,
     },

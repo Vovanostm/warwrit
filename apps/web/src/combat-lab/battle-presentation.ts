@@ -54,6 +54,7 @@ export type BattlePresentationView = Omit<
   readonly sceneKey: string;
   readonly label: string;
   readonly sourceNote?: string;
+  readonly outcomeNote?: string;
   readonly sceneEnvironment?: 'old-mill' | 'open-field';
   readonly controlledSideId: string;
   readonly viewerSideKnown?: boolean;

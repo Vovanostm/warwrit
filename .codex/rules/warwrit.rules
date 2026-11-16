@@ -1,7 +1,7 @@
 # Best-effort command guards for AGENTS.md "Hard rules" 1 and 7. Prefix matching only:
 # reordered flags are not caught. Loaded only when the project .codex/ layer is
-# trusted. Ordinary merges stay unguarded here because PRs merge on gates
-# (AGENTS.md hard rule 1, owner decision 2026-10-21); the parent checks the gates.
+# trusted. Prefix rules do not grant merge permission; current owner scope/stop
+# and AGENTS.md Authority and scope apply even when no prefix prompts.
 
 prefix_rule(
     pattern = ["git", "push", ["--force", "-f"]],

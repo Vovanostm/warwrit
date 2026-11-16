@@ -12,7 +12,7 @@ log=.orca/play.log
 [[ -f .worktree-ports ]] || bash scripts/orca-setup.sh >> "$log" 2>&1 || { echo "BLOCKED_ENV setup failed ($log)"; exit 3; }
 # shellcheck disable=SC1091
 . ./.worktree-ports
-web="http://127.0.0.1:$COMBAT_WEB_PORT/combat-lab"
+web="http://127.0.0.1:$COMBAT_WEB_PORT/dev/playground/combat"
 api="http://127.0.0.1:$COMBAT_API_PORT/health/live"
 
 up() { curl -fsS -o /dev/null --max-time 3 "$api" 2>/dev/null && curl -fsS -o /dev/null --max-time 3 "$web" 2>/dev/null; }

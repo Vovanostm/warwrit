@@ -12,7 +12,7 @@ const decimal = (v: unknown): v is string => typeof v === 'string' && /^(0|[1-9]
 function fractionDigits(t: { numerator: string; denominator: string }): boolean {
   return /^(0|[1-9]\d{0,18})$/.test(t.numerator) && /^[1-9]\d{0,18}$/.test(t.denominator);
 }
-function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto | undefined {
+export function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
   const v = value as WorldFreeMovementV2ResponseDto;
   const point = (p: WorldFreeMovementV2ResponseDto['point']) =>
@@ -38,15 +38,18 @@ function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto 
       (p.planVersion !== 2 && p.planVersion !== 3) ||
       (p.planVersion === 3 &&
         (p.navigationVersion !== 'polygon-v1' ||
-          p.mapEdition !== 'seroe-porechye-continuous-v5')) ||
+          !['seroe-porechye-continuous-v5', 'porechye-atlas-lab-v1'].includes(p.mapEdition))) ||
       (p.planVersion === 2 &&
-        (p.navigationVersion !== undefined || p.mapEdition === 'seroe-porechye-continuous-v5')) ||
+        (p.navigationVersion !== undefined ||
+          p.mapEdition === 'seroe-porechye-continuous-v5' ||
+          p.mapEdition === 'porechye-atlas-lab-v1')) ||
       ![
         'seroe-porechye-continuous-v1',
         'seroe-porechye-continuous-v2',
         'seroe-porechye-continuous-v3',
         'seroe-porechye-continuous-v4',
         'seroe-porechye-continuous-v5',
+        'porechye-atlas-lab-v1',
       ].includes(p.mapEdition) ||
       typeof p.planId !== 'string' ||
       typeof p.speedProfileId !== 'string' ||
@@ -125,6 +128,8 @@ const messageFor = (code: string) =>
     STALE_REVISION: 'Состояние изменилось. Обновляем карту.',
     STALE_MOVEMENT_EPOCH: 'Путь уже изменился. Обновляем карту.',
     MAP_EDITION_MISMATCH: 'Карта обновилась. Перезагрузите страницу.',
+    MAP_INFORMATION_REQUIRED:
+      'Недостаточно сведений о пути. Разведайте местность перед дальнейшим движением.',
   })[code] ?? 'Не удалось принять приказ.';
 
 export function useContinuousMovement(
@@ -250,17 +255,38 @@ export function useContinuousMovement(
         const body = await r.json();
         if (!live) return;
         const v = readContinuousMovement(body);
+        if (body?.commandId !== pending.current?.commandId) throw new Error('unmatched response');
         if (
-          !v &&
+          !(r.status === 200 && v) &&
           !(
+            ((r.status === 409 &&
+              [
+                'STALE_REVISION',
+                'STALE_MOVEMENT_EPOCH',
+                'COMMAND_ID_CONFLICT',
+                'MAP_EDITION_MISMATCH',
+              ].includes(body?.code)) ||
+              (r.status === 422 &&
+                [
+                  'INVALID_COMMAND',
+                  'UNSUPPORTED_VERSION',
+                  'TARGET_BLOCKED',
+                  'OUT_OF_BOUNDS',
+                  'NO_PATH',
+                  'MAP_INFORMATION_REQUIRED',
+                  'ROUTE_TOO_COMPLEX',
+                  'MOVEMENT_NOT_ALLOWED',
+                  'ROUTE_FORBIDDEN',
+                  'KNOWN_SUPPLY_SHORTAGE',
+                ].includes(body?.code))) &&
             body?.schemaVersion === 2 &&
             body?.result === 'REJECTED' &&
             typeof body.code === 'string'
           )
         )
           throw new Error('unknown response');
-        pending.current = null;
         localStorage.removeItem(storageKey);
+        pending.current = null;
         setUnknown(false);
         if (v) {
           apply(v, sent);

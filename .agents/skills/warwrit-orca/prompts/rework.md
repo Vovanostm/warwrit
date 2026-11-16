@@ -1,13 +1,15 @@
 # REWORK — {{SLICE}} (round {{ROUND}})
 
-You are the lane's builder again. Fix every finding below inside ownership
-{{OWNERSHIP}}; do not widen scope. Follow the commit, audit, validate and
-smoke-play steps of the build brief (`prompts/build.md` steps 3–6, so `.orca/{{SLICE}}/text.md` matches the new strings), refresh
-affected screenshots and append fixes and new check results to
-`.orca/{{SLICE}}/report.md`. Finish with commits.
-
-When the findings are audit-only, restructure: split each named function into
-sub-components, hooks or pure helpers with their own focused tests.
+Fix confirmed findings inside {{OWNERSHIP}}. Preserve unrelated WIP and follow
+the build brief's execution mode, validation ownership and applicable acceptance.
+Classify code defects, environment failures and missing evidence separately.
+Retry with a new hypothesis or changed input; the same cause recurring requires
+a different approach or a concrete blocker. Do not automatically refactor named
+functions or add helper tests. Refresh affected checks/images/text evidence;
+reuse unaffected results only while their inputs remain valid.
 
 {{FINDINGS}}
-Set `report_path` to `.orca/{{SLICE}}/report.md` in your final answer.
+
+Append actual fixes, check results and residual criteria to
+`.orca/{{SLICE}}/report.md`; set report_path accordingly. Branch owner commits;
+delegated editor returns the diff. No publication or merge.

@@ -102,6 +102,36 @@ for (const asset of manifest.assets ?? []) {
   }
 }
 
+// The current combat catalogue covers every file URL imported by its finite
+// consumer set. This catches both deleted resources and uncatalogued revisions.
+const revisions = manifest.contentRevisions ?? {};
+const activeCombat = manifest.assets.filter(
+  (asset) => asset.contentRevision === 'combat-sprite-current',
+);
+const combatPaths = new Set(activeCombat.map((asset) => asset.path));
+for (const consumer of revisions['combat-sprite-current']?.consumers ?? []) {
+  const source = await readFile(resolve(root, consumer), 'utf8');
+  for (const match of source.matchAll(/['"]([^'"]*assets\/[^'"]+)['"]/gu)) {
+    const path = relative(root, resolve(root, consumer, '..', match[1]))
+      .split(sep)
+      .join('/');
+    if (!combatPaths.has(path)) failures.push(`Uncatalogued combat asset: ${path}`);
+    if (!activeCombat.some((asset) => asset.path === path && asset.consumers.includes(consumer))) {
+      failures.push(`Missing combat consumer: ${consumer} -> ${path}`);
+    }
+  }
+}
+for (const asset of manifest.assets.filter((asset) => asset.contentRevision !== undefined)) {
+  if (!(asset.contentRevision in revisions)) failures.push(`Unknown content revision: ${asset.id}`);
+  if (!asset.provenance || !(await fileExists(resolve(root, asset.provenance)))) {
+    failures.push(`Missing active provenance: ${asset.id}`);
+  }
+  for (const consumer of asset.consumers ?? []) {
+    if (!(await fileExists(resolve(root, consumer))))
+      failures.push(`Missing consumer: ${consumer}`);
+  }
+}
+
 const contentFiles = await walk(join(root, 'content'), '.json');
 const contentIds = new Set();
 for (const file of contentFiles) {

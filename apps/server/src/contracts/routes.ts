@@ -1,3 +1,5 @@
+import { readHuntAttempt } from '../encounters/hunt-attempt.js';
+import { huntTerminalSummary } from './terminal-result.js';
 import { executeCommandTransaction } from '../db/command-transaction.js';
 import { settleDueContinuousMovementInTransaction } from '../world/continuous-movement.js';
 import { randomUUID } from 'node:crypto';
@@ -30,7 +32,7 @@ import type {
 } from '@warwrit/protocol';
 import { isFirstHuntCommand } from '@warwrit/protocol';
 import type { FastifyInstance } from 'fastify';
-import type { Kysely, Transaction } from 'kysely';
+import type { Kysely, Transaction, Selectable } from 'kysely';
 
 import { resolveSessionAccount } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
@@ -43,6 +45,7 @@ import {
 import { admitFirstHuntInTransaction } from '../encounters/admission.js';
 import { readWorldClock, readWorldLight } from '../world/clock.js';
 import { readFirstHuntReceipt, persistFirstHuntReceipt } from './repository.js';
+import { grantHuntObjective } from './cartography.js';
 import {
   canFirstHuntHelperOptIn,
   canFirstHuntParticipantLeave,
@@ -57,7 +60,7 @@ import {
   selectHuntWorldRow,
 } from './first-hunt-runtime.js';
 
-type ContractRow = DatabaseSchema['contract_instances'];
+type ContractRow = Selectable<DatabaseSchema['contract_instances']>;
 
 export function registerFirstHuntRoutes(
   app: FastifyInstance,
@@ -352,6 +355,7 @@ async function executeContractCommand(input: {
           .select(['encounter_id', 'terminal_revision', 'effects_source_id', 'effects_applied_at'])
           .where('world_id', '=', worldId)
           .where('instance_id', '=', contract.instance_id)
+          .where('is_current', '=', true)
           .forUpdate()
           .executeTakeFirst();
         const encounter = admission
@@ -385,11 +389,25 @@ async function executeContractCommand(input: {
       }
       if (BigInt(state.economy.lifecycle.campaignTick) > BigInt(clock.tick))
         return reject('NOT_AVAILABLE', contract.revision);
-      const ownerJoin = readJoinIntent(contract.owner_join, contract.owner_company_id);
-      const helperJoin = readJoinIntent(contract.helper_join, contract.helper_company_id);
+      const attempt = await readHuntAttempt(transaction, worldState);
+      if (commandType === 'JOIN' && attempt.joinAttemptNo === undefined)
+        return reject('NOT_AVAILABLE', contract.revision);
+      const joinAttemptNo = attempt.joinAttemptNo ?? attempt.admission?.attempt_no ?? 1;
+      const ownerJoin =
+        contract.owner_join_attempt_no === joinAttemptNo
+          ? readJoinIntent(contract.owner_join, contract.owner_company_id)
+          : undefined;
+      const helperJoin =
+        contract.helper_join_attempt_no === joinAttemptNo
+          ? readJoinIntent(contract.helper_join, contract.helper_company_id)
+          : undefined;
       if (
-        (contract.owner_join !== null && ownerJoin === undefined) ||
-        (contract.helper_join !== null && helperJoin === undefined)
+        (contract.owner_join_attempt_no === joinAttemptNo &&
+          contract.owner_join !== null &&
+          ownerJoin === undefined) ||
+        (contract.helper_join_attempt_no === joinAttemptNo &&
+          contract.helper_join !== null &&
+          helperJoin === undefined)
       )
         return reject('NOT_AVAILABLE', contract.revision);
       const atIssuer = isAtArea(state, terms.issuerLocation.siteId, terms.issuerLocation.areaId);
@@ -410,6 +428,7 @@ async function executeContractCommand(input: {
           .select(['encounter_id', 'terminal_revision', 'effects_applied_at'])
           .where('world_id', '=', worldId)
           .where('instance_id', '=', contract.instance_id)
+          .where('is_current', '=', true)
           .forUpdate()
           .executeTakeFirst();
         const encounter = admission
@@ -671,8 +690,11 @@ async function executeContractCommand(input: {
       const values = {
         owner_company_id: participation.next.ownerCompanyId,
         helper_company_id: participation.next.helperCompanyId,
-        owner_join: participation.next.ownerJoin,
+        owner_join: commandType === 'LEAVE' ? null : participation.next.ownerJoin,
         helper_join: participation.next.helperJoin,
+        owner_join_attempt_no:
+          commandType !== 'LEAVE' && participation.next.ownerJoin ? joinAttemptNo : null,
+        helper_join_attempt_no: participation.next.helperJoin ? joinAttemptNo : null,
       };
       const proposedContract = { ...contract, ...values };
       const shouldActivate =
@@ -702,6 +724,9 @@ async function executeContractCommand(input: {
         .executeTakeFirst();
       if (Number(committed.numUpdatedRows) !== 1)
         throw new Error('FIRST HUNT contract revision CAS failed');
+
+      if (commandType === 'ACCEPT' || commandType === 'HELP')
+        await grantHuntObjective(transaction, worldId, companyId, profile, now);
 
       const receiptId = randomUUID();
       const receiptSnapshot = await transaction
@@ -743,16 +768,15 @@ async function readHuntView(
 ): Promise<FirstHuntReadResponseDto | null> {
   const contract = await readContract(transaction, worldId, profile.instanceId);
   if (!contract) return null;
-  const admission = await transaction
-    .selectFrom('encounter_admissions')
-    .select(['encounter_id', 'effects_applied_at'])
-    .where('world_id', '=', worldId)
-    .where('instance_id', '=', profile.instanceId)
-    .executeTakeFirst();
+  const worldRow = await selectHuntWorldRow(transaction, worldId, profile);
+  const attempt = worldRow
+    ? await readHuntAttempt(transaction, readHuntWorldState(worldId, profile, worldRow))
+    : undefined;
+  const admission = attempt?.admission;
   const encounter = admission
     ? await transaction
         .selectFrom('encounters')
-        .select(['id', 'status'])
+        .select(['id', 'status', 'state'])
         .where('id', '=', admission.encounter_id)
         .executeTakeFirst()
     : undefined;
@@ -809,6 +833,11 @@ async function readHuntView(
           redemption: proof.redemption_receipt_id ? ('REDEEMED' as const) : ('UNREDEEMED' as const),
         }
       : null;
+  const terminal =
+    encounter && admission
+      ? huntTerminalSummary(encounter, admission.effects_applied_at, currentAggregate)
+      : undefined;
+  const joinAttemptNo = attempt?.joinAttemptNo ?? attempt?.admission?.attempt_no ?? 1;
   const body: FirstHuntReadResponseDto = {
     schemaVersion: 1,
     publicRevision: contract.revision,
@@ -822,10 +851,14 @@ async function readHuntView(
           knownState: state,
           yourJoinIntent:
             role === 'OWNER'
-              ? contract.owner_join !== null
-              : role === 'HELPER' && contract.helper_join !== null,
+              ? contract.owner_join !== null && contract.owner_join_attempt_no === joinAttemptNo
+              : role === 'HELPER' &&
+                contract.helper_join !== null &&
+                contract.helper_join_attempt_no === joinAttemptNo,
           helperSlot: contract.helper_company_id ? 'OCCUPIED' : 'AVAILABLE',
           encounterId: admission?.encounter_id ?? null,
+          ...(terminal ? { terminal } : {}),
+          repeatAvailable: role !== 'NONE' && attempt?.repeatAvailable === true,
           pickupTargets:
             companyId &&
             (role === 'OWNER' || role === 'HELPER') &&

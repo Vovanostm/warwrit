@@ -4,6 +4,27 @@ Owner policy moved verbatim from [AGENTS.md](../../AGENTS.md) on 2026-10-21 to
 keep the always-loaded contract short; its authority is unchanged. Read it
 before any art, scene, UI-art, lore or player-text work.
 
+Owner amendment — 2026-11-06: style/lore requirements below remain binding.
+[VISUAL_CRITIQUE](VISUAL_CRITIQUE.md) now owns proportional evidence selection.
+The historical full day/night/overview/close-view requirement applies when the
+scene/art feature needs those views, not as a universal prerequisite for controls
+or unrelated gameplay. Missing broader comparisons leave scene quality unassessed.
+
+Owner amendment — 2026-10-25:
+
+- The default for new 2D illustrations and sprites is **«Сдержанный графический
+  роман»**; **«Туман и мокрый камень»** is an explicit location/environment
+  override. The [owning decision](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+  records scope and reference authority. Current profiles and selected images
+  are under `assets/art/styles/`: `graphic-novel.json`, `fog-wet-stone.json`
+  and their `references/` directories. Open matching current references before
+  art work or critique.
+- Older style-C and M1 place images below retain historical, proportion,
+  material and geography value; they no longer prescribe the previous dense
+  texture for new 2D work. Preserve accepted history and existing assets.
+  Do not infer a camera, renderer or 3D-character workflow change from this
+  2D art selection. No specific location list for the fog override is assigned.
+
 Owner policy — 2026-10-04:
 
 - Treat Warwrit as serious, grounded dark fantasy. Preserve the approved

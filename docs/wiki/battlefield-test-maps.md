@@ -1,11 +1,11 @@
 ---
 title: Поле боя и спрайтовая боёвка — ТЗ и тестовые карты
 created: 2026-10-07
-updated: 2026-10-20
+updated: 2026-11-08
 type: proposal
 tags: [combat, battlefield, sprites, art-direction, review-draft]
-status: direction-approved; merged-playable-sandbox; combat-readability-merged; PR160-merged; full-spec-review-draft
-authority: owner decisions 2026-10-09; provisional balance; local prototype 2026-10-10
+status: direction-approved; merged-playable-sandbox; combat-readability-merged; PR160-merged; full-spec-review-draft; camera-grid-selected-2026-10-30; visual-transfer-pending
+authority: owner decisions 2026-10-09; camera/grid/height presentation 2026-10-30; provisional balance; local prototype 2026-10-10
 sources:
   - m1-spec.md
   - ../work-packages/M1-CHARACTERS-3D.md
@@ -13,6 +13,17 @@ sources:
 ---
 
 # Поле боя и тестовые карты
+
+## Единый Developer Combat Lab — WLC-06, 2026-11-08
+
+Текущий вход: `/dev/playground/combat` с авторизованным аккаунтом разработчика.
+Визуальные редактор и HUD сохранены; новый sandbox запускается по игровым
+`m1-domain-bridge-v5`, через общий серверный encounter executor и изолированное
+PostgreSQL-хранилище. Старые `/combat-lab`, `/dev/combat-lab` и volatile-сессии
+удалены. Версии прежних правил, replay и ресурсы сохранены; unmapped навыки и
+особые силы прототипа не превращаются в игровые правила кампании.
+[Сценарий, границы, проверки и ограничения WLC-06](../engineering/COMBAT_LAB_CONSOLIDATION.md).
+Исторические результаты ниже не являются приёмкой нового стенда или всей M1.
 
 ## Обзор и разделение пульта — 2026-10-20
 
@@ -440,7 +451,7 @@ XCOM, сосредоточиться на спрайтах, интересных
 Приёмка направления не означает приёмку игровой интеграции.
 
 Наблюдаемый результат этапа 1: открыть
-[экран согласования](../../assets/art/combat/stage1-2026-10-09/index.html),
+[экран согласования](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/index.html),
 рассмотреть общий концепт, сопоставить роли и прочитать принятые развилки.
 Экран согласования не исполняет бой. Следующий результат — законченный
 настоящий бой на одной карте через существующее ядро и затем расширение.
@@ -565,18 +576,18 @@ W07–W09 — дополнительные авторские предложен
 только B001/B053 имеют M1-источник присутствия. Выбор состава не утверждает
 архивные биографии, все способности или автоматическое размещение видов в мире.
 
-| ID / источник                                              | Облик / задача боя                                                                      | Предлагаемый ответ игрока                                                 |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [B001 Волк](bestiary/creatures/b001.md)                    | Низкая голова, грубая шерсть; проверяет край группы                                     | Держаться вместе, прикрывать отделившегося                                |
-| [B002 Бурый медведь](bestiary/creatures/b002.md)           | Тяжёлый зверь; подготовка сильного ближнего удара                                       | Не оставаться перед ним, использовать восстановление после удара          |
-| [B003 Дикий вепрь](bestiary/creatures/b003.md)             | Клин низкой головы; прямой натиск                                                       | Сойти с объявленной линии, оставить выход                                 |
-| [B017 Могильный зверь](bestiary/creatures/b017.md)         | Сутулый живой падальщик с длинными передними конечностями                               | Защитить раненого/тело; не рисовать воскресшего солдата                   |
-| [B019 Могильный сторож](bestiary/creatures/b019.md)        | Костлявая фигура в погребальной ткани, граница могилы                                   | Предложенная местная задача с предметом; не добавлять религию             |
-| [B023 Висельная тень](bestiary/creatures/b023.md)          | Натянутая тонкая фигура у опоры                                                         | Видеть область петли и освободить захваченного; бесплотность не доказана  |
-| [B025 Камышник](bestiary/creatures/b025.md)                | Высокое узкое тело, волокнистая кожа и согнутая шея                                     | Прочитать движение камыша/головы, сохранить строй                         |
-| [B030 Береговая плакальщица](bestiary/creatures/b030.md)   | Мешковидное тело, дыхательные щели, бессловесный плач                                   | Не дать контактного захвата; без магического вытягивания                  |
-| [B037 Пустоголос](bestiary/creatures/b037.md)              | Тонкая перепончатая фигура у полого дерева                                              | Отличить реально услышанный повтор от команды; без знания чужой биографии |
-| [B053 Ночная мельничная тварь](bestiary/creatures/b053.md) | Силуэт из [текущего арта](../../assets/art/m1/battle/unit-mill-beast.png), ночная охота | Сохранить истинный контракт и коготь; новый натиск только кандидат        |
+| ID / источник                                              | Облик / задача боя                                                                                                                                                   | Предлагаемый ответ игрока                                                 |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [B001 Волк](bestiary/creatures/b001.md)                    | Низкая голова, грубая шерсть; проверяет край группы                                                                                                                  | Держаться вместе, прикрывать отделившегося                                |
+| [B002 Бурый медведь](bestiary/creatures/b002.md)           | Тяжёлый зверь; подготовка сильного ближнего удара                                                                                                                    | Не оставаться перед ним, использовать восстановление после удара          |
+| [B003 Дикий вепрь](bestiary/creatures/b003.md)             | Клин низкой головы; прямой натиск                                                                                                                                    | Сойти с объявленной линии, оставить выход                                 |
+| [B017 Могильный зверь](bestiary/creatures/b017.md)         | Сутулый живой падальщик с длинными передними конечностями                                                                                                            | Защитить раненого/тело; не рисовать воскресшего солдата                   |
+| [B019 Могильный сторож](bestiary/creatures/b019.md)        | Костлявая фигура в погребальной ткани, граница могилы                                                                                                                | Предложенная местная задача с предметом; не добавлять религию             |
+| [B023 Висельная тень](bestiary/creatures/b023.md)          | Натянутая тонкая фигура у опоры                                                                                                                                      | Видеть область петли и освободить захваченного; бесплотность не доказана  |
+| [B025 Камышник](bestiary/creatures/b025.md)                | Высокое узкое тело, волокнистая кожа и согнутая шея                                                                                                                  | Прочитать движение камыша/головы, сохранить строй                         |
+| [B030 Береговая плакальщица](bestiary/creatures/b030.md)   | Мешковидное тело, дыхательные щели, бессловесный плач                                                                                                                | Не дать контактного захвата; без магического вытягивания                  |
+| [B037 Пустоголос](bestiary/creatures/b037.md)              | Тонкая перепончатая фигура у полого дерева                                                                                                                           | Отличить реально услышанный повтор от команды; без знания чужой биографии |
+| [B053 Ночная мельничная тварь](bestiary/creatures/b053.md) | Силуэт из [текущего арта](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/m1/battle/unit-mill-beast.png), ночная охота | Сохранить истинный контракт и коготь; новый натиск только кандидат        |
 
 У каждого нового профиля должны быть: видимая подготовка, одна особая угроза,
 понятный контрприём, ограничение способности и законный исход. Различие нельзя
@@ -1329,8 +1340,8 @@ evidence, не tracked. Визуальный критик не выполнял 
 **сверху**, с границами раундов как в присланном Olden Era; состояния на
 портретах; отдельные способности, открываемые развитием навыков.
 
-[Пять интерактивных концептов](../../assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/index.html)
-и [лист сравнения](../../assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/comparison.png).
+[Пять интерактивных концептов](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/index.html)
+и [лист сравнения](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/comparison.png).
 Локальный запуск: `http://127.0.0.1:5320/@fs/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/ui-fullscreen-concepts-v2/index.html`.
 «Экран целиком» открывает один вариант; Esc возвращает выбор. Внешняя галерея
 не входит в игровой HUD. Форматирование и масштабирование едины для desktop;
@@ -1711,7 +1722,7 @@ NOT_RUN для визуального изменения; форматирова
 согласование композиции владельцем**. Внедрённый экран пока сохранён;
 новые варианты — предложения для выбора, не принятый производственный UI.
 
-[Переключаемые макеты](../../assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/index.html)
+[Переключаемые макеты](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/index.html)
 показывают одну сцену в четырёх компоновках 1440×900. Для локального Vite:
 `http://127.0.0.1:5320/@fs/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/index.html`.
 Кнопка «Экран целиком» показывает масштаб 1:1; Esc возвращает сравнение.
@@ -1767,7 +1778,7 @@ D — альтернатива для подробного тактическо�
 полноэкранных концептов заменяет эту развилку; A/C/D старой редакции
 не соответствуют новому требованию поля на весь экран.
 
-[Четыре кадра рядом](../../assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/comparison.png)
+[Четыре кадра рядом](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-concepts-2026-10-10/comparison.png)
 и отдельные `concept-a/b/c/d-day.png` сохранены с макетами. Ночные/крупные
 проверочные кадры находятся локально в `output/playwright/ui-concept-*.png`.
 Production game source, commands/rules/replay/dependencies/migrations не менялись;
@@ -1803,7 +1814,7 @@ workspace dependency, новая внешняя библиотека не доб
 точные pending/retry guards сохранены. Легенда различает ход, выстрел,
 доступную цель и огонь. При 1440×900 низ панели находится на 860 px.
 
-[UI-референс](../../assets/art/combat/stage1-2026-10-09/ui-reference-v1.html)
+[UI-референс](https://github.com/Vovanostm/warwrit/blob/79a6ba025bba236dfe4be0665aece98d1c8c4353/assets/art/combat/stage1-2026-10-09/ui-reference-v1.html)
 содержит четыре настоящих кадра интеграции: лучник день/ночь, ближний бой,
 мельница 6×6. Для запущенного Vite открыть
 `http://127.0.0.1:5320/@fs/Users/vovanostm/learn/warwrit/assets/art/combat/stage1-2026-10-09/ui-reference-v1.html`;
@@ -1920,7 +1931,7 @@ Gamedev дополнительно воспроизвёл через чисто�
 - Горизонт — доступность удара в текущей активации. Нет оценки ответного
   урона следующего хода, угрозы отхода цели, защиты своего стрелка или
   согласования нескольких бойцов. Лук стреляет и в соседнюю цель.
-- [Lab continuation](../../apps/server/src/combat-lab/routes.ts) использует
+- [Historical lab continuation](https://github.com/Vovanostm/warwrit/blob/fdbb0dc2/apps/server/src/combat-lab/routes.ts) использует
   стандартную `aggressive`: атака → сближение → защита/ожидание.
   `survivor` с порогами здоровья/морали существует, но здесь не выбран.
   Паника/сдача не подключены; в завершённых боях враги с моралью 0 продолжали
@@ -5369,3 +5380,163 @@ Coordinator validator passed 9/9 before integrating JOIN main. Fresh integrated
 validation and independent evaluator/absolute visual ACCEPT remain pending;
 legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
 Local evidence: `.orca/uix-affordability-bands/report.md`.
+
+## Обновление существующей боёвки — поручение 2026-10-29
+
+Владелец поручил обновить существующий бой вместе с картой и wiki.
+[Предварительная визуальная база и статус](vision.md#единая-визуальная-база-и-интеграция--поручение-2026-10-29):
+локальная практика высот у мельницы из648830d8, рисованные бойцы и
+читаемый предпросмотр. Кадр — предложение интеграции, не объявление
+готового сетевого боя или новой утверждённой камеры. Переносить подачу
+в текущий игровой вход с прежними владельцами команд/состояния;
+синхронизацию, сохранение, AI и возврат в мир проверять в реальном пути.
+Не превращать отдельный preview в ещё одну параллельную боёвку.
+
+### Камера, сетка и высоты — решение владельца 2026-10-30
+
+Владелец повторно выбрал показанный ниже вариант и уточнил, что под
+«field of view» имеет в виду **перспективу камеры**. Перспективная подача
+сетки читается и выглядит хуже выбранного варианта. Этот раздел заменяет
+статус «только предварительное предложение ракурса» от 2026-10-29; прежние
+записи о перспективе/FoV ниже сохраняются как история, не текущая цель.
+
+![Эталон камеры, сетки и высот боя](../engineering/evidence/visual-direction-20261029/combat-proposal.png)
+
+**Текущая визуальная цель:** ортографическая камера «Ракурс · ровные ряды»
+из локальной пробы `648830d8`. В исходном `camera-view.ts` это
+`frontal`: elevation 35°, yaw 0°; в `terrain-scene.ts` используется
+`Camera.ORTHOGRAPHIC_CAMERA`. Это проверяемая исходная настройка эталона,
+не измерение чужой игры. При переносе нужно сохранить согласованные оси
+поля, рисунка и бойцов. Масштабирование меняет ортографический охват,
+не угол перспективного FoV.
+
+- Ряды гексов ровные, параллельные направления не сходятся вдаль; клетки
+  одинакового уровня сохраняют одинаковый масштаб в глубину. Дальний ряд
+  не сжимается перспективой. Поворот и наклон не меняются автоматически
+  при выборе бойца или приближении.
+- Сетка — тонкие спокойные линии, связанные с реальной поверхностью клеток.
+  В обзоре и вблизи её толщина остаётся читаемой; общая граница клетки
+  не превращается в двойную яркую полосу. Выбор и допустимый приказ
+  различимы без плотной заливки всего поля.
+- Высота читается самой формой: ровная верхняя площадка и выраженный
+  земляной/каменный уступ между уровнями. Не сглаживать разницу уровней
+  до почти незаметной волны. Рисунок боковой грани согласован с грунтом;
+  ноги, клетка выбора и указатель опираются на одну геометрию.
+- Выбранная клетка/боец и предпросмотр действия явно показывают свой уровень
+  и перепад, например «Высота +1» и «Перепад +1». Не заставлять игрока
+  угадывать высоту по цвету грунта. Конкретные боевые модификаторы берутся
+  из действующих правил, а не из случайных чисел на эталонном кадре.
+- Гекс, маршрут, заливки и контуры остаются за непрозрачными пикселями
+  тела, оружия, щита и ног, в том числе на уступе и ночью. Панели не
+  перекрывают бойцов при штатном кадрировании.
+
+Кадр задаёт язык отображения, а не фиксированную карту для каждого боя.
+Состав, проходимость, высоты, дальность и исходы остаются у существующих
+серверных владельцев. У мельницы сохраняются её руины и география; обычное
+поле не получает мельничные стены или высоты ради сходства со скриншотом.
+Уточнение о камере не меняет правил видимости/обнаружения и мировой
+картографии. Новой механики FoV этим решением не вводится.
+
+**Приёмка переноса:** в существующем обычном бою показать тот же принцип
+камеры и сетки, клетку на 0 рядом с +1/+2, выбор и приказ через перепад,
+обзор/приближение, день/ночь и плотную группу над панелью. Проверить
+совпадение выбранной клетки с фактическим попаданием мыши и парные кадры
+с наземными наложениями/без них при неизменных фигурах и HUD. Независимый
+визуальный критик сравнивает результат именно с этим кадром и текущим
+стилевым профилем. Наличие другой красивой текстуры или зелёная сборка
+не закрывают эти критерии.
+
+**Состояние 2026-10-30:** выбранная проба сохранена; открытый
+`combat-lab?environment=open-field` пока не соответствует выбранной подаче.
+На текущих v3-кадрах независимый критик подтвердил видимость плотной группы
+над панелью и лучника на +1 без пересечения тела сеткой; полный результат
+REJECT/BLOCKED. Техническая поправка 2026-10-30: прежняя запись «камера уже ортографическая»
+была ошибочной. У helper есть такое значение по умолчанию, но сцена явно
+передавала `perspective`, включая перспективную камеру; расчёт кадра также
+использовал перспективное преобразование. Требуется согласованно изменить
+камеру, проекцию, кадрирование и привязку рисунка вместе со ступенями/сеткой.
+Игровая приёмка этого переноса `NOT_RUN`.
+
+### Ordinary battle integration checkpoint — 2026-10-29
+
+The following source/results belong to the separate local parent branch
+`codex/game-painted-map`; combat changes are not present in this map-only
+`codex/game-painted-delivery` candidate.
+
+Local `codex/game-painted-map`, base48d8a2ae; parent integrates the selected
+ink assets into the existing dynamic open-field renderer and authoritative
+encounter commands. The fixed96-cell mill demonstration and ten-hero preview
+are not copied into every ordinary battle. Existing height/mud/fire/blocked
+facts remain server-owned.
+
+A source-confirmed identity defect rendered Mora as a man: company observations
+retained `identity.sex`, but the owner summary and battle presentation dropped
+it. Optional observed sex now travels owner-private through `/company` and only
+known-own character IDs. Female sword/bow reuse retained art; the new unnamed
+female spear archetype has exact prompt/provenance under
+`assets/art/combat/ink-fighters-2026-10-29/`. No canonical face/biography/age or
+new public encounter field is invented. Absent sex retains compatibility;
+unsupported explicit sex/female weapon variants use neutral art; creatures take
+precedence. Independent source ACCEPT, protocol build/server+web types,
+20focused combat checks and2actual PostgreSQL company-route cases PASS.
+
+Sprite `visibleBounds` remains source XYWH, with a shared derived-extents helper;
+legacy tuples and wolf portrait framing are retained. Unsafe0.86post-fit zoom
+was removed. A subsequent actual capture exposed automatic single-actor focus
+hiding neighbours; activation now retains the tactical group frame and respects
+manual camera movement. Latest web types and18framing checks PASS. Source tests
+are not visual acceptance.
+
+Initial ordinary visual verdict BLOCKED: missing required night/comparison/layer
+inputs plus observed HUD/edge clipping and uniform ground/strong hex fills.
+The current source includes a horizonless painted meadow plate, less dominant
+selection/reach cues and preserved old-mill material. Fresh captures32–39 include
+day, local diagnostic night and grid on/off; full repeated critique is pending.
+Height-step/large-creature/owner-rejected archer cases remain NOT_RUN. There are
+no new animation clips in this slice; motion timing NOT_MEASURED.
+
+Actual QA3 ordinary journey: normal login/opening3members, travel to Bereznyak,
+equip all, accept HUNT02, manual attacks/endturns plus2single-action auto commands,
+round5VICTORY with3survivors/3deadwolves. Reload returned to campaign; actual
+physical trophy pickup/presentation/payment80 and another reload retained880
+crowns, injuries and equipment. QA1/QA2 losses remain retained; missed author
+30second deadlines do not establish balance. One-company HUNT02 does not prove
+two-company/full-M1 acceptance. Current battle night remains a local diagnostic
+toggle; world-time synchronization versus freeze-at-entry needs an owning rule.
+
+Current images are local untracked output/painted-map-integration/native/32–39;
+source/art prompts are retained under the paths above. Normal audit/commit/PR,
+current clean full gate and complete visual acceptance are pending; no merge or
+deployment.
+
+### Diagnostic refinement and repeated combat rejection — 2026-10-29
+
+This checkpoint describes unfinished source only in `codex/game-painted-map`
+(`/Users/vovanostm/.codex/worktrees/game-painted-map/warwrit`), outside the
+map-only `codex/game-painted-delivery` candidate. No combat acceptance or delivery
+is claimed by the painted-map branch.
+
+The local renderer now waits for scene readiness, fits the authored open-field
+plate to actual projected ground bounds, preserves old-mill composition and
+supports explicit diagnostic `environment=open-field` / `overlays=off` views.
+Night cues and bodies have separate treatment; source changes retain geometry,
+authoritative terrain and ordinary command ownership. Latest web types, scoped
+ESLint and107focused checks PASS. The earlier1041PASS/72SKIP V8 measurement
+predates final terrain/overlay/map-helper edits and cannot prove current coverage.
+
+Repeated independent absolute critique: diagnostic slice REJECT; full gate
+BLOCKED. Captures42–66 show four concrete defects: the bottom command dock hides
+a neighbouring shield fighter in dense manual close focus; the large creature
+has no convincing foot contact/shadow; open-field drawing remains a broad blurry
+wash at actual scale; night figures are weaker than labels/HUD. Pose, drawing,
+night value and integration score1; other applicable criteria2. Drawing and
+night value repeated1 require a technique-level change, not more tint/alpha
+adjustment. The archer overlay pairs46↔53/47↔54 PASS only their shown opaque-body
+invariant. Raised-wolf60 has no same-view overlays-on partner; latest visuals
+have no new ordinary-battle journey. Motion timing NOT_MEASURED.
+
+Current native captures and equal-height sheets remain local untracked evidence
+under `output/painted-map-integration/native/` in the parent tree; corresponding
+raw captures are under `game-combat-ink/warwrit/output/painted-combat-native-20261029/`.
+Prior QA3 victory/payment remains real gameplay evidence on the earlier visual
+revision. No main merge, deployment, paid provisioning or Orca activation.

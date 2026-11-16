@@ -1,0 +1,6 @@
+{
+  "path": "/company/commands",
+  "body": "{\"schemaVersion\":2,\"commandId\":\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"expectedPublicRevision\":\"1\",\"type\":\"TransferItem\",\"payload\":{\"itemId\":\"[\\\"2f4cbbc3-7cae-499c-b4ca-15b45771ca87\\\",\\\"shared\\\",\\\"ration\\\"]\",\"quantity\":2,\"fromContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"004eb77e-aa3e-4cf1-9fe2-295d285faee3\\\",\\\"party-supply\\\"]\",\"toContainerId\":\"[\\\"1a7a3488-c54c-459e-851a-b75c2bdea978\\\",\\\"cc535187-7345-47c9-bece-68a0051875d0\\\",\\\"carry\\\"]\"}}",
+  "response": "{\"commandId\":\"6d953e2b-0ac8-469f-a35b-1af9a03cab34\",\"ok\":true,\"publicRevision\":\"2\"}",
+  "httpStatus": 200
+}

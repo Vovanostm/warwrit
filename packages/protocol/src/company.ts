@@ -88,11 +88,87 @@ export interface CompanySummaryDto {
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+    /** The owner knows whether this character travels with the active field party. */
+    readonly inFieldParty?: boolean;
+    /** A local, available reserve can join through the explicit roster action. */
+    readonly canJoinFieldParty?: boolean;
+    readonly fieldPartyFull?: boolean;
   }[];
+}
+/** Safe, owner-private payroll observation; absent on historical responses means unavailable. */
+export interface CompanyPayrollDto {
+  readonly atTick: string;
+  readonly publicRevision: string;
+  readonly pools: readonly {
+    readonly poolId: string;
+    readonly walletId: string;
+    readonly location: {
+      readonly kind: 'AT' | 'TERRAIN' | 'MOVING' | 'TRANSIT';
+      readonly [key: string]: string;
+    };
+    readonly cashQ: string;
+    readonly reservedQ: string;
+    readonly spendableQ: string;
+  }[];
+  readonly services: readonly {
+    readonly membershipId: string;
+    readonly poolId: string;
+    readonly currentAgreedRateMilli: string;
+    readonly materialSupportOnly: boolean;
+  }[];
+  readonly claims: readonly {
+    readonly claimId: string;
+    readonly membershipId: string;
+    readonly poolId: string;
+    readonly payee: {
+      readonly kind: 'CHARACTER' | 'COMPANY' | 'ESTATE' | 'WORLD';
+      readonly id: string;
+    };
+    readonly dueAt: string;
+    readonly estimatedQ: string;
+    readonly cashPaidQ: string;
+    readonly currentMaintenanceQ: string;
+    readonly pendingQ: string;
+    readonly unsecuredQ: string;
+  }[];
+  readonly owedQ: string;
+  readonly dueQ: string;
+  readonly payableQ: string;
+  readonly duePayableQ: string;
 }
 /** Owner-private physical and money view; only the owning account receives it. */
 export interface CompanyHoldingsDto {
+  /** Accessible owner-private containers; absent on older servers. Moving items preserves ownership. */
+  readonly transfer?: {
+    readonly containers: readonly {
+      readonly containerId: string;
+      readonly carrierCharacterId: string | null;
+      readonly kind: string;
+    }[];
+    readonly items: readonly {
+      readonly itemId: string;
+      readonly containerId: string;
+      readonly quantity: number;
+    }[];
+  };
+  /** Owner-known wound instances and locally available material-care choices. */
+  readonly care?: {
+    readonly treatments: readonly {
+      readonly characterId: string;
+      readonly conditionId: string;
+      readonly definitionId: string;
+      readonly careDefinitionId: string;
+      readonly providers: readonly { readonly characterId: string }[];
+      readonly materials: readonly {
+        readonly itemId: string;
+        readonly definitionId: string;
+        readonly quantity: number;
+      }[];
+    }[];
+  };
   readonly supplies?: { readonly rations: number; readonly people: number; readonly days: number };
+  /** Optional for old response compatibility; missing means no payroll snapshot is available. */
+  readonly payroll?: CompanyPayrollDto;
   /** Exact company-owned cash in q units (1 crown = 1,000,000 q); members' purses excluded. */
   readonly cashQ: string;
   readonly wallets: readonly {
@@ -124,6 +200,12 @@ export interface CompanyHoldingsDto {
     readonly maximumStamina: number | null;
     /** Unresolved physical conditions (wounds, illness) by definition id. */
     readonly conditions: readonly string[];
+    /** Lawfully observed local duty state and actions currently available to the owner. */
+    readonly recovery?: {
+      readonly assignment: 'FIELD' | 'RECOVERY' | 'OTHER';
+      readonly canRest: boolean;
+      readonly canReturnToField: boolean;
+    };
   }[];
   /** The company's party is in a field camp that covers its current food. */
   readonly fieldCamp: boolean;
@@ -197,6 +279,16 @@ export type OrdinaryPlayerCompanyCommandType =
 
 /** Payloads whose complete ordinary-command effects and public readback are enabled in V2. */
 export interface OrdinaryPlayerCompanyPayloads {
+  /** Pay existing due claims from an accessible company pool; core owns selection and allocation. */
+  readonly PayClaims: {
+    readonly poolId: string;
+    readonly amountQ: string;
+    readonly claimIds: readonly string[];
+    readonly mode: 'DEFAULT' | 'TARGETED';
+    readonly payeeId?: string;
+  };
+  readonly Recruit: { readonly offerId: string; readonly offerRevision: string };
+  readonly JoinFieldParty: { readonly characterId: string };
   readonly BuySupplies: {
     readonly siteId: string;
     readonly quantity: number;
@@ -221,6 +313,44 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly itemId: string;
     readonly slotId: 'HEAD' | 'BODY' | 'MAIN_HAND' | 'OFF_HAND' | 'BELT';
   };
+  /** Relocate existing property between accessible containers; the server supplies access evidence. */
+  readonly TransferItem: {
+    readonly itemId: string;
+    readonly quantity: number;
+    readonly fromContainerId: string;
+    readonly toContainerId: string;
+  };
+  /** Apply one locally performed treatment using an accessible material instance. */
+  readonly ApplyCare: {
+    readonly characterId: string;
+    readonly conditionId: string;
+    readonly providerId: string;
+    readonly resourceItemId: string;
+  };
+  /** Rest locally or return to field duty; location, funding and eligibility are server-derived. */
+  readonly SetAssignment: {
+    readonly characterId: string;
+    readonly assignment: 'FIELD' | 'RECOVERY';
+  };
+}
+
+export interface LocalRecruitOfferDto {
+  readonly offerId: string;
+  readonly offerRevision: string;
+  readonly characterId: string;
+  readonly name: string;
+  readonly skills: readonly { readonly skillId: string; readonly level: number }[];
+  readonly aptitudes: readonly { readonly skillId: string; readonly valueBps: number }[];
+  readonly health: { readonly current: number; readonly maximum: number };
+  readonly stamina: { readonly current: number; readonly maximum: number };
+  readonly conditions: readonly string[];
+  readonly signingQ: string;
+  readonly dailyWageMilli: string;
+  readonly physician: boolean;
+}
+
+export interface LocalRecruitOffersResponseDto {
+  readonly offers: readonly LocalRecruitOfferDto[];
 }
 
 export type EnabledOrdinaryPlayerCompanyCommandType = keyof OrdinaryPlayerCompanyPayloads;

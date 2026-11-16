@@ -1,0 +1,98 @@
+{
+  "source": "1bb63f8b",
+  "base": "ffaa84a5",
+  "database": "warwrit_retreat401_recheck_20261106",
+  "encounterId": "3bdcb018-c626-4954-8c7b-2da61f06223b",
+  "command": {
+    "version": 2,
+    "encounterId": "3bdcb018-c626-4954-8c7b-2da61f06223b",
+    "commandId": "de6c04b4-dd4f-4fee-8fb1-5dc0a04696f2",
+    "expectedRevision": 7,
+    "activationId": "1:01d936fe-8396-42f2-af5b-bc43e4320651",
+    "actorId": "01d936fe-8396-42f2-af5b-bc43e4320651",
+    "intent": {
+      "type": "retreat"
+    }
+  },
+  "receipt": {
+    "version": 1,
+    "encounterId": "3bdcb018-c626-4954-8c7b-2da61f06223b",
+    "commandId": "de6c04b4-dd4f-4fee-8fb1-5dc0a04696f2",
+    "receiptId": "3bdcb018-c626-4954-8c7b-2da61f06223b:8",
+    "status": "accepted",
+    "revision": 8
+  },
+  "offExitActor": {
+    "id": "01d936fe-8396-42f2-af5b-bc43e4320651",
+    "position": {
+      "q": -1,
+      "r": -2
+    }
+  },
+  "ownExitHexes": [
+    {
+      "q": -3,
+      "r": 0
+    },
+    {
+      "q": -3,
+      "r": 1
+    },
+    {
+      "q": -3,
+      "r": 2
+    },
+    {
+      "q": -3,
+      "r": 3
+    }
+  ],
+  "legalPosition": {
+    "q": -3,
+    "r": 0
+  },
+  "identicalSavedRequestAfterReload": true,
+  "retryResponses": [
+    {
+      "version": 1,
+      "encounterId": "3bdcb018-c626-4954-8c7b-2da61f06223b",
+      "commandId": "de6c04b4-dd4f-4fee-8fb1-5dc0a04696f2",
+      "receiptId": "3bdcb018-c626-4954-8c7b-2da61f06223b:8",
+      "status": "accepted",
+      "revision": 8
+    },
+    {
+      "status": "accepted",
+      "version": 1,
+      "revision": 8,
+      "commandId": "de6c04b4-dd4f-4fee-8fb1-5dc0a04696f2",
+      "receiptId": "3bdcb018-c626-4954-8c7b-2da61f06223b:8",
+      "encounterId": "3bdcb018-c626-4954-8c7b-2da61f06223b"
+    }
+  ],
+  "pendingAfterRetry": {},
+  "originalCommandRows": 1,
+  "originalReceiptRows": 1,
+  "terminalRevision": 12,
+  "terminalStatus": "resolved",
+  "ownUnits": [
+    {
+      "id": "01d936fe-8396-42f2-af5b-bc43e4320651",
+      "status": "retreated",
+      "health": 56
+    },
+    {
+      "id": "1dcefb37-b994-46fc-85a3-abd626a42f22",
+      "status": "retreated",
+      "health": 56
+    },
+    {
+      "id": "64d1b740-3e95-435e-8cab-812f6d2b193f",
+      "status": "retreated",
+      "health": 56
+    }
+  ],
+  "acceptedNativeActions": 6,
+  "rejectedNativeActions": 0,
+  "scope": "Normal local Dex OIDC -> new company Дальний берег / Савва+Rell+Mora -> nine equips -> normal travel -> elder ACCEPT -> JOIN. Native move/retreat only. First retreat reply withheld, reload, exact retry. Three lawful retreats; no state/position/health/clock/RNG edits. Earlier worlds and failed run retained."
+}

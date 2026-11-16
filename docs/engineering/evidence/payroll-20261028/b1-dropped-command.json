@@ -1,0 +1,6 @@
+{
+  "path": "/company/commands",
+  "body": "{\"schemaVersion\":2,\"commandId\":\"703f3976-daa1-48a0-a6e8-944c3d9b766f\",\"expectedPublicRevision\":\"2\",\"type\":\"PayClaims\",\"payload\":{\"poolId\":\"local\",\"amountQ\":\"19170000\",\"claimIds\":[],\"mode\":\"DEFAULT\"}}",
+  "response": "{\"commandId\":\"703f3976-daa1-48a0-a6e8-944c3d9b766f\",\"ok\":true,\"publicRevision\":\"4\"}",
+  "httpStatus": 200
+}

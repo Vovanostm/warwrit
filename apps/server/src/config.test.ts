@@ -3,12 +3,68 @@ import { describe, expect, it } from 'vitest';
 import { loadServerConfig } from './config.js';
 
 describe('server configuration', () => {
+  it('permits quick company login only in development with a loopback listener and origin', () => {
+    const local = {
+      NODE_ENV: 'development',
+      HOST: '127.0.0.1',
+      DATABASE_URL: 'postgres://unused:unused@127.0.0.1:55433/unused',
+      OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+      OIDC_CLIENT_ID: 'warwrit-local',
+      OIDC_CLIENT_SECRET: 'local-only-secret',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:5173/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:5173',
+    };
+    expect(loadServerConfig(local).identity?.localCompanyLogin).toBe(true);
+    for (const NODE_ENV of ['production', 'test', '']) {
+      expect(loadServerConfig({ ...local, NODE_ENV }).identity?.localCompanyLogin).toBeUndefined();
+    }
+    const hosted = {
+      ...local,
+      OIDC_ISSUER: 'https://identity.example.test',
+      OIDC_REDIRECT_URI: 'https://game.example.test/auth/callback',
+      PUBLIC_ORIGIN: 'https://game.example.test',
+    };
+    expect(loadServerConfig(hosted).identity?.localCompanyLogin).toBeUndefined();
+    expect(
+      loadServerConfig({ ...hosted, HOST: '0.0.0.0' }).identity?.localCompanyLogin,
+    ).toBeUndefined();
+  });
+
+  it('requires an explicit matching QA world and all Playground guards for campaign time', () => {
+    const local = {
+      NODE_ENV: 'development',
+      HOST: '127.0.0.1',
+      WORLD_MAP: 'painted-atlas',
+      DATABASE_URL: 'postgres://unused:unused@127.0.0.1:54808/qa',
+      OIDC_ISSUER: 'http://127.0.0.1:55808/dex',
+      OIDC_CLIENT_ID: 'test',
+      OIDC_CLIENT_SECRET: 'test',
+      OIDC_REDIRECT_URI: 'http://127.0.0.1:53808/auth/callback',
+      PUBLIC_ORIGIN: 'http://127.0.0.1:53808',
+      PLAYGROUND: '1',
+      PLAYGROUND_ACCOUNT_IDS: 'developer',
+      PLAYGROUND_CAMPAIGN_WORLD: 'world.porechye.atlas-v1',
+    };
+    expect(loadServerConfig(local).playground?.campaignTimeWorldId).toBe('world.porechye.atlas-v1');
+    expect(() => loadServerConfig({ ...local, PLAYGROUND: '0' })).toThrow('PLAYGROUND=1');
+    expect(() =>
+      loadServerConfig({ ...local, PLAYGROUND_CAMPAIGN_WORLD: 'another-world' }),
+    ).toThrow('configured isolated world');
+    for (const NODE_ENV of ['production', 'staging', ''])
+      expect(() => loadServerConfig({ ...local, NODE_ENV })).toThrow('Playground');
+  });
+
   it('loads deterministic defaults', () => {
     expect(loadServerConfig({})).toEqual({
+      worldId: 'main',
       host: '0.0.0.0',
       port: 3000,
       encounterRealtimePort: 3110,
     });
+    expect(loadServerConfig({ WORLD_MAP: 'painted-atlas' }).worldId).toBe(
+      'world.porechye.atlas-v1',
+    );
+    expect(() => loadServerConfig({ WORLD_MAP: 'unknown' })).toThrow('WORLD_MAP');
   });
 
   it('validates the dedicated encounter realtime port', () => {
@@ -26,21 +82,8 @@ describe('server configuration', () => {
     }
   });
 
-  it('enables the lab only with an explicit local nonproduction configuration', () => {
-    expect(loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', PORT: '3000' })).toMatchObject({
-      combatLabOrigin: 'http://127.0.0.1:5173',
-    });
-    expect(() => loadServerConfig({ COMBAT_LAB: '1' })).toThrow('loopback');
-    expect(() =>
-      loadServerConfig({ HOST: '127.0.0.1', COMBAT_LAB: '1', NODE_ENV: 'production' }),
-    ).toThrow('loopback');
-    expect(() =>
-      loadServerConfig({
-        HOST: '127.0.0.1',
-        COMBAT_LAB: '1',
-        COMBAT_LAB_ORIGIN: 'https://example.test',
-      }),
-    ).toThrow('local HTTP origin');
+  it('refuses the retired standalone lab switch', () => {
+    expect(() => loadServerConfig({ COMBAT_LAB: '1', HOST: '127.0.0.1' })).toThrow('retired');
   });
 
   it('accepts only a complete fixed-origin OIDC configuration with database storage', () => {
@@ -80,6 +123,32 @@ describe('server configuration', () => {
     ).toThrow('fixed callback');
   });
 
+  it.each(['development', 'test', 'production'])(
+    'requires a nonblank database for configured identity in %s',
+    (NODE_ENV) => {
+      const identity = {
+        NODE_ENV,
+        HOST: '127.0.0.1',
+        OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+        OIDC_CLIENT_ID: 'warwrit-local',
+        OIDC_CLIENT_SECRET: 'local-only-secret',
+        OIDC_REDIRECT_URI: 'http://127.0.0.1:3107/auth/callback',
+        PUBLIC_ORIGIN: 'http://127.0.0.1:3107',
+      };
+      for (const DATABASE_URL of [undefined, '', ' \t ']) {
+        expect(() => loadServerConfig({ ...identity, DATABASE_URL })).toThrow(
+          'OIDC identity requires DATABASE_URL',
+        );
+      }
+      expect(
+        loadServerConfig({
+          ...identity,
+          DATABASE_URL: '  postgres://unused@127.0.0.1:55433/unused  ',
+        }).databaseUrl,
+      ).toBe('postgres://unused@127.0.0.1:55433/unused');
+    },
+  );
+
   it('enables fixture encounter admission only with an explicit local flag and identity', () => {
     const identity = {
       DATABASE_URL: 'postgres://warwrit:warwrit-local-only@127.0.0.1:55433/warwrit_encounter_test',
@@ -92,6 +161,11 @@ describe('server configuration', () => {
       ENCOUNTER_FIXTURES: '1',
     };
     expect(loadServerConfig(identity).fixtureEncountersEnabled).toBe(true);
+    for (const DATABASE_URL of ['', ' \t ']) {
+      expect(() => loadServerConfig({ ...identity, DATABASE_URL })).toThrow(
+        'database-backed identity',
+      );
+    }
     expect(() =>
       loadServerConfig({ ...identity, PORT: '3107', ENCOUNTER_REALTIME_PORT: '3107' }),
     ).toThrow('loopback HTTP and realtime listeners');
@@ -118,5 +192,16 @@ describe('server configuration', () => {
 
     expect(config.identity).toBeDefined();
     expect(config.fixtureEncountersEnabled).toBeUndefined();
+  });
+
+  it('requires database-backed OIDC identity before accepting production configuration', () => {
+    for (const configuration of [
+      {},
+      { DATABASE_URL: 'postgres://user:secret@db.example.test/warwrit' },
+    ]) {
+      expect(() => loadServerConfig({ ...configuration, NODE_ENV: 'production' })).toThrow(
+        'Production server requires DATABASE_URL and complete OIDC identity configuration',
+      );
+    }
   });
 });

@@ -58,7 +58,8 @@ evidenced). Engine competition is not a prerequisite to implementation or a
 reason to reopen this choice; address a demonstrated Babylon acceptance failure
 within the owner-approved decision process.
 
-Historical PlayCanvas code and measurements remain intact as historical evidence.
+Historical PlayCanvas code remains in Git history; measurements, assets and
+provenance remain as historical evidence. See the WLC-02 amendment below.
 
 ## Sprite combat production amendment — 2026-10-09
 
@@ -80,3 +81,37 @@ This cycle uses only static full-body sprites; frame animation is later work.
 Twenty individual static asset tasks may proceed after this style agreement.
 Balance values, archived creature biographies and renderer changes are not approved.
 Concept generation is not integrated visual or gameplay acceptance.
+
+## 2D art direction amendment — 2026-10-25
+
+The owner selected **«Сдержанный графический роман»** as the main style and
+**«Туман и мокрый камень»** for some locations. For new 2D illustrations and
+sprites this supersedes style C as the primary rendering-density reference;
+irregular ink, flat/matte washes, grounded dark fantasy and credible materials
+remain. Use broad calm forms and selective focal contrast, not uniform fine
+texture or a global contrast filter. The
+[owning decision](../wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25)
+and `assets/art/styles/{graphic-novel,fog-wet-stone}.json` identify selected
+references and generation templates. The second profile is an explicit
+location/environment override, not an automatic biome rule.
+
+This selects art direction, not new lore, production-ready sprites or runtime
+acceptance. Opaque study images establish rendering language; sprite alpha,
+view projection, scale, pivots and integrated day/night readability still need
+verification. Existing renderer/camera decisions and the separately owned
+3D-character experiment are not changed by this amendment.
+
+## PlayCanvas pilot removal — 2026-11-07
+
+WLC-02 removes the standalone dual-engine comparison, baker and workspace
+PlayCanvas dependency. Babylon core/loaders 9.28.0 remain pinned in `apps/web`.
+The ordinary encounter and Combat Lab already share the same Babylon battle
+pipeline; maps and places also use Babylon directly. No production engine
+switch, gameplay rule, scene lifecycle or art asset is changed.
+
+Models, baked images, licenses and measured/corrected evidence are retained.
+The removed executable source is available at the
+[pre-removal commit](https://github.com/Vovanostm/warwrit/tree/79a6ba025bba236dfe4be0665aece98d1c8c4353/apps/renderer-spike).
+The [owning removal record](../engineering/LEGACY_INVENTORY.md#wlc-02--remove-playcanvas-pilot-2026-11-07)
+records scoped checks and their acceptance limits. Broader visual/device and
+full-game acceptance do not follow from removing an unused engine.

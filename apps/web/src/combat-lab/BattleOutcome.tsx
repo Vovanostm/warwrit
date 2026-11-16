@@ -4,11 +4,13 @@ export function BattleOutcome({
   busy,
   onRestart,
   onEditor,
+  onContinue,
 }: {
   view: BattlePresentationView;
   busy: boolean;
   onRestart: (() => void) | undefined;
   onEditor: (() => void) | undefined;
+  onContinue: (() => void) | undefined;
 }) {
   return (
     <>
@@ -18,12 +20,18 @@ export function BattleOutcome({
           <p>РАУНД {view.round} · БОЙ ЗАВЕРШЁН</p>
           <h2>{outcomeTitle(view)}</h2>
           <small>{outcomeDescription(view)}</small>
+          {view.outcomeNote && <p className="battle-outcome-note">{view.outcomeNote}</p>}
           <div className="battle-outcome-sides">
             {outcomeSideIds(view).map((sideId, index) => (
               <OutcomeSide key={`${sideId ?? 'unknown'}:${index}`} sideId={sideId} view={view} />
             ))}
           </div>
           <footer>
+            {onContinue && (
+              <button className="battle-control" type="button" disabled={busy} onClick={onContinue}>
+                Вернуться к отряду
+              </button>
+            )}
             {onRestart && (
               <button className="battle-control" type="button" disabled={busy} onClick={onRestart}>
                 Начать заново

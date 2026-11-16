@@ -14,6 +14,18 @@ const ROAD_TYPES = {
   'kamenny-brod-severny-dvor': { overlayId: 'paved_road', widthFp: 144 },
   'tikhaya-gat-staraya-melnitsa': { overlayId: 'trail', widthFp: 96 },
 } as const;
+
+export const PAINTED_ATLAS_REGION_VERSION = 'porechye-atlas-lab-v1' as const;
+const isPaintedAtlasEdition = (edition: string | undefined) =>
+  edition === PAINTED_ATLAS_REGION_VERSION;
+
+/** Atlas coordinates use a separate frame; legacy editions retain their existing frame. */
+export function sharesContinuousCoordinateFrame(
+  regionVersion: string | undefined,
+  mapEdition: string | undefined,
+): boolean {
+  return isPaintedAtlasEdition(regionVersion) === isPaintedAtlasEdition(mapEdition);
+}
 const polygon = (...points: readonly (readonly [number, number])[]): readonly PointFp[] =>
   points.map(([xFp, zFp]) => ({ xFp, zFp }));
 
@@ -25,6 +37,7 @@ export function isContinuousRegionVersion(version: string | undefined): boolean 
     'seroe-porechye-continuous-v3',
     'seroe-porechye-continuous-v4',
     'seroe-porechye-continuous-v5',
+    PAINTED_ATLAS_REGION_VERSION,
   ].includes(version ?? '');
 }
 const site = (siteId: string, q: number, r: number, areaId: string) => ({

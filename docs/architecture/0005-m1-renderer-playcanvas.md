@@ -1,6 +1,6 @@
 # ADR-0005: Use PlayCanvas for the private M1 renderer
 
-- Status: Superseded for production renderer selection by ADR-0006; historical evidence retained
+- Status: SUPERSEDED for production renderer selection by ADR-0006; historical evidence retained
 - Date: 2026-09-29
 - Supersedes: renderer-provisional portion of ADR-0003 only
 - Sources: canonical M1 ART04, Q-T03, owner full-M1 assignment

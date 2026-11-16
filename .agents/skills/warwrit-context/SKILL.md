@@ -8,38 +8,57 @@ description: Restore current Warwrit task, authority, source scope and repositor
 ## Inputs
 
 The owner request and repository access. Start with [AGENTS.md](../../../AGENTS.md)
-and [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md). Do not use a
+and the status block in [CURRENT_PLAN.md](../../../docs/engineering/CURRENT_PLAN.md).
+Read its linked history only for a named unresolved question. Do not use a
 remembered PR, old attachment or cache as the current head.
 
 ## Procedure
 
-1. Run `pnpm agent:status` for live main/CI/PRs/active branches, then read the
-   active issue body/comments and exact PR base/head/tree/merged state. Check
-   who holds the coordinator lease (AGENTS.md § Orchestration); if it is not
-   you, act only as a worker or reviewer.
+1. Confirm checkout/base/branch/dirty state and current owner scope/stop status.
+   A delegated task needs an explicit checkout in its current brief, including
+   follow-ups to a reused agent. Verify the requested revision there first.
+   If that route is missing or mismatched, return `NEEDS_CONTEXT` before source
+   discovery; do not substitute the host's primary checkout.
+   Use `pnpm agent:status` when live integration/PR state matters; a small local
+   documentation task does not need a broad inventory. Read the active issue and
+   applicable comments. An old branch's instructions or old merge permission
+   cannot reactivate a cancelled mission. Inspect a coordinator lease only for
+   an explicitly activated queue; otherwise work within the local assignment.
    Inspect existing work before creating a branch; keep unrelated work intact.
 2. When the task sets or interprets game rules or a milestone contract, read
    full Notes and Purpose of the active canonical Airtable contract and its
    named applicable sources; an issue whose contract already cites them is
    worked from that contract. Restore the latest Empirical checkpoint tagged
-   `Warwrit`. New Purpose amendments may supersede historical statuses, not silently
-   rewrite accepted mechanics. Use explicit record IDs before broad search.
+   `Warwrit` for a named gap left by the assignment and its owning sources.
+   Reuse known base/record IDs. Skip optional memory discovery when those sources
+   already resolve the task. After a connector failure use available owning sources
+   and continue independent work, keeping any required missing fact open. Tooling and
+   documentation work uses its owning local sources. New Purpose amendments may
+   supersede historical statuses, not silently rewrite accepted mechanics.
 3. Identify source edition, accepted rules, provisional parameters, current
    implementation and unexecuted evidence separately. Missing old ZIP bytes remain
    a source-concordance limitation, not an invitation to regenerate definitions.
-4. Read nested instructions and actual common types/guards/definitions/preparers
-   used by the task. Trace one command from authorization to receipt and projection.
+4. Read nested instructions and actual affected definitions and consumers.
+   For command changes trace authorization through receipt and projection.
    Check the installed lockfile and type declarations before changing library APIs.
-5. Write a compact boundary note: required existing inputs; IN/OUT; one next action;
-   owner-authorized writes; unresolved dependencies. Raise only a concrete new
-   product conflict. Storage shapes or finite adapter contracts are engineering
-   choices within the approved rules, not a reason for a new general interview.
+5. Before implementation, complete the owning feature specification using
+   [AGENTS feature contract](../../../AGENTS.md#feature-specification-before-implementation):
+   player problem/effect, full behavior, state/rules, architecture and small tasks
+   with direct acceptance checks. Reuse existing sources and unchanged evidence.
+   Resolve undefined product rules; choose technical details within the assignment.
+   Broad visual evidence gaps do not block unrelated feature work. Start the next
+   specified player improvement, not another general readiness audit.
 
-## Expected output
+## Working checkpoint
+
+Keep this in working context. The game integrator updates CURRENT_PLAN for a
+changed result, blocker or next action. Supporting tasks update their owning page.
+Reuse the last checkpoint after compaction and read only
+the changed sources. Do not repeat a broad readiness audit without relevant changes.
 
 ```text
 Task / active contract / source edition:
-Live repository / base / branch / head / tree:
+Live repository / base / branch / head:
 Applicable decisions and dated corrections:
 Implemented / prepared / still required:
 Allowed writes / prohibited operations:

@@ -1,0 +1,40 @@
+{
+  "sourceHead": "5e3dcd5c7bb4e43565037d1d7804260159209c64",
+  "nativePosts": [
+    {
+      "body": "{\"schemaVersion\":1,\"commandId\":\"636e75ca-00d4-477e-bfcc-2af0c5a36f35\",\"instanceId\":\"ci.m1.mill-worker.01\",\"expectedRevision\":\"1\",\"type\":\"HELP\",\"stepId\":null}",
+      "response": "{\"schemaVersion\":1,\"commandId\":\"636e75ca-00d4-477e-bfcc-2af0c5a36f35\",\"ok\":true,\"revision\":\"2\",\"rewardQ\":null}",
+      "status": 200
+    },
+    {
+      "body": "{\"schemaVersion\":1,\"commandId\":\"636e75ca-00d4-477e-bfcc-2af0c5a36f35\",\"instanceId\":\"ci.m1.mill-worker.01\",\"expectedRevision\":\"1\",\"type\":\"HELP\",\"stepId\":null}",
+      "response": "{\"ok\":true,\"rewardQ\":null,\"revision\":\"2\",\"commandId\":\"636e75ca-00d4-477e-bfcc-2af0c5a36f35\",\"schemaVersion\":1}",
+      "status": 200
+    }
+  ],
+  "conflictingBody": {
+    "status": 409,
+    "command": {
+      "schemaVersion": 1,
+      "commandId": "636e75ca-00d4-477e-bfcc-2af0c5a36f35",
+      "instanceId": "ci.m1.mill-worker.01",
+      "expectedRevision": "2",
+      "type": "HELP",
+      "stepId": null
+    },
+    "response": {
+      "schemaVersion": 1,
+      "commandId": "636e75ca-00d4-477e-bfcc-2af0c5a36f35",
+      "ok": false,
+      "code": "INVALID_COMMAND"
+    }
+  },
+  "afterRetryAndConflictProbe": {
+    "revision": 2,
+    "instanceId": "ci.m1.mill-worker.01",
+    "companyCount": 2,
+    "ownerCompanyId": "161674f8-d8e7-4218-8396-dca31f7535ec",
+    "helperCompanyId": "9160e133-1a5d-4bca-a527-0e6fbc30b3cf",
+    "ordinaryReceiptCount": 2
+  }
+}

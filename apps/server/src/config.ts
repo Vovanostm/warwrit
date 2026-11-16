@@ -1,13 +1,20 @@
+import { gameWorldId } from './world/map-context.js';
 import { invariant } from '@warwrit/game-core';
 
 export interface ServerConfig {
+  readonly worldId: string;
   readonly host: string;
   readonly port: number;
   readonly databaseUrl?: string;
-  readonly combatLabOrigin?: string;
   readonly fixtureEncountersEnabled?: true;
   readonly encounterRealtimePort: number;
   readonly identity?: IdentityConfig;
+  readonly playground?: {
+    readonly environment: 'development' | 'test';
+    readonly campaignTimeWorldId?: string;
+    readonly origin: string;
+    readonly accountIds: readonly string[];
+  };
 }
 
 export interface IdentityConfig {
@@ -17,6 +24,7 @@ export interface IdentityConfig {
   readonly redirectUri: string;
   readonly publicOrigin: string;
   readonly secureCookies: boolean;
+  readonly localCompanyLogin?: true;
 }
 
 export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): ServerConfig {
@@ -27,7 +35,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     'PORT must be a valid TCP port',
   );
 
-  const databaseUrl = environment['DATABASE_URL']?.trim();
+  const databaseUrl = environment['DATABASE_URL']?.trim() || undefined;
   const host = environment['HOST']?.trim() || '0.0.0.0';
   const fixtureEncountersEnabled = environment['ENCOUNTER_FIXTURES'] === '1';
   const encounterRealtimePortValue = environment['ENCOUNTER_REALTIME_PORT']?.trim() ?? '3110';
@@ -54,24 +62,10 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
         ].every((value) => Boolean(value?.trim()))),
     'Encounter fixtures require nonproduction loopback HTTP and realtime listeners with database-backed identity',
   );
-  const labEnabled = environment['COMBAT_LAB'] === '1';
   invariant(
-    !labEnabled ||
-      (environment['NODE_ENV'] !== 'production' && (host === '127.0.0.1' || host === '::1')),
-    'Combat lab requires a nonproduction loopback server',
+    environment['COMBAT_LAB'] !== '1',
+    'COMBAT_LAB is retired; use authenticated PLAYGROUND=1',
   );
-  const combatLabOrigin = environment['COMBAT_LAB_ORIGIN']?.trim() || 'http://127.0.0.1:5173';
-  if (labEnabled) {
-    const origin = new URL(combatLabOrigin);
-    invariant(
-      origin.protocol === 'http:' &&
-        (origin.hostname === '127.0.0.1' ||
-          origin.hostname === 'localhost' ||
-          origin.hostname === '[::1]') &&
-        origin.origin === combatLabOrigin,
-      'COMBAT_LAB_ORIGIN must be an exact local HTTP origin',
-    );
-  }
   const identityValues = [
     environment['OIDC_ISSUER'],
     environment['OIDC_CLIENT_ID'],
@@ -132,13 +126,56 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
       redirectUri,
       publicOrigin,
       secureCookies: originUrl.protocol === 'https:',
+      ...(environment['NODE_ENV'] === 'development' &&
+      hostIsLoopback &&
+      loopbackNames.has(originUrl.hostname) &&
+      originUrl.protocol === 'http:'
+        ? { localCompanyLogin: true as const }
+        : {}),
+    };
+  }
+  invariant(
+    environment['NODE_ENV'] !== 'production' || (Boolean(databaseUrl) && identity !== undefined),
+    'Production server requires DATABASE_URL and complete OIDC identity configuration',
+  );
+  const worldId = gameWorldId(environment['WORLD_MAP']?.trim());
+  const campaignTimeWorldId = environment['PLAYGROUND_CAMPAIGN_WORLD']?.trim();
+  invariant(
+    !campaignTimeWorldId || environment['PLAYGROUND'] === '1',
+    'QA campaign time requires PLAYGROUND=1',
+  );
+  invariant(
+    !campaignTimeWorldId || campaignTimeWorldId === worldId,
+    'QA campaign time must name the configured isolated world',
+  );
+  let playground: ServerConfig['playground'];
+  if (environment['PLAYGROUND'] === '1') {
+    const nodeEnvironment = environment['NODE_ENV'];
+    const accountIds = (environment['PLAYGROUND_ACCOUNT_IDS'] ?? '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean);
+    invariant(
+      (nodeEnvironment === 'development' || nodeEnvironment === 'test') &&
+        (host === '127.0.0.1' || host === '::1') &&
+        identity !== undefined &&
+        databaseUrl !== undefined &&
+        accountIds.length > 0,
+      'Playground requires explicit development/test, loopback, OIDC database and developer allowlist',
+    );
+    playground = {
+      environment: nodeEnvironment,
+      origin: identity.publicOrigin,
+      accountIds,
+      ...(campaignTimeWorldId ? { campaignTimeWorldId } : {}),
     };
   }
   return {
+    ...(playground === undefined ? {} : { playground }),
+    worldId,
     host,
     port,
     ...(databaseUrl ? { databaseUrl } : {}),
-    ...(labEnabled ? { combatLabOrigin } : {}),
     ...(fixtureEncountersEnabled ? { fixtureEncountersEnabled: true as const } : {}),
     encounterRealtimePort,
     ...(identity === undefined ? {} : { identity }),

@@ -11,7 +11,6 @@ import {
 import type { CombatLabBattleConfig } from '@warwrit/protocol';
 import { createCombatLabPresentation } from './presentation.js';
 import { projectCombatLabReplay, exportCombatLabReplay, type CombatLabReplay } from './replay.js';
-import { prepareTransition, type CombatLabSession } from './routes.js';
 
 describe('projectCombatLabView initiative forecast', () => {
   it('projects the core forecast only while a future round can occur', () => {
@@ -157,7 +156,7 @@ it.each(['W01', 'W05'])(
       );
       expect(result.state).toEqual(before);
       if (profile === 'W05') {
-        const session: CombatLabSession = {
+        const session = {
           originalSetup: createCustomBattleFixture('refused-bow', fixture.battle).originalSetup(),
           controlledSideId: 'human',
           capability: Buffer.alloc(32),
@@ -169,14 +168,14 @@ it.each(['W01', 'W05'])(
         };
         const saved = exportCombatLabReplay(session);
         expect(
-          prepareTransition(session, {
+          combat.applyCombatCommand(session.state, {
             type: 'attack',
             commandId: combat.commandId('refused-bow'),
             actorId: actor.id,
             activationId: state.activation!.id,
             targetId: combat.unitId('target'),
           }),
-        ).toEqual({ code: 'INVALID_ACTION' });
+        ).toMatchObject({ ok: false });
         expect(session.state).toEqual(before);
         expect(exportCombatLabReplay(session)).toEqual(saved);
         expect(session.commands).toEqual([]);

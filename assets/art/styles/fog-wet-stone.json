@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "id": "fog-wet-stone",
+  "title": "Туман и мокрый камень",
+  "decision_date": "2026-10-25",
+  "status": "owner_selected_direction",
+  "usage": "Explicit location/environment-asset override only. Do not automatically assign every marsh, forest or mill to it; no location assignment list was supplied. Character portraits and units use the main profile unless separately directed.",
+  "authority": "docs/wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25",
+  "reference_path_base": "repository_root",
+  "references": [
+    {
+      "subject": "mill",
+      "path": "assets/art/styles/references/fog-wet-stone/mill.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/mill.png"
+    },
+    {
+      "subject": "town",
+      "path": "assets/art/styles/references/fog-wet-stone/town.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/town.png"
+    },
+    {
+      "subject": "village",
+      "path": "assets/art/styles/references/fog-wet-stone/village.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/village.png"
+    },
+    {
+      "subject": "field",
+      "path": "assets/art/styles/references/fog-wet-stone/field.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/field.png"
+    },
+    {
+      "subject": "marsh",
+      "path": "assets/art/styles/references/fog-wet-stone/marsh.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/marsh.png"
+    },
+    {
+      "subject": "forest",
+      "path": "assets/art/styles/references/fog-wet-stone/forest.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/05-fog-wet-stone/forest.png"
+    }
+  ],
+  "style_prompt": "Warwrit location variant: fog and wet stone, within the same grounded adult dark-fantasy family as the main graphic-novel direction. Broad cold mineral-grey and slate washes, peat-black shadow masses, restrained muted olive; damp matte stone and timber, calm long water reflections. A few clear ink accents define the focal structure or path; peripheral edges soften into two or three atmospheric layers. Keep the focal subject, entrance, path and relevant objects legible. No sparkling wavelets, all-over wet highlights, uniform grey veil or texture noise. On transparent object sprites express this variant through palette and materials, not a baked fog rectangle or translucent haze around the cutout.",
+  "shared_constraints": "Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+  "generation": {
+    "preferred_tool": "built-in image_gen",
+    "profile_is_not_api_payload": true,
+    "prompt_assembly": "Join 'Use case: stylized-concept.', style_prompt, selected template.prompt with every required input substituted, and shared_constraints. Pass the assembled text as prompt and the selected template's transparent_background as the tool flag. Do not send this whole profile as a tool request.",
+    "reference_handling": "Inspect the relevant selected references before writing the asset prompt. Use only references from this profile for rendering, plus canonical subject sources for identity/geometry. For a new built-in generation omit edit-target arguments; for an actual edit inspect and provide the target through the tool's supported reference mechanism. Do not treat filenames mentioned in a prompt as proof the tool received image pixels.",
+    "batch_rule": "One image per call. Compare one representative output with selected references before extending a batch. Keep final exact prompt, inputs, references and output beside the asset.",
+    "not_a_guarantee": "Size hints and text instructions do not prove output dimensions, alpha, anatomy, pivot, style match or game acceptance."
+  },
+  "templates": {
+    "scene": {
+      "required_inputs": ["subject", "canonical_facts", "composition", "light_direction"],
+      "prompt": "Asset type: one opaque visual-novel or location background. Subject: {{subject}}. Canonical facts: {{canonical_facts}}. Composition and camera: {{composition}}. Light direction and time: {{light_direction}}. Full-bleed cohesive environment, a clear main subject and calm areas for dialogue layout. Do not create new foreground people unless the subject explicitly requires them. Request landscape 1536x1024; verify actual dimensions after generation. This is an illustration, not a transparent sprite.",
+      "transparent_background": false
+    },
+    "environment_sprite": {
+      "required_inputs": [
+        "subject",
+        "canonical_facts",
+        "projection",
+        "facing",
+        "light_direction",
+        "anchor_contract"
+      ],
+      "prompt": "Asset type: one isolated static transparent environment sprite (building, tree, rock or prop), not a complete landscape. Subject: {{subject}}. Canonical identity, construction and condition: {{canonical_facts}}. Projection: {{projection}}. Facing and visible sides: {{facing}}. Light direction: {{light_direction}}. Canvas placement, relative scale, root/base/entrance pivot and safe margins: {{anchor_contract}}. Natural irregular base, credible materials, complete silhouette within canvas. No detached scenery, sky, horizon, rectangular ground tile, fog backdrop or baked ground shadow. Genuine alpha transparency with clean readable cutout edges, no white/grey matte or checkerboard. Request 1024x1024; verify actual dimensions, alpha, bounds and pivot. Do not squash an already projected sprite or mirror baked lighting.",
+      "transparent_background": true
+    }
+  },
+  "example_requests": [
+    {
+      "id": "fog-wet-stone-example-1",
+      "status": "ready prompt example; confirm current canonical place facts before production",
+      "template": "scene",
+      "inputs": {
+        "subject": "The old ruined watermill in cold damp weather",
+        "canonical_facts": "Abandoned structurally ruined grey-stone watermill; collapsed roof; broken wooden waterwheel beside stream; closed cellar hatch must remain visible. No new inhabitants or supernatural event.",
+        "composition": "Wide three-quarter establishing view; readable hatch and wheel in foreground/middle ground; distant silhouettes separated by fog without changing geography.",
+        "light_direction": "Diffuse cold overcast light from upper left, reflected light on the focal wall and hatch; muted calm water."
+      },
+      "tool": "image_gen",
+      "arguments": {
+        "prompt": "Use case: stylized-concept.\nStyle: Warwrit location variant: fog and wet stone, within the same grounded adult dark-fantasy family as the main graphic-novel direction. Broad cold mineral-grey and slate washes, peat-black shadow masses, restrained muted olive; damp matte stone and timber, calm long water reflections. A few clear ink accents define the focal structure or path; peripheral edges soften into two or three atmospheric layers. Keep the focal subject, entrance, path and relevant objects legible. No sparkling wavelets, all-over wet highlights, uniform grey veil or texture noise. On transparent object sprites express this variant through palette and materials, not a baked fog rectangle or translucent haze around the cutout.\nAsset type: one opaque visual-novel or location background. Subject: The old ruined watermill in cold damp weather. Canonical facts: Abandoned structurally ruined grey-stone watermill; collapsed roof; broken wooden waterwheel beside stream; closed cellar hatch must remain visible. No new inhabitants or supernatural event.. Composition and camera: Wide three-quarter establishing view; readable hatch and wheel in foreground/middle ground; distant silhouettes separated by fog without changing geography.. Light direction and time: Diffuse cold overcast light from upper left, reflected light on the focal wall and hatch; muted calm water.. Full-bleed cohesive environment, a clear main subject and calm areas for dialogue layout. Do not create new foreground people unless the subject explicitly requires them. Request landscape 1536x1024; verify actual dimensions after generation. This is an illustration, not a transparent sprite.\nConstraints: Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+        "transparent_background": false
+      }
+    },
+    {
+      "id": "fog-wet-stone-example-2",
+      "status": "illustrative request; replace example projection/facing/scale/light with the consuming view's contract before production",
+      "template": "environment_sprite",
+      "inputs": {
+        "subject": "One small alder clump and reeds for a wet location",
+        "canonical_facts": "Generic vegetation study, not a new named location or quest fact. Irregular natural alder trunks, sparse muted leaves, a small mass of reeds; no objects, symbols or creatures.",
+        "projection": "Example only: three-quarter view. Replace with the consuming view's approved projection before production.",
+        "facing": "Example only: front and right sides visible; replace with the approved view contract.",
+        "light_direction": "Example only: diffuse light from upper left, damp mineral-grey and peat palette.",
+        "anchor_contract": "Example only: roots together on a common baseline, entire plant visible with clear margins; use the actual view's root-pivot and scale contract before production."
+      },
+      "tool": "image_gen",
+      "arguments": {
+        "prompt": "Use case: stylized-concept.\nStyle: Warwrit location variant: fog and wet stone, within the same grounded adult dark-fantasy family as the main graphic-novel direction. Broad cold mineral-grey and slate washes, peat-black shadow masses, restrained muted olive; damp matte stone and timber, calm long water reflections. A few clear ink accents define the focal structure or path; peripheral edges soften into two or three atmospheric layers. Keep the focal subject, entrance, path and relevant objects legible. No sparkling wavelets, all-over wet highlights, uniform grey veil or texture noise. On transparent object sprites express this variant through palette and materials, not a baked fog rectangle or translucent haze around the cutout.\nAsset type: one isolated static transparent environment sprite (building, tree, rock or prop), not a complete landscape. Subject: One small alder clump and reeds for a wet location. Canonical identity, construction and condition: Generic vegetation study, not a new named location or quest fact. Irregular natural alder trunks, sparse muted leaves, a small mass of reeds; no objects, symbols or creatures.. Projection: Example only: three-quarter view. Replace with the consuming view's approved projection before production.. Facing and visible sides: Example only: front and right sides visible; replace with the approved view contract.. Light direction: Example only: diffuse light from upper left, damp mineral-grey and peat palette.. Canvas placement, relative scale, root/base/entrance pivot and safe margins: Example only: roots together on a common baseline, entire plant visible with clear margins; use the actual view's root-pivot and scale contract before production.. Natural irregular base, credible materials, complete silhouette within canvas. No detached scenery, sky, horizon, rectangular ground tile, fog backdrop or baked ground shadow. Genuine alpha transparency with clean readable cutout edges, no white/grey matte or checkerboard. Request 1024x1024; verify actual dimensions, alpha, bounds and pivot. Do not squash an already projected sprite or mirror baked lighting.\nConstraints: Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+        "transparent_background": true
+      }
+    }
+  ],
+  "acceptance": [
+    "Match this selected reference family in silhouette, contour/edge treatment, tonal hierarchy, restrained palette and material character.",
+    "At thumbnail size the main person, object, path or entrance is readable; sky, water and foreground texture do not compete with it.",
+    "Preserve canonical condition and observer-appropriate information; no new lore derived from incidental reference details.",
+    "For sprites check real alpha on dark and light backgrounds, no matte/halo, no clipped body/gear/branches, and correct projection/scale/pivot.",
+    "Check the first asset in the actual scene at target size and by day/night before batch production; concept approval is not integrated acceptance."
+  ],
+  "production_status": {
+    "new_outputs_generated": false,
+    "transparent_sprites_verified": false,
+    "runtime_integration": "NOT_RUN"
+  }
+}

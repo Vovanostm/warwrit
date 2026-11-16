@@ -1,10 +1,11 @@
-import { MAIN_WORLD_ID } from '@warwrit/protocol';
+import { worldNavigationRegion } from './world/map-context.js';
 
 import { buildApp, listenOrClose } from './app.js';
 import { loadServerConfig } from './config.js';
 import { createDatabase, createDatabaseReadinessProbe } from './db/database.js';
 import { startWorldRouteWorker } from './world/route-worker.js';
 import { ensureFirstHuntGenesis } from './contracts/first-hunt-runtime.js';
+import { ensureWorldRecruitPool } from './company/recruitment.js';
 
 const config = loadServerConfig();
 const database = config.databaseUrl === undefined ? undefined : createDatabase(config.databaseUrl);
@@ -14,6 +15,9 @@ const closeDatabase =
     ? undefined
     : (): Promise<void> => (databaseClosePromise ??= database.destroy());
 const app = buildApp({
+  ...(config.playground === undefined || database === undefined
+    ? {}
+    : { playground: { ...config.playground, host: config.host, database } }),
   ...(closeDatabase === undefined ? {} : { closeDatabase }),
   ...(database === undefined
     ? {}
@@ -32,16 +36,7 @@ const app = buildApp({
     : { identity: { config: config.identity, database } }),
   ...(config.identity === undefined || database === undefined
     ? {}
-    : { company: { database, worldId: MAIN_WORLD_ID } }),
-  ...(config.combatLabOrigin === undefined
-    ? {}
-    : {
-        combatLab: {
-          host: config.host,
-          port: config.port,
-          origin: config.combatLabOrigin,
-        },
-      }),
+    : { company: { database, worldId: config.worldId } }),
   ...(database === undefined || config.identity === undefined
     ? {}
     : {
@@ -55,7 +50,10 @@ const app = buildApp({
 
 if (database !== undefined && config.identity !== undefined) {
   try {
-    await ensureFirstHuntGenesis(database, MAIN_WORLD_ID);
+    await ensureFirstHuntGenesis(database, config.worldId);
+    await database
+      .transaction()
+      .execute((transaction) => ensureWorldRecruitPool(transaction, config.worldId));
   } catch (error) {
     await closeDatabase?.();
     throw error;
@@ -69,14 +67,20 @@ const address = await listenOrClose(app, {
 const stopWorldRouteWorker =
   database === undefined || config.identity === undefined
     ? undefined
-    : startWorldRouteWorker(database, MAIN_WORLD_ID, (error) => {
-        app.log.error({ error, event: 'world.route_worker.failed' }, 'World route worker failed');
-      });
+    : startWorldRouteWorker(
+        database,
+        config.worldId,
+        (error) => {
+          app.log.error({ error, event: 'world.route_worker.failed' }, 'World route worker failed');
+        },
+        1_000,
+        worldNavigationRegion(config.worldId),
+      );
 app.log.info(
   {
     address,
     event: 'server.listening',
-    worldId: MAIN_WORLD_ID,
+    worldId: config.worldId,
   },
   'Warwrit server is listening',
 );

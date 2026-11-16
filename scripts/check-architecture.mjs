@@ -14,7 +14,6 @@ const allowedWorkspaceDependencies = new Map([
   ['@warwrit/testkit', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/server', new Set(['@warwrit/game-core', '@warwrit/protocol'])],
   ['@warwrit/web', new Set(['@warwrit/protocol'])],
-  ['@warwrit/renderer-spike', new Set()],
 ]);
 
 const failures = [];
@@ -66,7 +65,7 @@ async function exists(path) {
 }
 
 async function resolveRelativeImport(file, specifier) {
-  const base = resolve(dirname(file), specifier);
+  const base = resolve(dirname(file), specifier.replace(/\?url$/u, ''));
   const sourceBase = /\.(?:c|m)?jsx?$/u.test(base) ? base.replace(/\.(?:c|m)?jsx?$/u, '') : base;
   const candidates = [
     base,
@@ -135,6 +134,9 @@ for (const workspaceRoot of workspaceRoots) {
     }
 
     const packageRoot = join(directory, entry.name);
+    if (!(await exists(join(packageRoot, 'package.json')))) {
+      continue;
+    }
     const manifest = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'));
     workspaces.push({
       name: manifest.name,
@@ -193,6 +195,16 @@ for (const workspace of workspaces) {
     for (const specifier of imports) {
       const workspaceDependency = packageNameFromSpecifier(specifier);
       if (workspaceDependency) {
+        const allowed = allowedWorkspaceDependencies.get(workspace.name);
+        const serverTestkit =
+          workspace.name === '@warwrit/server' &&
+          workspaceDependency === '@warwrit/testkit' &&
+          isTestFile;
+        if (!allowed?.has(workspaceDependency) && !serverTestkit) {
+          failures.push(
+            `${relative(root, file)} imports forbidden workspace dependency ${workspaceDependency}.`,
+          );
+        }
         if (!names.has(workspaceDependency)) {
           failures.push(
             `${relative(root, file)} imports unknown workspace package ${workspaceDependency}.`,
@@ -214,6 +226,15 @@ for (const workspace of workspaces) {
         }
       }
 
+      if (
+        workspace.name === '@warwrit/web' &&
+        !isTestFile &&
+        (builtinSet.has(specifier) ||
+          /^(?:pg|kysely|@warwrit\/(?:server|game-core|testkit))(?:\/|$)/u.test(specifier))
+      ) {
+        failures.push(`web authority boundary: ${relative(root, file)} -> ${specifier}`);
+      }
+
       if (workspace.name === '@warwrit/game-core' && !isTestFile) {
         const isRelative = specifier.startsWith('./') || specifier.startsWith('../');
         if (!isRelative || builtinSet.has(specifier)) {
@@ -226,6 +247,12 @@ for (const workspace of workspaces) {
         if (!resolved) {
           failures.push(`${relative(root, file)} has unresolved relative import ${specifier}.`);
         } else {
+          const owner = workspaces.find((candidate) => resolved.startsWith(`${candidate.root}/`));
+          if (owner && owner.name !== workspace.name) {
+            failures.push(
+              `${relative(root, file)} imports another workspace by relative path; use its public export: ${specifier}`,
+            );
+          }
           graphDependencies.add(resolved);
         }
       }

@@ -5,7 +5,8 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Review the assigned exact diff and affected consumers against the accepted contract.
-Read AGENTS.md and docs/engineering/AGENT_TEAM.md, then warwrit-review. Use
+Use AGENTS.md, the assigned acceptance and warwrit-review. Load team guidance
+only for an ownership question. Use
 warwrit-context if authority or revision is unclear. Establish your own evidence before adopting
 the author's conclusions. Similar code is not automatically duplicate policy.
 This read-only assignment narrows warwrit-review: do not apply its suggested fixes.

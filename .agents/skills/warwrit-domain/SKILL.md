@@ -11,9 +11,15 @@ Use the active contract from [CURRENT_PLAN.md](../../../docs/engineering/CURRENT
 Apply [AGENTS.md](../../../AGENTS.md); use `warwrit-context` when resuming.
 For items/care/outcomes read [physical-state.md](references/physical-state.md).
 
+Before changing code, complete the owning [feature specification](../../../AGENTS.md#feature-specification-before-implementation).
+Explain the player effect and architecture choice, including existing rule owners,
+compatibility and the next known extension. Reuse the approved specification.
+
 ## Work from behavior to one owner
 
-For each affected transition write a short table:
+Use the task's acceptance to identify the affected transition and normal consumer.
+Reuse an existing decision record. When the state/observer boundary is unclear,
+this compact table can resolve it.
 
 | Input / trusted fact               | Required preconditions          | Actual state delta                      | Unmet requirement                   | Observable delta             |
 | ---------------------------------- | ------------------------------- | --------------------------------------- | ----------------------------------- | ---------------------------- |

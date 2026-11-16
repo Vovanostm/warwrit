@@ -552,3 +552,108 @@ describe('FIRST HUNT meeting offer transport', () => {
     }
   });
 });
+
+it('guides a fresh hunt by location and participation before terminal feedback takes over', () => {
+  expect(firstHuntGuidance(offer.contract!, 'kamenny-brod')).toContain('примите контракт');
+  expect(firstHuntGuidance(offer.contract!, 'staraya-melnitsa')).toContain('вернитесь к заказчику');
+  const active: NonNullable<FirstHuntReadResponseDto['contract']> = {
+    ...offer.contract!,
+    yourRole: 'OWNER',
+    knownState: 'ACTIVE',
+  };
+  expect(firstHuntGuidance(active, 'kamenny-brod')).toContain('Следуйте по доступным маршрутам');
+  expect(firstHuntGuidance(active, 'staraya-melnitsa')).toContain('вступите в бой');
+  expect(firstHuntGuidance({ ...active, yourJoinIntent: true }, 'staraya-melnitsa')).toContain(
+    'Отряд готов к бою',
+  );
+  expect(firstHuntGuidance({ ...active, knownState: 'ENCOUNTER_ACTIVE' }, null)).toContain(
+    'выйти из контракта до завершения нельзя',
+  );
+  const outsider = { ...active, yourRole: 'NONE' as const };
+  expect(firstHuntGuidance(outsider, 'kamenny-brod')).toContain('Помощь добровольна');
+  expect(firstHuntGuidance(outsider, 'staraya-melnitsa')).toContain('прибудьте к заказчику');
+  expect(firstHuntGuidance({ ...outsider, helperSlot: 'OCCUPIED' }, 'kamenny-brod')).toContain(
+    'Слот помощника занят',
+  );
+  for (const yourRole of ['OWNER', 'HELPER'] as const) {
+    const settled = { ...active, yourRole, knownState: 'SETTLED' as const };
+    expect(firstHuntStateLabel(settled)).toBe('поручение выполнено');
+    expect(firstHuntGuidance(settled, 'kamenny-brod')).toBe(
+      'Носитель трофея получил награду. Трофей отмечен как погашенный.',
+    );
+  }
+});
+
+it('distinguishes pending and saved retreat from a fresh JOIN or reward', () => {
+  const pending: NonNullable<FirstHuntReadResponseDto['contract']> = {
+    ...offer.contract!,
+    yourRole: 'HELPER',
+    knownState: 'ACTIVE',
+    encounterId: 'saved-battle',
+    terminal: { effects: 'PENDING', hostileRetreated: true },
+  };
+  expect(firstHuntStateLabel(pending)).toContain('сохраняем последствия');
+  expect(firstHuntGuidance(pending, 'staraya-melnitsa')).toContain('ещё не сохранены');
+  expect(availableFirstHuntActions(pending, 'staraya-melnitsa', true)).toEqual([]);
+  expect(firstHuntEncounterDiscoveryId(pending)).toBe('saved-battle');
+  const applied = { ...pending, terminal: { effects: 'APPLIED' as const, hostileRetreated: true } };
+  expect(firstHuntStateLabel(applied)).toBe('охота не завершена');
+  expect(firstHuntGuidance(applied, 'staraya-melnitsa')).toContain('Противники ушли живыми');
+  expect(firstHuntGuidance(applied, 'staraya-melnitsa')).toContain(
+    'Повторная попытка пока недоступна',
+  );
+  expect(availableFirstHuntActions(applied, 'staraya-melnitsa', true)).toEqual(['LEAVE']);
+  expect(firstHuntEncounterDiscoveryId(applied)).toBeUndefined();
+});
+
+it('offers a saved hunt repeat, polls fresh consent and discovers only the new battle', async () => {
+  const saved: NonNullable<FirstHuntReadResponseDto['contract']> = {
+    ...offer.contract!,
+    yourRole: 'OWNER',
+    knownState: 'ACTIVE',
+    encounterId: 'previous-battle',
+    terminal: { effects: 'APPLIED', hostileRetreated: true },
+    repeatAvailable: true,
+  };
+  expect(isFirstHuntReadResponse({ ...offer, contract: saved })).toBe(true);
+  expect(
+    isFirstHuntReadResponse({ ...offer, contract: { ...saved, repeatAvailable: 'yes' } }),
+  ).toBe(false);
+  expect(availableFirstHuntActions(saved, 'staraya-melnitsa', false)).toEqual(['JOIN']);
+  expect(firstHuntGuidance(saved, 'staraya-melnitsa')).toContain('Можно вступить в бой снова');
+  expect(firstHuntGuidance(saved, 'kamenny-brod')).toContain('вернитесь');
+  expect(firstHuntEncounterDiscoveryId(saved)).toBeUndefined();
+  const waiting = { ...saved, yourJoinIntent: true };
+  expect(shouldPollForFirstHuntActivation(waiting)).toBe(true);
+  expect(availableFirstHuntActions(waiting, 'staraya-melnitsa', false)).toEqual([]);
+  expect(firstHuntGuidance(waiting, 'staraya-melnitsa')).toContain('Ожидаем подтверждения');
+  vi.useFakeTimers();
+  try {
+    const discovered = vi.fn();
+    const { terminal: _terminal, ...nextContract } = waiting;
+    const stop = startFirstHuntActivationPolling({
+      initialContract: waiting,
+      refresh: async () => ({
+        ...offer,
+        contract: {
+          ...nextContract,
+          encounterId: 'next-battle',
+          knownState: 'ENCOUNTER_ACTIVE',
+          repeatAvailable: false,
+        },
+      }),
+      onEncounterDiscovered: discovered,
+    });
+    await vi.advanceTimersByTimeAsync(3000);
+    expect(discovered).toHaveBeenCalledWith('next-battle');
+    stop();
+  } finally {
+    vi.useRealTimers();
+  }
+  const pending = {
+    ...saved,
+    terminal: { effects: 'PENDING' as const, hostileRetreated: true },
+    repeatAvailable: false,
+  };
+  expect(availableFirstHuntActions(pending, 'staraya-melnitsa', false)).toEqual([]);
+});

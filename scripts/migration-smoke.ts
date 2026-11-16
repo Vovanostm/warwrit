@@ -19,7 +19,13 @@ const client = new Client({ connectionString });
 
 /** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
 async function downToFirstHunt(): Promise<void> {
+  await downAfterRecruitPool();
   for (const name of [
+    '0019_world_recruit_pool',
+    '0018_company_cartography',
+    '0017_world_lab_pursuit_order_ids',
+    '0016_world_lab_pursuits',
+    '0015_world_lab_npc_groups',
     '0014_settlement_supplies',
     '0013_world_hunt_states',
     '0012_ordinary_contracts',
@@ -28,6 +34,24 @@ async function downToFirstHunt(): Promise<void> {
     const down = await runMigrations(client, 'down');
     assert.deepEqual(down.applied, [name]);
   }
+}
+
+/** Remove only newer migrations before testing the retained older rollback guards. */
+async function downAfterRecruitPool(): Promise<void> {
+  for (const name of [
+    '0025_qa_world_clock',
+    '0024_playground_campaign_time',
+    '0023_map_editor',
+    '0022_playground_encounters',
+    '0021_playground',
+    '0020_hunt_attempts',
+  ]) {
+    assert.deepEqual((await runMigrations(client, 'down')).applied, [name]);
+  }
+  const tables = await client.query<{ live: string | null; sandbox: string | null }>(
+    "select to_regclass('public.encounters')::text as live, to_regnamespace('playground')::text as sandbox",
+  );
+  assert.deepEqual(tables.rows, [{ live: 'encounters', sandbox: null }]);
 }
 
 await client.connect();
@@ -49,6 +73,17 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
+    '0019_world_recruit_pool',
+    '0020_hunt_attempts',
+    '0021_playground',
+    '0022_playground_encounters',
+    '0023_map_editor',
+    '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -67,7 +102,59 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
+    '0019_world_recruit_pool',
+    '0020_hunt_attempts',
+    '0021_playground',
+    '0022_playground_encounters',
+    '0023_map_editor',
+    '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
+
+  await downAfterRecruitPool();
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0019_world_recruit_pool']);
+
+  const smokeMapId = 'migration-smoke-cartography';
+  await client.query(
+    `insert into world_map_editions
+      (map_id, edition, region_id, grid_edition, grid_columns, grid_rows,
+       origin_x_q, origin_z_q, cell_size_fp, coverage_snapshot, site_snapshot)
+     values ($1, '1', 'smoke-region', 'smoke-grid-v1', 1, 1, 0, 0, 64, $2, '[]'::jsonb)`,
+    [smokeMapId, Buffer.from([1])],
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Cannot roll back company cartography while map or knowledge data exists/u,
+  );
+  const retainedMap = await client.query<{ edition: string }>(
+    'select edition from world_map_editions where map_id = $1',
+    [smokeMapId],
+  );
+  assert.deepEqual(retainedMap.rows, [{ edition: '1' }]);
+  await client.query('delete from world_map_editions where map_id = $1 and edition = $2', [
+    smokeMapId,
+    '1',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0018_company_cartography']);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, [
+    '0017_world_lab_pursuit_order_ids',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0016_world_lab_pursuits']);
+
+  await client.query(`insert into world_lab_npc_groups
+    (world_id, group_id, kind, profile_id, map_edition, home, state, revision, next_decision_ms)
+    values ('migration-smoke-lab', 'patrol', 'PATROL', 'lab-v1', 'atlas-v1', '{}', '{}', 0, 0)`);
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /refusing to delete persisted world lab NPC groups/u,
+  );
+  await client.query("delete from world_lab_npc_groups where world_id = 'migration-smoke-lab'");
+  const labDown = await runMigrations(client, 'down');
+  assert.deepEqual(labDown.applied, ['0015_world_lab_npc_groups']);
 
   await client.query(
     "insert into settlement_supplies (world_id, site_id, revision, rations, cash_q) values ('migration-smoke-supplies', 'severny-dvor', 1, 290, 40000000)",
@@ -79,7 +166,20 @@ try {
   await client.query("delete from settlement_supplies where world_id = 'migration-smoke-supplies'");
 
   const secondUp = await runMigrations(client, 'up');
-  assert.deepEqual(secondUp.applied, []);
+  assert.deepEqual(secondUp.applied, [
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
+    '0019_world_recruit_pool',
+    '0020_hunt_attempts',
+    '0021_playground',
+    '0022_playground_encounters',
+    '0023_map_editor',
+    '0024_playground_campaign_time',
+    '0025_qa_world_clock',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
   const afterUp = await client.query<{ table_name: string | null }>(
     "select to_regclass('public.engineering_schema_probe')::text as table_name",
@@ -174,6 +274,17 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
+    '0019_world_recruit_pool',
+    '0020_hunt_attempts',
+    '0021_playground',
+    '0022_playground_encounters',
+    '0023_map_editor',
+    '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -491,6 +602,17 @@ try {
     '0012_ordinary_contracts',
     '0013_world_hunt_states',
     '0014_settlement_supplies',
+    '0015_world_lab_npc_groups',
+    '0016_world_lab_pursuits',
+    '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
+    '0019_world_recruit_pool',
+    '0020_hunt_attempts',
+    '0021_playground',
+    '0022_playground_encounters',
+    '0023_map_editor',
+    '0024_playground_campaign_time',
+    '0025_qa_world_clock',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

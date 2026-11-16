@@ -4,6 +4,108 @@ Project setup, 2026-09-27. [AGENTS.md](../../AGENTS.md) and the active contract
 remain authoritative. Profiles reuse existing skills; they do not activate
 gameplay cards or introduce another workflow engine.
 
+## Harness cleanup — 2026-11-04
+
+Owner requested systemic correction after the chat «Оценить готовность игры к
+публикации» (`01a182d5-a42b-7f71-be34-149cf554d19a`). Reviewed its active November 4
+turn and the preceding completed turn `01a189d8-4e47-7461-8bfd-5f6bf5d58e0a`.
+The latter contains 176 command executions over about 103 minutes, including
+failed commits, repeated coverage refresh/merging and source-map investigations.
+This is a bounded transcript observation, not a project-wide efficiency rate.
+The active chat still has a separate painted-map writer. No edits were made there.
+
+Confirmed causes in main at `5c2b3cd7` and their corrections follow.
+
+- The commit hook refreshed coverage with test output suppressed and continued
+  after a failed test. It also merged optional browser coverage. Step commits now
+  check staged whitespace only. Authors run relevant tests explicitly. Required
+  coverage/journey/audit gates remain in clean PR CI. Local static-quality failures
+  can be discovered later in that pipeline. A commit alone establishes no quality verdict.
+- Claude ran a second `PreToolUse` audit before Git's hook, and fetched remote
+  status at every startup/resume/compaction. Removed the duplicate gate/script.
+  Startup/resume retain local preflight. Compaction runs no inventory hook.
+  Fetch remote state when integration needs it.
+- Root AGENTS had 409 lines and CURRENT_PLAN had 5641. Consolidated repeated rules
+  and moved the old plan to CURRENT_PLAN_HISTORY with dates/evidence retained.
+  The current entry has only the active assignment and continuation pointers.
+- The owner's October 29 finite-journey, two-active-writing-worktree and final-only
+  review correction was present in chat but absent from root instructions. Recorded
+  it with mission scope, without adopting the separate unapproved roadmap or its
+  proposed merge permissions, contracts or numeric diff/document quotas.
+- Historical HARNESS_HANDOFF briefs still prescribed removed gates. Marked them
+  historical and linked the current contract. Older detailed evidence remains dated.
+
+Rule consolidation retained permission/state/verification boundaries as essential,
+linked art/technology/delegation detail on demand, and removed duplicate gate code
+and repeated policy prose. Applicable policy decisions retain their source links.
+OpenAI's instruction-loading guidance supports a short root contract and scoped
+references. [Official documentation](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+
+Executed checks passed, including three Node hook/startup regressions, scoped
+ESLint/format, shell/JavaScript syntax, current-plan validation, scoped diff and
+new local links. Direct text comparison confirms the complete old plan body was
+retained. An initial archive-comparison helper split the heading incorrectly;
+correcting the helper passed without changing archived content. Final independent
+infrastructure review ACCEPT after removing task-local scope from permanent rules,
+dating the old startup claim and disabling inventory reload on compaction.
+Reviewer ran source/diff checks only. Full game/SQL/browser/CI checks NOT_RUN. Token savings, delivery speed and future
+agent error rate NOT_MEASURED. Validate those on subsequent real work before
+claiming an improvement in delivered-game quality.
+
+Owner follow-up — 2026-11-04 authorizes review, improvements, scoped publication,
+merge after green applicable CI and updating local main. Fresh base remains
+`5c2b3cd7`. Re-review caught a current recipe still passing runtime coverage into
+`git commit`, plus two stale comments in Vitest/Orca validation. Replaced the
+recipe with explicit merger/audit commands and corrected comments. Runtime and
+test configuration behavior are preserved. Final independent affected readback ACCEPT.
+Tracked delivery [issue341](https://github.com/Vovanostm/warwrit/issues/341) and
+[PR342](https://github.com/Vovanostm/warwrit/pull/342). The PR owns live CI, the reviewed head and actual
+merge receipt. Local main is updated by fast-forward after confirmed merge.
+
+This amendment supersedes conflicting local gate/startup/record-loading guidance
+below. Use the latest permission policy and root contract. Retained historical
+role limits, model settings and Orca queues are source material for a named task.
+
+## Current operating model — 2026-10-25
+
+Owner accepted the workflow improvement and requested one GPT-6.1 Sol author,
+then a separate reviewer for this assignment. [AGENTS permission policy](../../AGENTS.md#permission-policy--current-as-of-2026-10-25)
+is the sole current authority; the 2026-10-24 cancellation remains in force.
+Historical Orca/merge-on-gates, studio rule-making, scout/refill and one-issue
+policies below record their original decisions, not current activation or defaults.
+A fresh session must compare current scope/base with old-branch instructions.
+
+Use one accountable author by default. Delegate only a useful independent result
+with source pointers, base/worktree, write/resource ownership, acceptance and a
+bounded stopping condition. No separate contract agent or shared skeleton is
+required. Existing issues can supply the complete contract. Resolve decisive
+uncertainties by targeted source reading/probes before generating code; see
+[preparation](AGENT_DEVELOPMENT_PREPARATION.md#current-workflow--2026-10-25).
+
+Every writing assignment names exactly one mode:
+
+- **Delegated editor:** leaves its scoped diff to the parent; no commit/publication.
+- **Branch owner:** commits finished steps in its named worktree; publication is
+  separately governed by current permission. Parent still owns integration.
+
+The parent assigns one validation owner per relevant revision. Do not run the
+same validate/audit chain in both builder and coordinator. Commit hooks and PR CI
+remain required. Metrics are pointers, not a mandate to refactor or create tests.
+300 lines is advisory; semantic review checks cohesion, comprehensibility,
+verification and rollback. Related issues may share a PR; each keeps its criteria.
+
+Review is independent at required risk/result boundaries. Infrastructure requires
+reviewer ACCEPT; substantive gameplay/visual cycles retain AGENTS' playable and
+visual acceptance. Author self-review never substitutes for it. Rework identifies
+defect/environment/evidence causes and changes hypothesis before retry; a repeated
+cause requires another approach or a concrete blocker. No automatic two-round
+reset/split ritual. Unattended work needs explicit scope, budget and stop condition.
+
+This amends the conflicting 2026-10-18/19/21 rules below, retaining their dated
+history and measured results. Optional Orca operation uses the updated skill only
+after new activation; no worker, automation, scout, GitHub write or merge is
+started by this amendment. Pilot NOT_RUN; savings NOT_MEASURED.
+
 ## Responsibilities
 
 | Owner                 | Responsibility                                                                             | Write boundary                                |
@@ -31,10 +133,22 @@ See [the current packet queue](PARALLEL_WAVES.md) for dependencies and exact own
 
 ## Assignment and scheduling
 
+Every initial task and follow-up repeats the checkout, expected head/base,
+read/write paths and completion condition. Reusing an agent does not establish
+its working directory. The [context skill](../../.agents/skills/warwrit-context/SKILL.md)
+owns the recipient's missing/mismatched-route check. Keep follow-ups self-contained:
+
+```text
+Checkout / expected HEAD / base:
+Mode / allowed paths / prohibited operations:
+Question or changed result to review:
+Acceptance / smallest check / stop condition:
+```
+
 Use the four-field brief in [the preparation plan](AGENT_DEVELOPMENT_PREPARATION.md#parallel-work-without-a-new-control-plane).
-Include a time limit and exact focused checks/resource ownership in that brief.
-If a time limit is missing, the parent sets it before dispatch. Reaching it means
-reporting partial evidence, never inventing completion.
+Include exact focused checks/resource ownership and a finite scope/stop condition.
+For unattended operation set an explicit budget before dispatch. Reaching a limit
+means reporting partial evidence, never inventing completion.
 
 1. Restore actual cwd, HEAD/tree, dirty changes, live dependencies and source edition.
    Read mandatory contracts in full; give children pointers and relevant context.
@@ -47,7 +161,7 @@ reporting partial evidence, never inventing completion.
    explicitly owned disposable resources are the alternative.
 5. Review the frozen diff independently. Compare the reviewed revision and dirty
    delta before applying findings. A changed tree invalidates affected evidence.
-6. Parent inspects the union and performs delivery under the existing skill/gate.
+6. Parent inspects the union and performs delivery under current permission and the existing skill/gate.
    Reuse unchanged-code evidence; successful branches do not prove their union.
 
 Prefer a scoped brief over copying the full conversation when it contains enough

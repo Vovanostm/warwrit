@@ -69,4 +69,15 @@ it('places state restrictions in the shared full-width feedback row', () => {
   expect(html).toContain(
     '</div><div class="battle-feedback-row" role="status"><p>Переноска и спасение пока недоступны.</p></div>',
   );
+  const both = renderToStaticMarkup(
+    <EncounterCommandDesk
+      {...base}
+      feedback="Состояние бойца"
+      retreatRequirement="Клетки отхода"
+    />,
+  );
+  expect(both).toContain('<p>Состояние бойца</p><p>Клетки отхода</p>');
+  expect(renderToStaticMarkup(<EncounterCommandDesk {...base} />)).not.toContain(
+    'battle-feedback-row',
+  );
 });

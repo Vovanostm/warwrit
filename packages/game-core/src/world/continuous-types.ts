@@ -10,11 +10,13 @@ export interface PointMicroFp {
   readonly xMicroFp: string;
   readonly zMicroFp: string;
 }
+export type ContinuousMovementSpeedProfileId =
+  'free-terrain-continuous-v2' | 'free-terrain-continuous-v3' | 'free-atlas-walk-v1';
 export interface NavigationRegion {
   readonly mapEdition: string;
   readonly navigationVersion?: 'polygon-v1';
   /** Omitted only by retained V2 navigation fixtures. Accepted schedules never use this default. */
-  readonly speedProfileId?: 'free-terrain-continuous-v2' | 'free-terrain-continuous-v3';
+  readonly speedProfileId?: ContinuousMovementSpeedProfileId;
   /** Scene units per canonical fp are scaled together for geography and movement. */
   readonly worldScale?: number;
   readonly origin: PointFp;

@@ -16,6 +16,7 @@ export function HuntList(
     readonly refreshKey: number;
     readonly onUnauthorized: () => void;
     readonly onEncounterDiscovered: () => void;
+    readonly onRewardPaid?: () => void;
   },
 ) {
   const [hunts, setHunts] = useState<readonly FirstHuntReadResponseDto[]>([]);
@@ -74,6 +75,7 @@ export function HuntList(
             onUnauthorized={props.onUnauthorized}
             refreshKey={props.refreshKey}
             onEncounterDiscovered={props.onEncounterDiscovered}
+            {...(props.onRewardPaid ? { onRewardPaid: props.onRewardPaid } : {})}
           />
         ))}
     </>

@@ -27,8 +27,10 @@ export function BattleView(props: BattleViewProps) {
     onRefusal,
     children,
     menu,
+    terminalNotice,
     onRestart,
     onEditor,
+    onContinue,
     busy = false,
     selectedSkillId = null,
     onSelectSkill,
@@ -155,7 +157,18 @@ export function BattleView(props: BattleViewProps) {
         />
         <BattleThreats view={view} />
       </div>
-      <BattleOutcome view={view} busy={busy} onRestart={onRestart} onEditor={onEditor} />
+      {view.status === 'resolved' && (
+        <div className="battle-terminal-overlays">
+          {terminalNotice}
+          <BattleOutcome
+            view={view}
+            busy={busy}
+            onRestart={onRestart}
+            onEditor={onEditor}
+            onContinue={onContinue}
+          />
+        </div>
+      )}
       <BattleForecast
         view={view}
         blockedCell={blockedCell}

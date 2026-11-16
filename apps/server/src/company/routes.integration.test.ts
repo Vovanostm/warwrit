@@ -6,6 +6,9 @@ import {
   COMPANY_RULESET_ID,
   COMPANY_SCHEMA_VERSION,
   initialSkillProgress,
+  campaignTick,
+  moneyQ,
+  projectCompanyEconomy,
   projectCompanyLifecycle,
   readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
@@ -20,10 +23,25 @@ import { loadServerConfig } from '../config.js';
 import { createDatabase } from '../db/database.js';
 import { createOpeningAggregate } from './opening.js';
 import { loadCompanyAggregate } from './repository.js';
+import { projectPayroll } from './payroll-view.js';
 
 const connectionString = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const database = connectionString === undefined ? undefined : createDatabase(connectionString);
 const apps: ReturnType<typeof buildApp>[] = [];
+
+async function setPayrollWorldTick(worldId: string, companyId: string) {
+  if (!database) throw new Error('company test database missing');
+  const previous = await database
+    .transaction()
+    .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId));
+  if (!previous) throw new Error('company snapshot missing before payroll advance');
+  await database
+    .updateTable('world_campaign_clocks')
+    .set({ epoch_ms: String(Date.now()), starting_tick: '2000' })
+    .where('world_id', '=', worldId)
+    .executeTakeFirstOrThrow();
+  return previous;
+}
 
 afterAll(async () => {
   await Promise.all(apps.map((app) => app.close()));
@@ -43,7 +61,49 @@ describe('authenticated company read (PostgreSQL)', () => {
       const foreignSessionToken = randomUUID();
       const worldId = randomUUID();
       const companyId = randomUUID();
-      const state = createCompanyCombatAggregateFixture().state;
+      const fixture = createCompanyCombatAggregateFixture().state;
+      const state = {
+        ...fixture,
+        economy: {
+          ...fixture.economy,
+          finance: {
+            ...fixture.economy.finance,
+            claims: [
+              {
+                claimId: 'read-payroll-claim',
+                membershipId: 'service-worker-0',
+                poolId: 'local',
+                rateVersion: 'rate-worker-0',
+                dueAt: campaignTick('999'),
+                fromTick: campaignTick('998'),
+                toTick: campaignTick('999'),
+                dailyWageMilli: '13',
+                maintenanceId: null,
+                earned: [
+                  {
+                    fromTick: campaignTick('998'),
+                    toTick: campaignTick('999'),
+                    dailyWageMilli: '13',
+                    maintenanceId: null,
+                  },
+                ],
+                paidQ: moneyQ('5'),
+                reportedQ: moneyQ('13'),
+                reportedCoveredQ: moneyQ('3'),
+              },
+            ],
+            reservations: [
+              {
+                reservationId: 'read-payroll-hold',
+                walletId: 'purse',
+                claimId: 'read-payroll-claim',
+                amountQ: moneyQ('2'),
+                purpose: 'PENDING_CONFIRMATION' as const,
+              },
+            ],
+          },
+        },
+      };
       const storedState = JSON.parse(
         JSON.stringify(state)
           .replaceAll('"world"', JSON.stringify(worldId))
@@ -134,11 +194,58 @@ describe('authenticated company read (PostgreSQL)', () => {
               nicknameTextKey: character.nicknameTextKey,
               perkIds: character.perkIds,
               knownStatus: character.knownStatus,
+              inFieldParty: ['a-leader', 'a-worker-0', 'a-worker-1'].includes(
+                character.characterId,
+              ),
+              canJoinFieldParty: character.characterId === 'a-provider',
+              fieldPartyFull: false,
             })),
           },
           holdings: expect.objectContaining({ cashQ: expect.stringMatching(/^[0-9]+$/u) }),
         });
-        expect(JSON.stringify(ownerRead.json())).not.toContain('finance');
+        const loaded = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId));
+        if (!loaded) throw new Error('stored company missing');
+        const observed = projectCompanyEconomy(loaded.economy, companyId)!;
+        const response = ownerRead.json();
+        expect(response.holdings.payroll).toEqual({
+          atTick: observed.finance.atTick,
+          publicRevision: response.company.revision,
+          pools: observed.finance.wallets,
+          services: observed.finance.services.map(
+            ({ membershipId, poolId, currentAgreedRateMilli, materialSupportOnly }) => ({
+              membershipId,
+              poolId,
+              currentAgreedRateMilli,
+              materialSupportOnly,
+            }),
+          ),
+          claims: [
+            {
+              claimId: 'read-payroll-claim',
+              membershipId: 'service-worker-0',
+              poolId: 'local',
+              payee: { kind: 'CHARACTER', id: 'a-worker-0' },
+              dueAt: '999',
+              estimatedQ: '13',
+              cashPaidQ: '5',
+              currentMaintenanceQ: '3',
+              pendingQ: '2',
+              unsecuredQ: '3',
+            },
+          ],
+          owedQ: '5',
+          dueQ: '5',
+          payableQ: '3',
+          duePayableQ: '3',
+        });
+        expect({ owedQ: response.holdings.wagesOwedQ, dueQ: response.holdings.wagesDueQ }).toEqual({
+          owedQ: '5',
+          dueQ: '5',
+        });
+        expect(loaded).toEqual(storedState);
+        expect(JSON.stringify(response)).not.toContain('finance');
 
         const otherAccountRead = await createdApp.inject({
           method: 'GET',
@@ -623,6 +730,54 @@ describe('authenticated company read (PostgreSQL)', () => {
         });
         expect(malformedPerk.statusCode).toBe(400);
 
+        for (const payload of [
+          { itemId: 'ration', quantity: 0, fromContainerId: 'supply', toContainerId: 'pack' },
+          { itemId: 'ration', quantity: 1.5, fromContainerId: 'supply', toContainerId: 'pack' },
+          {
+            itemId: 'ration',
+            quantity: 1,
+            fromContainerId: 'supply',
+            toContainerId: 'pack',
+            splitItemId: 'injected',
+          },
+          {
+            itemId: 'ration',
+            quantity: 1,
+            fromContainerId: 'supply',
+            toContainerId: 'pack',
+            accessEvidenceId: 'injected',
+          },
+        ]) {
+          const invalidTransfer = await createdApp.inject({
+            method: 'POST',
+            url: '/company/commands',
+            headers: commandHeaders,
+            payload: {
+              schemaVersion: 2,
+              commandId: `invalid-transfer-${accountId}`,
+              expectedPublicRevision: ownerCompany.revision,
+              type: 'TransferItem',
+              payload,
+            },
+          });
+          expect(invalidTransfer.statusCode).toBe(400);
+          expect(invalidTransfer.json()).toMatchObject({ code: 'INVALID_COMMAND' });
+        }
+
+        const malformedPayroll = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: { ...headers, [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId! },
+          payload: {
+            schemaVersion: 2,
+            commandId: `malformed-payroll-${accountId}`,
+            expectedPublicRevision: ownerCompany.revision,
+            type: 'PayClaims',
+            payload: { poolId: 'local', amountQ: '0', claimIds: [], mode: 'DEFAULT' },
+          },
+        });
+        expect(malformedPayroll.statusCode).toBe(400);
+
         const foreignCommand = await createdApp.inject({
           method: 'POST',
           url: '/company/commands',
@@ -641,6 +796,24 @@ describe('authenticated company read (PostgreSQL)', () => {
         });
         expect(foreignCommand.statusCode).toBe(403);
         expect(foreignCommand.json()).toMatchObject({ code: 'NOT_AUTHORIZED' });
+        const foreignPayroll = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: {
+            cookie: `warwrit_session=${foreignSessionToken}`,
+            origin: 'http://127.0.0.1:3107',
+            [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId!,
+          },
+          payload: {
+            schemaVersion: 2,
+            commandId: `foreign-payroll-${accountId}`,
+            expectedPublicRevision: ownerCompany.revision,
+            type: 'PayClaims',
+            payload: { poolId: 'local', amountQ: '1', claimIds: [], mode: 'DEFAULT' },
+          },
+        });
+        expect(foreignPayroll.statusCode).toBe(403);
+        expect(foreignPayroll.json()).toMatchObject({ code: 'NOT_AUTHORIZED' });
         expect(
           await database
             .selectFrom('company_receipts')
@@ -745,7 +918,7 @@ describe('authenticated company read (PostgreSQL)', () => {
           code: 'STALE_REVISION',
           publicRevision: renamedRevision,
         });
-        const unsupported = await createdApp.inject({
+        const invalidAssignment = await createdApp.inject({
           method: 'POST',
           url: '/company/commands',
           headers: commandHeaders,
@@ -753,8 +926,22 @@ describe('authenticated company read (PostgreSQL)', () => {
             schemaVersion: 2,
             commandId: `unsupported-${accountId}`,
             expectedPublicRevision: renamedRevision,
-            type: 'Recruit',
+            type: 'SetAssignment',
             payload: {},
+          },
+        });
+        expect(invalidAssignment.statusCode).toBe(400);
+        expect(invalidAssignment.json()).toMatchObject({ code: 'INVALID_COMMAND' });
+        const unsupported = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: commandHeaders,
+          payload: {
+            schemaVersion: 2,
+            commandId: `unsupported-action-${accountId}`,
+            expectedPublicRevision: renamedRevision,
+            type: 'ReturnToService',
+            payload: { characterId: 'a-member' },
           },
         });
         expect(unsupported.statusCode).toBe(409);
@@ -892,6 +1079,483 @@ describe('authenticated company read (PostgreSQL)', () => {
         const summary = await createdApp.inject({ method: 'GET', url: '/company', headers });
         expect(summary.statusCode).toBe(200);
         expect(summary.json().company.companyId).toBe(companyId);
+
+        // Replace only this already-created integration company's state with the
+        // canonical service fixture. Its opening evidence, owner and purse remain
+        // the actual values produced by the route above.
+        const payrollSeed = createCompanyCombatAggregateFixture().state;
+        const payrollState = JSON.parse(
+          JSON.stringify(payrollSeed)
+            .replaceAll('"world"', JSON.stringify(worldId))
+            .replaceAll('"a-company"', JSON.stringify(companyId))
+            .replaceAll('"a-party"', JSON.stringify(evidence.partyId))
+            .replaceAll('"purse"', JSON.stringify(`${evidence.id}:company-purse`)),
+        ) as typeof payrollSeed;
+        await database.transaction().execute(async (transaction) => {
+          await transaction
+            .deleteFrom('company_receipts')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          await transaction
+            .deleteFrom('company_audit_events')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          await transaction
+            .updateTable('company_snapshots')
+            .set({
+              state: payrollState,
+              public_revision: payrollState.economy.lifecycle.knowledge.revision,
+              canonical_revision: payrollState.economy.lifecycle.revision,
+            })
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .executeTakeFirstOrThrow();
+        });
+
+        // Observe at the fixture's current tick before testing future time.
+        await database
+          .updateTable('world_campaign_clocks')
+          .set({
+            epoch_ms: String(Date.now()),
+            starting_tick: payrollState.economy.lifecycle.campaignTick,
+          })
+          .where('world_id', '=', worldId)
+          .executeTakeFirstOrThrow();
+        // A later healthy FIELD read must disclose new wages without a
+        // test-only domain advance or an unrelated order.
+        const beforeAccrualRead = await createdApp.inject({
+          method: 'GET',
+          url: '/company',
+          headers,
+        });
+        expect(beforeAccrualRead.statusCode).toBe(200);
+        const accrued = await setPayrollWorldTick(worldId, companyId!);
+        const payrollRead = await createdApp.inject({ method: 'GET', url: '/company', headers });
+        expect(payrollRead.statusCode).toBe(200);
+        expect(payrollRead.json().holdings.payroll.atTick).toBe('2000');
+        expect(BigInt(payrollRead.json().holdings.payroll.duePayableQ)).toBeGreaterThanOrEqual(4n);
+        const observedAccrued = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!));
+        if (!observedAccrued) throw new Error('company snapshot missing after payroll read');
+        expect(payrollRead.json().holdings.payroll).toEqual(
+          projectPayroll(observedAccrued.economy, companyId!),
+        );
+        expect(observedAccrued.economy.finance.wallets).toEqual(accrued.economy.finance.wallets);
+        const paidMembers = observedAccrued.economy.lifecycle.memberships.filter((member) =>
+          member.characterId.startsWith('a-worker-'),
+        );
+        expect(paidMembers.length).toBeGreaterThanOrEqual(2);
+        for (const member of paidMembers) {
+          expect(
+            observedAccrued.economy.finance.accounts.find(
+              (account) => account.membershipId === member.membershipId,
+            )?.confirmedAt,
+          ).toBe('2000');
+          expect(
+            payrollRead
+              .json()
+              .holdings.payroll.claims.some(
+                (claim: { membershipId: string; unsecuredQ: string }) =>
+                  claim.membershipId === member.membershipId && BigInt(claim.unsecuredQ) > 0n,
+              ),
+          ).toBe(true);
+        }
+        const stablePayrollRead = await createdApp.inject({
+          method: 'GET',
+          url: '/company',
+          headers,
+        });
+        expect(stablePayrollRead.json()).toEqual(payrollRead.json());
+        expect(
+          await database
+            .transaction()
+            .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!)),
+        ).toEqual(observedAccrued);
+
+        const payrollHeaders = {
+          ...headers,
+          [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId!,
+        };
+        const payrollCommand = {
+          schemaVersion: 2,
+          commandId: `payroll-${accountId}`,
+          expectedPublicRevision: observedAccrued.economy.lifecycle.knowledge.revision,
+          type: 'PayClaims',
+          payload: {
+            poolId: 'local',
+            amountQ: '2',
+            claimIds: [],
+            mode: 'TARGETED',
+            payeeId: 'a-worker-0',
+          },
+        };
+        const refusedRequest = {
+          ...payrollCommand,
+          commandId: `payroll-poor-${accountId}`,
+          payload: { ...payrollCommand.payload, amountQ: '999999' },
+        };
+        const beforeRefusal = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, companyId!));
+        if (!beforeRefusal) throw new Error('company snapshot missing before payroll refusal');
+        const refusal = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: payrollHeaders,
+          payload: refusedRequest,
+        });
+        expect(refusal.statusCode).toBe(409);
+        expect(refusal.json()).toMatchObject({
+          ok: false,
+          publicRevision: beforeRefusal.economy.lifecycle.knowledge.revision,
+          code: 'INSUFFICIENT_FUNDS',
+        });
+        await database.transaction().execute(async (transaction) => {
+          expect(await loadCompanyAggregate(transaction, worldId, companyId!)).toEqual(
+            beforeRefusal,
+          );
+          expect(
+            await transaction
+              .selectFrom('company_receipts')
+              .select('command_id')
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', companyId!)
+              .where('command_id', '=', refusedRequest.commandId)
+              .executeTakeFirst(),
+          ).toBeUndefined();
+        });
+        const afterRefusalReadback = await createdApp.inject({
+          method: 'GET',
+          url: '/company',
+          headers,
+        });
+        expect(afterRefusalReadback.json().company.revision).toBe(
+          beforeRefusal.economy.lifecycle.knowledge.revision,
+        );
+
+        const failingPayrollDatabase = new Proxy(database, {
+          get(target, property) {
+            if (property === 'transaction') {
+              return () => {
+                const transaction = target.transaction();
+                return {
+                  execute: (callback: Parameters<typeof transaction.execute>[0]) =>
+                    transaction.execute(async (connection) => {
+                      await callback(connection);
+                      throw new Error('injected payroll persistence failure');
+                    }),
+                };
+              };
+            }
+            const value = Reflect.get(target, property, target) as unknown;
+            return typeof value === 'function' ? value.bind(target) : value;
+          },
+        });
+        const failingPayrollApp = buildApp({
+          identity: { config: appConfig.identity!, database: failingPayrollDatabase },
+          company: { database: failingPayrollDatabase, worldId },
+        });
+        apps.push(failingPayrollApp);
+        const payrollAuditBeforeFailure = await database
+          .selectFrom('company_audit_events')
+          .select(['event_id', 'event'])
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId!)
+          .execute();
+        const rollbackPayroll = {
+          ...payrollCommand,
+          commandId: `rollback-payroll-${accountId}`,
+        };
+        const payrollRollback = await failingPayrollApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: payrollHeaders,
+          payload: rollbackPayroll,
+        });
+        expect(payrollRollback.statusCode).toBe(500);
+        await database.transaction().execute(async (transaction) => {
+          expect(await loadCompanyAggregate(transaction, worldId, companyId!)).toEqual(
+            beforeRefusal,
+          );
+          expect(
+            await transaction
+              .selectFrom('company_receipts')
+              .select('command_id')
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', companyId!)
+              .where('command_id', '=', rollbackPayroll.commandId)
+              .executeTakeFirst(),
+          ).toBeUndefined();
+          const payrollAudit = await transaction
+            .selectFrom('company_audit_events')
+            .select(['event_id', 'event'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          expect(payrollAudit).toEqual(payrollAuditBeforeFailure);
+        });
+
+        const firstPayrollSubmissions = await Promise.all(
+          [0, 1].map(() =>
+            createdApp.inject({
+              method: 'POST',
+              url: '/company/commands',
+              headers: payrollHeaders,
+              payload: payrollCommand,
+            }),
+          ),
+        );
+        expect(firstPayrollSubmissions.map((response) => response.statusCode)).toEqual([200, 200]);
+        const paid = firstPayrollSubmissions[0]!;
+        expect(firstPayrollSubmissions[1]!.json()).toEqual(paid.json());
+        expect(paid.json()).toMatchObject({ commandId: payrollCommand.commandId, ok: true });
+        const storedPayment = await database.transaction().execute(async (transaction) => {
+          const stored = await loadCompanyAggregate(transaction, worldId, companyId!);
+          if (!stored) throw new Error('company snapshot missing after payroll payment');
+          const receipt = await transaction
+            .selectFrom('company_receipts')
+            .select(['response', 'resulting_revision'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .where('command_id', '=', payrollCommand.commandId)
+            .executeTakeFirstOrThrow();
+          const audit = await transaction
+            .selectFrom('company_audit_events')
+            .select(['event_id', 'event'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          return { stored, receipt, audit };
+        });
+        expect(storedPayment.stored.economy.finance.wallets).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ walletId: `${evidence.id}:company-purse`, cashQ: '98' }),
+            expect.objectContaining({ walletId: 'wallet-worker-0', cashQ: '2' }),
+          ]),
+        );
+        expect(storedPayment.receipt).toMatchObject({
+          response: paid.json(),
+          resulting_revision: storedPayment.stored.economy.lifecycle.revision,
+        });
+        expect(storedPayment.audit).toContainEqual(
+          expect.objectContaining({
+            event: expect.objectContaining({
+              type: 'CompanyPayrollPaid',
+              commandId: payrollCommand.commandId,
+              amountQ: '2',
+            }),
+          }),
+        );
+        await database.transaction().execute(async (transaction) => {
+          expect(await loadCompanyAggregate(transaction, worldId, companyId!)).toEqual(
+            storedPayment.stored,
+          );
+          const audit = await transaction
+            .selectFrom('company_audit_events')
+            .select(['event_id', 'event'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          expect(audit).toEqual(storedPayment.audit);
+        });
+        const paymentReplay = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: payrollHeaders,
+          payload: payrollCommand,
+        });
+        expect(paymentReplay.statusCode).toBe(200);
+        expect(paymentReplay.json()).toEqual(paid.json());
+        const conflictingPayroll = {
+          ...payrollCommand,
+          payload: { ...payrollCommand.payload, amountQ: '1' },
+        };
+        const conflict = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: payrollHeaders,
+          payload: conflictingPayroll,
+        });
+        expect(conflict.statusCode).toBe(409);
+        expect(conflict.json()).toMatchObject({
+          commandId: payrollCommand.commandId,
+          code: 'IDEMPOTENCY_CONFLICT',
+        });
+
+        const concurrentPayroll = {
+          ...payrollCommand,
+          commandId: `payroll-race-${accountId}`,
+          expectedPublicRevision: storedPayment.stored.economy.lifecycle.knowledge.revision,
+          payload: { ...payrollCommand.payload, payeeId: 'a-worker-1' },
+        };
+        const concurrentConflict = {
+          ...concurrentPayroll,
+          payload: { ...concurrentPayroll.payload, amountQ: '1' },
+        };
+        const concurrentCommands = [concurrentPayroll, concurrentConflict];
+        const concurrentSubmissions = await Promise.all(
+          concurrentCommands.map((payload) =>
+            createdApp.inject({
+              method: 'POST',
+              url: '/company/commands',
+              headers: payrollHeaders,
+              payload,
+            }),
+          ),
+        );
+        expect(concurrentSubmissions.map((response) => response.statusCode).toSorted()).toEqual([
+          200, 409,
+        ]);
+        const winnerIndex = concurrentSubmissions.findIndex(
+          (response) => response.statusCode === 200,
+        );
+        const winningPayrollCommand = concurrentCommands[winnerIndex]!;
+        const racePaid = concurrentSubmissions[winnerIndex]!;
+        expect(racePaid.json()).toMatchObject({
+          commandId: winningPayrollCommand.commandId,
+          ok: true,
+        });
+        expect(concurrentSubmissions[1 - winnerIndex]!.json()).toMatchObject({
+          commandId: concurrentPayroll.commandId,
+          code: 'IDEMPOTENCY_CONFLICT',
+        });
+        const postRacePayment = await database.transaction().execute(async (transaction) => {
+          const stored = await loadCompanyAggregate(transaction, worldId, companyId!);
+          if (!stored) throw new Error('company snapshot missing after concurrent payroll payment');
+          const receipt = await transaction
+            .selectFrom('company_receipts')
+            .select(['response', 'resulting_revision'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .where('command_id', '=', concurrentPayroll.commandId)
+            .executeTakeFirstOrThrow();
+          const beforePayroll = projectPayroll(storedPayment.stored.economy, companyId!);
+          const afterPayroll = projectPayroll(stored.economy, companyId!);
+          const unpaidBefore =
+            beforePayroll?.claims
+              .filter((claim) => claim.payee.id === 'a-worker-1')
+              .reduce((sum, claim) => sum + BigInt(claim.unsecuredQ), 0n) ?? 0n;
+          const unpaidAfter =
+            afterPayroll?.claims
+              .filter((claim) => claim.payee.id === 'a-worker-1')
+              .reduce((sum, claim) => sum + BigInt(claim.unsecuredQ), 0n) ?? 0n;
+          expect(unpaidBefore - unpaidAfter).toBe(BigInt(winningPayrollCommand.payload.amountQ));
+          const audit = await transaction
+            .selectFrom('company_audit_events')
+            .select(['event_id', 'event'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          return { stored, receipt, audit };
+        });
+        const raceAmountQ = BigInt(winningPayrollCommand.payload.amountQ);
+        expect(postRacePayment.stored.economy.finance.wallets).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              walletId: `${evidence.id}:company-purse`,
+              cashQ: (98n - raceAmountQ).toString(),
+            }),
+            expect.objectContaining({
+              walletId: 'wallet-worker-0',
+              cashQ: '2',
+            }),
+            expect.objectContaining({
+              walletId: 'wallet-worker-1',
+              cashQ: raceAmountQ.toString(),
+            }),
+          ]),
+        );
+        expect(postRacePayment.receipt).toMatchObject({
+          response: racePaid.json(),
+          resulting_revision: postRacePayment.stored.economy.lifecycle.revision,
+        });
+        const racePaidEvents = postRacePayment.audit.filter(
+          (row) =>
+            typeof row.event === 'object' &&
+            row.event !== null &&
+            'type' in row.event &&
+            row.event.type === 'CompanyPayrollPaid' &&
+            'commandId' in row.event &&
+            row.event.commandId === winningPayrollCommand.commandId,
+        );
+        expect(racePaidEvents).toHaveLength(1);
+        expect(postRacePayment.audit).toContainEqual(
+          expect.objectContaining({
+            event: expect.objectContaining({
+              type: 'CompanyPayrollPaid',
+              commandId: winningPayrollCommand.commandId,
+              amountQ: winningPayrollCommand.payload.amountQ,
+            }),
+          }),
+        );
+        const exactRaceReplays = await Promise.all(
+          [0, 1].map(() =>
+            createdApp.inject({
+              method: 'POST',
+              url: '/company/commands',
+              headers: payrollHeaders,
+              payload: winningPayrollCommand,
+            }),
+          ),
+        );
+        expect(exactRaceReplays.map((response) => response.statusCode)).toEqual([200, 200]);
+        expect(exactRaceReplays[0]!.json()).toEqual(racePaid.json());
+        expect(exactRaceReplays[1]!.json()).toEqual(racePaid.json());
+        await database.transaction().execute(async (transaction) => {
+          expect(await loadCompanyAggregate(transaction, worldId, companyId!)).toEqual(
+            postRacePayment.stored,
+          );
+          const audit = await transaction
+            .selectFrom('company_audit_events')
+            .select(['event_id', 'event'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .execute();
+          expect(audit).toEqual(postRacePayment.audit);
+        });
+
+        const remoteLocation = { kind: 'AT' as const, siteId: 'remote', areaId: 'road' };
+        const moved = {
+          ...postRacePayment.stored,
+          economy: {
+            ...postRacePayment.stored.economy,
+            lifecycle: {
+              ...postRacePayment.stored.economy.lifecycle,
+              parties: postRacePayment.stored.economy.lifecycle.parties.map((party) =>
+                party.partyId === evidence.partyId ? { ...party, location: remoteLocation } : party,
+              ),
+              characters: postRacePayment.stored.economy.lifecycle.characters.map((character) =>
+                character.presence.fieldPartyId === evidence.partyId
+                  ? { ...character, presence: { ...character.presence, location: remoteLocation } }
+                  : character,
+              ),
+            },
+          },
+        };
+        await database.transaction().execute(async (transaction) => {
+          await transaction
+            .updateTable('company_snapshots')
+            .set({ state: moved })
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', companyId!)
+            .executeTakeFirstOrThrow();
+          await transaction
+            .updateTable('world_campaign_clocks')
+            .set({ epoch_ms: String(Date.now()), starting_tick: '3000' })
+            .where('world_id', '=', worldId)
+            .executeTakeFirstOrThrow();
+        });
+        const historicalReplay = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers: payrollHeaders,
+          payload: payrollCommand,
+        });
+        expect(historicalReplay.statusCode).toBe(200);
+        expect(historicalReplay.json()).toEqual(paid.json());
       } finally {
         if (companyId !== undefined) {
           const cleanupCompanyId = companyId;

@@ -1,7 +1,8 @@
 # Warwrit use boundary
 
-Pinned official PlayCanvas inspect-glb skill; upstream bytes are unchanged and
-identified in sources.json. Only this skill was installed, not the whole plugin.
+Pinned official PlayCanvas inspect-glb parser with a locally adapted instruction
+entry as of 2026-11-06. `sources.json` records original installed upstream bytes.
+The script and license remain unchanged. Only this skill was installed.
 
 Use it for the assigned licensed asset files before choosing clip names, rig paths,
 scale and grounding. The zero-dependency script reads files and prints JSON; no
@@ -13,12 +14,11 @@ flag covers skins/morphs/decode limitations, but source review found it does not
 flag rigid node-TRS animation. Measure actual clip extremes even if that flag is
 false. This is a source-level risk, not an executed regression of the upstream tool.
 
-The source package tests PlayCanvas2.22.0; Warwrit pins2.22.4. This parser does not
-invoke Engine APIs. Version-sensitive shader/animation guidance still requires the
-installed2.22.4 source and types. References to other upstream skills do not mean
-those skills are installed; follow Warwrit's own axis, ownership and verification
-contracts and check the rendered asset. Additional installs/transcoding need a
-concrete asset requirement and an owned scratch path.
+The parser is engine-independent. Warwrit uses Babylon.js under ADR-0006.
+The adapted entry removes PlayCanvas-specific compression, culling and facing
+assumptions and unavailable neighboring-skill references. Use installed Babylon
+loader/decoder support, the owning axis convention and an owned scratch path for
+an actual asset requirement. Check the final rendered asset.
 
 Parent smoke: Knight.glb and Rig_Medium_General.glb both parsed; decoded vertex
 bounds report bind pose and requiresRuntimeCheck=true. This proves input inspection,

@@ -74,6 +74,12 @@ export interface CombatLabCatalog {
   readonly presets?: readonly { readonly id: string; readonly battle: CombatLabBattleConfig }[];
   readonly skills?: readonly CombatLabSkillDefinition[];
   readonly profiles: readonly {
+    readonly maximumPools?: {
+      readonly health: number;
+      readonly armor: number;
+      readonly stamina: number;
+      readonly morale: number;
+    };
     readonly id: string;
     readonly name: string;
     readonly defaultSkillRanks?: CombatLabSkillRanks;
@@ -211,7 +217,8 @@ export interface CombatLabView extends CombatLabViewRequest {
     | 'sprite-prototype-v1'
     | 'sprite-prototype-v2'
     | 'sprite-prototype-v3'
-    | 'sprite-prototype-v4';
+    | 'sprite-prototype-v4'
+    | 'm1-domain-bridge-v5';
   readonly status: 'active' | 'resolved';
   readonly round: number;
   readonly nextRoundInitiative?: { readonly round: number; readonly unitIds: readonly string[] };

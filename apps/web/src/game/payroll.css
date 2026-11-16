@@ -1,0 +1,71 @@
+.payroll-panel {
+  margin-top: 0.9rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgb(140 118 80 / 24%);
+}
+
+.payroll-panel .panel-subtitle {
+  margin-top: 0.3rem;
+}
+
+.payroll-pool {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.55rem 0;
+  padding: 0.5rem;
+  border: 1px solid rgb(140 118 80 / 20%);
+}
+
+.payroll-pool-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.payroll-pool-balance,
+.payroll-history-balance {
+  font-variant-numeric: tabular-nums;
+}
+
+.payroll-pool .quiet-action {
+  justify-self: start;
+}
+
+.payroll-target {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: start;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.payroll-pending {
+  margin: 0.6rem 0;
+  padding: 0.6rem;
+  border-left: 2px solid var(--gold);
+  background: rgb(140 118 80 / 10%);
+}
+
+.payroll-pending p {
+  margin: 0 0 0.4rem;
+}
+
+.payroll-history {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 0;
+}
+
+.payroll-history li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgb(140 118 80 / 14%);
+  font-size: 0.82rem;
+}
+
+.payroll-history-balance {
+  color: var(--muted);
+}

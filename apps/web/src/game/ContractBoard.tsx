@@ -1,19 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-
-import type {
-  OrdinaryContractBoardDto,
-  OrdinaryContractCommandDto,
-  OrdinaryContractDto,
-} from '@warwrit/protocol';
-import {
-  classifyOrdinaryContractPost,
-  selectOrdinaryContractAttempt,
-} from './ordinary-contract-attempt.js';
+import type { OrdinaryContractCommandDto, OrdinaryContractDto } from '@warwrit/protocol';
+import type { OrdinaryContractAttemptScope } from './ordinary-contract-attempt-storage.js';
 
 import { lookup } from '../i18n/index.js';
 import { formatCrowns } from './format.js';
 import {
-  contractPlaceFacts,
   issuerBuilding,
   issuerVenue,
   ordinaryStepVenue,
@@ -21,8 +11,7 @@ import {
   visitingIssuer,
   type ContractVisitProps,
 } from './contract-visits.js';
-
-const REFRESH_MS = 15_000;
+import { useOrdinaryContractBoard } from './use-ordinary-contract-board.js';
 
 const siteName = (siteId: string) => lookup(`place.${siteId}.name`) ?? siteId;
 const siteIn = (siteId: string) => lookup(`place.${siteId}.in`) ?? siteId;
@@ -35,19 +24,6 @@ const findingText = (instanceId: string, stepId: string) =>
 const conditionText = (instanceId: string, stepId: string) =>
   lookup(`contract.${instanceId}.condition.${stepId}`);
 const personName = (personId: string) => lookup(`person.${personId}`) ?? personId;
-
-const REJECTION_TEXT: Readonly<Record<string, string>> = {
-  STALE_REVISION: 'Контракт только что изменился. Обновили сведения — попробуйте ещё раз.',
-  NOT_AVAILABLE: 'Это действие сейчас недоступно.',
-  NOT_A_PARTICIPANT: 'Сначала возьмите контракт или помогите его владельцу.',
-  WRONG_PLACE: 'Отряд должен стоять в нужном месте.',
-  ALREADY_DONE: 'Это уже сделано.',
-  MISSING_EVIDENCE: 'Сначала выполните предыдущие шаги.',
-  CONDITION_NOT_MET: 'Условие ещё не выполнено.',
-  INSUFFICIENT_FUNDS: 'У заказчика нет денег на выплату.',
-  NOT_AUTHORIZED: 'Сеанс не подтверждён. Войдите снова.',
-  INVALID_COMMAND: 'Сервер отклонил запрос.',
-};
 
 function stepBlockerText(
   contract: OrdinaryContractDto,
@@ -71,102 +47,24 @@ function stepBlockerText(
   }
 }
 
-async function readBoard(): Promise<OrdinaryContractBoardDto | 'unauthorized' | undefined> {
-  try {
-    const response = await fetch('/api/contracts/board', {
-      credentials: 'same-origin',
-      cache: 'no-store',
-    });
-    if (response.status === 401) return 'unauthorized';
-    if (!response.ok) return undefined;
-    const body = (await response.json()) as OrdinaryContractBoardDto;
-    return body.schemaVersion === 1 && Array.isArray(body.contracts) ? body : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 /** Ordinary contracts offered where the party stands, and those the company has taken. */
 export function ContractBoard(
   props: ContractVisitProps & {
+    readonly scope: OrdinaryContractAttemptScope;
     readonly siteId: string | null;
     readonly refreshKey: number;
     readonly onUnauthorized: () => void;
     readonly onRewardPaid: () => void;
   },
 ) {
-  const [board, setBoard] = useState<OrdinaryContractBoardDto | undefined>(undefined);
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | undefined>(undefined);
-  const [pending, setPending] = useState<OrdinaryContractCommandDto | undefined>(undefined);
-  const pendingRef = useRef<OrdinaryContractCommandDto | undefined>(undefined);
-  const sendingRef = useRef(false);
-  const { onUnauthorized, onRewardPaid } = props;
-  const onPlaceFacts = useRef(props.onPlaceFacts);
-  onPlaceFacts.current = props.onPlaceFacts;
-
-  const refresh = useCallback(async () => {
-    const next = await readBoard();
-    if (next === 'unauthorized') onUnauthorized();
-    else if (next) {
-      setBoard(next);
-      onPlaceFacts.current?.(contractPlaceFacts(next.contracts));
-    }
-  }, [onUnauthorized]);
-
-  useEffect(() => {
-    void refresh();
-    const id = setInterval(() => void refresh(), REFRESH_MS);
-    return () => clearInterval(id);
-  }, [refresh, props.siteId, props.refreshKey]);
-
-  const send = async (requested: OrdinaryContractCommandDto, retry = false) => {
-    if (sendingRef.current) return;
-    const command = selectOrdinaryContractAttempt(pendingRef.current, requested, retry);
-    if (!command) return;
-    sendingRef.current = true;
-    if (!pendingRef.current) {
-      // Reserve synchronously so same-turn clicks cannot replace an in-flight command.
-      pendingRef.current = command;
-      setPending(command);
-    }
-    setBusy(true);
-    setMessage(undefined);
-    try {
-      const response = await fetch('/api/contracts/ordinary/commands', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(command),
-      });
-      const body: unknown = response.status === 401 ? null : await response.json();
-      const result = classifyOrdinaryContractPost(response.status, body, command.commandId);
-      if (result.kind === 'UNAUTHENTICATED') {
-        onUnauthorized();
-        return;
-      }
-      if (result.kind === 'UNKNOWN') {
-        // Keep the command ID and body until a matching terminal receipt is verified.
-        setMessage('Связь прервалась, результат неизвестен. Повторите тот же запрос.');
-        return;
-      }
-      pendingRef.current = undefined;
-      setPending(undefined);
-      if (result.kind === 'REJECTED')
-        setMessage(REJECTION_TEXT[result.response.code] ?? 'Сервер отклонил запрос.');
-      else if (result.response.rewardQ !== null) {
-        setMessage(`Заказчик заплатил ${formatCrowns(result.response.rewardQ)} кр.`);
-        onRewardPaid();
-      }
-      await refresh();
-    } catch {
-      // Unknown outcome: only this exact command can safely be sent again.
-      setMessage('Связь прервалась, результат неизвестен. Повторите тот же запрос.');
-    } finally {
-      sendingRef.current = false;
-      setBusy(false);
-    }
-  };
+  const { board, busy, commandBusy, message, pending, send } = useOrdinaryContractBoard({
+    scope: props.scope,
+    siteId: props.siteId,
+    refreshKey: props.refreshKey,
+    onUnauthorized: props.onUnauthorized,
+    onRewardPaid: props.onRewardPaid,
+    ...(props.onPlaceFacts ? { onPlaceFacts: props.onPlaceFacts } : {}),
+  });
 
   const command = (
     contract: OrdinaryContractDto,
@@ -231,7 +129,7 @@ export function ContractBoard(
           canVisit={props.canVisit}
           onVisitIssuer={props.onVisitIssuer}
           onJournal={props.onJournal}
-          busy={busy || pending !== undefined}
+          busy={commandBusy}
           onCommand={(type, stepId) => void send(command(contract, type, stepId))}
         />
       ))}

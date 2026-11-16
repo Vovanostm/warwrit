@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { applyFirstHuntTerminalEffectsInTransaction } from '../contracts/executor.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from 'node:net';
 
@@ -42,6 +44,7 @@ import {
   listDueEncounterTimeouts,
   requestEncounterResume,
   verifyEncounterReplay,
+  prepareCompanyTerminalEvidence,
 } from './executor.js';
 import { readEncounterAccess } from './access.js';
 import { firstHuntTimeoutCommandId } from './admission.js';
@@ -196,11 +199,12 @@ function makeFirstHuntJoinActor(
   mixed = false,
   overloadedPartySupply = false,
   carriedPartyRations?: number,
+  createId: () => string = randomUUID,
 ): FirstHuntJoinActor {
-  const accountId = randomUUID();
-  const companyId = randomUUID();
-  const partyId = randomUUID();
-  const sessionToken = randomUUID();
+  const accountId = createId();
+  const companyId = createId();
+  const partyId = createId();
+  const sessionToken = createId();
   const base = createCompanyCombatAggregateFixture().state;
   const lifecycle = base.economy.lifecycle;
   const basePartyId = lifecycle.parties[0]?.partyId;
@@ -208,14 +212,14 @@ function makeFirstHuntJoinActor(
   const members = lifecycle.characters
     .filter((character) => character.presence.fieldPartyId !== null)
     .map((character) => character.identity.characterId);
-  const memberIds = members.map(() => randomUUID());
+  const memberIds = members.map(() => createId());
   const replacements = new Map<string, string>([
     [lifecycle.worldId, worldId],
     [lifecycle.companyId, companyId],
     [basePartyId, partyId],
     ...members.map((id, index) => [id, memberIds[index]!] as const),
     // Two companies built from one fixture must not share physical item identities.
-    ...(base.economy.physical?.items ?? []).map((item) => [item.itemId, randomUUID()] as const),
+    ...(base.economy.physical?.items ?? []).map((item) => [item.itemId, createId()] as const),
   ]);
   const remapped = JSON.parse(
     JSON.stringify(base, (_key, value: unknown) =>
@@ -497,19 +501,26 @@ function bowHuntActor(actor: FirstHuntJoinActor): FirstHuntJoinActor {
 async function seedFirstHuntJoinScenario(
   database: (typeof databases)[number],
   mixed = false,
-  worldId = randomUUID(),
+  worldId: string = randomUUID(),
   encountersEnabled = mixed,
   overloadedOwner = false,
   helperCarriedPartyRations?: number,
   wolfHunt = false,
+  createId: () => string = randomUUID,
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
   readonly helper: FirstHuntJoinActor;
   readonly app: ReturnType<typeof buildApp>;
 }> {
-  const ownerFixture = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner);
-  const helperFixture = makeFirstHuntJoinActor(worldId, false, false, helperCarriedPartyRations);
+  const ownerFixture = makeFirstHuntJoinActor(worldId, mixed, overloadedOwner, undefined, createId);
+  const helperFixture = makeFirstHuntJoinActor(
+    worldId,
+    false,
+    false,
+    helperCarriedPartyRations,
+    createId,
+  );
   const owner = wolfHunt ? bowHuntActor(ownerFixture) : ownerFixture;
   const helper = wolfHunt ? bowHuntActor(helperFixture) : helperFixture;
   for (const [actor, subject] of [
@@ -610,6 +621,7 @@ async function playFirstHuntToVictory(
   app: ReturnType<typeof buildApp>,
   encounterId: string,
   actors: readonly [FirstHuntJoinActor, FirstHuntJoinActor],
+  letPanickedHostilesEscape = false,
 ): Promise<void> {
   for (let step = 0; step < 400; step += 1) {
     const row = await database
@@ -642,13 +654,20 @@ async function playFirstHuntToVictory(
     }
     if (!controller || !actorActions)
       throw new Error('FIRST HUNT activation has no company owner or due hostile AI wake');
+    const remainingHostiles = state.units.filter(
+      (unit) => unit.sideId === 'first-hunt-hostiles' && unit.status === 'active',
+    );
     const proposed = combat.chooseTacticalCombatCommand(state);
     const intent =
-      proposed.type === 'move'
-        ? { type: 'move', to: proposed.to }
-        : proposed.type === 'attack'
-          ? { type: 'attack', targetId: proposed.targetId }
-          : { type: proposed.type };
+      letPanickedHostilesEscape &&
+      remainingHostiles.length > 0 &&
+      remainingHostiles.every((unit) => combat.isCombatPanicked(state, unit))
+        ? { type: 'wait' }
+        : proposed.type === 'move'
+          ? { type: 'move', to: proposed.to }
+          : proposed.type === 'attack'
+            ? { type: 'attack', targetId: proposed.targetId }
+            : { type: proposed.type };
     const response = await app.inject({
       method: 'POST',
       url: '/encounters/commands',
@@ -3924,21 +3943,32 @@ it.skipIf(connectionString === undefined)(
   15000,
 );
 
-it.skipIf(connectionString === undefined)(
-  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects',
-  async () => {
+it.skipIf(connectionString === undefined).each([0, 2160000])(
+  'freezes bridge v5 through real wolf JOIN, move and bow shot, durable retry and terminal effects (QA offset %i)',
+  async (qaOffsetMs) => {
     const database = databases[0]!;
+    // The world selects battle RNG, and participant IDs break tactical ties.
+    // This settlement scenario needs a reproducible supported terminal outcome.
+    let identityIndex = 0;
+    const createFixtureId = () =>
+      `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`;
     const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
       database,
       false,
-      randomUUID(),
+      'world.test.wolf-bridge-v5-terminal',
       true,
       false,
       undefined,
       true,
+      createFixtureId,
     );
     const restoreClock = freezeCampaignClock();
     try {
+      await database
+        .updateTable('world_campaign_clocks')
+        .set({ qa_offset_ms: String(qaOffsetMs) })
+        .where('world_id', '=', worldId)
+        .execute();
       for (const actor of [owner, helper]) {
         const read = await app.inject({
           method: 'GET',
@@ -4146,7 +4176,45 @@ it.skipIf(connectionString === undefined)(
         await reopened.destroy();
       }
       await playFirstHuntToVictory(database, app, encounterId, [owner, helper]);
-      await applyPendingFirstHuntTerminalEffects(database);
+      const terminalBattle = await database
+        .selectFrom('encounters')
+        .select('state')
+        .where('id', '=', encounterId)
+        .executeTakeFirstOrThrow();
+      const terminalUnits = (terminalBattle.state as combat.BattleState).units;
+      expect(
+        terminalUnits
+          .filter((unit) => unit.sideId !== 'first-hunt-companies')
+          .every((unit) => unit.status === 'dead'),
+        JSON.stringify({ worldId, seed: savedSetup.seed, terminalUnits }),
+      ).toBe(true);
+      const applied = await applyPendingFirstHuntTerminalEffects(database);
+      if (!applied.includes(encounterId)) {
+        // Victory can still require the real owner to choose a fallen leader's successor.
+        for (const actor of [owner, helper]) {
+          const leadership = await app.inject({
+            method: 'GET',
+            url: `/encounters/${encounterId}/leadership`,
+            headers: actor.headers,
+          });
+          expect(leadership.statusCode, leadership.body).toBe(200);
+          const view = leadership.json();
+          if (!view.required) continue;
+          expect(view.candidates.length).toBeGreaterThan(0);
+          const chosen = await app.inject({
+            method: 'POST',
+            url: `/encounters/${encounterId}/leadership`,
+            headers: actor.headers,
+            payload: {
+              version: 1,
+              candidateId: view.candidates[0].characterId,
+              mode: 'PERMANENT',
+            },
+          });
+          expect(chosen.statusCode, chosen.body).toBe(202);
+        }
+        await applyPendingFirstHuntTerminalEffects(database);
+      }
       expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
       const terminal = await database
         .selectFrom('encounter_admissions')
@@ -4201,6 +4269,437 @@ it.skipIf(connectionString === undefined)(
     } finally {
       restoreClock();
       await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+    }
+  },
+  60_000,
+);
+
+it.skipIf(connectionString === undefined)(
+  'repeats a settled wolf retreat with exact survivors, durable history and one payout',
+  async () => {
+    const database = databases[0]!;
+    let identityIndex = 1000;
+    const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
+      database,
+      false,
+      'world.test.wolf-retreat-57',
+      true,
+      false,
+      undefined,
+      true,
+      () => `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`,
+    );
+    const restoreClock = freezeCampaignClock();
+    const firstJoins: {
+      actor: FirstHuntJoinActor;
+      payload: Record<string, unknown>;
+      body: string;
+    }[] = [];
+    try {
+      for (const actor of [owner, helper]) {
+        const read = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          headers: actor.headers,
+        });
+        const payload = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: read.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.wolf-trail.01' },
+        };
+        const joined = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.headers,
+          payload,
+        });
+        firstJoins.push({ actor, payload, body: joined.body });
+        expect(joined.statusCode, joined.body).toBe(200);
+      }
+      const admission = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const encounterId = admission.encounter_id;
+      await playFirstHuntToVictory(database, app, encounterId, [owner, helper], true);
+      const encounter = await database
+        .selectFrom('encounters')
+        .selectAll()
+        .where('id', '=', encounterId)
+        .executeTakeFirstOrThrow();
+      const terminal = encounter.state as combat.BattleState;
+      const hostiles = terminal.units.filter((unit) => unit.sideId === 'first-hunt-hostiles');
+      expect(
+        hostiles.some((unit) => unit.status === 'retreated' && unit.health > 0),
+        JSON.stringify(hostiles),
+      ).toBe(true);
+      expect(hostiles.some((unit) => unit.status === 'dead')).toBe(true);
+      expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      const pending = await app.inject({
+        method: 'GET',
+        url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+        headers: owner.headers,
+      });
+      expect(pending.json().contract.terminal).toEqual({
+        effects: 'PENDING',
+        hostileRetreated: true,
+      });
+      const before = await database
+        .selectFrom('company_snapshots')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .orderBy('company_id')
+        .execute();
+      // Fail after both company transitions have been prepared and persisted in
+      // the transaction. The world write must roll back every company/receipt.
+      await sql`create function reject_retreat_world_update() returns trigger language plpgsql as $$ begin raise exception 'retreat rollback probe'; end $$`.execute(
+        database,
+      );
+      await sql`create trigger reject_retreat_world_update before update on world_hunt_states for each row execute function reject_retreat_world_update()`.execute(
+        database,
+      );
+      try {
+        await expect(applyPendingFirstHuntTerminalEffects(database)).rejects.toThrow(
+          'retreat rollback probe',
+        );
+        expect(
+          await database
+            .selectFrom('company_snapshots')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .orderBy('company_id')
+            .execute(),
+        ).toEqual(before);
+      } finally {
+        await sql`drop trigger reject_retreat_world_update on world_hunt_states`.execute(database);
+        await sql`drop function reject_retreat_world_update()`.execute(database);
+      }
+      const reopened = createDatabase(connectionString!);
+      try {
+        expect(await applyPendingFirstHuntTerminalEffects(reopened)).toContain(encounterId);
+        expect(
+          await reopened
+            .selectFrom('world_proof_claims')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(0);
+        const savedWorld = await reopened
+          .selectFrom('world_hunt_states')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+          .executeTakeFirstOrThrow();
+        const savedHostiles = savedWorld.hostiles as {
+          entityId: string;
+          currentPools: Record<string, number>;
+        }[];
+        for (const hostile of hostiles)
+          expect(savedHostiles.find((unit) => unit.entityId === hostile.id)?.currentPools).toEqual({
+            health: hostile.health,
+            armor: hostile.armor,
+            stamina: hostile.stamina,
+            morale: hostile.morale,
+          });
+        for (const actor of [owner, helper]) {
+          const root = await reopened
+            .transaction()
+            .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+          expect(root?.encounter.active).toBeNull();
+          expect(root?.encounter.completed).toHaveLength(1);
+          const active = await app.inject({
+            method: 'GET',
+            url: '/encounters/active',
+            headers: actor.headers,
+          });
+          expect(active.json().encounterId).toBeNull();
+          const contract = await app.inject({
+            method: 'GET',
+            url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+            headers: actor.headers,
+          });
+          expect(contract.json().contract.terminal).toEqual({
+            effects: 'APPLIED',
+            hostileRetreated: true,
+          });
+          expect(contract.json().contract.knownState).toBe('ACTIVE');
+          expect(contract.json().contract.pickupTargets).toEqual([]);
+        }
+        const readContract = async (actor: FirstHuntJoinActor) =>
+          (
+            await app.inject({
+              method: 'GET',
+              url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+              headers: actor.headers,
+            })
+          ).json();
+        const join = async (
+          actor: FirstHuntJoinActor,
+          revision: string,
+          commandId = randomUUID(),
+        ) =>
+          app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: actor.headers,
+            payload: {
+              schemaVersion: 1,
+              commandId,
+              expectedPublicRevision: revision,
+              type: 'JOIN',
+              payload: { instanceId: 'ci.m1.wolf-trail.01' },
+            },
+          });
+        expect((await readContract(owner)).contract).toMatchObject({
+          repeatAvailable: true,
+          yourJoinIntent: false,
+        });
+        // A saved first attempt can roll back, then migrate with its old consent and binding intact.
+        const down = await readFile(
+          new URL('../../migrations/0020_hunt_attempts.down.sql', import.meta.url),
+          'utf8',
+        );
+        const up = await readFile(
+          new URL('../../migrations/0020_hunt_attempts.up.sql', import.meta.url),
+          'utf8',
+        );
+        await reopened.transaction().execute(async (tx) => {
+          await sql.raw(down).execute(tx);
+          await sql.raw(up).execute(tx);
+        });
+        expect(
+          await reopened
+            .selectFrom('encounter_admissions')
+            .selectAll()
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirst(),
+        ).toMatchObject({
+          ...admission,
+          effects_applied_at: expect.any(Date),
+          terminal_revision: encounter.revision,
+          effects_source_id: `first-hunt-terminal:${encounterId}:${encounter.revision}`,
+          attempt_no: 1,
+          is_current: true,
+        });
+        const ownerJoin = await join(owner, (await readContract(owner)).publicRevision);
+        expect(ownerJoin.statusCode, ownerJoin.body).toBe(200);
+        expect((await readContract(owner)).contract.yourJoinIntent).toBe(true);
+        expect((await readContract(helper)).contract.yourJoinIntent).toBe(false);
+        expect(
+          await reopened
+            .selectFrom('encounter_admissions')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+        // The second company's failure after current switches rolls back every binding and row.
+        await sql`create function reject_repeat_admission() returns trigger language plpgsql as $$ begin if NEW.attempt_no > 1 then raise exception 'repeat rollback probe'; end if; return NEW; end $$`.execute(
+          reopened,
+        );
+        await sql`create trigger reject_repeat_admission before insert on encounter_admissions for each row execute function reject_repeat_admission()`.execute(
+          reopened,
+        );
+        try {
+          expect((await join(helper, (await readContract(helper)).publicRevision)).statusCode).toBe(
+            500,
+          );
+          expect((await readContract(owner)).contract.encounterId).toBe(encounterId);
+          expect(
+            (
+              await reopened
+                .transaction()
+                .execute((tx) => loadCompanyAggregate(tx, worldId, owner.companyId))
+            )?.encounter.active,
+          ).toBeNull();
+        } finally {
+          await sql`drop trigger reject_repeat_admission on encounter_admissions`.execute(reopened);
+          await sql`drop function reject_repeat_admission()`.execute(reopened);
+        }
+        const revision = (await readContract(helper)).publicRevision;
+        const raced = await Promise.all([join(helper, revision), join(helper, revision)]);
+        expect(raced.filter((reply) => reply.statusCode === 200)).toHaveLength(1);
+        const second = await reopened
+          .selectFrom('encounter_admissions')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('is_current', '=', true)
+          .executeTakeFirstOrThrow();
+        expect(second.attempt_no).toBe(2);
+        expect(second.encounter_id).not.toBe(encounterId);
+        const secondSetup = (
+          await reopened
+            .selectFrom('encounters')
+            .select('setup')
+            .where('id', '=', second.encounter_id)
+            .executeTakeFirstOrThrow()
+        ).setup as combat.BattleSetupV2;
+        expect(
+          secondSetup.units
+            .filter((unit) => unit.sideId === 'first-hunt-hostiles')
+            .map((unit) => ({ entityId: unit.id, currentPools: unit.initialPools })),
+        ).toEqual(
+          savedHostiles
+            .filter((unit) => unit.currentPools['health']! > 0)
+            .map((unit) => ({ entityId: unit.entityId, currentPools: unit.currentPools })),
+        );
+        expect(await verifyEncounterReplay(reopened, encounterId)).toBe(true);
+        for (const previous of firstJoins) {
+          const replay = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: previous.actor.headers,
+            payload: previous.payload,
+          });
+          expect(replay.json()).toEqual(JSON.parse(previous.body));
+        }
+        await expect(
+          reopened.transaction().execute((tx) => sql.raw(down).execute(tx)),
+        ).rejects.toThrow('Repeated hunt participation exists');
+        const beforeOldWorker = await reopened
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .execute();
+        await reopened.transaction().execute((tx) =>
+          applyFirstHuntTerminalEffectsInTransaction(tx, {
+            worldId,
+            encounterId,
+            terminalRevision: encounter.revision,
+            prepareCompanyTerminalEvidence,
+          }),
+        );
+        expect(
+          await reopened
+            .selectFrom('company_snapshots')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .orderBy('company_id')
+            .execute(),
+        ).toEqual(beforeOldWorker);
+        expect((await readContract(owner)).contract.encounterId).toBe(second.encounter_id);
+        await playFirstHuntToVictory(reopened, app, second.encounter_id, [owner, helper]);
+        expect(await applyPendingFirstHuntTerminalEffects(reopened)).toContain(second.encounter_id);
+        expect(await verifyEncounterReplay(reopened, second.encounter_id)).toBe(true);
+        const secondTerminal = (
+          await reopened
+            .selectFrom('encounters')
+            .select('state')
+            .where('id', '=', second.encounter_id)
+            .executeTakeFirstOrThrow()
+        ).state as combat.BattleState;
+        const allDead = secondTerminal.units
+          .filter((unit) => unit.sideId === 'first-hunt-hostiles')
+          .every((unit) => unit.health === 0);
+        expect(
+          await reopened
+            .selectFrom('world_proof_claims')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+        expect(allDead).toBe(true);
+        const proofView = await readContract(owner);
+        expect(proofView.contract.knownState).toBe('PROOF_AVAILABLE');
+        const pickup = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: proofView.publicRevision,
+            type: 'PICKUP',
+            payload: {
+              instanceId: 'ci.m1.wolf-trail.01',
+              toContainerId: proofView.contract.pickupTargets[0].containerId,
+            },
+          },
+        });
+        expect(pickup.statusCode, pickup.body).toBe(200);
+        const held = await readContract(owner);
+        const presentPayload = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: held.publicRevision,
+          type: 'PRESENT',
+          payload: { instanceId: 'ci.m1.wolf-trail.01' },
+        };
+        const paid = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: presentPayload,
+        });
+        expect(paid.statusCode, paid.body).toBe(200);
+        const paidAgain = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: presentPayload,
+        });
+        expect(paidAgain.json()).toEqual(paid.json());
+        expect((await readContract(owner)).contract.knownState).toBe('SETTLED');
+        const walletAfterPay = await reopened
+          .selectFrom('world_hunt_states')
+          .select('wallet_q')
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+          .executeTakeFirstOrThrow();
+        expect(walletAfterPay.wallet_q).toBe(
+          (BigInt(savedWorld.wallet_q) - 80_000_000n).toString(),
+        );
+        const helperView = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          headers: helper.headers,
+        });
+        const left = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: helperView.json().publicRevision,
+            type: 'LEAVE',
+            payload: { instanceId: 'ci.m1.wolf-trail.01' },
+          },
+        });
+        expect(left.statusCode, left.body).toBe(200);
+        const formerHelper = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          headers: helper.headers,
+        });
+        expect(formerHelper.json().contract.yourRole).toBe('NONE');
+        expect(formerHelper.json().contract.terminal).toEqual({
+          effects: 'APPLIED',
+          hostileRetreated: !allDead,
+        });
+        const after = await reopened
+          .selectFrom('company_snapshots')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .orderBy('company_id')
+          .execute();
+        expect(await applyPendingFirstHuntTerminalEffects(reopened)).not.toContain(encounterId);
+        expect(
+          await reopened
+            .selectFrom('company_snapshots')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .orderBy('company_id')
+            .execute(),
+        ).toEqual(after);
+      } finally {
+        await reopened.destroy();
+      }
+    } finally {
+      restoreClock();
     }
   },
   60_000,

@@ -84,6 +84,7 @@ export function FirstHunt(
     readonly onUnauthorized: () => void;
     readonly refreshKey?: number;
     readonly onEncounterDiscovered?: () => void;
+    readonly onRewardPaid?: () => void;
   },
 ) {
   const [view, setView] = useState<ViewState>({ status: 'loading' });
@@ -202,6 +203,7 @@ export function FirstHunt(
           return { ...withoutAttempt, pending: false };
         });
         await refresh();
+        if (attempt.request.type === 'PRESENT') props.onRewardPaid?.();
       } catch (error) {
         setView((state) => ({
           ...state,
@@ -211,7 +213,14 @@ export function FirstHunt(
         }));
       }
     },
-    [props.scope.accountId, props.scope.companyId, refresh, selectedContainerId, view],
+    [
+      props.scope.accountId,
+      props.scope.companyId,
+      props.onRewardPaid,
+      refresh,
+      selectedContainerId,
+      view,
+    ],
   );
 
   const contract = view.response?.contract;
@@ -330,38 +339,46 @@ export function FirstHunt(
           </p>
           {huntText.brief && <p className="contract-brief">{huntText.brief}</p>}
           <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
-          <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
-            <summary>Куда идти и что потребуется?</summary>
-            <p>
-              Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-              {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
-              убедитесь, что у отряда есть провизия.
-            </p>
-          </details>
-          <details className="contract-conversation">
-            <summary>Как получить награду?</summary>
-            <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
-            <p>
-              Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
-              второй компании добровольна; выплата не делится. Принятые условия фиксированы.
-            </p>
-          </details>
+          {contract.knownState !== 'SETTLED' && (
+            <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
+              <summary>Куда идти и что потребуется?</summary>
+              <p>
+                Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
+                {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
+                убедитесь, что у отряда есть провизия.
+              </p>
+            </details>
+          )}
+          {contract.knownState !== 'SETTLED' && (
+            <details className="contract-conversation">
+              <summary>Как получить награду?</summary>
+              <p>После боя нужно забрать подлинный трофей и лично предъявить его заказчику.</p>
+              <p>
+                Награда: {rewardLabel(contract.terms.rewardQ)} единственному носителю трофея. Помощь
+                второй компании добровольна; выплата не делится. Принятые условия фиксированы.
+              </p>
+            </details>
+          )}
           <dl>
             <dt>Ваша роль</dt>
             <dd>{firstHuntRoleLabel(contract.yourRole)}</dd>
             <dt>Состояние</dt>
             <dd>{firstHuntStateLabel(contract)}</dd>
-            <dt>Слот помощника</dt>
-            <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
-            <dt>Готовность к бою</dt>
-            <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
+            {contract.knownState !== 'SETTLED' && (
+              <>
+                <dt>Слот помощника</dt>
+                <dd>{contract.helperSlot === 'AVAILABLE' ? 'свободен' : 'занят'}</dd>
+                <dt>Готовность к бою</dt>
+                <dd>{contract.yourJoinIntent ? 'отряд готов' : 'не заявлена'}</dd>
+              </>
+            )}
           </dl>
           <p className="state-note">{firstHuntGuidance(contract, props.location)}</p>
           {contract.yourProof && (
             <p className="state-note">
               Трофей находится {containerLabel(contract.yourProof.containerId)} ·{' '}
               {contract.yourProof.redemption === 'REDEEMED'
-                ? 'выплата получена, отметка REDEEMED'
+                ? lookup('journey.hunt.redeemed')
                 : 'ещё не предъявлен'}
               .
             </p>
@@ -410,7 +427,7 @@ export function FirstHunt(
                 disabled={actionsDisabled}
                 onClick={() => void submit('JOIN')}
               >
-                Вступить в бой
+                {contract.repeatAvailable ? 'Вступить в бой снова' : 'Вступить в бой'}
               </button>
             )}
             {atField && contract.knownState === 'PROOF_AVAILABLE' && pickupTargets.length > 0 && (
@@ -533,6 +550,9 @@ export function firstHuntRoleLabel(
 export function firstHuntStateLabel(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
 ): string {
+  if (contract.terminal?.effects === 'PENDING') return 'бой завершён, сохраняем последствия';
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'охота не завершена';
   switch (contract.knownState) {
     case 'OFFERED':
       return 'предложен';
@@ -545,7 +565,7 @@ export function firstHuntStateLabel(
     case 'PROOF_HELD':
       return contract.yourProof ? 'трофей у вашей компании' : 'трофей удерживается участником';
     case 'SETTLED':
-      return 'выплата завершена';
+      return lookup('journey.hunt.settled');
   }
 }
 
@@ -572,40 +592,64 @@ export function firstHuntGuidance(
   contract: NonNullable<FirstHuntReadResponseDto['contract']>,
   currentSiteId: string | null,
 ): string {
+  if (contract.terminal?.effects === 'PENDING')
+    return 'Бой завершён. Последствия ещё не сохранены; дождитесь обновления.';
+  if (contract.repeatAvailable && contract.knownState === 'ACTIVE') {
+    if (contract.yourJoinIntent) return 'Отряд готов. Ожидаем подтверждения второго участника.';
+    const repeatHint =
+      contract.instanceId === 'ci.m1.wolf-trail.01'
+        ? ' Выживших можно перехватить в середине поля.'
+        : '';
+    return currentSiteId === contract.terms.objectiveLocation.siteId
+      ? `Охота не завершена. Последствия боя сохранены. Можно вступить в бой снова.${repeatHint}`
+      : `Охота не завершена. Для новой попытки вернитесь к ${locationLabel(contract.terms.objectiveLocation.siteId)}.`;
+  }
+  if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
+    return 'Противники ушли живыми. Трофея и награды нет. Последствия боя сохранены; отряд больше не связан боем. Повторная попытка пока недоступна.';
   const issuer = contract.terms.issuerLocation.siteId;
   const objective = contract.terms.objectiveLocation.siteId;
-  if (contract.knownState === 'OFFERED' && currentSiteId !== issuer)
-    return `Чтобы принять предложение, вернитесь к заказчику в ${locationLabel(issuer)}.`;
-  if (contract.knownState === 'OFFERED')
-    return 'Условия показаны до принятия; примите контракт у заказчика, когда будете готовы.';
-  if (contract.knownState === 'ACTIVE' && contract.yourRole === 'NONE') {
+  switch (contract.knownState) {
+    case 'OFFERED':
+      return currentSiteId === issuer
+        ? 'Условия показаны до принятия; примите контракт у заказчика, когда будете готовы.'
+        : `Чтобы принять предложение, вернитесь к заказчику в ${locationLabel(issuer)}.`;
+    case 'ACTIVE':
+      return activeHuntGuidance(contract, currentSiteId);
+    case 'ENCOUNTER_ACTIVE':
+      return 'Бой идёт. Участие закреплено сервером; выйти из контракта до завершения нельзя.';
+    case 'PROOF_AVAILABLE':
+      return currentSiteId === objective
+        ? 'Выберите контейнер, предложенный сервером, чтобы забрать трофей.'
+        : `Вернитесь к месту боя: ${locationLabel(objective)}.`;
+    case 'PROOF_HELD':
+      if (!contract.yourProof)
+        return 'Трофей удерживается текущим носителем; вы не можете предъявить его от имени другой компании.';
+      return currentSiteId === issuer
+        ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
+        : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
+    case 'SETTLED':
+      return lookup('journey.hunt.settled-guidance');
+  }
+}
+
+function activeHuntGuidance(
+  contract: NonNullable<FirstHuntReadResponseDto['contract']>,
+  currentSiteId: string | null,
+): string {
+  const issuer = contract.terms.issuerLocation.siteId;
+  if (contract.yourRole === 'NONE') {
     if (contract.helperSlot === 'OCCUPIED')
       return 'Слот помощника занят; второй слот не предусмотрен.';
     return currentSiteId === issuer
       ? 'Помощь добровольна и доступна у заказчика, пока слот свободен.'
       : `Чтобы предложить помощь, прибудьте к заказчику в ${locationLabel(issuer)}.`;
   }
-  if (contract.knownState === 'ACTIVE' && contract.yourRole !== 'NONE') {
-    if (contract.yourJoinIntent)
-      return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
-    return currentSiteId === objective
-      ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
-      : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
-  }
-  if (contract.knownState === 'ENCOUNTER_ACTIVE')
-    return 'Бой идёт. Участие закреплено сервером; выйти из контракта до завершения нельзя.';
-  if (contract.knownState === 'PROOF_AVAILABLE')
-    return currentSiteId === objective
-      ? 'Выберите контейнер, предложенный сервером, чтобы забрать трофей.'
-      : `Вернитесь к месту боя: ${locationLabel(objective)}.`;
-  if (contract.knownState === 'PROOF_HELD')
-    if (!contract.yourProof)
-      return 'Трофей удерживается текущим носителем; вы не можете предъявить его от имени другой компании.';
-    else
-      return currentSiteId === issuer
-        ? 'Предъявите трофей заказчику. Награда достанется текущему носителю.'
-        : `Вернитесь к заказчику в ${locationLabel(issuer)}, сохраняя трофей в своём контейнере.`;
-  return 'Выплата завершена. Трофей остаётся в прежнем контейнере и отмечен как погашенный.';
+  if (contract.yourJoinIntent)
+    return 'Отряд готов к бою. Бой начнётся, когда выполнены условия допуска.';
+  const objective = contract.terms.objectiveLocation.siteId;
+  return currentSiteId === objective
+    ? 'Вы у цели: вступите в бой. Участие второй компании добровольно.'
+    : `Следуйте по доступным маршрутам к ${locationLabel(objective)} и запаситесь провизией перед опасным переходом.`;
 }
 
 export async function readHunt(instanceId: string | undefined) {

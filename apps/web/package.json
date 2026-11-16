@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@babylonjs/core": "9.28.0",
+    "@babylonjs/loaders": "9.28.0",
     "@colyseus/sdk": "0.18.4",
     "@warwrit/protocol": "workspace:*",
     "react": "^19.0.0",
@@ -17,7 +18,7 @@
     "vite": "^7.0.0"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "build": "tsc -p tsconfig.json --noEmit && NODE_ENV=production vite build",
     "clean": "node ../../scripts/clean.mjs",
     "dev": "vite",
     "preview": "vite preview",

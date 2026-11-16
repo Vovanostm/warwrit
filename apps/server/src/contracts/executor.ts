@@ -43,6 +43,7 @@ import {
 } from '../company/repository.js';
 import { readFirstHuntTerminalLockSet } from './repository.js';
 import {
+  HUNT_TERMINAL_POLICY_VERSION,
   TerminalAwaitingLeadershipChoice,
   type FirstHuntTerminalEvidence,
   type PrepareFirstHuntTerminalEvidence,
@@ -461,7 +462,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
           entry.terminalRevision === input.terminalRevision &&
           entry.terminalSourceEventId === `encounter:${input.encounterId}:terminal`,
       );
-      if (!previous || previous.encounter.active !== null || !completed)
+      if (
+        !previous ||
+        previous.encounter.active?.binding.setup.battleId === input.encounterId ||
+        !completed
+      )
         throw new TypeError('FIRST HUNT terminal acknowledgement has an unreleased company');
       const receiptIdentity = firstHuntTerminalReceiptIdentity({
         worldId: input.worldId,
@@ -545,10 +550,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   )
     throw new TypeError('FIRST HUNT terminal encounter replay is invalid');
 
-  const hostileIds = new Set(world.hostiles.map((hostile) => hostile.entityId));
+  const admittedHostiles = world.hostiles.filter((hostile) => hostile.currentPools['health']! > 0);
+  const hostileIds = new Set(admittedHostiles.map((hostile) => hostile.entityId));
   const hostileUnits = setup.units.filter((unit) => hostileIds.has(unit.id));
   if (
-    hostileUnits.length !== world.hostiles.length ||
+    hostileUnits.length !== admittedHostiles.length ||
     hostileUnits.some((unit) => {
       const hostile = world.hostiles.find((entry) => entry.entityId === unit.id);
       return (
@@ -581,10 +587,11 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
         },
       ]),
   );
-  if (terminalPools.size !== world.hostiles.length)
+  if (terminalPools.size !== admittedHostiles.length)
     throw new TypeError('FIRST HUNT terminal hostile pool set is incomplete');
 
   const hostiles: readonly FirstHuntHostileState[] = world.hostiles.map((hostile) => {
+    if (hostile.currentPools['health'] === 0) return hostile;
     const pools = terminalPools.get(String(hostile.entityId));
     if (
       !pools ||
@@ -681,6 +688,7 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
 
   for (const release of released) {
     await persistFirstHuntTerminalCompanyTransition(transaction, {
+      terminalPolicyVersion: HUNT_TERMINAL_POLICY_VERSION,
       previous: release.previous,
       next: release.next,
       encounterId: input.encounterId,
@@ -702,7 +710,13 @@ export async function applyFirstHuntTerminalEffectsInTransaction(
   const companySide = setup.sides.find((side) => side.id === COMPANY_SIDE_ID);
   const hasCompanyVictory =
     companySide !== undefined && state.outcome?.winnerSideId === companySide.id;
-  if (hasCompanyVictory) {
+  // Historical V2/V3 settlements retain their rule. Tactical V4/V5 victory
+  // can include escaped living targets, which do not supply a trophy.
+  const objectivesDead = hostiles.every((hostile) => hostile.currentPools['health'] === 0);
+  const tactical =
+    state.rulesetId === M1_DOMAIN_BRIDGE_V4_RULESET_ID ||
+    state.rulesetId === M1_DOMAIN_BRIDGE_V5_RULESET_ID;
+  if (hasCompanyVictory && (!tactical || objectivesDead)) {
     const groundItem = createGroundProof(input.worldId, proofSourceId, hunt);
     await transaction
       .insertInto('world_proof_claims')

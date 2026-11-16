@@ -32,6 +32,25 @@ The server rejects partial configuration, a missing database, an inexact public
 origin, or any callback URI except the fixed callback on that origin. HTTP is
 accepted only when both the issuer and public origin are loopback URLs.
 
+Production startup correction — 2026-10-28: `NODE_ENV=production` now requires
+a nonblank `DATABASE_URL` and the complete validated OIDC configuration above.
+The server refuses missing game dependencies before constructing or listening
+on the app, rather than starting a health-only server that reports ready.
+Nonproduction retains the optional identity/database setup used by local tools.
+Focused config/app checks pass (12 tests); an actual process with missing
+production settings exits with the configuration refusal. A new real
+database-down/issuer journey and deployment are NOT_RUN.
+
+The 2026-11-06 post-review correction trims `DATABASE_URL` and normalizes an empty
+result to missing before checking identity or encounter-fixture requirements.
+With configured OIDC, absent, empty and whitespace-only values refuse startup
+in every environment. Previously development/test could retain an identity
+configuration while omitting database-backed routes and reporting health-only
+readiness200. Production already refused that configuration at its later guard.
+Valid padded URLs still normalize to their trimmed value. Regression and actual
+entry-process results are recorded in the
+[launch follow-up](M1_LOCAL_PLAYTEST.md#post-review-blank-database-correction--2026-11-06).
+
 When identity is enabled, `/health/ready` checks the required identity tables and
 columns without reading account data or applying migrations. Missing schema
 returns 503. With identity disabled, the database-only readiness probe remains.
@@ -105,3 +124,23 @@ PostgreSQL integration spec passed again. A real empty-schema probe returned 503
 with identity enabled and 200 with identity disabled; the migrated database
 returned 200 with identity enabled. These are local fixture results, not
 external-provider, lost-credential recovery or company-persistence evidence.
+
+## Four local company profiles
+
+Owner request, 2026-10-29; publication scope confirmed 2026-10-30. In development
+with a loopback HTTP listener/origin, `GET /auth/local-companies` advertises slots
+1–4 and `POST /auth/local-companies` accepts only `{ companyNumber: 1|2|3|4 }`.
+Unsafe-method Origin checks apply before session creation. The identities use the
+reserved issuer `urn:warwrit:local-test-company` and fixed numbered subjects;
+they cannot select or merge an OIDC account. Account upsert, previous-browser
+session revocation and new session persistence share one transaction using the
+same helper as OIDC. The ordinary HttpOnly/SameSite cookie and expiry apply.
+
+These routes are absent outside explicit `NODE_ENV=development` plus local
+listener/origin configuration, and are additionally unavailable in a production
+process even if handed a manually enabled option. The Vite production UI never
+requests their capability. The client creates each first-use company through the
+ordinary authenticated opening/command endpoints; later logins do not reset it.
+No additional privilege, provider request, schema or saved-company mutation is
+introduced by session entry itself. This is local test functionality, not a
+production account-login or recovery method.

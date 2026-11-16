@@ -2,69 +2,6 @@
   "schemaVersion": 1,
   "assets": [
     {
-      "id": "art.m1.battle.ground-grass",
-      "path": "assets/art/m1/battle/ground-grass.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/ground-grass.json",
-      "generatedAt": "2026-10-02T10:59:09.454Z"
-    },
-    {
-      "id": "art.m1.battle.ground-mud",
-      "path": "assets/art/m1/battle/ground-mud.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/ground-mud.json",
-      "generatedAt": "2026-10-02T11:00:36.657Z"
-    },
-    {
-      "id": "art.m1.battle.obstacle-rubble",
-      "path": "assets/art/m1/battle/obstacle-rubble.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/obstacle-rubble.json",
-      "generatedAt": "2026-10-02T11:01:40.833Z"
-    },
-    {
-      "id": "art.m1.battle.unit-merc-spear",
-      "path": "assets/art/m1/battle/unit-merc-spear.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-merc-spear.json",
-      "generatedAt": "2026-10-02T10:54:33.798Z"
-    },
-    {
-      "id": "art.m1.battle.unit-merc-sword",
-      "path": "assets/art/m1/battle/unit-merc-sword.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-merc-sword.json",
-      "generatedAt": "2026-10-02T10:52:11.960Z"
-    },
-    {
-      "id": "art.m1.battle.unit-raider-axe",
-      "path": "assets/art/m1/battle/unit-raider-axe.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-raider-axe.json",
-      "generatedAt": "2026-10-02T10:56:01.232Z"
-    },
-    {
-      "id": "art.m1.battle.unit-raider-spear",
-      "path": "assets/art/m1/battle/unit-raider-spear.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-raider-spear.json",
-      "generatedAt": "2026-10-02T10:57:29.164Z"
-    },
-    {
       "id": "art.m1.style.portrait-leader",
       "path": "assets/art/m1/style/portrait-leader.png",
       "kind": "image",
@@ -191,58 +128,15 @@
       "generatedAt": "2026-10-02"
     },
     {
-      "id": "art.m1.battle.unit-captive",
-      "path": "assets/art/m1/battle/unit-captive.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-captive.json",
-      "generatedAt": "2026-10-02T12:02:07.880Z"
-    },
-    {
-      "id": "art.m1.battle.unit-mill-beast",
-      "path": "assets/art/m1/battle/unit-mill-beast.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-mill-beast.json",
-      "generatedAt": "2026-10-02T12:00:19.416Z"
-    },
-    {
-      "id": "art.m1.battle.unit-raider-bow",
-      "path": "assets/art/m1/battle/unit-raider-bow.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-raider-bow.json",
-      "generatedAt": "2026-10-02T11:56:37.056Z"
-    },
-    {
-      "id": "art.m1.battle.unit-raider-greatsword",
-      "path": "assets/art/m1/battle/unit-raider-greatsword.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-raider-greatsword.json",
-      "generatedAt": "2026-10-02T11:57:52.161Z"
-    },
-    {
-      "id": "art.m1.battle.unit-scout",
-      "path": "assets/art/m1/battle/unit-scout.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/m1/battle/unit-scout.json",
-      "generatedAt": "2026-10-02T12:03:24.836Z"
-    },
-    {
       "id": "art.m1.battle.unit-wolf",
       "path": "assets/art/m1/battle/unit-wolf.png",
       "kind": "image",
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/battle/unit-wolf.json",
-      "generatedAt": "2026-10-02T11:59:04.166Z"
+      "generatedAt": "2026-10-02T11:59:04.166Z",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
     },
     {
       "id": "art.m1.places.bereznyak",
@@ -895,7 +789,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/mud.json",
-      "generatedAt": "2026-10-16T18:50:18.849208+00:00"
+      "generatedAt": "2026-10-16T18:50:18.849208+00:00",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.fire",
@@ -904,16 +800,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire.json",
-      "generatedAt": "2026-10-16T18:50:18.849208+00:00"
-    },
-    {
-      "id": "art.combat.readable-terrain.earth-ink",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-ink.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-ink.json",
-      "generatedAt": "2026-10-17T03:58:46.645102+00:00"
+      "generatedAt": "2026-10-16T18:50:18.849208+00:00",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.fire-crescent",
@@ -922,7 +811,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire-crescent.json",
-      "generatedAt": "2026-10-17T07:00:17.199Z"
+      "generatedAt": "2026-10-17T07:00:17.199Z",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.fire-stubs",
@@ -931,34 +822,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/fire-stubs.json",
-      "generatedAt": "2026-10-17T07:00:20.248Z"
-    },
-    {
-      "id": "art.combat.readable-terrain.earth-ruts",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-ruts.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-ruts.json",
-      "generatedAt": "2026-10-17T08:30:47.702856+00:00"
-    },
-    {
-      "id": "art.combat.readable-terrain.earth-worn",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-worn.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-worn.json",
-      "generatedAt": "2026-10-17T09:39:43.136604+00:00"
-    },
-    {
-      "id": "art.combat.readable-terrain.earth-cobbles",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-cobbles.json",
-      "generatedAt": "2026-10-17T09:39:00.611961+00:00"
+      "generatedAt": "2026-10-17T07:00:20.248Z",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.mill-scenery",
@@ -967,25 +833,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/mill-scenery.json",
-      "generatedAt": "2026-10-17T10:48:30.352970+00:00"
-    },
-    {
-      "id": "art.combat.readable-terrain.site-ground",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/site-ground.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/site-ground.json",
-      "generatedAt": "2026-10-17T11:50:27.288834+00:00"
-    },
-    {
-      "id": "art.combat.readable-terrain.earth-quiet",
-      "path": "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.png",
-      "kind": "image",
-      "source": "codex-image-generation",
-      "license": "original work generated for Warwrit; no third-party art",
-      "provenance": "assets/art/combat/readable-terrain-2026-10-16/earth-quiet.json",
-      "generatedAt": "2026-10-17T11:56:04.519710+00:00"
+      "generatedAt": "2026-10-17T10:48:30.352970+00:00",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-battle-scene.ts"]
     },
     {
       "id": "art.combat.readable-terrain.field-ground",
@@ -994,7 +844,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/field-ground.json",
-      "generatedAt": "2026-10-17T13:20:53.996557+00:00"
+      "generatedAt": "2026-10-17T13:20:53.996557+00:00",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-battle-scene.ts"]
     },
     {
       "id": "art.combat.readable-terrain.paving",
@@ -1003,7 +855,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/paving.json",
-      "generatedAt": "2026-10-17T13:37:08.504659+00:00"
+      "generatedAt": "2026-10-17T13:37:08.504659+00:00",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.ink-yard-earth",
@@ -1012,7 +866,9 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/ink-yard-earth.json",
-      "generatedAt": "2026-10-17T14:42:00Z"
+      "generatedAt": "2026-10-17T14:42:00Z",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/battle-terrain.ts"]
     },
     {
       "id": "art.combat.readable-terrain.yard-fringe",
@@ -1021,7 +877,384 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/combat/readable-terrain-2026-10-16/yard-fringe.json",
-      "generatedAt": "2026-10-17T14:51:00Z"
+      "generatedAt": "2026-10-17T14:51:00Z",
+      "contentRevision": "combat-sprite-current",
+      "consumers": [
+        "apps/web/src/combat-lab/battle-terrain.ts",
+        "apps/web/src/combat-lab/battle-scenery.ts"
+      ]
+    },
+    {
+      "id": "art.combat.w01.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w01/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w01/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w02.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w02/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w02/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w03.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w03/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w03/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w04.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w04/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w04/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w05.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w05/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w05/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w06.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w06/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w06/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w07.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w07/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w07/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w08.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w08/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w08/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w09.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w09/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w09/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w10.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w10/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w10/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b002.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b002/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b002/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b003.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b003/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b003/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b017.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b017/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b017/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b019.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b019/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b019/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b023.sprite-v3",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b023/sprite-v3.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b023/provenance-v3.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b025.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b025/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b025/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b030.sprite-v3",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b030/sprite-v3.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b030/provenance-v3.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b037.sprite-v2",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b037/sprite-v2.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b037/provenance-v2.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b053.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b053/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b053/provenance.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.w01-unarmed.sprite",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/w01-unarmed/sprite.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/w01-unarmed/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-art.ts"]
+    },
+    {
+      "id": "art.combat.b023.fixture",
+      "path": "assets/art/combat/stage1-2026-10-09/roster/b023/fixture.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/combat/stage1-2026-10-09/roster/b023/provenance-fixture.json",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/sprite-battle-scene.ts"]
+    },
+    {
+      "id": "art.combat.ui-icons.crossed-swords",
+      "path": "assets/art/combat/ui-icons/crossed-swords.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.walking-boot",
+      "path": "assets/art/combat/ui-icons/walking-boot.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.shield",
+      "path": "assets/art/combat/ui-icons/shield.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.hourglass",
+      "path": "assets/art/combat/ui-icons/hourglass.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.run",
+      "path": "assets/art/combat/ui-icons/run.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.shield-bash",
+      "path": "assets/art/combat/ui-icons/shield-bash.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.hammer-drop",
+      "path": "assets/art/combat/ui-icons/hammer-drop.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.barbed-spear",
+      "path": "assets/art/combat/ui-icons/barbed-spear.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.arrow-scope",
+      "path": "assets/art/combat/ui-icons/arrow-scope.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.combat.ui-icons.tattered-banner",
+      "path": "assets/art/combat/ui-icons/tattered-banner.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4",
+      "license": "CC BY 3.0; assets/art/combat/ui-icons/license.txt",
+      "provenance": "assets/art/combat/ui-icons/README.md",
+      "contentRevision": "combat-sprite-current",
+      "consumers": ["apps/web/src/combat-lab/CombatIcon.tsx"]
+    },
+    {
+      "id": "art.world.atlas-v6",
+      "path": "assets/art/world/porechye-atlas-v1/atlas-v6.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/world/porechye-atlas-v1/road-repair-v6.json",
+      "contentRevision": "atlas-v6",
+      "consumers": ["apps/server/src/world-lab/cartography-raster.ts"]
+    },
+    {
+      "id": "art.world.fog-paper",
+      "path": "assets/art/world/fog-paper-v1/unknown-paper.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit; no third-party art",
+      "provenance": "assets/art/world/fog-paper-v1/provenance.json",
+      "contentRevision": "atlas-v6",
+      "consumers": ["apps/web/src/game/PaintedMapCanvas.tsx"]
+    },
+    {
+      "id": "art.world.map-icons",
+      "path": "assets/art/world/map-icons-v1/icons.svg",
+      "kind": "image",
+      "source": "game-icons/icons@82d948812bfe3f269ef8f731dcdb07b08160edc4 and original local symbols",
+      "license": "CC BY 3.0; original local symbols as documented",
+      "provenance": "assets/art/world/map-icons-v1/sources.json",
+      "contentRevision": "atlas-v6",
+      "consumers": ["scripts/world-map/map-symbols.ts"]
+    }
+  ],
+  "contentRevisions": {
+    "combat-sprite-current": {
+      "hud": "apps/web/src/combat-lab/BattleView.tsx",
+      "entry": "apps/web/src/EncounterPanel.tsx",
+      "consumers": [
+        "apps/web/src/combat-lab/sprite-art.ts",
+        "apps/web/src/combat-lab/sprite-battle-scene.ts",
+        "apps/web/src/combat-lab/battle-terrain.ts",
+        "apps/web/src/combat-lab/battle-scenery.ts",
+        "apps/web/src/combat-lab/CombatIcon.tsx"
+      ],
+      "note": "Existing Command desk sprite HUD; measured sprite geometry remains in sprite-art.ts. Unknown combatant is inline SVG."
+    },
+    "atlas-v6": {
+      "raster": "art.world.atlas-v6",
+      "geometry": "packages/game-core/src/world/painted-atlas/region.ts",
+      "editor": "scripts/world-map/navigation-maps.ts",
+      "worldIds": ["world.porechye.atlas-v1", "world.painted-atlas.lab-v1"],
+      "note": "v1 in world/directory IDs is a persisted namespace, not an obsolete raster selector. Legacy world/save readers remain supported without conversion."
+    }
+  },
+  "archives": [
+    {
+      "sourceRevision": "79a6ba025bba236dfe4be0665aece98d1c8c4353",
+      "release": "https://github.com/Vovanostm/warwrit/releases/tag/wlc-03-history-2026-11-07",
+      "archive": "wlc-03-history.tar.gz",
+      "manifest": "https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/archive-manifest.json",
+      "note": "Retired combat/HUD and atlas authoring inputs. Original prompts/provenance preserve historical paths; recover those paths from this archive or the pinned source revision. Renderer-spike is owned by WLC-02.",
+      "supplementalSource": "https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/porechye-atlas-layout-source.ts",
+      "supplementalManifest": "https://github.com/Vovanostm/warwrit/releases/download/wlc-03-history-2026-11-07/atlas-layout-source.json"
     }
   ]
 }

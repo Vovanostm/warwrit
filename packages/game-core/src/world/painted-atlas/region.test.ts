@@ -1,0 +1,130 @@
+import { expect, it } from 'vitest';
+
+import {
+  buildNavigationField,
+  compileMovementPlan,
+  continuousSurfaceAt,
+  findTravelPath,
+  isContinuousPointWalkable,
+} from '../continuous-movement.js';
+import { continuousLocationPoint } from '../continuous-company.js';
+import { CONTINUOUS_WORLD_REGION, isContinuousRegionVersion } from '../continuous-region.js';
+import {
+  PAINTED_ATLAS_REGION,
+  PAINTED_ATLAS_SITES,
+  paintedAtlasNearbySite,
+  paintedAtlasPixel,
+  paintedAtlasPoint,
+} from './region.js';
+
+// Match the server's one immutable compiled field per edition.
+const field = buildNavigationField(PAINTED_ATLAS_REGION);
+
+it('matches the repaired atlas roads and removes the former shortcut through the field', () => {
+  expect(
+    [
+      [2960, 1410],
+      [2998, 1447],
+      [2547, 1925],
+      [2572, 1858],
+      [2640, 1831],
+    ].map(([x, y]) => continuousSurfaceAt(field, paintedAtlasPoint([x!, y!])).overlayId),
+  ).toEqual(Array(5).fill('dirt_road'));
+  expect(continuousSurfaceAt(field, paintedAtlasPoint([2950, 1433])).overlayId).toBeNull();
+});
+
+it('uses the drawn field-edge bends instead of cutting across the repaired road connections', () => {
+  for (const [from, to, bend] of [
+    [
+      [2691, 1379],
+      [3072, 1454],
+      [2970, 1413],
+    ],
+    [
+      [2636, 2048],
+      [2800, 1775],
+      [2547, 1925],
+    ],
+  ] as const) {
+    const start = paintedAtlasPoint(from);
+    const goal = paintedAtlasPoint(to);
+    const path = findTravelPath(field, start, goal)!;
+    const plan = compileMovementPlan({
+      field,
+      path,
+      startedAtMs: '0',
+      movementEpoch: '0',
+      planId: 'repaired-road',
+    });
+    const direct = compileMovementPlan({
+      field,
+      path: [start, goal],
+      startedAtMs: '0',
+      movementEpoch: '0',
+      planId: 'field-shortcut',
+    });
+    expect(
+      path.map(paintedAtlasPixel).some(([x, y]) => Math.hypot(x - bend[0], y - bend[1]) < 20),
+    ).toBe(true);
+    expect(BigInt(plan.totalDurationUs)).toBeLessThan(BigInt(direct.totalDurationUs));
+  }
+});
+
+it('uses the rendered atlas frame and resolves its authored settlement zone', () => {
+  const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
+  const entrance = paintedAtlasPoint([1536 + 195, 1024 + 220]);
+
+  expect(paintedAtlasPoint(paintedAtlasPixel(bereznyak.anchorFp))).toEqual(bereznyak.anchorFp);
+  expect(paintedAtlasNearbySite(field, entrance)?.siteId).toBe('bereznyak');
+  expect(
+    paintedAtlasNearbySite(field, paintedAtlasPoint([1536 + 500, 1024 + 500])),
+  ).toBeUndefined();
+});
+
+it('routes over the authored atlas bridges while keeping river water impassable', () => {
+  const from = paintedAtlasPoint([450, 330]);
+  const to = paintedAtlasPoint([4222, 2398]);
+  const river = paintedAtlasPoint([600, 1604]);
+
+  expect(isContinuousPointWalkable(field, river)).toBe(false);
+  expect(findTravelPath(field, from, to)).toBeDefined();
+});
+
+it('maps company positions to the selected edition without crossing atlas frames', () => {
+  const bereznyak = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'bereznyak')!;
+  const location = { kind: 'AT' as const, siteId: bereznyak.siteId, areaId: bereznyak.areaId };
+  const expected = {
+    xMicroFp: String(bereznyak.anchorFp.xFp * 65_536),
+    zMicroFp: String(bereznyak.anchorFp.zFp * 65_536),
+  };
+
+  expect(continuousLocationPoint(location, PAINTED_ATLAS_REGION)).toEqual(expected);
+  expect(isContinuousRegionVersion(PAINTED_ATLAS_REGION.mapEdition)).toBe(true);
+  const insideBereznyakZone = paintedAtlasPoint([1536 + 200, 1024 + 220]);
+  expect(
+    continuousLocationPoint(
+      {
+        kind: 'TERRAIN',
+        regionVersion: PAINTED_ATLAS_REGION.mapEdition,
+        q: String(insideBereznyakZone.xFp * 65_536),
+        r: String(insideBereznyakZone.zFp * 65_536),
+      },
+      PAINTED_ATLAS_REGION,
+    ),
+  ).toEqual({
+    xMicroFp: String(insideBereznyakZone.xFp * 65_536),
+    zMicroFp: String(insideBereznyakZone.zFp * 65_536),
+  });
+  expect(
+    continuousLocationPoint(
+      { kind: 'TERRAIN', regionVersion: PAINTED_ATLAS_REGION.mapEdition, q: '100', r: '200' },
+      CONTINUOUS_WORLD_REGION,
+    ),
+  ).toBeUndefined();
+  expect(
+    continuousLocationPoint(
+      { kind: 'TERRAIN', regionVersion: 'seroe-porechye-continuous-v4', q: '100', r: '200' },
+      CONTINUOUS_WORLD_REGION,
+    ),
+  ).toEqual({ xMicroFp: '100', zMicroFp: '200' });
+});

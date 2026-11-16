@@ -1,0 +1,19 @@
+{
+  "phase": "after-committed-response-loss",
+  "type": "HELP",
+  "commandId": "d118acbf-7491-42dc-a174-52ae7983083d",
+  "droppedStatus": 200,
+  "durableReceipt": [
+    {
+      "command_id": "d118acbf-7491-42dc-a174-52ae7983083d",
+      "response": {
+        "ok": true,
+        "rewardQ": null,
+        "revision": "2",
+        "commandId": "d118acbf-7491-42dc-a174-52ae7983083d",
+        "schemaVersion": 1
+      }
+    }
+  ],
+  "receiptCount": 2
+}

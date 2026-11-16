@@ -290,6 +290,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     toContainerId: id,
     accessEvidenceId: id,
     ownershipReceiptId: optional(id),
+    splitItemId: optional(id),
   }),
   EquipItem: command('PLAYER', {
     characterId: id,

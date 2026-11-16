@@ -7,6 +7,9 @@ import type { Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 
+/** Accepted 2026-11-06: living escaped objectives never create hunt proof. */
+export const HUNT_TERMINAL_POLICY_VERSION = 'm1-hunt-terminal-2';
+
 /**
  * Shapes shared by the FIRST HUNT terminal transaction and the encounter evidence producer.
  * Kept apart from both executors so neither imports the other.

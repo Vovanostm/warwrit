@@ -1,15 +1,27 @@
 id,name_ru,name_en,place,role_ru,wants,hides,voice,contracts,status
 onufriy-sych,Онуфрий Сыч,Onufriy Sych,kamenny-brod,посадник,удержать город ничьим,готов отдать знамя житному воеводе ради мира с герцогиней,осторожный; говорит о пошлинах,ci.m1.raider-standard.01 (за сценой),proposal
-evsey-pyzhov,Евсей Пыжов,Yevsey Pyzhov,kamenny-brod,писарь при доске объявлений,понять кто ходит ночью по дороге,посадник боится что это житный разъезд,вежливо и длинно; бывший приказной из Белоречи,ci.m1.road-tracks.01,proposal
-gordey-lapa,Гордей Лапа,Gordey Lapa,kamenny-brod,десятник городской стражи,вернуть своего человека; убрать банду,послал разведчика одного: второго не было,коротко; грубоватый юмор,ci.m1.lost-scout.01;ci.m1.raider-standard.01,proposal
+evsey-pyzhov,Евсей Пыжов,Yevsey Pyzhov,kamenny-brod,писарь при доске объявлений,понять кто ходит ночью по дороге,посадник боится что это житный разъезд,вежливо и длинно; бывший приказной из Белоречи,ci.m1.road-tracks.01;ci.m1.empty-watch-record.01,proposal
+gordey-lapa,Гордей Лапа,Gordey Lapa,kamenny-brod,десятник городской стражи,вернуть своего человека; убрать банду,послал разведчика одного: второго не было,коротко; грубоватый юмор,ci.m1.lost-scout.01;ci.m1.raider-standard.01;ci.m1.tracks-over-tracks.01,proposal
 ivashka-ryaboy,Ивашка Рябой,Ivashka Ryaboy,kamenny-brod,разведчик стражи,выжить,видел что били люди в житных куртках,молодой; испуганный,ci.m1.lost-scout.01,proposal
-agafya-sushina,Агафья Сушина,Agafya Sushina,bereznyak,травница,найти вора и травы,травы заказаны караульней; без них нечем платить подать,сухо; по делу; вдова,ci.m1.missing-herbs.01,proposal
-tikhon-bortnik,Тихон Бортник,Tikhon Bortnik,bereznyak,староста Березняка; бортник,чтобы волков не стало,зарезанная корова — соседская; с соседом в ссоре,ворчливый,ci.m1.wolf-trail.01,proposal
-frol-zvonar,Фрол Звонарь,Frol Zvonar,tikhaya-gat,смотритель с билом,убить то что ходит у мельницы,сам закапывал мёртвых после сечи,старик; сравнивает с тем что было до Смуты,ci.m1.mill-beast.01;ci.m1.mill-worker.01,proposal
+agafya-sushina,Агафья Сушина,Agafya Sushina,bereznyak,травница,найти вора и травы,травы заказаны караульней; без них нечем платить подать,сухо; по делу; вдова,ci.m1.missing-herbs.01;ci.m1.man-by-road.01;ci.m1.foul-well.01,proposal
+tikhon-bortnik,Тихон Бортник,Tikhon Bortnik,bereznyak,староста Березняка; бортник,чтобы волков не стало,зарезанная корова — соседская; с соседом в ссоре,ворчливый,ci.m1.wolf-trail.01;ci.m1.two-receipts.01,proposal
+frol-zvonar,Фрол Звонарь,Frol Zvonar,tikhaya-gat,смотритель с билом,убить то что ходит у мельницы,сам закапывал мёртвых после сечи,старик; сравнивает с тем что было до Смуты,ci.m1.mill-beast.01;ci.m1.mill-worker.01;ci.m1.foul-well.01,proposal
 marfa,Марфа,Marfa,tikhaya-gat,дочь перевозчика,вернуть отца,отец сам взялся перевезти банду за плату,прямо; без денег,ci.m1.cellar-rescue.01,proposal
 demyan-perevozchik,Демьян Перевозчик,Demyan the Ferryman,tikhaya-gat,перевозчик (пленник),чтобы его забыли обе стороны,знает все броды Мутни,молчаливый,ci.m1.cellar-rescue.01,proposal
-kondrat-ovsyanik,Кондрат Овсяник,Kondrat Ovsyanik,severny-dvor,староста,вернуть Сеньку и зерно,зерно прятали в руинах от сборщиков обоих герцогов,уклончиво; считает в мешках,ci.m1.mill-worker.01,proposal
+kondrat-ovsyanik,Кондрат Овсяник,Kondrat Ovsyanik,severny-dvor,староста,вернуть Сеньку и зерно,зерно прятали в руинах от сборщиков обоих герцогов,уклончиво; считает в мешках,ci.m1.mill-worker.01;ci.m1.whose-wolves.01;ci.m1.stretcher-and-sword.01,proposal
 senka,Сенька,Senka,severny-dvor,батрак 16 лет,домой,видел кто увёз зерно,сбивчиво,ci.m1.mill-worker.01,proposal
 ulita-tkachikha,Улита Ткачиха,Ulita Tkachikha,severny-dvor,ткачиха,спасти сына,украла травы для раненого сына-дезертира,—,ci.m1.missing-herbs.01 (правда за сценой),proposal
 petrus,Петрусь,Petrus,severny-dvor,беглый из банды,выжить и не вернуться в полк,прячется у матери,—,будущий сюжет,proposal
 khariton-obukh,Харитон Обух,Khariton Obukh,staraya-melnitsa,бывший десятник житного полка; главарь дезертиров,дожить до весны,банда боится ночного зверя,командный; насмешливый,ci.m1.raider-standard.01;ci.m1.cellar-rescue.01,proposal
+efim-glukhoy,Ефим Глухой,Efim Glukhoy,tikhaya-gat,пастух,держать Обуховых подальше от настила,весной Обуховы увели у него последнюю корову,коротко; упрямо,ci.m1.whose-wolves.01,proposal
+prokop-sentsov,Прокоп Сенцов,Prokop Sentsov,kamenny-brod,караульный,прокормить беженцев под мостом,среди них вдова его брата убитого в битве у брода,по-солдатски; без лишнего,ci.m1.empty-watch-record.01,proposal
+pelageya,Пелагея,Pelageya,severny-dvor,работница,вернуть дочь,отпустила дочь за хворостом одну потому что отрабатывала долг Кондрату,коротко; о деле,ci.m1.stretcher-and-sword.01,proposal
+nastya,Настя,Nastya,severny-dvor,дочь Пелагеи 7 лет,—,—,—,ci.m1.stretcher-and-sword.01,proposal
+luka,Лука,Luka,—,полесский ополченец; беглый,выжить,ушёл из своего отряда после стычки за рекой,устало; прямо,ci.m1.stretcher-and-sword.01,proposal
+otets-nikon,отец Никон,Father Nikon,kamenny-brod,священник часовни,найти виноватого в порче воды,сам освятил овраг над родником под могилы битвы у брода,властно; книжно,ci.m1.foul-well.01,proposal
+yerema,Ерёма,Yerema,severny-dvor,ездит с телегой в город,вернуть мешок до счёта,заснул на телеге; лошадь шла домой сама,оправдывается,ci.m1.dragged-sack.01,proposal
+savva-krivonos,Савва Кривонос,Savva Krivonos,bereznyak,скотник; сосед Тихона Бортника,убить стаю у своего пастбища,пасёт на Тихоновом лугу без спроса,ворчливо,ci.m1.not-one-pack.01,proposal
+nil-bezmen,Нил Безмен,Nil Bezmen,kamenny-brod,городской кладовщик,сойтись с накладной,уже записал мешки сборщику полными,с иронией; считает,ci.m1.light-sack.01,proposal
+sidor,Сидор,Sidor,—,бродячий торговец,дойти до жилья с коробом,—,по-городскому,ci.m1.man-by-road.01,proposal
+vasilisa,Василиса,Vasilisa,tikhaya-gat,жена Остапа,вытащить мужа; заплатит продажей коровы,Остап нёс железо продавать за муку,сухо; практично,ci.m1.voice-under-boards.01,proposal
+ostap,Остап,Ostap,tikhaya-gat,ищет железо в руинах,выбраться,—,—,ci.m1.voice-under-boards.01,proposal

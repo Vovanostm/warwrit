@@ -1,18 +1,28 @@
 import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
+import { ItemTransferPanel } from './ItemTransferPanel.js';
+import { PayrollPanel } from './PayrollPanel.js';
+import { CompanyCarePanel } from './CompanyCarePanel.js';
+import { CompanyRecoveryPanel } from './CompanyRecoveryPanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
 export function CompanyPanel(props: {
+  readonly accountId: string;
+  readonly onRefreshItems: () => void;
+  readonly refreshBusy?: boolean;
+  readonly refreshMessage?: string;
   readonly company: CompanySummaryDto;
   readonly holdings: CompanyHoldingsDto | undefined;
+  readonly ticksPerDay: number;
   readonly supplyVenueName: string;
   readonly canBuySupplies: boolean;
   readonly onBuySupplies: () => void;
   readonly equipBusy: boolean;
   readonly equipMessage?: string;
   readonly onEquip: (characterId: string, item: HeldItem) => void;
+  readonly onJoinFieldParty: (characterId: string) => void;
 }) {
   const { company, holdings } = props;
   const supplies = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
@@ -72,8 +82,14 @@ export function CompanyPanel(props: {
                     <span className="leader-mark"> · глава</span>
                   )}
                 </span>
-                <span className="person-status">{statusLabel(status)}</span>
+                <span className="person-status">{rosterStatusLabel(character, status)}</span>
               </div>
+              <FullPartyNotice character={character} status={status} />
+              <JoinPartyButton
+                character={character}
+                busy={props.equipBusy}
+                onJoin={props.onJoinFieldParty}
+              />
               {body && body.maximumHealth !== null && (
                 <Meter
                   label="Здоровье"
@@ -135,6 +151,29 @@ export function CompanyPanel(props: {
       </ul>
       {holdings && (
         <>
+          <ItemTransferPanel
+            key={`item-transfer:${props.accountId}:${company.companyId}`}
+            accountId={props.accountId}
+            company={company}
+            onRefresh={props.onRefreshItems}
+          />
+          <CompanyCarePanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            onRefresh={props.onRefreshItems}
+          />
+          <CompanyRecoveryPanel
+            key={`${props.accountId}:${company.companyId}`}
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            onRefresh={props.onRefreshItems}
+            refreshBusy={props.refreshBusy ?? false}
+            {...(props.refreshMessage === undefined
+              ? {}
+              : { refreshMessage: props.refreshMessage })}
+          />
           <h3 className="panel-subtitle">Обоз</h3>
           {supplies.length === 0 ? (
             <p className="state-note">Общих припасов нет.</p>
@@ -179,9 +218,64 @@ export function CompanyPanel(props: {
                 </li>
               ))}
           </ul>
+          <PayrollPanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
+            ticksPerDay={props.ticksPerDay}
+            onRefresh={props.onRefreshItems}
+          />
         </>
       )}
     </section>
+  );
+}
+
+type RosterCharacter = CompanySummaryDto['characters'][number];
+
+function rosterStatusLabel(character: RosterCharacter, status: RosterCharacter['knownStatus']) {
+  return status === 'AVAILABLE' && character.inFieldParty === false
+    ? 'В компании'
+    : statusLabel(status);
+}
+
+function FullPartyNotice({
+  character,
+  status,
+}: {
+  readonly character: RosterCharacter;
+  readonly status: RosterCharacter['knownStatus'];
+}) {
+  if (!character.fieldPartyFull || character.inFieldParty || status !== 'AVAILABLE') return null;
+  return (
+    <>
+      <button type="button" className="action action-quiet" disabled>
+        Присоединить к отряду
+      </button>
+      <p className="state-note">Отряд заполнен; сначала освободите место.</p>
+    </>
+  );
+}
+
+function JoinPartyButton({
+  character,
+  busy,
+  onJoin,
+}: {
+  readonly character: RosterCharacter;
+  readonly busy: boolean;
+  readonly onJoin: (characterId: string) => void;
+}) {
+  if (!character.canJoinFieldParty || character.fieldPartyFull) return null;
+  return (
+    <button
+      type="button"
+      className="action action-quiet"
+      disabled={busy}
+      onClick={() => onJoin(character.characterId)}
+    >
+      Присоединить к отряду
+    </button>
   );
 }
 

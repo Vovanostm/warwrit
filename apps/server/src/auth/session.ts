@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { fastifyCookie } from '@fastify/cookie';
 import type { FastifyRequest } from 'fastify';
-import { sql, type Kysely } from 'kysely';
+import { sql, type Kysely, type Transaction } from 'kysely';
 
 import type { DatabaseSchema } from '../db/database.js';
 
@@ -22,20 +22,37 @@ function digest(value: string): Buffer {
   return createHash('sha256').update(value).digest();
 }
 
+/** Serialize company opening and reads before acquiring the company aggregate lock. */
+export async function lockIdentityAccount(
+  transaction: Transaction<DatabaseSchema>,
+  accountId: string,
+): Promise<boolean> {
+  const account = await transaction
+    .selectFrom('identity_accounts')
+    .select('id')
+    .where('id', '=', accountId)
+    .forUpdate()
+    .executeTakeFirst();
+  return account !== undefined;
+}
+
 export async function resolveSessionAccount(
   request: FastifyRequest,
   database: Kysely<DatabaseSchema>,
+  cookieName = sessionCookie,
 ): Promise<string | undefined> {
-  return (await resolveSessionPrincipalFromCookieHeader(request.headers.cookie, database))
-    ?.accountId;
+  return (
+    await resolveSessionPrincipalFromCookieHeader(request.headers.cookie, database, cookieName)
+  )?.accountId;
 }
 
 export async function resolveSessionPrincipalFromCookieHeader(
   cookieHeader: string | undefined,
   database: Kysely<DatabaseSchema>,
+  cookieName = sessionCookie,
 ): Promise<ActiveSessionPrincipal | undefined> {
   if (cookieHeader === undefined) return undefined;
-  const token = fastifyCookie.parse(cookieHeader)[sessionCookie];
+  const token = fastifyCookie.parse(cookieHeader)[cookieName];
   if (token === undefined) return undefined;
   const result = await sql<SessionAccountRow>`
     select account_id, token_digest

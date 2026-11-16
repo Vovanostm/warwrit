@@ -418,12 +418,20 @@ it('accepts only account-owned activation previews and detaches their quoted pat
   };
   const grant = readEncounterControlGrant(source, 'encounter-1');
   expect(grant?.tactical?.moves[0]?.actionPointCost).toBe(1);
+  const withExits = { ...source.tactical, retreatHexes: [{ q: -3, r: 0 }] };
+  const exitGrant = readEncounterControlGrant({ ...source, tactical: withExits }, 'encounter-1');
+  expect(exitGrant?.tactical?.retreatHexes).toEqual([{ q: -3, r: 0 }]);
+  withExits.retreatHexes[0]!.q = 7;
+  expect(exitGrant?.tactical?.retreatHexes).toEqual([{ q: -3, r: 0 }]);
   source.tactical.moves[0]!.path[0]!.q = 3;
   expect(grant?.tactical?.moves[0]?.path[0]?.q).toBe(1);
   for (const tactical of [
     { ...source.tactical, actorId: 'foreign-unit' },
     { ...source.tactical, activationId: 'old-turn' },
     { ...source.tactical, seed: 19 },
+    { ...source.tactical, retreatHexes: undefined },
+    { ...source.tactical, retreatHexes: [{ q: -3, r: 0, seed: 19 }] },
+    { ...source.tactical, retreatHexes: [{ q: -3, r: 0.5 }] },
     { ...source.tactical, moves: [{ ...source.tactical.moves[0], skillRanks: {} }] },
   ])
     expect(readEncounterControlGrant({ ...source, tactical }, 'encounter-1')).toBeUndefined();

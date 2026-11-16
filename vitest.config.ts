@@ -11,10 +11,10 @@ function integrationHooks(mode: string) {
 
 export default defineConfig(({ mode }) => ({
   resolve: {
-    // Coverage mode only: resolve each library's public entry to its source so
+    // Coverage runs: resolve each library's public entry to its source so
     // one instrumented copy exists. Normal runs keep testing built exports.
     alias:
-      mode === 'coverage'
+      mode === 'coverage' || process.argv.includes('--coverage')
         ? [
             {
               find: /^@warwrit\/(game-core|protocol|testkit)$/u,
@@ -30,17 +30,30 @@ export default defineConfig(({ mode }) => ({
     globalSetup: ['./scripts/integration-global-setup.ts'],
     setupFiles: ['./scripts/integration-file-setup.ts'],
     ...integrationHooks(mode),
-    // Bound concurrent CPU-heavy geometry/combat suites on the two-core target.
-    maxWorkers: 2,
-    include: ['apps/**/*.{test,spec}.{ts,tsx}', 'packages/**/*.{test,spec}.{ts,tsx}'],
+    // V8 measurement competes with geometry/raster work; preserve test deadlines.
+    // Ordinary runs still use the two-core target's existing two workers.
+    maxWorkers: mode === 'coverage' ? 1 : 2,
+    include: [
+      'apps/**/*.{test,spec}.{ts,tsx}',
+      'packages/**/*.{test,spec}.{ts,tsx}',
+      'scripts/world-map/*.test.ts',
+    ],
     passWithNoTests: false,
     restoreMocks: true,
     coverage: {
+      // Preserve failed-run coverage for diagnostics and explicit local audits.
+      // A coverage report does not turn a failing test into a pass.
+      reportOnFailure: true,
       // `pnpm test:coverage` evidence for `fallow health --coverage`.
       // No percentage threshold: AGENTS.md sets no coverage targets.
       provider: 'v8',
-      include: ['apps/*/src/**/*.{ts,tsx}', 'packages/*/src/**/*.{ts,tsx}'],
-      exclude: ['**/*.test.{ts,tsx}', 'apps/renderer-spike/**'],
+      include: [
+        'apps/*/src/**/*.{ts,tsx}',
+        'packages/*/src/**/*.{ts,tsx}',
+        'scripts/world-map/*.ts',
+        'scripts/world-map/fog-design/*.ts',
+      ],
+      exclude: ['**/*.test.{ts,tsx}'],
       reporter: ['json', 'text-summary'],
       reportsDirectory: 'coverage',
     },

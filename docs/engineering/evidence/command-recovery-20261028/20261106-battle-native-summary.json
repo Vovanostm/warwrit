@@ -1,0 +1,135 @@
+{
+  "source": "496ca5f5 / product unchanged from reviewed 5e3dcd5c",
+  "encounterId": "42e80acf-71e3-464a-b761-9dfbc3444bee",
+  "commandId": "37da8d69-cde7-49d4-b1b5-27bd46816b57",
+  "originalCommand": {
+    "version": 2,
+    "encounterId": "42e80acf-71e3-464a-b761-9dfbc3444bee",
+    "commandId": "37da8d69-cde7-49d4-b1b5-27bd46816b57",
+    "expectedRevision": 6,
+    "activationId": "1:5b0b1738-0110-4c96-8923-71ce6039b2d5",
+    "actorId": "5b0b1738-0110-4c96-8923-71ce6039b2d5",
+    "intent": {
+      "type": "wait"
+    }
+  },
+  "acceptedResponse": {
+    "version": 1,
+    "encounterId": "42e80acf-71e3-464a-b761-9dfbc3444bee",
+    "commandId": "37da8d69-cde7-49d4-b1b5-27bd46816b57",
+    "receiptId": "42e80acf-71e3-464a-b761-9dfbc3444bee:7",
+    "status": "accepted",
+    "revision": 7
+  },
+  "originalCommandCopies": 2,
+  "commandRows": 1,
+  "receiptRows": 1,
+  "sameCommandValues": true,
+  "sameReceiptValues": true,
+  "sameStoredBody": true,
+  "pendingCleared": true,
+  "manualPolicy": {
+    "activation_id": "1:5b0b1738-0110-4c96-8923-71ce6039b2d5",
+    "activation_epoch": 4,
+    "unit_id": "5b0b1738-0110-4c96-8923-71ce6039b2d5",
+    "mode": "HUMAN",
+    "started_at": "2026-11-06T09:28:44.781Z",
+    "deadline_at": "2026-11-06T09:29:14.781Z",
+    "timeout_command_id": "timeout-9fb359ecbb8617d2a8231f80e33af23a7d97799102a18cc6a5fa739730537283"
+  },
+  "manualAcceptedAt": "2026-11-06T09:29:10.616Z",
+  "manualActivationTimeoutRows": 0,
+  "expiredPolicy": {
+    "activation_id": "1:7040f474-cc1a-4729-b65b-57a8bdd96994",
+    "activation_epoch": 5,
+    "unit_id": "7040f474-cc1a-4729-b65b-57a8bdd96994",
+    "mode": "HUMAN",
+    "started_at": "2026-11-06T09:29:10.517Z",
+    "deadline_at": "2026-11-06T09:29:40.517Z",
+    "timeout_command_id": "timeout-7fdfa4f827f68103e259ab2336c1018f911e69d8463dd0b96f6295fc4c5f545e"
+  },
+  "expiredPolicyTimeout": {
+    "revision": 8,
+    "command_id": "timeout-7fdfa4f827f68103e259ab2336c1018f911e69d8463dd0b96f6295fc4c5f545e",
+    "source_kind": "system_timeout",
+    "activation_policy_id": "1:7040f474-cc1a-4729-b65b-57a8bdd96994",
+    "command": {
+      "type": "wait",
+      "commandId": "timeout-7fdfa4f827f68103e259ab2336c1018f911e69d8463dd0b96f6295fc4c5f545e",
+      "activationId": "1:7040f474-cc1a-4729-b65b-57a8bdd96994",
+      "actorId": "7040f474-cc1a-4729-b65b-57a8bdd96994"
+    },
+    "accepted_at": "2026-11-06T09:29:40.766Z"
+  },
+  "awayAt": "2026-11-06T09:29:42.024Z",
+  "reloadedAt": "2026-11-06T09:29:44.766Z",
+  "retriedAt": "2026-11-06T09:29:44.983Z",
+  "revisionBefore": 7,
+  "revisionAfter": 8,
+  "obsoleteProbe": {
+    "command": {
+      "version": 2,
+      "encounterId": "42e80acf-71e3-464a-b761-9dfbc3444bee",
+      "commandId": "3006e512-b421-44dd-b853-2f1c856ee70a",
+      "expectedRevision": 57,
+      "activationId": "1:5b0b1738-0110-4c96-8923-71ce6039b2d5",
+      "actorId": "5b0b1738-0110-4c96-8923-71ce6039b2d5",
+      "intent": {
+        "type": "wait"
+      }
+    },
+    "response": {
+      "version": 1,
+      "commandId": "3006e512-b421-44dd-b853-2f1c856ee70a",
+      "status": "rejected",
+      "code": "UNAUTHORIZED"
+    },
+    "phase": "resolved",
+    "revisionBefore": 57,
+    "revisionAfter": 57
+  },
+  "terminal": {
+    "at": "2026-11-06T09:32:22.885Z",
+    "revision": 57,
+    "status": "resolved",
+    "units": [
+      {
+        "id": "5b0b1738-0110-4c96-8923-71ce6039b2d5",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "7040f474-cc1a-4729-b65b-57a8bdd96994",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "efff5699-266e-4b9d-8a94-ca01389be9ff",
+        "sideId": "first-hunt-companies",
+        "status": "dead",
+        "health": 0
+      },
+      {
+        "id": "world.wolf.bereznyak.02",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      },
+      {
+        "id": "world.wolf.bereznyak.03",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      },
+      {
+        "id": "world.wolf.bereznyak.leader.01",
+        "sideId": "first-hunt-hostiles",
+        "status": "active",
+        "health": 40
+      }
+    ]
+  },
+  "limitation": "The new-ID obsolete activation probe was sent after battle resolution; this is terminal refusal, not an isolated active-battle activation rejection. The author did not resume manual control promptly after retry; all three allied units died under AFK automation. No state was reset."
+}

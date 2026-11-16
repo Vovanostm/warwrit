@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "id": "graphic-novel",
+  "title": "Сдержанный графический роман",
+  "decision_date": "2026-10-25",
+  "status": "owner_selected_direction",
+  "usage": "Default for new 2D illustrations and sprites; does not itself change renderer, camera or the separately owned 3D-character workflow.",
+  "authority": "docs/wiki/vision.md#основной-стиль-и-профиль-локаций--решение-2026-10-25",
+  "reference_path_base": "repository_root",
+  "references": [
+    {
+      "subject": "character",
+      "path": "assets/art/styles/references/graphic-novel/character.png",
+      "role": "rendering and proportions only; not sprite projection or identity for every character",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/character.png"
+    },
+    {
+      "subject": "mill",
+      "path": "assets/art/styles/references/graphic-novel/mill.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/mill.png"
+    },
+    {
+      "subject": "town",
+      "path": "assets/art/styles/references/graphic-novel/town.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/town.png"
+    },
+    {
+      "subject": "village",
+      "path": "assets/art/styles/references/graphic-novel/village.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/village.png"
+    },
+    {
+      "subject": "field",
+      "path": "assets/art/styles/references/graphic-novel/field.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/field.png"
+    },
+    {
+      "subject": "marsh",
+      "path": "assets/art/styles/references/graphic-novel/marsh.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/marsh.png"
+    },
+    {
+      "subject": "forest",
+      "path": "assets/art/styles/references/graphic-novel/forest.png",
+      "role": "rendering, palette and visual hierarchy; canonical place brief owns geography",
+      "selected_from": "assets/art/novel/style-study-2026-10-25/02-graphic-novel/forest.png"
+    }
+  ],
+  "style_prompt": "Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.",
+  "shared_constraints": "Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+  "generation": {
+    "preferred_tool": "built-in image_gen",
+    "profile_is_not_api_payload": true,
+    "prompt_assembly": "Join 'Use case: stylized-concept.', style_prompt, selected template.prompt with every required input substituted, and shared_constraints. Pass the assembled text as prompt and the selected template's transparent_background as the tool flag. Do not send this whole profile as a tool request.",
+    "reference_handling": "Inspect the relevant selected references before writing the asset prompt. Use only references from this profile for rendering, plus canonical subject sources for identity/geometry. For a new built-in generation omit edit-target arguments; for an actual edit inspect and provide the target through the tool's supported reference mechanism. Do not treat filenames mentioned in a prompt as proof the tool received image pixels.",
+    "batch_rule": "One image per call. Compare one representative output with selected references before extending a batch. Keep final exact prompt, inputs, references and output beside the asset.",
+    "not_a_guarantee": "Size hints and text instructions do not prove output dimensions, alpha, anatomy, pivot, style match or game acceptance."
+  },
+  "templates": {
+    "scene": {
+      "required_inputs": ["subject", "canonical_facts", "composition", "light_direction"],
+      "prompt": "Asset type: one opaque visual-novel or location background. Subject: {{subject}}. Canonical facts: {{canonical_facts}}. Composition and camera: {{composition}}. Light direction and time: {{light_direction}}. Full-bleed cohesive environment, a clear main subject and calm areas for dialogue layout. Do not create new foreground people unless the subject explicitly requires them. Request landscape 1536x1024; verify actual dimensions after generation. This is an illustration, not a transparent sprite.",
+      "transparent_background": false
+    },
+    "portrait": {
+      "required_inputs": ["subject", "canonical_facts", "composition", "light_direction"],
+      "prompt": "Asset type: one transparent character portrait for dialogue. Subject: {{subject}}. Established identity, clothing and equipment: {{canonical_facts}}. Framing: {{composition}}. Light direction: {{light_direction}}. Face and any requested hands must be large and readable. Only show the requested pose and gear. Entire requested crop inside the canvas with clear margins. No scenery, floor plane or background shadow. Genuine alpha transparency, no checkerboard or painted backdrop. Request 1024x1024; verify actual dimensions.",
+      "transparent_background": true
+    },
+    "character_sprite": {
+      "required_inputs": [
+        "subject",
+        "canonical_facts",
+        "projection",
+        "facing",
+        "light_direction",
+        "anchor_contract"
+      ],
+      "prompt": "Asset type: one static transparent full-body character sprite, not a portrait or scenic illustration. Subject: {{subject}}. Established identity and equipment: {{canonical_facts}}. Projection: {{projection}}. Facing: {{facing}}. Light direction: {{light_direction}}. Canvas placement, relative scale, foot pivot and safe margins: {{anchor_contract}}. Show all of head, feet, hands, weapons and shield without clipping. Believable weight and grip, adult proportions. No scenery, floor plane, baked ground shadow or background halo. Genuine alpha transparency, no checkerboard. Request 1024x1024; verify actual dimensions, full bounds and foot pivot. A reference-scene perspective must not override the supplied sprite projection.",
+      "transparent_background": true
+    },
+    "environment_sprite": {
+      "required_inputs": [
+        "subject",
+        "canonical_facts",
+        "projection",
+        "facing",
+        "light_direction",
+        "anchor_contract"
+      ],
+      "prompt": "Asset type: one isolated static transparent environment sprite (building, tree, rock or prop), not a complete landscape. Subject: {{subject}}. Canonical identity, construction and condition: {{canonical_facts}}. Projection: {{projection}}. Facing and visible sides: {{facing}}. Light direction: {{light_direction}}. Canvas placement, relative scale, root/base/entrance pivot and safe margins: {{anchor_contract}}. Natural irregular base, credible materials, complete silhouette within canvas. No detached scenery, sky, horizon, rectangular ground tile, fog backdrop or baked ground shadow. Genuine alpha transparency with clean readable cutout edges, no white/grey matte or checkerboard. Request 1024x1024; verify actual dimensions, alpha, bounds and pivot. Do not squash an already projected sprite or mirror baked lighting.",
+      "transparent_background": true
+    }
+  },
+  "example_requests": [
+    {
+      "id": "graphic-novel-example-1",
+      "status": "ready prompt example; confirm current canonical place facts before production",
+      "template": "scene",
+      "inputs": {
+        "subject": "The old ruined watermill",
+        "canonical_facts": "Abandoned grey-stone watermill; partly collapsed shingle roof exposing broken rafters; broken wooden wheel beside the stream; a clearly visible closed cellar hatch in the muddy yard. No newly working mill.",
+        "composition": "Wide three-quarter establishing view, wheel at left and closed hatch in a readable central yard; preserve actual place geography from the owning location brief.",
+        "light_direction": "Overcast dusk, soft cold light from upper left; keep hatch and ruin readable."
+      },
+      "tool": "image_gen",
+      "arguments": {
+        "prompt": "Use case: stylized-concept.\nStyle: Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.\nAsset type: one opaque visual-novel or location background. Subject: The old ruined watermill. Canonical facts: Abandoned grey-stone watermill; partly collapsed shingle roof exposing broken rafters; broken wooden wheel beside the stream; a clearly visible closed cellar hatch in the muddy yard. No newly working mill.. Composition and camera: Wide three-quarter establishing view, wheel at left and closed hatch in a readable central yard; preserve actual place geography from the owning location brief.. Light direction and time: Overcast dusk, soft cold light from upper left; keep hatch and ruin readable.. Full-bleed cohesive environment, a clear main subject and calm areas for dialogue layout. Do not create new foreground people unless the subject explicitly requires them. Request landscape 1536x1024; verify actual dimensions after generation. This is an illustration, not a transparent sprite.\nConstraints: Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+        "transparent_background": false
+      }
+    },
+    {
+      "id": "graphic-novel-example-2",
+      "status": "illustrative request; replace example projection/facing/scale/light with the consuming view's contract before production",
+      "template": "character_sprite",
+      "inputs": {
+        "subject": "An unnamed adult mercenary from the selected character reference",
+        "canonical_facts": "Short dark hair and beard, weathered face, worn brown quilted gambeson, leather boots, plain round wooden shield in left hand and practical short straight sword in right hand; no heraldry.",
+        "projection": "Example only: three-quarter view. Replace with the consuming view's approved projection before production.",
+        "facing": "Example only: facing screen-right. Replace with the consuming view's approved facing before production.",
+        "light_direction": "Example only: soft light from upper left; replace if the view contract differs.",
+        "anchor_contract": "Example only: full body centered, feet grounded at a common baseline, generous clear margins around weapons; use the actual consumer's scale and foot-pivot contract before production."
+      },
+      "tool": "image_gen",
+      "arguments": {
+        "prompt": "Use case: stylized-concept.\nStyle: Mature, restrained graphic-novel illustration for Warwrit's serious grounded dark fantasy. Confident irregular hand-inked contours around major forms, broad matte flat washes and coherent shadow masses. Selective interior strokes suggest weathered stone, timber, cloth and leather; do not trace every stone, board, leaf or grass stem. Desaturated slate, soot, umber, restrained ochre and moss olive; naturally warm readable skin. A clear focal silhouette, deliberate negative space, calm secondary surfaces and distinct foreground/middle/distance. Details and strongest local contrast belong to the subject or action. Use the selected graphic-novel reference images as the visual authority; avoid photorealistic surface rendering and smooth CGI.\nAsset type: one static transparent full-body character sprite, not a portrait or scenic illustration. Subject: An unnamed adult mercenary from the selected character reference. Established identity and equipment: Short dark hair and beard, weathered face, worn brown quilted gambeson, leather boots, plain round wooden shield in left hand and practical short straight sword in right hand; no heraldry.. Projection: Example only: three-quarter view. Replace with the consuming view's approved projection before production.. Facing: Example only: facing screen-right. Replace with the consuming view's approved facing before production.. Light direction: Example only: soft light from upper left; replace if the view contract differs.. Canvas placement, relative scale, foot pivot and safe margins: Example only: full body centered, feet grounded at a common baseline, generous clear margins around weapons; use the actual consumer's scale and foot-pivot contract before production.. Show all of head, feet, hands, weapons and shield without clipping. Believable weight and grip, adult proportions. No scenery, floor plane, baked ground shadow or background halo. Genuine alpha transparency, no checkerboard. Request 1024x1024; verify actual dimensions, full bounds and foot pivot. A reference-scene perspective must not override the supplied sprite projection.\nConstraints: Preserve the supplied canonical identity, geography, construction, condition and equipment. A ruined old watermill stays structurally ruined with a broken waterwheel; inhabited places remain inhabited. No invented factions, emblems, gods, witnesses, magic or story facts. Serious natural adult proportions and credible practical construction; no cute rounded toys, pristine pale masonry, vivid lawns, glossy surfaces or franchise copying. No text, letters, runes, logos, watermark, decorative border, collage or sheet of variants. No evenly distributed microtexture. Follow the supplied projection, facing, light direction, scale and anchor contract exactly; style does not authorize changing them.",
+        "transparent_background": true
+      }
+    }
+  ],
+  "acceptance": [
+    "Match this selected reference family in silhouette, contour/edge treatment, tonal hierarchy, restrained palette and material character.",
+    "At thumbnail size the main person, object, path or entrance is readable; sky, water and foreground texture do not compete with it.",
+    "Preserve canonical condition and observer-appropriate information; no new lore derived from incidental reference details.",
+    "For sprites check real alpha on dark and light backgrounds, no matte/halo, no clipped body/gear/branches, and correct projection/scale/pivot.",
+    "Check the first asset in the actual scene at target size and by day/night before batch production; concept approval is not integrated acceptance."
+  ],
+  "production_status": {
+    "new_outputs_generated": false,
+    "transparent_sprites_verified": false,
+    "runtime_integration": "NOT_RUN"
+  }
+}

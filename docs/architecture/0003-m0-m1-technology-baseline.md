@@ -92,7 +92,10 @@ Keep the existing React/Vite browser shell. Game rendering must remain an adapte
 
 ### 6. Historical renderer decision — superseded by ADR-0006
 
-Do not install a production renderer solely from the prior recommendation.
+**SUPERSEDED:** the following renderer comparison/default/freeze requirements
+are retained as history. [ADR-0006](0006-m1-renderer-babylon.md) selects Babylon.js;
+WLC-02 removes the executable PlayCanvas pilot. Do not reinstall it or rerun an
+engine selection to start gameplay. The remaining technology baseline is active.
 
 The current working default remains **Babylon.js 9.x**, because its animation/rendering breadth fits the tactical-diorama requirements and its MCP/editor ecosystem is now strong.
 

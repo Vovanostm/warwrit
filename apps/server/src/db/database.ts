@@ -1,5 +1,6 @@
 import { Kysely, PostgresDialect, sql, type Generated } from 'kysely';
 import { Pool } from 'pg';
+import { createLogger } from '../logger.js';
 
 interface SchemaMigrationsTable {
   readonly name: string;
@@ -149,10 +150,26 @@ interface CompanyOpeningOptionTable {
 }
 
 interface WorldCampaignClockTable {
+  readonly qa_offset_ms: Generated<string>;
   readonly world_id: string;
   readonly epoch_ms: string;
   readonly starting_tick: string;
   readonly updated_at: Generated<Date>;
+}
+
+interface WorldRecruitOfferTable {
+  readonly world_id: string;
+  readonly offer_id: string;
+  readonly offer_revision: string;
+  readonly site_id: string;
+  readonly area_id: string;
+  readonly character_id: string;
+  readonly candidate: unknown;
+  readonly vitals: unknown;
+  readonly wallet: unknown;
+  readonly consumed_company_id: string | null;
+  readonly consumed_command_id: string | null;
+  readonly consumed_at: Generated<Date | null>;
 }
 
 interface WorldPartyRouteTable {
@@ -204,9 +221,13 @@ interface ContractInstanceTable {
   readonly helper_company_id: string | null;
   readonly owner_join: unknown | null;
   readonly helper_join: unknown | null;
+  readonly owner_join_attempt_no: Generated<number | null>;
+  readonly helper_join_attempt_no: Generated<number | null>;
 }
 
 interface EncounterAdmissionTable {
+  readonly attempt_no: Generated<number>;
+  readonly is_current: Generated<boolean>;
   readonly encounter_id: string;
   readonly world_id: string;
   readonly instance_id: string;
@@ -274,6 +295,7 @@ export interface DatabaseSchema {
   readonly company_account_owners: CompanyAccountOwnerTable;
   readonly company_opening_options: CompanyOpeningOptionTable;
   readonly world_campaign_clocks: WorldCampaignClockTable;
+  readonly world_recruit_offers: WorldRecruitOfferTable;
   readonly world_party_routes: WorldPartyRouteTable;
   readonly world_route_receipts: WorldRouteReceiptTable;
   readonly world_first_hunt_state: WorldFirstHuntStateTable;
@@ -326,13 +348,14 @@ export interface DatabaseSchema {
 }
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
+  const pool = new Pool({ connectionString, max: 5 });
+  // pg removes the failed idle client. Handle its event so readiness can report
+  // the outage and the pool can reconnect when PostgreSQL returns.
+  pool.on('error', () => {
+    createLogger().warn({ event: 'database.connection_lost' }, 'Idle database connection lost');
+  });
   return new Kysely<DatabaseSchema>({
-    dialect: new PostgresDialect({
-      pool: new Pool({
-        connectionString,
-        max: 5,
-      }),
-    }),
+    dialect: new PostgresDialect({ pool }),
   });
 }
 
@@ -431,7 +454,7 @@ export function createDatabaseReadinessProbe(
     }
     if (worldStorageEnabled) {
       await sql`
-        select world_id, epoch_ms, starting_tick from world_campaign_clocks limit 0
+        select world_id, epoch_ms, starting_tick, qa_offset_ms from world_campaign_clocks limit 0
       `.execute(database);
       await sql`
         select world_id, company_id, party_id, route_epoch, segment_id, profile_id,
@@ -449,8 +472,9 @@ export function createDatabaseReadinessProbe(
           w.seed, w.issuer_id, w.issuer_area_id, w.wallet_id, w.wallet_q, w.hostiles,
           c.world_id, c.instance_id, c.profile_id, c.terms, c.terms_digest, c.revision,
           c.owner_company_id, c.helper_company_id, c.owner_join, c.helper_join,
+          c.owner_join_attempt_no, c.helper_join_attempt_no,
           a.encounter_id, a.world_id, a.instance_id, a.binding_version, a.binding,
-          a.terminal_revision, a.effects_source_id, a.effects_applied_at,
+          a.terminal_revision, a.effects_source_id, a.effects_applied_at, a.attempt_no, a.is_current,
           p.world_id, p.item_id, p.source_id, p.encounter_id, p.terminal_revision,
           p.ground_item, p.custodian_company_id, p.redeemed_company_id,
           p.redemption_receipt_id

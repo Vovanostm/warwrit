@@ -421,7 +421,7 @@ function coreHexEqual(a: { q: number; r: number }, b: { q: number; r: number }):
   return a.q === b.q && a.r === b.r;
 }
 
-it('preserves historical retreat settlement but leaves new tactical hostile retreat pending', () => {
+it('settles hostile retreat without changing the historical combat replay', () => {
   for (const version of [3, 4, 5] as const) {
     const { battle, input } = terminalInput(false, version);
     expect(
@@ -430,11 +430,10 @@ it('preserves historical retreat settlement but leaves new tactical hostile retr
         .every((unit) => unit.status === 'retreated'),
     ).toBe(true);
     const result = prepareFirstHuntTerminalEvidence(input);
-    if (version === 3) expect(result.status, JSON.stringify(result)).toBe('READY');
-    else
-      expect(result).toEqual({
-        status: 'NOT_READY',
-        residuals: ['TERMINAL_DISPOSITION_EVIDENCE_MISSING'],
-      });
+    expect(result.status, JSON.stringify(result)).toBe('READY');
+    if (result.status === 'READY') {
+      expect(result.finalState.encounter.active).toBeNull();
+      expect(result.finalState.encounter.completed).toHaveLength(1);
+    }
   }
 }, 15_000);

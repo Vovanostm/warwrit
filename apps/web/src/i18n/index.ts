@@ -33,6 +33,8 @@ function isMessageKey(key: string): key is MessageKey {
 }
 
 /** Text for a key built from game IDs; undefined when no text is authored for it. */
+export function lookup(key: MessageKey): string;
+export function lookup(key: string): string | undefined;
 export function lookup(key: string): string | undefined {
   return isMessageKey(key) ? CATALOGUES[locale][key] : undefined;
 }

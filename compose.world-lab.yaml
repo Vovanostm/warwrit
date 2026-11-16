@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: warwrit_world_lab
+      POSTGRES_USER: world_lab
+      POSTGRES_PASSWORD: world_lab
+    ports:
+      - '127.0.0.1:65438:5432'
+    volumes:
+      - world_lab_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U world_lab -d warwrit_world_lab']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  world_lab_data:

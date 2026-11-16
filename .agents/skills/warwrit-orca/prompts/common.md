@@ -1,27 +1,27 @@
-## Common rules for every Warwrit pipeline worker
+## Common rules for an explicitly activated Warwrit worker
 
-- Read `AGENTS.md` first. Your contract is the GitHub issues named in the task:
-  `gh issue view <N> -R Vovanostm/warwrit --comments`. Follow each issue's ТЗ,
-  acceptance criteria (Критерии приёмки) and DoD. Epic comments hold owner
-  decisions; do not reopen them.
-- Stay inside the task's OWNERSHIP paths. Other workers edit other paths now.
-  Need anything else → stop, set `outcome` to `failed` and say what you need.
-- Never edit `CHANGELOG.md`, `docs/engineering/CURRENT_PLAN.md` or `docs/wiki/*`.
-  Put proposed entries in your report or PR body; the coordinator owns them.
-- Rules live on the server/game-core; the web client never computes range, LOS,
-  cost or legality. game-core stays pure. Never edit released migrations.
-- If `.worktree-ports` is missing, run `bash scripts/orca-setup.sh` once.
-- Smallest stand first: a focused Vitest file or a component rendered in Node
-  before the browser; the combat lab only for scene, HUD and input. Browser:
-  the `playwright` skill (`playwright-cli`), headless, in the session the
-  wrapper set in `PLAYWRIGHT_CLI_SESSION`; batch the checks and save
-  screenshots to files. Finish every browser check with
-  `bash scripts/agent-cleanup.sh` (closes your named session; stops the lab
-  only with the matching coordinator grant `WARWRIT_LAB_OWNER=<session>`).
-  Never assign yourself that grant; report inspection and cleanup failures. Never `close-all`/`kill-all`, never `--headed`, no extra MCP servers.
-- Smallest relevant checks only. Do not run full `pnpm verify`, coverage, stress
-  or migration suites; the coordinator schedules heavy gates one at a time.
-- Never merge, force-push a shared branch, or use `--no-verify`.
-- Do not call any `orca` command; the wrapper reports for you. Your final
-  answer must follow the output schema: `outcome`, a three-sentence `summary`,
-  `files_modified` and `report_path` (empty string when none).
+- Read AGENTS.md and the assigned issue/accepted contract. Current scope and stop
+  override historical instructions. A worker role never authorizes activation.
+- Stay inside OWNERSHIP. You are not alone; preserve unrelated WIP. Report a
+  missing source, overlap or required expansion to the parent; continue independent
+  permitted work. Undefined product rules require a question; technical choices
+  inside the contract belong to the author.
+- The brief names one mode: delegated editor leaves changes for the parent;
+  branch owner commits finished steps. Default to delegated editor. Shared
+  CHANGELOG/CURRENT_PLAN/wiki writes belong only to their assigned writer.
+- Rules live in server/game-core; web never owns range, LOS, cost or legality.
+  Keep core pure and migrations append-only. Trace affected producers/consumers.
+- Do not run setup, services, databases or cleanup without assigned resources and
+  permission. One named validation owner runs proportional checks per revision;
+  no duplicate validate/full gate. Hooks and required CI remain unchanged.
+- After a browser check, close the task's named session with
+  `bash scripts/agent-cleanup.sh <session>`. Stop only services and stands assigned
+  to this task; stopping a shared combat lab requires the matching coordinator
+  grant `WARWRIT_LAB_OWNER=<session>`. Never close all sessions or kill shared
+  browser processes. Report any cleanup failure.
+- Reuse unchanged sources and applicable checks. Get complete relevant errors;
+  do not treat truncation, zero tests, missing proof or tool failure as PASS.
+- Never merge, publish or call Orca; the wrapper reports. Follow AGENTS' narrow
+  intermediate-commit exception only if applicable; never weaken checks.
+- Use the output schema: outcome, three-sentence summary, files_modified,
+  report_path (empty when none). Report gaps and exact check results.

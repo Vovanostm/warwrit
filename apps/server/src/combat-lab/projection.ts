@@ -31,7 +31,9 @@ export function projectCombatLabView(
   presentation?: CombatLabReplayPresentation,
 ): CombatLabView {
   combat.invariant(
-    state.rulesetId === 'm0-prototype-v1' || combat.isSpritePrototypeRuleset(state.rulesetId),
+    state.rulesetId === 'm0-prototype-v1' ||
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID ||
+      combat.isSpritePrototypeRuleset(state.rulesetId),
     'Unknown combat lab ruleset',
   );
   combat.invariant(
@@ -124,9 +126,11 @@ export function projectCombatLabView(
       },
       recovery: { staminaPerActivation: rules.recovery.staminaPerActivation },
     },
-    scenarioId: combat.isSpritePrototypeRuleset(state.rulesetId)
-      ? SPRITE_COMBAT_LAB_SCENARIO
-      : COMBAT_LAB_SCENARIO,
+    scenarioId:
+      combat.isSpritePrototypeRuleset(state.rulesetId) ||
+      state.rulesetId === combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+        ? SPRITE_COMBAT_LAB_SCENARIO
+        : COMBAT_LAB_SCENARIO,
     ...(battle === undefined ? {} : { battle }),
     sessionId,
     battleId: state.battleId,
@@ -276,7 +280,11 @@ function projectSpriteActions(
   controlledSideId: string,
   availableActions: NonNullable<CombatLabView['availableActions']>,
 ): Partial<CombatLabView> {
-  if (!combat.isSpritePrototypeRuleset(state.rulesetId)) return {};
+  if (
+    !combat.isSpritePrototypeRuleset(state.rulesetId) &&
+    state.rulesetId !== combat.M1_DOMAIN_BRIDGE_V5_RULESET_ID
+  )
+    return {};
   const attackRefusals = projectAttackRefusals(state, controlledSideId);
   const skillReach = projectSkillReach(state, controlledSideId);
   if (state.status !== 'active' || !activeActivation(state)) return { attackRefusals, skillReach };

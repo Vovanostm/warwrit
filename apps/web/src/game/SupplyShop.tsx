@@ -142,12 +142,14 @@ function purchaseMessage(result: SupplyPurchaseResult, attempt: Purchase): strin
   if (result.ok) return `Куплено ${attempt.payload.quantity} рационов. Они в обозе.`;
   return rejectionText[result.code] ?? 'Покупка отклонена. Данные отряда обновлены.';
 }
-type ShopPanelProps = {
+type ShopDetailsProps = {
   readonly props: SupplyShopProps;
   readonly shop: SupplyShopDto | undefined;
   readonly quote: SupplyQuote;
   readonly quantity: number;
   readonly setQuantity: (quantity: number) => void;
+};
+type ShopPanelProps = ShopDetailsProps & {
   readonly pending: Purchase | undefined;
   readonly message: string | undefined;
   readonly purchase: () => void;
@@ -178,7 +180,7 @@ function SupplyShopPanel(panel: ShopPanelProps) {
     </section>
   );
 }
-function SupplyShopDetails(panel: ShopPanelProps) {
+function SupplyShopDetails(panel: ShopDetailsProps) {
   const shop = panel.shop;
   if (!shop) return null;
   return (

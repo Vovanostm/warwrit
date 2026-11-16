@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { OrdinaryContractCommandDto } from '@warwrit/protocol';
 import {
   classifyOrdinaryContractPost,
+  ordinaryContractCommandAvailability,
   selectOrdinaryContractAttempt,
 } from './ordinary-contract-attempt.js';
 
@@ -15,6 +16,42 @@ const command: OrdinaryContractCommandDto = {
 };
 
 describe('ordinary contract command attempts', () => {
+  it('owns scoped readiness, pending retry availability and the rendered busy state', () => {
+    const base = {
+      scopeKey: 'account\u0000company',
+      currentScopeKey: 'account\u0000company',
+      attemptScopeKey: 'account\u0000company',
+      ready: true,
+      inFlight: false,
+    };
+
+    expect(ordinaryContractCommandAvailability({ ...base, hasPending: true, retry: true })).toEqual(
+      { scopeReady: true, inFlight: false, canSend: true, commandsBusy: true },
+    );
+    expect(
+      ordinaryContractCommandAvailability({ ...base, hasPending: true, retry: false }),
+    ).toEqual({ scopeReady: true, inFlight: false, canSend: false, commandsBusy: true });
+    expect(
+      ordinaryContractCommandAvailability({ ...base, hasPending: false, retry: false }),
+    ).toEqual({ scopeReady: true, inFlight: false, canSend: true, commandsBusy: false });
+    expect(
+      ordinaryContractCommandAvailability({
+        ...base,
+        currentScopeKey: 'other-account\u0000company',
+        hasPending: false,
+        retry: false,
+      }),
+    ).toEqual({ scopeReady: false, inFlight: false, canSend: false, commandsBusy: true });
+    expect(
+      ordinaryContractCommandAvailability({
+        ...base,
+        hasPending: true,
+        inFlight: true,
+        retry: true,
+      }),
+    ).toEqual({ scopeReady: true, inFlight: true, canSend: false, commandsBusy: true });
+  });
+
   it('retains the original command for retry and rejects a new action while its outcome is unknown', () => {
     const different: OrdinaryContractCommandDto = {
       ...command,

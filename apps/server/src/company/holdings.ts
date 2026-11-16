@@ -1,6 +1,9 @@
 import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
+import { projectPayroll } from './payroll-view.js';
+import { itemTransferOptions } from './item-transfer.js';
+import { companyCareOptions } from './care.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -27,6 +30,8 @@ export function projectCompanyHoldings(
     .toString();
 
   const physical = state.economy.physical;
+  const payroll = projectPayroll(state.economy, companyId);
+  if (!payroll) throw new Error('Company payroll observation unavailable');
   const carriers = new Map(
     (physical?.containers ?? []).map((container) => [
       container.containerId,
@@ -57,33 +62,44 @@ export function projectCompanyHoldings(
     ),
   );
   const people = [...characterIds].map((characterId) => {
-    const vitals = physical?.vitals.find((entry) => entry.characterId === characterId);
+    const vitals = physical?.knowledge.vitalSnapshots.find(
+      (entry) => entry.characterId === characterId,
+    );
+    const known = state.economy.lifecycle.knowledge.characters.find(
+      (entry) => entry.identity.characterId === characterId,
+    );
+    const knownAssignment = known?.presence.assignment;
+    const knownLocalAvailability =
+      !fallen.has(characterId) &&
+      known?.presence.availability === 'AVAILABLE' &&
+      known.presence.encounterBindingId === null &&
+      known.presence.fieldPartyId !== null &&
+      known.presence.location.kind === 'AT';
+    const recoveryAssignment: 'FIELD' | 'RECOVERY' | 'OTHER' =
+      knownAssignment === 'FIELD' || knownAssignment === 'RECOVERY' ? knownAssignment : 'OTHER';
     return {
       characterId,
       fallen: fallen.has(characterId),
-      currentHealth: vitals?.currentHealth ?? null,
+      currentHealth: fallen.has(characterId) ? 0 : (vitals?.currentHealth ?? null),
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
-      conditions: (physical?.conditions ?? [])
+      conditions: (physical?.knowledge.conditionSnapshots ?? [])
         .filter(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
         )
         .map((condition) => condition.definitionId),
+      recovery: {
+        assignment: recoveryAssignment,
+        canRest: knownLocalAvailability && knownAssignment === 'FIELD',
+        canReturnToField: knownLocalAvailability && knownAssignment === 'RECOVERY',
+      },
     };
   });
 
   const fieldCamp = state.economy.finance.maintenance.some(
     (mode) => mode.kind === 'FIELD_CAMP' && mode.endedAt === null,
   );
-  const finance = state.economy.finance;
-  const owed = (claim: (typeof finance.claims)[number]) =>
-    BigInt(claim.reportedQ) - BigInt(claim.reportedCoveredQ) - BigInt(claim.paidQ);
-  const wagesOwedQ = finance.claims.reduce((sum, claim) => sum + owed(claim), 0n).toString();
-  const wagesDueQ = finance.claims
-    .filter((claim) => BigInt(claim.dueAt) <= BigInt(state.economy.lifecycle.campaignTick))
-    .reduce((sum, claim) => sum + owed(claim), 0n)
-    .toString();
   const party = state.economy.lifecycle.parties[0];
   const partyMembers = state.economy.lifecycle.characters.filter(
     (person) =>
@@ -130,5 +146,34 @@ export function projectCompanyHoldings(
     people: partyMembers.length,
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
-  return { cashQ, wallets, items, people, fieldCamp, wagesOwedQ, wagesDueQ, supplies };
+  const accessible = itemTransferOptions(state);
+  return {
+    care: companyCareOptions(state),
+    ...(accessible
+      ? {
+          transfer: {
+            containers: accessible.containers.map((container) => ({
+              containerId: container.containerId,
+              kind: container.kind,
+              carrierCharacterId:
+                container.carrier?.kind === 'CHARACTER' ? container.carrier.id : null,
+            })),
+            items: accessible.items.map((item) => ({
+              itemId: item.itemId,
+              containerId: item.containerId!,
+              quantity: item.quantity,
+            })),
+          },
+        }
+      : {}),
+    cashQ,
+    wallets,
+    items,
+    people,
+    fieldCamp,
+    wagesOwedQ: payroll.owedQ,
+    wagesDueQ: payroll.dueQ,
+    payroll,
+    supplies,
+  };
 }
