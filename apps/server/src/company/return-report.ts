@@ -5,8 +5,11 @@ import {
   isEntityId,
   ordinaryContractProfile,
   readOrdinaryContractState,
+  WHOSE_WOLVES_INSTANCE_ID,
 } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState, OrdinaryContractState } from '@warwrit/game-core';
+import { huntProfile } from '@warwrit/game-core';
+import type { WhoseWolvesQuestState } from '@warwrit/game-core';
 import type {
   CompanyReturnReportAcknowledgeRequestDto,
   CompanyReturnReportAcknowledgeResponseDto,
@@ -25,6 +28,12 @@ import { lockIdentityAccount, resolveSessionAccount } from '../auth/session.js';
 import { findOwnedCompanyId, lockCompanyAggregate } from './repository.js';
 import { observeLocalCompanyConditions } from './observation.js';
 import { projectPayroll } from './payroll-view.js';
+import { readHuntWorldState } from '../contracts/first-hunt-runtime.js';
+import {
+  foulWellHerbalistRemoved,
+  readFoulWellOutcome,
+  type FoulWellOutcome,
+} from '../contracts/foul-well-state.js';
 import {
   emptyWatchCampRemovedAt,
   emptyWatchFordFact,
@@ -91,11 +100,22 @@ export function settledReturnReportTick(state: CompanyCombatAggregateState): str
     .reduce((minimum, tick) => (BigInt(tick) < BigInt(minimum) ? tick : minimum));
 }
 
+type ReturnReportContractInstanceId =
+  | 'ci.m1.empty-watch-record.01'
+  | 'ci.m1.stretcher-and-sword.01'
+  | 'ci.m1.whose-wolves.01'
+  | 'ci.m1.foul-well.01';
 type ContractOutcomePhase =
-  'TERMINAL' | 'CAMP_REMOVED' | 'OLD_FORD_REVEALED' | 'LUKA_DEATH_OBSERVED' | 'LUKA_RECRUIT_OFFER';
+  | 'TERMINAL'
+  | 'CAMP_REMOVED'
+  | 'OLD_FORD_REVEALED'
+  | 'LUKA_DEATH_OBSERVED'
+  | 'LUKA_RECRUIT_OFFER'
+  | 'RAID'
+  | 'HERBALIST_EXILED';
 
 function contractOutcomeIdentity(
-  instanceId: 'ci.m1.empty-watch-record.01' | 'ci.m1.stretcher-and-sword.01',
+  instanceId: ReturnReportContractInstanceId,
   sourceEventId: string,
   phase: ContractOutcomePhase = 'TERMINAL',
 ): string {
@@ -115,7 +135,11 @@ function phaseForReturnOutcome(
         ? 'LUKA_RECRUIT_OFFER'
         : outcome === 'LUKA_DEATH_OBSERVED'
           ? 'LUKA_DEATH_OBSERVED'
-          : 'TERMINAL';
+          : outcome === 'WOLVES_RAID'
+            ? 'RAID'
+            : outcome === 'FOUL_WELL_HERBALIST_EXILED'
+              ? 'HERBALIST_EXILED'
+              : 'TERMINAL';
 }
 
 function foodSnapshot(state: CompanyCombatAggregateState, throughTick: string): FoodBaseline[] {
@@ -148,7 +172,7 @@ function parseFoodBaseline(value: unknown): FoodBaseline[] | undefined {
   return food;
 }
 
-function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
+export function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
   if (!Array.isArray(value)) return undefined;
   const identities = new Set<string>();
   for (const entry of value) {
@@ -157,7 +181,9 @@ function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
     const sourceEventId = candidate['sourceEventId'];
     if (
       (candidate['instanceId'] !== 'ci.m1.empty-watch-record.01' &&
-        candidate['instanceId'] !== 'ci.m1.stretcher-and-sword.01') ||
+        candidate['instanceId'] !== 'ci.m1.stretcher-and-sword.01' &&
+        candidate['instanceId'] !== 'ci.m1.whose-wolves.01' &&
+        candidate['instanceId'] !== 'ci.m1.foul-well.01') ||
       typeof sourceEventId !== 'string' ||
       sourceEventId.length === 0 ||
       (candidate['phase'] !== undefined &&
@@ -165,14 +191,24 @@ function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
         candidate['phase'] !== 'CAMP_REMOVED' &&
         candidate['phase'] !== 'OLD_FORD_REVEALED' &&
         candidate['phase'] !== 'LUKA_DEATH_OBSERVED' &&
-        candidate['phase'] !== 'LUKA_RECRUIT_OFFER') ||
+        candidate['phase'] !== 'LUKA_RECRUIT_OFFER' &&
+        candidate['phase'] !== 'RAID' &&
+        candidate['phase'] !== 'HERBALIST_EXILED') ||
       (candidate['instanceId'] === 'ci.m1.empty-watch-record.01' &&
         candidate['phase'] === 'LUKA_RECRUIT_OFFER') ||
       (candidate['instanceId'] === 'ci.m1.stretcher-and-sword.01' &&
         candidate['phase'] !== undefined &&
         candidate['phase'] !== 'TERMINAL' &&
         candidate['phase'] !== 'LUKA_DEATH_OBSERVED' &&
-        candidate['phase'] !== 'LUKA_RECRUIT_OFFER')
+        candidate['phase'] !== 'LUKA_RECRUIT_OFFER') ||
+      (candidate['instanceId'] === 'ci.m1.whose-wolves.01' &&
+        candidate['phase'] !== undefined &&
+        candidate['phase'] !== 'TERMINAL' &&
+        candidate['phase'] !== 'RAID') ||
+      (candidate['instanceId'] === 'ci.m1.foul-well.01' &&
+        candidate['phase'] !== undefined &&
+        candidate['phase'] !== 'TERMINAL' &&
+        candidate['phase'] !== 'HERBALIST_EXILED')
     )
       return undefined;
     identities.add(
@@ -186,14 +222,18 @@ function parseContractOutcomeIds(value: unknown): Set<string> | undefined {
   return identities;
 }
 
-function serializeContractOutcomeIds(identities: ReadonlySet<string>): string {
+export function serializeContractOutcomeIds(identities: ReadonlySet<string>): string {
   return JSON.stringify(
     [...identities].flatMap((identity) => {
       const instanceId = identity.startsWith('ci.m1.empty-watch-record.01:')
         ? 'ci.m1.empty-watch-record.01'
         : identity.startsWith('ci.m1.stretcher-and-sword.01:')
           ? 'ci.m1.stretcher-and-sword.01'
-          : undefined;
+          : identity.startsWith('ci.m1.whose-wolves.01:')
+            ? 'ci.m1.whose-wolves.01'
+            : identity.startsWith('ci.m1.foul-well.01:')
+              ? 'ci.m1.foul-well.01'
+              : undefined;
       if (!instanceId) return [];
       const remainder = identity.slice(instanceId.length + 1);
       if (!remainder) return [];
@@ -204,7 +244,9 @@ function serializeContractOutcomeIds(identities: ReadonlySet<string>): string {
         (phase === 'CAMP_REMOVED' ||
           phase === 'OLD_FORD_REVEALED' ||
           phase === 'LUKA_DEATH_OBSERVED' ||
-          phase === 'LUKA_RECRUIT_OFFER')
+          phase === 'LUKA_RECRUIT_OFFER' ||
+          phase === 'RAID' ||
+          phase === 'HERBALIST_EXILED')
       )
         return [
           {
@@ -502,6 +544,93 @@ export function projectStretcherReturnOutcome(
   return result;
 }
 
+export function projectWhoseWolvesReturnOutcome(
+  state: WhoseWolvesQuestState | undefined,
+  companyId: string,
+  fromTick: string,
+  throughTick: string,
+  acknowledgedOutcomeIds: ReadonlySet<string> = new Set(),
+): NonNullable<CompanyReturnReportDto['contractOutcomes']> {
+  const outcome = state?.outcome;
+  if (!outcome || outcome.companyId !== companyId) return [];
+  const from = BigInt(fromTick);
+  const through = BigInt(throughTick);
+  const result: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number][] = [];
+  const terminalId = contractOutcomeIdentity('ci.m1.whose-wolves.01', outcome.sourceEventId);
+  if (
+    BigInt(outcome.atTick) >= from &&
+    BigInt(outcome.atTick) <= through &&
+    !acknowledgedOutcomeIds.has(terminalId)
+  )
+    result.push({
+      instanceId: 'ci.m1.whose-wolves.01',
+      outcome: outcome.kind === 'PACK_KILLED' ? 'WOLVES_PACK_KILLED' : 'WOLVES_PACK_SPARED',
+      atTick: outcome.atTick,
+    });
+
+  const raidId = contractOutcomeIdentity('ci.m1.whose-wolves.01', outcome.sourceEventId, 'RAID');
+  if (
+    outcome.kind === 'PACK_KILLED' &&
+    outcome.raidAtTick !== undefined &&
+    BigInt(outcome.raidAtTick) >= from &&
+    BigInt(outcome.raidAtTick) <= through &&
+    !acknowledgedOutcomeIds.has(raidId)
+  )
+    result.push({
+      instanceId: 'ci.m1.whose-wolves.01',
+      outcome: 'WOLVES_RAID',
+      atTick: outcome.raidAtTick,
+    });
+  return result;
+}
+
+export function projectFoulWellReturnOutcome(
+  outcome: FoulWellOutcome | undefined,
+  companyId: string,
+  fromTick: string,
+  throughTick: string,
+  acknowledgedOutcomeIds: ReadonlySet<string> = new Set(),
+): NonNullable<CompanyReturnReportDto['contractOutcomes']> {
+  if (!outcome || outcome.companyId !== companyId) return [];
+  const from = BigInt(fromTick);
+  const through = BigInt(throughTick);
+  const result: NonNullable<CompanyReturnReportDto['contractOutcomes']>[number][] = [];
+  const terminalId = contractOutcomeIdentity('ci.m1.foul-well.01', outcome.sourceEventId);
+  if (
+    BigInt(outcome.atTick) >= from &&
+    BigInt(outcome.atTick) <= through &&
+    !acknowledgedOutcomeIds.has(terminalId)
+  )
+    result.push({
+      instanceId: 'ci.m1.foul-well.01',
+      outcome:
+        outcome.slotId === 'foul-well-truth-reported'
+          ? 'FOUL_WELL_TRUTH_REPORTED'
+          : 'FOUL_WELL_AGHAFYA_ACCUSED',
+      atTick: outcome.atTick,
+    });
+
+  const exileAt = BigInt(outcome.atTick) + 7000n;
+  const exileId = contractOutcomeIdentity(
+    'ci.m1.foul-well.01',
+    outcome.sourceEventId,
+    'HERBALIST_EXILED',
+  );
+  if (
+    outcome.slotId === 'foul-well-aghafya-accused' &&
+    foulWellHerbalistRemoved(outcome, throughTick) &&
+    exileAt >= from &&
+    exileAt <= through &&
+    !acknowledgedOutcomeIds.has(exileId)
+  )
+    result.push({
+      instanceId: 'ci.m1.foul-well.01',
+      outcome: 'FOUL_WELL_HERBALIST_EXILED',
+      atTick: exileAt.toString(),
+    });
+  return result;
+}
+
 async function emptyWatchContractState(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
@@ -532,6 +661,22 @@ async function stretcherContractState(
     .executeTakeFirst();
   if (!row || row.profile_id !== profile.definitionId) return undefined;
   return readOrdinaryContractState(profile, row.state, row.profile_id);
+}
+
+async function whoseWolvesQuestState(
+  transaction: Transaction<DatabaseSchema>,
+  worldId: string,
+): Promise<WhoseWolvesQuestState | undefined> {
+  const profile = huntProfile(WHOSE_WOLVES_INSTANCE_ID);
+  if (!profile) return undefined;
+  const row = await transaction
+    .selectFrom('world_hunt_states')
+    .selectAll()
+    .where('world_id', '=', worldId)
+    .where('instance_id', '=', WHOSE_WOLVES_INSTANCE_ID)
+    .executeTakeFirst();
+  if (!row || row.profile_id !== profile.profileId) return undefined;
+  return readHuntWorldState(worldId, profile, row).questState;
 }
 
 function companyEmptyWatchOutcomeIdentities(
@@ -606,6 +751,46 @@ function companyStretcherOutcomeIdentities(
         recruitFact.sourceEventId,
         'LUKA_RECRUIT_OFFER',
       ),
+    );
+  return identities;
+}
+
+function companyWhoseWolvesOutcomeIdentities(
+  state: WhoseWolvesQuestState | undefined,
+  companyId: string,
+  throughTick: string,
+): Set<string> {
+  const outcome = state?.outcome;
+  if (!outcome || outcome.companyId !== companyId || BigInt(outcome.atTick) > BigInt(throughTick))
+    return new Set();
+  const identities = new Set([
+    contractOutcomeIdentity('ci.m1.whose-wolves.01', outcome.sourceEventId),
+  ]);
+  if (
+    outcome.kind === 'PACK_KILLED' &&
+    outcome.raidAtTick !== undefined &&
+    BigInt(outcome.raidAtTick) <= BigInt(throughTick)
+  )
+    identities.add(contractOutcomeIdentity('ci.m1.whose-wolves.01', outcome.sourceEventId, 'RAID'));
+  return identities;
+}
+
+function companyFoulWellOutcomeIdentities(
+  outcome: FoulWellOutcome | undefined,
+  companyId: string,
+  throughTick: string,
+): Set<string> {
+  if (!outcome || outcome.companyId !== companyId || BigInt(outcome.atTick) > BigInt(throughTick))
+    return new Set();
+  const identities = new Set([
+    contractOutcomeIdentity('ci.m1.foul-well.01', outcome.sourceEventId),
+  ]);
+  if (
+    outcome.slotId === 'foul-well-aghafya-accused' &&
+    foulWellHerbalistRemoved(outcome, throughTick)
+  )
+    identities.add(
+      contractOutcomeIdentity('ci.m1.foul-well.01', outcome.sourceEventId, 'HERBALIST_EXILED'),
     );
   return identities;
 }
@@ -693,6 +878,16 @@ async function getReturnReport(
       ),
       ...companyStretcherOutcomeIdentities(
         await stretcherContractState(transaction, worldId),
+        companyId,
+        throughTick,
+      ),
+      ...companyWhoseWolvesOutcomeIdentities(
+        await whoseWolvesQuestState(transaction, worldId),
+        companyId,
+        throughTick,
+      ),
+      ...companyFoulWellOutcomeIdentities(
+        await readFoulWellOutcome(transaction, worldId),
         companyId,
         throughTick,
       ),
@@ -789,6 +984,8 @@ async function getReturnReport(
   }
   const emptyWatchState = await emptyWatchContractState(transaction, worldId);
   const stretcherState = await stretcherContractState(transaction, worldId);
+  const wolvesState = await whoseWolvesQuestState(transaction, worldId);
+  const foulWellOutcome = await readFoulWellOutcome(transaction, worldId);
   const contractOutcomes = [
     ...projectEmptyWatchReturnOutcome(
       emptyWatchState,
@@ -799,6 +996,20 @@ async function getReturnReport(
     ),
     ...projectStretcherReturnOutcome(
       stretcherState,
+      companyId,
+      fromTick,
+      throughTick,
+      acknowledgedContractOutcomeIds,
+    ),
+    ...projectWhoseWolvesReturnOutcome(
+      wolvesState,
+      companyId,
+      fromTick,
+      throughTick,
+      acknowledgedContractOutcomeIds,
+    ),
+    ...projectFoulWellReturnOutcome(
+      foulWellOutcome,
       companyId,
       fromTick,
       throughTick,

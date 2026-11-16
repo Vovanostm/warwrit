@@ -70,8 +70,9 @@ revised line is «Быстрее доберётесь». The guide is a saved, c
 source and cannot shorten travel to other destinations. Movement profiles may
 combine it with carrying burdens only through finite approved modifiers.
 
-Next: implement the remaining approved texts and saved consequence consumers.
-Parameters (rewards, price deltas, durations) are set in each implementing slice.
+Next: complete the T035 consequence matrix/art and the remaining native M1
+acceptance checks. Parameters (rewards, price deltas, durations) are set in
+each implementing slice.
 
 ## Asset implementation checkpoint — 2026-11-15
 
@@ -482,3 +483,17 @@ and the affected 17-test file passing. The subsequent catalogue/ordinary/UI
 run passed 50/50, and food/return-report checks passed 41/41. Migration 0032
 was applied to the owned stand. Native combined quests and full T032
 acceptance remain NOT_RUN. LOCAL.
+
+### Moral choice return reports — 2026-11-16
+
+Added company-scoped return-report projections for «Чьи волки» and «Грязный
+колодец». The report reads the saved terminal choice; it includes the wolf raid
+only from its persisted `raidAtTick`, and reports Агафья’s exile only after the
+saved accusation’s seven-day delay. Outcome identities survive cursor reloads,
+so acknowledged choices and delayed phases are not repeated. The report does not
+infer another company’s outcome or expose Ефим’s private findings.
+
+Focused return-report tests passed 12/12 and web return-report tests passed
+22/22; server, web and protocol typechecks passed after rebuilding game-core and
+protocol. Native play, PostgreSQL route integration and player acceptance remain
+NOT_RUN. LOCAL.

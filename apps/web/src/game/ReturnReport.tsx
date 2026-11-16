@@ -51,6 +51,24 @@ function contractOutcomeTextKey(
             : 'luka-recruit-offer';
     return `contract.ci.m1.stretcher-and-sword.01.report.${key}`;
   }
+  if (outcome.instanceId === 'ci.m1.whose-wolves.01') {
+    const key =
+      outcome.outcome === 'WOLVES_PACK_KILLED'
+        ? 'pack-killed'
+        : outcome.outcome === 'WOLVES_PACK_SPARED'
+          ? 'pack-spared'
+          : 'raid';
+    return `contract.ci.m1.whose-wolves.01.report.${key}`;
+  }
+  if (outcome.instanceId === 'ci.m1.foul-well.01') {
+    const key =
+      outcome.outcome === 'FOUL_WELL_TRUTH_REPORTED'
+        ? 'truth-reported'
+        : outcome.outcome === 'FOUL_WELL_AGHAFYA_ACCUSED'
+          ? 'aghafya-accused'
+          : 'herbalist-exiled';
+    return `contract.ci.m1.foul-well.01.report.${key}`;
+  }
   const key =
     outcome.outcome === 'PROKOP_HANDED_OVER'
       ? 'handed-over'
@@ -391,6 +409,18 @@ function readReportResponse(value: unknown): SafeReturnReport | null | undefined
               outcome['outcome'] === 'NASTYA_ONLY' ||
               outcome['outcome'] === 'LUKA_DEATH_OBSERVED' ||
               outcome['outcome'] === 'LUKA_RECRUIT_OFFER'
+            );
+          if (outcome['instanceId'] === 'ci.m1.whose-wolves.01')
+            return (
+              outcome['outcome'] === 'WOLVES_PACK_KILLED' ||
+              outcome['outcome'] === 'WOLVES_PACK_SPARED' ||
+              outcome['outcome'] === 'WOLVES_RAID'
+            );
+          if (outcome['instanceId'] === 'ci.m1.foul-well.01')
+            return (
+              outcome['outcome'] === 'FOUL_WELL_TRUTH_REPORTED' ||
+              outcome['outcome'] === 'FOUL_WELL_AGHAFYA_ACCUSED' ||
+              outcome['outcome'] === 'FOUL_WELL_HERBALIST_EXILED'
             );
           return false;
         })))

@@ -137,6 +137,36 @@ it.each([
     outcome: 'LUKA_RECRUIT_OFFER',
     text: 'Домой мне дороги нет.',
   },
+  {
+    instanceId: 'ci.m1.whose-wolves.01',
+    outcome: 'WOLVES_PACK_KILLED',
+    text: 'Кондрат заплатил за волчьи шкуры.',
+  },
+  {
+    instanceId: 'ci.m1.whose-wolves.01',
+    outcome: 'WOLVES_PACK_SPARED',
+    text: 'За волков он не заплатил.',
+  },
+  {
+    instanceId: 'ci.m1.whose-wolves.01',
+    outcome: 'WOLVES_RAID',
+    text: 'Утром на мостках нашли следы подкованных сапог.',
+  },
+  {
+    instanceId: 'ci.m1.foul-well.01',
+    outcome: 'FOUL_WELL_TRUTH_REPORTED',
+    text: 'Вы рассказали отцу Никону про овраг.',
+  },
+  {
+    instanceId: 'ci.m1.foul-well.01',
+    outcome: 'FOUL_WELL_AGHAFYA_ACCUSED',
+    text: 'Никон заплатил за имя Агафьи.',
+  },
+  {
+    instanceId: 'ci.m1.foul-well.01',
+    outcome: 'FOUL_WELL_HERBALIST_EXILED',
+    text: 'Через неделю дверь сарая Агафьи заколотили.',
+  },
 ])(
   'shows the saved $outcome outcome in the return report',
   async ({ instanceId, outcome, text }) => {

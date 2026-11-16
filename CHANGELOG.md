@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: company-scoped return-report outcomes for «Чьи волки» and
+  «Грязный колодец», including only saved and matured delayed facts. [M1 quest
+  report evidence](docs/work-packages/M1-QUESTS.md#moral-choice-return-reports--2026-11-16).
+  `codex/m1-quest-return-report-20261116`; LOCAL.
+
 - 2026-11-16 — Fixed: remove repeated reward and destination paragraphs from
   integrated hunt cards. [Native card correction](docs/work-packages/M1-CONTRACT-TERMS.md#combined-hunt-card-correction--2026-11-16). LOCAL.
 
