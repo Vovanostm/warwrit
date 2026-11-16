@@ -133,3 +133,15 @@ through ordinary controls. Details and remaining re-entry/retry evidence belong
 to [N02](02-next-contract.md#scout-delivery-and-subsequent-recovery--2026-11-16).
 The unavailable/dead-target branch and the rest of the eight-contract/eleven-scene
 matrix remain open.
+
+## C03 native road observation and report — 2026-11-16
+
+LOCAL. The restored N02 company accepted «Следы на дороге» from Евсей at the
+market, physically reached Тихая Гать, inspected the bank and returned to the
+issuer. Its ordinary report paid 40 crowns once, taking cash 398.71 → 438.71.
+The completed paid result survived reload and runtime return. The following
+journey to Северный Двор retained that cash and both completed contracts.
+Command and continuation details belong to
+[N02](02-next-contract.md#roadtracks-delivery-and-retained-continuation--2026-11-16).
+Remote/fabricated-observation refusals were NOT_RUN in this native journey;
+this result does not close the complete C03/CT branch matrix.

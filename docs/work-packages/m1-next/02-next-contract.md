@@ -13,8 +13,10 @@ and one-action autoplay, alongside timeout and reconnect handling.
 On that restored copy, the owner completed «Пропавший разведчик» through normal
 search, living custody, physical return and issuer delivery, receiving 80 crowns.
 The same company then camped in Каменный Брод, rested its three survivors and
-returned them to FIELD at 100/100. HUNT-03 remains unfinished. Full reward/proof,
-helper retry and native control acceptance keep their individual criteria below.
+returned them to FIELD at 100/100. It subsequently completed «Следы на дороге»
+for 40 crowns and retained both paid results after reload and runtime return.
+HUNT-03 remains unfinished. Full hunt reward/proof, helper retry and native
+control acceptance keep their individual criteria below.
 
 ### Earlier restore checkpoint — 2026-11-15
 
@@ -268,3 +270,19 @@ returned 200. The campaign computes food and wage consequences normally;
 historical unpaid wages remain company debt. No casualty or resource was repaired.
 The return/re-entry follow-up and remaining contract criteria are recorded when
 actually checked. This closes T011's ordinary objective, not the full N02 journey.
+
+## RoadTracks delivery and retained continuation — 2026-11-16
+
+LOCAL. The same restored owner accepted «Следы на дороге» from Евсей at the
+Каменный Брод market, travelled to Тихая Гать and inspected the bank through
+normal controls. After physically returning to the market, delivery command
+`6e67ab59-d734-420b-a517-adac8cf11876` succeeded and paid 40,000,000 Q
+(40 crowns), raising cash 398.71 → 438.71. The native board showed the completed
+paid result. It remained present with the scout's completed paid result after
+reload and the recorded runtime return. The subsequent normal journey reached
+Северный Двор with 438.71 and three living FIELD members, then camped there.
+
+This supplies C03's ordinary observation/report/payment path in N05 and the
+same-company continuation after a newly completed contract. HUNT-03 proof,
+helper retry, native victory and the remaining NEXT criteria retain their open
+status. No second payment or hidden clue was inferred.

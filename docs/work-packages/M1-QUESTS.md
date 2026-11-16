@@ -393,9 +393,8 @@ a payout policy from the first fact in the terminal event; the shared
 `living-rescue` fact could point to its earlier non-completing step. The
 projection now identifies the completing step from that company's recorded
 facts and the exact outcome event, preserving the accepted profile's output
-order. This local
-PostgreSQL check does not replace normal in-game play or owner acceptance; both
-remain NOT_RUN.
+order. The owner accepted the unpaid-delivery rule on 2026-11-16. Normal
+in-game play and broader M1 acceptance remain NOT_RUN.
 
 The early game-core/protocol commit is `8841f9c1779f5e48170712aaeafdfda8862b8ac6`;
 the foul-well shared dependency is `54290b29`. Game-core and protocol builds

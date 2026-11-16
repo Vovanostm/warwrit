@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: distinguish the accepted unpaid Sidor delivery rule
+  from pending native play, and record the retained company's paid RoadTracks
+  journey. [Quest rule](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16), [N02](docs/work-packages/m1-next/02-next-contract.md#roadtracks-delivery-and-retained-continuation--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: observe locally present founders before guard-service
   admission. Native entry, covered time, exit and reload complete T017.
   [N06](docs/work-packages/m1-next/06-company-capabilities.md#native-guard-service-and-founder-contact--2026-11-16). LOCAL.
