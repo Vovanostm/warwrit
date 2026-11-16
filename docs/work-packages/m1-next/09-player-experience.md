@@ -8,8 +8,50 @@ control while valid private grants and public revisions were out of sync.
 The correction and checks below are implemented. The subsequent retained-N01 attempt accepted orders from both accounts but
 still showed interrupted control and long requests. Its defeat and driver
 assistance are recorded in [N08](08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16).
+Stalled lookup recovery now passes the controlled native check below.
 Continuous tactical control remains unverified. Agreed-player observation is NOT_RUN. Enjoyment
 and comprehension remain NOT_MEASURED. T027 stays open.
+
+## Stalled encounter lookup recovery — 2026-11-16
+
+FIXED / LOCAL. A controlled native browser check held the surviving company's
+ordinary /encounters/active request for 12 seconds. Before correction the panel
+kept «Проверяем активный бой» and exposed no retry button. This isolates a
+recoverability gap independently of the earlier API pause. The control driver's
+section-presence check also misidentified discovery as a live battlefield.
+
+Active lookup and initial projection reads now have a 10-second deadline covering
+fetch and JSON-body consumption. Timeout aborts the request and reaches the
+existing failed/retry interface. Outer cancellation and timeout race the pending
+read, late results cannot publish a projection, and timer/listener cleanup runs
+for every result. The existing projection authorization fallback has the same
+bounded response wait. Stored combat rules, commands and replay versions retain
+their existing formats.
+
+The two focused regressions failed before correction, with discovery still
+pending at 10 seconds. After correction the connection file passes 15/15. The
+parent's connection, presentation and component-recovery union passes 26/26.
+Web typecheck, scoped ESLint, Prettier and diff checks pass. Native repetition
+of the same 12-second held request displays «Повторить проверку боя». Releasing
+the request and pressing that button restores the same company screen. Logs are
+output/m1-discovery-held-{before,after}-20261116.log and
+output/m1-encounter-deadline-union-20261116.log.
+
+The saved minute-scale resource durations span the deliberate API pause. Runtime
+logs have a 1,330.84-second request gap from 17:59:42Z to 18:21:53Z. Those values
+cannot establish active API latency. A subsequent unpaused 30-second owner sample
+has 30 movement reads at median 174/p95 314 ms, six hunt reads at median 268/p95
+991 ms, two board reads at 793 ms, two hunt-list reads at 769 ms and two surroundings
+reads at 1075 ms. All returned 200 and no atlas tile was requested during that
+stationary sample. The log is output/m1-n01-network-steady-20261116.log.
+Rasterization still takes place inside each tile transaction, but its contribution
+to the battle delays remains unmeasured. No server optimization is claimed.
+
+The controlled request hold is diagnostic assistance on an idle company, with no
+API pause or new battle. Whole-route production performance, continuous native
+battle control and agreed-player observation remain open. Full suites are
+NOT_RUN. The timeout is an engineering recovery limit, independent of combat turn
+rules. T027 remains open.
 
 ## Private grant and public projection synchronization — 2026-11-16
 

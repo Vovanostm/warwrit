@@ -281,6 +281,81 @@ describe('authenticated encounter re-entry', () => {
     connection.close();
   });
 
+  it('fails and aborts a held active-encounter read, ignoring its late result', async () => {
+    vi.useFakeTimers();
+    const observed = observer();
+    let resolveActive!: (response: Response) => void;
+    let requestSignal: AbortSignal | undefined;
+    const stop = startEncounterConnection({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      observer: observed,
+      apiUrl: '/api',
+      fetcher: (_input, init) => {
+        requestSignal = init?.signal ?? undefined;
+        return new Promise<Response>((resolve) => {
+          resolveActive = resolve;
+        });
+      },
+    });
+
+    try {
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(observed.statuses).toEqual(['discovering', 'failed']);
+      expect(requestSignal?.aborted).toBe(true);
+
+      resolveActive(jsonResponse({ version: 1, encounterId: null }));
+      await Promise.resolve();
+      expect(observed.statuses).toEqual(['discovering', 'failed']);
+      expect(vi.mocked(observed.onProjection).mock.calls).toEqual([[undefined]]);
+    } finally {
+      stop();
+      await Promise.resolve();
+      vi.useRealTimers();
+    }
+  });
+
+  it('fails and aborts when the initial encounter projection body stalls', async () => {
+    vi.useFakeTimers();
+    const observed = observer();
+    let projectionSignal: AbortSignal | undefined;
+    const stop = startEncounterConnection({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      observer: observed,
+      apiUrl: '/api',
+      fetcher: async (input, init) => {
+        if (String(input).endsWith('/encounters/active'))
+          return jsonResponse({ version: 1, encounterId: 'encounter-a' });
+        if (String(input).endsWith('/encounters/encounter-a/projection')) {
+          projectionSignal = init?.signal ?? undefined;
+          return {
+            ok: true,
+            status: 200,
+            json: () =>
+              new Promise((_resolve, reject) => {
+                projectionSignal?.addEventListener(
+                  'abort',
+                  () => reject(new DOMException('Aborted', 'AbortError')),
+                  { once: true },
+                );
+              }),
+          } as Response;
+        }
+        throw new Error(`Unexpected request ${String(input)}`);
+      },
+    });
+
+    try {
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(observed.statuses).toEqual(['discovering', 'failed']);
+      expect(projectionSignal?.aborted).toBe(true);
+      expect(vi.mocked(observed.onProjection).mock.calls).toEqual([[undefined]]);
+    } finally {
+      stop();
+      await Promise.resolve();
+      vi.useRealTimers();
+    }
+  });
+
   it('localizes a failed network request before offering a new connection check', async () => {
     const observed = observer();
     const clientFactory = vi.fn();

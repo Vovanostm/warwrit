@@ -17,6 +17,7 @@ import {
 
 const apiBaseUrl = import.meta.env['VITE_API_BASE_URL'] ?? '/api';
 const realtimeBaseUrl = import.meta.env['VITE_REALTIME_BASE_URL'];
+const encounterReadTimeoutMs = 10_000;
 
 export type EncounterConnectionStatus =
   | 'discovering'
@@ -200,6 +201,59 @@ async function readResponse(response: Response): Promise<unknown> {
   }
 }
 
+function withEncounterReadDeadline<T>(
+  signal: AbortSignal,
+  read: (requestSignal: AbortSignal) => Promise<T>,
+): Promise<T> {
+  if (signal.aborted) {
+    return Promise.reject(signal.reason ?? new DOMException('Aborted', 'AbortError'));
+  }
+
+  const timeoutController = new AbortController();
+  const requestSignal = AbortSignal.any([signal, timeoutController.signal]);
+  const timeout = setTimeout(
+    () => timeoutController.abort(new TypeError('Encounter read timed out.')),
+    encounterReadTimeoutMs,
+  );
+  let rejectAbort!: (reason: unknown) => void;
+  const aborted = new Promise<never>((_resolve, reject) => {
+    rejectAbort = reject;
+  });
+  const onAbort = () => rejectAbort(requestSignal.reason);
+  requestSignal.addEventListener('abort', onAbort, { once: true });
+
+  return Promise.race([Promise.resolve().then(() => read(requestSignal)), aborted]).finally(() => {
+    clearTimeout(timeout);
+    requestSignal.removeEventListener('abort', onAbort);
+  });
+}
+
+function fetchEncounterResponse(
+  fetcher: typeof fetch,
+  input: RequestInfo | URL,
+  init: RequestInit,
+  signal: AbortSignal,
+): Promise<Response> {
+  return withEncounterReadDeadline(signal, (requestSignal) =>
+    fetcher(input, { ...init, signal: requestSignal }),
+  );
+}
+
+function fetchEncounterJson(
+  fetcher: typeof fetch,
+  input: RequestInfo | URL,
+  init: RequestInit,
+  signal: AbortSignal,
+): Promise<{ readonly response: Response; readonly body: unknown }> {
+  return withEncounterReadDeadline(signal, async (requestSignal) => {
+    const response = await fetcher(input, { ...init, signal: requestSignal });
+    return {
+      response,
+      body: response.ok ? await readResponse(response) : undefined,
+    };
+  });
+}
+
 function authorizationStatus(status: number): 'unauthorized' | 'lost-access' | undefined {
   if (status === 401) return 'unauthorized';
   if (status === 403 || status === 404) return 'lost-access';
@@ -310,13 +364,14 @@ export async function connectEncounter(
   };
 
   const fetchProjection = async (encounterId: string): Promise<EncounterPublicProjectionDto> => {
-    const response = await fetcher(
+    const { response, body } = await fetchEncounterJson(
+      fetcher,
       `${apiUrl}/encounters/${encodeURIComponent(encounterId)}/projection`,
       {
         credentials: 'same-origin',
         cache: 'no-store',
-        signal,
       },
+      signal,
     );
     const auth = authorizationStatus(response.status);
     if (auth === 'unauthorized') {
@@ -329,7 +384,7 @@ export async function connectEncounter(
       throw new Error('Доступ к активному бою больше не подтверждается.');
     }
     if (!response.ok) throw new Error('Не удалось получить общую сводку боя.');
-    const projection = readEncounterProjection(await readResponse(response), encounterId);
+    const projection = readEncounterProjection(body, encounterId);
     if (!projection) throw new Error('Сервер вернул неполную сводку боя.');
     return projection;
   };
@@ -373,9 +428,11 @@ export async function connectEncounter(
       if (closed || requestId !== grantRequestRevision) return;
       clearGrant();
       try {
-        const response = await fetcher(
+        const response = await fetchEncounterResponse(
+          fetcher,
           `${apiUrl}/encounters/${encodeURIComponent(latestProjection.encounterId)}/projection`,
-          { credentials: 'same-origin', cache: 'no-store', signal },
+          { credentials: 'same-origin', cache: 'no-store' },
+          signal,
         );
         const auth = authorizationStatus(response.status);
         if (auth === 'unauthorized') {
@@ -437,11 +494,12 @@ export async function connectEncounter(
   signal.addEventListener('abort', close, { once: true });
   try {
     observer.onStatus('discovering');
-    const activeResponse = await fetcher(`${apiUrl}/encounters/active`, {
-      credentials: 'same-origin',
-      cache: 'no-store',
+    const { response: activeResponse, body: activeBody } = await fetchEncounterJson(
+      fetcher,
+      `${apiUrl}/encounters/active`,
+      { credentials: 'same-origin', cache: 'no-store' },
       signal,
-    });
+    );
     const activeAuth = authorizationStatus(activeResponse.status);
     if (activeAuth === 'unauthorized') {
       observer.onUnauthorized();
@@ -454,7 +512,7 @@ export async function connectEncounter(
       }
       throw new Error('Не удалось восстановить активный бой компании.');
     }
-    const active = readActiveEncounter(await readResponse(activeResponse));
+    const active = readActiveEncounter(activeBody);
     if (!active) throw new Error('Сервер вернул неполные сведения об активном бое.');
     if (signal.aborted || closed) return { encounterId: active.encounterId, close };
     if (active.encounterId === null) {

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: stalled battle lookup and projection reads now abort after
+  ten seconds and offer the existing retry. Native held-request recovery passes.
+  [N09](docs/work-packages/m1-next/09-player-experience.md#stalled-encounter-lookup-recovery--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the retained N01 battle's two deaths, two
   surrenders, released companies and intermittent control. Preserve the failed
   journey and corrected driver pause. [N08](docs/work-packages/m1-next/08-battle-outcomes.md#retained-n01-control-attempt--2026-11-16). LOCAL.
