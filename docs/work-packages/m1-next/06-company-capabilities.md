@@ -8,12 +8,13 @@ provider/course leaves below retain their own source prerequisites. Select
 each leaf against the [current M1 amendment](../../../specs/001-warwrit-m1/spec.md#overview-and-scope)
 before exposing a new command. Fresh gameplay checks here are NOT_RUN.
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; remaining capability matrix not freshly accepted.
-Recruitment, treatment, rest, payroll and transfer are already implemented;
-do not rebuild them from old roadmap text. N03/N04 own their open loss scenarios.
-Next: inspect actual enabled commands and existing #168/#170/#172/#8.
+PARTIAL / LOCAL. T017–T020 have ordinary control and saved-result evidence for
+supplies, equipment, camp, guard service, courses and retraining. N1 still needs
+a genuine native qualifying deed followed by nickname consent/refusal and saved
+history. I1 and the complete CAP matrix remain open. N03/N04 own loss recovery
+and deceased payroll. Next: obtain the qualifying deed through normal play.
 [Common contract](COMMON.md). [Prompt](prompts/06-company-capabilities.md).
 
 ## Player goal, sources and start condition
@@ -288,9 +289,52 @@ refusal without partial balance or coverage, and wrong-company scope privacy.
 It also confirmed that a guard quote catches a stationary company up to the
 current campaign tick before issue: a command carrying the older public revision
 is refused after catch-up, and the refreshed quote allows the player to continue.
-Protocol build plus server and web typechecks pass. A native player journey is
-NOT_RUN; player acceptance is NOT_MEASURED. No migration or new financial policy
-was added. N06 remains open for N1/I1 and independent player acceptance.
+Protocol build plus server and web typechecks pass. At this checkpoint a native
+player journey was NOT_RUN; the later result follows below. Player acceptance
+is NOT_MEASURED. No migration or new financial policy was added. N06 remains
+open for N1/I1 and independent player acceptance.
+
+### Native guard service and founder contact — 2026-11-16
+
+The retained helper company `2a5ab48d-29c3-49d5-8bf7-526c7bd351bc` reached
+Kamenny Brod with its living founder and the normally hired Ratko. Its ordinary
+guard quote was available, but acceptance returned `CONTACT_OR_ACCESS_REQUIRED`.
+The founder has no wage schedule, so the observation predicate skipped his
+stale contact even though he was locally present. The quote also caught up time
+without observing local beneficiaries. The adapter now captures one time,
+catches up, observes locally present members and issues the resulting revision.
+The shared observation predicate includes schedule-null accounts. Existing core
+access, debt, beneficiary and coverage rules still decide acceptance.
+
+The public-boundary PostgreSQL regression reproduced quote 200 followed by
+acceptance 409 before the fix. The corrected guard/deceased-payroll integration
+union passed 4/4 on disposable clones. Server typecheck, scoped ESLint,
+Prettier and diff checks passed. Log `output/m1-guard-observation-after.log`
+belongs to the integration worktree. No migration or retained-save repair was
+needed.
+
+Through ordinary controls, Ratko's due 1.69 crowns were paid by command
+`4abb6acd-b71c-44db-923c-af16b7bb9276` (public revision 238), reducing cash
+717.55 → 715.86. The player explicitly accepted service for the founder and
+Ratko with `aa56696f-90cc-457f-bc95-f14351f1034d` (revision 240), starting at
+tick 83061. An existing 0.61-crown earned wage obligation retained its real
+backing, leaving free cash 715.25. No earlier obligation was forgiven.
+
+The isolated-world QA control advanced 83072 → 84072 by exactly 1,000 ticks
+(`b40ce6f2-4c03-475e-ac38-e07dc8d349bf`). After a legitimate stale-revision
+refusal, the refreshed ordinary exit succeeded with
+`a316591c-23b5-4abd-b497-c6661e1c1d99` (revision 253), ending service at 84078. Its actual 1,017 ticks covered Ratko's 9.39 + 0.78 = 10.17 crowns of
+wages. Cash remained 715.86 and carried rations remained 21. Reload showed
+inactive service and an available new offer. Return report 82954 → 84090
+retained zero ration consumption and the actual payment. Its current owed 0.73
+includes the old backed 0.61 plus 0.12 earned after exit.
+
+T017 now has native supply purchase/readback from N03, all nine retained helper
+equip commands and reload below, safe camp/break-camp evidence in N02, the
+specific unsafe-camp refusal below, and service entry/coverage/exit/reload here.
+This closes T017's bounded journey. A native service amendment is NOT_RUN;
+the existing PostgreSQL regression covers amendment. CAP-4, broader I1,
+complete CAP-6/CAP-7 and owner acceptance remain open.
 
 ### Equipment controls and unsafe camp feedback — 2026-11-16
 

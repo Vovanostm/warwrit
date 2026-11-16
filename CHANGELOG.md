@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: observe locally present founders before guard-service
+  admission. Native entry, covered time, exit and reload complete T017.
+  [N06](docs/work-packages/m1-next/06-company-capabilities.md#native-guard-service-and-founder-contact--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: order board snapshot/hunt locks consistently after native
   PostgreSQL deadlocks; complete R1–R5 with independent restored continuation.
   [N11](docs/work-packages/m1-next/11-durability.md#native-board-deadlock-and-lock-ordering--2026-11-16). LOCAL.
