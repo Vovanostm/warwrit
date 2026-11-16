@@ -9,6 +9,12 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: show pending battle readiness only for current company
+  consent, restoring the JOIN control after equipment or other company changes.
+  [Native preparation](docs/work-packages/m1-next/02-next-contract.md#fresh-join-readiness-after-equipment-changes--2026-11-16). LOCAL.
+- 2026-11-16 — Added: real PostgreSQL rollback, competing claim and historical
+  retry evidence for admission and payments. [N11 boundaries](docs/work-packages/m1-next/11-durability.md#r1r3r4-boundary-evidence--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: explain when living opponents prevent pitching camp,
   preserving the server's existing eligibility rule and exact command retry.
   [Company controls](docs/work-packages/m1-next/06-company-capabilities.md#equipment-controls-and-unsafe-camp-feedback--2026-11-16). LOCAL.

@@ -1257,11 +1257,15 @@ async function readHuntView(
           yourRole: role,
           knownState: state,
           yourJoinIntent:
-            role === 'OWNER'
-              ? contract.owner_join !== null && contract.owner_join_attempt_no === joinAttemptNo
+            currentAggregate !== undefined &&
+            (role === 'OWNER'
+              ? contract.owner_join_attempt_no === joinAttemptNo &&
+                readJoinIntent(contract.owner_join, contract.owner_company_id)?.publicRevision ===
+                  currentAggregate.economy.lifecycle.knowledge.revision
               : role === 'HELPER' &&
-                contract.helper_join !== null &&
-                contract.helper_join_attempt_no === joinAttemptNo,
+                contract.helper_join_attempt_no === joinAttemptNo &&
+                readJoinIntent(contract.helper_join, contract.helper_company_id)?.publicRevision ===
+                  currentAggregate.economy.lifecycle.knowledge.revision),
           helperSlot: contract.helper_company_id ? 'OCCUPIED' : 'AVAILABLE',
           encounterId: admission?.encounter_id ?? null,
           ...(terminal ? { terminal } : {}),

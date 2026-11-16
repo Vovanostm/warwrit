@@ -2237,6 +2237,12 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           payload: ownerJoin,
         });
         expect(ownerAccepted.statusCode).toBe(200);
+        const ready = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        expect(ready.json().contract.yourJoinIntent).toBe(true);
 
         const ownerCompany = owner.initial.economy.lifecycle.company;
         if (!ownerCompany) throw new Error('FIRST HUNT owner company is missing');
@@ -2258,6 +2264,12 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
           },
         });
         expect(renamed.statusCode, renamed.body).toBe(200);
+        const needsConfirmation = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        expect(needsConfirmation.json().contract.yourJoinIntent).toBe(false);
 
         await setFirstHuntWorldTick(database, worldId, Number(startingTick) + 2, startingTick);
         const helperRead = await app.inject({

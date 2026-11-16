@@ -225,3 +225,25 @@ remaining encounter binding. The terminal acknowledgment is revision135, applied
 at 2026-11-16T01:29:08.530Z. NEXT-2–NEXT-5 are still open. Success coverage will
 use the explicitly separate pre-battle restored copy, retaining this failed
 attempt as actual history.
+
+### Fresh JOIN readiness after equipment changes — 2026-11-16
+
+LOCAL. On the pre-battle restored copy, the helper equipped all nine existing
+carried items with ordinary `взять`/`надеть` controls. Every command returned200,
+and a page reload retained the equipment. No new item or replacement company
+was created. The earlier equipment-UI gap was a mistaken source summary, and
+the proposed duplicate selector was cancelled without code changes.
+
+Those real equipment changes exposed a separate stale readiness display. The
+read projection checked only that a JOIN record existed, while admission already
+required the recorded company revision to match. The projection now applies
+that same revision condition for the current attempt and authenticated company.
+Refreshing the helper's contract changes readiness to `не заявлена` and exposes
+`Вступить в бой` again. Server admission still requires renewed consent and
+retains its existing ownership and time guards.
+
+The existing PostgreSQL fresh-consent regression now checks readiness before
+and after a company change, alongside its unchanged rejected completing JOIN
+and exact re-consent path. It passes (1 passed,28 skipped), and its disposable
+database was disposed. Server typecheck and scoped formatting pass. Native
+re-confirmation and the restored battle remain pending at this checkpoint.
