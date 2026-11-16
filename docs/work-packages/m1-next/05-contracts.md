@@ -47,17 +47,17 @@ to the accepted eight. No old source ZIP catalogue reconstruction.
 These nine leaves cover eight instances and eleven scenes, not nine contracts.
 Actual IDs and prerequisite facts come from the current authored definition.
 
-| Leaf / existing issue | Result and mandatory special case                                                                                                                  |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C01/#379              | «Знамя налётчиков»: actual eligible battle source → unique standard → lawful bearer → one payout; no proof from an ineligible terminal outcome     |
-| C02/#380              | «Волчья тропа»: real hunt → pelt pickup/capacity → return → once-only payment; reuse unchanged WLC-08 coverage                                     |
-| C03/#381              | «Следы на дороге»: available actual observation → truthful report; no remote or fabricated observation                                             |
-| C04/#382              | «Пропавшие травы»: actual daytime inspection and both required clues → report; missing/night-time access does not invent findings                  |
-| C05/#383              | «Спасение из погреба»: actual living captive → release/custody → physical delivery; no reward for a dead/unavailable target; source dependency C01 |
-| C06/#384              | «Потерянный разведчик»: lawful discovery/custody → actual live delivery; preserve unavailable/dead-target branch                                   |
-| C07/#385              | Mill start MILL-01/02: source-backed beginning and two real clues; stop before inventing night-beast eligibility                                   |
-| C08/#386              | Mill HUNT-01: source-eligible night hunt → real terminal/proof; after C07                                                                          |
-| C09/#387              | Mill MILL-03/04: actual worker release/custody → live delivery and final accepted result; after C08                                                |
+| Leaf / existing issue | Result and mandatory special case                                                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C01/#379              | `HUNT-03` — «Знамя налётчиков»: actual eligible battle source → unique standard → lawful bearer → one payout; no proof from an ineligible terminal outcome       |
+| C02/#380              | `HUNT-02` — «Волчья тропа»: real hunt → pelt pickup/capacity → return → once-only payment; reuse unchanged WLC-08 coverage                                       |
+| C03/#381              | `INVEST-01` — «Следы на дороге»: available actual observation → truthful report; no remote or fabricated observation                                             |
+| C04/#382              | `INVEST-02` — «Пропавшие травы»: actual daytime inspection and both required clues → report; missing/night-time access does not invent findings                  |
+| C05/#383              | `RESCUE-01` — «Спасение из погреба»: actual living captive → release/custody → physical delivery; no reward for a dead/unavailable target; source dependency C01 |
+| C06/#384              | `RESCUE-02` — «Потерянный разведчик»: lawful discovery/custody → actual live delivery; preserve unavailable/dead-target branch                                   |
+| C07/#385              | `MILL-01` / `MILL-02`: source-backed beginning and two real clues; stop before inventing night-beast eligibility                                                 |
+| C08/#386              | `HUNT-01`: source-eligible night hunt → real terminal/proof; after C07                                                                                           |
+| C09/#387              | `MILL-03` / `MILL-04`: actual worker release/custody → live delivery and final accepted result; after C08                                                        |
 
 Execute C07 → C08 → C09. Do not require full worker delivery before its own
 night-hunt prerequisite. Other independent ready leaves can run serially.

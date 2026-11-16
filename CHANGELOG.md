@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: expand the accepted twenty-quest table to individual
+  stable IDs and map the eleven original narrative scenes to N05 leaves.
+  [Quest matrix](docs/work-packages/M1-QUESTS.md#twenty-quest-rows-and-eleven-original-scenes--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: reconcile T007 completion with demonstrated side history,
   native surrender/death/retreat effects and R2 atomic recovery. Native hostile
   escape/retry remains open. [N08](docs/work-packages/m1-next/08-battle-outcomes.md#t007-outcome-composition-completion--2026-11-16). LOCAL.

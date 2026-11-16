@@ -3,11 +3,11 @@
 Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
 quests have local domain, server and UI implementations. T032 is complete on
 the recorded public-boundary outcome evidence below. The combined branch
-has focused checks and migrations through 0032. The twenty-quest native matrix,
-four paired moral outcomes and full M1 player acceptance remain open. Each of
-the four moral pairs has domain/report evidence; isolated PostgreSQL checks
-cover selected consumers and branches, while ordinary combined re-entry remains
-pending.
+has focused checks and migrations through 0032. Aggregate consequence/art
+checks and full M1 player acceptance remain open. All four
+moral pairs have domain/report rules and saved-consumer PostgreSQL evidence.
+Some PostgreSQL cases seed terminal states; their full native producer journeys
+and ordinary combined re-entry remain unverified.
 Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
@@ -39,21 +39,28 @@ Studioigor decisions #11–#12. List and dilemma frames approved. The later
 November 13 text approval is recorded below. Rewards and numerical effects in the approved texts remain trial balance
 for verification during implementation.
 
-| #   | Quest                    | Stable ID / source                                               |
-| --- | ------------------------ | ---------------------------------------------------------------- |
-| 1–8 | Eight existing contracts | [Instances](../wiki/m1-spec.md#9-контракты-улика-и-выплата), N05 |
-| 9   | Кто выдал тайник         | [B4](M1-STORY-MISSIONS.md)                                       |
-| 10  | Чьи волки                | `ci.m1.whose-wolves.01`                                          |
-| 11  | Обход, которого не было  | `ci.m1.empty-watch-record.01`                                    |
-| 12  | Девочка в синем платке   | `ci.m1.stretcher-and-sword.01`                                   |
-| 13  | Грязный колодец          | `ci.m1.foul-well.01`                                             |
-| 14  | Мешок у дороги           | `ci.m1.dragged-sack.01`                                          |
-| 15  | Вожак с рваным ухом      | `ci.m1.not-one-pack.01`                                          |
-| 16  | Свежие следы на дороге   | `ci.m1.tracks-over-tracks.01`                                    |
-| 17  | Мешок легче накладной    | `ci.m1.light-sack.01`                                            |
-| 18  | Чужая расписка           | `ci.m1.two-receipts.01`                                          |
-| 19  | Человек на обочине       | `ci.m1.man-by-road.01`                                           |
-| 20  | Голос из-под пола        | `ci.m1.voice-under-boards.01`                                    |
+| #   | Quest                   | Stable ID / source                                        |
+| --- | ----------------------- | --------------------------------------------------------- |
+| 1   | Знамя налётчиков        | `ci.m1.raider-standard.01` — N05 C01, `HUNT-03`           |
+| 2   | Волчья тропа            | `ci.m1.wolf-trail.01` — N05 C02, `HUNT-02`                |
+| 3   | Следы на дороге         | `ci.m1.road-tracks.01` — N05 C03, `INVEST-01`             |
+| 4   | Пропавшие травы         | `ci.m1.missing-herbs.01` — N05 C04, `INVEST-02`           |
+| 5   | Спасение из погреба     | `ci.m1.cellar-rescue.01` — N05 C05, `RESCUE-01`           |
+| 6   | Потерянный разведчик    | `ci.m1.lost-scout.01` — N05 C06, `RESCUE-02`              |
+| 7   | Работник мельницы       | `ci.m1.mill-worker.01` — N05 C07/C09, `MILL-01`–`MILL-04` |
+| 8   | Зверь у мельницы        | `ci.m1.mill-beast.01` — N05 C08, `HUNT-01`                |
+| 9   | Кто выдал тайник        | `sm.m1.cache-disclosure.01` — [B4](M1-STORY-MISSIONS.md)  |
+| 10  | Чьи волки               | `ci.m1.whose-wolves.01`                                   |
+| 11  | Обход, которого не было | `ci.m1.empty-watch-record.01`                             |
+| 12  | Девочка в синем платке  | `ci.m1.stretcher-and-sword.01`                            |
+| 13  | Грязный колодец         | `ci.m1.foul-well.01`                                      |
+| 14  | Мешок у дороги          | `ci.m1.dragged-sack.01`                                   |
+| 15  | Вожак с рваным ухом     | `ci.m1.not-one-pack.01`                                   |
+| 16  | Свежие следы на дороге  | `ci.m1.tracks-over-tracks.01`                             |
+| 17  | Мешок легче накладной   | `ci.m1.light-sack.01`                                     |
+| 18  | Чужая расписка          | `ci.m1.two-receipts.01`                                   |
+| 19  | Человек на обочине      | `ci.m1.man-by-road.01`                                    |
+| 20  | Голос из-под пола       | `ci.m1.voice-under-boards.01`                             |
 
 ### Moral dilemma frames
 
@@ -636,3 +643,21 @@ prompts saved with produced assets retain their historical bytes.
 Both profile JSON files parse, the six changed constraint strings were checked
 for consistency, and the scoped diff passes. No image was generated in this
 correction. Night inspection and owner visual acceptance remain open under T035.
+
+### Twenty quest rows and eleven original scenes — 2026-11-16
+
+LOCAL. The selected-twenty table now names each original contract separately,
+with its existing instance ID, N05 leaf and narrative scene IDs. The remaining
+eleven approved quests retain their stable IDs and B4 remains the separate
+ninth quest. The original eight/eleven mapping uses the current finite
+[authored derivative](../content/CONTRACTS_M1_DERIVATIVE.md) and
+[wiki scene edition](../wiki/m1-spec.md#одиннадцать-повествовательных-сцен).
+N05 names all eleven scenes in its existing leaf matrix. This organizes current
+accepted definitions; the recorded source-ZIP concordance limitation remains.
+
+T035's eight moral-outcome rows already identify later consumers and PostgreSQL
+saved-state observations. These are distinct from full native producer journeys,
+which the table continues to mark unrun. No additional requirement for eight
+fresh paired browser journeys is introduced here. The original-contract branch
+matrix remains under T031/N05; T035 retains remaining consequence/art checks and
+full M1 acceptance remains under T036.
