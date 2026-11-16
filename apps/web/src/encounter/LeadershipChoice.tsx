@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { EncounterLeadershipDto } from '@warwrit/protocol';
 
@@ -9,23 +9,47 @@ export function LeadershipChoice(props: { readonly encounterId: string }) {
   const [view, setView] = useState<EncounterLeadershipDto | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [busy, setBusy] = useState(false);
+  const [polling, setPolling] = useState(true);
+  const latestRequest = useRef(0);
   const url = `${apiBaseUrl}/encounters/${encodeURIComponent(props.encounterId)}/leadership`;
 
   const load = useCallback(async () => {
+    const requestId = ++latestRequest.current;
     try {
       const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+      if (requestId !== latestRequest.current) return;
+      if (response.status === 404) {
+        setView(undefined);
+        setPolling(false);
+        return;
+      }
       if (!response.ok) return;
-      setView((await response.json()) as EncounterLeadershipDto);
+      const next = (await response.json()) as EncounterLeadershipDto;
+      if (requestId !== latestRequest.current) return;
+      setView(next);
+      setPolling(next.required);
     } catch {
       // The next poll retries; the outcome does not change while waiting.
     }
   }, [url]);
 
   useEffect(() => {
+    latestRequest.current += 1;
+    setView(undefined);
+    setMessage(undefined);
+    setBusy(false);
+    setPolling(true);
+  }, [url]);
+
+  useEffect(() => {
+    if (!polling) return;
     void load();
     const id = setInterval(() => void load(), 5000);
-    return () => clearInterval(id);
-  }, [load]);
+    return () => {
+      clearInterval(id);
+      latestRequest.current += 1;
+    };
+  }, [load, polling]);
 
   if (!view?.required) return null;
   const choose = async (candidateId: string) => {

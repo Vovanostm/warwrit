@@ -11,6 +11,31 @@ owns that complete journey and its diagnostic assistance. Agreed-player
 observation, subjective comprehension/enjoyment and full tactical handoff
 acceptance remain NOT_RUN/NOT_MEASURED. T027 stays open.
 
+## Leadership lookup after applied outcomes — 2026-11-17
+
+FIXED / LOCAL. The retained production HUNT-01 result repeatedly requested
+`/encounters/308aa36e-0ab0-428f-8fa1-942ceee9f352/leadership` every five seconds.
+Both leaders survived and terminal effects had released the companies, so the
+route correctly returned 404. The chooser kept polling after each refusal and
+could retain a stale earlier choice. The native console records the repeated
+requests. Combat commands and the saved outcome had already completed.
+
+The chooser now clears stale content and ends polling on 404 or a successful
+`required:false` response. Pending required choices continue to refresh, and
+transient HTTP/network failures retain retry. A changed encounter ID resets the
+chooser and restarts polling. Request generations discard older reads after a
+replacement or unmount. Parent review caught the initial stopped-state lifetime
+gap and the corrected patch includes its regression.
+
+Focused component checks pass 7/7 for terminal refusals, no required choice,
+continuing required/chosen state, transient failures, cleanup, a new encounter
+after a stopped poll and a late prior response. Web types, scoped ESLint,
+Prettier and diff checks pass. The complete root production build passes with
+`index-DBR1Y_I3.js`; its log is
+`output/m1-integrated-build-leadership-poll-20261117.log`. Native terminal
+repetition on that artifact is NOT_RUN. The preceding native victory proves the trigger
+and saved release. Agreed-player observation remains open under T027.
+
 ## Stalled encounter lookup recovery — 2026-11-16
 
 FIXED / LOCAL. A controlled native browser check held the surviving company's

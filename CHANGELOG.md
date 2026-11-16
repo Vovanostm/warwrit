@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Fixed: completed battles stop polling an unavailable leadership
+  choice; later encounters restart their own chooser and ignore stale reads.
+  [N09](docs/work-packages/m1-next/09-player-experience.md#leadership-lookup-after-applied-outcomes--2026-11-17). LOCAL.
+
 - 2026-11-17 — Added: a lawful night sighting at Old Mill opens the beast hunt
   on fresh worker contracts; saved accepted steps stay fixed.
   [N05](docs/work-packages/m1-next/05-contracts.md#mill-clue-eligibility-and-hunt-refusals--2026-11-17). LOCAL.

@@ -12,6 +12,22 @@ open. No deployment, paid provisioning or pilot audience/size is authorized.
 
 ### Current local runtime pointers — 2026-11-16
 
+On 2026-11-17 the QA matrix continued in the compiled production runtime on the
+same `m1_control_sync_20261116` database. API 3033/realtime 3034 and preview 5333
+use private mode 0600 `output/m1-matrix-production-runtime-20261117.env`, with
+development flags removed. Owned API/preview terminals are 89293/32452; listeners
+were verified as 82176/82227 at this checkpoint. Append logs are
+`output/m1-matrix-production-{api,web}-20261117.log`. The preceding development
+terminal 87509 stopped normally. Its private configuration remains available.
+
+Both pre-existing QA3/QA4 sessions restored their actual companies and consent in
+`index-CFWbcjwC.js`. This is session restoration using the local QA identities.
+N05 owns the successful real HUNT-01, living worker release and pending return.
+N10 owns the measured atlas/result intervals for this exact artifact. The current
+preview now serves the subsequently built `index-DBR1Y_I3.js` after the leadership
+poll correction. A fresh native terminal check on that later client is NOT_RUN.
+The production sessions keep their already loaded client until ordinary reload.
+
 The active continuation has returned to the owned development runtime on
 m1_n01_control_20261116, API 3031/realtime 3032/web 5331. Its private mode 0600
 configuration is output/m1-n01-control-runtime-20261116.env, terminal 13226, API
@@ -21,7 +37,7 @@ output/m1-n01-control-dev-20261116.log. The runtime includes the purse and encou
 This return enabled the existing protected clock controls for the next native
 C05 journey, which now completes and pays 80 crowns under [N05](05-contracts.md#c05-native-living-rescue-and-paid-re-entry--2026-11-16).
 
-The separate remaining-matrix runtime uses the retained m1_control_sync_20261116
+The preceding remaining-matrix development runtime used the retained m1_control_sync_20261116
 QA database on API 3033/realtime 3034/web 5333, terminal 87509, private mode 0600
 output/m1-matrix-runtime-20261116.env and append-preserved
 output/m1-matrix-dev-20261116.log. Its entry is the existing development quick-login
@@ -230,13 +246,15 @@ scope cut or force another infrastructure project before useful local work.
 
 ## Current integrated production build — 2026-11-16
 
-The latest root pnpm build passes on 2026-11-17 with the independent mill night
-observation, map marker anchor correction, carried purse and encounter-read
-deadline corrections. The source and this record are delivered together after
-791b276e. All workspace production artifacts completed. Web compilation took
-1m7s and reports the existing large-chunk advisory, with index-CFWbcjwC.js at
-7,819.96 kB (gzip 1,788.53 kB). The log is
-output/m1-integrated-build-night-observation-20261117.log. Native compiled re-entry and
+The latest root pnpm build passes on 2026-11-17 with the leadership poll fix,
+independent mill night observation, map marker anchor correction, carried purse
+and encounter-read deadline corrections. The source and this record are delivered
+together after 8dff71bd. All workspace production artifacts completed. Web
+compilation took 1m25s and reports the existing large-chunk advisory, with
+index-DBR1Y_I3.js at 7,819.96 kB (gzip 1,788.53 kB). The log is
+output/m1-integrated-build-leadership-poll-20261117.log. The preceding
+index-CFWbcjwC.js build passes native two-company HUNT-01, both session re-entries
+and the atlas/result measurements under N05/N10. Native compiled re-entry and
 supply purchase passed at the earlier 1e607f39 artifact on the active isolated N01
 continuation. Re-entry on the latest artifact is NOT_RUN. Whole-route 60-FPS
 compliance remains NOT_MEASURED. Earlier integrated build evidence follows.
