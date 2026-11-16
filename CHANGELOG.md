@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the native missing-herbs journey, night refusal,
+  both real clues and once-only 40-crown report retained after reload.
+  [N05 C04](docs/work-packages/m1-next/05-contracts.md#c04-native-paid-journey--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: approved safe-camp rest restores morale at 10 per campaign
   day up to 50, with saved fractional progress and visible morale. Native rest,
   refresh and reload pass. [N06](docs/work-packages/m1-next/06-company-capabilities.md#native-camp-recovery-and-compatibility--2026-11-16). LOCAL.

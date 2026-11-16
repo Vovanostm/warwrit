@@ -17,8 +17,9 @@ PARTIAL / LOCAL; full matrix remains open. C03 and C06 have newly recorded
 ordinary paid journeys; C02 reuses unchanged WLC-08 wolf-proof/payment evidence.
 N02's restored state retains completed/paid mill rescue and completed HUNT-01,
 so C07–C09 success is inherited saved-state evidence. Their source/branch and
-receipt details remain separate gaps. C01 victory/payout and C04/C05 ordinary
-journeys remain open. Next: run C04's daytime two-clue inspection and report.
+receipt details remain separate gaps. C04 now has a paid native two-clue journey
+and reload. C01 victory/payout and the C05 ordinary journey remain open.
+Next: recover morale, finish the remaining raid and continue C05.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Player goal and normal path
@@ -213,3 +214,31 @@ m1_herbs_checks_20261116 database. Scoped types, lint and formatting passed
 with the integrated test. The related rescue gate cases explicitly skip when
 the dedicated database input is absent. Log is `output/m1-missing-herbs-parent-20261116.log`.
 The normal herbalist/green/report journey remains open under C04/T031.
+
+## C04 native paid journey — 2026-11-16
+
+COMPLETED / LOCAL for C04's ordinary path. The existing helper company
+2a5ab48d-29c3-49d5-8bf7-526c7bd351bc continued after the saved battle effects
+recovered. It travelled from Old Mill to Bereznyak through the map with route
+receipt 9c415225-4fd4-4924-8ac0-e824cf240d45. The parent's protected QA control
+advanced 1000 ticks through receipt 47937a6f-6bf7-4d02-88bb-29efa5d1b001,
+from 91226 to 92226. The route arrived and the ordinary place controls opened.
+
+At Agafya's herbalist visit the company accepted the 40-crown terms and recounted
+stock. The recorded clue is «Нет шести связок, и все — от крови. Остальное не
+тронуто». Night inspection showed «ночью следов не разглядеть» with its action
+disabled. After natural daylight, the company left for the green and inspected
+the meadow. Its clue is «Свежие срезы у корня, ножом. Тропа уходит к Северному
+Двору». Returning to Agafya and handing in produced «Заказчик заплатил 40 кр.».
+
+Reload retained both clues and the completed/paid contract. Treasury changed
+715.86→755.86 crowns. The native path used one hand-in. Exact late replay,
+missing evidence, night-command refusal and observer privacy have the isolated
+PostgreSQL evidence above. The founder retains sword/shield and 36/100 health.
+The company has six carried rations plus its opened-food reserve. Kest, Rell and
+Ratko remain dead. The saved defeat and obligations remain part of this company.
+
+Captures are `.playwright-cli/c04-herbs-paid-reloaded.png`,
+`.playwright-cli/c04-herbs-final-squad.png` and their corresponding txt snapshots.
+The ordinary C05 rescue and the remaining original source branches retain their
+own T031 criteria. Full M1 acceptance remains open.
