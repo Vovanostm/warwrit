@@ -17,9 +17,10 @@ last known position. Fresh browser/SQL conformance checks are NOT_RUN.
 IN_PROGRESS / LOCAL; N07 observer, travel and offline acceptance remains open.
 The dated marker projection is implemented, and a native owner route now covers
 reroute, S-key STOP, a new route from the stopped position, tab close/reopen and
-arrival. T025's remote-selection place boundary is demonstrated. The full
-two-observer/native day-night journey remains open. Focused PostgreSQL checks,
-including the obsolete-arrival worker regression, are recorded below.
+arrival. T023–T025 are complete with ordinary re-entry, paired-observer
+visibility/date observations and remote-selection place access. The night atlas
+capture and current day readbacks retain their own conditions. Broader N07
+acceptance remains open; focused PostgreSQL and native evidence follow below.
 Continue with the accepted observation → leave visibility → changed second
 observer → return and refresh scenario.
 
@@ -282,3 +283,51 @@ was disposed. Output is retained at `output/m1-stale-arrival-20261116.log`.
 Scoped ESLint, Prettier, server typecheck and diff checks passed.
 The earlier five-case movement/privacy union remains applicable. N07's broader
 preview, paired-observer and day/night criteria remain separately open.
+
+## Paired observers and dated knowledge — 2026-11-16
+
+COMPLETED / LOCAL for T024. Both real source companies used ordinary controls
+and authenticated reads. The helper travelled from Kamenny Brod to North Yard;
+at ticks 85612/85619 both observers were there. The helper saw the owner's
+three-person company and the owner saw «Дозор помощника · 2 чел.».
+
+The owner ended camp and travelled to Kamenny Brod. At tick 86646 its
+`observedCompanies` was empty, North Yard was outside current visibility and
+retained day 86/tick 646. The helper then travelled to Tikhaya Gat. At ticks
+87657/87659 the helper saw its current Tikhaya Gat, while the owner at Brod
+retained Tikhaya's day 83/tick 732 marker and an empty company observation list.
+The helper's new actual location was excluded from the distant owner's current
+company projection.
+
+After the owner's ordinary return and reload, tick 88681 showed stationary
+North Yard, revision 916/epoch 57 and no observed companies. North Yard was
+fresh at day 89/tick 679. Tikhaya Gat remained stale at day 83/tick 732. The
+helper's own readback at tick 88679 showed stationary Tikhaya Gat, revision
+285/epoch 68, with current local observation day 89/tick 678. Its North Yard
+marker retained day 87/tick 658 outside current visibility. Both screens showed
+the correct local place and no other currently visible company. Cash in the
+captures remained 438.71 and 715.86 respectively.
+
+The accepted route commands were:
+
+- Helper Brod → North `ca0e8a1e-3806-4f95-a524-0cb3e39bfcf5`, epoch 65.
+- Owner North → Brod `a88f98eb-d8da-4193-9b0b-28cf480b76b4`, epoch 54,
+  following camp closure `68169188-5db0-4ac8-af83-81b57235a97b`.
+- Helper North → Gat `df8f398e-90af-45de-a02c-b20d2d56f808`, epoch 67.
+- Owner Brod → North `6a8ab6e8-90af-48e5-9715-5f24430d8a8c`, epoch 56.
+
+Each accepted leg was shortened with one acknowledged protected-world +1,000
+Campaign-tick control, four advances in total. Recorded QA marks were 85305,
+86638, 87656 and 88665; differences between these marks also include ordinary
+elapsed time. Food and wages accrued through the existing settlement path. The
+first helper re-entry recorded 1.02 days, two ration units consumed and 10.2
+crowns newly owed. Earlier debt persists.
+
+The parent inspected the two final day captures
+`.playwright-cli/page-2026-11-16T09-19-39-204Z.png` and
+`.playwright-cli/page-2026-11-16T09-20-05-778Z.png`, plus the existing night
+atlas capture `output/playwright/m1-dated-atlas-readable-20261116.png`. The
+three-state/dated-marker UI and company-scoped masked-tile regressions already
+recorded above remain applicable. This completes the bounded two-observer
+knowledge/re-entry check. Broader N07 rumour, preview and offline acceptance
+rows retain their individual evidence requirements.

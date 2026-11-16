@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: complete T024 with two-company co-location, departure,
+  changed current location, retained old dates and lawful refresh after return.
+  [N07](docs/work-packages/m1-next/07-world.md#paired-observers-and-dated-knowledge--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the owner's minimum 60-FPS budget for MacBook
   Chrome across atlas, settlements and combat up to 36 figures. Compliance awaits
   full-session measurement. [N10](docs/work-packages/m1-next/10-desktop-performance.md#performance-budget--owner-decision-2026-11-16). LOCAL.
