@@ -4,7 +4,9 @@ Status **PARTIAL / LOCAL**, checked 2026-11-16. All eleven approved new
 quests have local domain, server and UI implementations. T032 and T035 are
 complete against their recorded implementation, branch/consumer and asset-use
 criteria. The combined branch has focused checks and migrations through 0032.
-The original eight-contract normal-entry matrix remains under N05/T031.
+The original eight-contract normal-entry matrix is complete locally under
+[N05/T031](m1-next/05-contracts.md#acceptance-evidence-reconciliation--2026-11-17),
+including the final living Senka delivery and exact replay.
 Full native producer journeys, combined re-entry, night presentation and owner
 acceptance retain their separate T028/T036 criteria. Some PostgreSQL consequence
 checks seed terminal states, as identified in the evidence matrix below.

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Changed: close the original eight-contract matrix after Senka's
+  physical return, saved 80-crown payout and unchanged exact delivery replay.
+  [N05](docs/work-packages/m1-next/05-contracts.md#acceptance-evidence-reconciliation--2026-11-17). LOCAL.
+
 - 2026-11-17 — Fixed: hunt meeting, pickup and return hints use direct Russian
   instructions, correcting the observed «в Тихая Гать» destination.
   [N09](docs/work-packages/m1-next/09-player-experience.md#hunt-return-wording--2026-11-17). LOCAL.

@@ -13,21 +13,15 @@ Fresh gameplay checks for this reconciliation are NOT_RUN.
 
 ## Current result — 2026-11-17
 
-PARTIAL / LOCAL; full matrix remains open. C03 and C06 have newly recorded
-ordinary paid journeys; C02 reuses unchanged WLC-08 wolf-proof/payment evidence.
-N02's restored state retains completed/paid mill rescue and completed HUNT-01,
-so C07–C09 success is inherited saved-state evidence. Their source/branch and
-receipt details remain separate gaps. C04 now has a paid native two-clue journey
-and reload. C01 now has the native victory, unique standard, physical return,
-once-only 100-crown payout, compiled restart and subsequent supply purchase under
-[N02](02-next-contract.md#native-hunt-03-completion--2026-11-16). Its saved proof
-source is the actual terminal encounter. C05 now has a native living rescue,
-custody re-entry, physical delivery, 80-crown payment and paid re-entry below.
-The new authenticated checks below close C03's refusal gap and C06's accepted
-live-delivery replay gap. The fresh C07–C09 journey now has real clues, a dead
-beast, living worker custody, saved claw pickup and Frol's 90-crown payment.
-Senka's delivery and its final checks remain. The three death-report branches
-follow the owner's after-M1 task below.
+COMPLETED / LOCAL for T031; the accepted living-rescue matrix now has its final native mill delivery,
+reload and exact-retry evidence. C01 uses N02's genuine HUNT-03 terminal,
+standard and once-only 100-crown return. C02 reuses unchanged WLC-08 evidence.
+C03–C06 have native paid journeys and focused authenticated refusal, privacy,
+custody and replay checks below. Fresh C07–C09 records both clues, a real
+six-survivor beast victory, source-bound claw, living Senka, both physical returns
+and 170 crowns paid once in total. The three original rescue death/report
+branches follow the owner's after-M1 task below. RC-GAP-MACHINE-01 retains its
+original source-archive limitation. Human acceptance remains with T027/T036.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Original rescue scope — owner decision 2026-11-17
@@ -131,22 +125,38 @@ No new reward amount, NPC, battle archetype or hidden outcome is approved here.
 
 ## Acceptance / DoD
 
-- [ ] CT-1 Exactly the accepted eight instances/eleven scenes are mapped to
+- [x] CT-1 Exactly the accepted eight instances/eleven scenes are mapped to
       existing definitions and all reachable source-backed branch criteria.
-- [ ] CT-2 Every leaf succeeds through ordinary entry with actual issuer,
+- [x] CT-2 Every leaf succeeds through ordinary entry with actual issuer,
       location/time/knowledge, combat or custody, proof and final result.
-- [ ] CT-3 Each exposed material alternative/refusal/failure has truthful feedback
+- [x] CT-3 Each exposed material alternative/refusal/failure has truthful feedback
       and accepted saved consequences; no unsupported successful placeholder.
-- [ ] CT-4 Required owner/helper presence/consent and observer privacy hold;
+- [x] CT-4 Required owner/helper presence/consent and observer privacy hold;
       living-rescue rewards require their actual source/custody, and ineligible
       proof cannot produce a reward. The three death branches follow the after-M1 task.
-- [ ] CT-5 Unique ownership/custody, funded one-time payout and exact retry survive
+- [x] CT-5 Unique ownership/custody, funded one-time payout and exact retry survive
       reload/API restart. Relevant competing-claim risk has real SQL evidence.
-- [ ] CT-6 Required four reusable backgrounds, six portraits, two trophy images,
+- [x] CT-6 Required four reusable backgrounds, six portraits, two trophy images,
       three enemy archetypes and the mill chain have source/licensing and actual
       integrated-use evidence; asset counts alone do not accept presentation.
-- [ ] CT-7 Matrix distinguishes author evidence/new run/inherited unchanged proof;
+- [x] CT-7 Matrix distinguishes author evidence/new run/inherited unchanged proof;
       no B4 expansion or unrelated story/engine work enters the diff.
+
+## Acceptance evidence reconciliation — 2026-11-17
+
+| Criteria   | Evidence and provenance                                                                                                                                                                                                                                                                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-1, CT-7 | Existing C01–C09 table owns eight instances/eleven scenes. [T035 reconciliation](../M1-QUESTS.md) retains source IDs. C02 reuses unchanged WLC-08 evidence. The dated sections identify each new native journey and each isolated SQL fixture.                                                                                                                         |
+| CT-2       | C01 uses [N02's native completion](02-next-contract.md#native-hunt-03-completion--2026-11-16). C03–C06 have native paid paths below. C07–C09 use the fresh matrix mill journey and final saved delivery below.                                                                                                                                                         |
+| CT-3, CT-4 | Authenticated road/herbs/cellar/scout/mill tests below exercise unavailable evidence, wrong place/time, privacy and holder-only custody/payment. Mill native HELP and JOIN retain actual consent/presence. [N08](08-battle-outcomes.md) owns actual no-proof/escape/retry SQL evidence. The three unimplemented death/report sources follow the owner's after-M1 task. |
+| CT-5       | The leaf SQL cases and native reloads preserve funded exact-once results. Final mill readbacks and exact replay preserve worker revision 5, five ordinary receipts and both company states.                                                                                                                                                                            |
+| CT-6       | [M1-QUESTS](../M1-QUESTS.md) records T035's four backgrounds, six portraits, two trophy images, three archetypes and source/licence/integrated-use mapping. The native mill path now demonstrates its full integrated chain.                                                                                                                                           |
+
+The scoped self-review checked the owner decision, final delivery/replay readbacks
+and unchanged evidence against CT-1–CT-7. No new source catalogue, asset batch or
+extra gameplay rule was introduced. T031 is complete locally. T027/T028/T036,
+N08's separately specified native hostile-escape case and human acceptance keep
+their own status. Game tests for this documentation closeout are NOT_RUN.
 
 ## Checks and unresolved policy
 
@@ -180,7 +190,7 @@ The isolated per-file PostgreSQL case passes 1/1 and its database was disposed.
 Scoped ESLint, server types, Prettier and diff checks pass. The final additional
 zero-clue assertion was rerun with PostgreSQL and formatting. Native C07–C09
 continuation remains in progress on the preserved QA matrix world. The three
-death-report producers follow the owner's after-M1 task. T031 awaits living delivery.
+death-report producers follow the owner's after-M1 task. The living delivery is now recorded below.
 
 The new `ordinary.mill-night-observation.integration.test.ts` passes 1/1 on an
 isolated per-file PostgreSQL clone. It checks wrong-place refusal, daylight and
@@ -227,7 +237,30 @@ held unredeemed claw. The owner then followed the normal accepted route to Gat
 `1104669c-7243-4e96-96fe-50d249752a4f` paid 90 crowns with receipt
 `789a751c-1bba-44e5-b291-3a7eab742559`, public revision 6. Ordinary re-entry on
 the newer `index-DBR1Y_I3.js` retained completed HUNT-01, 890 crowns and living
-Senka. Worker delivery remains pending. The helper remains at the mill.
+Senka. The owner then followed the actual accepted Gat → Северный Двор route
+`8c0759c3-b4e5-4a56-baed-753c34b00562` in real time. At the elder's house,
+«Передать результат заказчику» sent delivery
+`9cd97f84-223a-4bf4-9bd6-2444fb58276c`. It saved SUCCESS at tick 3037,
+worker revision 5, paid 80 crowns and cleared custody. Owner cash rose 890→970.
+The public consequence says «Сенька вернулся в Северный Двор». Reload on
+`index-DHU6DWGG.js` retained completed/paid work, 970 crowns and no travelling
+Senka. The helper remains at the mill with its original 800 crowns.
+
+An exact authenticated replay of that original delivery returned its original
+revision-5/80-crown response. Read-only before/after comparison retained the
+identical worker state, five ordinary receipts and both company states. The hunt
+issuer paid from 180→90 crowns and worker issuer from 160→80. The browser's
+30-second response waiter expired during the original delivery, but the UI and
+canonical readback then established success before any replay. That waiter
+alone does not establish server latency. No reset or gameplay SQL repair was used.
+
+Final evidence is `output/m1-matrix-mill-final-readback-20261117.json`,
+`output/m1-matrix-mill-paid-reentry-20261117.log`,
+`output/m1-matrix-mill-delivery-exact-replay-20261117.log` and
+`output/m1-matrix-mill-after-replay-20261117.json`. Ordinary travel and original
+hand-in are in `output/m1-matrix-senka-{return-route,issuer-arrival,delivery}-20261117.log`.
+These new results supersede the pending living-delivery notes in earlier dated
+sections. The separate owner death deferral supersedes their death-source gaps.
 
 Author assistance includes the protected QA clock, reading public map masks and
 map-coordinate conversion for native clicks. QA3 accepted Gordey's existing
