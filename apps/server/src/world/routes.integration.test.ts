@@ -3970,6 +3970,26 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
         expect(await inspectCompany(db, actor)).toEqual(after);
         const mill = PAINTED_ATLAS_SITES.find((site) => site.siteId === 'staraya-melnitsa');
         if (!mill) throw new Error('authored mill missing');
+        const blockedCommand = {
+          ...command,
+          commandId: randomUUID(),
+          expectedPublicRevision: result.publicRevision,
+          expectedMovementEpoch: result.movementEpoch,
+          action: {
+            kind: 'MOVE_TO',
+            mapEdition: cartography.mapEdition,
+            target: { kind: 'TERRAIN', xFp: 1769, zFp: -20 },
+          },
+        };
+        const hiddenBlocked = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: blockedCommand,
+        });
+        expect(hiddenBlocked.statusCode, hiddenBlocked.body).toBe(422);
+        expect(hiddenBlocked.json()).toMatchObject({ code: 'MAP_INFORMATION_REQUIRED' });
+        expect(await inspectCompany(db, actor)).toEqual(after);
         const mapId = `test.mill.${actor.companyId}`;
         await db.transaction().execute(async (transaction) => {
           await registerCartographyMap(transaction, {
@@ -4017,6 +4037,23 @@ describe('ordinary painted cartography (PostgreSQL)', () => {
           expect(entry.json(), entry.body).toMatchObject({ code: 'ROUTE_FORBIDDEN' });
           expect(await inspectCompany(db, actor)).toEqual(after);
         }
+        const knownBlocked = await actor.app.inject({
+          method: 'POST',
+          url: '/world/free-movement',
+          headers: actor.ownerHeaders,
+          payload: { ...blockedCommand, commandId: randomUUID() },
+        });
+        expect(knownBlocked.statusCode, knownBlocked.body).toBe(422);
+        expect(knownBlocked.json()).toMatchObject({ code: 'TARGET_BLOCKED' });
+        expect(await inspectCompany(db, actor)).toEqual(after);
+        expect(
+          await db
+            .selectFrom('world_route_receipts')
+            .select('command_id')
+            .where('company_id', '=', actor.companyId)
+            .where('command_id', '=', knownBlocked.json().commandId)
+            .execute(),
+        ).toEqual([]);
       } finally {
         for (const table of [
           'company_exploration_chunks',

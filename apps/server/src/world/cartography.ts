@@ -186,7 +186,8 @@ export async function executePaintedMovement(
       if (
         input.action.kind === 'MOVE_TO' &&
         error instanceof MovementRejection &&
-        ['NO_PATH', 'TARGET_BLOCKED', 'OUT_OF_BOUNDS', 'ROUTE_TOO_COMPLEX'].includes(error.code)
+        (['NO_PATH', 'OUT_OF_BOUNDS', 'ROUTE_TOO_COMPLEX'].includes(error.code) ||
+          (error.code === 'TARGET_BLOCKED' && input.action.target.kind === 'SITE'))
       )
         throw new MovementRejection('MAP_INFORMATION_REQUIRED');
       throw error;

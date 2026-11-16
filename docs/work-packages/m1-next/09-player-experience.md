@@ -66,6 +66,34 @@ Neither has joined a new battle. Their default resources, QA time acceleration
 and automated control remain disclosed diagnostic conditions. They have distinct
 provenance from N01's accepted source company.
 
+### Known blocked-terrain feedback — 2026-11-16
+
+FIXED / LOCAL. Incremental scouting by QA companies 3 and 4 exposed a misleading
+refusal south of Brod. Read-only diagnosis placed the owner at (1759, 8) FP.
+The attempted nearby cell was explored, but its ground was deep water. The
+movement adapter converted TARGET_BLOCKED to MAP_INFORMATION_REQUIRED and told
+the player to scout that already-known ground.
+
+Known terrain targets now retain TARGET_BLOCKED and use the existing message
+«Сюда нельзя пройти». Unknown targets still stop at the knowledge check. Site
+targets and path-planning failures retain the existing masked response. This
+changes feedback without changing passability, route authority or saved formats.
+
+The ordinary authenticated PostgreSQL regression uses the same deep-water
+target before and after an isolated map grant. It expects the masked refusal
+before knowledge and TARGET_BLOCKED afterward, with unchanged company state
+and no rejection receipt. It failed before the correction and passed afterward
+(1 passed, 16 skipped). Its existing ordinary-scope, private tiles, exact replay
+and forbidden mill-entry assertions remain in the same case. Logs are
+`output/m1-known-blocked-{before,after}-20261116.log`.
+
+Native command dd594baf-3979-44b6-a3d5-bdee415d51ad targeted (1768, -17) FP
+through an actual map right-click, returned TARGET_BLOCKED and displayed the
+correct message. Zoom was increased through the mouse wheel for more precise
+terrain selection. The companies remain alive and have not started another
+battle. The persistent battle-driver check and agreed-player observation remain
+open.
+
 ## Earlier result — 2026-11-08
 
 SPECIFIED / LOCAL; new-player comprehension, enjoyment and retention

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: known impassable terrain now says it cannot be crossed
+  instead of requesting more scouting. Unknown terrain retains its masked
+  refusal. [N09](docs/work-packages/m1-next/09-player-experience.md#known-blocked-terrain-feedback--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the fresh QA defeat caused by expired browser
   controllers across JOIN and preserve its failed save. Native control remains
   unverified. [N09](docs/work-packages/m1-next/09-player-experience.md#fresh-qa-attempt-and-controller-coordination-failure--2026-11-16). LOCAL.
