@@ -562,3 +562,28 @@ states; they check board/report consumers at their due ticks and execute the two
 post-completion Stretcher observation commands. They do not exercise the full
 search, rescue, handover, reward or travel journeys in native play. T035’s other
 twenty-quest consequences, art and native acceptance remain open.
+
+### Trophy art integration — 2026-11-16
+
+LOCAL. The two existing proof definitions `beast-claw-trophy` and
+`raider-standard-trophy` now have separate transparent 1254×1254 PNGs and
+original generation prompts beside them in `assets/art/m1/trophies/`. Both
+images were generated with the built-in image tool, inspected against the
+selected graphic-novel references and registered in the manifest. The references
+were inspected locally; their pixels were not supplied to the generation tool.
+Claw shape, cloth colour and staff construction are production interpretations.
+The standard has no invented emblem. Owner visual acceptance is pending.
+
+`TrophyArt` renders known company holdings and public accepted hunt targets or
+an already held proof. Unregistered items retain the existing fallback. The
+claw's visible label is now «Коготь зверя». Four settlement paintings have their
+existing code consumers recorded in the manifest. The art-use matrix therefore
+has four backgrounds, six portraits, two trophy illustrations and three enemy
+archetypes with code consumers. Count and integration do not establish visual
+acceptance or the complete twenty-quest consequence journey.
+
+Focused trophy/issuer regressions passed 7/7, web typecheck, scoped ESLint and
+content validation passed on the author tree. Touched TS/CSS formatting passed.
+The manifest's existing baseline formatting check fails and its established
+format was retained. Native scale/day/night inspection is pending. T035 remains
+open for its remaining consequence, scene and acceptance criteria.

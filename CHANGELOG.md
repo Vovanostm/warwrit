@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: use the exact carried company purse for kin payments.
+  Both native payments survive restart, login and exact replay, completing T016.
+  [N04](docs/work-packages/m1-next/04-deceased-payroll.md#carried-purse-correction-and-completed-settlement--2026-11-16). LOCAL.
+- 2026-11-16 — Added: illustrated claw and standard trophies in known inventory
+  and accepted hunt guidance, with original prompts and provenance.
+  [Quest art](docs/work-packages/M1-QUESTS.md#trophy-art-integration--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the restored scout delivery and 80-crown payout,
   timed camp recovery and preserved surrender equipment. [N02](docs/work-packages/m1-next/02-next-contract.md#scout-delivery-and-subsequent-recovery--2026-11-16), [N08](docs/work-packages/m1-next/08-battle-outcomes.md#restored-native-surrender-and-continuation--2026-11-16). LOCAL.
 - 2026-11-16 — Changed: reconcile durability criteria with current PostgreSQL

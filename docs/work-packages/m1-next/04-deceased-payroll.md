@@ -1,11 +1,15 @@
 # N04 — Resolve a deceased member's lawful obligations
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; deceased-member payroll/estate acceptance NOT_RUN. Ordinary
-payroll is implemented. WLC-08 paid living Rell but did not allocate to deceased
-Kest. This is an evidence gap, not a finding that all death payroll is broken.
-Next: trace accepted accrual/claim/custody/disposition rules and actual saved debt.
+COMPLETED / LOCAL for the accepted deceased-wage settlement. The naturally
+bereaved restored helper observed Kest and Rell at their actual body location,
+returned to Каменный Брод and paid their kin 16.21 and 16.24 crowns through
+ordinary controls. Cash changed 800→767.55 and debt became zero. After actual
+API restart, normal sign-out/sign-in and exact authenticated command replay,
+the same company retained both deaths, zero debt and 767.55 crowns. The replay
+returned the original revision 209 without another debit. Estate items keep
+their existing custody. Full M1 acceptance remains separate.
 [Common contract](COMMON.md). [Prompt](prompts/04-deceased-payroll.md).
 
 ## Payee decision — owner 2026-11-13
@@ -76,17 +80,17 @@ Use the canonical transaction for claim/wallet/receipt; no partial disposal.
 
 ## Acceptance / DoD
 
-- [ ] PAY-1 Every activated death/debt/payee/disposition transition has an explicit
+- [x] PAY-1 Every activated death/debt/payee/disposition transition has an explicit
       accepted source; missing policy remains visibly unactivated.
-- [ ] PAY-2 Ordinary UI accurately distinguishes the deceased member's actual
+- [x] PAY-2 Ordinary UI accurately distinguishes the deceased member's actual
       obligation, accessible cash, backed hold and paid outcome.
-- [ ] PAY-3 A real eligible obligation is settled through its accepted command,
+- [x] PAY-3 A real eligible obligation is settled through its accepted command,
       or the package remains PARTIAL/BLOCKED_SOURCE rather than claiming payment.
-- [ ] PAY-4 Money is conserved; exact retry/competing or stale requests cannot
+- [x] PAY-4 Money is conserved; exact retry/competing or stale requests cannot
       duplicate settlement, forgive debt or transfer funds to an unauthorized payee.
-- [ ] PAY-5 State/receipts survive API restart and normal login; no released
+- [x] PAY-5 State/receipts survive API restart and normal login; no released
       receipt/save is rewritten and no unrelated player funds are touched.
-- [ ] PAY-6 Owning economic record and scoped evidence distinguish actual
+- [x] PAY-6 Owning economic record and scoped evidence distinguish actual
       settlement, legitimate refusal, source decision and NOT_RUN cases.
 
 ## Verification
@@ -133,3 +137,40 @@ company retains 800 crowns and 24 rations at this observation. Return and actual
 kin settlement are still pending. The client now refreshes this quote when the
 same company's public revision changes. Its new revision-refresh regression
 passed with the focused UI union, 16/16. Full PAY-3/PAY-5 remain open.
+
+## Carried-purse correction and completed settlement — 2026-11-16
+
+The first native settlement at Каменный Брод refused with
+CONTACT_OR_ACCESS_REQUIRED even though the quote was local. Read-only inspection
+found the party at the market and its opening-attested company purse still
+recorded at its original Северный Двор location. The adapter now reuses the
+existing recruitment reconciliation for that exact carried purse. The shared
+function lives with supply purse identity. It requires the issued opening,
+matching party, company ownership and the purse backing the local pool. Other
+company wallets, personal wallets and estate custody retain their locations.
+Only a successful canonical payment persists the prepared location change.
+
+The focused disposable-PostgreSQL case passed 1/1, with two unrelated cases
+skipped. It models the old purse location, a remote decoy company wallet and
+unchanged personal wallets, verifies full rollback on an initially unaffordable
+payment, then exact settlement/retry and unchanged unrelated wallets. Server
+typecheck, scoped ESLint, Prettier and diff checks passed. The parent server
+typecheck also passed after integration.
+
+Native Kest and Rell payments returned HTTP 200 at public revisions 209 and 211.
+Cash moved 800→783.79→767.55. Reload showed 32.45 crowns paid and no unpaid
+wages; the local quote returned an empty people list at revision 212. The API
+process was then restarted through its source watcher, PID 2941→6857, and
+readiness returned 200. Normal logout/login retained the same company, permanent
+deaths, zero debt and exact cash. The initial callback from a pre-restart login
+form was rejected; starting a fresh normal login succeeded with the existing
+fixture credential. No identity or password was changed for this follow-up.
+
+An authenticated API replay of Kest's original accepted command ID and body,
+including its old expected revision 207, returned the original revision 209.
+Subsequent reload retained 767.55 crowns and zero debt. This replay was an API
+idempotency check; both original payments used ordinary confirmation controls.
+The later +100 campaign ticks created no further debt for either deceased
+companion. Retained captures and request evidence are in ignored
+`output/private/m1-helper-deceased-wages-20261116.md`. T016 is complete. Broader
+estate mechanics, publication, merge and owner acceptance were not exercised.

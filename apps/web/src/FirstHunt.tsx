@@ -478,7 +478,9 @@ export function FirstHunt(
                 {publicProofDefinition && (
                   <p className="trophy-proof-target">
                     <TrophyArt definitionId={publicProofDefinition} />
-                    <span>Подлинный трофей: {itemLabel(publicProofDefinition)}.</span>
+                    <span>
+                      Принесите {itemLabel(publicProofDefinition).toLocaleLowerCase('ru-RU')}.
+                    </span>
                   </p>
                 )}
               </details>
