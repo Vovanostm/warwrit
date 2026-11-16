@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: align active style-profile constraints and example prompts
+  with the accepted reference-adaptation rule. [Quest art record](docs/work-packages/M1-QUESTS.md#active-generation-constraint-correction--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: distinguish the accepted unpaid Sidor delivery rule
   from pending native play, and record the retained company's paid RoadTracks
   journey. [Quest rule](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16), [N02](docs/work-packages/m1-next/02-next-contract.md#roadtracks-delivery-and-retained-continuation--2026-11-16). LOCAL.

@@ -621,3 +621,18 @@ The approved original prose remains the text source. The extra accepted Sidor
 exile outcome follows the owner's delivery-without-reward decision, with its
 additional scene prose retaining the separately recorded draft status. No owner
 visual or full M1 acceptance is inferred from this implementation completion.
+
+### Active generation constraint correction — 2026-11-16
+
+LOCAL. Both active style profiles still prohibited franchise copying despite
+the owner's 2026-11-14 permission to copy concepts with adaptation. Their shared
+constraints and four embedded example prompts now permit reference concepts,
+compositions and designs with changes for Warwrit, require a recorded source
+and adaptation, and prohibit unchanged transfer of finished material. The
+standalone request examples already bind the authored subject and style without
+that blanket prohibition. This updates future generation instructions. Exact
+prompts saved with produced assets retain their historical bytes.
+
+Both profile JSON files parse, the six changed constraint strings were checked
+for consistency, and the scoped diff passes. No image was generated in this
+correction. Night inspection and owner visual acceptance remain open under T035.
