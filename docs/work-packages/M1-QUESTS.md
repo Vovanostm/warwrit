@@ -370,6 +370,24 @@ Owner decision 2026-11-16: after exile matures, an already accepted rescue can
 finish by delivering Sidor alive to Березняк without reward. No new failure
 ending is inferred, and custody stays with the company until delivery.
 
+PostgreSQL integration follow-up — 2026-11-16: the single-file isolated
+integration test passed 1/1. It accepts the rescue, finds Sidor at the painted
+road target, records living on-foot custody and the roadside rest, advances the
+campaign until Агафья is exiled, and delivers Sidor to Березняк without payment.
+After server reload, the owner still sees completion with `NO_PAYOUT`; replaying
+the exact delivery command returns the original receipt, and another company
+does not see the private finding text. The journey exposed a coordinate-edition
+mix-up in the standing-position adapter: the retained painted-map position was
+being reported in the continuous-world edition. The adapter now keeps the
+position's matching region edition. The same journey found that the board chose
+a payout policy from the first fact in the terminal event; the shared
+`living-rescue` fact could point to its earlier non-completing step. The
+projection now identifies the completing step from that company's recorded
+facts and the exact outcome event, preserving the accepted profile's output
+order. This local
+PostgreSQL check does not replace normal in-game play or owner acceptance; both
+remain NOT_RUN.
+
 The early game-core/protocol commit is `8841f9c1779f5e48170712aaeafdfda8862b8ac6`;
 the foul-well shared dependency is `54290b29`. Game-core and protocol builds
 and testkit build, server and web typechecks pass. Focused game-core, server,
