@@ -15,6 +15,7 @@ import {
   ordinaryContractTerms,
   ordinaryStepBlocker,
   prepareOrdinaryContractCommand,
+  PAINTED_ATLAS_REGION,
   readOrdinaryContractState,
   type CompanyCombatAggregateState,
   type ContractPlace,
@@ -23,10 +24,7 @@ import {
   type OrdinaryContractState,
   type OrdinaryStepGate,
 } from '@warwrit/game-core';
-import {
-  foulWellHerbalistRemoved,
-  readFoulWellOutcome,
-} from './foul-well-state.js';
+import { foulWellHerbalistRemoved, readFoulWellOutcome } from './foul-well-state.js';
 import type {
   OrdinaryContractBoardDto,
   OrdinaryContractCommandDto,
@@ -91,13 +89,20 @@ function standingPlace(state: CompanyCombatAggregateState): ContractPlace | null
 
 function standingTerrainPosition(
   state: CompanyCombatAggregateState | undefined,
-): { readonly mapEdition: string; readonly xMicroFp: string; readonly zMicroFp: string } | undefined {
+):
+  | { readonly mapEdition: string; readonly xMicroFp: string; readonly zMicroFp: string }
+  | undefined {
   const party = state?.economy.lifecycle.parties[0];
   if (!party || party.location.kind === 'MOVING') return undefined;
-  const point = continuousLocationPoint(party.location, CONTINUOUS_WORLD_REGION);
+  const region =
+    party.location.kind === 'TERRAIN' &&
+    party.location.regionVersion === PAINTED_ATLAS_REGION.mapEdition
+      ? PAINTED_ATLAS_REGION
+      : CONTINUOUS_WORLD_REGION;
+  const point = continuousLocationPoint(party.location, region);
   return point
     ? {
-        mapEdition: CONTINUOUS_WORLD_REGION.mapEdition,
+        mapEdition: region.mapEdition,
         xMicroFp: point.xMicroFp,
         zMicroFp: point.zMicroFp,
       }
@@ -192,14 +197,31 @@ export function contractView(
       fact.sourceEventId === state.outcome?.sourceEventId &&
       fact.atTick === state.outcome?.atTick,
   );
+  const outcome = state.outcome;
   const emptyWatchTerminal =
     profile.instanceId === 'ci.m1.empty-watch-record.01' && state.outcome
       ? emptyWatchTerminalFact(state)
       : undefined;
-  const terminalStep =
-    terminalFact === undefined
-      ? undefined
-      : terms.steps.find((step) => step.produces.includes(terminalFact.slotId));
+  const terminalStep = outcome
+    ? terms.steps.find(
+        (step) =>
+          step.completes &&
+          step.produces.every((slotId) =>
+            state.facts.some(
+              (fact) => fact.companyId === outcome.companyId && fact.slotId === slotId,
+            ),
+          ) &&
+          step.produces.some((slotId) =>
+            state.facts.some(
+              (fact) =>
+                fact.companyId === outcome.companyId &&
+                fact.slotId === slotId &&
+                fact.sourceEventId === outcome.sourceEventId &&
+                fact.atTick === outcome.atTick,
+            ),
+          ),
+      )
+    : undefined;
   const emptyWatchPublicConsequences =
     profile.instanceId === 'ci.m1.empty-watch-record.01' &&
     emptyWatchTerminal?.slotId === 'empty-watch-sack-handed-over'

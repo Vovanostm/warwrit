@@ -16,6 +16,12 @@ requests.
 - 2026-11-16 — Changed: preserve an accepted roadside rescue if Agafya is exiled;
   deliver Sidor alive to Bereznyak without payment and retain him in company food loads. [T032 checkpoint](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16). LOCAL.
 
+- 2026-11-16 — Fixed: keep the painted-map edition when checking a standing
+  roadside-rescue position and show the correct unpaid terminal result after
+  exile. The PostgreSQL journey passes through reload, exact replay and
+  company-private findings.
+  [T032 checkpoint](docs/work-packages/M1-QUESTS.md#t032-roadside-rescue--2026-11-16). LOCAL.
+
 - 2026-11-15 — Fixed: use grammatical destination guidance in hunt cards.
   Record the retained company's next contracts, voluntary helper preparation
   and STOP/reload continuation. [Native continuation](docs/work-packages/m1-next/02-next-contract.md#native-continuation-checkpoint--2026-11-15). LOCAL.
