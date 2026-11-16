@@ -12,6 +12,9 @@ requests.
 - 2026-11-16 — Fixed: select routes only through observer-known segments, allowing
   a slower known path when a faster road crosses unexplored terrain.
   [N07 known-route search](docs/work-packages/m1-next/07-world.md#known-route-search--2026-11-16). LOCAL.
+- 2026-11-16 — Fixed: apply the known-segment route rule to authenticated
+  world-lab ground orders as well as ordinary painted-map movement.
+  [N07 world-lab adapter](docs/work-packages/m1-next/07-world.md#world-lab-known-route-adapter--2026-11-16). LOCAL.
 
 - 2026-11-15 — Fixed: cover funded B4 endings when the paying company has no
   ration stock, preserving uncovered food time without consuming stock.

@@ -15,6 +15,7 @@ import type {
   WorldLabPursuitRequestDto,
   WorldLabStateDto,
 } from '@warwrit/protocol';
+import type { PointFp } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 import {
   executeContinuousMovement,
@@ -125,6 +126,14 @@ function assertKnownPlan(
   }
 }
 
+function knownSegment(cartography: WorldLabCartographyDto, from: PointFp, to: PointFp): boolean {
+  const micro = (point: PointFp) => ({
+    xMicroFp: String(point.xFp * 65_536),
+    zMicroFp: String(point.zFp * 65_536),
+  });
+  return cartographyKnowsSegment(cartography, micro(from), micro(to));
+}
+
 async function guardedMove(
   database: Kysely<DatabaseSchema>,
   context: PursuitContext,
@@ -155,6 +164,10 @@ async function guardedMove(
       throw new MovementRejection('MAP_INFORMATION_REQUIRED');
   }
   try {
+    const observedCartography = cartography;
+    const allowedSegment = observedCartography
+      ? (from: PointFp, to: PointFp) => knownSegment(observedCartography, from, to)
+      : undefined;
     const response = await executeContinuousMovement(
       database,
       context.worldId,
@@ -164,6 +177,7 @@ async function guardedMove(
       PAINTED_ATLAS_REGION,
       context.now,
       identity,
+      allowedSegment,
     );
     if (cartography) assertKnownPlan(cartography, response);
     return response;
