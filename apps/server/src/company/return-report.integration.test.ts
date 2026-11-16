@@ -14,6 +14,7 @@ import {
   ordinaryContractProfile,
   ordinaryContractTerms,
   publicRevision,
+  readCompanyCombatAggregateState,
   readOrdinaryContractState,
   WHOSE_WOLVES_INSTANCE_ID,
 } from '@warwrit/game-core';
@@ -575,21 +576,30 @@ describe('company return report (PostgreSQL)', () => {
         .execute();
 
       const advanceReportState = (tick: string) => {
-        state = {
-          ...state,
-          economy: {
-            ...state.economy,
-            lifecycle: { ...state.economy.lifecycle, campaignTick: campaignTick(tick) },
-            finance: { ...state.economy.finance, processedTick: campaignTick(tick) },
-            physical: { ...state.economy.physical!, processedTick: campaignTick(tick) },
-          },
-        };
         return database
-          .updateTable('company_snapshots')
-          .set({ state })
+          .selectFrom('company_snapshots')
+          .select('state')
           .where('world_id', '=', worldId)
           .where('company_id', '=', companyId)
-          .executeTakeFirstOrThrow();
+          .executeTakeFirstOrThrow()
+          .then((snapshot) => {
+            state = readCompanyCombatAggregateState(snapshot.state);
+            state = {
+              ...state,
+              economy: {
+                ...state.economy,
+                lifecycle: { ...state.economy.lifecycle, campaignTick: campaignTick(tick) },
+                finance: { ...state.economy.finance, processedTick: campaignTick(tick) },
+                physical: { ...state.economy.physical!, processedTick: campaignTick(tick) },
+              },
+            };
+            return database
+              .updateTable('company_snapshots')
+              .set({ state })
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', companyId)
+              .executeTakeFirstOrThrow();
+          });
       };
       await advanceReportState('9999');
       const beforeDelayedFacts = (
@@ -691,6 +701,285 @@ describe('company return report (PostgreSQL)', () => {
           })
         ).json(),
       ).toEqual({ report: null });
+
+      const stretcher = ordinaryContractProfile('ci.m1.stretcher-and-sword.01')!;
+      const setStretcherState = async (
+        stretcherState: ReturnType<typeof readOrdinaryContractState>,
+      ) =>
+        database
+          .insertInto('ordinary_contracts')
+          .values({
+            world_id: worldId,
+            instance_id: stretcher.instanceId,
+            profile_id: stretcher.definitionId,
+            revision: stretcherState.revision,
+            wallet_id: stretcher.walletId,
+            wallet_q: stretcher.genesisWalletQ,
+            state: stretcherState,
+          })
+          .onConflict((conflict) =>
+            conflict.columns(['world_id', 'instance_id']).doUpdateSet({
+              revision: stretcherState.revision,
+              state: stretcherState,
+            }),
+          )
+          .execute();
+      const setCampaignClock = async (tick: string) => {
+        const epochMs = String(Date.now() - 100);
+        const qaOffsetMs = String(BigInt(tick) * 21_600n);
+        await database
+          .insertInto('world_campaign_clocks')
+          .values({
+            world_id: worldId,
+            epoch_ms: epochMs,
+            starting_tick: '0',
+            qa_offset_ms: qaOffsetMs,
+          })
+          .onConflict((conflict) =>
+            conflict
+              .column('world_id')
+              .doUpdateSet({ epoch_ms: epochMs, qa_offset_ms: qaOffsetMs }),
+          )
+          .execute();
+      };
+      const setCompanyPlace = async (place: { siteId: string; areaId: string }) => {
+        const snapshot = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        state = readCompanyCombatAggregateState(snapshot.state);
+        const location = { kind: 'AT' as const, ...place };
+        state = {
+          ...state,
+          economy: {
+            ...state.economy,
+            lifecycle: {
+              ...state.economy.lifecycle,
+              parties: state.economy.lifecycle.parties.map((party) => ({ ...party, location })),
+              characters: state.economy.lifecycle.characters.map((character) => ({
+                ...character,
+                presence: { ...character.presence, location },
+              })),
+            },
+            finance: {
+              ...state.economy.finance,
+              wallets: state.economy.finance.wallets.map((wallet) => ({ ...wallet, location })),
+            },
+            ...(state.economy.physical === undefined
+              ? {}
+              : {
+                  physical: {
+                    ...state.economy.physical,
+                    containers: state.economy.physical.containers.map((container) => ({
+                      ...container,
+                      location,
+                    })),
+                  },
+                }),
+          },
+        };
+        await database
+          .updateTable('company_snapshots')
+          .set({ state })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+      };
+      const ordinaryCommand = async (stepId: string, expectedRevision: string) => {
+        const response = await app.inject({
+          method: 'POST',
+          url: '/contracts/ordinary/commands',
+          headers: ownerPostHeaders,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            instanceId: stretcher.instanceId,
+            expectedRevision,
+            type: 'STEP',
+            stepId,
+          },
+        });
+        expect(response.statusCode, response.body).toBe(200);
+        return response.json();
+      };
+
+      const rescuedTick = '11000';
+      const rescuedSourceEventId = 'stretcher-blue-kerchief-delivery';
+      const rescuedStretcher = readOrdinaryContractState(stretcher, {
+        ...ordinaryContractGenesis(stretcher),
+        revision: '1',
+        ownerCompanyId: companyId,
+        acceptedTerms: ordinaryContractTerms(stretcher),
+        facts: [
+          {
+            slotId: 'stretcher-luka-delivered',
+            companyId,
+            sourceEventId: rescuedSourceEventId,
+            atTick: rescuedTick,
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId,
+          sourceEventId: rescuedSourceEventId,
+          atTick: rescuedTick,
+        },
+      });
+      await setStretcherState(rescuedStretcher);
+      await setCompanyPlace({ siteId: 'severny-dvor', areaId: 'severny-dvor-yard' });
+      await setCampaignClock(rescuedTick);
+      await advanceReportState(rescuedTick);
+      const rescuedReport = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(rescuedReport.contractOutcomes).toContainEqual({
+        instanceId: stretcher.instanceId,
+        outcome: 'LUKA_RESCUED',
+        atTick: rescuedTick,
+      });
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/company/return-report/ack',
+            headers: ownerPostHeaders,
+            payload: { schemaVersion: 1, reportId: rescuedReport.reportId },
+          })
+        ).json(),
+      ).toEqual({ ok: true, duplicate: false });
+
+      const beforeRecruitTick = '13999';
+      await setCampaignClock(beforeRecruitTick);
+      await advanceReportState(beforeRecruitTick);
+      const beforeRecruitReport = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(beforeRecruitReport?.contractOutcomes ?? []).not.toContainEqual(
+        expect.objectContaining({ outcome: 'LUKA_RECRUIT_OFFER' }),
+      );
+      if (beforeRecruitReport)
+        expect(
+          (
+            await app.inject({
+              method: 'POST',
+              url: '/company/return-report/ack',
+              headers: ownerPostHeaders,
+              payload: { schemaVersion: 1, reportId: beforeRecruitReport.reportId },
+            })
+          ).json(),
+        ).toEqual({ ok: true, duplicate: false });
+
+      await setCampaignClock('14000');
+      await ordinaryCommand('inspect-luka-at-camp', '1');
+      const recruitedState = await database
+        .selectFrom('ordinary_contracts')
+        .select('state')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', stretcher.instanceId)
+        .executeTakeFirstOrThrow();
+      expect(readOrdinaryContractState(stretcher, recruitedState.state).facts).toContainEqual(
+        expect.objectContaining({
+          slotId: 'stretcher-luka-recruit-offer',
+          companyId,
+          atTick: '14000',
+        }),
+      );
+      await advanceReportState('14000');
+      const recruitReport = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(recruitReport.contractOutcomes).toContainEqual({
+        instanceId: stretcher.instanceId,
+        outcome: 'LUKA_RECRUIT_OFFER',
+        atTick: '14000',
+      });
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/company/return-report/ack',
+            headers: ownerPostHeaders,
+            payload: { schemaVersion: 1, reportId: recruitReport.reportId },
+          })
+        ).json(),
+      ).toEqual({ ok: true, duplicate: false });
+
+      const onlyNastyaTick = '15000';
+      const onlyNastyaSourceEventId = 'stretcher-only-nastya-delivered';
+      const onlyNastya = readOrdinaryContractState(stretcher, {
+        ...ordinaryContractGenesis(stretcher),
+        revision: '1',
+        ownerCompanyId: companyId,
+        acceptedTerms: ordinaryContractTerms(stretcher),
+        facts: [
+          {
+            slotId: 'stretcher-luka-dead',
+            companyId,
+            sourceEventId: onlyNastyaSourceEventId,
+            atTick: onlyNastyaTick,
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId,
+          sourceEventId: onlyNastyaSourceEventId,
+          atTick: onlyNastyaTick,
+        },
+      });
+      await setStretcherState(onlyNastya);
+      await setCampaignClock(onlyNastyaTick);
+      await advanceReportState(onlyNastyaTick);
+      const onlyNastyaReport = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(onlyNastyaReport.contractOutcomes).toContainEqual({
+        instanceId: stretcher.instanceId,
+        outcome: 'NASTYA_ONLY',
+        atTick: onlyNastyaTick,
+      });
+      expect(onlyNastyaReport.contractOutcomes).not.toContainEqual(
+        expect.objectContaining({ outcome: 'LUKA_DEATH_OBSERVED' }),
+      );
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/company/return-report/ack',
+            headers: ownerPostHeaders,
+            payload: { schemaVersion: 1, reportId: onlyNastyaReport.reportId },
+          })
+        ).json(),
+      ).toEqual({ ok: true, duplicate: false });
+
+      const returnRoadTick = '15001';
+      await setCompanyPlace({ siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' });
+      await setCampaignClock(returnRoadTick);
+      const inspected = await ordinaryCommand('inspect-return-road', '1');
+      expect(inspected).toMatchObject({ ok: true, revision: '2' });
+      const inspectedState = await database
+        .selectFrom('ordinary_contracts')
+        .select('state')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', stretcher.instanceId)
+        .executeTakeFirstOrThrow();
+      expect(readOrdinaryContractState(stretcher, inspectedState.state).facts).toContainEqual(
+        expect.objectContaining({
+          slotId: 'stretcher-luka-death-observed',
+          companyId,
+          atTick: returnRoadTick,
+        }),
+      );
+      await advanceReportState(returnRoadTick);
+      const deathReport = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(deathReport.contractOutcomes).toContainEqual({
+        instanceId: stretcher.instanceId,
+        outcome: 'LUKA_DEATH_OBSERVED',
+        atTick: returnRoadTick,
+      });
     },
   );
 });
