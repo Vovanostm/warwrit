@@ -266,10 +266,8 @@ function locallyObservableDeadMembers(
 ): readonly string[] {
   const { lifecycle, finance, physical } = state.economy;
   if (!physical) return [];
-  const companyMembershipIds = new Set<string>(
-    lifecycle.memberships
-      .filter((entry) => entry.companyId === lifecycle.companyId)
-      .map((entry) => entry.membershipId),
+  const companyMemberships = lifecycle.memberships.filter(
+    (entry) => entry.companyId === lifecycle.companyId,
   );
   const atPlace = (location: {
     readonly kind: string;
@@ -291,17 +289,11 @@ function locallyObservableDeadMembers(
       const characterId = person.identity.characterId;
       if (person.presence.availability !== 'DEAD' || !atPlace(person.presence.location))
         return false;
-      const memberships = lifecycle.memberships.filter(
-        (entry) =>
-          entry.companyId === lifecycle.companyId &&
-          entry.characterId === characterId &&
-          companyMembershipIds.has(entry.membershipId),
-      );
+      const memberships = companyMemberships.filter((entry) => entry.characterId === characterId);
       if (memberships.length === 0) return false;
       return finance.accounts.some((account) => {
         const death = account.death;
         if (
-          !companyMembershipIds.has(account.membershipId) ||
           !memberships.some((membership) => membership.membershipId === account.membershipId) ||
           !death
         )

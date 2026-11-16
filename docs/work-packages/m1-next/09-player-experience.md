@@ -160,3 +160,12 @@ Integrated recovery/live-lane, ContractBoard and hunt-attempt tests passed
 39 cases and web typecheck passed. The final historical-retry wording assertion
 was updated with its displayed message. A fresh native battle with the revision
 gate is NOT_RUN. Owner comprehension and enjoyment remain NOT_MEASURED.
+
+### Missing private grant feedback — 2026-11-16
+
+LOCAL. While the current private control grant is unavailable, the live lane
+shows the actor and deadline without assigning the turn to another participant.
+Missing AFK metadata no longer claims that the server version lacks support.
+The accepted-revision command gate remains in force. Recovery, live-lane and
+deceased-payroll UI regressions passed 16/16. Scoped ESLint passed. A fresh
+native battle after these feedback fixes remains NOT_RUN.

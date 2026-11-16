@@ -73,6 +73,30 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
+it('refreshes local death quotes when the same company receives a new observation', async () => {
+  const fetcher = vi
+    .fn()
+    .mockResolvedValueOnce(Response.json(quote({ local: false, people: [] })))
+    .mockResolvedValueOnce(Response.json(quote()));
+  vi.stubGlobal('fetch', fetcher);
+  await mount();
+  expect(container?.textContent).toContain('Нет известного невыплаченного жалованья');
+
+  await act(async () =>
+    root!.render(
+      <DeceasedPayrollPanel
+        accountId={accountId}
+        company={{ ...company, revision: '22' }}
+        onRefresh={refresh}
+      />,
+    ),
+  );
+  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(container?.textContent).toContain('Степан');
+  expect(container?.textContent).toContain('3,25 кр.');
+  expect(container?.textContent).toContain('один раз передать их родным');
+});
+
 it('shows exact known debt and requires explicit once-only confirmation before payment', async () => {
   const calls: { url: string; init?: RequestInit }[] = [];
   let quotes = 0;

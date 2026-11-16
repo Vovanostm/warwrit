@@ -114,7 +114,7 @@ export function DeceasedPayrollPanel(props: {
       }
     })();
     return () => controller.abort();
-  }, [companyId, props.accountId, quoteRetry, scopeKey]);
+  }, [companyId, props.accountId, props.company.revision, quoteRetry, scopeKey]);
 
   async function pay(request?: PayRequest) {
     if (lock.current) return;

@@ -318,3 +318,12 @@ after correcting return-type propagation in the shared route/join consumers.
 Initial typechecks exposed that inference mismatch and were fixed. Native readback now confirms the specific danger message. All nine helper
 equip commands returned 200, and a page reload retained the equipment. The
 existing controls provided the complete equipment path.
+
+### Retained item location labels — 2026-11-16
+
+LOCAL. The company holdings list now calls items without a character carrier
+«Другие вещи компании». The null-carrier projection includes caravan, ground
+and corpse containers, so its previous «Обоз» heading misrepresented surrendered
+gear after the restored defeat. Item ownership and custody keep their existing
+canonical rules. Web typecheck and scoped ESLint passed. A dedicated native
+location-specific transfer check remains NOT_RUN.

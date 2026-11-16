@@ -299,6 +299,11 @@ describe('EncounterPanel command recovery', () => {
       deadlineAt: new Date(Date.now() + 60_000).toISOString(),
     });
     expect(container.textContent).toMatch(/Ваш ход · .* · осталось \d+ с/);
+    const observer = harness.observers.at(-1)!;
+    await act(async () => observer['onControlGrant']!(undefined as never));
+    expect(container.textContent).toMatch(/Ход · .* · осталось \d+ с/);
+    expect(container.textContent).not.toContain('Ход другого участника');
+    await act(async () => observer['onControlGrant']!(grant as never));
     const wait = () => container!.querySelector<HTMLButtonElement>('[aria-label="Завершить ход"]');
     expect(wait()?.disabled).toBe(false);
     const staleAction = harness.battleActs.at(-1)!;
@@ -309,7 +314,6 @@ describe('EncounterPanel command recovery', () => {
     await act(async () => staleAction({ type: 'wait' } as never));
     expect(sender).toHaveBeenCalledTimes(1);
 
-    const observer = harness.observers.at(-1)!;
     const nextProjection = { ...projection, revision: 5 };
     await act(async () => observer['onProjection']!(nextProjection as never));
     expect(wait()).toBeNull();

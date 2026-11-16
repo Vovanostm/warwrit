@@ -113,3 +113,23 @@ refusal and insufficient-funds rollback across snapshot, receipt and audit
 counts. Native eligible settlement, restart and PAY-3/PAY-5 remain NOT_RUN. The
 shared entity-ID reader accepts historical JSON-shaped IDs within the existing
 canonical bound.
+
+## Native death observation and quote refresh — 2026-11-16
+
+PARTIAL / LOCAL. The restored helper's Kest and Rell died in encounter
+`77ac1437-4895-4954-b2ed-528e65bf6fb7`. Their earned unpaid wages stop at the
+recorded death ticks 81183 and 81186, at 16.21 and 16.24 crowns respectively.
+The first local quote had no people because ordinary observation selected only
+available field members. Local observation now also considers own dead members
+at the party's exact site/area, with a retained world-custodied corpse and both
+recorded death sources. Remote deaths remain undisclosed. Three real PostgreSQL
+regressions passed on the author tree. The parent removed redundant membership
+set checks and passed server typecheck and formatting afterward.
+
+The ordinary restored helper travelled from Каменный Брод to Старая мельница.
+After arrival, its Company view showed both names and the exact 32.45-crown
+debt. Payment controls explain that settlement requires Каменный Брод. The
+company retains 800 crowns and 24 rations at this observation. Return and actual
+kin settlement are still pending. The client now refreshes this quote when the
+same company's public revision changes. Its new revision-refresh regression
+passed with the focused UI union, 16/16. Full PAY-3/PAY-5 remain open.

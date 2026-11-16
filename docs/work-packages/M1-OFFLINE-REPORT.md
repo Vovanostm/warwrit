@@ -87,3 +87,17 @@ Native player acceptance and general same-tick gameplay are NOT_RUN.
 The result is local on `codex/m1-completion-20261115`. Publication and merge are
 NOT_RUN. Human usability acceptance and target-device measurements are
 NOT_MEASURED. Broader M1 acceptance remains in T027–T030 and T036.
+
+### Moral-quest cursor dispatch correction — 2026-11-16
+
+LOCAL. A real PostgreSQL regression reproduced HTTP 500 when the report cursor
+resolved Wolves or Foul Well outcomes through the Stretcher source lookup.
+The cursor now obtains each of the four moral quests' saved source event from
+its owning instance. Delayed Stretcher facts use their actual fact source. An
+absent source fails before cursor advancement. Focused report tests passed
+12/12 and the selected PostgreSQL case passed 1/1, with server typecheck and
+builds passing on that slice. The later delayed-camp and Luka PostgreSQL checks
+also passed individually and are recorded in the
+[quest matrix](M1-QUESTS.md#t035-moral-branch-consequence-matrix--2026-11-16).
+These cases use saved terminal fixtures. Full native moral-quest journeys
+remain open.

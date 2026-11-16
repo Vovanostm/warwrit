@@ -310,9 +310,11 @@ export function EncounterPanel(props: {
       ? 'Бой завершён; команды недоступны.'
       : actorUnitId === null
         ? 'Сервер пока не назначил следующий ход.'
-        : actorIsOurs
-          ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
-          : `Ход другого участника · ${actorLabel}`
+        : currentGrant === undefined
+          ? `Ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
+          : actorIsOurs
+            ? `Ваш ход · ${actorLabel}${secondsLeft === null ? '' : ` · осталось ${secondsLeft} с`}`
+            : `Ход другого участника · ${actorLabel}`
     : undefined;
   const presentation = projection
     ? toEncounterBattlePresentation(

@@ -43,7 +43,7 @@ export function CompanyPanel(props: {
   readonly onGuardServiceCommand?: (request: GuardCommand) => Promise<unknown>;
 }) {
   const { company, holdings } = props;
-  const supplies = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
+  const otherItems = holdings?.items.filter((item) => item.carrierCharacterId === null) ?? [];
   return (
     <section className="panel company-panel" aria-label="Компания">
       <h2 className="panel-title">Отряд</h2>
@@ -220,12 +220,12 @@ export function CompanyPanel(props: {
               onRefresh={props.onRefreshItems}
             />
           )}
-          <h3 className="panel-subtitle">Обоз</h3>
-          {supplies.length === 0 ? (
-            <p className="state-note">Общих припасов нет.</p>
+          <h3 className="panel-subtitle">Другие вещи компании</h3>
+          {otherItems.length === 0 ? (
+            <p className="state-note">Других вещей нет.</p>
           ) : (
             <ul className="supplies">
-              {supplies.map((item) => (
+              {otherItems.map((item) => (
                 <li key={item.itemId}>
                   <span>{itemLabel(item.definitionId)}</span>
                   <span>{item.quantity}</span>

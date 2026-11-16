@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: observe own deaths at the actual body location and refresh
+  the deceased-wage quote after company observations. [N04](docs/work-packages/m1-next/04-deceased-payroll.md#native-death-observation-and-quote-refresh--2026-11-16). LOCAL.
+- 2026-11-16 — Fixed: use neutral turn feedback while a private grant is pending
+  and label retained company items truthfully after surrender. [N09](docs/work-packages/m1-next/09-player-experience.md#missing-private-grant-feedback--2026-11-16), [N06](docs/work-packages/m1-next/06-company-capabilities.md#retained-item-location-labels--2026-11-16). LOCAL.
+- 2026-11-16 — Fixed: resolve moral-quest report cursors through their saved
+  outcome sources, with delayed camp and Luka database regressions.
+  [Return report](docs/work-packages/M1-OFFLINE-REPORT.md#moral-quest-cursor-dispatch-correction--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: wait for an accepted battle revision before fresh orders,
   expose the turn deadline and resolve escorted people through authored names.
   [Control and journal feedback](docs/work-packages/m1-next/09-player-experience.md#accepted-command-and-visible-deadline--2026-11-16). LOCAL.

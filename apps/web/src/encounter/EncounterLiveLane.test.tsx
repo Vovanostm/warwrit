@@ -13,6 +13,23 @@ const pendingCommand: EncounterCommandDto = {
   intent: { type: 'wait' },
 };
 
+it('does not infer a service version while control metadata is unavailable', () => {
+  const html = renderToStaticMarkup(
+    <EncounterLiveLane
+      status="connected"
+      statusLabel="Сводка боя синхронизирована"
+      battleActive
+      resumePending={false}
+      commandPending={false}
+      retryAvailable={false}
+      onResume={() => {}}
+      onRetry={() => {}}
+    />,
+  );
+  expect(html).not.toContain('Состояние бездействия недоступно в этой версии службы.');
+  expect(html).not.toContain('Вернуться к управлению');
+});
+
 it('keeps the same-command retry inside the fullscreen live lane', () => {
   const html = renderToStaticMarkup(
     <EncounterLiveLane

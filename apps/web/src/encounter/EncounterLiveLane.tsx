@@ -43,7 +43,7 @@ export function EncounterLiveLane({
           {turnNotice}
         </p>
       )}
-      <ParticipantActivity status={status} active={battleActive} selfAfk={grant?.selfAfk} />
+      <ParticipantActivity active={battleActive} selfAfk={grant?.selfAfk} />
       {pendingCommand && (
         <PendingCommand
           pending={commandPending}
@@ -65,19 +65,15 @@ export function EncounterLiveLane({
 }
 
 function ParticipantActivity({
-  status,
   active,
   selfAfk,
 }: {
-  status: EncounterConnectionStatus;
   active: boolean;
   selfAfk: boolean | undefined;
 }) {
   if (!active) return null;
   if (selfAfk === false)
     return <p className="state-note">Сервер не считает вас бездействующим участником.</p>;
-  if (selfAfk === undefined && status === 'connected')
-    return <p className="state-note">Состояние бездействия недоступно в этой версии службы.</p>;
   return null;
 }
 
