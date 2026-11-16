@@ -11,6 +11,10 @@ requests.
 
 - 2026-11-16 — Changed: reconcile the quest summary with the integrated eleven
   implementations and explicit remaining report/playthrough checks. [Quest status](docs/work-packages/M1-QUESTS.md). LOCAL.
+- 2026-11-16 — Rehearsed the production server against an isolated database:
+  readiness returned 200→503→200 around local proxy loss, liveness stayed 200,
+  and restart/debug-route checks passed. Browser login, company re-entry,
+  rollback and owner acceptance remain open. [N12 rehearsal](docs/work-packages/m1-next/12-release-preparation.md#production-artifact-and-health-rehearsal--2026-11-16). LOCAL.
 
 - 2026-11-16 — Fixed: declare the hunt UI’s game-core workspace dependency so
   production builds follow the actual import order. [Build dependency](docs/work-packages/M1-QUESTS.md#web-build-dependency--2026-11-16). LOCAL.

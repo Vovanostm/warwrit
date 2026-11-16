@@ -1,12 +1,45 @@
 # N12 — Reproducible launch and hosted-test preparation
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; fresh clean launch/hosted rehearsal NOT_RUN here.
-No deployment, paid provisioning, pilot audience/size or reduced M1 acceptance
-is authorized by this package. Next: prepare/rehearse the local release artifact
-and reconcile remaining M1 criteria; request only concrete external decisions.
+SCOPED LOCAL release-artifact and PostgreSQL-readiness rehearsal passed. N12 is
+not complete: normal OIDC login/company re-entry, backup/restore, compatible
+rollback, capacity measurement and full M1 evidence join remain NOT_RUN. No
+deployment, paid provisioning, pilot audience/size or reduced M1 acceptance is
+authorized by this package.
 [Common contract](COMMON.md). [Prompt](prompts/12-release-preparation.md).
+
+Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
+not run.
+
+## Production artifact and health rehearsal — 2026-11-16
+
+At `39ec7ce22a7a943a22219cf217f26985cf6516e5`, frozen offline install passed.
+The root build first exposed a missing direct web-to-game-core workspace edge;
+adding that declared dependency fixed the web TypeScript failure. Core,
+protocol, testkit and server production builds then passed in `pnpm build`.
+This worktree's sparse checkout excluded tracked art: after materializing
+`assets/art`, `pnpm --filter @warwrit/web build` passed (3,557 modules). A single
+root `pnpm build` after restoring all sparse paths was NOT_RUN; the web production
+artifact was built separately after the other packages.
+
+Created the isolated PostgreSQL database `m1_release_rehearsal_20261116` through
+the existing local tunnel, applied migrations `0001`–`0032`, and started the
+compiled production entrypoint on `127.0.0.1:3035` with realtime port `3036`.
+It connected through a local proxy on `54922` to the existing tunnel on `54921`.
+Initial `/health/live` and `/health/ready` both returned 200; `/playground`
+returned 404. Stopping only the local proxy left liveness at 200 and changed
+readiness to 503. Restoring the proxy returned readiness to 200. The process
+then stopped cleanly and restarted against the same rehearsal database; both
+health routes returned 200 again. The shared PostgreSQL/Dex services stayed up,
+and no retained database was used. The temporary mode-600 environment file was
+removed after shutdown.
+
+This closes the local DB-readiness, restart and production playground-exclusion
+substeps. Browser OIDC login and a player's saved-company re-entry were NOT_RUN;
+the required second executor's normal login/restore is still open. This evidence
+does not establish hosted readiness, rollback safety, player acceptance or full
+M1 completion.
 
 ## Player outcome and readiness states
 
