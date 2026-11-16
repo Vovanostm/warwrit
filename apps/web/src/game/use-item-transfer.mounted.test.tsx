@@ -108,24 +108,61 @@ it('lets the player choose and retry the exact transfer after loss and reload, t
         equippedBy: null,
         slot: null,
       },
+      {
+        itemId: 'surrendered-sword',
+        definitionId: 'sword',
+        quantity: 1,
+        currentCondition: 70,
+        maximumCondition: 100,
+        carrierCharacterId: null,
+        equippedBy: null,
+        slot: 'MAIN_HAND',
+      },
     ],
     transfer: {
-      items: [{ itemId: 'rations', containerId: 'supply', quantity: 6 }],
+      items: [
+        { itemId: 'rations', containerId: 'supply', quantity: 6 },
+        { itemId: 'surrendered-sword', containerId: 'ground', quantity: 1 },
+      ],
       containers: [
         { containerId: 'supply', kind: 'PARTY_SUPPLY', carrierCharacterId: null },
         { containerId: 'pack', kind: 'CHARACTER_PACK', carrierCharacterId: 'leader' },
         { containerId: 'chest', kind: 'STATIC', carrierCharacterId: null },
+        {
+          containerId: 'ground',
+          kind: 'GROUND_BUNDLE',
+          carrierCharacterId: null,
+          canReceive: false,
+        },
       ],
     },
   };
+  let currentHoldings = holdings;
   vi.stubGlobal(
     'fetch',
     vi.fn(async (url: string, init?: RequestInit) => {
       if (String(url).endsWith('/auth/session')) return response({ accountId: 'account' });
-      if (String(url).endsWith('/company')) return response({ company: panelCompany, holdings });
-      const body = String(init?.body);
+      if (String(url).endsWith('/company'))
+        return response({ company: { ...panelCompany, revision: '8' }, holdings: currentHoldings });
+      if (typeof init?.body !== 'string') return response({}, 404);
+      const body = init.body;
       bodies.push(body);
-      if (bodies.length === 1) throw new Error('response lost');
+      if (bodies.length === 1) {
+        currentHoldings = {
+          ...holdings,
+          items: holdings.items.map((item) =>
+            item.itemId === 'surrendered-sword' ? { ...item, carrierCharacterId: 'leader' } : item,
+          ),
+          transfer: {
+            ...holdings.transfer!,
+            items: holdings.transfer!.items.filter((item) => item.itemId !== 'surrendered-sword'),
+            containers: holdings.transfer!.containers.filter(
+              (container) => container.containerId !== 'ground',
+            ),
+          },
+        };
+        throw new Error('response lost');
+      }
       const commandId = JSON.parse(body).commandId;
       if (bodies.length === 2)
         return response({ commandId: 'another-command', ok: true, publicRevision: '8' });
@@ -175,18 +212,32 @@ it('lets the player choose and retry the exact transfer after loss and reload, t
   expect(host.querySelectorAll('[aria-label="Восстановление отряда"]')).toHaveLength(1);
   expect(host.querySelectorAll('[aria-label="Уход за ранами"]')).toHaveLength(1);
   expect(host.querySelectorAll('[aria-label="Жалованье"]')).toHaveLength(1);
-  expect(host.textContent).toContain('Перемещение между сумками');
+  expect(
+    [...host.querySelector<HTMLSelectElement>('[aria-label="Вещь для передачи"]')!.options].some(
+      (option) => option.textContent?.includes('На земле'),
+    ),
+  ).toBe(true);
+  expect(
+    [...host.querySelector<HTMLSelectElement>('[aria-label="Контейнер назначения"]')!.options].some(
+      (option) => option.textContent?.includes('На земле'),
+    ),
+  ).toBe(false);
   expect(host.querySelector<HTMLButtonElement>('.item-transfer-fields .action')!.disabled).toBe(
     true,
   );
-  await change('Вещь для передачи', 'rations');
-  await change('Количество для передачи', '2');
+  await change('Вещь для передачи', 'surrendered-sword');
+  expect(host.querySelector<HTMLButtonElement>('.item-transfer-fields .action')!.textContent).toBe(
+    'Забрать',
+  );
   await change('Контейнер назначения', 'pack');
-  await click('Передать');
+  expect(host.querySelector<HTMLButtonElement>('.item-transfer-fields .action')!.disabled).toBe(
+    false,
+  );
+  await click('Забрать');
   expect(JSON.parse(bodies[0]!).payload).toEqual({
-    itemId: 'rations',
-    quantity: 2,
-    fromContainerId: 'supply',
+    itemId: 'surrendered-sword',
+    quantity: 1,
+    fromContainerId: 'ground',
     toContainerId: 'pack',
   });
   expect(host.textContent).toContain('ещё не подтверждена');
@@ -194,7 +245,7 @@ it('lets the player choose and retry the exact transfer after loss and reload, t
   act(() => root!.unmount());
   root = (await import('react-dom/client')).createRoot(host);
   await act(async () => render());
-  expect(host.textContent).toContain('Передача 2');
+  expect(host.textContent).toContain('Передача 1 × Меч');
   expect(host.textContent).toContain('Сумка: Яромир');
   await click('Повторить эту же передачу');
   expect(sessionStorage.getItem('warwrit:item-transfer:account:company')).toBe(stored);
@@ -205,6 +256,7 @@ it('lets the player choose and retry the exact transfer after loss and reload, t
   expect(host.textContent).toContain('Вещи переданы.');
   expect(host.querySelector('[aria-label="Вещь для передачи"]')).not.toBeNull();
   await change('Вещь для передачи', 'rations');
+  await change('Количество для передачи', '2');
   await change('Контейнер назначения', 'pack');
   await click('Передать');
   await act(async () => render());

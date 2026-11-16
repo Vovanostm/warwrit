@@ -401,10 +401,31 @@ because his matching shield was unavailable. Current source cash is 438.71 and
 at 36/100 and Ratko at 100/100. Kest's retained raider weapon/padded coat is the
 only currently equipped kit. No new battle was started during preparation.
 
-Implementation is IN_PROGRESS / LOCAL through existing TransferItem authority,
-transaction/receipt and controls. Keep recoverable world sources distinct from
-valid owned destinations. The accepted rule grants physical recovery and leaves
-personal-estate ownership with its existing owner. No shop profile or purchase
-price is approved by this decision. Native captures are
-`.playwright-cli/page-2026-11-16T09-45-47-054Z.png` and
-`.playwright-cli/page-2026-11-16T09-46-01-584Z.png`.
+IMPLEMENTED / LOCAL through existing TransferItem authority, transaction,
+receipts and controls. Local open world ground/corpse containers holding owned
+items appear as source-only options. The server separately validates the owned
+destination and chooses a local basicWork-capable operator. Existing injured
+members' accessible bags remain available. The public optional canReceive flag
+preserves compatibility with earlier projections. Personal-estate property
+retains its owner and remains outside this access path.
+
+Native source continuation at Old Mill recovered Dozor's sword, shield and
+helmet while the three living hostiles remained there. Reload retained all three
+in Dozor's bag, with the original item identities and condition. Sword transfer
+`cb37cfa1-923a-475a-b0dd-8aeb3159cf02` committed once at revision 990→991.
+The attempted response-loss interception failed to hide its successful response,
+so this run supplies ordinary pickup/reload evidence. Exact replay is covered by
+the PostgreSQL regression. Further equipment preparation belongs to the next
+campaign attempt. The source runtime briefly restarted during the parent's
+shared-package build; readiness returned 200 and ordinary reload restored access.
+
+Focused PostgreSQL recovery/refusal cases passed 3/3, access/projection/capability
+cases 3/3 and mounted transfer UI cases 3/3. Protocol build, server/web types,
+scoped ESLint/Prettier and diff checks passed on the author tree. The parent
+repeated the mounted UI cases (3/3), full production build and scoped formatting.
+Build output retains the existing large-chunk advisory. Logs are
+`output/m1-owned-recovery-pg-20261116.log`,
+`output/m1-owned-recovery-parent-ui-20261116.log` and
+`output/m1-owned-recovery-build-20261116.log`. Native snapshots include
+`.playwright-cli/page-2026-11-16T11-15-04-551Z.yml`. Publication/merge are NOT_RUN.
+This recovery slice does not close the remaining native hunt or N1 journey.

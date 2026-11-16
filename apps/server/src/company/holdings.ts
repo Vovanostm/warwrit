@@ -148,6 +148,9 @@ export function projectCompanyHoldings(
     days: partyMembers.length ? (rations + openedFood) / partyMembers.length : 0,
   };
   const accessible = itemTransferOptions(state);
+  const destinationIds = new Set(
+    accessible?.destinations.map((container) => container.containerId) ?? [],
+  );
   return {
     care: companyCareOptions(state, chapelPriceQ),
     ...(accessible
@@ -158,6 +161,7 @@ export function projectCompanyHoldings(
               kind: container.kind,
               carrierCharacterId:
                 container.carrier?.kind === 'CHARACTER' ? container.carrier.id : null,
+              canReceive: destinationIds.has(container.containerId),
             })),
             items: accessible.items.map((item) => ({
               itemId: item.itemId,

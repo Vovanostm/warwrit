@@ -34,6 +34,8 @@ import { createDatabase } from '../db/database.js';
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { readSupplyShop } from './supplies.js';
+import { itemTransferAccess, itemTransferOptions } from './item-transfer.js';
+import { projectCompanyHoldings } from './holdings.js';
 import type { DatabaseSchema } from '../db/database.js';
 import {
   executeOrdinaryPlayerCompanyCommand,
@@ -601,6 +603,168 @@ describe('ordinary company command executor (PostgreSQL)', () => {
         );
         expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
       });
+    },
+  );
+  it.skipIf(database === undefined)(
+    'recovers an owned ground item locally with its owner and condition intact',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const before = scenario.priorState.economy.physical!.items.find(
+            (entry) => entry.itemId === 'a-leader-sword',
+          )!;
+          const request = ordinaryRequest(scenario, {
+            type: 'TransferItem',
+            payload: {
+              itemId: before.itemId,
+              quantity: before.quantity,
+              fromContainerId: 'surrender-ground-bundle',
+              toContainerId: 'fixture-supply',
+            },
+          });
+          const first = await executeOrdinary(scenario, request);
+          expect(first, JSON.stringify(first)).toMatchObject({ kind: 'COMMITTED' });
+          expect(await executeOrdinary(scenario, request)).toEqual(first);
+          const stored = await readOrdinaryPersistence(scenario);
+          const recovered = stored.state.economy.physical!.items.find(
+            (entry) => entry.itemId === before.itemId,
+          )!;
+          expect(recovered).toMatchObject({
+            owner: before.owner,
+            quantity: before.quantity,
+            currentCondition: before.currentCondition,
+            maximumCondition: before.maximumCondition,
+            containerId: 'fixture-supply',
+            equipped: null,
+          });
+          expect(
+            stored.state.economy.physical!.items.filter((entry) => entry.itemId === before.itemId),
+          ).toHaveLength(1);
+          expect(
+            stored.receipts.filter((entry) => entry.command_id === request.commandId),
+          ).toHaveLength(1);
+          const party = scenario.priorState.economy.lifecycle.parties[0]!;
+          const partyCharacterIds = new Set<string>(
+            scenario.priorState.economy.lifecycle.characters
+              .filter((character) => character.presence.fieldPartyId === party.partyId)
+              .map((character) => character.identity.characterId),
+          );
+          const carriedWeight = (value: CompanyCombatAggregateState) => {
+            const physical = value.economy.physical!;
+            const carriedIds = new Set(
+              physical.containers
+                .filter(
+                  (container) =>
+                    container.closed === null &&
+                    (container.carrier?.kind === 'PARTY'
+                      ? container.carrier.id === party.partyId
+                      : container.carrier?.kind === 'CHARACTER' &&
+                        partyCharacterIds.has(container.carrier.id)),
+                )
+                .map((container) => container.containerId),
+            );
+            return physical.items
+              .filter(
+                (entry) =>
+                  entry.tombstone === null &&
+                  entry.containerId !== null &&
+                  carriedIds.has(entry.containerId),
+              )
+              .reduce((sum, entry) => {
+                const definition = COMPANY_CATALOGUE.items.find(
+                  (candidate) => candidate.id === entry.definitionId,
+                );
+                if (!definition) throw new Error(`Missing item definition ${entry.definitionId}`);
+                return sum + definition.weightG * entry.quantity;
+              }, 0);
+          };
+          const swordDefinition = COMPANY_CATALOGUE.items.find(
+            (entry) => entry.id === before.definitionId,
+          )!;
+          expect(carriedWeight(stored.state) - carriedWeight(scenario.priorState)).toBe(
+            swordDefinition.weightG * before.quantity,
+          );
+        },
+        (state) => withSurrenderGroundSource(state, undefined, true),
+      );
+    },
+  );
+  it.skipIf(database === undefined)(
+    'rejects an owned ground source at another location without changing saved state',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const sword = scenario.priorState.economy.physical!.items.find(
+            (entry) => entry.itemId === 'a-leader-sword',
+          )!;
+          await rejectOrdinaryUnchanged(
+            scenario,
+            ordinaryRequest(scenario, {
+              type: 'TransferItem',
+              payload: {
+                itemId: sword.itemId,
+                quantity: sword.quantity,
+                fromContainerId: 'surrender-ground-bundle',
+                toContainerId: 'fixture-supply',
+              },
+            }),
+            'CONTACT_OR_ACCESS_REQUIRED',
+          );
+        },
+        (state) =>
+          withSurrenderGroundSource(state, {
+            kind: 'AT',
+            siteId: 'remote-site',
+            areaId: 'remote-area',
+          }),
+      );
+    },
+  );
+  it.skipIf(database === undefined)(
+    'does not transfer estate property or receive items into a world source',
+    async () => {
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const sword = scenario.priorState.economy.physical!.items.find(
+            (entry) => entry.itemId === 'a-leader-sword',
+          )!;
+          await rejectOrdinaryUnchanged(
+            scenario,
+            ordinaryRequest(scenario, {
+              type: 'TransferItem',
+              payload: {
+                itemId: sword.itemId,
+                quantity: sword.quantity,
+                fromContainerId: 'surrender-ground-bundle',
+                toContainerId: 'fixture-supply',
+              },
+            }),
+            'CONTACT_OR_ACCESS_REQUIRED',
+          );
+
+          const ownedItem = scenario.priorState.economy.physical!.items.find(
+            (entry) =>
+              entry.itemId !== sword.itemId &&
+              entry.owner.kind === 'COMPANY' &&
+              entry.containerId !== null,
+          );
+          if (!ownedItem) throw new Error('Expected another company item for destination check');
+          await rejectOrdinaryUnchanged(
+            scenario,
+            ordinaryRequest(scenario, {
+              type: 'TransferItem',
+              payload: {
+                itemId: ownedItem.itemId,
+                quantity: ownedItem.quantity,
+                fromContainerId: ownedItem.containerId!,
+                toContainerId: 'surrender-ground-bundle',
+              },
+            }),
+            'CONTACT_OR_ACCESS_REQUIRED',
+          );
+        },
+        (state) => withEstateSurrenderGroundSource(state),
+      );
     },
   );
   it.skipIf(database === undefined)(
@@ -1633,6 +1797,82 @@ describe('ordinary company command executor (PostgreSQL)', () => {
   );
 });
 
+it('does not issue item transfer access during an active battle', () => {
+  const state = withSurrenderGroundSource(createCompanyCombatAggregateFixture().state);
+  const activeBattle = {
+    ...state,
+    encounter: { ...state.encounter, active: {} },
+  } as unknown as CompanyCombatAggregateState;
+  expect(
+    itemTransferAccess(
+      activeBattle,
+      {
+        itemId: 'a-leader-sword',
+        quantity: 1,
+        fromContainerId: 'surrender-ground-bundle',
+        toContainerId: 'fixture-supply',
+      },
+      '0',
+    ),
+  ).toBeUndefined();
+});
+
+it('selects a capable operator without hiding the injured owner’s accessible bag', () => {
+  const state = withSurrenderGroundSource(createCompanyCombatAggregateFixture().state);
+  const partyId = state.economy.lifecycle.parties[0]?.partyId;
+  const firstLocalPerson = state.economy.lifecycle.characters.find(
+    (character) =>
+      character.presence.fieldPartyId === partyId &&
+      character.presence.availability === 'AVAILABLE',
+  );
+  if (!firstLocalPerson) throw new Error('Expected an available local person');
+  const injured = {
+    ...state,
+    economy: {
+      ...state.economy,
+      lifecycle: {
+        ...state.economy.lifecycle,
+        characters: state.economy.lifecycle.characters.map((character) =>
+          character.identity.characterId === firstLocalPerson.identity.characterId
+            ? { ...character, conditionIds: ['critical-bleed'] }
+            : character,
+        ),
+      },
+    },
+  };
+  const options = itemTransferOptions(injured);
+  expect(options?.operatorId).not.toBe(firstLocalPerson.identity.characterId);
+  expect(
+    options?.items.some(
+      (item) =>
+        item.owner.kind === 'CHARACTER' && item.owner.id === firstLocalPerson.identity.characterId,
+    ),
+  ).toBe(true);
+});
+
+it('projects a local world bundle as a source and keeps it out of destination choices', () => {
+  const state = withSurrenderGroundSource(createCompanyCombatAggregateFixture().state);
+  const lifecycle = state.economy.lifecycle;
+  const memberIds = lifecycle.memberships
+    .filter((membership) => membership.companyId === lifecycle.companyId && !membership.endedAt)
+    .map((membership) => membership.characterId);
+  const transfer = projectCompanyHoldings(state, lifecycle.companyId, memberIds).transfer;
+  expect(transfer?.items).toContainEqual({
+    itemId: 'a-leader-sword',
+    containerId: 'surrender-ground-bundle',
+    quantity: expect.any(Number),
+  });
+  expect(transfer?.containers).toContainEqual({
+    containerId: 'surrender-ground-bundle',
+    kind: 'GROUND_BUNDLE',
+    carrierCharacterId: null,
+    canReceive: false,
+  });
+  expect(
+    transfer?.containers.find((container) => container.containerId === 'fixture-supply'),
+  ).toMatchObject({ canReceive: true });
+});
+
 type OrdinaryIntent = OrdinaryPlayerCompanyCommandV2Dto extends infer Request
   ? Request extends OrdinaryPlayerCompanyCommandV2Dto
     ? Pick<Request, 'type' | 'payload'>
@@ -1700,6 +1940,111 @@ async function withOrdinaryScenario(
       .execute();
     await cleanupScenario(database, scenario);
   }
+}
+
+function withSurrenderGroundSource(
+  state: CompanyCombatAggregateState,
+  location?: { readonly kind: 'AT'; readonly siteId: string; readonly areaId: string },
+  makeCarryingRoom = false,
+): CompanyCombatAggregateState {
+  const physical = state.economy.physical!;
+  const party = state.economy.lifecycle.parties[0];
+  if (!party || party.location.kind !== 'AT') throw new Error('Expected a local test party');
+  const source = {
+    containerId: 'surrender-ground-bundle',
+    kind: 'GROUND_BUNDLE' as const,
+    location: location ?? party.location,
+    custodian: { kind: 'WORLD' as const, id: state.economy.lifecycle.worldId },
+    carrier: null,
+    capacityG: 100_000,
+    access: 'CUSTODIAN' as const,
+    closed: null,
+  };
+  const store = {
+    containerId: 'local-supply-store',
+    kind: 'STATIC' as const,
+    location: party.location,
+    custodian: { kind: 'COMPANY' as const, id: state.economy.lifecycle.companyId },
+    carrier: null,
+    capacityG: 200_000,
+    access: 'COMPANY' as const,
+    closed: null,
+  };
+  const rationCarrierIds = new Set(
+    physical.containers
+      .filter((container) => container.carrier !== null)
+      .map((container) => container.containerId),
+  );
+  const sword = physical.items.find((entry) => entry.itemId === 'a-leader-sword');
+  if (!sword) throw new Error('Expected the leader sword in the test fixture');
+  const changedItems = physical.items.map((entry) => {
+    if (entry.itemId === sword.itemId)
+      return { ...entry, containerId: source.containerId, equipped: null };
+    if (
+      makeCarryingRoom &&
+      entry.definitionId === 'ration' &&
+      entry.containerId !== null &&
+      rationCarrierIds.has(entry.containerId)
+    )
+      return { ...entry, containerId: store.containerId };
+    return entry;
+  });
+  const changedItemIds = new Set(
+    changedItems
+      .filter((entry, index) => entry !== physical.items[index])
+      .map((entry) => entry.itemId),
+  );
+  return readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...state.economy,
+      physical: {
+        ...physical,
+        containers: [...physical.containers, source, ...(makeCarryingRoom ? [store] : [])],
+        items: changedItems,
+        knowledge: {
+          ...physical.knowledge,
+          containerSnapshots: [
+            ...physical.knowledge.containerSnapshots.filter(
+              (entry) => entry.containerId !== source.containerId,
+            ),
+            source,
+            ...(makeCarryingRoom ? [store] : []),
+          ],
+          itemSnapshots: [
+            ...physical.knowledge.itemSnapshots.filter(
+              (entry) => !changedItemIds.has(entry.itemId),
+            ),
+            ...changedItems.filter((entry) => changedItemIds.has(entry.itemId)),
+          ],
+        },
+      },
+    },
+  });
+}
+
+function withEstateSurrenderGroundSource(state: CompanyCombatAggregateState) {
+  const grounded = withSurrenderGroundSource(state);
+  const physical = grounded.economy.physical!;
+  const characterId = grounded.economy.lifecycle.company!.currentLeaderId!;
+  const item = physical.items.find((entry) => entry.itemId === 'a-leader-sword')!;
+  const estateItem = { ...item, owner: { kind: 'ESTATE' as const, id: characterId } };
+  return readCompanyCombatAggregateState({
+    ...grounded,
+    economy: {
+      ...grounded.economy,
+      physical: {
+        ...physical,
+        items: physical.items.map((entry) => (entry.itemId === item.itemId ? estateItem : entry)),
+        knowledge: {
+          ...physical.knowledge,
+          itemSnapshots: physical.knowledge.itemSnapshots.map((entry) =>
+            entry.itemId === item.itemId ? estateItem : entry,
+          ),
+        },
+      },
+    },
+  });
 }
 
 function withCareState(

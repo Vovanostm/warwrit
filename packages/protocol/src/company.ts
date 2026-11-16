@@ -151,6 +151,8 @@ export interface CompanyHoldingsDto {
       readonly containerId: string;
       readonly carrierCharacterId: string | null;
       readonly kind: string;
+      /** False for a world-custodied source that can be emptied into owned storage. */
+      readonly canReceive?: boolean;
     }[];
     readonly items: readonly {
       readonly itemId: string;

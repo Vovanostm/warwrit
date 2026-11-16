@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { campaignTick, PHYSICAL_POLICY_VERSION } from '@warwrit/game-core';
+import { campaignTick, canPerform, PHYSICAL_POLICY_VERSION } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState, ItemAccessEvidence } from '@warwrit/game-core';
 import type { OrdinaryPlayerCompanyCommandV2Dto } from '@warwrit/protocol';
 
@@ -24,7 +24,7 @@ export function itemTransferOptions(state: CompanyCombatAggregateState) {
       person.presence.location.siteId === location.siteId &&
       person.presence.location.areaId === location.areaId,
   );
-  const operator = people[0];
+  const operator = people.find((person) => canPerform(person, 'basicWork'));
   if (!operator) return undefined;
   const localIds = new Set<string>(people.map((person) => person.identity.characterId));
   const owned = (owner: { readonly kind: string; readonly id: string }) =>
@@ -41,7 +41,24 @@ export function itemTransferOptions(state: CompanyCombatAggregateState) {
         (container.carrier.kind === 'PARTY' && container.carrier.id === party.partyId) ||
         (container.carrier.kind === 'CHARACTER' && localIds.has(container.carrier.id))),
   );
-  const containerIds = new Set(containers.map((container) => container.containerId));
+  const companyItems = root.physical.items.filter(
+    (item) => item.tombstone === null && owned(item.owner),
+  );
+  const droppedContainers = root.physical.containers.filter(
+    (container) =>
+      (container.kind === 'GROUND_BUNDLE' || container.kind === 'CORPSE') &&
+      container.custodian.kind === 'WORLD' &&
+      container.custodian.id === root.lifecycle.worldId &&
+      container.access === 'CUSTODIAN' &&
+      container.closed === null &&
+      container.carrier === null &&
+      container.location.kind === 'AT' &&
+      container.location.siteId === location.siteId &&
+      container.location.areaId === location.areaId &&
+      companyItems.some((item) => item.containerId === container.containerId),
+  );
+  const sources = [...containers, ...droppedContainers];
+  const containerIds = new Set(sources.map((container) => container.containerId));
   const items = root.physical.items.filter(
     (item) =>
       item.tombstone === null &&
@@ -49,7 +66,13 @@ export function itemTransferOptions(state: CompanyCombatAggregateState) {
       item.containerId !== null &&
       containerIds.has(item.containerId),
   );
-  return { location, operatorId: operator.identity.characterId, containers, items };
+  return {
+    location,
+    operatorId: operator.identity.characterId,
+    containers: sources,
+    destinations: containers,
+    items,
+  };
 }
 
 export function itemTransferAccess(
@@ -64,7 +87,7 @@ export function itemTransferAccess(
     !options.items.some(
       (item) => item.itemId === payload.itemId && item.containerId === payload.fromContainerId,
     ) ||
-    !options.containers.some((container) => container.containerId === payload.toContainerId)
+    !options.destinations.some((container) => container.containerId === payload.toContainerId)
   )
     return undefined;
   return {

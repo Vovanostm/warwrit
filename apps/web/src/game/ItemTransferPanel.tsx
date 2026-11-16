@@ -9,6 +9,8 @@ type TransferContainer = NonNullable<CompanyHoldingsDto['transfer']>['containers
 type Selection = { itemId: string; destination: string; quantity: number };
 
 function containerName(container: TransferContainer, company: CompanySummaryDto) {
+  if (container.kind === 'GROUND_BUNDLE') return 'На земле';
+  if (container.kind === 'CORPSE') return 'При погибшем';
   if (container.carrierCharacterId) {
     const carrier = company.characters.find(
       (person) => person.characterId === container.carrierCharacterId,
@@ -99,13 +101,17 @@ function TransferForm({
   if (!options || options.items.length === 0)
     return (
       <p className="state-note">
-        {state.reading
-          ? 'Нет доступных вещей для передачи в этом месте.'
-          : 'Обновляем список вещей…'}
+        {state.reading ? 'Здесь нет вещей для передачи или подбора.' : 'Обновляем список вещей…'}
       </p>
     );
   const item = options.items.find((entry) => entry.itemId === selection.itemId);
-  const targets = options.containers.filter((entry) => entry.containerId !== item?.containerId);
+  const source = options.containers.find((entry) => entry.containerId === item?.containerId);
+  const recovering = source?.canReceive === false;
+  const actionLabel = recovering ? 'Забрать' : 'Передать';
+  const busyLabel = recovering ? 'Забираем…' : 'Передаём…';
+  const targets = options.containers.filter(
+    (entry) => entry.canReceive !== false && entry.containerId !== item?.containerId,
+  );
   const canTransfer = Boolean(
     item &&
     targets.some((entry) => entry.containerId === selection.destination) &&
@@ -182,11 +188,8 @@ function TransferForm({
         disabled={state.busy || !canTransfer || company.runStatus !== 'ACTIVE'}
         onClick={submit}
       >
-        {state.busy ? 'Передаём…' : 'Передать'}
+        {state.busy ? busyLabel : actionLabel}
       </button>
-      <p className="state-note">
-        Перемещение между сумками не меняет владельца вещи и общий груз отряда.
-      </p>
     </div>
   );
 }

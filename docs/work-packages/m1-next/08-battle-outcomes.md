@@ -240,5 +240,8 @@ Surrender still drops equipped gear into the actual world bundle, and recovery
 moves the existing item to an authorized carried container. Ownership,
 condition, source and quantity remain attached to that item. Existing authority
 checks handle other people's property, remote access and active encounters.
-The implementation and native result belong to
+LOCAL implementation now uses ordinary TransferItem with source-only local
+world containers. Native pickup and reload returned Dozor's existing sword,
+shield and helmet at Old Mill while the hostiles remained alive. Focused checks,
+compatibility and remaining campaign work belong to
 [N06](06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16).
