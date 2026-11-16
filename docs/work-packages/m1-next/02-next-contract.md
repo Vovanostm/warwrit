@@ -25,9 +25,8 @@ attempt 3. Both ordinary contract cards showed the existing helper and fresh
 readiness before admission. The corrected persistent UI driver starts both loops
 before JOIN, recognizes an actual field projection, and includes the existing
 lookup-retry control. This run used no API pause. It resolved victorious at
-revision 14, round 3. Both founders survived, the retained axe raider died. There
-were nine accepted account orders: five by the owner for its founder, four by
-the helper for its founder. Each used manual Defend, then visible one-action
+revision 14, round 3. Both founders survived, the retained axe raider died. The owner issued five accepted orders for its founder and the helper issued
+four for its founder. Each used manual Defend, then visible one-action
 autoplay produced movement, attack and wait orders. Five AI orders and zero timeout
 orders completed the history. No account controlled the other company's fighter.
 

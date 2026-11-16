@@ -16,9 +16,22 @@ The active continuation has returned to the owned development runtime on
 m1_n01_control_20261116, API 3031/realtime 3032/web 5331. Its private mode 0600
 configuration is output/m1-n01-control-runtime-20261116.env, terminal 13226, API
 listener 41584 and web 41573 at this checkpoint. The append-preserved log remains
-output/m1-n01-control-dev-20261116.log. Source execution is unchanged since 1e607f39.
+output/m1-n01-control-dev-20261116.log. The runtime includes the purse and encounter deadline corrections, plus
+[N10's SVG marker fix](10-desktop-performance.md#svg-map-marker-anchor-correction--2026-11-16).
 This return enabled the existing protected clock controls for the next native
 C05 journey, which now completes and pays 80 crowns under [N05](05-contracts.md#c05-native-living-rescue-and-paid-re-entry--2026-11-16).
+
+The separate remaining-matrix runtime uses the retained m1_control_sync_20261116
+QA database on API 3033/realtime 3034/web 5333, terminal 87509, private mode 0600
+output/m1-matrix-runtime-20261116.env and append-preserved
+output/m1-matrix-dev-20261116.log. Its entry is the existing development quick-login
+for companies 3/4. Account 30c3692b-0a37-4287-8843-ae5187274daf was verified through
+its authenticated session and added to this private QA runtime's developer
+allowlist for the protected clock controls. This is an autonomous local test
+configuration change. All gameplay progress uses authenticated commands. The earlier source
+database and N01 continuation retain their own configurations. The fresh QA
+provenance, accepted mill-worker contract, explicit guard-issued map marker and
+normal scouting belong to the ongoing C07–C09 check under N05.
 
 The compiled production rehearsal passed first. It used private mode 0600
 output/m1-n01-production-runtime-20261116.env with the same DB/OIDC settings and

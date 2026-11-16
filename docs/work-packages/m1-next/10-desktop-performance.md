@@ -37,6 +37,37 @@ Comparable whole-journey load/resource measurements and server capacity remain
 NOT_MEASURED. The owner budget accepted on 2026-11-16 is recorded below;
 compliance with it remains unmeasured.
 
+## SVG map-marker anchor correction — 2026-11-16
+
+FIXED / LOCAL, P2. In the ordinary QA atlas, label placement changed each SVG
+marker group's bounding box. Scaling a fill-box reference shifted site icons away
+from their public map coordinates. Native screen-matrix comparison found up to
+52.77 CSS pixels of displacement among nine sites. A controlled quest-marker SVG
+using the same stylesheet also shifted 34.65px horizontally and 31.67px vertically.
+
+Both painted-site and painted-quest-target now use the SVG view-box reference
+and origin 0,0. Nine native markers match their public projected coordinates within
+0.00002 CSS pixels at the initial scale, zoomed-in scale and returned scale. The
+actual quest-marker stylesheet fixture has zero displacement on both axes. A
+normal known-ground right-click still produces its actual TERRAIN command and
+accepted travel; unknown-route refusals retain their observed masked response.
+
+The native sample used 1070×757 CSS pixels, DPR 2, visual scale 1. The additional
+960×540 landscape emulation used DPR 1, had document width 960 and nine markers
+within 0.000008 CSS pixels. The QA browser subsequently returned to 1070×757 CSS
+pixels and reports DPR 1; subsequent measurements must record that current density.
+The PaintedMapCanvas label/date/control component tests pass 2/2, Prettier and diff
+checks pass. The related place-worker body/hammer transform origins are deliberate
+animation pivots. The narrow transform-box/origin search found the two confirmed
+map cases above.
+
+Evidence is output/m1-map-marker-anchors-{before,after}-20261116.log,
+output/m1-map-quest-anchor-{diagnostic,after}-20261116.log,
+output/m1-map-marker-landscape-after-20261116.log and
+output/m1-map-marker-component-20261116.log. These are geometry and control checks.
+Complete DESK-1–DESK-6, whole-route 60-FPS compliance, loading/resource comparison
+and agreed-player acceptance remain open. This correction alone leaves T028 open.
+
 ## Player goal and trial
 
 Map, place, battle, result and re-entry remain readable, controllable and responsive

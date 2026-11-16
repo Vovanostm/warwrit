@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: atlas site and quest icons keep their map coordinates
+  while labels and zoom change. Native and landscape geometry checks pass.
+  [N10](docs/work-packages/m1-next/10-desktop-performance.md#svg-map-marker-anchor-correction--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: authenticated road-observation refusals preserve company
   and contract state; scout delivery replay preserves one exact 80-crown payment
   after app recreation. [N05](docs/work-packages/m1-next/05-contracts.md#c03-refusals-and-c06-saved-delivery-replay--2026-11-16). LOCAL.

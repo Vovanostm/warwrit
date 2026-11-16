@@ -63,8 +63,8 @@
 }
 
 .painted-site {
-  transform-box: fill-box;
-  transform-origin: center;
+  transform-box: view-box;
+  transform-origin: 0 0;
   scale: var(--painted-marker-scale, 1);
   cursor: pointer;
   pointer-events: none;
@@ -131,7 +131,8 @@
 
 .painted-quest-target {
   pointer-events: none;
-  transform-box: fill-box;
+  transform-box: view-box;
+  transform-origin: 0 0;
 }
 
 .painted-quest-target .quest-target-halo {
