@@ -745,7 +745,7 @@ export function firstHuntGuidance(
         : '';
     return currentSiteId === contract.terms.objectiveLocation.siteId
       ? `Охота не завершена. Последствия боя сохранены. Можно вступить в бой снова.${repeatHint}`
-      : `Охота не завершена. Для новой попытки вернитесь к ${locationLabel(contract.terms.objectiveLocation.siteId)}.`;
+      : `Охота не завершена. Для новой попытки вернитесь на место боя («${locationLabel(contract.terms.objectiveLocation.siteId)}»).`;
   }
   if (contract.terminal?.hostileRetreated && contract.knownState === 'ACTIVE')
     return 'Противники ушли живыми. Трофея и награды нет. Последствия боя сохранены; отряд больше не связан боем. Повторная попытка пока недоступна.';

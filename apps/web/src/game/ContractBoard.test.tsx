@@ -434,6 +434,8 @@ it('shows a physical unpaid return action for a withdrawn rescue holder', () => 
   };
   const issuerVisit = { siteId: issuer.siteId, building: 'watch' as const };
   const activeMarkup = render(returnedPerson, issuerVisit, issuer.siteId);
+  expect(activeMarkup).toContain('С отрядом: Ивашка Рябой, ранен');
+  expect(activeMarkup).not.toContain('С отрядом: person.');
   expect(activeMarkup).toContain('Верните человека заказчику; за этот возврат платить не будут.');
   expect(activeMarkup).toContain('Отвести человека заказчику без выплаты');
   expect(activeMarkup).not.toContain('Отказаться от поручения');

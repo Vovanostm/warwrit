@@ -138,3 +138,25 @@ The owner has no deaths; the helper's two companions died and its leader
 survived. The failed result, surrendered gear and obligations remain saved.
 A later native flee attempt did not send a command before resolution. Both the source defeat and this restored outcome remain in their respective
 databases.
+
+### Accepted command and visible deadline — 2026-11-16
+
+LOCAL. Fresh combat intents now wait for the accepted revision to reach the
+public projection and for its matching private grant. The immediate callback
+also checks the current revision requirement, covering a stale rendered handler.
+Projection-before-response and historical exact retry have focused regressions.
+The existing fullscreen live lane now displays the acting unit and its deadline.
+Its existing positioning already supported the resume control, so the lane was
+retained in that overlay. Keyboard resume was exercised in the native attempt.
+
+The rescue journal now resolves canonical person keys through the existing
+name catalogue, including prefixed and legacy bare IDs. The native rescued
+scout had appeared as `person.lost-scout.01` because the client added a second
+`person.` prefix. It now uses the authored name. The remote repeat-hunt hint
+also uses a grammatical place-name construction. Waiting feedback describes the
+accepted order without exposing a technical revision number.
+
+Integrated recovery/live-lane, ContractBoard and hunt-attempt tests passed
+39 cases and web typecheck passed. The final historical-retry wording assertion
+was updated with its displayed message. A fresh native battle with the revision
+gate is NOT_RUN. Owner comprehension and enjoyment remain NOT_MEASURED.

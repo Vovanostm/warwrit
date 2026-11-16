@@ -188,7 +188,7 @@ export function EncounterPanel(props: {
               ...(awaitingProjectionRevision
                 ? {
                     awaitingProjectionRevision,
-                    message: `Команда принята. Ждём обновления сводки боя до ${awaitingProjectionRevision.revision}.`,
+                    message: 'Приказ принят. Ждём обновления боя.',
                   }
                 : {}),
               ...(storedAttempt.kind === 'FOUND'
@@ -801,7 +801,7 @@ export function EncounterPanel(props: {
           commandStorageBlocked: false,
           ...(awaitingProjectionRevision ? { awaitingProjectionRevision } : {}),
           message: awaitingProjectionRevision
-            ? `Команда принята. Ждём обновления сводки боя до ${awaitingProjectionRevision.revision}.`
+            ? 'Приказ принят. Ждём обновления боя.'
             : response.status === 'accepted'
               ? 'Команда принята сервером. Обновляем состояние боя.'
               : response.code === 'CONFLICT'

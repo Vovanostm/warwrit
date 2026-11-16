@@ -25,7 +25,8 @@ const findingText = (instanceId: string, stepId: string) =>
   lookup(`contract.${instanceId}.finding.${stepId}`);
 const conditionText = (instanceId: string, stepId: string) =>
   lookup(`contract.${instanceId}.condition.${stepId}`);
-const personName = (personId: string) => lookup(`person.${personId}`) ?? personId;
+const personName = (personId: string) =>
+  lookup(personId) ?? lookup(`person.${personId}`) ?? 'Спутник';
 
 function stepBlockerText(
   contract: OrdinaryContractDto,

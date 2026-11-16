@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: wait for an accepted battle revision before fresh orders,
+  expose the turn deadline and resolve escorted people through authored names.
+  [Control and journal feedback](docs/work-packages/m1-next/09-player-experience.md#accepted-command-and-visible-deadline--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: replace internal battle side/party identifiers in result
   headings and initiative with readable, stable side labels. [Native feedback](docs/work-packages/m1-next/09-player-experience.md#native-feedback-corrections--2026-11-16). LOCAL.
 

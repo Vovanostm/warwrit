@@ -304,7 +304,7 @@ describe('EncounterPanel command recovery', () => {
     const staleAction = harness.battleActs.at(-1)!;
     await act(async () => wait()!.click());
     expect(sender).toHaveBeenCalledTimes(1);
-    expect(container.textContent).toContain('Ждём обновления сводки боя до 5');
+    expect(container.textContent).toContain('Приказ принят. Ждём обновления боя.');
     expect(wait()).toBeNull();
     await act(async () => staleAction({ type: 'wait' } as never));
     expect(sender).toHaveBeenCalledTimes(1);
@@ -350,7 +350,7 @@ describe('EncounterPanel command recovery', () => {
       await Promise.resolve();
       await Promise.resolve();
     });
-    expect(container.textContent).not.toContain('Ждём обновления сводки боя');
+    expect(container.textContent).not.toContain('Ждём обновления боя');
     expect(wait()?.disabled).toBe(false);
   });
 
@@ -386,7 +386,7 @@ describe('EncounterPanel command recovery', () => {
     expect(retry).toBeDefined();
     await act(async () => retry!.click());
     expect(sender).toHaveBeenCalledWith(historicalCommand);
-    expect(container.textContent).not.toContain('Ждём обновления сводки боя');
+    expect(container.textContent).not.toContain('Ждём обновления боя');
     expect(container.querySelector('[aria-label="Завершить ход"]')?.hasAttribute('disabled')).toBe(
       false,
     );
