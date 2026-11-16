@@ -20,7 +20,7 @@ import {
 import { ensureFirstHuntGenesis } from '../contracts/first-hunt-runtime.js';
 import { contractOwnershipMatches } from '../contracts/routes.js';
 import { Client, CloseCode, type SeatReservation } from '@colyseus/sdk';
-import type { EncounterCommandResponse } from '@warwrit/protocol';
+import type { EncounterCommandResponse, EncounterControlGrantDto } from '@warwrit/protocol';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { sql } from 'kysely';
 import { afterAll, describe, expect, it, vi } from 'vitest';
@@ -3894,6 +3894,31 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
         await revisionUpdated;
         expect(room.state.revision).toBe(1);
         expect(room.state.units.get('human-shield')).toMatchObject({ q: -1, r: 0 });
+        const unbroadcast = await executeEncounterCommand(
+          database,
+          accountId,
+          {
+            version: 1,
+            encounterId,
+            commandId: randomUUID(),
+            expectedRevision: 1,
+            activationId: initial.activation.id,
+            actorId: initial.activation.unitId,
+            intent: { type: 'defend' },
+          },
+          true,
+        );
+        expect(unbroadcast.status).toBe('accepted');
+        expect(room.state.revision).toBe(1);
+        const grant = await room.request<{ version: 1 }, EncounterControlGrantDto>(
+          'get-control-grant',
+          {
+            version: 1,
+          },
+        );
+        expect(grant.revision).toBe(2);
+        await vi.waitFor(() => expect(room.state.revision).toBe(grant.revision));
+        expect(JSON.stringify(room.state.toJSON())).not.toContain('controllableUnitIds');
         // Use only accepted commands on the freshly created fixture to reach damaged HP.
         let damaged: combat.BattleState | undefined;
         let damagedDeadline = 0;

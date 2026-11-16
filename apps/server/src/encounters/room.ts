@@ -143,8 +143,9 @@ export class EncounterRoom extends Room<{
       const principal = client.auth;
       if (
         principal === undefined ||
-        !(await this.isAuthorized(principal)) ||
-        this.encounterId === undefined
+        this.encounterId === undefined ||
+        principal.encounterId !== this.encounterId ||
+        !(await isSessionTokenActive(this.database, principal))
       )
         return ctx.reject({ code: 'UNAUTHORIZED' });
       const access = await readEncounterAccess(
@@ -154,6 +155,7 @@ export class EncounterRoom extends Room<{
         this.fixtureAdmission,
       );
       if (access === undefined) return ctx.reject({ code: 'UNAUTHORIZED' });
+      this.applyProjection(access.projection);
       return access.controlGrant;
     },
     command: async (client: EncounterRoomClient, payload: unknown): Promise<void> => {

@@ -1,6 +1,48 @@
 # N09 — Understandable decisions and meaningful tactics
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
+
+PARTIAL / LOCAL. Native preparation, camp, supplies, recovery and sale controls
+have the recorded N02/N06 journeys. The latest battle exposed loss of manual
+control while valid private grants and public revisions were out of sync.
+The correction and checks below are implemented. Native tactical control on
+the final correction and agreed-player observation remain NOT_RUN. Enjoyment
+and comprehension remain NOT_MEASURED. T027 stays open.
+
+## Private grant and public projection synchronization — 2026-11-16
+
+IMPLEMENTED / LOCAL. The native failure is recorded in N08. The client used to
+replace an in-flight grant request on every new public revision and reject a
+valid response that led the public room snapshot. Requests are now coalesced.
+A future grant waits for its matching public revision, and a request that fails
+after the public revision changes retries for the newer version. Close/drop
+invalidate pending responses and buffered grants. Gameplay commands still
+require an exact revision match.
+
+The authenticated room handler now reuses one authoritative access read after
+its active-session check, then applies that read's public projection before
+returning the private grant. This supplies the matching synchronized revision
+while retaining private grant fields outside shared room state. Session loss,
+wrong encounter and revoked access retain their refusals. No combat or AFK
+policy changed.
+
+Three new client ordering/error cases and the room projection case failed
+before their corrections. The reviewer found the skipped retry after a rejected
+in-flight request; that regression was reproduced and fixed. The focused
+connection/presentation/live-lane/room union passed 33/33. The real PostgreSQL and
+Colyseus listener case passed 1/1 on m1_control_sync_20261116. It commits an
+ordinary fixture command without a room broadcast, requests the actual private
+grant and waits for the room to reach that grant's revision. Existing two-client,
+disconnect/reconnect, reopen and replay checks also passed in that case.
+
+Log is output/m1-control-sync-pg-20261116.log. Server/web types passed after
+correcting the test's SDK request generic to its installed payload/response
+signature. Source ESLint/format/diff checks are recorded at delivery. The first
+native client-only correction failed to restore usable control before the four
+fighters died. The final combined correction still requires a fresh native
+campaign check and agreed-player observation.
+
+## Earlier result — 2026-11-08
 
 SPECIFIED / LOCAL; new-player comprehension, enjoyment and retention
 NOT_MEASURED. WLC-08 records generic loadout/remote-wallet refusals and raw trophy

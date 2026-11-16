@@ -155,6 +155,110 @@ async function flushConnectionTasks(): Promise<void> {
 }
 
 describe('authenticated encounter re-entry', () => {
+  it('requests the newer revision after an earlier in-flight grant rejects', async () => {
+    let rejectGrant!: (reason: Error) => void;
+    const pending = new Promise<unknown>((_resolve, reject) => {
+      rejectGrant = reject;
+    });
+    const grant = {
+      version: 1,
+      encounterId: 'encounter-a',
+      revision: 2,
+      controllableUnitIds: ['unit-a'],
+    };
+    const { room, onStateChange } = makeRoom(
+      vi.fn().mockReturnValueOnce(pending).mockResolvedValue(grant),
+    );
+    const observed = observer();
+    const connection = await connectEncounter({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      signal: new AbortController().signal,
+      observer: observed,
+      fetcher: encounterFetcher(),
+      createClient: () => ({
+        reconnect: async () => room,
+        consumeSeatReservation: async () => room,
+      }),
+    });
+    (room.state as { revision: number }).revision = 2;
+    onStateChange.emit();
+    rejectGrant(new Error('request timed out'));
+    await flushConnectionTasks();
+    expect(observed.onControlGrant).toHaveBeenLastCalledWith(grant);
+    connection.close();
+  });
+
+  it('accepts a grant for the current projection when the revision advances during its request', async () => {
+    let resolveGrant!: (value: unknown) => void;
+    const pending = new Promise<unknown>((resolve) => {
+      resolveGrant = resolve;
+    });
+    const { room, onStateChange } = makeRoom(
+      vi
+        .fn()
+        .mockReturnValueOnce(pending)
+        .mockReturnValue(new Promise(() => {})),
+    );
+    const observed = observer();
+    const connection = await connectEncounter({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      signal: new AbortController().signal,
+      observer: observed,
+      fetcher: encounterFetcher(),
+      createClient: () => ({
+        reconnect: async () => room,
+        consumeSeatReservation: async () => room,
+      }),
+    });
+    (room.state as { revision: number }).revision = 2;
+    onStateChange.emit();
+    resolveGrant({
+      version: 1,
+      encounterId: 'encounter-a',
+      revision: 2,
+      controllableUnitIds: ['unit-a'],
+    });
+    await flushConnectionTasks();
+    expect(observed.onControlGrant).toHaveBeenLastCalledWith(
+      expect.objectContaining({ revision: 2, controllableUnitIds: ['unit-a'] }),
+    );
+    connection.close();
+  });
+
+  it('holds a future grant until the matching room projection arrives', async () => {
+    const grant = {
+      version: 1,
+      encounterId: 'encounter-a',
+      revision: 2,
+      controllableUnitIds: ['unit-a'],
+    };
+    const { room, onStateChange } = makeRoom(
+      vi
+        .fn()
+        .mockResolvedValueOnce(grant)
+        .mockReturnValue(new Promise(() => {})),
+    );
+    const observed = observer();
+    const connection = await connectEncounter({
+      scope: { accountId: 'account-a', companyId: 'company-a' },
+      signal: new AbortController().signal,
+      observer: observed,
+      fetcher: encounterFetcher(),
+      createClient: () => ({
+        reconnect: async () => room,
+        consumeSeatReservation: async () => room,
+      }),
+    });
+    await flushConnectionTasks();
+    expect(observed.onControlGrant).not.toHaveBeenCalledWith(grant);
+    (room.state as { revision: number }).revision = 2;
+    onStateChange.emit();
+    await flushConnectionTasks();
+    expect(observed.onControlGrant).toHaveBeenLastCalledWith(grant);
+    expect(room.request).toHaveBeenCalledTimes(1);
+    connection.close();
+  });
+
   it('shows no active encounter without opening a room', async () => {
     const clientFactory = vi.fn();
     const observed = observer();

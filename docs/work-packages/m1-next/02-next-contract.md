@@ -7,7 +7,7 @@ fighters dead. Its terminal effects have now applied and both companies are
 GAME_OVER, with no active binding. That database remains preserved. The separate
 pre-JOIN restored copy also lost its battle, with two deaths, three surrenders
 and one retreat. Both restored companies remain ACTIVE and their bindings are
-released. The restored attempt included manual account orders from both players
+released at that checkpoint. The restored attempt included manual account orders from both players
 and one-action autoplay, alongside timeout and reconnect handling.
 
 On that restored copy, the owner completed «Пропавший разведчик» through normal
@@ -17,6 +17,13 @@ returned them to FIELD at 100/100. It subsequently completed «Следы на �
 for 40 crowns and retained both paid results after reload and runtime return.
 HUNT-03 remains unfinished. Full hunt reward/proof, helper retry and native
 control acceptance keep their individual criteria below.
+
+Latest continuation: the subsequent 0fb84685-22e9-4e9c-871e-cd281d3e74be retry
+lost all four remaining fighters after unusable client control. Both restored
+companies are now GAME_OVER, with effects applied and bindings released.
+[N08](08-battle-outcomes.md#native-control-loss-and-fourth-defeat--2026-11-16)
+records the retained outcome. Further same-company play is unavailable. T014
+and the remaining success criteria stay open.
 
 ### Earlier restore checkpoint — 2026-11-15
 

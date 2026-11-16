@@ -2,12 +2,45 @@
 
 ## Current result — 2026-11-16
 
-PARTIAL / LOCAL. Both native defeats have applied their terminal effects. The
-original six-death attempt leaves both companies GAME_OVER. The separate
-restored attempt leaves both companies ACTIVE, with two dead, three surrendered
-and one retreated fighter. Both bindings released. The restored owner then
-completed the scout delivery and ordinary camp recovery. The required native
-hostile escape and ordinary hunt retry remain open under OUT-3.
+PARTIAL / LOCAL. Recorded defeats preserve their actual casualties and release
+their bindings. The restored companies continued through paid quests, property
+recovery, trade and safe-camp rest. Their latest retry ended with all four
+remaining fighters dead after the client lost usable battle control. Both
+companies are now GAME_OVER. The dated result below owns that failure and its
+follow-up. Hostile escape and successful ordinary hunt continuation remain open.
+
+## Native control loss and fourth defeat — 2026-11-16
+
+FAILED / LOCAL. Before retry, ordinary UI confirmed all three owner fighters
+and the one surviving helper at 100/100 health and 50 morale, FIELD duty and
+equipped weapons. The owner had 27 rations, the helper 4. The accepted ordinary
+JOINs created 0fb84685-22e9-4e9c-871e-cd281d3e74be at tick 98500 against the two
+retained healthy raiders. The owner JOIN command was
+c63f2c48-8f13-42fe-8705-5c220122758b.
+
+The clients repeatedly displayed zero controlled units and lacked command
+controls. A read-only call through the existing readEncounterAccess boundary
+returned valid correctly scoped grants for both accounts, with selfAfk true.
+Public state kept advancing while private grant requests became obsolete.
+The parent temporarily SIGSTOP-paused its verified API PID 28040 during the
+client correction, then SIGCONT-resumed that same process. The initial sandbox
+signal failed with operation-not-permitted; the explicit escalation succeeded.
+No canonical state or deadline was edited. The wall clock continued advancing.
+
+The first client correction and normal reload briefly restored controlled-unit
+counts and resume buttons. Neither account obtained a usable accepted battle
+action in this retry. Resume requests and unattended wait/hostile actions
+continued. The final server-side projection handoff correction followed the
+terminal result, with its separate checks recorded in N09.
+
+The battle resolved at revision 133, round 23. All four allied fighters were
+canonically dead and both hostiles remained active at 60/60. The terminal worker
+applied those consequences. Read-only roots confirmed both companies GAME_OVER,
+zero living active members and no encounter binding. An earlier inference from
+disappearing initiative entries suggested retreat; the canonical terminal state
+corrects that inference to death. This is another failed verification journey.
+The previous saves, losses, paid quests, receipts and property records remain
+retained. Native victory, N1, OUT-3 and full M1 acceptance stay open.
 
 ## Scope reconciliation — 2026-11-13
 

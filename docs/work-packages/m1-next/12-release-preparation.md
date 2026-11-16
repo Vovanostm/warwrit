@@ -10,6 +10,25 @@ restore. Compatible rollback, capacity measurement and full M1 acceptance remain
 open. No deployment, paid provisioning or pilot audience/size is authorized.
 [Common contract](COMMON.md). [Prompt](prompts/12-release-preparation.md).
 
+### Current local runtime pointers — 2026-11-16
+
+The preserved source remains m1_restore_current_20261116 on API 3035,
+realtime 3036 and web 5335. Its original guard-worktree private env disappeared
+externally. A replacement private 0600 file now owns its actual database and
+port/proxy/callback settings at output/m1-source-current-20261116.env. The bare
+worktree .env points to the earlier m1_completion database. Use the replacement
+for source restarts. Preserve the existing source logs.
+
+Both retained source companies are now GAME_OVER after N08's latest failed
+battle. A separate fresh control-verification runtime uses the dedicated
+m1_control_sync_20261116 database, migrated 0001–0032. It runs API 3031,
+realtime 3032 and web 5331 with private output/m1-control-sync-20261116.env.
+Its source log is append-preserved output/m1-fresh-control-dev-20261116.log.
+The existing development quick-login created «Тестовая компания 1» with its
+configured 800 crowns and 30 rations. This is a fresh QA company, with provenance
+distinct from ordinary character creation and the preserved failed campaigns.
+Its native control check is in progress. Further native results belong to N09.
+
 Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
 not run.
 

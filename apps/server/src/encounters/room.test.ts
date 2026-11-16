@@ -136,6 +136,7 @@ describe('EncounterRoom projection ordering', () => {
     } as never;
     room.onCreate({ encounterId });
     await room.onJoin(client);
+    vi.mocked(readEncounterAccess).mockClear().mockResolvedValue(access(1, -1));
     const grant = await room.messages['get-control-grant'](
       client,
       { version: 1 },
@@ -146,7 +147,9 @@ describe('EncounterRoom projection ordering', () => {
       },
     );
 
-    expect(grant).toEqual(access(0, -2).controlGrant);
+    expect(grant).toEqual(access(1, -1).controlGrant);
+    expect(room.state.revision).toBe(1);
+    expect(readEncounterAccess).toHaveBeenCalledTimes(1);
     const synchronizedState = JSON.stringify(room.state.toJSON());
     expect(synchronizedState).not.toContain('controllableUnitIds');
     expect(synchronizedState).not.toContain('selfAfk');
@@ -165,6 +168,38 @@ describe('EncounterRoom projection ordering', () => {
     );
     room.onDispose();
   });
+
+  it.each(['expired-session', 'lost-access', 'wrong-encounter'])(
+    'refuses a control grant for %s',
+    async (failure) => {
+      vi.mocked(isSessionTokenActive).mockResolvedValue(failure !== 'expired-session');
+      vi.mocked(readEncounterAccess).mockResolvedValue(
+        failure === 'lost-access' ? undefined : access(1, 0),
+      );
+      const room = new EncounterRoom({} as never);
+      const encounterId = '11111111-1111-4111-8111-111111111111';
+      room.onCreate({ encounterId });
+      const client = {
+        auth: {
+          accountId: 'owner',
+          tokenDigest: 'token',
+          encounterId: failure === 'wrong-encounter' ? 'another-encounter' : encounterId,
+        },
+      } as never;
+      await expect(
+        room.messages['get-control-grant'](
+          client,
+          { version: 1 },
+          {
+            reject(reason: unknown): never {
+              throw new Error(JSON.stringify(reason));
+            },
+          },
+        ),
+      ).rejects.toThrow('UNAUTHORIZED');
+      room.onDispose();
+    },
+  );
 
   it('copies the current cap on join, cap-only refresh and reconnect, clearing unknown', async () => {
     vi.mocked(isSessionTokenActive).mockResolvedValue(true);

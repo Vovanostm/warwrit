@@ -224,6 +224,8 @@ export async function connectEncounter(
   } = options;
   let room: EncounterRoom | undefined;
   let latestProjection: EncounterPublicProjectionDto | undefined;
+  let receivedGrant: EncounterControlGrantDto | undefined;
+  let grantRequestPending = false;
   let grantRequestRevision = 0;
   let closed = false;
   let lostAccess = false;
@@ -242,6 +244,8 @@ export async function connectEncounter(
     closed = true;
     signal.removeEventListener('abort', close);
     grantRequestRevision += 1;
+    grantRequestPending = false;
+    receivedGrant = undefined;
     for (const unbindCallback of unbind.splice(0)) unbindCallback();
     if (room) {
       room.onDrop.remove(onDrop);
@@ -274,6 +278,8 @@ export async function connectEncounter(
   const onDrop = () => {
     if (closed) return;
     grantRequestRevision += 1;
+    grantRequestPending = false;
+    receivedGrant = undefined;
     clearGrant();
     clearCommandSender();
     observer.onStatus('reconnecting');
@@ -328,10 +334,26 @@ export async function connectEncounter(
     return projection;
   };
 
+  const publishControlGrant = (grant: EncounterControlGrantDto) => {
+    observer.onControlGrant(grant);
+    commandSender = (command) => sendEncounterCommand(room!, command);
+    observer.onCommandSender?.(commandSender);
+    observer.onStatus('connected');
+  };
+
   const requestControlGrant = async () => {
-    if (closed || !room || !latestProjection) return;
+    if (
+      closed ||
+      !room ||
+      !latestProjection ||
+      grantRequestPending ||
+      (receivedGrant && receivedGrant.revision > latestProjection.revision)
+    )
+      return;
     const requestedRevision = latestProjection.revision;
     const requestId = ++grantRequestRevision;
+    grantRequestPending = true;
+    let retry = false;
     clearGrant();
     try {
       const response = await room.request<unknown>(
@@ -341,14 +363,12 @@ export async function connectEncounter(
       );
       if (closed || requestId !== grantRequestRevision || !latestProjection) return;
       const grant = readEncounterControlGrant(response, latestProjection.encounterId);
-      if (grant?.revision === requestedRevision && grant.revision === latestProjection.revision) {
-        observer.onControlGrant(grant);
-        commandSender = (command) => sendEncounterCommand(room!, command);
-        observer.onCommandSender?.(commandSender);
-        observer.onStatus('connected');
-        return;
+      if (grant && grant.revision >= latestProjection.revision) {
+        receivedGrant = grant;
+        if (grant.revision === latestProjection.revision) publishControlGrant(grant);
+      } else {
+        retry = requestedRevision !== latestProjection.revision;
       }
-      if (requestedRevision !== latestProjection.revision) void requestControlGrant();
     } catch {
       if (closed || requestId !== grantRequestRevision) return;
       clearGrant();
@@ -371,8 +391,14 @@ export async function connectEncounter(
         if (signal.aborted || closed) return;
       }
       if (!closed) {
+        retry = requestedRevision !== latestProjection?.revision;
         observer.onStatus('connected');
         observer.onError('Бой доступен только для чтения: полномочия управления не получены.');
+      }
+    } finally {
+      if (requestId === grantRequestRevision) {
+        grantRequestPending = false;
+        if (retry && !closed) void requestControlGrant();
       }
     }
   };
@@ -381,8 +407,13 @@ export async function connectEncounter(
     latestProjection = projection;
     observer.onProjection(projection);
     observer.onStatus('connected');
-    clearGrant();
-    void requestControlGrant();
+    if (receivedGrant?.revision === projection.revision) {
+      publishControlGrant(receivedGrant);
+    } else {
+      if (receivedGrant && receivedGrant.revision < projection.revision) receivedGrant = undefined;
+      clearGrant();
+      void requestControlGrant();
+    }
   };
 
   const syncRoomProjection = () => {
