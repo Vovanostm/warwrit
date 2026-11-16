@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: explain when living opponents prevent pitching camp,
+  preserving the server's existing eligibility rule and exact command retry.
+  [Company controls](docs/work-packages/m1-next/06-company-capabilities.md#equipment-controls-and-unsafe-camp-feedback--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: prevent service reads from advancing an encounter-bound
   company and settle retained terminal evidence against its admission history.
   [Preserved defeat and company release](docs/work-packages/m1-next/08-battle-outcomes.md#bound-clock-and-retained-terminal-recovery--2026-11-16). LOCAL.

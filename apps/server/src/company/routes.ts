@@ -759,7 +759,7 @@ async function executeOrdinaryCompanyRequest(
       publicRevision: '0',
       code: 'INVALID_COMMAND',
     });
-  const result = await database.transaction().execute((transaction) => {
+  const result = await database.transaction().execute(async (transaction) => {
     const context = {
       transaction,
       accountId,
@@ -769,8 +769,8 @@ async function executeOrdinaryCompanyRequest(
       now: new Date(),
     };
     return ordinary.type === 'PayDeceasedWages'
-      ? executePayDeceasedWages({ ...context, request: ordinary })
-      : executeOrdinaryPlayerCompanyCommand({ ...context, request: ordinary });
+      ? await executePayDeceasedWages({ ...context, request: ordinary })
+      : await executeOrdinaryPlayerCompanyCommand({ ...context, request: ordinary });
   });
   return reply.code(result.kind === 'COMMITTED' ? 200 : result.statusCode).send(result.response);
 }

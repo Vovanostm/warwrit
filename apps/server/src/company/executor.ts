@@ -234,10 +234,17 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
     code: CompanyCommandRejectionDto['code'],
     revision = '0',
     statusCode = 409,
+    reason?: CompanyCommandRejectionDto['reason'],
   ): OrdinaryCompanyCommandExecution => ({
     kind: 'REJECTED',
     statusCode,
-    response: { commandId: input.request.commandId, ok: false, publicRevision: revision, code },
+    response: {
+      commandId: input.request.commandId,
+      ok: false,
+      publicRevision: revision,
+      code,
+      ...(reason === undefined ? {} : { reason }),
+    },
   });
 
   if (!input.expectedCompanyId || input.requestKey !== canonicalJson(input.request)) {
@@ -478,7 +485,8 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       stationary: true,
       conflict: await localSiteHasHostiles(input.transaction, input.worldId, party.location.siteId),
     };
-    if (campSite.conflict) return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);
+    if (campSite.conflict)
+      return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision, 409, 'PLACE_UNSAFE');
   }
   if (input.request.type === 'EndFieldCamp' && !openCamp)
     return rejectRequest('UNSUPPORTED_ACTION', lifecycle.knowledge.revision);

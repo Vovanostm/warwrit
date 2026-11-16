@@ -232,7 +232,7 @@ export async function postCompanyRosterAttempt(
   apiBaseUrl: string,
   attempt: CompanyRosterAttempt,
   fetcher: typeof fetch = fetch,
-): Promise<CarePostResult> {
+): Promise<CarePostResult | 'PLACE_UNSAFE'> {
   try {
     const response = await fetcher(`${apiBaseUrl.replace(/\/$/u, '')}/company/commands`, {
       method: 'POST',
@@ -247,7 +247,15 @@ export async function postCompanyRosterAttempt(
     if (response.status === 403) return 'UNKNOWN';
     const value: unknown =
       response.status === 401 ? undefined : await response.json().catch(() => undefined);
-    return classifyCompanyCarePost(response.status, value, attempt.request.commandId);
+    const result = classifyCompanyCarePost(response.status, value, attempt.request.commandId);
+    if (
+      result === 'REJECTED' &&
+      attempt.type === 'BeginFieldCamp' &&
+      isRecord(value) &&
+      value['reason'] === 'PLACE_UNSAFE'
+    )
+      return 'PLACE_UNSAFE';
+    return result;
   } catch {
     return 'UNKNOWN';
   }

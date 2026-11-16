@@ -291,3 +291,29 @@ is refused after catch-up, and the refreshed quote allows the player to continue
 Protocol build plus server and web typechecks pass. A native player journey is
 NOT_RUN; player acceptance is NOT_MEASURED. No migration or new financial policy
 was added. N06 remains open for N1/I1 and independent player acceptance.
+
+### Equipment controls and unsafe camp feedback — 2026-11-16
+
+LOCAL. A read-only source review and the restored helper's ordinary Company tab
+confirmed existing `взять`/`надеть` controls for its own carried, unequipped gear.
+`CompanyPanel` already calls App's `EquipItem` handler through the durable
+company-action hook. The existing transfer panel moves accessible owned gear
+between bags and caravan. The earlier continuation note that no production
+component invoked EquipItem was incorrect. A second selector was cancelled
+before source changes. Native equip/reload checks follow on the restored copy.
+
+The restored owner's camp request at Old Mill received UNSUPPORTED_ACTION.
+The current restored hunt state confirms living hostiles at that site, which
+triggers the accepted safe-camp guard. The server now attaches PLACE_UNSAFE to
+that specific refusal. The client explains the danger and the condition for
+camping, clears the acknowledged rejected intent and refreshes observed state.
+Other refusals keep their existing handling. Camp eligibility and world state
+are preserved. This optional transport field remains compatible with older
+clients. No migration or replay change was needed.
+
+Focused roster-attempt/action-hook tests passed13 cases, including matched
+unsafe-camp feedback, mismatched reply rejection, generic non-camp rejection
+and existing lost-reply retry. Protocol build and server/web typechecks passed
+after correcting return-type propagation in the shared route/join consumers.
+Initial typechecks exposed that inference mismatch and were fixed. Native
+readback of the new message and successful equip/reload are still NOT_RUN.

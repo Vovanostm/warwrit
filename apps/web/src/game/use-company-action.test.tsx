@@ -39,6 +39,34 @@ afterEach(async () => {
   refresh.mockClear();
 });
 
+it('explains an unsafe camp refusal and clears the acknowledged intent', async () => {
+  const action = { ...request, type: 'BeginFieldCamp' as const, payload: {} };
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            commandId: action.commandId,
+            ok: false,
+            publicRevision: '8',
+            code: 'UNSUPPORTED_ACTION',
+            reason: 'PLACE_UNSAFE',
+          }),
+          { status: 409 },
+        ),
+    ),
+  );
+  await mount();
+  await act(async () => controls.send(action));
+  expect(controls.message).toBe(
+    'Здесь опасно. Разбить лагерь можно, когда поблизости не останется противников.',
+  );
+  expect(controls.pending).toBe(false);
+  expect(sessionStorage.getItem(companyRosterAttemptKey(scope, action.type))).toBeNull();
+  expect(refresh).toHaveBeenCalledExactlyOnceWith(scope);
+});
+
 it.each(['EquipItem', 'BeginFieldCamp', 'EndFieldCamp'] as const)(
   'retains %s after lost reply and reload; retries exact ID/body before refreshing facts',
   async (type) => {

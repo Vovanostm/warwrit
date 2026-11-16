@@ -242,6 +242,7 @@ export interface CompanyCommandRejectionDto {
   readonly commandId: string;
   readonly ok: false;
   readonly publicRevision: string;
+  readonly reason?: 'PLACE_UNSAFE';
   readonly code:
     | 'INVALID_COMMAND'
     | 'NOT_AUTHORIZED'

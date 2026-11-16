@@ -1481,7 +1481,7 @@ export function App() {
       joinAttemptRef.current = undefined;
       setJoinAttempt(undefined);
       setJoinAttemptMessage(undefined);
-      setEquipMessage(joinAttemptOutcomeMessage(result));
+      setEquipMessage(joinAttemptOutcomeMessage(result === 'ACCEPTED' ? 'ACCEPTED' : 'REJECTED'));
       await refreshWorldParty(scope);
     },
     [refreshWorldParty, restoreJourney],

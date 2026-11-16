@@ -41,6 +41,31 @@ function response(status: number, value: unknown): Response {
 }
 
 describe('company roster command attempts', () => {
+  it('uses an unsafe-place reason only for a matching camp rejection', async () => {
+    const action = { ...request, type: 'BeginFieldCamp' as const, payload: {} };
+    const attempt = createCompanyRosterAttempt(scope, action);
+    const rejected = {
+      commandId: action.commandId,
+      ok: false,
+      publicRevision: '7',
+      code: 'UNSUPPORTED_ACTION',
+      reason: 'PLACE_UNSAFE',
+    };
+    expect(
+      await postCompanyRosterAttempt('/api', attempt, async () => response(409, rejected)),
+    ).toBe('PLACE_UNSAFE');
+    expect(
+      await postCompanyRosterAttempt('/api', attempt, async () =>
+        response(409, { ...rejected, commandId: 'someone-else' }),
+      ),
+    ).toBe('UNKNOWN');
+    expect(
+      await postCompanyRosterAttempt('/api', createCompanyRosterAttempt(scope, request), async () =>
+        response(409, rejected),
+      ),
+    ).toBe('REJECTED');
+  });
+
   it('retries a lost guard-service acceptance with the exact saved cohort and quote', async () => {
     const storage = new MemoryStorage();
     const request = {
