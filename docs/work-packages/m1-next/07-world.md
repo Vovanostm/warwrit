@@ -34,6 +34,18 @@ given the segment rule. The 13-test free-movement suite, game-core typecheck,
 server typecheck and diff check PASS. Native journey and database checks are
 NOT_RUN; full N07 acceptance remains open.
 
+### World-lab known-route adapter — 2026-11-16
+
+LOCAL — authenticated world-lab ground orders now pass their observer's known
+segment rule into route search, matching the ordinary painted-map adapter. The
+final plan knowledge check remains as a safeguard. This prevents a faster
+unexplored road from rejecting an otherwise valid known route.
+
+PASS — known-route regression, server typecheck and diff check. The grouped
+free-movement run had 12 passes and one existing road-junction timeout under
+load; rerunning that case alone passed. Native and database checks are NOT_RUN;
+N07 acceptance remains open.
+
 ### Prior checkpoint — 2026-11-08
 
 SPECIFIED / LOCAL; complete observer/travel/offline matrix NOT_RUN here.
