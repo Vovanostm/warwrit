@@ -326,10 +326,13 @@ async function readGates(
     !state.hostiles.some(isAvailableHuntHostile);
   const raiders = await ensureFirstHuntGenesisInTransaction(transaction, worldId);
   const beast = await ensureHuntGenesisInTransaction(transaction, worldId, MILL_BEAST);
+  const nightThreatVisible =
+    readWorldLight(clock).phase === 'NIGHT' && beast.hostiles.some(isAvailableHuntHostile);
   return {
     DAYLIGHT: readWorldLight(clock).phase === 'DAY',
     RAIDERS_DEFEATED: allDefeated(raiders),
     BEAST_DEFEATED: allDefeated(beast),
+    LIVING_MILL_BEAST_AT_NIGHT: nightThreatVisible,
     HERBALIST_PRESENT: !herbalistExiled,
     HERBALIST_EXILED: herbalistExiled,
   };

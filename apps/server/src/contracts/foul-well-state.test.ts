@@ -61,6 +61,7 @@ describe('foul well shared consequences', () => {
       DAYLIGHT: true,
       RAIDERS_DEFEATED: false,
       BEAST_DEFEATED: false,
+      LIVING_MILL_BEAST_AT_NIGHT: false,
       HERBALIST_PRESENT: true,
       HERBALIST_EXILED: false,
     };

@@ -30,7 +30,12 @@ export interface ContractPlace {
 
 /** World conditions a step needs, read by the adapter from authoritative world state. */
 export type OrdinaryStepGate =
-  'DAYLIGHT' | 'RAIDERS_DEFEATED' | 'BEAST_DEFEATED' | 'HERBALIST_PRESENT' | 'HERBALIST_EXILED';
+  | 'DAYLIGHT'
+  | 'RAIDERS_DEFEATED'
+  | 'BEAST_DEFEATED'
+  | 'LIVING_MILL_BEAST_AT_NIGHT'
+  | 'HERBALIST_PRESENT'
+  | 'HERBALIST_EXILED';
 
 export type OrdinaryCustodyTravelMode = 'ON_FOOT' | 'STRETCHER';
 
@@ -368,6 +373,14 @@ export const ORDINARY_CONTRACT_PROFILES: readonly OrdinaryContractProfile[] = fr
         requires: [],
         gates: [],
         produces: ['mill-worker-grain-cart-observation'],
+      },
+      {
+        stepId: 'inspect-yard-at-night',
+        action: 'INSPECT',
+        place: MILL_YARD,
+        requires: [],
+        gates: ['LIVING_MILL_BEAST_AT_NIGHT'],
+        produces: ['mill-worker-lawful-night-threat-observation'],
       },
       {
         stepId: 'ask-keeper',
@@ -2058,6 +2071,7 @@ function isStep(value: unknown): value is OrdinaryStepDefinition {
         'DAYLIGHT',
         'RAIDERS_DEFEATED',
         'BEAST_DEFEATED',
+        'LIVING_MILL_BEAST_AT_NIGHT',
         'HERBALIST_PRESENT',
         'HERBALIST_EXILED',
       ].includes(gate as string),

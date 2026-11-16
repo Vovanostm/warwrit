@@ -133,6 +133,17 @@ continue ready leaves. Unsupported surrender is not fixed by minting hunt proof.
 
 ## Mill clue eligibility and hunt refusals — 2026-11-17
 
+The approved MILL-02 manifest also permits an independent lawful night-threat
+observation. This branch now uses the ordinary worker contract on fresh offers.
+The player accepts a fresh worker rescue, reaches the mill yard at night, inspects
+the living beast and retains the observation. The saved observation reveals the
+hunt without the track/report pair. Wrong place, daylight and an absent living
+target must refuse without a saved finding. A lost response uses the ordinary
+exact retry. Rescue/delivery retain their existing pair requirements. The simplest
+trial is the new night inspection at the actual mill yard on that fresh offer, followed by reload
+and the hunt offer. Previously accepted offers keep their saved steps. Legacy
+accepted saves without stored terms retain the existing profile-hydration path.
+
 LOCAL. The authenticated PostgreSQL case in
 `apps/server/src/contracts/ordinary.mill-eligibility.integration.test.ts` uses
 actual ACCEPT/HELP/STEP commands. Zero clues, one clue and clues split between
@@ -144,8 +155,50 @@ setup in this test. No terminal result, beast death or successful proof is seede
 The isolated per-file PostgreSQL case passes 1/1 and its database was disposed.
 Scoped ESLint, server types, Prettier and diff checks pass. The final additional
 zero-clue assertion was rerun with PostgreSQL and formatting. Native C07–C09
-continuation remains in progress on the preserved QA matrix world. Unavailable
-death-report/night-threat producers remain separate source gaps. T031 stays open.
+continuation remains in progress on the preserved QA matrix world. Death-report
+producers remain a separate source gap. T031 stays open.
+
+The new `ordinary.mill-night-observation.integration.test.ts` passes 1/1 on an
+isolated per-file PostgreSQL clone. It checks wrong-place refusal, daylight and
+no-living-target refusals, the actual authenticated night STEP, saved unlock after
+app recreation and exact command replay. The latter two refusals preserve the
+company snapshot and receipts, and the no-living-target case preserves the facts.
+The cleared-hostile state is an explicit negative test fixture. No proof or trophy
+claim is seeded. This fresh-offer test remains separate from the native QA3
+contract accepted before the new inspection was available.
+
+Core ordinary tests pass 21/21. Core build/types, server/web types, scoped ESLint,
+formatting and diff checks pass. Initial missing-environment, acceptance-fact and
+JSON-fixture assertion failures were corrected before the successful SQL run.
+Parent review corrected the finding-key prefix and retained exhaustive gate input
+types. The new finding uses the existing UI lookup. The complete root production
+build passes, including `index-CFWbcjwC.js`; its log is
+`output/m1-integrated-build-night-observation-20261117.log`. Native continuation
+is next. Death-report rules remain the outstanding owner decision.
+
+### Native mill continuation checkpoint
+
+The retained QA matrix world has no reset or repaired gameplay state. QA3
+accepted the worker contract at Северный Двор (`2f234ce6`), inspected the actual
+mill yard (`a124f1ab`) and reached Фрол through normal scouting and travel. The
+keeper STEP `7a84efe7-9e16-4ac0-82f3-3319e237fb0c` succeeded at revision 3 and
+showed the human report. QA3 accepted HUNT-01 at Gat through
+`f9de0cbb-6bb7-4c8c-a057-9ecef2b60d2a`. QA4 separately travelled to Gat and
+volunteered through HELP `7c0b66d8-37c3-4a6a-9be4-8c258e797f82`, revision 2.
+Both returned to Old Mill by accepted routes. No JOIN or battle has started.
+Each company still has three living, equipped people at 100 health and 50 morale;
+QA4's most recent stamina is 80. Worker rescue/delivery and claw redemption remain
+pending. Source edits for the approved independent night observation precede JOIN.
+
+Author assistance includes the protected QA clock, reading public map masks and
+map-coordinate conversion for native clicks. QA3 accepted Gordey's existing
+HUNT-03 to obtain its lawful Old Mill marker. It did not join that hunt. Unknown
+routes were refused before successful intermediate scouting. QA4's browser was
+closed on lease release and reopened with the same quick-login 4, preserving
+arrival and consent. The resumed offline report was closed normally. The unused
+raw browser listener on 9337 is absent. Native receipts and route logs are
+`output/m1-matrix-{keeper-clue,beast-accept,beast-helper}-20261117.log` and the
+associated scout/clock logs. N12 owns the private runtime configuration pointers.
 
 ## C03 refusals and C06 saved delivery replay — 2026-11-16
 

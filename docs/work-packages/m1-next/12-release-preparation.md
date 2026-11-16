@@ -230,12 +230,13 @@ scope cut or force another infrastructure project before useful local work.
 
 ## Current integrated production build — 2026-11-16
 
-The latest root pnpm build passes at source revision 1475ce76, including the map
-marker anchor correction, carried purse and encounter-read deadline corrections.
-All workspace production artifacts completed. Web compilation took 1m6s and
-reports the existing large-chunk advisory, with index-CWwKVsTj.js at 7,819.12 kB
-(gzip 1,788.35 kB). The log is
-output/m1-integrated-build-after-map-20261116.log. Native compiled re-entry and
+The latest root pnpm build passes on 2026-11-17 with the independent mill night
+observation, map marker anchor correction, carried purse and encounter-read
+deadline corrections. The source and this record are delivered together after
+791b276e. All workspace production artifacts completed. Web compilation took
+1m7s and reports the existing large-chunk advisory, with index-CFWbcjwC.js at
+7,819.96 kB (gzip 1,788.53 kB). The log is
+output/m1-integrated-build-night-observation-20261117.log. Native compiled re-entry and
 supply purchase passed at the earlier 1e607f39 artifact on the active isolated N01
 continuation. Re-entry on the latest artifact is NOT_RUN. Whole-route 60-FPS
 compliance remains NOT_MEASURED. Earlier integrated build evidence follows.

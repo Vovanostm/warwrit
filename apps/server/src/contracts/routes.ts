@@ -1361,7 +1361,7 @@ async function readContract(
   return row;
 }
 
-/** MILL-02: the grain-cart tracks and the keeper's report, held together by some company. */
+/** MILL-02 accepts a lawful night sighting or one company's paired tracks and keeper report. */
 async function millBeastUnlocked(
   transaction: Transaction<DatabaseSchema>,
   worldId: string,
@@ -1377,10 +1377,13 @@ async function millBeastUnlocked(
   if (!row) return false;
   const state = readOrdinaryContractState(profile, row.state);
   const holders = new Set(state.facts.map((fact) => fact.companyId));
-  return [...holders].some((companyId) =>
-    MILL_BEAST_UNLOCK_SLOTS.every((slotId) =>
-      state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
-    ),
+  return (
+    state.facts.some((fact) => fact.slotId === 'mill-worker-lawful-night-threat-observation') ||
+    [...holders].some((companyId) =>
+      MILL_BEAST_UNLOCK_SLOTS.every((slotId) =>
+        state.facts.some((fact) => fact.companyId === companyId && fact.slotId === slotId),
+      ),
+    )
   );
 }
 

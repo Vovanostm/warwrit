@@ -70,11 +70,15 @@ export const contractsEn: Readonly<Partial<Record<keyof typeof contractsRu, stri
   'contract.ci.m1.mill-worker.01.brief':
     'Senka, our hired lad, went missing at the Old Mill. Our grain was stored there: in the barn the tax collector would find it. The grain is gone too. Never mind the grain — bring the boy back.',
   'contract.ci.m1.mill-worker.01.step.inspect-yard': 'Search the mill yard',
+  'contract.ci.m1.mill-worker.01.step.inspect-yard-at-night': 'Inspect the mill at night',
   'contract.ci.m1.mill-worker.01.step.ask-keeper': 'Question Frol Zvonar in Tikhaya Gat',
   'contract.ci.m1.mill-worker.01.step.release': 'Get Senka out of the mill',
   'contract.ci.m1.mill-worker.01.step.deliver': 'Bring Senka to Severny Dvor',
   'contract.ci.m1.mill-worker.01.finding.inspect-yard':
     'The rut of a loaded cart and spilled rye. More than one pair of hands did the loading.',
+  'contract.ci.m1.mill-worker.01.finding.inspect-yard-at-night': 'A beast is prowling by the mill.',
+  'contract.ci.m1.mill-worker.01.condition.inspect-yard-at-night':
+    'inspect at night while the beast is at the mill',
   'contract.ci.m1.mill-worker.01.finding.ask-keeper':
     'Frol saw it at night: something large, on four legs, driving a man toward the mill.',
   'contract.ci.m1.mill-worker.01.finding.release':

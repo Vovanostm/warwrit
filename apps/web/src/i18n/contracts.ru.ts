@@ -99,11 +99,15 @@ export const contractsRu = {
   'contract.ci.m1.mill-worker.01.brief':
     'Сенька, наш работник, пропал у Старой мельницы. Там лежало наше зерно: в амбаре его сборщик найдёт. Зерно тоже пропало. Зерно ладно — вы парня верните.',
   'contract.ci.m1.mill-worker.01.step.inspect-yard': 'Осмотреть двор мельницы',
+  'contract.ci.m1.mill-worker.01.step.inspect-yard-at-night': 'Осмотреть мельницу ночью',
   'contract.ci.m1.mill-worker.01.step.ask-keeper': 'Расспросить Фрола Звонаря в Тихой Гати',
   'contract.ci.m1.mill-worker.01.step.release': 'Вызволить Сеньку из мельницы',
   'contract.ci.m1.mill-worker.01.step.deliver': 'Привести Сеньку в Северный Двор',
   'contract.ci.m1.mill-worker.01.finding.inspect-yard':
     'Колея гружёной телеги и рассыпанная рожь. Грузили не в одни руки.',
+  'contract.ci.m1.mill-worker.01.finding.inspect-yard-at-night': 'У мельницы бродит зверь.',
+  'contract.ci.m1.mill-worker.01.condition.inspect-yard-at-night':
+    'осмотреть можно только ночью, пока зверь у мельницы',
   'contract.ci.m1.mill-worker.01.finding.ask-keeper':
     'Фрол видел ночью: что-то большое, на четырёх, гнало человека к мельнице.',
   'contract.ci.m1.mill-worker.01.finding.release':

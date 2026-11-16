@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Added: a lawful night sighting at Old Mill opens the beast hunt
+  on fresh worker contracts; saved accepted steps stay fixed.
+  [N05](docs/work-packages/m1-next/05-contracts.md#mill-clue-eligibility-and-hunt-refusals--2026-11-17). LOCAL.
+
 - 2026-11-17 — Added: authenticated mill clues unlock the hunt only when one
   company holds both; daytime join and early trophy pickup preserve saved state.
   [N05](docs/work-packages/m1-next/05-contracts.md#mill-clue-eligibility-and-hunt-refusals--2026-11-17). LOCAL.

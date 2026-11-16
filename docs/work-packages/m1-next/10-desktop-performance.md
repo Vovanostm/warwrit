@@ -68,6 +68,27 @@ output/m1-map-marker-component-20261116.log. These are geometry and control chec
 Complete DESK-1–DESK-6, whole-route 60-FPS compliance, loading/resource comparison
 and agreed-player acceptance remain open. This correction alone leaves T028 open.
 
+## Measurement setup follow-up — 2026-11-17
+
+LOCAL. System reads identify Mac15,6, Apple M3 Pro (18 GPU cores), 36 GiB RAM,
+macOS 26.7.1 (25G241) and the internal 3024×1964 display, scaled to 1512×982 at
+120 Hz. Chrome reports 157.0.8103.51. WebGL2 uses ANGLE Metal on Apple M3 Pro.
+The active owner browser measures 1070×757 CSS px, DPR 1 and visual scale 1,
+including after clearing the CDP device-metrics override. Its document is visible.
+
+A five-second development trace confirms that Chrome exposes DrawFrame,
+Display::FrameDisplayed, compositor submission/presentation and dropped-frame
+events. Its idle scene skips unchanged frames, so a count of presented frames
+alone would misstate the interactive frame rate. This was a capture-tool probe.
+No foreground interaction workload or production performance pass is claimed.
+The system display was reported asleep during device inspection. Target capture
+still requires recorded display/foreground conditions and ordinary input.
+GPU timing and whole-route minimum FPS remain NOT_MEASURED.
+
+Sanitized device data is `output/m1-device-displays-20261117.json`; browser/GPU
+metadata and probe are `output/m1-native-device-browser-20261117.log` and
+`output/m1-frame-trace-tool-probe-20261117.log`. T028 remains open.
+
 ## Player goal and trial
 
 Map, place, battle, result and re-entry remain readable, controllable and responsive

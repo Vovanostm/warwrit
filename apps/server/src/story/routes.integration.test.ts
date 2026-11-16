@@ -181,6 +181,7 @@ async function seedOrdinaryDelivery(
     DAYLIGHT: true,
     RAIDERS_DEFEATED: true,
     BEAST_DEFEATED: true,
+    LIVING_MILL_BEAST_AT_NIGHT: false,
     HERBALIST_PRESENT: true,
     HERBALIST_EXILED: false,
   } as const;

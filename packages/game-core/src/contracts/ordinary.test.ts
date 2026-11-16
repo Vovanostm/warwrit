@@ -27,6 +27,7 @@ const gates = {
   DAYLIGHT: true,
   RAIDERS_DEFEATED: false,
   BEAST_DEFEATED: false,
+  LIVING_MILL_BEAST_AT_NIGHT: false,
   HERBALIST_PRESENT: true,
   HERBALIST_EXILED: false,
 };
@@ -73,7 +74,13 @@ describe('ordinary contract transitions', () => {
           atTick: '10',
           expectedRevision: state.revision,
           sourceEventId: `${stepId ?? 'accept'}-${state.revision}`,
-          gates: { DAYLIGHT: true, RAIDERS_DEFEATED: values.raiders, BEAST_DEFEATED: values.beast },
+          gates: {
+            ...gates,
+            DAYLIGHT: true,
+            RAIDERS_DEFEATED: values.raiders,
+            BEAST_DEFEATED: values.beast,
+            LIVING_MILL_BEAST_AT_NIGHT: false,
+          },
         },
       );
     const prep = (result: ReturnType<typeof command>) => {
@@ -569,7 +576,13 @@ describe('ordinary contract transitions', () => {
         atTick: '10',
         expectedRevision: state.revision,
         sourceEventId: `voice-under-boards-${state.revision}`,
-        gates: { DAYLIGHT: true, RAIDERS_DEFEATED: true, BEAST_DEFEATED: beastDefeated },
+        gates: {
+          ...gates,
+          DAYLIGHT: true,
+          RAIDERS_DEFEATED: true,
+          BEAST_DEFEATED: beastDefeated,
+          LIVING_MILL_BEAST_AT_NIGHT: false,
+        },
       });
 
     let state = ordinaryContractGenesis(rescue);

@@ -20,6 +20,7 @@ const gates = {
   DAYLIGHT: true,
   RAIDERS_DEFEATED: false,
   BEAST_DEFEATED: false,
+  LIVING_MILL_BEAST_AT_NIGHT: false,
   HERBALIST_PRESENT: true,
   HERBALIST_EXILED: false,
 };
@@ -762,8 +763,7 @@ describe('ordinary accepted term projection', () => {
       'CONDITION_NOT_MET',
     );
     expect(
-      activeAfterExile.steps.find((step) => step.stepId === 'deliver-on-foot-after-exile')
-        ?.blocker,
+      activeAfterExile.steps.find((step) => step.stepId === 'deliver-on-foot-after-exile')?.blocker,
     ).toBeNull();
   });
 });
