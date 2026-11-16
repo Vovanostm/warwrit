@@ -122,6 +122,53 @@ these selected tables and keyed saved rows only; it is not full T029, RPO/RTO,
 capacity measurement or SC-008 acceptance. RPO/RTO and capacity remain
 NOT_MEASURED.
 
+### Exact retained-value follow-up — 2026-11-16
+
+LOCAL / PARTIAL. Reused the same private extracts; compared all extracted columns
+and JSON values, with no timestamp exclusions. For these selected immutable
+receipt/event/history tables, every baseline row is an exact target match by the
+verified primary key: changed and missing baseline rows are zero in every table.
+
+| Table | Baseline | Target | Exact baseline rows | Changed | Missing | Added |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `company_audit_events` | 1,083 | 1,170 | 1,083 | 0 | 0 | 87 |
+| `company_receipts` | 822 | 915 | 822 | 0 | 0 | 93 |
+| `encounter_commands` | 115 | 181 | 115 | 0 | 0 | 66 |
+| `encounter_events` | 320 | 493 | 320 | 0 | 0 | 173 |
+| `encounter_leadership_choices` | 1 | 1 | 1 | 0 | 0 | 0 |
+| `encounter_receipts` | 115 | 181 | 115 | 0 | 0 | 66 |
+| `ordinary_contract_receipts` | 6 | 6 | 6 | 0 | 0 | 0 |
+| `story_command_receipts` | 21 | 21 | 21 | 0 | 0 | 0 |
+| `world_route_receipts` | 114 | 115 | 114 | 0 | 0 | 1 |
+| `company_map_grants` | 7 | 7 | 7 | 0 | 0 | 0 |
+| `world_proof_claims` | 1 | 1 | 1 | 0 | 0 | 0 |
+
+In the owner snapshot, all 19 learning-task rows, including all three rows with a
+stop record, match exactly. Snapshot arrays were keyed by task ID, claim ID,
+command ID, movement ID, effect/source key, food source and tick tuple, or encounter
+binding as applicable. The same is true for all baseline finance-applied (636),
+lifecycle-applied (498), physical source-effect (1,366), food-history (792),
+movement (39), maintenance-receipt (3), learning-effect (40) and learning-obligation
+(19) rows. The helper snapshot exactly retains its 85 finance-applied, 17
+lifecycle-applied, 283 physical source-effect, 225 food-history and three movement
+rows. Each snapshot also retains its completed-encounter history; the owner has
+one exact baseline row and the helper had none. New rows follow campaign progress.
+
+The only changed same-key entries among those embedded history arrays are two finance
+claims in each company snapshot; none is missing. Stable claim IDs match, and the
+changed fields are `earned`, `toTick` and `reportedQ`; each snapshot also has two new
+claims. These are campaign finance updates, not restore loss. In the helper snapshot,
+the finance source-effect list grows from zero to seven entries.
+
+Knowledge entity IDs also retain their baseline subsets: owner item snapshots 12/12,
+vital snapshots 3/3 and container snapshots 4/4; helper item snapshots 12/12, vital
+snapshots 3/3 and container snapshots 4/4. Target additions are one owner-known
+item, two owner-known containers and one helper-known container. All 20 baseline
+company place-observation site IDs remain; four same-key observations update
+`last_observed_at` and `source_ref`. All baseline exploration chunks and map grants
+remain exact. This value check does not compare every other mutable snapshot field
+or public tables omitted from the 32-table extract.
+
 ## R1/R3/R4 boundary evidence — 2026-11-16
 
 LOCAL. The real PostgreSQL FIRST HUNT retreat/repeat case now snapshots both
