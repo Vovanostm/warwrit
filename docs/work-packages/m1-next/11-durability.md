@@ -481,6 +481,29 @@ used port 5331 and failed on the existing listener; an explicit environment
 passed to the child processes started the intended 5335 runtime. These local
 startup failures did not change player state.
 
+## Long observed history blocked movement — 2026-11-16
+
+FIXED / LOCAL. The retained owner completed an ordinary movement order after
+the latest loot pickup. Its arrival worker and movement GET repeatedly failed
+with HTTP 500 in publicObservableKey. A read-only copy of the real company
+showed 1,002 observed event IDs in projectCompanyEconomy. canonicalJson applies
+the incoming-request limit of 1,000 entries per array to that owned projection.
+The data was valid and the failed transaction retained the pending route.
+
+The comparison now uses the existing canonicalStateJson budget for trusted,
+owned state. Request validation keeps its existing budget. The regression with
+1,002 retained observation IDs failed before the change and passes afterward,
+including a real payment, exact total money and retained history. Economy,
+privacy and roster-attempt checks passed21/21 after the game-core build.
+Server/web typechecks passed. An initial post-edit rerun still loaded the old
+compiled package and failed; rebuilding it resolved that stale-code run.
+
+The existing worker then completed the original route. Ordinary session retry
+restored access, and a further map order reached Kamenny Brod. The player could
+enter the market, sell actual hostile loot and buy supplies. No saved state,
+history or command receipt was truncated or repaired. The diagnostic copy is
+private ignored output/m1-economy-budget-source-20261116.json.
+
 ## Native retry pending on first skill practice — 2026-11-16
 
 FIXED / LOCAL. The fresh HUNT-03 encounter ended at revision 24 with its

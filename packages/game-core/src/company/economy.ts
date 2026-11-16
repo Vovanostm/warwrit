@@ -15,7 +15,7 @@ import {
   companySourceKey,
   guardCompanyCommand,
 } from './guards.js';
-import { canonicalJson } from './input.js';
+import { canonicalJson, canonicalStateJson } from './input.js';
 import { canPerform, LifecycleViolation } from './lifecycle-state.js';
 import { prepareCompanyLifecycle } from './lifecycle.js';
 import { campaignTick, canonicalRevision, isExactInteger, publicRevision } from './values.js';
@@ -563,7 +563,7 @@ function publicObservableKey(
   observerCompanyId: string,
 ): { readonly economy: string; readonly physical: string } {
   return {
-    economy: canonicalJson(projectCompanyEconomy(state, observerCompanyId)),
+    economy: canonicalStateJson(projectCompanyEconomy(state, observerCompanyId)),
     physical: physicalObservableKey(state),
   };
 }

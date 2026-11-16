@@ -15,6 +15,27 @@ import {
 } from './company-economy-fixture.js';
 
 describe('WP02.3 — exact local finance postulates', () => {
+  it('continues a company whose observed event history exceeds the request array budget', () => {
+    const initial = claims(economy(), [1n, 3n]);
+    const eventIds = Array.from({ length: 1002 }, (_, index) => `observed-event-${index}`);
+    const state = {
+      ...initial,
+      lifecycle: {
+        ...initial.lifecycle,
+        knowledge: { ...initial.lifecycle.knowledge, eventIds },
+      },
+    };
+    const result = pay(state, 1n);
+    expect(result.next.finance.claims.map((claim) => claim.paidQ)).toEqual(['0', '1']);
+    expect(
+      result.next.finance.wallets.reduce((total, wallet) => total + BigInt(wallet.cashQ), 0n),
+    ).toBe(100n);
+    expect(projectCompanyEconomy(result.next, state.lifecycle.companyId)?.eventIds).toEqual(
+      expect.arrayContaining(eventIds),
+    );
+    expect(state.lifecycle.knowledge.eventIds).toEqual(eventIds);
+  });
+
   it('P2: C04 preserves prefixes across fragmented requests, reload and large exact amounts', () => {
     const base = claims(economy(), [1n, 3n]);
     const one = pay(base, 1n).next;
