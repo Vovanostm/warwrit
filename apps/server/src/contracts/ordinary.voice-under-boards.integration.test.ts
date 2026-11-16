@@ -23,7 +23,7 @@ import { createDatabase } from '../db/database.js';
 const connectionString = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const database = connectionString === undefined ? undefined : createDatabase(connectionString);
 const apps: ReturnType<typeof buildApp>[] = [];
-const testScopes: { readonly worldId: string; readonly accountId: string }[] = [];
+const testScopes: { readonly worldId: string; readonly accountIds: string[] }[] = [];
 const issuer: ContractPlace = { siteId: 'tikhaya-gat', areaId: 'tikhaya-gat-bank' };
 
 function config() {
@@ -269,14 +269,13 @@ afterAll(async () => {
           .deleteFrom('world_campaign_clocks')
           .where('world_id', '=', scope.worldId)
           .execute();
-        await transaction
-          .deleteFrom('identity_sessions')
-          .where('account_id', '=', scope.accountId)
-          .execute();
-        await transaction
-          .deleteFrom('identity_accounts')
-          .where('id', '=', scope.accountId)
-          .execute();
+        for (const accountId of scope.accountIds) {
+          await transaction
+            .deleteFrom('identity_sessions')
+            .where('account_id', '=', accountId)
+            .execute();
+          await transaction.deleteFrom('identity_accounts').where('id', '=', accountId).execute();
+        }
       });
     }
   await database?.destroy();
@@ -294,7 +293,8 @@ describe('ordinary rescue battle gates (isolated PostgreSQL)', () => {
       const profile = ordinaryContractProfile('ci.m1.cellar-rescue.01')!;
       const app = createApp(worldId);
       apps.push(app);
-      testScopes.push({ worldId, accountId });
+      const testScope = { worldId, accountIds: [accountId] };
+      testScopes.push(testScope);
       await seedCompany({
         worldId,
         companyId,
@@ -403,6 +403,372 @@ describe('ordinary rescue battle gates (isolated PostgreSQL)', () => {
         .where('world_id', '=', worldId)
         .executeTakeFirstOrThrow();
       expect(retainedRaiders.hostiles).toEqual(hostiles);
+
+      if (outcome !== 'surrendered') return;
+
+      const strangerCompanyId = randomUUID();
+      const strangerAccountId = randomUUID();
+      const strangerSessionToken = randomUUID();
+      await seedCompany({
+        worldId,
+        companyId: strangerCompanyId,
+        accountId: strangerAccountId,
+        sessionToken: strangerSessionToken,
+        state: aggregateAt(worldId, strangerCompanyId, issuer),
+      });
+      testScope.accountIds.push(strangerAccountId);
+
+      const releaseRow = await database
+        .selectFrom('ordinary_contracts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      const companyBeforeRefusal = await database
+        .selectFrom('company_snapshots')
+        .select(['canonical_revision', 'public_revision', 'state'])
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .executeTakeFirstOrThrow();
+      const strangerBeforeRefusal = await database
+        .selectFrom('company_snapshots')
+        .select(['canonical_revision', 'public_revision', 'state'])
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', strangerCompanyId)
+        .executeTakeFirstOrThrow();
+      const ordinaryReceiptsBeforeRefusal = await database
+        .selectFrom('ordinary_contract_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .execute();
+      const companyReceiptsBeforeRefusal = await database
+        .selectFrom('company_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('company_id', 'in', [companyId, strangerCompanyId])
+        .execute();
+      const strangerDeliveryCommandId = randomUUID();
+      const refusedDelivery = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: {
+          cookie: `warwrit_session=${strangerSessionToken}`,
+          origin: 'http://127.0.0.1:3107',
+        },
+        payload: {
+          schemaVersion: 1,
+          commandId: strangerDeliveryCommandId,
+          instanceId: profile.instanceId,
+          expectedRevision: releaseRow.revision,
+          type: 'STEP',
+          stepId: 'deliver',
+        },
+      });
+      expect(refusedDelivery.statusCode, refusedDelivery.body).toBe(409);
+      expect(refusedDelivery.json()).toMatchObject({ ok: false, code: 'NOT_A_PARTICIPANT' });
+      expect(
+        await database
+          .selectFrom('ordinary_contracts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(releaseRow);
+      expect(
+        await database
+          .selectFrom('company_snapshots')
+          .select(['canonical_revision', 'public_revision', 'state'])
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(companyBeforeRefusal);
+      expect(
+        await database
+          .selectFrom('company_snapshots')
+          .select(['canonical_revision', 'public_revision', 'state'])
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', strangerCompanyId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(strangerBeforeRefusal);
+      expect(
+        await database
+          .selectFrom('ordinary_contract_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .execute(),
+      ).toEqual(ordinaryReceiptsBeforeRefusal);
+      expect(
+        await database
+          .selectFrom('company_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('company_id', 'in', [companyId, strangerCompanyId])
+          .execute(),
+      ).toEqual(companyReceiptsBeforeRefusal);
+      expect(
+        await database
+          .selectFrom('ordinary_contract_receipts')
+          .select('command_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', strangerCompanyId)
+          .where('command_id', '=', strangerDeliveryCommandId)
+          .execute(),
+      ).toEqual([]);
+
+      const helpCommandId = randomUUID();
+      const help = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: {
+          cookie: `warwrit_session=${strangerSessionToken}`,
+          origin: 'http://127.0.0.1:3107',
+        },
+        payload: {
+          schemaVersion: 1,
+          commandId: helpCommandId,
+          instanceId: profile.instanceId,
+          expectedRevision: releaseRow.revision,
+          type: 'HELP',
+          stepId: null,
+        },
+      });
+      expect(help.statusCode, help.body).toBe(200);
+      expect(help.json()).toMatchObject({
+        ok: true,
+        revision: (BigInt(releaseRow.revision) + 1n).toString(),
+        rewardQ: null,
+      });
+      const helpedContract = await database
+        .selectFrom('ordinary_contracts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      expect(helpedContract.state).toMatchObject({
+        ownerCompanyId: companyId,
+        helperCompanyId: strangerCompanyId,
+        custody: [{ personId: 'person.cellar-captive.01', companyId }],
+      });
+      const companyAfterHelp = await database
+        .selectFrom('company_snapshots')
+        .select(['canonical_revision', 'public_revision', 'state'])
+        .where('world_id', '=', worldId)
+        .where('company_id', 'in', [companyId, strangerCompanyId])
+        .orderBy('company_id')
+        .execute();
+      const ordinaryReceiptsAfterHelp = await database
+        .selectFrom('ordinary_contract_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .execute();
+      const companyReceiptsAfterHelp = await database
+        .selectFrom('company_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('company_id', 'in', [companyId, strangerCompanyId])
+        .execute();
+      const helperDeliveryCommandId = randomUUID();
+      const refusedAsHelper = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: {
+          cookie: `warwrit_session=${strangerSessionToken}`,
+          origin: 'http://127.0.0.1:3107',
+        },
+        payload: {
+          schemaVersion: 1,
+          commandId: helperDeliveryCommandId,
+          instanceId: profile.instanceId,
+          expectedRevision: helpedContract.revision,
+          type: 'STEP',
+          stepId: 'deliver',
+        },
+      });
+      expect(refusedAsHelper.statusCode, refusedAsHelper.body).toBe(409);
+      expect(refusedAsHelper.json()).toMatchObject({ ok: false, code: 'MISSING_EVIDENCE' });
+      expect(
+        await database
+          .selectFrom('ordinary_contracts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(helpedContract);
+      expect(
+        await database
+          .selectFrom('company_snapshots')
+          .select(['canonical_revision', 'public_revision', 'state'])
+          .where('world_id', '=', worldId)
+          .where('company_id', 'in', [companyId, strangerCompanyId])
+          .orderBy('company_id')
+          .execute(),
+      ).toEqual(companyAfterHelp);
+      expect(
+        await database
+          .selectFrom('ordinary_contract_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .execute(),
+      ).toEqual(ordinaryReceiptsAfterHelp);
+      expect(
+        await database
+          .selectFrom('company_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('company_id', 'in', [companyId, strangerCompanyId])
+          .execute(),
+      ).toEqual(companyReceiptsAfterHelp);
+
+      await setCompanyPlace(worldId, companyId, issuer);
+      const companyAtIssuer = await database
+        .selectFrom('company_snapshots')
+        .select('state')
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .executeTakeFirstOrThrow();
+      const companyBeforeDelivery = readCompanyCombatAggregateState(companyAtIssuer.state);
+      const localPurseId = companyBeforeDelivery.economy.finance.pools.find(
+        (pool) => pool.poolId === 'local',
+      )?.walletId;
+      const purseBefore = companyBeforeDelivery.economy.finance.wallets.find(
+        (wallet) => wallet.walletId === localPurseId,
+      );
+      if (!purseBefore) throw new Error('Company local purse is missing');
+      const deliveryCommandId = randomUUID();
+      const delivery = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: { ...headers, origin: 'http://127.0.0.1:3107' },
+        payload: {
+          schemaVersion: 1,
+          commandId: deliveryCommandId,
+          instanceId: profile.instanceId,
+          expectedRevision: helpedContract.revision,
+          type: 'STEP',
+          stepId: 'deliver',
+        },
+      });
+      expect(delivery.statusCode, delivery.body).toBe(200);
+      expect(delivery.json()).toMatchObject({
+        ok: true,
+        revision: (BigInt(helpedContract.revision) + 1n).toString(),
+        rewardQ: profile.rewardQ,
+      });
+
+      const deliveredContract = await database
+        .selectFrom('ordinary_contracts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      expect(deliveredContract.wallet_q).toBe(
+        (BigInt(releaseRow.wallet_q) - BigInt(profile.rewardQ)).toString(),
+      );
+      expect(deliveredContract.state).toMatchObject({
+        custody: [],
+        outcome: { kind: 'SUCCESS', companyId },
+      });
+      const companyAfterDelivery = await database
+        .selectFrom('company_snapshots')
+        .select('state')
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .executeTakeFirstOrThrow();
+      const paidCompany = readCompanyCombatAggregateState(companyAfterDelivery.state);
+      const purseAfter = paidCompany.economy.finance.wallets.find(
+        (wallet) => wallet.walletId === localPurseId,
+      );
+      expect(purseAfter).toBeDefined();
+      expect(BigInt(purseAfter!.cashQ) - BigInt(purseBefore.cashQ)).toBe(BigInt(profile.rewardQ));
+      expect(paidCompany.economy.finance.movements).toContainEqual(
+        expect.objectContaining({ amountQ: profile.rewardQ }),
+      );
+      const ordinaryDeliveryReceipt = await database
+        .selectFrom('ordinary_contract_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .where('command_id', '=', deliveryCommandId)
+        .executeTakeFirstOrThrow();
+      expect(ordinaryDeliveryReceipt.response).toEqual(delivery.json());
+      const companyDeliveryReceipt = await database
+        .selectFrom('company_receipts')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .where('company_id', '=', companyId)
+        .where('command_id', '=', deliveryCommandId)
+        .executeTakeFirstOrThrow();
+      expect(companyDeliveryReceipt.response).toEqual(delivery.json());
+
+      const replay = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: { ...headers, origin: 'http://127.0.0.1:3107' },
+        payload: {
+          schemaVersion: 1,
+          commandId: deliveryCommandId,
+          instanceId: profile.instanceId,
+          expectedRevision: helpedContract.revision,
+          type: 'STEP',
+          stepId: 'deliver',
+        },
+      });
+      expect(replay.statusCode, replay.body).toBe(200);
+      expect(replay.json()).toEqual(delivery.json());
+
+      await app.close();
+      const reopenedApp = createApp(worldId);
+      apps.push(reopenedApp);
+      const reopenedBoard = await reopenedApp.inject({
+        method: 'GET',
+        url: '/contracts/board',
+        headers,
+      });
+      expect(reopenedBoard.statusCode, reopenedBoard.body).toBe(200);
+      expect(
+        reopenedBoard
+          .json()
+          .contracts.find(
+            (entry: { instanceId: string }) => entry.instanceId === profile.instanceId,
+          ),
+      ).toMatchObject({ state: 'COMPLETED', terminalPayout: 'PAID', completedByYou: true });
+      expect(
+        await database
+          .selectFrom('ordinary_contracts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(deliveredContract);
+      expect(
+        await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow(),
+      ).toEqual(companyAfterDelivery);
+      expect(
+        await database
+          .selectFrom('ordinary_contract_receipts')
+          .selectAll()
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', profile.instanceId)
+          .execute(),
+      ).toHaveLength(3);
+      expect(
+        await database
+          .selectFrom('company_receipts')
+          .select('command_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .where('command_id', '=', deliveryCommandId)
+          .execute(),
+      ).toHaveLength(1);
     },
   );
 });
@@ -421,7 +787,7 @@ describe('voice-under-boards kit purchase (isolated PostgreSQL)', () => {
       if (!profile) throw new Error('Voice-under-boards profile is missing');
       const app = createApp(worldId);
       apps.push(app);
-      testScopes.push({ worldId, accountId });
+      testScopes.push({ worldId, accountIds: [accountId] });
       await seedCompany({
         worldId,
         companyId,

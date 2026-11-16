@@ -242,3 +242,27 @@ Captures are `.playwright-cli/c04-herbs-paid-reloaded.png`,
 `.playwright-cli/c04-herbs-final-squad.png` and their corresponding txt snapshots.
 The ordinary C05 rescue and the remaining original source branches retain their
 own T031 criteria. Full M1 acceptance remains open.
+
+## C05 authenticated delivery authority — 2026-11-16
+
+LOCAL public-boundary evidence. The existing surrendered-raiders PostgreSQL
+case now continues after lawful release. A second authenticated company at the
+issuer gets NOT_A_PARTICIPANT when it attempts delivery. After its accepted HELP
+command, another delivery attempt gets MISSING_EVIDENCE. The captive remains
+with the original holder. Both company snapshots, the contract including its
+wallet and custody, and both receipt sets remain unchanged by each refusal.
+
+The holder then delivers at the issuer with the current contract revision.
+Its local purse gains exactly 80 crowns, the issuer wallet loses the same amount,
+and custody clears. Exact replay returns the original response. Reopening the
+application retains COMPLETED/PAID for the holder and one delivery receipt at
+each transaction boundary.
+
+The focused isolated case passed 1/1, with three siblings skipped. Server
+typecheck, scoped ESLint, Prettier and diff checks passed. The initial delivery
+fixture was at the wrong place; it was moved to the issuer before the passing
+run. The later HELP fixture initially omitted required `stepId: null`; it was
+corrected and the focused case passed again. Log is
+`output/m1-cellar-custody-focused-20261116.log`. Company creation, battle outcome
+and place changes in this case are explicit isolated fixtures. This supplies
+route/transaction coverage. Native C05 travel, rescue and delivery remain open.

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: authenticated cellar-rescue checks cover stranger/helper
+  delivery refusals, the holder's funded once-only payment and reopened saved
+  result. [C05](docs/work-packages/m1-next/05-contracts.md#c05-authenticated-delivery-authority--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: known impassable terrain now says it cannot be crossed
   instead of requesting more scouting. Unknown terrain retains its masked
   refusal. [N09](docs/work-packages/m1-next/09-player-experience.md#known-blocked-terrain-feedback--2026-11-16). LOCAL.
