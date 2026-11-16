@@ -13,6 +13,7 @@ const cases = [
     location: 'kamenny-brod',
     area: 'kamenny-brod-market',
     building: 'watch',
+    proofFilename: 'raider-standard-v1.png',
   },
   {
     instanceId: 'ci.m1.wolf-trail.01',
@@ -21,6 +22,7 @@ const cases = [
     location: 'bereznyak',
     area: 'bereznyak-green',
     building: 'elder',
+    proofFilename: undefined,
   },
   {
     instanceId: 'ci.m1.mill-beast.01',
@@ -29,6 +31,7 @@ const cases = [
     location: 'tikhaya-gat',
     area: 'tikhaya-gat-bank',
     building: 'inn',
+    proofFilename: 'beast-claw-v1.png',
   },
 ] as const;
 
@@ -94,6 +97,12 @@ it.each(cases)('shows the portrait matching $instanceId and issuerId', async (te
   expect(host?.querySelector('.first-hunt-issuer img')?.getAttribute('src')).toContain(
     testCase.filename,
   );
+  const proofImage = host?.querySelector('.trophy-proof-target img');
+  if (testCase.proofFilename) {
+    expect(proofImage?.getAttribute('src')).toContain(testCase.proofFilename);
+  } else {
+    expect(proofImage).toBeNull();
+  }
 });
 
 it('does not show a portrait when contract and issuer identities disagree', async () => {

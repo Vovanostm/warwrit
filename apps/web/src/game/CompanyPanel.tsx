@@ -14,6 +14,7 @@ import { RetrainingPanel } from './RetrainingPanel.js';
 import { PerkSelectionPanel } from './PerkSelectionPanel.js';
 import { NicknamePanel } from './NicknamePanel.js';
 import { GuardServicePanel } from './GuardServicePanel.js';
+import { TrophyArt } from './TrophyArt.js';
 
 type GuardCommand = Extract<
   OrdinaryPlayerCompanyCommandV2Dto,
@@ -135,6 +136,7 @@ export function CompanyPanel(props: {
                   {carried.map((item) => (
                     <li key={item.itemId}>
                       <span className={item.equippedBy ? 'gear-equipped' : 'gear-carried'}>
+                        <TrophyArt definitionId={item.definitionId} />
                         {itemLabel(item.definitionId)}
                         {item.quantity > 1 ? ` ×${item.quantity}` : ''}
                         {item.equippedBy
@@ -227,7 +229,10 @@ export function CompanyPanel(props: {
             <ul className="supplies">
               {otherItems.map((item) => (
                 <li key={item.itemId}>
-                  <span>{itemLabel(item.definitionId)}</span>
+                  <span>
+                    <TrophyArt definitionId={item.definitionId} />
+                    {itemLabel(item.definitionId)}
+                  </span>
                   <span>{item.quantity}</span>
                 </li>
               ))}

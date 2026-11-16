@@ -466,7 +466,8 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
-      "generatedAt": "2026-10-04"
+      "generatedAt": "2026-10-04",
+      "consumers": ["apps/web/src/game/place-buildings.ts"]
     },
     {
       "id": "art.m1.places.settlements-v2.bereznyak",
@@ -502,7 +503,8 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
-      "generatedAt": "2026-10-04"
+      "generatedAt": "2026-10-04",
+      "consumers": ["apps/web/src/game/place-buildings.ts"]
     },
     {
       "id": "art.m1.places.settlements-v2.kamenny-brod",
@@ -520,7 +522,8 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
-      "generatedAt": "2026-10-04"
+      "generatedAt": "2026-10-04",
+      "consumers": ["apps/web/src/game/place-buildings.ts"]
     },
     {
       "id": "art.m1.places.settlements-v2.severny-dvor",
@@ -556,7 +559,8 @@
       "source": "codex-image-generation",
       "license": "original work generated for Warwrit; no third-party art",
       "provenance": "assets/art/m1/places/settlements-v2/provenance.json",
-      "generatedAt": "2026-10-04"
+      "generatedAt": "2026-10-04",
+      "consumers": ["apps/web/src/game/place-buildings.ts"]
     },
     {
       "id": "art.m1.places.settlements-v2.tikhaya-gat",
@@ -1301,9 +1305,39 @@
       "provenance": "assets/art/world/map-icons-v1/sources.json",
       "contentRevision": "atlas-v6",
       "consumers": ["scripts/world-map/map-symbols.ts"]
+    },
+    {
+      "id": "art.m1.trophy.beast-claw",
+      "path": "assets/art/m1/trophies/beast-claw-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/trophies/beast-claw-v1.json",
+      "generatedAt": "2026-11-16",
+      "contentRevision": "m1-trophy-art-v1",
+      "consumers": ["apps/web/src/game/TrophyArt.tsx"]
+    },
+    {
+      "id": "art.m1.trophy.raider-standard",
+      "path": "assets/art/m1/trophies/raider-standard-v1.png",
+      "kind": "image",
+      "source": "codex-image-generation",
+      "license": "original work generated for Warwrit",
+      "provenance": "assets/art/m1/trophies/raider-standard-v1.json",
+      "generatedAt": "2026-11-16",
+      "contentRevision": "m1-trophy-art-v1",
+      "consumers": ["apps/web/src/game/TrophyArt.tsx"]
     }
   ],
   "contentRevisions": {
+    "m1-trophy-art-v1": {
+      "consumers": [
+        "apps/web/src/game/TrophyArt.tsx",
+        "apps/web/src/game/CompanyPanel.tsx",
+        "apps/web/src/FirstHunt.tsx"
+      ],
+      "note": "Two inventory trophy illustrations with style and adaptation recorded in asset provenance. Owner visual acceptance is pending."
+    },
     "m1-dialogue-portraits-v1": {
       "consumers": [
         "apps/web/src/game/NpcPortrait.tsx",

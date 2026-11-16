@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "art.m1.trophy.raider-standard",
+  "tool": "image_gen built-in",
+  "prompt": "Create one game inventory trophy illustration for Warwrit, centered in a square canvas with a genuinely transparent background. A single captured, cut-down bandit standard: a short broken dark wooden flagstaff with a worn dull ochre wool-and-linen cloth fragment attached by two plain leather ties. The cloth is frayed and has a clearly cut lower edge and one torn notch. It has no emblem or inscription, because no heraldic design has been established for this item. Compose the staff diagonally from lower left toward upper center, with the broad hanging folded cloth on the upper right; entire trophy visible with generous transparent margins. Grounded medieval practical construction, believable old cloth weight, no ceremonial ornament. Mature restrained graphic-novel illustration, confident irregular dark ink contours around major forms, broad matte flat colour washes and grouped shadows, only a few selective interior strokes. Desaturated soot and umber wood, muted ochre cloth, restrained rust wear. Overcast upper-left lighting. Strong readable silhouette at 64 pixels against charcoal UI. No floor, ground shadow, scenery, hands, people, stand, badge, frame, text, letters, runes, magical glow, logos, watermark, collage, or other objects. Avoid glossy 3D, photographic microtexture and cute cartoon proportions. Adapt Warwrit's selected restrained graphic-novel contour hierarchy and muted flat washes to this existing quest proof. This is a distinct inventory object illustration, not a scene or an invented faction symbol.",
+  "transparentBackground": true,
+  "generatedAt": "2026-11-16",
+  "style": "graphic-novel",
+  "canonicalDefinitionId": "raider-standard-trophy",
+  "references": [
+    "assets/art/styles/references/graphic-novel/character.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/severny-dvor.png"
+  ],
+  "referenceHandling": "Parent inspected these local images before composing the prompt. Generation received the exact written prompt without reference image pixels.",
+  "adaptation": "Adapted irregular focal contours, matte grouped washes and muted natural materials to a separate inventory object. Claw shape, cloth colour and staff construction are production interpretations. No emblem or additional faction fact is established.",
+  "status": "LOCAL production candidate, owner visual acceptance pending"
+}

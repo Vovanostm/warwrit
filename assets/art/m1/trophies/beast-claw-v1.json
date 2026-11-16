@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "art.m1.trophy.beast-claw",
+  "tool": "image_gen built-in",
+  "prompt": "Create a single game inventory trophy illustration for Warwrit, centered in a square canvas with a genuinely transparent background. One detached large hooked beast claw, intact rough keratin with a blunt broken root, no flesh or blood. The subject is an existing quest trophy, not a living creature. Strong distinctive crescent silhouette, tip pointing toward upper right, broad root toward lower left, entire object visible with generous transparent margin. Mature restrained graphic-novel rendering, confident irregular hand-inked charcoal contours around major forms, broad matte flat washes with grouped shadows and only a few interior strokes. Muted warm bone, umber and soot, overcast upper-left light. Credible weathered material and practical scale. Make the silhouette legible at 64 pixels on a charcoal inventory background. No scenery, floor, cast ground shadow, badge, frame, text, letters, runes, emblem, glowing magic, watermark, collage or extra objects. Avoid glossy 3D, photographic microtexture and cute cartoon shapes. Production reference interpretation follows Warwrit's selected restrained graphic-novel contour hierarchy and muted flat washes.",
+  "transparentBackground": true,
+  "generatedAt": "2026-11-16",
+  "style": "graphic-novel",
+  "canonicalDefinitionId": "beast-claw-trophy",
+  "references": [
+    "assets/art/styles/references/graphic-novel/character.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/severny-dvor.png"
+  ],
+  "referenceHandling": "Parent inspected these local images before composing the prompt. Generation received the exact written prompt without reference image pixels.",
+  "adaptation": "Adapted irregular focal contours, matte grouped washes and muted natural materials to a separate inventory object. Claw shape, cloth colour and staff construction are production interpretations. No emblem or additional faction fact is established.",
+  "status": "LOCAL production candidate, owner visual acceptance pending"
+}
