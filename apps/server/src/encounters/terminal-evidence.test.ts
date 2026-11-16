@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { prepareFirstHuntTerminalEvidence } from './terminal-evidence.js';
 import type { TerminalCommandRow } from './terminal-evidence.js';
+import { prepareEncounterFoodFacts } from '../company/travel-food.js';
 
 function resolvedBattle(
   killLeader = false,
@@ -325,6 +326,70 @@ function terminalInput(
 }
 
 describe('FIRST HUNT terminal evidence composition', () => {
+  it('settles a retained pre-receipt catch-up using the bound history without charging time twice', () => {
+    const { input } = terminalInput();
+    const lifecycle = input.previous.economy.lifecycle;
+    const command = combat.parseCompanyCommand({
+      schemaVersion: combat.COMPANY_COMMAND_SCHEMA_VERSION,
+      commandId: 'retained-guard-offer-catch-up',
+      sourceEventId: 'retained-guard-offer-catch-up',
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      actorRef: { kind: 'SYSTEM', id: 'world-travel' },
+      expectedRevision: lifecycle.revision,
+      campaignTick: '1001',
+      rulesetId: combat.COMPANY_RULESET_ID,
+      type: 'AdvanceCampaign',
+      payload: { toTick: '1001', authoritativeInputs: [] },
+    });
+    if (!command.ok) throw new Error('Invalid catch-up fixture');
+    const food = prepareEncounterFoodFacts(input.previous, '1001', command.command.commandId);
+    if (food.kind !== 'PREPARED') throw new Error('Missing catch-up food');
+    const advanced = combat.prepareCompanyEconomy(input.previous.economy, command.command, {
+      worldId: lifecycle.worldId,
+      companyId: lifecycle.companyId,
+      principal: command.command.actorRef,
+      canonicalRevision: lifecycle.revision,
+      publicRevision: lifecycle.knowledge.revision,
+      atTick: combat.campaignTick('1001'),
+      completeGraph: true,
+      contactIds: [],
+      facts: [],
+      financeFacts: [],
+      physicalFacts: food.facts,
+      internalGrant: {
+        commandId: command.command.commandId,
+        sourceEventId: command.command.sourceEventId!,
+        canonicalRequest: combat.canonicalJson(command.command),
+      },
+    });
+    if (advanced.kind !== 'PREPARED') throw new Error(advanced.error);
+    const previous = combat.readCompanyCombatAggregateState({
+      ...input.previous,
+      economy: advanced.next,
+    });
+    const before = combat.canonicalStateJson(previous);
+    const prepared = prepareFirstHuntTerminalEvidence({ ...input, previous });
+    if (prepared.status !== 'READY') throw new Error(prepared.residuals.join(','));
+    expect(prepared.consume.applications[1]?.advance).toBeUndefined();
+    const baseline = prepareFirstHuntTerminalEvidence(input);
+    if (baseline.status !== 'READY') throw new Error(baseline.residuals.join(','));
+    expect(prepared.finalState.economy.finance.wallets).toEqual(
+      baseline.finalState.economy.finance.wallets,
+    );
+    expect(prepared.finalState.economy.physical?.items).toEqual(
+      baseline.finalState.economy.physical?.items,
+    );
+    expect(prepared.finalState.encounter.active).toBeNull();
+    const consumed = combat.prepareConsumeCombatAggregate(previous, prepared.consume);
+    if (consumed.kind !== 'PREPARED') throw new Error(consumed.error);
+    const finalized = combat.prepareFinalizeCombatAggregate(consumed.next, prepared.finalize);
+    if (finalized.kind !== 'PREPARED') throw new Error(finalized.error);
+    const retried = combat.prepareFinalizeCombatAggregate(finalized.next, prepared.finalize);
+    expect(retried.kind === 'PREPARED' && retried.replayed).toBe(true);
+    expect(combat.canonicalStateJson(previous)).toBe(before);
+  }, 15_000);
+
   it('produces READY from a resolved bound combat and receipts at a later food-backed tick', () => {
     const { battle, input } = terminalInput();
     const active = input.previous.encounter.active!;

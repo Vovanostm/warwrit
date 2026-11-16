@@ -225,8 +225,19 @@ export function prepareFirstHuntTerminalEvidence(input: {
   if (previous.learning.tasks.tasks.some((task) => !task.stop && !task.terminal))
     return notReady('LEARNING_EVIDENCE_MISSING');
 
+  let boundCompany: CompanyCombatAggregateState;
+  try {
+    boundCompany = combat.readCompanyCombatAggregateState({
+      ...previous,
+      economy: JSON.parse(active.initialRootDigest),
+      encounter: combat.createCombatEncounterApplication(),
+    });
+  } catch {
+    return notReady('COMPANY_BINDING_MISMATCH');
+  }
+  const initialRoot = materialized(boundCompany);
   let journal = combat.createCombatReceiptJournal(active.binding, input.companyId);
-  journal = appendReceipt(journal, previous, active.binding.initial, null);
+  journal = appendReceipt(journal, boundCompany, active.binding.initial, null);
   const receiptTicks = [active.binding.atTick];
   let priorTick = active.binding.atTick;
   let kernelState = active.binding.initial.state;
@@ -241,7 +252,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
     const result = combat.applyCombatCommand(kernelState, row.command);
     if (!result.ok) return notReady('ENCOUNTER_REPLAY_INVALID');
     const transition = { state: result.state, events: result.events };
-    journal = appendReceipt(journal, previous, transition, row.command);
+    journal = appendReceipt(journal, boundCompany, transition, row.command);
     kernelState = transition.state;
     priorTick = combat.campaignTick(row.campaign_tick);
     receiptTicks.push(priorTick);
@@ -253,7 +264,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
     return notReady('ENCOUNTER_REPLAY_INVALID');
 
   const profileResult = combat.deriveCombatPracticeProfile({
-    root: materialized(previous),
+    root: initialRoot,
     journal,
     receiptTicks,
     profileId: combat.FIRST_HUNT_PRACTICE_PROFILE_ID,
@@ -290,13 +301,13 @@ export function prepareFirstHuntTerminalEvidence(input: {
             physicalFacts: [] as readonly combat.PhysicalEvidence[],
             financeFacts: [] as readonly combat.FinanceEvidence[],
           }
-        : combat.deriveCombatReceiptDomainEvidence(materialized(previous), journal, index, {
+        : combat.deriveCombatReceiptDomainEvidence(initialRoot, journal, index, {
             worldId: input.worldId,
             companyId: input.companyId,
-            canonicalRevision: previous.economy.lifecycle.revision,
+            canonicalRevision: initialRoot.lifecycle.revision,
             atTick: combat.campaignTick(atTick),
           });
-    const context = ownerContext(previous, atTick, sources.physicalFacts, sources.financeFacts);
+    const context = ownerContext(boundCompany, atTick, sources.physicalFacts, sources.financeFacts);
     const savedStarts = [
       ...(stateBefore.encounter.active?.practiceStartSnapshots ?? []),
       ...startSnapshotsForReceipt(stateBefore, journal, practiceProfile, index),
@@ -349,7 +360,7 @@ export function prepareFirstHuntTerminalEvidence(input: {
           profile: practiceProfile,
           receiptTicks,
           savedStarts,
-          context: ownerContext(previous, atTick),
+          context: ownerContext(boundCompany, atTick),
         });
       } catch {
         return notReady('PRACTICE_CREDIT_EVIDENCE_MISSING');

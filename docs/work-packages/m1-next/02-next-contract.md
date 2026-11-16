@@ -213,3 +213,15 @@ The equipment refusal now states the actual shield requirement and the existing
 caravan-transfer alternative. Its own-company check also covers available FIELD
 or RECOVERY members admitted under the current immobility rules. Parent server/web typechecks and 18 focused tests passed after the correction.
 Prettier and scoped diff checks passed. LOCAL.
+
+### Original defeat settled — 2026-11-16
+
+The original attempt above has now settled through the normal terminal worker.
+The guard-service offer read had advanced the bound helper by one tick, and the
+terminal producer incorrectly used its current revision as admission evidence.
+The prevention and retained-state correction are recorded in [N08](08-battle-outcomes.md#bound-clock-and-retained-terminal-recovery--2026-11-16).
+Both original companies are GAME_OVER with all six deaths preserved and no
+remaining encounter binding. The terminal acknowledgment is revision135, applied
+at 2026-11-16T01:29:08.530Z. NEXT-2–NEXT-5 are still open. Success coverage will
+use the explicitly separate pre-battle restored copy, retaining this failed
+attempt as actual history.

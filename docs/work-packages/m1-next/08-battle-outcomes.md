@@ -138,3 +138,39 @@ Use focused encounter/terminal/attempt public tests and real multi-company SQL
 where changed. Browser uses ordinary persistent encounters. A naturally
 unreproduced outcome requires an honest NOT_RUN plus a bounded next attempt,
 not endless battles, fake state or automatic gameplay-policy change.
+
+### Bound clock and retained terminal recovery — 2026-11-16
+
+LOCAL on `codex/m1-completion-20261115`. The native HUNT-03 defeat exposed a
+persisted one-tick helper advance after admission. Its last company receipt
+identified `GuardServiceOffer` at revision145. The binding and its initial root
+were at tick80988, while the helper's lifecycle, finance and physical state were
+at80989. The first battle command was also at80989. The terminal worker kept
+rejecting practice evidence and retained both company bindings.
+
+The shared stationary catch-up now refuses active encounters before reading the
+clock or settling movement. The guard-service GET keeps its read-only bound
+view and skips offer creation. Terminal evidence derives journal requests,
+practice and consequence facts from the stored admission root and its bound
+revision. Actual applications still consume the current retained root and its
+processed clock. Existing monotonic receipt-time and exact replay checks apply.
+The correction preserves the earlier food/finance advance, without charging its
+interval twice or rewinding the save. No released replay or migration changed.
+
+The actual worker applied terminal revision135 at 2026-11-16T01:29:08.530Z.
+Both original companies reached tick81005 and GAME_OVER, with three deceased
+characters each, no IN_ENCOUNTER members and no active binding. The owner now
+has two completed encounter records, the fresh helper one. All six deaths and
+the hostile victory remain. Original-save victory and subsequent work are
+unavailable because these two companies ended.
+
+Checks performed on the scoped source are seven terminal-evidence tests,
+including a real economy catch-up followed by settlement and exact finalization
+retry, and the separate no-write bound-catch-up regression. Server typecheck,
+Prettier and scoped diff checks passed. The actual PostgreSQL readback confirms
+binding release and the terminal acknowledgment. An initial diagnostic selected
+an absent acknowledgment column, then the read was corrected to the actual
+`effects_applied_at` field. Full suites and native surrender are NOT_RUN.
+Performance and human acceptance are NOT_MEASURED. T007 remains open for the
+other required native outcomes. Continue success-path checks on the separately
+restored pre-battle database recorded by N11.

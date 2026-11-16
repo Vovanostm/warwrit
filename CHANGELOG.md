@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: prevent service reads from advancing an encounter-bound
+  company and settle retained terminal evidence against its admission history.
+  [Preserved defeat and company release](docs/work-packages/m1-next/08-battle-outcomes.md#bound-clock-and-retained-terminal-recovery--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record the native two-company defeat and preserved
   pre-battle restore copy, clarify equipment refusal and cover RECOVERY members.
   [Native attempt and limits](docs/work-packages/m1-next/02-next-contract.md#native-ownerhelper-attempt--2026-11-16). LOCAL.
