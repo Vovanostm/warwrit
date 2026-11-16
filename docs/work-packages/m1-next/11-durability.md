@@ -8,6 +8,24 @@ claim and actual backup/restore coverage remain to reconcile, not assume absent.
 Next: map current evidence to existing #393–#397 and perform one missing boundary.
 [Common contract](COMMON.md). [Prompt](prompts/11-durability.md).
 
+## R2 terminal recovery evidence — 2026-11-16
+
+LOCAL. A focused real-PostgreSQL scenario persists a terminal company victory with
+the owner’s leader dead, then closes the app and reopens a fresh DB handle, app and
+worker. The worker leaves effects pending until the owner records a permanent
+successor. An injected world update failure rolls back company snapshots and leaves
+the applied marker unset; after another app/worker restart the saved effect applies
+once, promotes the successor, preserves the deceased leader, releases both company
+bindings and writes one terminal receipt per company. A second apply is a no-op and
+the encounter replay verifies.
+
+The new leadership recovery case and the existing settled wolf retreat/repeat case
+both pass individually in `apps/server/src/encounters/postgres.integration.test.ts`;
+the latter retains its original retreated-survivor assertions. Prettier, server
+typecheck and `git diff --check` pass. NOT_RUN: the full integration file, an OS
+process restart, R1/R3–R5, backup/restore and full T029. This is focused R2 evidence,
+not completion of N11 or T029.
+
 ## Player goal and ordinary result
 
 An interruption cannot duplicate money, erase people or trap a company.

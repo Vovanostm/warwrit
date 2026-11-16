@@ -4999,3 +4999,300 @@ it.skipIf(connectionString === undefined)(
   },
   60_000,
 );
+
+it.skipIf(connectionString === undefined)(
+  'recovers a terminal encounter after a durable leadership choice',
+  async () => {
+    const database = databases[0]!;
+    let identityIndex = 1000;
+    const scenario = await seedFirstHuntJoinScenario(
+      database,
+      false,
+      'world.test.wolf-retreat-57',
+      true,
+      false,
+      undefined,
+      true,
+      () => `00000000-0000-4000-8000-${String(++identityIndex).padStart(12, '0')}`,
+    );
+    const { helper, worldId, app } = scenario;
+    let activeApp: ReturnType<typeof buildApp> | undefined = app;
+    let reopened: (typeof databases)[number] | undefined;
+    const leaderId = scenario.owner.initial.economy.lifecycle.company!.currentLeaderId;
+    const physical = scenario.owner.initial.economy.physical;
+    if (!physical) throw new Error('FIRST HUNT leader health fixture has no physical state');
+    const setHealth = (vitals: typeof physical.vitals) =>
+      vitals.map((entry) =>
+        entry.characterId === leaderId ? { ...entry, currentHealth: 1 } : entry,
+      );
+    const owner = {
+      ...scenario.owner,
+      initial: combat.readCompanyCombatAggregateState({
+        ...scenario.owner.initial,
+        economy: {
+          ...scenario.owner.initial.economy,
+          physical: {
+            ...physical,
+            vitals: setHealth(physical.vitals),
+            knowledge: {
+              ...physical.knowledge,
+              vitalSnapshots: setHealth(physical.knowledge.vitalSnapshots),
+            },
+          },
+        },
+      }),
+    };
+    await database
+      .updateTable('company_snapshots')
+      .set({ state: owner.initial })
+      .where('world_id', '=', worldId)
+      .where('company_id', '=', owner.companyId)
+      .executeTakeFirstOrThrow();
+    const restoreClock = freezeCampaignClock();
+    try {
+      for (const actor of [owner, helper]) {
+        const read = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          headers: actor.headers,
+        });
+        const joined = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: actor.headers,
+          payload: {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: read.json().publicRevision,
+            type: 'JOIN',
+            payload: { instanceId: 'ci.m1.wolf-trail.01' },
+          },
+        });
+        expect(joined.statusCode, joined.body).toBe(200);
+      }
+      const admission = await database
+        .selectFrom('encounter_admissions')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const encounterId = admission.encounter_id;
+      await playFirstHuntToVictory(database, app, encounterId, [owner, helper], true);
+      const battle = (
+        await database
+          .selectFrom('encounters')
+          .select('state')
+          .where('id', '=', encounterId)
+          .executeTakeFirstOrThrow()
+      ).state as combat.BattleState;
+      const binding = admission.binding as combat.FrozenEncounterBinding;
+      const leader = binding.participants.find(
+        (participant) =>
+          participant.companyId === owner.companyId &&
+          participant.projection.characterId === leaderId,
+      );
+      expect(leader).toBeDefined();
+      expect(battle.units.find((unit) => unit.id === leader?.unitId)?.health).toBe(0);
+      expect(await verifyEncounterReplay(database, encounterId)).toBe(true);
+      expect(
+        await database
+          .selectFrom('encounter_admissions')
+          .select(['terminal_revision', 'effects_applied_at', 'effects_source_id'])
+          .where('encounter_id', '=', encounterId)
+          .executeTakeFirstOrThrow(),
+      ).toMatchObject({
+        terminal_revision: battle.revision,
+        effects_applied_at: null,
+        effects_source_id: null,
+      });
+      const before = await database
+        .selectFrom('company_snapshots')
+        .selectAll()
+        .where('world_id', '=', worldId)
+        .orderBy('company_id')
+        .execute();
+
+      await app.close();
+      apps.splice(apps.indexOf(app), 1);
+      activeApp = undefined;
+      reopened = createDatabase(connectionString!);
+      try {
+        const config = loadServerConfig({
+          DATABASE_URL: connectionString,
+          OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
+          OIDC_CLIENT_ID: 'warwrit-local',
+          OIDC_CLIENT_SECRET: 'local-only-secret',
+          OIDC_REDIRECT_URI: 'http://127.0.0.1:3108/auth/callback',
+          PUBLIC_ORIGIN: 'http://127.0.0.1:3108',
+          HOST: '127.0.0.1',
+          PORT: '3108',
+        });
+        const restarted = buildApp({
+          identity: { config: config.identity!, database: reopened },
+          company: { database: reopened, worldId },
+          encounters: { database: reopened },
+        });
+        apps.push(restarted);
+        activeApp = restarted;
+        let appliedBeforeChoice = false;
+        const waitingWorker = startEncounterAiWorker(reopened, {
+          onTerminalEffects: (id) => {
+            if (id === encounterId) appliedBeforeChoice = true;
+          },
+        });
+        await new Promise((resolve) => setTimeout(resolve, 750));
+        await waitingWorker.stop();
+        expect(appliedBeforeChoice).toBe(false);
+        expect(
+          await reopened
+            .selectFrom('company_snapshots')
+            .selectAll()
+            .where('world_id', '=', worldId)
+            .orderBy('company_id')
+            .execute(),
+        ).toEqual(before);
+        for (const actor of [owner, helper]) {
+          const held = await reopened
+            .transaction()
+            .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+          expect(held?.encounter.active?.binding.bindingId).toBe(binding.bindingId);
+        }
+
+        const leadership = await restarted.inject({
+          method: 'GET',
+          url: `/encounters/${encounterId}/leadership`,
+          headers: owner.headers,
+        });
+        expect(leadership.statusCode, leadership.body).toBe(200);
+        const view = leadership.json();
+        expect(view.required).toBe(true);
+        expect(view.candidates.length).toBeGreaterThan(0);
+        const successorId = view.candidates[0].characterId;
+        const chosen = await restarted.inject({
+          method: 'POST',
+          url: `/encounters/${encounterId}/leadership`,
+          headers: owner.headers,
+          payload: { version: 1, candidateId: successorId, mode: 'PERMANENT' },
+        });
+        expect(chosen.statusCode, chosen.body).toBe(202);
+        expect(
+          await reopened
+            .selectFrom('encounter_leadership_choices')
+            .select(['candidate_id', 'mode'])
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow(),
+        ).toEqual({ candidate_id: successorId, mode: 'PERMANENT' });
+
+        await sql`create function reject_leadership_recovery_world_update() returns trigger language plpgsql as $$ begin raise exception 'leadership recovery rollback probe'; end $$`.execute(
+          reopened,
+        );
+        await sql`create trigger reject_leadership_recovery_world_update before update on world_hunt_states for each row execute function reject_leadership_recovery_world_update()`.execute(
+          reopened,
+        );
+        try {
+          await expect(applyPendingFirstHuntTerminalEffects(reopened)).rejects.toThrow(
+            'leadership recovery rollback probe',
+          );
+          expect(
+            await reopened
+              .selectFrom('company_snapshots')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .orderBy('company_id')
+              .execute(),
+          ).toEqual(before);
+          expect(
+            await reopened
+              .selectFrom('encounter_admissions')
+              .select('effects_applied_at')
+              .where('encounter_id', '=', encounterId)
+              .executeTakeFirstOrThrow(),
+          ).toMatchObject({ effects_applied_at: null });
+        } finally {
+          await sql`drop trigger reject_leadership_recovery_world_update on world_hunt_states`.execute(
+            reopened,
+          );
+          await sql`drop function reject_leadership_recovery_world_update()`.execute(reopened);
+        }
+
+        await restarted.close();
+        apps.splice(apps.indexOf(restarted), 1);
+        activeApp = undefined;
+        const recoveryApp = buildApp({
+          identity: { config: config.identity!, database: reopened },
+          company: { database: reopened, worldId },
+          encounters: { database: reopened },
+        });
+        apps.push(recoveryApp);
+        activeApp = recoveryApp;
+        let resolveApplied!: (id: string) => void;
+        const applied = new Promise<string>((resolve) => {
+          resolveApplied = resolve;
+        });
+        const recoveryWorker = startEncounterAiWorker(reopened, {
+          onTerminalEffects: resolveApplied,
+        });
+        try {
+          await Promise.race([
+            applied,
+            new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error('terminal effects did not recover')), 5000),
+            ),
+          ]);
+        } finally {
+          await recoveryWorker.stop();
+        }
+        expect(
+          await reopened
+            .selectFrom('encounter_admissions')
+            .select('effects_applied_at')
+            .where('encounter_id', '=', encounterId)
+            .executeTakeFirstOrThrow(),
+        ).toMatchObject({ effects_applied_at: expect.any(Date) });
+        for (const actor of [owner, helper]) {
+          const completed = await reopened
+            .transaction()
+            .execute((tx) => loadCompanyAggregate(tx, worldId, actor.companyId));
+          expect(completed?.encounter.active).toBeNull();
+          expect(completed?.encounter.completed).toHaveLength(1);
+          const receipts = await reopened
+            .selectFrom('company_receipts')
+            .select('response')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', actor.companyId)
+            .execute();
+          expect(
+            receipts.filter(
+              (receipt) =>
+                (receipt.response as { readonly type?: string }).type === 'FIRST_HUNT_TERMINAL',
+            ),
+          ).toHaveLength(1);
+          if (actor.companyId === owner.companyId) {
+            expect(completed?.economy.lifecycle.company?.currentLeaderId).toBe(successorId);
+            expect(
+              completed?.economy.lifecycle.characters.find(
+                (person) => person.identity.characterId === leaderId,
+              )?.presence.availability,
+            ).toBe('DEAD');
+          }
+        }
+        expect(await applyPendingFirstHuntTerminalEffects(reopened)).not.toContain(encounterId);
+        expect(await verifyEncounterReplay(reopened, encounterId)).toBe(true);
+      } finally {
+        if (activeApp !== undefined) {
+          await activeApp.close();
+          apps.splice(apps.indexOf(activeApp), 1);
+          activeApp = undefined;
+        }
+        await reopened.destroy();
+      }
+    } finally {
+      if (activeApp !== undefined) {
+        await activeApp.close();
+        apps.splice(apps.indexOf(activeApp), 1);
+      }
+      restoreClock();
+      await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+    }
+  },
+  60_000,
+);
