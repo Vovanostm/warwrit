@@ -353,6 +353,53 @@ describe('light-sack ordinary contract (isolated PostgreSQL)', () => {
            and source_ref = 'quest.empty-watch-record.old-ford'
       `.execute(database);
       expect(grants.rows).toEqual([{ source_ref: 'quest.empty-watch-record.old-ford' }]);
+
+      const handoverSourceEventId = 'empty-watch-terminal-sack-handed-over';
+      const handedOver = readOrdinaryContractState(profile, {
+        ...ordinaryContractGenesis(profile),
+        revision: '9',
+        ownerCompanyId,
+        acceptedTerms: ordinaryContractTerms(profile),
+        facts: [
+          {
+            slotId: 'empty-watch-sack-handed-over',
+            companyId: ownerCompanyId,
+            sourceEventId: handoverSourceEventId,
+            atTick: '1000',
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId: ownerCompanyId,
+          sourceEventId: handoverSourceEventId,
+          atTick: '1000',
+        },
+      });
+      await database
+        .updateTable('ordinary_contracts')
+        .set({ revision: handedOver.revision, state: handedOver })
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      await database
+        .updateTable('world_campaign_clocks')
+        .set({ qa_offset_ms: String(2_999 * 21_600) })
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const beforeCampRemoval = (await getBoard(app, ownerSession)).contracts.find(
+        (contract) => contract.instanceId === profile.instanceId,
+      )!;
+      expect(beforeCampRemoval.publicConsequences?.refugeeCamp).toBe('PRESENT');
+
+      await database
+        .updateTable('world_campaign_clocks')
+        .set({ qa_offset_ms: String(3_000 * 21_600) })
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const afterCampRemoval = (await getBoard(app, ownerSession)).contracts.find(
+        (contract) => contract.instanceId === profile.instanceId,
+      )!;
+      expect(afterCampRemoval.publicConsequences?.refugeeCamp).toBe('REMOVED');
     },
   );
 
