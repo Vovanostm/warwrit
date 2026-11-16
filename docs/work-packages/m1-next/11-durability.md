@@ -2,19 +2,17 @@
 
 ## Current status — 2026-11-16
 
-LOCAL / PARTIAL. DUR-1, DUR-3, DUR-5 and DUR-6 meet their recorded criteria.
-R1–R4 have applicable real-PostgreSQL boundary, concurrency or exact-retry
-evidence below; RPO/RTO and capacity remain `NOT_MEASURED`. A current consistent
-17.11 dump restored into a fresh separate database with exact schema and full
-table/value equality before any app writer connected. R5's full
-data-conservation criterion is met. The prior independent normal login and lawful
-transfer remain valid evidence on `m1_restore_current_20261116`. This rehearsal's
-newer target was left disconnected; DUR-4 / end-to-end SC-008 evidence on that
-target remains open, pending an owner-coordinated use of an existing runtime. No
-gameplay result is claimed for the new target; overall R5 remains PARTIAL pending
-that playable check. DUR-2 is partial:
-the restarted helper route arrived and returned without losses, while public UI
-uncertain-outcome handling remains unverified.
+LOCAL / COMPLETE. DUR-1 through DUR-6 meet their recorded criteria. R1–R4 have
+applicable real-PostgreSQL boundary, concurrency or exact-retry evidence below;
+RPO/RTO and capacity remain `NOT_MEASURED`. A current consistent 17.11 dump
+restored into a fresh separate database with exact schema and full table/value
+equality before any app writer connected. The fresh target then passed a normal
+Dex login, one lawful item transfer with a lost response and same-transfer retry,
+canonical readback and reversal through the existing isolated runtime. Source
+command receipts for both new target commands remain absent, and source owner /
+helper balances match the coordinated baseline. R5's playable continuation and
+DUR-4 / SC-008 evidence are recorded below. DUR-2's restarted helper route and
+public UI uncertain-outcome retry are both verified.
 
 ## Earlier status — 2026-11-08
 
@@ -44,14 +42,16 @@ It is focused R2 evidence, not completion of N11 or T029.
 
 ## DUR-2 helper movement process-restart evidence — 2026-11-16
 
-LOCAL / PARTIAL. An actual source-triggered OS process restart during helper
+LOCAL / COMPLETE. An actual source-triggered OS process restart during helper
 movement replaced the API process PID 85080 with 88928. `/health/ready` returned
 200 after restart. Read-only state retained the same `MOVING` route epoch 61 and
 public revision 193; the campaign tick advanced from 81466 to 81468. The owner
 later confirmed the helper arrived at the Old Mill and returned normally to
 Kamenny Brod after 1,000 QA-clock units, without route losses. This demonstrates
-recovery and completion of the active route through the API restart. Public UI
-handling of an uncertain command outcome remains unverified, so DUR-2 stays open.
+recovery and completion of the active route through the API restart. The fresh
+target check below also exercised the public UI's uncertain-command retry after
+the first transfer reached the API but its response was lost; the retained result
+was one receipt and one transfer.
 
 ## R1/R3/R4 boundary evidence — 2026-11-16
 
@@ -306,15 +306,43 @@ the parent later confirmed the helper arrived and returned normally without loss
 
 For the coordinated normal-use check, `output/restore-r5-guard-target.env` was
 prepared mode 0600 and ignored, retaining every source setting except
-`DATABASE_URL`, which points at the new target. The file is unused so far; no
-application has connected to the target.
+`DATABASE_URL`, which points at the new target. The existing runtime connected
+only to that target during the check; no new listener or auth configuration was
+created. The target runtime was stopped afterward and read-only PostgreSQL
+inspection found zero remaining target sessions.
 
-The earlier successful independent login and medical-kit round trip remains the
-normal-use evidence for `m1_restore_current_20261116`; this fresh full-value target
-was not connected to the game runtime. Under the literal DUR-4 sequence, the
-remaining step is one normal login, lawful action and readback against this target
-through the existing runtime and Dex setup. That requires owner coordination; no
-new listener or auth configuration was created here.
+### Fresh target normal-use and uncertain-reply check — 2026-11-16
+
+LOCAL. A separate executor used the named Playwright session
+`r5-final-restore-20261116` to sign in normally through Dex to the isolated fresh
+target. The company panel showed Дозор помощника, 800 crowns, 22 rations and two
+medical kits in the company caravan. Through Отряд → Передать вещи, one medical
+kit was sent to the leader's bag. The first `POST /api/company/commands` was
+forwarded to the target with `route.fetch()` and its browser response was then
+aborted. The UI offered «Повторить эту же передачу»; using it succeeded. The
+retry command ID has exactly one target company receipt.
+
+The same kit was transferred back through the ordinary UI. The live page after
+the reversal still showed 800 crowns and 22 rations. A browser reload after the
+reverse transfer was `NOT_RUN`; the named browser session was unavailable after
+the target runtime stopped. Read-only canonical state showed
+two medical-unit rows totaling two units, both in party-supply containers, zero
+medical units carried by any character, 22 ration units and an 800-crown company
+wallet. The retry command was
+`7d83e810-8c92-472d-a8ef-d9de1cfdfbf2`; the reverse transfer command was
+`c3d0b474-2e25-467b-a9ab-b2430e3e4c7c`; each has one target company receipt.
+Read-only checks found zero receipts for those IDs in source
+`m1_restore_current_20261116`, whose owner and helper wallets remain 438.71 and
+717.55 crowns; Ratko remains assigned to FIELD and bound to a field party there.
+The target API was stopped, and `pg_stat_activity` showed zero other target
+sessions. This meets DUR-4's normal-login, lawful-continuation and saved-readback
+step and the public uncertain-reply part of DUR-2. It does not measure RPO/RTO or
+capacity.
+
+After the player check, another agent ran the lock-order PostgreSQL regression
+against this target in two isolated UUID test worlds; no existing player-world
+rows were touched. Treat those rows as later test activity. The full 56-table
+equality remains evidence from before any application or test writer connected.
 
 ## Player goal and ordinary result
 
@@ -397,11 +425,11 @@ production ops, rewriting migrations or deleting failing worlds.
 
 - [x] DUR-1 R1–R4 have actual applicable commit-boundary/concurrency/exact-retry
       evidence with atomic effects, authorized readback and no duplicate reward.
-- [ ] DUR-2 Restart recovers actual active route/encounter and releases completed
+- [x] DUR-2 Restart recovers actual active route/encounter and releases completed
       work; public UI handles uncertain outcome without a fresh duplicate intent.
 - [x] DUR-3 An actual consistent backup restores into a separate owned DB with
       compatible migrations/content/replay and complete conserved canonical state.
-- [ ] DUR-4 Another executor follows the prepared runbook to restore a separate
+- [x] DUR-4 Another executor follows the prepared runbook to restore a separate
       owned DB, sign in normally and perform one lawful restored continuation.
       Record the executor and result for SC-008, including conserved state,
       access controls and isolation from the source world's writer. Ordinary login
