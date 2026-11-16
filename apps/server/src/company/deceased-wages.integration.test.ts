@@ -75,6 +75,45 @@ function atPlace(root: CompanyEconomyState, place: AtLocation): CompanyEconomySt
   };
 }
 
+function partyAtKeepingDeadBodies(
+  state: CompanyCombatAggregateState,
+  place: AtLocation,
+): CompanyCombatAggregateState {
+  const { lifecycle, finance } = state.economy;
+  const deadIds = new Set(
+    lifecycle.characters
+      .filter((character) => character.presence.availability === 'DEAD')
+      .map((character) => character.identity.characterId),
+  );
+  return readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...state.economy,
+      lifecycle: {
+        ...lifecycle,
+        parties: lifecycle.parties.map((party) => ({ ...party, location: place })),
+        characters: lifecycle.characters.map((character) =>
+          deadIds.has(character.identity.characterId)
+            ? character
+            : { ...character, presence: { ...character.presence, location: place } },
+        ),
+        knowledge: {
+          ...lifecycle.knowledge,
+          characters: lifecycle.knowledge.characters.map((character) =>
+            deadIds.has(character.identity.characterId)
+              ? character
+              : { ...character, presence: { ...character.presence, location: place } },
+          ),
+        },
+      },
+      finance: {
+        ...finance,
+        wallets: finance.wallets.map((wallet) => ({ ...wallet, location: place })),
+      },
+    },
+  });
+}
+
 function rootAtKamennyBrod(): CompanyEconomyState {
   const root = createCompanyCombatAggregateFixture().state.economy;
   const membership = root.lifecycle.memberships.find(
@@ -523,47 +562,7 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
               [],
               [deathFact],
             );
-            const observeId = randomUUID();
-            const observe = transitionCommand(
-              dead.economy,
-              observeId,
-              `source-${observeId}`,
-              'Observe',
-              {
-                observationId: observeId,
-                observerRef: { kind: 'COMPANY', id: companyId },
-                subjectRef: { kind: 'CHARACTER', id: target.characterId },
-                factId: observeId,
-                sourceId: `source-${observeId}`,
-              },
-              { kind: 'DOMAIN_RECEIPT', id: 'local-observation' },
-            );
-            const fact: LifecycleEvidence = {
-              id: observeId,
-              worldId,
-              companyId,
-              revision: dead.economy.lifecycle.revision,
-              sourceEventId: observe.sourceEventId!,
-              atTick: dead.economy.lifecycle.campaignTick,
-              kind: 'COMPANY_OBSERVATION',
-              subject: { kind: 'CHARACTER', id: target.characterId },
-            };
-            const physicalFact: PhysicalEvidence = {
-              id: observeId,
-              worldId,
-              companyId,
-              revision: dead.economy.lifecycle.revision,
-              sourceEventId: observe.sourceEventId!,
-              atTick: dead.economy.finance.processedTick,
-              ordinal: 0,
-              version: PHYSICAL_POLICY_VERSION,
-              kind: 'PHYSICAL_OBSERVATION',
-              observerCompanyId: companyId,
-              subject: { kind: 'CHARACTER', id: target.characterId },
-              itemIds: [],
-              containerIds: [],
-            };
-            return persistSeededTransition(transaction, dead, observe, [], [fact], [physicalFact]);
+            return dead;
           });
         }
 
@@ -572,6 +571,79 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
           origin: 'http://127.0.0.1:3107',
           [WORLD_EXPECTED_COMPANY_ID_HEADER]: companyId,
         };
+        for (const target of targets) {
+          const canonical = state.economy.lifecycle.characters.find(
+            (character) => character.identity.characterId === target.characterId,
+          );
+          const known = state.economy.lifecycle.knowledge.characters.find(
+            (character) => character.identity.characterId === target.characterId,
+          );
+          const membership = state.economy.lifecycle.memberships.find(
+            (entry) => entry.characterId === target.characterId,
+          );
+          const account = state.economy.finance.accounts.find(
+            (entry) => entry.membershipId === membership?.membershipId,
+          );
+          expect(canonical?.presence.availability).toBe('DEAD');
+          expect(known?.presence.availability).toBe('AVAILABLE');
+          expect(account).toMatchObject({ known: true, knownDeath: false });
+        }
+
+        const remoteState = partyAtKeepingDeadBodies(state, remote);
+        await database
+          .updateTable('company_snapshots')
+          .set({
+            state: remoteState,
+            public_revision: remoteState.economy.lifecycle.knowledge.revision,
+            canonical_revision: remoteState.economy.lifecycle.revision,
+          })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        const remoteQuote = await createdApp.inject({
+          method: 'GET',
+          url: '/company/deceased-wages',
+          headers,
+        });
+        expect(remoteQuote.statusCode, remoteQuote.body).toBe(200);
+        expect(remoteQuote.json()).toMatchObject({ local: false, people: [] });
+        const afterRemoteObservation = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        const remoteObservedState = readCompanyCombatAggregateState(afterRemoteObservation.state);
+        for (const target of targets) {
+          const known = remoteObservedState.economy.lifecycle.knowledge.characters.find(
+            (character) => character.identity.characterId === target.characterId,
+          );
+          const membership = remoteObservedState.economy.lifecycle.memberships.find(
+            (entry) => entry.characterId === target.characterId,
+          );
+          const account = remoteObservedState.economy.finance.accounts.find(
+            (entry) => entry.membershipId === membership?.membershipId,
+          );
+          expect(known?.presence.availability).toBe('AVAILABLE');
+          expect(account?.knownDeath).toBe(false);
+        }
+
+        const localState = partyAtKeepingDeadBodies(remoteObservedState, {
+          kind: 'AT',
+          siteId: 'kamenny-brod',
+          areaId: 'market',
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({
+            state: localState,
+            public_revision: localState.economy.lifecycle.knowledge.revision,
+            canonical_revision: localState.economy.lifecycle.revision,
+          })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+
         const quote = await createdApp.inject({
           method: 'GET',
           url: '/company/deceased-wages',
@@ -585,6 +657,39 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
             expect.objectContaining({ characterId: 'a-worker-1', amountQ: '4' }),
           ]),
         });
+        const afterLocalObservation = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        const locallyObservedState = readCompanyCombatAggregateState(afterLocalObservation.state);
+        for (const target of targets) {
+          const canonical = locallyObservedState.economy.lifecycle.characters.find(
+            (character) => character.identity.characterId === target.characterId,
+          );
+          const known = locallyObservedState.economy.lifecycle.knowledge.characters.find(
+            (character) => character.identity.characterId === target.characterId,
+          );
+          const membership = locallyObservedState.economy.lifecycle.memberships.find(
+            (entry) => entry.characterId === target.characterId,
+          );
+          const account = locallyObservedState.economy.finance.accounts.find(
+            (entry) => entry.membershipId === membership?.membershipId,
+          );
+          expect(canonical?.presence.availability).toBe('DEAD');
+          expect(known?.presence.availability).toBe('DEAD');
+          expect(account).toMatchObject({ known: true, knownDeath: true });
+          expect(
+            locallyObservedState.economy.finance.claims
+              .filter((claim) => claim.membershipId === membership?.membershipId)
+              .every((claim) =>
+                claim.earned.every(
+                  (period) => BigInt(period.toTick) <= BigInt(account?.death?.atTick ?? '0'),
+                ),
+              ),
+          ).toBe(true);
+        }
 
         const foreignQuote = await createdApp.inject({
           method: 'GET',
