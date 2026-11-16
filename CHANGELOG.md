@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: reconcile original contract coverage with inherited
+  mill success and new paid journeys, retaining named source/branch gaps.
+  [N05](docs/work-packages/m1-next/05-contracts.md#inherited-mill-result-and-remaining-branches--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record a successful current integrated production build
   and an additional provisional Place performance sample. [N12](docs/work-packages/m1-next/12-release-preparation.md#current-integrated-production-build--2026-11-16), [N10](docs/work-packages/m1-next/10-desktop-performance.md#additional-source-place-sample--2026-11-16). LOCAL.
 

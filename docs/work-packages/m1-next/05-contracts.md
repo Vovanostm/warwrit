@@ -11,12 +11,14 @@ workflow. Ordinary withdrawal/payment/trophy behavior follows
 [M1-CONTRACT-TERMS](../M1-CONTRACT-TERMS.md); FIRST HUNT retains its own policy.
 Fresh gameplay checks for this reconciliation are NOT_RUN.
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; full matrix NOT_RUN. Reuse WLC-08's unchanged wolf-proof/
-payment evidence and N02's later mill continuation; neither proves other branches.
-Next: reconcile source instance/scene IDs and existing #379–#387 criteria with
-current runtime, then execute the first missing ready leaf.
+PARTIAL / LOCAL; full matrix remains open. C03 and C06 have newly recorded
+ordinary paid journeys; C02 reuses unchanged WLC-08 wolf-proof/payment evidence.
+N02's restored state retains completed/paid mill rescue and completed HUNT-01,
+so C07–C09 success is inherited saved-state evidence. Their source/branch and
+receipt details remain separate gaps. C01 victory/payout and C04/C05 ordinary
+journeys remain open. Next: run C04's daytime two-clue inspection and report.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Player goal and normal path
@@ -145,3 +147,19 @@ Command and continuation details belong to
 [N02](02-next-contract.md#roadtracks-delivery-and-retained-continuation--2026-11-16).
 Remote/fabricated-observation refusals were NOT_RUN in this native journey;
 this result does not close the complete C03/CT branch matrix.
+
+## Inherited mill result and remaining branches — 2026-11-16
+
+LOCAL. N02's restored final dump already retains the original ordinary mill
+rescue completed/paid and HUNT-01 completed. Reuse that saved success for
+C07–C09. It does not document each source clue, terminal/proof binding,
+custody/delivery receipt or replay. The older WLC-08 final journey only accepted
+the mill contract with its objectives still open, so its successful Wolf Trail
+run adds C02 evidence only.
+
+The remaining mill checks concern actual clue sources and eligibility, the
+hunt/proof relationship and absent-proof refusal, living delivery/custody and
+unavailable/dead-target handling. The separate approved «Голос из-под пола»
+implementation and its quiet-release equipment purchase do not substitute for
+these original scenes. Neither another full success replay nor a new mill
+implementation is required by this reconciliation.
