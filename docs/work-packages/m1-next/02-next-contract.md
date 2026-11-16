@@ -22,8 +22,20 @@ Latest continuation: the subsequent 0fb84685-22e9-4e9c-871e-cd281d3e74be retry
 lost all four remaining fighters after unusable client control. Both restored
 companies are now GAME_OVER, with effects applied and bindings released.
 [N08](08-battle-outcomes.md#native-control-loss-and-fourth-defeat--2026-11-16)
-records the retained outcome. Further same-company play is unavailable. T014
+records the retained outcome. Further play on that database is unavailable. T014
 and the remaining success criteria stay open.
+
+### Isolated retained-save continuation — 2026-11-16
+
+The separate `m1_n01_control_20261116` copy now supplies another continuation of
+the naturally created Dozor N01 save under N01's accepted fallback. It was copied
+from the retained R5 restore, before the later source defeats. The earlier source
+databases retain those failed outcomes. Ordinary owner OIDC re-entry restored
+398.71 crowns, three living members at 100/100 health and morale 10/14/14, Kest's
+equipped raider weapon/coat, and the unfinished HUNT-03 with its existing helper.
+Camp and three rest assignments succeeded through the UI. Local runtime and
+helper-fixture recovery details belong to [N12](12-release-preparation.md#current-local-runtime-pointers--2026-11-16).
+The persistent two-browser battle check is pending. T014 stays open.
 
 ### Earlier restore checkpoint — 2026-11-15
 

@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: rest assignments after travel locate the opening-attested
+  carried purse before funding access. The retained helper now rests and returns
+  at full health and 50 morale. [N06](docs/work-packages/m1-next/06-company-capabilities.md#rest-contact-refusal-on-the-retained-copy--2026-11-16). LOCAL.
+
+- 2026-11-16 — Changed: continue the accepted N01 save in an isolated retained-R5
+  copy and configure its existing local helper login for the next control check.
+  [N12](docs/work-packages/m1-next/12-release-preparation.md#current-local-runtime-pointers--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: authenticated cellar-rescue checks cover stranger/helper
   delivery refusals, the holder's funded once-only payment and reopened saved
   result. [C05](docs/work-packages/m1-next/05-contracts.md#c05-authenticated-delivery-authority--2026-11-16). LOCAL.

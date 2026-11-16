@@ -1476,6 +1476,106 @@ describe('ordinary company command executor (PostgreSQL)', () => {
     },
   );
 
+  it.skipIf(database === undefined).each(['missing', 'other-party', 'carried'] as const)(
+    'assigns recovery after travel only with the current party carried-purse evidence (%s)',
+    async (proof) => {
+      const openingId = randomUUID();
+      const walletId = `${openingId}:company-purse`;
+      await withOrdinaryScenario(
+        async (scenario) => {
+          if (!database) throw new Error('company test database missing');
+          const lifecycle = scenario.priorState.economy.lifecycle;
+          const party = lifecycle.parties[0]!;
+          const characterId = lifecycle.company!.currentLeaderId!;
+          try {
+            if (proof !== 'missing')
+              await database
+                .insertInto('company_opening_options')
+                .values({
+                  id: openingId,
+                  world_id: scenario.worldId,
+                  account_id: scenario.ownerAccountId,
+                  company_id: scenario.companyId,
+                  evidence: {
+                    id: openingId,
+                    worldId: scenario.worldId,
+                    companyId: scenario.companyId,
+                    partyId: proof === 'carried' ? party.partyId : 'another-party',
+                  },
+                  expires_at: new Date(60_000),
+                  consumed_at: new Date(0),
+                  consumed_command_id: 'test-opening',
+                  consumed_request_key: 'test-opening-request',
+                })
+                .execute();
+            const request = ordinaryRequest(scenario, {
+              type: 'SetAssignment',
+              payload: { characterId, assignment: 'RECOVERY' },
+            });
+            if (proof !== 'carried') {
+              await rejectOrdinaryUnchanged(scenario, request, 'CONTACT_OR_ACCESS_REQUIRED');
+              return;
+            }
+            expect(await executeOrdinary(scenario, request)).toMatchObject({
+              kind: 'COMMITTED',
+              response: { commandId: request.commandId, ok: true },
+            });
+            const stored = await readOrdinaryPersistence(scenario);
+            expect(
+              stored.state.economy.lifecycle.characters.find(
+                (person) => person.identity.characterId === characterId,
+              )?.presence.assignment,
+            ).toBe('RECOVERY');
+            const purse = stored.state.economy.finance.wallets.find(
+              (wallet) => wallet.walletId === walletId,
+            )!;
+            expect(purse.location).toEqual(party.location);
+            expect(purse.cashQ).toBe(
+              scenario.priorState.economy.finance.wallets.find(
+                (wallet) => wallet.walletId === walletId,
+              )!.cashQ,
+            );
+            expect(await executeOrdinary(scenario, request)).toMatchObject({
+              kind: 'COMMITTED',
+              response: { commandId: request.commandId, ok: true },
+            });
+            expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+          } finally {
+            await database
+              .deleteFrom('company_opening_options')
+              .where('id', '=', openingId)
+              .execute();
+          }
+        },
+        (state) => {
+          const finance = state.economy.finance;
+          const pool = finance.pools.find((entry) => entry.poolId === 'local')!;
+          return {
+            ...state,
+            economy: {
+              ...state.economy,
+              finance: {
+                ...finance,
+                pools: finance.pools.map((entry) =>
+                  entry.poolId === pool.poolId ? { ...entry, walletId } : entry,
+                ),
+                wallets: finance.wallets.map((wallet) =>
+                  wallet.walletId === pool.walletId
+                    ? {
+                        ...wallet,
+                        walletId,
+                        location: { ...wallet.location, siteId: 'old-site', areaId: 'old-yard' },
+                      }
+                    : wallet,
+                ),
+              },
+            },
+          };
+        },
+      );
+    },
+  );
+
   it.skipIf(database === undefined)(
     'assigns a local member to fed recovery, observes the assignment and only heals a future interval',
     async () => {

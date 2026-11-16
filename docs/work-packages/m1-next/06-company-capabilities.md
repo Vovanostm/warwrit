@@ -494,3 +494,48 @@ local observation before reading known vitals. A review initially suspected a
 stale display from inspecting the low-level projection alone; the ordinary
 observation path and native results above resolve that concern. Native nickname
 deed/consent/history and the remaining I1 rows remain open.
+
+### Rest contact refusal on the retained copy — 2026-11-16
+
+FIXED / LOCAL. In the isolated retained-R5 continuation, the ordinary player-three
+login restores helper company 2a5ab48d-29c3-49d5-8bf7-526c7bd351bc. Its sole
+living founder, Dozor, has 36/100 health, 74/100 stamina and morale 16. The UI
+reports AVAILABLE / FIELD and no known wounds. The two deaths remain saved.
+The company has 800 crowns and 20 rations at Kamenny Brod.
+
+Ordinary camp entry succeeded and the place view reports local food coverage.
+After one ordinary roster refresh, a deliberate RECOVERY assignment returned
+HTTP 409, CONTACT_OR_ACCESS_REQUIRED, public revision 223, command
+a74e55f9-0a31-4bbf-97bd-9d812ef1459b. The UI still offers rest. The command
+request body was not retained by the response-only listener. The founder remains
+FIELD at that checkpoint. Dozor N01's three rest assignments in the same city
+succeeded separately. No QA time had been advanced before the refusal.
+
+Read-only canonical inspection confirmed the founder's exact co-location,
+membership, availability and empty active-condition list. The local funding
+wallet still pointed to Severny Dvor. Consumed opening evidence identifies that
+purse as carried by the same party. SetAssignment now calls the existing scoped
+carried-purse reader and relocation function before preparing local assignment
+evidence. The purse identity, current local pool and party checks own that
+relocation. The ordinary command commits the resulting location and assignment
+together.
+
+The new real PostgreSQL regression failed for the valid carried-purse case
+before the fix. Missing attestation and another party's attestation preserve
+their refusal and saved state. The corrected union passes 4/4, including the
+existing fed-recovery/future-healing case and exact retry. An initial post-fix
+run used a helper that assumed every command response matched the subsequent
+observation revision. The case now follows the existing recovery test's response
+assertions and separately verifies persisted state. Logs are
+`output/m1-recovery-purse-{before,after,after-corrected}-20261116.log`. Server
+typecheck and scoped ESLint passed; formatting and diff checks passed.
+
+Native fresh command 421d161e-8f65-4b79-8df2-3a01ff12c72d then returned 200
+and showed the helper founder on RECOVERY. The protected QA control advanced
+84795→88795 in four 1000-tick steps. Ordinary refresh showed him at 100 health,
+100 stamina and 50 morale, with 800 crowns and 20 rations. FIELD return
+7964fae7-bc06-4db4-bcee-c72ebe365edb and camp closure
+57fcc106-159e-409d-8a42-bf88a68b7863 both returned 200. Dozor N01's three
+survivors also reached 100 health/stamina and 50 morale, retaining 398.71 crowns
+and 23 rations. They returned to FIELD and closed camp. Past wage debt accrued
+normally. The next native battle and the genuine nickname deed remain open.

@@ -19,19 +19,40 @@ port/proxy/callback settings at output/m1-source-current-20261116.env. The bare
 worktree .env points to the earlier m1_completion database. Use the replacement
 for source restarts. Preserve the existing source logs.
 
-Both retained source companies are now GAME_OVER after N08's latest failed
-battle. A separate fresh control-verification runtime uses the dedicated
-m1_control_sync_20261116 database, migrated 0001–0032. It runs API 3031,
-realtime 3032 and web 5331 with private output/m1-control-sync-20261116.env.
-Its source log is append-preserved output/m1-fresh-control-dev-20261116.log.
-The existing development quick-login created «Тестовая компания 1» with its
-configured 800 crowns and 30 rations. This is a fresh QA company, with provenance
-distinct from ordinary character creation and the preserved failed campaigns.
-Its Wolf Trail attempt with fresh company 2 ended in six allied deaths after
-the parent failed to keep the browser controllers active across JOIN. The
-failed companies and source saves are preserved. Fresh companies 3 and 4 now
-hold HUNT-04 and are scouting to its objective. Neither has joined another
-battle. Further native results belong to N09.
+Both retained source companies are GAME_OVER after N08's latest failed battle.
+The separate fresh QA database `m1_control_sync_20261116` is preserved. Its
+development-login companies 1 and 2 lost the Wolf Trail attempt after the parent
+failed to keep the browser controllers active across JOIN. Companies 3 and 4
+remain alive with HUNT-04 accepted. Their runtime was stopped through its owned
+terminal before another battle began. Its append-preserved log is
+`output/m1-fresh-control-dev-20261116.log`. [N09](09-player-experience.md)
+owns the failed controller attempt and the known-water feedback correction.
+
+The active continuation runtime now uses `m1_n01_control_20261116`, an isolated
+PostgreSQL template copy of retained `m1_r5_restore_guard_20261116`. The source
+had zero other sessions and the new name was absent before creation. Bounded
+company, contract, inventory, map and route readback matched. The copy retains
+Dozor N01's three survivors and the helper's one survivor/two deaths. The copy
+record is `output/m1-n01-control-copy.json`. It uses API 3031, realtime 3032 and
+web 5331, private `output/m1-n01-control-runtime-20261116.env` and append-preserved
+`output/m1-n01-control-dev-20261116.log`. Ordinary player-one OIDC entry restored
+Dozor N01 with 398.71 crowns. Camp and three RECOVERY assignments returned 200.
+
+The saved helper account 62254143-e21c-4178-aecb-b5199bf8ae94 maps to the
+existing `player-three@example.test` Dex fixture. Player two instead owns the
+older «Помощь N02». The initial identity read confused the final UUID digit;
+exact subject comparison corrected that mapping. Player two's company was
+inspected through ordinary login, with no gameplay command accepted.
+The guessed player-three password failed once. Its configured password was
+undocumented, so the parent set a recorded local test password in that fixture's
+single hash line and restarted the owned local Dex container. Discovery returned 200. The mode-0600 backup is
+`output/m1-n01-dex-before-helper-recovery-20261116.yaml`; the mode-0600 login input
+is `output/m1-n01-helper-login-20261116.env`. Normal player-three OIDC re-entry
+then restored the expected helper account/company with 800 crowns, 20 rations
+and its founder at 36 health/16 morale. Camp succeeded. A fresh rest assignment
+exposed the carried-purse location defect; [N06](06-company-capabilities.md#rest-contact-refusal-on-the-retained-copy--2026-11-16)
+owns its correction and the subsequent successful recovery to 100 health and
+50 morale, FIELD return and camp closure. The next battle remains pending.
 
 Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
 not run.

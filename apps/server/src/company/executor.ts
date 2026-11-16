@@ -443,6 +443,15 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       .executeTakeFirstOrThrow();
   }
 
+  if (input.request.type === 'SetAssignment') {
+    const carriedPurse = await readCarriedSupplyPurse(
+      input.transaction,
+      input.worldId,
+      companyId,
+      input.accountId,
+    );
+    state = locateCarriedCompanyPurse(state, carriedPurse);
+  }
   const assignmentEvidence =
     input.request.type === 'SetAssignment'
       ? prepareLocalAssignmentEvidence(
