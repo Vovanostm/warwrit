@@ -88,6 +88,40 @@ the camp inactive, returned HTTP 409 with
 поблизости не останется противников.» No battle was joined. Full T029 and SC-008
 acceptance remain open.
 
+### Read-only selected-row comparison — 2026-11-16
+
+LOCAL / PARTIAL. Compared the private 00:57:38 UTC dump baseline with the restored
+target extract taken at 02:17:46 UTC. The baseline contains 32 selected canonical
+public tables. I confirmed their comparison keys against the target's primary-key
+constraints; every baseline key is present in the target, with no missing baseline
+rows. The extract and dump remain private, ignored, and mode 0600. No database or
+gameplay writes were made for this comparison.
+
+The original resolved encounter remains intact. The target also contains the later
+native encounter `77ac1437`, which resolved at 02:09:09 UTC in round 7 / revision
+66: two helper companions died, three surrendered and one retreated; the owner had
+no deaths, the helper leader survived, and both bindings were released. The target
+has two resolved encounters, 66 additional encounter commands/receipts and 173
+additional events. The owner snapshot advanced from public/canonical revisions
+676/687 to 767/778; the helper snapshot advanced 143/143 to 186/191. Both retained
+their character and membership IDs. Current wallet records match the baseline,
+while ordinary finance history advanced by two claims in each snapshot and physical
+food history grew with elapsed ticks.
+
+For Дозор N01, all 19 baseline item IDs remain, with one additional item row;
+aggregate quantity remains 51. Five shared rows changed equipped state and five
+changed container assignment, consistent with battle consequences, and no item
+owner changed. Its seven character IDs, three membership IDs and learning-task
+state match the baseline.
+Knowledge and route state did advance: the owner snapshot has one more known item
+and two more known containers; map grants, exploration chunks and map editions
+retain their baseline rows. Receipt sets are monotonic in the selected tables:
+93 company receipts and one route receipt were added, while all baseline company,
+ordinary-contract, story and route receipts remain present. The comparison covers
+these selected tables and keyed saved rows only; it is not full T029, RPO/RTO,
+capacity measurement or SC-008 acceptance. RPO/RTO and capacity remain
+NOT_MEASURED.
+
 ## Player goal and ordinary result
 
 An interruption cannot duplicate money, erase people or trap a company.
