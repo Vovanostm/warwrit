@@ -213,6 +213,8 @@ export interface CompanyHoldingsDto {
     readonly maximumHealth: number | null;
     readonly currentStamina: number | null;
     readonly maximumStamina: number | null;
+    readonly currentMorale?: number | null;
+    readonly maximumMorale?: number | null;
     /** Unresolved physical conditions (wounds, illness) by definition id. */
     readonly conditions: readonly string[];
     /** Lawfully observed local duty state and actions currently available to the owner. */

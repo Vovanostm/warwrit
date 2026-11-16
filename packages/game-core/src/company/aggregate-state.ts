@@ -878,7 +878,6 @@ function transitionShape(value: unknown): boolean {
 
 function emptyRoundLimitTransitionShape(state: Record<string, unknown>, events: unknown): boolean {
   const round = state['round'];
-  const rounds = Array.isArray(events) ? events.slice(1, -1) : [];
   if (
     state['rulesetId'] !== M1_DOMAIN_BRIDGE_V6_RULESET_ID ||
     state['status'] !== 'resolved' ||
@@ -1274,7 +1273,7 @@ function vitalsShapeForBinding(value: unknown): boolean {
         'currentStamina',
         'staminaCarry',
       ],
-      ['morale'],
+      ['morale', 'moraleCarry'],
     ) &&
     ['characterId', 'sourceId'].every((key) => isEntityId(value[key])) &&
     ['maximumHealth', 'currentHealth', 'maximumStamina', 'currentStamina'].every((key) =>
@@ -1282,7 +1281,9 @@ function vitalsShapeForBinding(value: unknown): boolean {
     ) &&
     isExactInteger(value['healthCarry']) &&
     isExactInteger(value['staminaCarry']) &&
-    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale']))
+    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale'])) &&
+    (!Object.hasOwn(value, 'moraleCarry') ||
+      (Object.hasOwn(value, 'morale') && isExactInteger(value['moraleCarry'])))
   );
 }
 function projectionShape(value: unknown): boolean {

@@ -436,7 +436,10 @@ The owner accepted safe-camp recovery after the native low-morale retry.
 While resting in a safe camp with food, a fighter regains 10 morale per campaign
 day up to the opening value of 50. Existing values above 50 remain intact.
 Recovery uses eligible elapsed time and saved fractional progress, with the
-same result for split intervals and one combined interval. Moving, combat,
+same result for split intervals and one combined interval. Food eligibility
+reuses the existing physical fulfillment and camp CURRENT_FOOD receipts.
+The established field camp provides current food through its maintenance rule.
+That provision remains a valid food source with an empty carried ration stock. Moving, combat,
 unsafe camping and uncovered food intervals grant no recovery.
 
 Player goal is to return frightened survivors to effective duty. The normal
@@ -444,5 +447,50 @@ path is arrival at a safe place, available food, pitching camp and resting,
 then checking morale before breaking camp and taking the next task. The player
 can interrupt rest and retain the progress earned so far. Reload and exact
 command retries retain one saved result. Older vitals without fractional morale
-progress remain readable. Implementation is IN_PROGRESS / LOCAL in the isolated
-morale worktree. The saved native battle and its pending effects remain under N08/N11.
+progress remain readable. Implementation is COMPLETED / LOCAL in the integration
+worktree. The saved native battle and its effects remain under N08/N11.
+
+### Native camp recovery and compatibility — 2026-11-16
+
+The owner returned to safe Kamenny Brod with three survivors at 60/100 health
+and morale 14/10/14. After buying 25 rations for 100 crowns, carried stock was 30
+and cash 343.71. Camp command d5226f22-9bee-4e4e-8878-e1b6254af521 and all three
+ordinary rest assignments succeeded. The assignments were
+da650523-b282-4386-9b4b-564af4679cec,
+fd8af545-1b8e-4907-a71a-1d0630b71d49 and
+c6cbc8d8-b691-481c-bcb4-dd2c106d2e9b.
+
+The protected QA control advanced 93459→94459 by 1,000 ticks with
+87851dc1-79c8-4947-a093-8b81599101ee. Ordinary recovery refresh showed morale
+24/20/24 and health/stamina 100/100. Three further 1,000-tick controls advanced
+94463→95463→96463→97463. Ordinary refresh and reload showed all three at 50 morale,
+100/100 health/stamina, the same 30 carried rations and 343.71 crowns. Fractional
+natural elapsed time remained part of the existing calculation. The screenshot is
+output/playwright/m1-owner-camp-morale 50-20261116.png.
+
+The helper separately rested its surviving founder in a safe Brod camp from
+about tick 93446 at morale 16, health 49 and 5 carried rations. The first day
+was directly read back at morale 26. After the remaining elapsed-time controls,
+reload showed morale 50 and health 100, retaining 5 rations.
+Its earlier night visit to Bereznyak had living wolves, so safe-camp preparation
+continued in Brod. The helper's two camp/morale captures are retained under
+.playwright-cli/m1-helper-camp-morale 50-*. Historical deaths and wage debts
+remain intact.
+
+All three owner members returned to FIELD through accepted ordinary commands.
+Two closely sequenced requests received STALE_REVISION and succeeded as fresh
+deliberate actions after the UI refresh. Break-camp command
+362be601-5f4a-4e30-b1f7-66ef2c915ac5 succeeded, followed by the ordinary route
+back to Old Mill. The current-food maintenance coverage supplied by FIELD_CAMP
+is the existing food policy used by this implementation, including an empty
+carried ration stock.
+
+The focused morale/loot/roster union passed 54/54. Recovery cases include split
+interval equivalence, interrupted/moving/non-camp rest, food coverage, the cap,
+higher existing morale and legacy absent fractional progress. Core/protocol
+builds and server/web typechecks passed. Morale DTO fields remain optional and
+nullable for older schema 1 responses. The owner projection uses established
+local observation before reading known vitals. A review initially suspected a
+stale display from inspecting the low-level projection alone; the ordinary
+observation path and native results above resolve that concern. Native nickname
+deed/consent/history and the remaining I1 rows remain open.

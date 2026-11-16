@@ -3,8 +3,14 @@ import {
   prepareCompanyEconomy,
   projectCompanyEconomy,
   projectCompanyPhysical,
+  readCompanyCombatAggregateState,
 } from '@warwrit/game-core';
-import type { CompanyEconomyState, PhysicalEvidence } from '@warwrit/game-core';
+import type {
+  CompanyCombatAggregateState,
+  CompanyEconomyState,
+  FinanceEvidence,
+  PhysicalEvidence,
+} from '@warwrit/game-core';
 import {
   access,
   advance,
@@ -15,8 +21,10 @@ import {
   physicalScope,
   place,
   prepared,
+  scope,
   tick,
 } from './company-economy-fixture.js';
+import { createCompanyCombatAggregateFixture } from './company-combat-aggregate-fixture.js';
 import {
   addItem,
   addVitals,
@@ -26,7 +34,11 @@ import {
   withCareProvider,
 } from './company-physical-fixture.js';
 
-function resting(state: CompanyEconomyState, characterId: string): CompanyEconomyState {
+function resting(
+  state: CompanyEconomyState,
+  characterId: string,
+  morale?: number,
+): CompanyEconomyState {
   return addVitals(
     visibleCharacter(state, characterId, (character) => ({
       ...character,
@@ -41,8 +53,24 @@ function resting(state: CompanyEconomyState, characterId: string): CompanyEconom
       maximumStamina: 100,
       currentStamina: 70,
       staminaCarry: '0',
+      ...(morale === undefined ? {} : { morale }),
     },
   );
+}
+function beginSafeCamp(state: CompanyEconomyState, conflict = false) {
+  const cmd = command(state, 'BeginFieldCamp', {
+    partyId: 'party',
+    siteEligibilityId: 'safe-rest-camp',
+  });
+  const site: FinanceEvidence = {
+    ...scope(state, 'safe-rest-camp'),
+    kind: 'CAMP_SITE',
+    partyId: 'party',
+    location: place,
+    stationary: true,
+    conflict,
+  };
+  return prepareCompanyEconomy(state, cmd, context(state, cmd, [site]));
 }
 function withStock(state: CompanyEconomyState, quantity: number): CompanyEconomyState {
   const items = quantity === 0 ? [] : [{ ...state.physical!.items[0]!, quantity }];
@@ -93,6 +121,9 @@ function careInput(
 }
 function health(state: CompanyEconomyState, characterId = 'worker-0') {
   return state.physical!.vitals.find((v) => v.characterId === characterId)!.currentHealth;
+}
+function morale(state: CompanyEconomyState, characterId = 'leader') {
+  return state.physical!.vitals.find((v) => v.characterId === characterId)?.morale;
 }
 function providerFood(state: CompanyEconomyState, to: number, cost: number) {
   const cmd = command(
@@ -333,6 +364,127 @@ describe('WP-02.4 — adversarial recovery and fulfillment review', () => {
       expect(state.physical!.foodCarry[0]?.tickUnits).toBe('0');
       expect(health(state, 'leader')).toBe(100);
     }
+  });
+
+  it('restores ten morale per fed campaign day only during the accepted safe-camp rest interval', () => {
+    const initial = withStock(resting(economy([], 0n, 0), 'leader', 35), 100);
+    const camped = prepared(beginSafeCamp(initial)).next;
+    const first = advance(camped, 333).next;
+    expect(morale(first)).toBe(38);
+    expect(first.physical!.vitals.find((v) => v.characterId === 'leader')?.moraleCarry).toBe('330');
+
+    const fragmented = advance(JSON.parse(JSON.stringify(first)) as CompanyEconomyState, 500).next;
+    const whole = advance(camped, 500).next;
+    const fullDay = advance(camped, 1000).next;
+    const toOpening = advance(camped, 2000).next;
+    expect(morale(fragmented)).toBe(40);
+    expect(morale(whole)).toBe(40);
+    expect(morale(fullDay)).toBe(45);
+    expect(morale(toOpening)).toBe(50);
+    expect(fragmented.physical!.vitals.find((v) => v.characterId === 'leader')?.moraleCarry).toBe(
+      '0',
+    );
+    expect(toOpening.physical!.vitals.find((v) => v.characterId === 'leader')?.moraleCarry).toBe(
+      '0',
+    );
+    expect(fragmented.physical!.food).toEqual(whole.physical!.food);
+  });
+
+  it('does not accrue prior time, time outside camp or time after the camp boundary', () => {
+    const initial = withStock(resting(economy([], 0n, 0), 'leader', 35), 100);
+    const beforeCamp = advance(initial, 250).next;
+    expect(morale(beforeCamp)).toBe(35);
+    const camped = prepared(beginSafeCamp(beforeCamp)).next;
+    const afterCampStart = advance(camped, 500).next;
+    expect(morale(afterCampStart)).toBe(37);
+    expect(
+      afterCampStart.physical!.vitals.find((v) => v.characterId === 'leader')?.moraleCarry,
+    ).toBe('500');
+
+    const boundaryCamp = prepared(beginSafeCamp(initial)).next;
+    const agreementId = boundaryCamp.finance.maintenance[0]!.agreementId;
+    const boundary: FinanceEvidence = {
+      ...physicalScope(boundaryCamp, 'camp-ended-for-encounter', tick(500)),
+      kind: 'MAINTENANCE_BOUNDARY',
+      agreementId,
+      reason: 'ENCOUNTER',
+    };
+    const ended = advance(boundaryCamp, 1000, [boundary]).next;
+    expect(morale(ended)).toBe(40);
+    expect(ended.finance.maintenance[0]?.endedAt).toBe('500');
+
+    const movingCamp = prepared(beginSafeCamp(initial)).next;
+    const movementBoundary: FinanceEvidence = {
+      ...physicalScope(movingCamp, 'camp-ended-for-movement', tick(500)),
+      kind: 'MAINTENANCE_BOUNDARY',
+      agreementId: movingCamp.finance.maintenance[0]!.agreementId,
+      reason: 'MOVE',
+    };
+    const afterMovement = advance(movingCamp, 1000, [movementBoundary]).next;
+    expect(morale(afterMovement)).toBe(40);
+    expect(afterMovement.finance.maintenance[0]?.endedAt).toBe('500');
+  });
+
+  it('requires a safe camp and fed time, and preserves higher or unknown legacy morale', () => {
+    const initial = withStock(resting(economy([], 0n, 0), 'leader', 35), 100);
+    const unsafe = beginSafeCamp(initial, true);
+    expect(unsafe).toMatchObject({ kind: 'REJECTED', error: 'INVALID_SOURCE' });
+    expect(unsafe.state).toBe(initial);
+    expect(morale(advance(initial, 1000).next)).toBe(35);
+
+    const emptyStock = withStock(resting(economy([], 0n, 0), 'leader', 35), 0);
+    const suppliedCamp = prepared(beginSafeCamp(emptyStock)).next;
+    const suppliedCommand = command(
+      suppliedCamp,
+      'AdvanceCampaign',
+      { toTick: '1000', authoritativeInputs: [] },
+      'camp-supplied-rest',
+      'SYSTEM',
+    );
+    const suppliedRest = prepareCompanyEconomy(
+      suppliedCamp,
+      suppliedCommand,
+      context(suppliedCamp, suppliedCommand),
+    );
+    expect(suppliedRest.state).toBe(suppliedCamp);
+    if (suppliedRest.kind !== 'PREPARED') throw new Error(suppliedRest.error);
+    expect(suppliedRest.next.finance.maintenanceReceipts).toContainEqual(
+      expect.objectContaining({ fulfillment: 'CURRENT_FOOD', fromTick: '0', toTick: '1000' }),
+    );
+    expect(morale(suppliedRest.next)).toBe(45);
+
+    const higher = withStock(resting(economy([], 0n, 0), 'leader', 70), 100);
+    expect(morale(advance(prepared(beginSafeCamp(higher)).next, 1000).next)).toBe(70);
+    const legacy = withStock(resting(economy([], 0n, 0), 'leader'), 100);
+    const legacyAfter = advance(prepared(beginSafeCamp(legacy)).next, 1000).next;
+    expect(morale(legacyAfter)).toBeUndefined();
+  });
+
+  it('round-trips the optional fractional morale carry and accepts legacy vitals without it', () => {
+    const legacy = createCompanyCombatAggregateFixture().state;
+    expect(readCompanyCombatAggregateState(JSON.parse(JSON.stringify(legacy)))).toEqual(legacy);
+    const addCarry = (value: unknown): unknown => {
+      if (Array.isArray(value)) return value.map(addCarry);
+      if (typeof value !== 'object' || value === null) return value;
+      const record = value as Record<string, unknown>;
+      const copied = Object.fromEntries(
+        Object.entries(record).map(([key, entry]) => [key, addCarry(entry)]),
+      );
+      if (
+        typeof copied['characterId'] === 'string' &&
+        Number.isSafeInteger(copied['maximumHealth']) &&
+        Number.isSafeInteger(copied['currentHealth']) &&
+        typeof copied['morale'] === 'number'
+      )
+        copied['moraleCarry'] = '500';
+      return copied;
+    };
+    const withCarry = addCarry(JSON.parse(JSON.stringify(legacy))) as CompanyCombatAggregateState;
+    const reloaded = readCompanyCombatAggregateState(withCarry);
+    expect(reloaded.economy.physical?.vitals.every((vitals) => vitals.moraleCarry === '500')).toBe(
+      true,
+    );
+    expect(JSON.stringify(reloaded)).toContain('"moraleCarry":"500"');
   });
 
   it('P3/P4/P8: provider food pays its sub-day quote once and does not erase backed stock time', () => {

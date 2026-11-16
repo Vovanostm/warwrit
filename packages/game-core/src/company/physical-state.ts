@@ -537,6 +537,15 @@ export function validatePhysicalState(
           isEntityId(vitals.sourceId)),
       'INVALID_STATE',
     );
+  for (const vitals of [...physical.vitals, ...physical.knowledge.vitalSnapshots])
+    requirePhysical(
+      vitals.moraleCarry === undefined ||
+        (vitals.morale !== undefined &&
+          isExactInteger(vitals.moraleCarry) &&
+          BigInt(vitals.moraleCarry) >= 0n &&
+          BigInt(vitals.moraleCarry) < BigInt(COMPANY_RULES.ticksPerDay)),
+      'INVALID_STATE',
+    );
   for (const vitals of physical.vitals)
     requirePhysical(
       lifecycle.characters.some(
@@ -742,7 +751,7 @@ function vitalsShape(value: unknown): boolean {
         'currentStamina',
         'staminaCarry',
       ],
-      ['morale'],
+      ['morale', 'moraleCarry'],
     ) &&
     isEntityId(value['characterId']) &&
     isEntityId(value['sourceId']) &&
@@ -754,7 +763,9 @@ function vitalsShape(value: unknown): boolean {
     ].every(Number.isSafeInteger) &&
     isExactInteger(value['healthCarry']) &&
     isExactInteger(value['staminaCarry']) &&
-    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale']))
+    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale'])) &&
+    (!Object.hasOwn(value, 'moraleCarry') ||
+      (Object.hasOwn(value, 'morale') && isExactInteger(value['moraleCarry'])))
   );
 }
 function conditionShape(value: unknown): boolean {

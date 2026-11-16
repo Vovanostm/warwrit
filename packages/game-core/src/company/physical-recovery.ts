@@ -2,6 +2,7 @@ import { COMPANY_RULES } from './definitions.js';
 import { person } from './lifecycle-state.js';
 import { campaignTick, isExactInteger } from './values.js';
 import { foodCovered } from './physical-food.js';
+import { beneficiaryCoveredAt } from './economy-coverage.js';
 import { canonicalJson } from './input.js';
 import {
   activeConditions,
@@ -12,7 +13,7 @@ import {
   syncLifecycleConditions,
 } from './physical-state.js';
 import type { MaterializedCompanyState } from './physical-root-types.js';
-import type { TrustedTransitSegment } from './physical-types.js';
+import { PHYSICAL_RULES, type TrustedTransitSegment } from './physical-types.js';
 import { travelProfile } from './physical-types.js';
 
 function restore(
@@ -27,6 +28,91 @@ function restore(
   const gain = numerator / fullTicks;
   if (gain >= BigInt(maximum - current)) return { current: maximum, carry: '0' };
   return { current: current + Number(gain), carry: (numerator % fullTicks).toString() };
+}
+
+function eligibleCampTicks(
+  root: MaterializedCompanyState,
+  characterId: string,
+  membershipId: string,
+  partyId: string,
+  from: bigint,
+  to: bigint,
+  trustedTransitSegments: readonly TrustedTransitSegment[],
+): bigint {
+  const member = root.lifecycle.memberships.find((entry) => entry.membershipId === membershipId);
+  if (!member) return 0n;
+  const campAgreements = root.finance.maintenance.filter(
+    (agreement) =>
+      agreement.kind === 'FIELD_CAMP' &&
+      agreement.partyId === partyId &&
+      agreement.beneficiaryIds.includes(characterId),
+  );
+  const transit = trustedTransitSegments.filter(
+    (segment) =>
+      segment.worldId === root.lifecycle.worldId &&
+      segment.companyId === root.lifecycle.companyId &&
+      segment.partyId === partyId,
+  );
+  const boundaries = new Set<bigint>([from, to]);
+  const addBoundary = (tick: string | null | undefined) => {
+    if (tick === null || tick === undefined) return;
+    const value = BigInt(tick);
+    if (value > from && value < to) boundaries.add(value);
+  };
+  for (const agreement of campAgreements) {
+    addBoundary(agreement.startedAt);
+    addBoundary(agreement.endedAt);
+    addBoundary(
+      agreement.beneficiaryEnds.find((entry) => entry.characterId === characterId)?.atTick,
+    );
+  }
+  for (const entry of root.physical.food.filter((food) => food.membershipId === membershipId)) {
+    addBoundary(entry.fromTick);
+    addBoundary((BigInt(entry.toTick) - BigInt(entry.uncoveredTickUnits ?? '0')).toString());
+  }
+  for (const receipt of root.finance.maintenanceReceipts.filter(
+    (entry) => entry.beneficiaryId === member.characterId,
+  )) {
+    addBoundary(receipt.fromTick);
+    addBoundary(receipt.toTick);
+  }
+  for (const segment of transit) {
+    addBoundary(segment.startedAt);
+    addBoundary(segment.dueTick);
+  }
+  const ordered = [...boundaries].toSorted((left, right) =>
+    left < right ? -1 : left > right ? 1 : 0,
+  );
+  let eligible = 0n;
+  for (let index = 0; index < ordered.length - 1; index++) {
+    const start = ordered[index]!;
+    const finish = ordered[index + 1]!;
+    if (
+      campAgreements.some((agreement) =>
+        beneficiaryCoveredAt(agreement, characterId, campaignTick(start.toString())),
+      ) &&
+      !transit.some(
+        (segment) => BigInt(segment.startedAt) < finish && BigInt(segment.dueTick) > start,
+      ) &&
+      foodCovered(root, membershipId, start, finish)
+    )
+      eligible += finish - start;
+  }
+  return eligible;
+}
+
+function moraleRecovery(
+  current: number,
+  carryText: string,
+  eligibleTicks: bigint,
+): { readonly current: number; readonly carry: string } {
+  const maximum = PHYSICAL_RULES.openingMorale;
+  if (current >= maximum) return { current, carry: '0' };
+  const ticksPerDay = BigInt(COMPANY_RULES.ticksPerDay);
+  const total = BigInt(carryText) + eligibleTicks * BigInt(COMPANY_RULES.restMoralePerDay);
+  const gain = total / ticksPerDay;
+  if (gain >= BigInt(maximum - current)) return { current: maximum, carry: '0' };
+  return { current: current + Number(gain), carry: (total % ticksPerDay).toString() };
 }
 
 export function advancePhysicalRecovery(
@@ -47,16 +133,40 @@ export function advancePhysicalRecovery(
     const finish =
       member.endedAt === null || BigInt(member.endedAt) > to ? to : BigInt(member.endedAt);
     if (finish <= start) continue;
-    const recoverable =
+    const resting =
       character.presence.assignment === 'RECOVERY' &&
       character.presence.availability === 'AVAILABLE' &&
-      character.presence.encounterBindingId === null &&
-      foodCovered({ ...root, physical }, member.membershipId, start, finish);
-    if (!recoverable) continue;
+      character.presence.encounterBindingId === null;
+    if (!resting) continue;
     const duration = finish - start;
     const existingVitals = physical.vitals.find(
       (entry) => entry.characterId === member.characterId,
     );
+    if (existingVitals?.morale !== undefined && character.presence.fieldPartyId !== null) {
+      const eligibleTicks = eligibleCampTicks(
+        root,
+        member.characterId,
+        member.membershipId,
+        character.presence.fieldPartyId,
+        start,
+        finish,
+        trustedTransitSegments,
+      );
+      if (eligibleTicks > 0n) {
+        const morale = moraleRecovery(
+          existingVitals.morale,
+          existingVitals.moraleCarry ?? '0',
+          eligibleTicks,
+        );
+        physical = replaceVitals(physical, {
+          ...existingVitals,
+          morale: morale.current,
+          moraleCarry: morale.carry,
+        });
+      }
+    }
+    const recoverable = foodCovered({ ...root, physical }, member.membershipId, start, finish);
+    if (!recoverable) continue;
     const conditions = activeConditions(physical, member.characterId);
     if (
       conditions.some((instance) => {
@@ -99,8 +209,12 @@ export function advancePhysicalRecovery(
         duration,
         BigInt(COMPANY_RULES.restStaminaTicks),
       );
+      const currentVitals = physical.vitals.find(
+        (entry) => entry.characterId === member.characterId,
+      );
+      requirePhysical(currentVitals, 'INVALID_STATE');
       physical = replaceVitals(physical, {
-        ...existingVitals,
+        ...currentVitals,
         currentHealth: health.current,
         healthCarry: health.carry,
         currentStamina: stamina.current,

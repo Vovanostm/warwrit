@@ -49,6 +49,8 @@ it('retains a lost assignment across remount and refuses an opposite order until
         maximumHealth: 100,
         currentStamina: 80,
         maximumStamina: 100,
+        currentMorale: null,
+        maximumMorale: null,
         conditions: ['severe'],
         recovery: { assignment: 'FIELD', canRest: true, canReturnToField: false },
       },

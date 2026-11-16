@@ -554,6 +554,7 @@ export const COMPANY_RULES = freezeRegistry({
   maxF1Groups: 1,
   restHealthTicks: '100',
   restStaminaTicks: '10',
+  restMoralePerDay: 10,
   farewellMaxDays: 7,
   economy: {
     version: 's02-economy-parameters-1',

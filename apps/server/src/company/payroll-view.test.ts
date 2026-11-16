@@ -8,6 +8,7 @@ import {
   createSocialState,
   canonicalRevision,
   readCompanyCombatAggregateState,
+  PHYSICAL_RULES,
 } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyReadResponseDto } from '@warwrit/protocol';
@@ -220,6 +221,30 @@ describe('payroll projection', () => {
   it('attaches safe payroll totals to holdings and leaves historical responses compatible', () => {
     const state = stateWithClaims();
     const holdings = projectCompanyHoldings(state, 'a-company', ['a-leader']);
+    const leaderVitals = state.economy.physical!.vitals.find(
+      (vitals) => vitals.characterId === 'a-leader',
+    );
+    if (!leaderVitals) throw new Error('Fixture leader vitals missing');
+    const knownVitals = [
+      ...state.economy.physical!.knowledge.vitalSnapshots.filter(
+        (vitals) => vitals.characterId !== 'a-leader',
+      ),
+      { ...leaderVitals, morale: 43 },
+    ];
+    const observedMorale = projectCompanyHoldings(
+      {
+        ...state,
+        economy: {
+          ...state.economy,
+          physical: {
+            ...state.economy.physical!,
+            knowledge: { ...state.economy.physical!.knowledge, vitalSnapshots: knownVitals },
+          },
+        },
+      },
+      'a-company',
+      ['a-leader'],
+    );
     const oldResponse: CompanyReadResponseDto = {
       schemaVersion: 1,
       company: null,
@@ -240,6 +265,11 @@ describe('payroll projection', () => {
       payroll: { owedQ: '9007199254740986', dueQ: '9007199254740985' },
     });
     expect(oldResponse.holdings?.payroll).toBeUndefined();
+    expect(holdings.people[0]).toMatchObject({ currentMorale: null, maximumMorale: null });
+    expect(observedMorale.people[0]).toMatchObject({
+      currentMorale: 43,
+      maximumMorale: PHYSICAL_RULES.maximumMorale,
+    });
   });
 
   it('uses the finance observation tick and excludes claims from unknown service accounts', () => {
