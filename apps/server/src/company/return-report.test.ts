@@ -5,15 +5,21 @@ import { describe, expect, it } from 'vitest';
 import {
   accruedReturnReportWagesQ,
   classifyReturnReportAcknowledgement,
+  parseContractOutcomeIds,
+  serializeContractOutcomeIds,
   consumedReturnReportRations,
   hasReturnReportFacts,
   projectReturnReportEvent,
   projectEmptyWatchReturnOutcome,
   projectStretcherReturnOutcome,
+  projectWhoseWolvesReturnOutcome,
+  projectFoulWellReturnOutcome,
   returnReportElapsedDays,
   settledMovementCount,
   settledReturnReportTick,
 } from './return-report.js';
+import type { WhoseWolvesQuestState } from '@warwrit/game-core';
+import type { FoulWellOutcome } from '../contracts/foul-well-state.js';
 
 function withState(
   update: (state: CompanyCombatAggregateState) => CompanyCombatAggregateState,
@@ -473,5 +479,128 @@ describe('company return report facts', () => {
     expect(
       projectReturnReportEvent(event, '20', new Set(['event-known']), new Set()),
     ).toBeUndefined();
+  });
+
+  it('projects only the owning company’s saved wolf choice and matured raid', () => {
+    const state: WhoseWolvesQuestState = {
+      schemaVersion: 1,
+      companies: [{ companyId: 'company-a', findings: [], refusalPending: false }],
+      outcome: {
+        kind: 'PACK_KILLED',
+        companyId: 'company-a',
+        sourceEventId: 'wolf-kill-report',
+        atTick: '1000',
+        raidDueTick: '8000',
+      },
+    };
+    expect(projectWhoseWolvesReturnOutcome(state, 'company-b', '1000', '8000')).toEqual([]);
+    expect(projectWhoseWolvesReturnOutcome(state, 'company-a', '1000', '7999')).toEqual([
+      {
+        instanceId: 'ci.m1.whose-wolves.01',
+        outcome: 'WOLVES_PACK_KILLED',
+        atTick: '1000',
+      },
+    ]);
+    expect(projectWhoseWolvesReturnOutcome(state, 'company-a', '1000', '8000')).toEqual([
+      {
+        instanceId: 'ci.m1.whose-wolves.01',
+        outcome: 'WOLVES_PACK_KILLED',
+        atTick: '1000',
+      },
+    ]);
+    const matured = {
+      ...state,
+      outcome: { ...state.outcome!, raidAtTick: '8000' },
+    };
+    expect(projectWhoseWolvesReturnOutcome(matured, 'company-a', '1000', '8000')).toEqual([
+      {
+        instanceId: 'ci.m1.whose-wolves.01',
+        outcome: 'WOLVES_PACK_KILLED',
+        atTick: '1000',
+      },
+      {
+        instanceId: 'ci.m1.whose-wolves.01',
+        outcome: 'WOLVES_RAID',
+        atTick: '8000',
+      },
+    ]);
+  });
+
+  it('projects Foul Well choice and exile only when its saved delay has matured', () => {
+    const outcome: FoulWellOutcome = {
+      companyId: 'company-a',
+      atTick: '1000',
+      sourceEventId: 'foul-well-ending',
+      slotId: 'foul-well-aghafya-accused',
+    };
+    expect(projectFoulWellReturnOutcome(outcome, 'company-b', '1000', '8000')).toEqual([]);
+    expect(projectFoulWellReturnOutcome(outcome, 'company-a', '1000', '7999')).toEqual([
+      {
+        instanceId: 'ci.m1.foul-well.01',
+        outcome: 'FOUL_WELL_AGHAFYA_ACCUSED',
+        atTick: '1000',
+      },
+    ]);
+    expect(projectFoulWellReturnOutcome(outcome, 'company-a', '1000', '8000')).toEqual([
+      {
+        instanceId: 'ci.m1.foul-well.01',
+        outcome: 'FOUL_WELL_AGHAFYA_ACCUSED',
+        atTick: '1000',
+      },
+      {
+        instanceId: 'ci.m1.foul-well.01',
+        outcome: 'FOUL_WELL_HERBALIST_EXILED',
+        atTick: '8000',
+      },
+    ]);
+    const truth: FoulWellOutcome = { ...outcome, slotId: 'foul-well-truth-reported' };
+    expect(projectFoulWellReturnOutcome(truth, 'company-a', '1000', '9000')).toEqual([
+      {
+        instanceId: 'ci.m1.foul-well.01',
+        outcome: 'FOUL_WELL_TRUTH_REPORTED',
+        atTick: '1000',
+      },
+    ]);
+  });
+
+  it('roundtrips acknowledged wolf and well phases so reloaded reports do not repeat them', () => {
+    const saved = new Set([
+      'ci.m1.whose-wolves.01:wolf-kill-report',
+      'ci.m1.whose-wolves.01:RAID:wolf-kill-report',
+      'ci.m1.foul-well.01:foul-well-ending',
+      'ci.m1.foul-well.01:HERBALIST_EXILED:foul-well-ending',
+    ]);
+    const restored = parseContractOutcomeIds(JSON.parse(serializeContractOutcomeIds(saved)));
+    expect(restored).toEqual(saved);
+
+    const wolves: WhoseWolvesQuestState = {
+      schemaVersion: 1,
+      companies: [{ companyId: 'company-a', findings: [], refusalPending: false }],
+      outcome: {
+        kind: 'PACK_KILLED',
+        companyId: 'company-a',
+        sourceEventId: 'wolf-kill-report',
+        atTick: '1000',
+        raidDueTick: '8000',
+        raidAtTick: '8000',
+      },
+    };
+    expect(projectWhoseWolvesReturnOutcome(wolves, 'company-a', '1000', '8000', restored!)).toEqual(
+      [],
+    );
+    expect(
+      projectFoulWellReturnOutcome(
+        {
+          companyId: 'company-a',
+          atTick: '1000',
+          sourceEventId: 'foul-well-ending',
+          slotId: 'foul-well-aghafya-accused',
+        },
+        'company-a',
+        '1000',
+        '8000',
+        restored!,
+      ),
+    ).toEqual([]);
   });
 });

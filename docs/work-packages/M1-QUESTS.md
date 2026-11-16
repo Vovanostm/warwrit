@@ -4,7 +4,8 @@ Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
 quests have local domain, server and UI implementations. The combined branch
 has focused checks and migrations through 0032. The twenty-quest native matrix,
 four paired moral outcomes and full M1 player acceptance remain open. Return
-report consumers for «Чьи волки» and «Грязный колодец» are being completed.
+report consumers for «Чьи волки» and «Грязный колодец» have focused checks,
+with ordinary combined re-entry still pending.
 Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
@@ -72,9 +73,9 @@ revised line is «Быстрее доберётесь». The guide is a saved, c
 source and cannot shorten travel to other destinations. Movement profiles may
 combine it with carrying burdens only through finite approved modifiers.
 
-Next, complete the remaining report consumers and verify the combined quests
-through their ordinary entries, including each moral outcome and saved effect.
-Trial rewards, price changes and durations are recorded in their owning slices.
+Next, complete the T035 consequence matrix, art checks and native M1
+acceptance. Trial rewards, price changes and durations are recorded in
+their owning slices.
 
 ## Asset implementation checkpoint — 2026-11-15
 
@@ -512,3 +513,16 @@ wait for its declarations instead of racing their generation. Regenerated the
 single pnpm lockfile with the owning package manager in offline mode. Web
 typecheck passed. The independent release rehearsal owns the full build result.
 LOCAL.
+### Moral choice return reports — 2026-11-16
+
+Added company-scoped return-report projections for «Чьи волки» and «Грязный
+колодец». The report reads the saved terminal choice; it includes the wolf raid
+only from its persisted `raidAtTick`, and reports Агафья’s exile only after the
+saved accusation’s seven-day delay. Outcome identities survive cursor reloads,
+so acknowledged choices and delayed phases are not repeated. The report does not
+infer another company’s outcome or expose Ефим’s private findings.
+
+Focused return-report tests passed 12/12 and web return-report tests passed
+22/22; server, web and protocol typechecks passed after rebuilding game-core and
+protocol. Native play, PostgreSQL route integration and player acceptance remain
+NOT_RUN. LOCAL.

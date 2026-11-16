@@ -282,6 +282,11 @@ export const contractsRu = {
   'contract.ci.m1.foul-well.01.world.care-price-normal': 'Цена перевязки в часовне не изменилась.',
   'contract.ci.m1.foul-well.01.world.herbs-available': 'У торговца по-прежнему есть травы Агафьи.',
   'contract.ci.m1.foul-well.01.world.herbs-removed': 'Травы Агафьи сняли с продажи.',
+  'contract.ci.m1.foul-well.01.report.truth-reported':
+    'Вы рассказали отцу Никону про овраг. Он не заплатил. В часовне перевязки теперь стоят вдвое дороже.',
+  'contract.ci.m1.foul-well.01.report.aghafya-accused': 'Никон заплатил за имя Агафьи.',
+  'contract.ci.m1.foul-well.01.report.herbalist-exiled':
+    'Через неделю дверь сарая Агафьи заколотили. Её травы сняли с продажи.',
 
   'contract.ci.m1.dragged-sack.01.title': 'Мешок у дороги',
   'contract.ci.m1.dragged-sack.01.issuer': 'Ерёма из Северного Двора, ездит с телегой в город',
@@ -366,6 +371,11 @@ export const contractsRu = {
   'contract.ci.m1.whose-wolves.01.title': 'Чьи волки',
   'contract.ci.m1.whose-wolves.01.brief':
     'У дороги на Тихую Гать волки задрали двух наших молодых овец. Стая живёт там с осени. Убейте её.',
+  'contract.ci.m1.whose-wolves.01.report.pack-killed': 'Кондрат заплатил за волчьи шкуры.',
+  'contract.ci.m1.whose-wolves.01.report.pack-spared':
+    'Вы рассказали Кондрату про Ефима. За волков он не заплатил.',
+  'contract.ci.m1.whose-wolves.01.report.raid':
+    'Через неделю над Тихой Гатью всю ночь звонил колокол. Утром на мостках нашли следы подкованных сапог.',
 
   'npc.city-watch-contact.kamenny-brod.01': 'Гордей Лапа, десятник стражи',
   'npc.kondrat-ovsyanik.severny-dvor.01': 'Кондрат Овсяник, староста Северного Двора',

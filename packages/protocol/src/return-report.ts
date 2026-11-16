@@ -43,7 +43,11 @@ export interface CompanyReturnReportDto {
   readonly debt: { readonly currentQ: string };
   readonly events: readonly CompanyReturnReportEventDto[];
   readonly contractOutcomes?: readonly {
-    readonly instanceId: 'ci.m1.empty-watch-record.01' | 'ci.m1.stretcher-and-sword.01';
+    readonly instanceId:
+      | 'ci.m1.empty-watch-record.01'
+      | 'ci.m1.stretcher-and-sword.01'
+      | 'ci.m1.whose-wolves.01'
+      | 'ci.m1.foul-well.01';
     readonly outcome:
       | 'PROKOP_HANDED_OVER'
       | 'PROOF_DESTROYED'
@@ -52,7 +56,13 @@ export interface CompanyReturnReportDto {
       | 'LUKA_RESCUED'
       | 'NASTYA_ONLY'
       | 'LUKA_DEATH_OBSERVED'
-      | 'LUKA_RECRUIT_OFFER';
+      | 'LUKA_RECRUIT_OFFER'
+      | 'WOLVES_PACK_KILLED'
+      | 'WOLVES_PACK_SPARED'
+      | 'WOLVES_RAID'
+      | 'FOUL_WELL_TRUTH_REPORTED'
+      | 'FOUL_WELL_AGHAFYA_ACCUSED'
+      | 'FOUL_WELL_HERBALIST_EXILED';
     readonly atTick: string;
   }[];
 }
