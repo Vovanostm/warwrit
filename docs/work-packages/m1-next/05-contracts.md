@@ -23,8 +23,9 @@ once-only 100-crown payout, compiled restart and subsequent supply purchase unde
 [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16). Its saved proof
 source is the actual terminal encounter. C05 now has a native living rescue,
 custody re-entry, physical delivery, 80-crown payment and paid re-entry below.
-The recorded C03/C06/C07–C09 source/refusal gaps and unavailable/dead-target
-branches remain open. Next: resolve those finite rows without inventing sources.
+The new authenticated checks below close C03's refusal gap and C06's accepted
+live-delivery replay gap. C07–C09 source/refusal details and unavailable/dead-target
+branches remain open. Next: finish the ordinary mill chain and its actual sources.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
 
 ## Player goal and normal path
@@ -129,6 +130,35 @@ Focused changed contract tests, real SQL for custody/claim transactions, ordinar
 browser scenes, wording/lore checks for changed text. Mark absent human/device
 evidence separately. Missing accepted custody/target policy blocks that leaf;
 continue ready leaves. Unsupported surrender is not fixed by minting hunt proof.
+
+## C03 refusals and C06 saved delivery replay — 2026-11-16
+
+LOCAL / FOCUSED SQL PASSED. The C03 authenticated route case accepts the actual
+profile, then refuses wrong-place inspection, reporting before the observation
+and an extra forged observation payload. Contract state/facts, issuer funds and
+receipts remain unchanged. Full company state and both revisions are compared
+around the wrong-place refusal, then again around the two later refusals after
+the explicit test-fixture relocation.
+
+The C06 case accepts the live scout profile, searches at the real authored bank,
+gets living custody and physically submits delivery at the issuer fixture. It
+checks all four source/discovery/recovery/delivery facts, cleared custody, paid
+board state, one delivery receipt, one reward movement and exactly 80,000,000Q
+added to company-owned wallets. After recreating the application, the exact old
+delivery request returns its original result and preserves the whole company,
+contract and receipts. These are public-route tests with controlled PostgreSQL
+fixtures, separate from the earlier native journeys.
+
+Both new files pass one isolated PostgreSQL case each, run sequentially through
+node --env-file-if-exists=.env node_modules/vitest/vitest.mjs run --mode integration
+with their respective ordinary.road-tracks.integration.test.ts and
+ordinary.lost-scout.integration.test.ts paths. Scoped ESLint, Prettier, server
+typecheck and diff checks pass. The first C03 setup lacked a campaign clock and
+used the wrong FK cleanup order; those fixtures were corrected and the failed
+per-file clone was disposed. All passing per-file clones were also disposed.
+No production source changed. Dead/unavailable targets still lack the approved
+causal sources described in the owning rows. Full suites/native replay of these
+constructed cases are NOT_RUN. T031 remains open.
 
 ## C06 native scout delivery — 2026-11-16
 

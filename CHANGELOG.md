@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: authenticated road-observation refusals preserve company
+  and contract state; scout delivery replay preserves one exact 80-crown payment
+  after app recreation. [N05](docs/work-packages/m1-next/05-contracts.md#c03-refusals-and-c06-saved-delivery-replay--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: complete Demyan's native rescue after the real raider
   defeat, retain living custody through reload and receive Marfa's 80-crown
   payment after return. [C05](docs/work-packages/m1-next/05-contracts.md#c05-native-living-rescue-and-paid-re-entry--2026-11-16). LOCAL.
