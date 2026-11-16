@@ -64,6 +64,30 @@ successful continuation, full T029, or SC-008 acceptance. RPO/RTO and capacity
 remain NOT_MEASURED. Private credentials, dump and browser captures remain outside
 Git.
 
+### Successful restored continuation — 2026-11-16
+
+FOLLOW-UP / LOCAL. Executor: `guard_service`, separate from the dump operator.
+The restored runtime stayed bound to `m1_restore_current_20261116`; the camp
+rejection above is specific to starting a camp beside living hostiles and did not
+block all ordinary actions. The executor used the restored owner session on the
+refreshed integration source (based at `e33c055a` with the unsafe-camp feedback
+change then uncommitted; now frozen at `39e84f9c`) and transferred one existing
+medical kit from the caravan to living member Rell, then back through the normal
+item-transfer controls. The return `TransferItem` command was HTTP 200 and advanced
+public revision 722→723. The browser reload retained Дозор N01, 318.71 crowns and
+32 rations. After the round trip, the caravan again showed two medical kits and
+Rell's bag showed none. Read-only SQL confirmed total quantity 2, both item rows
+still company-owned, no other owner, and the returned item in the caravan with
+quantity 1 and no tombstone. This proves one lawful restored continuation and this
+item's owner/count conservation; it is not a full row-by-row source/target
+comparison. Known map markers and accepted HUNT-03 were visible but not compared
+against the dump baseline; learned/knowledge state, receipt sets and remaining
+item distributions were not compared source-to-target. A later camp click left
+the camp inactive, returned HTTP 409 with
+`reason=PLACE_UNSAFE`, and showed «Здесь опасно. Разбить лагерь можно, когда
+поблизости не останется противников.» No battle was joined. Full T029 and SC-008
+acceptance remain open.
+
 ## Player goal and ordinary result
 
 An interruption cannot duplicate money, erase people or trap a company.
