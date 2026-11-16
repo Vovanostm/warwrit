@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the retained desktop place-view pacing and
+  browser heap sample with its device/build limits. [Partial measurements](docs/work-packages/m1-next/10-desktop-performance.md#current-result--2026-11-15). LOCAL.
+
 - 2026-11-16 — Fixed: remove repeated reward and destination paragraphs from
   integrated hunt cards. [Native card correction](docs/work-packages/M1-CONTRACT-TERMS.md#combined-hunt-card-correction--2026-11-16). LOCAL.
 

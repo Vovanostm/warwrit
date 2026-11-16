@@ -18,14 +18,23 @@ A real SQL 130-command regression proves the 128-record inspection boundary, the
 complete 130-command replay and the exact historical retry.
 
 The resumed native autoplay completed at revision513, round11, winner south.
-The normal Replay button reported MATCH. Native replay export retains all513
+The normal Replay button reported MATCH. Native replay export retains all 513
 commands. Revision330 proves that north and south continue after middle is
 eliminated, with all three side identities retained. The editor's native scenario
-file roundtrip also preserves the entire36-figure scenario after save/reload.
+file roundtrip also preserves the entire 36-figure scenario after save/reload.
 
 These are partial diagnostic results. The complete DESK route remains open.
-FPS, memory, resource totals and
-server capacity remain NOT_MEASURED. Performance acceptance awaits the owner budget.
+The retained campaign also reached Old Mill through ordinary movement and API
+restart. Its place view was captured at 1200×757 CSS px, DPR 2, Chrome157 on the
+local Mac browser, development build. Document width was 1200px. The browser
+reported 883,442,960 bytes used JS heap and 957,210,780 bytes total heap, with the
+existing Playground tab still open. These browser-reported values include that
+context and are a provisional sample. A 120-frame requestAnimationFrame sample
+over 1014.1ms had median 8.3ms and p95 10.2ms. It measures callback pacing in the
+place view, with no claim about battle render time or the target performance
+budget. Capture is `output/playwright/m1-old-mill-owner-before-battle-20261115.png`.
+Comparable whole-journey load/resource measurements and server capacity remain
+NOT_MEASURED. Performance acceptance awaits the owner budget.
 
 ## Player goal and trial
 
