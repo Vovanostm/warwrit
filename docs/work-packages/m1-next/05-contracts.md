@@ -131,6 +131,22 @@ browser scenes, wording/lore checks for changed text. Mark absent human/device
 evidence separately. Missing accepted custody/target policy blocks that leaf;
 continue ready leaves. Unsupported surrender is not fixed by minting hunt proof.
 
+## Mill clue eligibility and hunt refusals — 2026-11-17
+
+LOCAL. The authenticated PostgreSQL case in
+`apps/server/src/contracts/ordinary.mill-eligibility.integration.test.ts` uses
+actual ACCEPT/HELP/STEP commands. Zero clues, one clue and clues split between
+two companies keep HUNT-01 hidden. Both clues recorded by the same company
+unlock it. Daytime JOIN and pre-terminal PICKUP refuse, preserving the company
+snapshot/revisions, receipts, proof claims and hunt wallet. Travel is fixture
+setup in this test. No terminal result, beast death or successful proof is seeded.
+
+The isolated per-file PostgreSQL case passes 1/1 and its database was disposed.
+Scoped ESLint, server types, Prettier and diff checks pass. The final additional
+zero-clue assertion was rerun with PostgreSQL and formatting. Native C07–C09
+continuation remains in progress on the preserved QA matrix world. Unavailable
+death-report/night-threat producers remain separate source gaps. T031 stays open.
+
 ## C03 refusals and C06 saved delivery replay — 2026-11-16
 
 LOCAL / FOCUSED SQL PASSED. The C03 authenticated route case accepts the actual

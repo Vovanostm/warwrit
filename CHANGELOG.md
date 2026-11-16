@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Added: authenticated mill clues unlock the hunt only when one
+  company holds both; daytime join and early trophy pickup preserve saved state.
+  [N05](docs/work-packages/m1-next/05-contracts.md#mill-clue-eligibility-and-hunt-refusals--2026-11-17). LOCAL.
+
 - 2026-11-16 — Fixed: atlas site and quest icons keep their map coordinates
   while labels and zoom change. Native and landscape geometry checks pass.
   [N10](docs/work-packages/m1-next/10-desktop-performance.md#svg-map-marker-anchor-correction--2026-11-16). LOCAL.
