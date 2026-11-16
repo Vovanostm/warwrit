@@ -509,6 +509,7 @@ async function seedFirstHuntJoinScenario(
   wolfHunt = false,
   createId: () => string = randomUUID,
   bowParties = wolfHunt,
+  huntInstanceId = wolfHunt ? 'ci.m1.wolf-trail.01' : 'ci.m1.raider-standard.01',
 ): Promise<{
   readonly worldId: string;
   readonly owner: FirstHuntJoinActor;
@@ -523,8 +524,15 @@ async function seedFirstHuntJoinScenario(
     helperCarriedPartyRations,
     createId,
   );
+  const huntProfile = wolfHunt
+    ? combat.HUNT_PROFILES.find((profile) => profile.instanceId === huntInstanceId)
+    : undefined;
+  if (wolfHunt && !huntProfile) throw new Error('Wolf hunt profile is unavailable');
   const bowLocation = wolfHunt
-    ? undefined
+    ? {
+        kind: 'AT' as const,
+        ...huntProfile!.objectiveLocation,
+      }
     : { kind: 'AT' as const, ...combat.FIRST_HUNT_ENCOUNTER_LOCATION };
   const owner = bowParties ? bowHuntActor(ownerFixture, bowLocation) : ownerFixture;
   const helper = bowParties ? bowHuntActor(helperFixture, bowLocation) : helperFixture;
@@ -581,7 +589,7 @@ async function seedFirstHuntJoinScenario(
     .updateTable('contract_instances')
     .set({ owner_company_id: owner.companyId, helper_company_id: helper.companyId, revision: '1' })
     .where('world_id', '=', worldId)
-    .where('instance_id', '=', wolfHunt ? 'ci.m1.wolf-trail.01' : 'ci.m1.raider-standard.01')
+    .where('instance_id', '=', huntInstanceId)
     .executeTakeFirstOrThrow();
   const config = loadServerConfig({
     DATABASE_URL: connectionString,
@@ -4409,10 +4417,17 @@ it.skipIf(connectionString === undefined)(
   15000,
 );
 
-it.skipIf(connectionString === undefined).each([0, 2160000])(
-  'freezes bridge v6 through real wolf JOIN, move and bow shot, durable retry and terminal effects (QA offset %i)',
-  async (qaOffsetMs) => {
+it.skipIf(connectionString === undefined).each([
+  { huntName: 'Wolf Trail', huntInstanceId: 'ci.m1.wolf-trail.01', qaOffsetMs: 0 },
+  { huntName: 'Wolf Trail', huntInstanceId: 'ci.m1.wolf-trail.01', qaOffsetMs: 2160000 },
+  { huntName: 'Savva', huntInstanceId: 'ci.m1.not-one-pack.01', qaOffsetMs: 0 },
+])(
+  'freezes bridge v6 through real wolf JOIN, move, bow shot, and terminal proof for $huntName (QA offset $qaOffsetMs)',
+  async ({ huntInstanceId, qaOffsetMs }) => {
     const database = databases[0]!;
+    const huntProfile = combat.HUNT_PROFILES.find(
+      (profile) => profile.instanceId === huntInstanceId,
+    )!;
     // The world selects battle RNG, and participant IDs break tactical ties.
     // This settlement scenario needs a reproducible supported terminal outcome.
     let identityIndex = 0;
@@ -4427,6 +4442,8 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
       undefined,
       true,
       createFixtureId,
+      true,
+      huntInstanceId,
     );
     const restoreClock = freezeCampaignClock();
     try {
@@ -4438,7 +4455,7 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
       for (const actor of [owner, helper]) {
         const read = await app.inject({
           method: 'GET',
-          url: '/contracts/first-hunt?instanceId=ci.m1.wolf-trail.01',
+          url: `/contracts/first-hunt?instanceId=${huntInstanceId}`,
           headers: actor.headers,
         });
         expect(read.statusCode, read.body).toBe(200);
@@ -4451,7 +4468,7 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
             commandId: randomUUID(),
             expectedPublicRevision: read.json().publicRevision,
             type: 'JOIN',
-            payload: { instanceId: 'ci.m1.wolf-trail.01' },
+            payload: { instanceId: huntInstanceId },
           },
         });
         expect(joined.statusCode, joined.body).toBe(200);
@@ -4737,6 +4754,12 @@ it.skipIf(connectionString === undefined).each([0, 2160000])(
       });
       const settled = await terminalRows();
       expect(settled.proofs).toHaveLength(1);
+      expect(settled.proofs[0]).toMatchObject({
+        item_id: huntProfile.proofId,
+        source_id: `encounter:${encounterId}:terminal`,
+        encounter_id: encounterId,
+        terminal_revision: (terminalBattle.state as combat.BattleState).revision,
+      });
       for (const actor of [owner, helper]) {
         const root = await database
           .transaction()

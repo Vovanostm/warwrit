@@ -1,7 +1,8 @@
 # M1 quests — at least 20, four with moral choices
 
 Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
-quests have local domain, server and UI implementations. The combined branch
+quests have local domain, server and UI implementations. T032 is complete on
+the recorded public-boundary outcome evidence below. The combined branch
 has focused checks and migrations through 0032. The twenty-quest native matrix,
 four paired moral outcomes and full M1 player acceptance remain open. Each of
 the four moral pairs has domain/report evidence; isolated PostgreSQL checks
@@ -119,7 +120,8 @@ validation, both terminal payments and delayed company-private local disclosure.
 Hunt guidance also passes the portrait/payment component checks and the text
 checker (0 issues). The changed passages were read together for meaning and flow.
 Migration 0029 is applied to the owned stand. Its destructive down execution
-remains NOT_RUN. These local checks do not close T031/T032/T035 or player acceptance.
+remained NOT_RUN at this checkpoint. The final T032 result is recorded below;
+T031, T035 and player acceptance retain their own criteria.
 
 Implemented the approved [«Обход, которого не было» text](../wiki/economy-quests/m1-quest-texts.md#обход-которого-не-было)
 as `ci.m1.empty-watch-record.01`, an ordinary INVESTIGATE offer at Каменный Брод.
@@ -185,7 +187,8 @@ launch failed with ENOSPC before collecting tests. After freeing space by
 sparsely omitting unchanged art in completed code worktrees, the same focused
 run passed. The author's four DTO errors are resolved on the integration base.
 The two-quest implementation is locally committed. Its native playthrough and
-the remaining T032 quests keep the whole task open.
+the remaining T032 quests kept the task open at this checkpoint. The final
+T032 outcome review is recorded below.
 
 ## «Грязный колодец» implementation checkpoint — 2026-11-15
 
@@ -254,7 +257,8 @@ Wrong-place or missing-evidence commands leave state unchanged and can be
 retried after travelling or recording the required clue. Withdrawal before
 pickup reopens the offer; withdrawal while carrying keeps the sack with that
 company and exposes its unpaid return action at the issuer. The approved
-late/missed-deadline outcome remains unimplemented pending the clock decision.
+late/missed-deadline outcome was still pending at this checkpoint. The later
+accepted one-day deadline and its implementation are recorded below.
 The accepted clocks define Campaign Day as 1,000 ticks and visual DAY/NIGHT as
 600/300 seconds; they do not define an evening boundary or ordinary-contract
 expiry. Owner decision on the intended deadline rule is pending.
@@ -585,5 +589,36 @@ acceptance or the complete twenty-quest consequence journey.
 Focused trophy/issuer regressions passed 7/7, web typecheck, scoped ESLint and
 content validation passed on the author tree. Touched TS/CSS formatting passed.
 The manifest's existing baseline formatting check fails and its established
-format was retained. Native scale/day/night inspection is pending. T035 remains
-open for its remaining consequence, scene and acceptance criteria.
+format was retained. Native source-continuation inspection loaded both images at 64×64 CSS pixels.
+The known claw appears beside «Коготь зверя» in the company inventory; the
+accepted banner target appears beside «Принесите знамя налётчиков». The parent
+inspected both captures in `output/playwright/m1-trophy-*-native-20261116.png`.
+The final focused issuer/trophy rerun passed 7/7 and web typecheck passed. Night
+inspection and owner visual acceptance remain open. T035 retains its remaining
+consequence, scene and acceptance criteria.
+
+### T032 completion and saved Savva outcome — 2026-11-16
+
+COMPLETED / LOCAL for T032. All eleven approved manuscripts are connected to
+canonical instance IDs, existing templates, ordinary server commands and Russian
+player-facing consumers. Their offer dependencies, trial reward/resource/time
+parameters and saved outcomes are recorded in the owning sections above. T031
+continues its original-contract/scene matrix, and T035 continues paired world
+consequences, art and full combined scene checks. Their unfinished criteria do
+not expand T032 into another complete native twenty-quest acceptance gate.
+
+The final narrow evidence gap was a retained terminal outcome for
+`ci.m1.not-one-pack.01`. The existing real PostgreSQL wolf JOIN/terminal case now
+also runs the Savva profile through actual admission and combat commands. After
+terminal application, it asserts the exact saved proof item, source, encounter
+and terminal revision, then reloads the saved aggregates and checks once-only effects. Both
+original Wolf Trail QA clock offsets remain in this case. The original distinct
+concurrent JOIN/retreat/proof/reward regression is preserved without changes.
+The four selected PostgreSQL cases passed, 26 unrelated cases were skipped and
+the disposable clone was disposed. This is adapter/persistence evidence from a
+deterministic test scenario; the full native Savva hunt remains open under T035.
+
+The approved original prose remains the text source. The extra accepted Sidor
+exile outcome follows the owner's delivery-without-reward decision, with its
+additional scene prose retaining the separately recorded draft status. No owner
+visual or full M1 acceptance is inferred from this implementation completion.

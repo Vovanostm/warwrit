@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: retained Savva hunt proof/outcome regression and reconciled
+  completion of all eleven approved quest implementations under T032.
+  [Quest result](docs/work-packages/M1-QUESTS.md#t032-completion-and-saved-savva-outcome--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: use the exact carried company purse for kin payments.
   Both native payments survive restart, login and exact replay, completing T016.
   [N04](docs/work-packages/m1-next/04-deceased-payroll.md#carried-purse-correction-and-completed-settlement--2026-11-16). LOCAL.
