@@ -195,7 +195,10 @@ export function registerGuardServiceRoute(
         let state = await lockCompanyAggregate(transaction, worldId, companyId);
         if (!state) throw new Error('Owned company snapshot is unavailable');
         const clock = await readWorldClock(transaction, worldId, new Date(), true);
-        if (BigInt(clock.tick) > BigInt(state.economy.finance.processedTick)) {
+        if (
+          state.encounter.active === null &&
+          BigInt(clock.tick) > BigInt(state.economy.finance.processedTick)
+        ) {
           const caughtUp = await catchUpStationaryCompany({
             transaction,
             accountId,
@@ -227,7 +230,9 @@ export function registerGuardServiceRoute(
             KAMENNY_BROD_GUARD_COURSE.location.siteId,
           ));
         const prepared =
-          request.params.siteId === KAMENNY_BROD_GUARD_COURSE.location.siteId && !unsafe
+          state.encounter.active === null &&
+          request.params.siteId === KAMENNY_BROD_GUARD_COURSE.location.siteId &&
+          !unsafe
             ? prepareGuardServiceOffer({
                 state,
                 worldId,

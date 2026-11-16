@@ -2406,6 +2406,10 @@ export async function catchUpStationaryCompany(input: {
   readonly requestKind: string;
   readonly clock?: WorldClockReading;
 }): Promise<CompanyCombatAggregateState | undefined> {
+  // An admitted company is frozen at its binding tick until terminal evidence is applied.
+  // Refuse before settling movement or issuing any AdvanceCampaign write.
+  if (input.state.encounter.active !== null) return undefined;
+
   const clock =
     input.clock ??
     (await readWorldClock(
