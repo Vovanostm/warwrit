@@ -3,9 +3,10 @@
 Status **IN PROGRESS / LOCAL**, checked 2026-11-16. All eleven approved new
 quests have local domain, server and UI implementations. The combined branch
 has focused checks and migrations through 0032. The twenty-quest native matrix,
-four paired moral outcomes and full M1 player acceptance remain open. Return
-report consumers for «Чьи волки» and «Грязный колодец» have focused checks,
-with ordinary combined re-entry still pending.
+four paired moral outcomes and full M1 player acceptance remain open. Each of
+the four moral pairs has domain/report evidence; isolated PostgreSQL checks
+cover selected consumers and branches, while ordinary combined re-entry remains
+pending.
 Draft rewards retain their balance status.
 Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
@@ -513,6 +514,7 @@ wait for its declarations instead of racing their generation. Regenerated the
 single pnpm lockfile with the owning package manager in offline mode. Web
 typecheck passed. The independent release rehearsal owns the full build result.
 LOCAL.
+
 ### Moral choice return reports — 2026-11-16
 
 Added company-scoped return-report projections for «Чьи волки» and «Грязный
@@ -524,5 +526,37 @@ infer another company’s outcome or expose Ефим’s private findings.
 
 Focused return-report tests passed 12/12 and web return-report tests passed
 22/22; server, web and protocol typechecks passed after rebuilding game-core and
-protocol. Native play, PostgreSQL route integration and player acceptance remain
-NOT_RUN. LOCAL.
+protocol. Native play and player acceptance remain NOT_RUN. The four branch
+rows, current PostgreSQL evidence and remaining checks are tracked below. LOCAL.
+
+### T035 moral-branch consequence matrix — 2026-11-16
+
+This records branch evidence, not completion of T035, the twenty-quest matrix,
+art acceptance or M1 player acceptance. “Unit/code” names the saved rule and
+focused local evidence; PostgreSQL checks exercise isolated server/database
+paths. None of these checks demonstrates the full normal player journey.
+
+| Quest branch                                      | Saved consequence and later observation                                                                                                      | Unit/code evidence                                                                                                                                         | PostgreSQL evidence run                                                                                                                                                                                                                                                                                        | Still not demonstrated                                                                          |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| «Чьи волки» — kill the pack                       | Северный Двор pays; the saved raid on Тихая Гать matures at 10,000 ticks and enters the owner’s return report.                               | `whose-wolves.ts` and `return-report.ts`; focused core raid-delay and report projection tests.                                                             | `whose-wolves.integration.test.ts`: “refuses Kondrat’s next ordinary offer once, replays exactly, and keeps the refusal private”, 1/1. `return-report.integration.test.ts`: kill and Foul Well accusation, no delayed facts at 9,999, raid/exile at 10,000, stable re-read and acknowledgements, 1/1.          | Full in-game bounty presentation, raid scene/atlas observation and normal re-entry.             |
+| «Чьи волки» — spare and expose the herder         | No bounty; Северный Двор refuses its next offer once; only the informed company receives the shorter guide from Тихая Гать to Северный Двор. | `whose-wolves.ts`; focused core tests for private findings, refusal binding and route-specific guide; report projection/privacy tests.                     | `whose-wolves.integration.test.ts`: “refuses Kondrat’s next ordinary offer once, replays exactly, and keeps the refusal private”, 1/1.                                                                                                                                                                         | Full dialogue choice, later board refusal, guide display and travel-time change in native play. |
+| «Обход, которого не было» — hand over the sack    | Прокоп takes custody and the camp is removed after 2,000 ticks.                                                                              | `empty-watch.ts` and return-report projection; focused delayed-fact and company-scope tests.                                                               | No selected PostgreSQL camp-removal branch test.                                                                                                                                                                                                                                                               | Full camp disappearance in the normal world path and combined re-entry.                         |
+| «Обход, которого не было» — destroy the proof     | Camp remains; only after 3,000 ticks and local observation does the return report reveal Прокоп’s ford fact.                                 | `empty-watch.ts` and return-report projection; focused delay, local-observation and report tests.                                                          | `ordinary.light-sack.integration.test.ts`: “reveals the delayed ford only on a local post-delay read and grants its marker privately”, 1/1; `return-report.integration.test.ts`: proof-destroyed report/cursor case, 1/1.                                                                                      | Full observed ford/route benefit in the native world path and combined re-entry.                |
+| «Девочка в синем платке» — carry Luka with Nastya | Luka is rescued; after 3,000 ticks the company receives the saved recruitment offer.                                                         | `ordinary.ts`, `recruitment.ts` and `return-report.ts`; focused report test `reports the blue-kerchief choice and delayed Luka offer only to its company`. | `return-report.integration.test.ts`: stable owner-only snapshot and acknowledgement case, 1/1; no Stretcher branch was exercised.                                                                                                                                                                              | Full burden, ration, recruitment and normal re-entry behavior in native play.                   |
+| «Девочка в синем платке» — take only Nastya       | Luka’s death is saved and reported only after inspection of the return road.                                                                 | `ordinary.ts` and `return-report.ts`; focused company-scoped death observation test.                                                                       | `return-report.integration.test.ts`: stable owner-only snapshot and acknowledgement case, 1/1; no Stretcher branch was exercised.                                                                                                                                                                              | Full road inspection, death scene and normal re-entry behavior in native play.                  |
+| «Грязный колодец» — tell the truth                | Агафья stays; only the truth-telling company pays double for chapel care.                                                                    | `foul-well-state.ts` and `return-report.ts`; focused price-scope, seven-day delay and report projection tests.                                             | `executor.integration.test.ts`: “charges chapel care to the right company, credits its shared ledger, replays once and rolls back atomically”, 1/1; return-report regression covered accusation only, 1/1.                                                                                                     | Full dialogue, chapel purchase and normal re-entry behavior in native play.                     |
+| «Грязный колодец» — accuse Агафью                 | Reward is paid; after 7,000 ticks Агафья is exiled and removed from herbalist stock; the report shows exile only after maturity.             | `foul-well-state.ts` and `return-report.ts`; focused stock-removal, delay and report-phase tests.                                                          | `executor.integration.test.ts`: “sells finite herbalist stock, preserves exact retries and removes the remaining stock after exile”, 1/1; return-report regression paired accusation with wolf kill, withheld exile at 9,999 and reported it at 10,000, then verified stable re-read and acknowledgement, 1/1. | Full accusation/reward in native play and the ordinary combined return/re-entry path.           |
+
+The report regression initially failed with HTTP 500 because the cursor builder
+used the Empty Watch or Stretcher source event ID for every contract outcome.
+`return-report.ts` now resolves the saved source ID by contract instance and,
+for Stretcher, by its terminal outcome or matching fact. A missing source ID
+fails closed before the report cursor advances. The focused PostgreSQL rerun
+passed and disposed its isolated clone. The other isolated PostgreSQL runs in
+this slice were Whose Wolves issuer refusal/replay/privacy (1/1), Empty Watch
+delayed ford/private map grant (1/1), and Foul Well chapel price/company scope and finite herbalist stock/exile (2/2); each used a disposable clone that was
+dropped after the run. The source database was not used by the tests.
+
+The Stretcher branches and Empty Watch camp-removal branch have focused unit
+and rule tests, but no selected PostgreSQL branch test here. The table does not
+close the other T035 consequences for twenty quests, art, or native acceptance.

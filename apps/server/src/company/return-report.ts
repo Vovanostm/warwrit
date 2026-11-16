@@ -1053,15 +1053,33 @@ async function getReturnReport(
   const offeredContractOutcomeIds = new Set(acknowledgedContractOutcomeIds);
   if (contractOutcomes.length > 0) {
     for (const outcome of contractOutcomes) {
-      const sourceEventId =
-        outcome.instanceId === 'ci.m1.empty-watch-record.01'
-          ? emptyWatchState!.outcome!.sourceEventId
-          : outcome.outcome === 'LUKA_RECRUIT_OFFER'
-            ? stretcherState!.facts.find(
-                (fact) =>
-                  fact.companyId === companyId && fact.slotId === 'stretcher-luka-recruit-offer',
-              )!.sourceEventId
-            : stretcherState!.outcome!.sourceEventId;
+      const sourceEventId = (() => {
+        switch (outcome.instanceId) {
+          case 'ci.m1.empty-watch-record.01':
+            return emptyWatchState?.outcome?.sourceEventId;
+          case 'ci.m1.stretcher-and-sword.01': {
+            const factSlot =
+              outcome.outcome === 'LUKA_DEATH_OBSERVED'
+                ? 'stretcher-luka-death-observed'
+                : outcome.outcome === 'LUKA_RECRUIT_OFFER'
+                  ? 'stretcher-luka-recruit-offer'
+                  : undefined;
+            if (factSlot !== undefined)
+              return stretcherState?.facts.find(
+                (fact) => fact.companyId === companyId && fact.slotId === factSlot,
+              )?.sourceEventId;
+            return stretcherState?.outcome?.sourceEventId;
+          }
+          case 'ci.m1.whose-wolves.01':
+            return wolvesState?.outcome?.sourceEventId;
+          case 'ci.m1.foul-well.01':
+            return foulWellOutcome?.sourceEventId;
+          default:
+            return undefined;
+        }
+      })();
+      if (sourceEventId === undefined)
+        throw new Error(`Return report outcome is missing its source event: ${outcome.instanceId}`);
       offeredContractOutcomeIds.add(
         contractOutcomeIdentity(
           outcome.instanceId,
