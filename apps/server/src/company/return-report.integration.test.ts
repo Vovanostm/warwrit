@@ -6,12 +6,16 @@ import {
   COMPANY_SCHEMA_VERSION,
   campaignTick,
   canonicalRevision,
+  emptyWhoseWolvesQuestState,
+  huntProfile,
+  matureWhoseWolvesRaid,
   moneyQ,
   ordinaryContractGenesis,
   ordinaryContractProfile,
   ordinaryContractTerms,
   publicRevision,
   readOrdinaryContractState,
+  WHOSE_WOLVES_INSTANCE_ID,
 } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
@@ -20,6 +24,10 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { createDatabase } from '../db/database.js';
+import {
+  ensureHuntGenesisInTransaction,
+  updateHuntWorldRow,
+} from '../contracts/first-hunt-runtime.js';
 
 const connectionString = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const database = connectionString === undefined ? undefined : createDatabase(connectionString);
@@ -501,6 +509,179 @@ describe('company return report (PostgreSQL)', () => {
         payload: { schemaVersion: 1, reportId: terminalReport.reportId },
       });
       expect(terminalAck.json()).toEqual({ ok: true, duplicate: false });
+      expect(
+        (
+          await app.inject({
+            method: 'GET',
+            url: '/company/return-report',
+            headers: ownerHeaders,
+          })
+        ).json(),
+      ).toEqual({ report: null });
+
+      const wolvesProfile = huntProfile(WHOSE_WOLVES_INSTANCE_ID)!;
+      const wolvesState = {
+        ...emptyWhoseWolvesQuestState(),
+        companies: [{ companyId, findings: [], refusalPending: false }],
+        outcome: {
+          kind: 'PACK_KILLED' as const,
+          companyId,
+          sourceEventId: 'return-report-wolves-killed',
+          atTick: '3000',
+          raidDueTick: '10000',
+        },
+      };
+      await database.transaction().execute(async (transaction) => {
+        const world = await ensureHuntGenesisInTransaction(transaction, worldId, wolvesProfile);
+        await updateHuntWorldRow(transaction, world, {
+          revision: (BigInt(world.revision) + 1n).toString(),
+          questState: wolvesState,
+        });
+      });
+
+      const foulWell = ordinaryContractProfile('ci.m1.foul-well.01')!;
+      const foulWellSourceEventId = 'return-report-foul-well-accused';
+      const foulWellState = readOrdinaryContractState(foulWell, {
+        ...ordinaryContractGenesis(foulWell),
+        revision: '1',
+        ownerCompanyId: companyId,
+        acceptedTerms: ordinaryContractTerms(foulWell),
+        facts: [
+          {
+            slotId: 'foul-well-aghafya-accused',
+            companyId,
+            sourceEventId: foulWellSourceEventId,
+            atTick: '3000',
+          },
+        ],
+        outcome: {
+          kind: 'SUCCESS',
+          companyId,
+          sourceEventId: foulWellSourceEventId,
+          atTick: '3000',
+        },
+      });
+      await database
+        .insertInto('ordinary_contracts')
+        .values({
+          world_id: worldId,
+          instance_id: foulWell.instanceId,
+          profile_id: foulWell.definitionId,
+          revision: foulWellState.revision,
+          wallet_id: foulWell.walletId,
+          wallet_q: foulWell.genesisWalletQ,
+          state: foulWellState,
+        })
+        .execute();
+
+      const advanceReportState = (tick: string) => {
+        state = {
+          ...state,
+          economy: {
+            ...state.economy,
+            lifecycle: { ...state.economy.lifecycle, campaignTick: campaignTick(tick) },
+            finance: { ...state.economy.finance, processedTick: campaignTick(tick) },
+            physical: { ...state.economy.physical!, processedTick: campaignTick(tick) },
+          },
+        };
+        return database
+          .updateTable('company_snapshots')
+          .set({ state })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+      };
+      await advanceReportState('9999');
+      const beforeDelayedFacts = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(beforeDelayedFacts).toMatchObject({
+        fromTick: '2000',
+        toTick: '9999',
+        contractOutcomes: [
+          {
+            instanceId: WHOSE_WOLVES_INSTANCE_ID,
+            outcome: 'WOLVES_PACK_KILLED',
+            atTick: '3000',
+          },
+          {
+            instanceId: 'ci.m1.foul-well.01',
+            outcome: 'FOUL_WELL_AGHAFYA_ACCUSED',
+            atTick: '3000',
+          },
+        ],
+      });
+      expect(JSON.stringify(beforeDelayedFacts.contractOutcomes)).not.toContain('WOLVES_RAID');
+      expect(JSON.stringify(beforeDelayedFacts.contractOutcomes)).not.toContain(
+        'FOUL_WELL_HERBALIST_EXILED',
+      );
+      expect(
+        (
+          await app.inject({
+            method: 'GET',
+            url: '/company/return-report',
+            headers: ownerHeaders,
+          })
+        ).json(),
+      ).toEqual({ report: beforeDelayedFacts });
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/company/return-report/ack',
+            headers: ownerPostHeaders,
+            payload: { schemaVersion: 1, reportId: beforeDelayedFacts.reportId },
+          })
+        ).json(),
+      ).toEqual({ ok: true, duplicate: false });
+
+      const maturedWolves = matureWhoseWolvesRaid(wolvesState, '10000');
+      expect(maturedWolves?.outcome).toMatchObject({ raidAtTick: '10000' });
+      await database
+        .updateTable('world_hunt_states')
+        .set({ revision: '2', quest_state: maturedWolves })
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', WHOSE_WOLVES_INSTANCE_ID)
+        .executeTakeFirstOrThrow();
+      await advanceReportState('10000');
+      const delayedFacts = (
+        await app.inject({ method: 'GET', url: '/company/return-report', headers: ownerHeaders })
+      ).json().report;
+      expect(delayedFacts).toMatchObject({
+        fromTick: '9999',
+        toTick: '10000',
+        contractOutcomes: [
+          {
+            instanceId: WHOSE_WOLVES_INSTANCE_ID,
+            outcome: 'WOLVES_RAID',
+            atTick: '10000',
+          },
+          {
+            instanceId: 'ci.m1.foul-well.01',
+            outcome: 'FOUL_WELL_HERBALIST_EXILED',
+            atTick: '10000',
+          },
+        ],
+      });
+      expect(
+        (
+          await app.inject({
+            method: 'GET',
+            url: '/company/return-report',
+            headers: ownerHeaders,
+          })
+        ).json(),
+      ).toEqual({ report: delayedFacts });
+      expect(
+        (
+          await app.inject({
+            method: 'POST',
+            url: '/company/return-report/ack',
+            headers: ownerPostHeaders,
+            payload: { schemaVersion: 1, reportId: delayedFacts.reportId },
+          })
+        ).json(),
+      ).toEqual({ ok: true, duplicate: false });
       expect(
         (
           await app.inject({
