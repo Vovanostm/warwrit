@@ -315,5 +315,6 @@ Focused roster-attempt/action-hook tests passed13 cases, including matched
 unsafe-camp feedback, mismatched reply rejection, generic non-camp rejection
 and existing lost-reply retry. Protocol build and server/web typechecks passed
 after correcting return-type propagation in the shared route/join consumers.
-Initial typechecks exposed that inference mismatch and were fixed. Native
-readback of the new message and successful equip/reload are still NOT_RUN.
+Initial typechecks exposed that inference mismatch and were fixed. Native readback now confirms the specific danger message. All nine helper
+equip commands returned 200, and a page reload retained the equipment. The
+existing controls provided the complete equipment path.

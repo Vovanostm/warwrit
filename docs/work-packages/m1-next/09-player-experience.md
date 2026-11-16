@@ -101,3 +101,40 @@ Existing affected component tests for actual defects, ordinary browser controls,
 normal two-company battle and human observation. Automated evidence cannot close
 UX-1. Prepare a concrete playable session and questions before requesting the
 owner's time; absent participant/device is a named remaining acceptance input.
+
+## Native feedback corrections — 2026-11-16
+
+LOCAL on the M1 completion integration. Battle result headings and initiative
+now use the existing side order with readable labels for the own side, one
+opponent, numbered opponents in three-side battles and numbered sides when
+viewer affiliation is unknown. Transport/editor IDs and the diagnostic data attributes retain
+identity. Raw party UUIDs were removed from initiative tooltips. The 42 combined
+BattleView, company-action and roster-attempt tests and integrated web typecheck
+passed. The worker
+reported DTO mismatches during its isolated web typecheck. The compatible
+integration web typecheck passed.
+
+Native equipment preparation used the existing Company tab, nine accepted
+commands and a reload. No second equipment panel was needed. The unsafe-camp
+refusal now explains the unmet safe-place condition. Contract readiness now
+reflects the current saved company consent, making reconfirmation available
+after equipment changes. Their detailed evidence belongs to N06 and N02.
+
+The separate pre-battle restored copy ran HUNT-03 encounter
+`77ac1437-4895-4954-b2ed-528e65bf6fb7`. Each account sent a primary manual
+order (defend/wait), followed by one-action autoplay commands through ordinary
+controls. The durable journal contains 14 account commands. Initial runners
+incorrectly tried to refresh background contract controls after the fullscreen
+battle opened, which cost deadlines. Later actions also encountered stale-state
+rejections and reconnection. Resume was exercised by keyboard, with no claim
+that pointer access was defective. The accepted-response/projection gap is a
+separate reproduced control risk under correction. Human unaided comprehension
+and seamless whole-battle control remain NOT_MEASURED / NOT_RUN.
+
+The restored attempt ended at round 7/revision 66 in defeat. Two fighters died,
+one retreated and three surrendered. Terminal effects applied at
+2026-11-16T02:09:09.391Z and released both companies. Both remain ACTIVE.
+The owner has no deaths; the helper's two companions died and its leader
+survived. The failed result, surrendered gear and obligations remain saved.
+A later native flee attempt did not send a command before resolution. Both the source defeat and this restored outcome remain in their respective
+databases.

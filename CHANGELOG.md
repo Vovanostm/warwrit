@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: replace internal battle side/party identifiers in result
+  headings and initiative with readable, stable side labels. [Native feedback](docs/work-packages/m1-next/09-player-experience.md#native-feedback-corrections--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: show pending battle readiness only for current company
   consent, restoring the JOIN control after equipment or other company changes.
   [Native preparation](docs/work-packages/m1-next/02-next-contract.md#fresh-join-readiness-after-equipment-changes--2026-11-16). LOCAL.
