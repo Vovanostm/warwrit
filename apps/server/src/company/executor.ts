@@ -5,7 +5,7 @@ import {
 } from '../world/continuous-movement.js';
 import { readPartyRoute } from '../world/repository.js';
 import { randomUUID } from 'node:crypto';
-import { readCarriedSupplyPurse } from './supplies.js';
+import { locateCarriedCompanyPurse, readCarriedSupplyPurse } from './supplies.js';
 import {
   ordinaryCommandIntent,
   ordinaryCommandSucceeded,
@@ -29,7 +29,6 @@ import {
   companyHasLukaRecruitEntitlement,
   isLukaRecruitOffer,
   localCompanyContacts,
-  locateRecruitCarriedPurse,
   lockRecruitOffer,
   recruitWageRates,
 } from './recruitment.js';
@@ -841,7 +840,7 @@ export async function executeOrdinaryPlayerCompanyCommand(input: {
       companyId,
       input.accountId,
     );
-    state = locateRecruitCarriedPurse(state, carriedPurse);
+    state = locateCarriedCompanyPurse(state, carriedPurse);
     const withGenesis = attachRecruitGenesis(state, recruitOffer);
     if (!withGenesis) return rejectRequest('INVALID_COMMAND', lifecycle.knowledge.revision);
     state = withGenesis;

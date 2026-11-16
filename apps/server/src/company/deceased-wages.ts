@@ -4,7 +4,6 @@ import {
   COMPANY_COMMAND_SCHEMA_VERSION,
   COMPANY_RULESET_ID,
   canonicalJson,
-  campaignTick,
   companySourceKey,
   parseCompanyCommand,
   payDeceasedWages,
@@ -28,7 +27,7 @@ import {
   updateCompanyAggregateWithReceipt,
 } from './repository.js';
 import type { CompanyStorageWrite } from './repository.js';
-import { readCarriedSupplyPurse } from './supplies.js';
+import { locateCarriedCompanyPurse, readCarriedSupplyPurse } from './supplies.js';
 import type { PayDeceasedWagesRequest } from './deceased-wages-routes.js';
 import { hasExactKeys, isRecord } from '../record-guards.js';
 
@@ -299,6 +298,8 @@ export async function executePayDeceasedWages(input: {
     companyId,
     input.accountId,
   );
+  const located = locateCarriedCompanyPurse(current, carriedPurse);
+  const preparedEconomy = located.economy;
   const sourceEventId = input.request.commandId;
   const scope: DeceasedWageAccessScope = {
     worldId: input.worldId,
@@ -310,7 +311,7 @@ export async function executePayDeceasedWages(input: {
     expectedPublicRevision: currentLife.knowledge.revision,
     carriedPurse,
   };
-  const preparedAccess = prepareDeceasedWageAccess(currentEconomy, scope);
+  const preparedAccess = prepareDeceasedWageAccess(preparedEconomy, scope);
   if (preparedAccess.kind !== 'PREPARED') {
     await rollbackCatchUp();
     return reject('CONTACT_OR_ACCESS_REQUIRED', previousLife.knowledge.revision);
@@ -336,7 +337,7 @@ export async function executePayDeceasedWages(input: {
 
   let result: ReturnType<typeof payDeceasedWages>;
   try {
-    result = payDeceasedWages(currentEconomy, parsed.command, {
+    result = payDeceasedWages(preparedEconomy, parsed.command, {
       worldId: input.worldId,
       companyId,
       principal: { kind: 'PLAYER', id: input.accountId },
@@ -354,7 +355,7 @@ export async function executePayDeceasedWages(input: {
   }
 
   const sourceKey = companySourceKey(parsed.command);
-  const next = { ...current, economy: result.next };
+  const next = { ...located, economy: result.next };
   const response: CompanyCommandAcceptedDto = {
     commandId: input.request.commandId,
     ok: true,

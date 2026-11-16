@@ -28,7 +28,6 @@ import {
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
 import { WORLD_EXPECTED_COMPANY_ID_HEADER } from '@warwrit/protocol';
 import { createDatabase } from '../db/database.js';
-import type { DatabaseSchema } from '../db/database.js';
 import { buildApp } from '../app.js';
 import { loadServerConfig } from '../config.js';
 import { updateCompanyAggregateWithReceipt } from './repository.js';
@@ -40,6 +39,11 @@ import { prepareDeceasedWageAccess } from './deceased-wages.js';
 
 const local = { kind: 'AT' as const, siteId: 'kamenny-brod', areaId: 'kamenny-brod-market' };
 const remote = { kind: 'AT' as const, siteId: 'bereznyak', areaId: 'bereznyak-green' };
+const purseOrigin = {
+  kind: 'AT' as const,
+  siteId: 'severny-dvor',
+  areaId: 'severny-dvor-yard',
+};
 
 const connectionString = process.env['WARWRIT_COMPANY_DATABASE_URL'];
 const database = connectionString === undefined ? undefined : createDatabase(connectionString);
@@ -258,11 +262,18 @@ function baseDeceasedAggregate(worldId: string, companyId: string, purseId: stri
       },
       finance: {
         ...economyRoot.finance,
-        wallets: economyRoot.finance.wallets.map((wallet) =>
-          wallet.walletId === 'purse'
-            ? { ...wallet, walletId: purseId, location: localPlace, cashQ: moneyQ('2') }
-            : wallet,
-        ),
+        wallets: economyRoot.finance.wallets
+          .map((wallet) =>
+            wallet.walletId === 'purse'
+              ? { ...wallet, walletId: purseId, location: purseOrigin, cashQ: moneyQ('2') }
+              : wallet,
+          )
+          .concat({
+            walletId: entityId<'Wallet'>('remote-company-store'),
+            owner: { kind: 'COMPANY' as const, id: companyId },
+            location: purseOrigin,
+            cashQ: moneyQ('17'),
+          }),
         pools: economyRoot.finance.pools.map((pool) =>
           pool.walletId === 'purse' ? { ...pool, walletId: purseId } : pool,
         ),
@@ -690,6 +701,32 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
               ),
           ).toBe(true);
         }
+        const paymentState = readCompanyCombatAggregateState({
+          ...locallyObservedState,
+          economy: {
+            ...locallyObservedState.economy,
+            finance: {
+              ...locallyObservedState.economy.finance,
+              wallets: locallyObservedState.economy.finance.wallets.map((wallet) =>
+                wallet.walletId === fixture.purseId ||
+                wallet.walletId === 'remote-company-store' ||
+                wallet.owner.kind === 'CHARACTER'
+                  ? { ...wallet, location: purseOrigin }
+                  : wallet,
+              ),
+            },
+          },
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({
+            state: paymentState,
+            public_revision: paymentState.economy.lifecycle.knowledge.revision,
+            canonical_revision: paymentState.economy.lifecycle.revision,
+          })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
 
         const foreignQuote = await createdApp.inject({
           method: 'GET',
@@ -700,6 +737,76 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
           },
         });
         expect(foreignQuote.statusCode).toBe(403);
+
+        const purseBeforeAttempt = paymentState.economy.finance.wallets.find(
+          (wallet) => wallet.walletId === fixture.purseId,
+        );
+        const localPoolBeforeAttempt = paymentState.economy.finance.pools.find(
+          (pool) => pool.poolId === 'local',
+        );
+        const personalWalletsBeforeAttempt = paymentState.economy.finance.wallets.filter(
+          (wallet) => wallet.owner.kind === 'CHARACTER',
+        );
+        const remoteCompanyWalletBeforeAttempt = paymentState.economy.finance.wallets.find(
+          (wallet) => wallet.walletId === 'remote-company-store',
+        );
+        expect(purseBeforeAttempt?.location).toEqual({
+          kind: 'AT',
+          siteId: 'severny-dvor',
+          areaId: 'severny-dvor-yard',
+        });
+        expect(localPoolBeforeAttempt?.walletId).toBe(fixture.purseId);
+        expect(remoteCompanyWalletBeforeAttempt?.location).toEqual(purseBeforeAttempt?.location);
+
+        const firstAttemptRequest = {
+          schemaVersion: 2,
+          commandId: randomUUID(),
+          expectedPublicRevision: quote.json().publicRevision as string,
+          type: 'PayDeceasedWages',
+          payload: { characterId: 'a-worker-1' },
+        };
+        const beforeFailedAttempt = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        const failedAttempt = await createdApp.inject({
+          method: 'POST',
+          url: '/company/commands',
+          headers,
+          payload: firstAttemptRequest,
+        });
+        expect(failedAttempt.statusCode, failedAttempt.body).toBe(409);
+        expect(failedAttempt.json()).toMatchObject({
+          ok: false,
+          code: 'INSUFFICIENT_FUNDS',
+        });
+        const afterFailedAttempt = await database
+          .selectFrom('company_snapshots')
+          .select('state')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .executeTakeFirstOrThrow();
+        expect(canonicalStateJson(afterFailedAttempt.state)).toBe(
+          canonicalStateJson(beforeFailedAttempt.state),
+        );
+        const stateAfterFailedAttempt = readCompanyCombatAggregateState(afterFailedAttempt.state);
+        expect(
+          stateAfterFailedAttempt.economy.finance.wallets.find(
+            (wallet) => wallet.walletId === fixture.purseId,
+          )?.location,
+        ).toEqual(purseBeforeAttempt?.location);
+        expect(
+          stateAfterFailedAttempt.economy.finance.wallets.filter(
+            (wallet) => wallet.owner.kind === 'CHARACTER',
+          ),
+        ).toEqual(personalWalletsBeforeAttempt);
+        expect(
+          stateAfterFailedAttempt.economy.finance.wallets.find(
+            (wallet) => wallet.walletId === 'remote-company-store',
+          ),
+        ).toEqual(remoteCompanyWalletBeforeAttempt);
 
         await database
           .updateTable('world_campaign_clocks')
@@ -743,6 +850,24 @@ describe('PayDeceasedWages PostgreSQL integration', () => {
               .executeTakeFirstOrThrow(),
           );
         const stateAfterPay = readCompanyCombatAggregateState(storedAfterPay.state);
+        const purseAfterPay = stateAfterPay.economy.finance.wallets.find(
+          (wallet) => wallet.walletId === fixture.purseId,
+        );
+        expect(purseAfterPay?.location).toEqual({
+          kind: 'AT',
+          siteId: 'kamenny-brod',
+          areaId: 'market',
+        });
+        expect(
+          stateAfterPay.economy.finance.wallets.filter(
+            (wallet) => wallet.owner.kind === 'CHARACTER',
+          ),
+        ).toEqual(personalWalletsBeforeAttempt);
+        expect(
+          stateAfterPay.economy.finance.wallets.find(
+            (wallet) => wallet.walletId === 'remote-company-store',
+          ),
+        ).toEqual(remoteCompanyWalletBeforeAttempt);
         expect(
           stateAfterPay.economy.finance.wallets.find(
             (wallet) => wallet.walletId === fixture.purseId,
