@@ -5,6 +5,14 @@ The [M1 specification](../../specs/001-warwrit-m1/spec.md) defines current party
 and battle capacity. The FIRST HUNT sections below record a released bounded
 profile used for storage/replay compatibility. Runtime changes use a versioned path.
 
+## Original rescue scope — owner decision 2026-11-17
+
+Death of Demyan, Ivashka and Senka and their death-report producers belong to
+[a separate task after M1](../work-packages/m1-next/05-contracts.md#death-of-rescued-people-and-reports-after-m1).
+M1 acceptance covers living rescue, custody, delivery and payment for these three
+people. Their authored death slots retain source-history value. The accepted
+four moral choices keep their own defined consequences and producers.
+
 ## Source labels
 
 - `ACCEPTED_POLICY` (`S`) marks constraints established by the live M1 contract:

@@ -9,6 +9,22 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Changed: record Gat's first scroll window at 45 FPS and a warmed
+  repeat at 90 FPS minimum; the first-scroll cause remains under investigation.
+  [N10](docs/work-packages/m1-next/10-desktop-performance.md#production-atlas-and-terminal-samples--2026-11-17). LOCAL.
+
+- 2026-11-17 — Changed: native HUNT-01 saves a six-survivor victory, real claw,
+  living Senka and a retained 90-crown payment; atlas/result render samples pass.
+  [N05](docs/work-packages/m1-next/05-contracts.md#native-mill-continuation-checkpoint), [N10](docs/work-packages/m1-next/10-desktop-performance.md#production-atlas-and-terminal-samples--2026-11-17). LOCAL.
+
+- 2026-11-17 — Changed: verify earned nickname consent/refusal and reopened
+  history from real authenticated battle commands; retain fixture provenance.
+  [N06](docs/work-packages/m1-next/06-company-capabilities.md#canonical-earned-nickname-verification--2026-11-17). LOCAL.
+
+- 2026-11-17 — Changed: move Demyan, Ivashka and Senka's death events/reports
+  to a separate after-M1 task by owner decision; M1 covers their living rescues.
+  [N05](docs/work-packages/m1-next/05-contracts.md#death-of-rescued-people-and-reports-after-m1). LOCAL.
+
 - 2026-11-17 — Fixed: completed battles stop polling an unavailable leadership
   choice; later encounters restart their own chooser and ignore stale reads.
   [N09](docs/work-packages/m1-next/09-player-experience.md#leadership-lookup-after-applied-outcomes--2026-11-17). LOCAL.

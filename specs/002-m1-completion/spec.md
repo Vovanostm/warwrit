@@ -1,10 +1,10 @@
 # Feature Specification — Завершение M1
 
-**Feature Branch** `codex/sprite-combat-stage1`
+**Feature Branch** `codex/m1-completion-20261115`
 
 **Created** 2026-11-15
 
-**Status** TASKED / LOCAL — план и очередь реализации подготовлены.
+**Status** IN_PROGRESS / LOCAL — реализация и проверка идут по tasks.md.
 
 **Feature** `002-m1-completion`
 
@@ -31,6 +31,12 @@
 PvP и последующее расширение мира следуют своим этапам из основного ТЗ.
 Локальный M1 рассчитан на принятый desktop-интерфейс.
 Разрешения на публикацию и размещение определяет [AGENTS.md](../../AGENTS.md).
+
+Решение владельца от 2026-11-17 переносит гибель Демьяна, Ивашки и Сеньки
+и отчёты об их смерти в отдельную задачу после M1. В M1 входят их живое
+спасение, сопровождение, передача заказчику и расчёт. Объём T031 и SC-005
+учитывает это решение. Задача и условия её начала записаны в
+[N05](../../docs/work-packages/m1-next/05-contracts.md#death-of-rescued-people-and-reports-after-m1).
 
 ## User Scenarios & Testing
 

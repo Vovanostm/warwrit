@@ -11,7 +11,7 @@ workflow. Ordinary withdrawal/payment/trophy behavior follows
 [M1-CONTRACT-TERMS](../M1-CONTRACT-TERMS.md); FIRST HUNT retains its own policy.
 Fresh gameplay checks for this reconciliation are NOT_RUN.
 
-## Current result — 2026-11-16
+## Current result — 2026-11-17
 
 PARTIAL / LOCAL; full matrix remains open. C03 and C06 have newly recorded
 ordinary paid journeys; C02 reuses unchanged WLC-08 wolf-proof/payment evidence.
@@ -24,9 +24,32 @@ once-only 100-crown payout, compiled restart and subsequent supply purchase unde
 source is the actual terminal encounter. C05 now has a native living rescue,
 custody re-entry, physical delivery, 80-crown payment and paid re-entry below.
 The new authenticated checks below close C03's refusal gap and C06's accepted
-live-delivery replay gap. C07–C09 source/refusal details and unavailable/dead-target
-branches remain open. Next: finish the ordinary mill chain and its actual sources.
+live-delivery replay gap. The fresh C07–C09 journey now has real clues, a dead
+beast, living worker custody, saved claw pickup and Frol's 90-crown payment.
+Senka's delivery and its final checks remain. The three death-report branches
+follow the owner's after-M1 task below.
 [Common contract](COMMON.md). [Prompt](prompts/05-contracts.md).
+
+## Original rescue scope — owner decision 2026-11-17
+
+The owner moved death of Demyan, Ivashka and Senka and reports of their death to
+the task after M1 below. C05/C06/C09 acceptance covers living rescue, custody,
+delivery and payment. The three unproduced death-report slots are deferred from
+T031. The four accepted moral-choice quests retain their defined consequences.
+The older dated records preserve the former gaps and their source limitations.
+
+## Death of rescued people and reports after M1
+
+- [ ] Define and implement actual death events and observer-grounded reports for
+      Demyan, Ivashka and Senka after M1.
+
+Start by agreeing with the owner which events can kill each person and how an
+observer can discover and report that death. Then connect canonical transitions,
+custody and quest outcomes, apply the accepted reward/refusal policy, and check
+saved knowledge, exact retry and re-entry. The task is complete when the approved
+events and truthful reports work through normal game controls. Current runtime
+producers for these deaths remain unimplemented. The archive limitation stays
+with its original owning record.
 
 ## Player goal and normal path
 
@@ -54,17 +77,17 @@ to the accepted eight. No old source ZIP catalogue reconstruction.
 These nine leaves cover eight instances and eleven scenes, not nine contracts.
 Actual IDs and prerequisite facts come from the current authored definition.
 
-| Leaf / existing issue | Result and mandatory special case                                                                                                                                |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| C01/#379              | `HUNT-03` — «Знамя налётчиков»: actual eligible battle source → unique standard → lawful bearer → one payout; no proof from an ineligible terminal outcome       |
-| C02/#380              | `HUNT-02` — «Волчья тропа»: real hunt → pelt pickup/capacity → return → once-only payment; reuse unchanged WLC-08 coverage                                       |
-| C03/#381              | `INVEST-01` — «Следы на дороге»: available actual observation → truthful report; no remote or fabricated observation                                             |
-| C04/#382              | `INVEST-02` — «Пропавшие травы»: actual daytime inspection and both required clues → report; missing/night-time access does not invent findings                  |
-| C05/#383              | `RESCUE-01` — «Спасение из погреба»: actual living captive → release/custody → physical delivery; no reward for a dead/unavailable target; source dependency C01 |
-| C06/#384              | `RESCUE-02` — «Потерянный разведчик»: lawful discovery/custody → actual live delivery; preserve unavailable/dead-target branch                                   |
-| C07/#385              | `MILL-01` / `MILL-02`: source-backed beginning and two real clues; stop before inventing night-beast eligibility                                                 |
-| C08/#386              | `HUNT-01`: source-eligible night hunt → real terminal/proof; after C07                                                                                           |
-| C09/#387              | `MILL-03` / `MILL-04`: actual worker release/custody → live delivery and final accepted result; after C08                                                        |
+| Leaf / existing issue | Result and mandatory special case                                                                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C01/#379              | `HUNT-03` — «Знамя налётчиков»: actual eligible battle source → unique standard → lawful bearer → one payout; no proof from an ineligible terminal outcome |
+| C02/#380              | `HUNT-02` — «Волчья тропа»: real hunt → pelt pickup/capacity → return → once-only payment; reuse unchanged WLC-08 coverage                                 |
+| C03/#381              | `INVEST-01` — «Следы на дороге»: available actual observation → truthful report; no remote or fabricated observation                                       |
+| C04/#382              | `INVEST-02` — «Пропавшие травы»: actual daytime inspection and both required clues → report; missing/night-time access does not invent findings            |
+| C05/#383              | `RESCUE-01` — «Спасение из погреба»: actual living captive → release/custody → physical delivery and payment; source dependency C01; death branch after M1 |
+| C06/#384              | `RESCUE-02` — «Потерянный разведчик»: lawful discovery/custody → actual live delivery and payment; death branch after M1                                   |
+| C07/#385              | `MILL-01` / `MILL-02`: source-backed beginning and two real clues; stop before inventing night-beast eligibility                                           |
+| C08/#386              | `HUNT-01`: source-eligible night hunt → real terminal/proof; after C07                                                                                     |
+| C09/#387              | `MILL-03` / `MILL-04`: actual worker release/custody → live delivery and final accepted result; after C08                                                  |
 
 Execute C07 → C08 → C09. Do not require full worker delivery before its own
 night-hunt prerequisite. Other independent ready leaves can run serially.
@@ -115,7 +138,8 @@ No new reward amount, NPC, battle archetype or hidden outcome is approved here.
 - [ ] CT-3 Each exposed material alternative/refusal/failure has truthful feedback
       and accepted saved consequences; no unsupported successful placeholder.
 - [ ] CT-4 Required owner/helper presence/consent and observer privacy hold;
-      unavailable/dead targets and ineligible proof cannot produce false rewards.
+      living-rescue rewards require their actual source/custody, and ineligible
+      proof cannot produce a reward. The three death branches follow the after-M1 task.
 - [ ] CT-5 Unique ownership/custody, funded one-time payout and exact retry survive
       reload/API restart. Relevant competing-claim risk has real SQL evidence.
 - [ ] CT-6 Required four reusable backgrounds, six portraits, two trophy images,
@@ -155,8 +179,8 @@ setup in this test. No terminal result, beast death or successful proof is seede
 The isolated per-file PostgreSQL case passes 1/1 and its database was disposed.
 Scoped ESLint, server types, Prettier and diff checks pass. The final additional
 zero-clue assertion was rerun with PostgreSQL and formatting. Native C07–C09
-continuation remains in progress on the preserved QA matrix world. Death-report
-producers remain a separate source gap. T031 stays open.
+continuation remains in progress on the preserved QA matrix world. The three
+death-report producers follow the owner's after-M1 task. T031 awaits living delivery.
 
 The new `ordinary.mill-night-observation.integration.test.ts` passes 1/1 on an
 isolated per-file PostgreSQL clone. It checks wrong-place refusal, daylight and
@@ -174,7 +198,7 @@ Parent review corrected the finding-key prefix and retained exhaustive gate inpu
 types. The new finding uses the existing UI lookup. The complete root production
 build passes, including `index-CFWbcjwC.js`; its log is
 `output/m1-integrated-build-night-observation-20261117.log`. Native continuation
-is next. Death-report rules remain the outstanding owner decision.
+is recorded below. Death-report rules follow the owner's after-M1 task.
 
 ### Native mill continuation checkpoint
 
@@ -185,10 +209,25 @@ keeper STEP `7a84efe7-9e16-4ac0-82f3-3319e237fb0c` succeeded at revision 3 and
 showed the human report. QA3 accepted HUNT-01 at Gat through
 `f9de0cbb-6bb7-4c8c-a057-9ecef2b60d2a`. QA4 separately travelled to Gat and
 volunteered through HELP `7c0b66d8-37c3-4a6a-9be4-8c258e797f82`, revision 2.
-Both returned to Old Mill by accepted routes. No JOIN or battle has started.
-Each company still has three living, equipped people at 100 health and 50 morale;
-QA4's most recent stamina is 80. Worker rescue/delivery and claw redemption remain
-pending. Source edits for the approved independent night observation precede JOIN.
+Both returned to Old Mill by accepted routes. The compiled `index-CFWbcjwC.js`
+restored both companies and their consent. Nighttime JOIN commands `98e5bedc`
+and `e6a016e2` admitted all six equipped people to encounter
+`308aa36e-0ab0-428f-8fa1-942ceee9f352`. It ended in round 3, revision 32, with
+all six allies alive and the actual beast dead. Thirty account orders and two AI
+orders were saved, with zero timeout orders. Each company used manual Defend and
+visible one-action autoplay. Effects applied and both companies are ACTIVE,
+unbound and outside an encounter. [N08](08-battle-outcomes.md) owns the outcome.
+
+The world claw claim names this actual terminal revision. Pickup command
+`c181421a-425a-4ebd-9393-84531d2a9da7` took it into the company supply container.
+Ordinary release `b0efe91a-23a3-4b11-a263-13cbb247d997` succeeded at worker
+revision 4. Reload retained the living finding and «С отрядом: Сенька», plus the
+held unredeemed claw. The owner then followed the normal accepted route to Gat
+(`a0e67f37`) entirely in real time. PRESENT
+`1104669c-7243-4e96-96fe-50d249752a4f` paid 90 crowns with receipt
+`789a751c-1bba-44e5-b291-3a7eab742559`, public revision 6. Ordinary re-entry on
+the newer `index-DBR1Y_I3.js` retained completed HUNT-01, 890 crowns and living
+Senka. Worker delivery remains pending. The helper remains at the mill.
 
 Author assistance includes the protected QA clock, reading public map masks and
 map-coordinate conversion for native clicks. QA3 accepted Gordey's existing
@@ -197,8 +236,10 @@ routes were refused before successful intermediate scouting. QA4's browser was
 closed on lease release and reopened with the same quick-login 4, preserving
 arrival and consent. The resumed offline report was closed normally. The unused
 raw browser listener on 9337 is absent. Native receipts and route logs are
-`output/m1-matrix-{keeper-clue,beast-accept,beast-helper}-20261117.log` and the
-associated scout/clock logs. N12 owns the private runtime configuration pointers.
+`output/m1-matrix-{keeper-clue,beast-accept,beast-helper}-20261117.log`,
+`output/m1-matrix-claw-and-senka-release-20261117.log`,
+`output/m1-matrix-custody-reentry-and-gat-route-20261117.log` and the associated
+scout/clock logs. N12 owns the private runtime configuration pointers.
 
 ## C03 refusals and C06 saved delivery replay — 2026-11-16
 

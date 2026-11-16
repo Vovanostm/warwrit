@@ -26,7 +26,9 @@ N05 owns the successful real HUNT-01, living worker release and pending return.
 N10 owns the measured atlas/result intervals for this exact artifact. The current
 preview now serves the subsequently built `index-DBR1Y_I3.js` after the leadership
 poll correction. A fresh native terminal check on that later client is NOT_RUN.
-The production sessions keep their already loaded client until ordinary reload.
+Ordinary QA3 reload on `index-DBR1Y_I3.js` now retains completed HUNT-01,
+890 crowns and living Senka at Gat. The helper keeps its already loaded client
+until ordinary reload.
 
 The active continuation has returned to the owned development runtime on
 m1_n01_control_20261116, API 3031/realtime 3032/web 5331. Its private mode 0600
@@ -256,7 +258,8 @@ output/m1-integrated-build-leadership-poll-20261117.log. The preceding
 index-CFWbcjwC.js build passes native two-company HUNT-01, both session re-entries
 and the atlas/result measurements under N05/N10. Native compiled re-entry and
 supply purchase passed at the earlier 1e607f39 artifact on the active isolated N01
-continuation. Re-entry on the latest artifact is NOT_RUN. Whole-route 60-FPS
+continuation. QA3 session re-entry on the latest artifact retains the paid claw
+and living worker under N05. Whole-route 60-FPS
 compliance remains NOT_MEASURED. Earlier integrated build evidence follows.
 
 LOCAL. A single root `pnpm build` completed successfully in the integration

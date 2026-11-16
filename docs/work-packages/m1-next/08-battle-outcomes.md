@@ -1,6 +1,44 @@
 # N08 — Terminal battles release the company and preserve truth
 
-## Current result — 2026-11-16
+## Current result — 2026-11-17
+
+PARTIAL / LOCAL. The retained QA matrix's native HUNT-01 wins in the compiled
+production artifact with six living allies and the actual beast dead. Terminal
+effects release both companies. The claw is picked up and living Senka is in
+custody after reload. [N05](05-contracts.md#native-mill-continuation-checkpoint)
+owns the ongoing return and payment journey. The earlier N01 HUNT-03 result
+below remains valid. Hostile escape/retry and agreed-player acceptance stay open.
+
+## Native mill-beast outcome — 2026-11-17
+
+LOCAL. On the retained QA matrix database, both companies joined at Old Mill at
+night through the ordinary HUNT-01 buttons, continuing the saved companies and
+retaining prior failed campaigns. The source artifact was `index-CFWbcjwC.js` from the build
+recorded under N12. The two pre-armed native browser loops used one manual Defend
+per company, then the visible one-action autoplay control.
+
+Encounter `308aa36e-0ab0-428f-8fa1-942ceee9f352`, attempt 1, ended in round 3 at
+revision 32. The owner issued 13 account orders and the helper 17; two AI orders
+and zero timeout orders complete the saved sequence. All six allies remain in
+the winning side, with zero allied deaths, retreats or surrenders. The beast's
+saved health is zero. Terminal effects applied at 21:45:29.709Z on November 16
+(00:45 MSK on November 17). Both companies are ACTIVE with zero bindings and no
+active encounter. Each still holds 800 crowns before reward presentation.
+
+The actual terminal claim is `proof.mill-beast.claw.01`, source
+`encounter:308aa36e-0ab0-428f-8fa1-942ceee9f352:terminal`, revision 32. Pickup
+and living worker release continue under N05. The snapshot and ordinary Return
+button show the six-survivor victory. Runtime remained unpaused throughout this
+battle. The earlier staging used the protected QA clock and public-map-assisted
+navigation. Input automation remains author assistance.
+
+Controller logs are `output/m1-matrix-beast-controls-20261117.{log,jsonl}`;
+the finite read-only canonical result is
+`output/m1-matrix-beast-readback-20261117.json`. The retained screenshot is
+`output/playwright/m1-matrix-beast-terminal-20261117.png`. Player observation and
+full M1 acceptance remain open. N10 records a separate terminal-render sample.
+
+## Retained N01 victory — 2026-11-16
 
 PARTIAL / LOCAL. The latest isolated N01 continuation won HUNT-03 with both
 founders alive, applied actual consequences and released both companies. The

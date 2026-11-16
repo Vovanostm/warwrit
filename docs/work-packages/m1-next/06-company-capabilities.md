@@ -8,13 +8,15 @@ provider/course leaves below retain their own source prerequisites. Select
 each leaf against the [current M1 amendment](../../../specs/001-warwrit-m1/spec.md#overview-and-scope)
 before exposing a new command. Fresh gameplay checks here are NOT_RUN.
 
-## Current result — 2026-11-16
+## Current result — 2026-11-17
 
 PARTIAL / LOCAL. T017–T020 have ordinary control and saved-result evidence for
-supplies, equipment, camp, guard service, courses and retraining. N1 still needs
-a genuine native qualifying deed followed by nickname consent/refusal and saved
-history. I1 and the complete CAP matrix remain open. N03/N04 own loss recovery
-and deceased payroll. Next: obtain the qualifying deed through normal play.
+supplies, equipment, camp, guard service, courses and retraining. T021/N1 now has
+current authenticated PostgreSQL and UI checks for a genuine qualifying battle,
+consent/refusal and reopened history. The complete CAP matrix remains open.
+N03/N04 own loss recovery and deceased payroll. Player observation follows
+T027/T036; the extra browser-only requirement in the previous progress summary
+has been removed from N1's technical acceptance.
 [Common contract](COMMON.md). [Prompt](prompts/06-company-capabilities.md).
 
 ## Player goal, sources and start condition
@@ -84,7 +86,7 @@ No new service framework, second time/accrual owner or speculative course editor
       entry/amendment/exit, preserving current coverage/debt boundaries.
 - [ ] CAP-3 L1–L3 prove actual course/retraining start, completion, stop and
       accepted interruptions without lost earned progress, early skill swap or duplication.
-- [ ] CAP-4 N1 consent/refusal/history follows one genuine deed and lawful
+- [x] CAP-4 N1 consent/refusal/history follows one genuine deed and lawful
       knowledge; no invented witness or automatic player consent.
 - [ ] CAP-5 I1 closes only verified remaining required actions; no command is
       advertised as enabled when mandatory effects/producers are missing.
@@ -236,6 +238,36 @@ replay verification, terminal effects, consent/refusal, exact retry, conflicting
 retry and reopened-connection history. Parent route-registration integration and
 the local observation merge have been checked by focused types/tests. Their
 PostgreSQL rerun and native earned-deed journey remain pending. T021 stays open.
+
+## Canonical earned nickname verification — 2026-11-17
+
+T021 / N1 PASSED / LOCAL on the integrated source. The original owner rule and
+CAP-4 require an actual saved qualifying victory, explicit consent/refusal and
+lawful history/witnesses. The previous progress summary added a browser-origin
+condition. The current verification follows the accepted event and command
+boundaries, with browser-level player observation retained under T027/T036.
+
+The focused real PostgreSQL case sets two fixture workers to 25% health before
+combat. Authenticated JOIN and encounter commands then produce the actual
+victory. Replay is verified and terminal effects derive the deeds, proposals and
+living bound witnesses from the saved result. Accepted and rejected proposals,
+exact retry, conflicting-body refusal and identical history after app/database
+connection recreation all pass. The fixture health setup is separate from the
+retained native companies. The latest native beast victory supplies no qualifying
+nickname and remains its own N08 result.
+
+The current isolated PostgreSQL rerun passes 1/1 with 29 unrelated tests skipped;
+the per-file clone is disposed. The first run passed its case but exceeded the
+10-second teardown hook. Its owned clone was already absent on readback. One
+isolated rerun with a 30-second hook allowance passes cleanly; repository timeout
+configuration is unchanged. The actual NicknamePanel component checks pass 2/2
+for choices and retained request retry. Production registration and the panel's
+GET/POST paths were traced to the same handlers. New browser-login nickname
+accept/refuse evidence is NOT_RUN and is recorded for player acceptance.
+
+Logs are `output/m1-nickname-canonical{,-repeat}-20261117.log` and
+`output/m1-nickname-panel-20261117.log`. Existing native training, service and
+recovery results above retain their actual scope. This closes T021 and CAP-4.
 
 ## Decisions and checks
 

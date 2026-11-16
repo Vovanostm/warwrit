@@ -21,4 +21,5 @@
   - [x] [N01 integrated candidate](../work-packages/m1-next/01-integration.md)
   - [ ] [Full player journey, launch and acceptance](roadmap/m1-acceptance.md)
 - [ ] [After M1: 3D characters and animation](../work-packages/M1-CHARACTERS-3D.md)
+- [ ] [After M1: rescued-person deaths and reports](../work-packages/m1-next/05-contracts.md#death-of-rescued-people-and-reports-after-m1)
 - [ ] [Diagnostic battle and editor](roadmap/combat-lab.md)

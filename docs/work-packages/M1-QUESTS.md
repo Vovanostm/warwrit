@@ -13,6 +13,13 @@ Rules: [m1-spec §11](M1-QUESTS.md#selected-twenty--owner-decision-2026-11-13),
 [quest rules](../wiki/economy-quests/quest-rules.md),
 [writing](../wiki/world/writing.md).
 
+## Original rescue scope — owner decision 2026-11-17
+
+The owner moved death of Demyan, Ivashka and Senka, and reports of their death,
+to [a separate task after M1](m1-next/05-contracts.md#death-of-rescued-people-and-reports-after-m1).
+M1 covers their living rescue, custody, delivery and payment. The four accepted
+moral choices keep their recorded consequences, including Luka's existing branch.
+
 ## Player outcome
 
 M1 has at least 20 quests on the HUNT/INVESTIGATE/RESCUE templates. At least

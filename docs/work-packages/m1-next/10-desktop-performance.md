@@ -89,6 +89,50 @@ Sanitized device data is `output/m1-device-displays-20261117.json`; browser/GPU
 metadata and probe are `output/m1-native-device-browser-20261117.log` and
 `output/m1-frame-trace-tool-probe-20261117.log`. T028 remains open.
 
+## Production atlas and terminal samples — 2026-11-17
+
+LOCAL / PARTIAL. The compiled `index-CFWbcjwC.js` ran on the Mac/Chrome/ANGLE
+configuration above at 1070×757 CSS px, DPR 1, visual scale 1, on AC power.
+Chrome marked the target document visible. A bounded `caffeinate -du` request
+held the measurement window active; later system display inspection returned no
+display row, so physical display state is unverified. Other retained QA browsers
+remained open. This is the actual automation viewport and workload.
+
+CDP traces identify the page's renderer process through its root frame, bracket
+samples with clock-sync events and retain unique DrawFrame sequence IDs. The
+minimum uses complete one-second bins. These are Chromium renderer frame events.
+GPU-query timing remains NOT_MEASURED.
+
+| Workload                                                                     | Duration | Unique drawn frames | Minimum complete 1s FPS | Dropped frame events | Frame interval p50 / p95 |
+| ---------------------------------------------------------------------------- | -------- | ------------------- | ----------------------- | -------------------- | ------------------------ |
+| HUNT-01 terminal result, six living allies and one defeated beast            | 30.002s  | 3601                | 119                     | 0                    | 8.328 / 9.165ms          |
+| Atlas, actual company travel with Senka/claw and continuous native left-drag | 30.003s  | 3597                | 117                     | 3                    | 8.327 / 9.228ms          |
+| Gat panorama, first recorded wheel-scroll window                             | 30.036s  | 3317                | 45                      | 562                  | 8.412 / 10.942ms         |
+| Gat panorama, repeated scroll with 5s after tracing startup                  | 30.010s  | 3455                | 90                      | 217                  | 8.460 / 10.612ms         |
+
+Atlas input delivered 110–120 pointer moves per complete second, with no input
+error. Its 30 renderer bins and the terminal sample exceed the accepted 60-FPS
+floor. Gat's first window starts at 45/82/96 FPS; later bins have a minimum of 86. This first-second value is below the floor. The repeated night sample stays
+at 90 or above. These two place captures use `index-DBR1Y_I3.js`, actual wheel
+input and the full observed 0–145px horizontal range. The repeat explicitly
+separates tracing startup from its measured window. It is a warmed repeat of the
+same source, with a different startup condition. The first-scroll cause remains
+unattributed. MainFrame.Draw CPU p50/p95 in the first sample is 0.217/0.318ms;
+those CPU events alone do not establish GPU/shader or asset-decode cost.
+The result sample has two canvases and 130.9 MB used JS heap; after ordinary
+return/reload the atlas has zero canvases and 101.2 MB. DOM counters are retained
+in the exports. Different scene heaps establish observations only. Engine mesh/
+material/texture counts and a matched performance-fix comparison remain absent.
+
+Raw frame exports and independently recomputed bins are
+`output/m1-production-{beast-terminal,atlas}-frames-20261117.log` and
+`output/m1-production-{beast-terminal,atlas}-frame-summary-20261117.json`.
+Place raw frames, summaries and scripts use `output/m1-production-place-*` and
+`output/m1-production-place-warm-*`. These intervals cover a terminal
+six-survivor scene, moving atlas and settlement panning. Active combat, the
+36-figure workload and a continuous whole-journey capture remain NOT_MEASURED.
+T028 and whole-route target acceptance stay open.
+
 ## Player goal and trial
 
 Map, place, battle, result and re-entry remain readable, controllable and responsive
