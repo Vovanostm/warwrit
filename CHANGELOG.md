@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: authenticated missing-herbs regression for daylight,
+  missing-clue refusal, funded once-only reporting and private findings.
+  [N05 C04](docs/work-packages/m1-next/05-contracts.md#c04-daylight-and-report-regression--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: surrendered living hostiles now satisfy ordinary rescue
   defeat gates through the existing hunt-availability policy, preserving their
   health and disposition. [N05](docs/work-packages/m1-next/05-contracts.md#surrendered-raiders-and-rescue-access--2026-11-16). LOCAL.

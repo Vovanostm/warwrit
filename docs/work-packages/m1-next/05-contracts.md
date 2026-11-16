@@ -189,3 +189,27 @@ live delivery to Marfa. This correction reuses the same saved availability rule
 as hunt admission and preserves old rows without a disposition. It does not
 create a captive-death source or complete the remaining C05 native journey.
 Publication/merge and native C05 are NOT_RUN for this correction.
+
+## C04 daylight and report regression — 2026-11-16
+
+LOCAL public-boundary evidence. The new missing-herbs PostgreSQL case uses
+ordinary authenticated acceptance, the stock observation, server-clock-derived
+night refusal, daylight inspection and the two-clue report. A report before the
+trail observation refuses with MISSING_EVIDENCE and leaves the issuer's 80-crown
+wallet intact. The night inspection refuses without adding a clue or paying.
+After the seeded clock reaches day, inspection records the second clue and the
+report pays 40 crowns once from the finite issuer wallet.
+
+Reopening the app retains the completed/paid result. Exact late report replay
+returns the original response and preserves all finance movements and issuer
+cash. The other company sees the shared completion without the private findings.
+The clock epoch/QA offset and company locations are isolated test fixtures.
+The production clock reader and command routes determine daylight authority.
+Native C04 play remains NOT_RUN.
+
+The Luna author's focused case passed 1/1. The parent added the incomplete-report
+refusal assertion and repeated the case successfully (1/1) against the isolated
+m1_herbs_checks_20261116 database. Scoped types, lint and formatting passed
+with the integrated test. The related rescue gate cases explicitly skip when
+the dedicated database input is absent. Log is `output/m1-missing-herbs-parent-20261116.log`.
+The normal herbalist/green/report journey remains open under C04/T031.

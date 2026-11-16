@@ -283,10 +283,10 @@ afterAll(async () => {
 });
 
 describe('ordinary rescue battle gates (isolated PostgreSQL)', () => {
-  it.each(['active', 'surrendered', 'dead'] as const)(
+  it.skipIf(database === undefined).each(['active', 'surrendered', 'dead'] as const)(
     'uses the retained %s raider outcome for the cellar release gate',
     async (outcome) => {
-      if (!database) return;
+      if (!database) throw new Error('company test database missing');
       const worldId = randomUUID();
       const companyId = randomUUID();
       const accountId = randomUUID();
