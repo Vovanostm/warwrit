@@ -286,3 +286,22 @@ This supplies C03's ordinary observation/report/payment path in N05 and the
 same-company continuation after a newly completed contract. HUNT-03 proof,
 helper retry, native victory and the remaining NEXT criteria retain their open
 status. No second payment or hidden clue was inferred.
+
+## Absent-helper admission and ordinary proof refusal — 2026-11-16
+
+LOCAL. The existing FIRST HUNT PostgreSQL absence scenario now attempts helper
+JOIN while that company is still at Kamenny Brod. The authoritative route
+refuses with `NOT_AVAILABLE`; the company root, owner/helper consent, admissions
+and receipts stay unchanged. The test then continues its original
+left-the-objective scenario. Both earlier Wolf Trail clock offsets and the
+separate concurrent completing-JOIN regression are preserved.
+
+The selected absence and ordinary Wolf Trail proof cases passed. The latter
+adds wrong-source, lost and already-presented proof refusals plus conservation
+and full-bearer payout, recorded in
+[M1-CONTRACT-TERMS](../M1-CONTRACT-TERMS.md#ordinary-proof-refusal-and-bearer-payout--2026-11-16).
+With the two native accounts' actual travel, voluntary participation, separate
+manual orders and preserved losses/property already recorded above and in N08,
+this closes T013's bounded arrival/control requirement. T012 is also complete.
+T014 still needs the native HUNT-03 proof/payout journey; no victory is inferred
+from either recorded defeat or these isolated boundary checks.

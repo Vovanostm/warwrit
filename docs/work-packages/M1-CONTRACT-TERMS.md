@@ -75,6 +75,7 @@ and was separately reread for meaning and rhythm.
 The native two-company ordinary hunt, helper presentation and full NEXT-2–NEXT-6
 sequence remain NOT_RUN. T012–T014 remain open until their complete paths are
 verified. All changes are local on `codex/m1-completion-20261115`.
+
 ## Held-person return after withdrawal — 2026-11-16
 
 The integration candidate combines this rule with the dragged-sack custody and
@@ -131,3 +132,21 @@ Native readback after quest integration showed the reward and destination
 guidance twice on HUNT cards. Removed the duplicated block, retaining the
 issuer-refusal and spared-pack conditions and grammatical destination guidance.
 Focused checks and native readback are recorded with the integration result. LOCAL.
+
+## Ordinary proof refusal and bearer payout — 2026-11-16
+
+LOCAL. The existing real PostgreSQL Wolf Trail JOIN/retreat/proof regression now
+also presents a wrong-source proof, a missing/lost proof and a previously
+presented proof through `/contracts/commands`. Each refusal preserves the full
+company snapshot, issuer hunt wallet, unique proof claim and contract ownership,
+and creates no rejection receipt. The valid bearer receives the entire
+80,000,000 Q reward. Original concurrent presentation, exact receipt replay,
+proof transfer and FIRST HUNT-specific rules remain covered by their own paths.
+
+The selected Wolf Trail case and the selected FIRST HUNT absent-helper case
+passed individually on per-file disposable PostgreSQL clones. Scoped ESLint,
+Prettier and diff checks passed. Two initial fixture-setup mistakes in the test
+were corrected before those passing runs. Frozen accepted terms and ordinary
+pre-battle withdrawal retain their existing focused core evidence. This closes
+T012's bounded terms/proof requirement. N02's native HUNT-03 victory/proof/payout
+and full contract acceptance remain open.

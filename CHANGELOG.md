@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: PostgreSQL proof-refusal/conservation and absent-helper
+  JOIN checks, completing T012/T013 with existing native arrival/control evidence.
+  [Terms](docs/work-packages/M1-CONTRACT-TERMS.md#ordinary-proof-refusal-and-bearer-payout--2026-11-16), [N02](docs/work-packages/m1-next/02-next-contract.md#absent-helper-admission-and-ordinary-proof-refusal--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: a PostgreSQL regression retaining position, route and
   receipts when an old arrival candidate runs after STOP/reroute.
   [N07](docs/work-packages/m1-next/07-world.md#obsolete-arrival-candidate-after-reroute--2026-11-16). LOCAL.

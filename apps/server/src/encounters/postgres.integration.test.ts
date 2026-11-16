@@ -1974,6 +1974,109 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
       const { owner, helper, worldId, app } = scenario;
       const startingTick = owner.initial.economy.lifecycle.campaignTick;
       try {
+        const initialHelperState = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, helper.companyId));
+        if (!initialHelperState) throw new Error('FIRST HUNT helper state is missing');
+        const helperNotArrived = relocateFirstHuntJoinCompany(initialHelperState, {
+          kind: 'AT',
+          siteId: 'kamenny-brod',
+          areaId: 'kamenny-brod-market',
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: helperNotArrived })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', helper.companyId)
+          .executeTakeFirstOrThrow();
+
+        const notArrivedRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        const notArrivedJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: notArrivedRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const beforeNotArrivedJoin = await database.transaction().execute(async (transaction) => ({
+          contract: await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow(),
+          helperRoot: await loadCompanyAggregate(transaction, worldId, helper.companyId),
+          admissions: await transaction
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute(),
+          receipts: await transaction
+            .selectFrom('company_receipts')
+            .select(['company_id', 'command_id', 'receipt_id'])
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', helper.companyId)
+            .execute(),
+        }));
+        const refusedBeforeArrival = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: notArrivedJoin,
+        });
+        expect(refusedBeforeArrival.statusCode).toBe(409);
+        expect(refusedBeforeArrival.json()).toMatchObject({ ok: false, code: 'NOT_AVAILABLE' });
+        expect(
+          await database.transaction().execute(async (transaction) => ({
+            contract: await transaction
+              .selectFrom('contract_instances')
+              .select(['revision', 'owner_join', 'helper_join'])
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', 'ci.m1.raider-standard.01')
+              .executeTakeFirstOrThrow(),
+            helperRoot: await loadCompanyAggregate(transaction, worldId, helper.companyId),
+            admissions: await transaction
+              .selectFrom('encounter_admissions')
+              .select('encounter_id')
+              .where('world_id', '=', worldId)
+              .execute(),
+            receipts: await transaction
+              .selectFrom('company_receipts')
+              .select(['company_id', 'command_id', 'receipt_id'])
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', helper.companyId)
+              .execute(),
+          })),
+        ).toEqual(beforeNotArrivedJoin);
+        expect(
+          await database
+            .selectFrom('company_receipts')
+            .select('command_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', helper.companyId)
+            .where('command_id', '=', notArrivedJoin.commandId)
+            .execute(),
+        ).toEqual([]);
+        const helperAtObjective = await database
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, helper.companyId));
+        if (!helperAtObjective) throw new Error('FIRST HUNT helper state is missing');
+        await database
+          .updateTable('company_snapshots')
+          .set({
+            state: relocateFirstHuntJoinCompany(helperAtObjective, {
+              kind: 'AT',
+              ...combat.FIRST_HUNT_ENCOUNTER_LOCATION,
+            }),
+          })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', helper.companyId)
+          .executeTakeFirstOrThrow();
+
         const ownerRead = await app.inject({
           method: 'GET',
           url: '/contracts/first-hunt',
@@ -4791,6 +4894,10 @@ it.skipIf(connectionString === undefined)(
   'races completing JOINs and preserves failed admission and proof receipts',
   async () => {
     const database = databases[0]!;
+    const huntProfile = combat.HUNT_PROFILES.find(
+      (profile) => profile.instanceId === 'ci.m1.wolf-trail.01',
+    );
+    if (!huntProfile) throw new Error('Wolf Trail hunt profile is unavailable');
     let identityIndex = 1000;
     const { owner, helper, worldId, app } = await seedFirstHuntJoinScenario(
       database,
@@ -5219,6 +5326,136 @@ it.skipIf(connectionString === undefined)(
         });
         expect(pickup.statusCode, pickup.body).toBe(200);
         const held = await readContract(owner);
+        const heldCompanyState = await reopened
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, owner.companyId));
+        const heldPhysical = heldCompanyState?.economy.physical;
+        if (!heldCompanyState || !heldPhysical)
+          throw new Error('Wolf Trail bearer state is missing after proof pickup');
+        const heldProof = heldPhysical.items.find(
+          (item) => item.itemId === huntProfile.proofId && item.tombstone === null,
+        );
+        if (!heldProof) throw new Error('Wolf Trail bearer proof is missing after pickup');
+        const bearerLocalPool = heldCompanyState.economy.finance.pools.find(
+          (pool) => pool.poolId === 'local',
+        );
+        const bearerWalletBefore = bearerLocalPool
+          ? heldCompanyState.economy.finance.wallets.find(
+              (wallet) => wallet.walletId === bearerLocalPool.walletId,
+            )
+          : undefined;
+        if (!bearerWalletBefore) throw new Error('Wolf Trail bearer local wallet is missing');
+        const replaceBearerState = async (state: NonNullable<typeof heldCompanyState>) => {
+          await reopened
+            .updateTable('company_snapshots')
+            .set({ state })
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', owner.companyId)
+            .executeTakeFirstOrThrow();
+        };
+        const proofConservationState = async () =>
+          reopened.transaction().execute(async (transaction) => ({
+            company: await transaction
+              .selectFrom('company_snapshots')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', owner.companyId)
+              .executeTakeFirstOrThrow(),
+            hunt: await transaction
+              .selectFrom('world_hunt_states')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+              .executeTakeFirstOrThrow(),
+            proof: await transaction
+              .selectFrom('world_proof_claims')
+              .selectAll()
+              .where('world_id', '=', worldId)
+              .where('source_id', '=', `encounter:${second.encounter_id}:terminal`)
+              .executeTakeFirstOrThrow(),
+            contract: await transaction
+              .selectFrom('contract_instances')
+              .select(['revision', 'owner_company_id', 'helper_company_id'])
+              .where('world_id', '=', worldId)
+              .where('instance_id', '=', 'ci.m1.wolf-trail.01')
+              .executeTakeFirstOrThrow(),
+          }));
+        const rejectUnusableProof = async (label: string) => {
+          const view = await readContract(owner);
+          const before = await proofConservationState();
+          const request = {
+            schemaVersion: 1,
+            commandId: randomUUID(),
+            expectedPublicRevision: view.publicRevision,
+            type: 'PRESENT',
+            payload: { instanceId: 'ci.m1.wolf-trail.01' },
+          } as const;
+          const response = await app.inject({
+            method: 'POST',
+            url: '/contracts/commands',
+            headers: owner.headers,
+            payload: request,
+          });
+          expect(response.statusCode, label).toBe(409);
+          expect(response.json(), label).toMatchObject({ ok: false, code: 'NOT_AVAILABLE' });
+          expect(await proofConservationState(), label).toEqual(before);
+          expect(
+            await reopened
+              .selectFrom('company_receipts')
+              .select('command_id')
+              .where('world_id', '=', worldId)
+              .where('company_id', '=', owner.companyId)
+              .where('command_id', '=', request.commandId)
+              .execute(),
+            label,
+          ).toEqual([]);
+        };
+
+        const wrongProof = combat.readCompanyCombatAggregateState({
+          ...heldCompanyState,
+          economy: {
+            ...heldCompanyState.economy,
+            physical: {
+              ...heldPhysical,
+              items: heldPhysical.items.map((item) =>
+                item.itemId === huntProfile.proofId
+                  ? { ...item, provenance: { ...item.provenance, sourceId: 'encounter:wrong' } }
+                  : item,
+              ),
+              knowledge: {
+                ...heldPhysical.knowledge,
+                itemSnapshots: heldPhysical.knowledge.itemSnapshots.map((item) =>
+                  item.itemId === huntProfile.proofId
+                    ? { ...item, provenance: { ...item.provenance, sourceId: 'encounter:wrong' } }
+                    : item,
+                ),
+              },
+            },
+          },
+        });
+        await replaceBearerState(wrongProof);
+        await rejectUnusableProof('wrong-source proof must not be presented');
+
+        const missingProof = combat.readCompanyCombatAggregateState({
+          ...heldCompanyState,
+          economy: {
+            ...heldCompanyState.economy,
+            physical: {
+              ...heldPhysical,
+              items: heldPhysical.items.filter((item) => item.itemId !== huntProfile.proofId),
+              knowledge: {
+                ...heldPhysical.knowledge,
+                itemSnapshots: heldPhysical.knowledge.itemSnapshots.filter(
+                  (item) => item.itemId !== huntProfile.proofId,
+                ),
+              },
+            },
+          },
+        });
+        await replaceBearerState(missingProof);
+        await rejectUnusableProof('lost proof must not be presented');
+        await replaceBearerState(heldCompanyState);
+
         const presentPayload = {
           schemaVersion: 1,
           commandId: randomUUID(),
@@ -5249,6 +5486,15 @@ it.skipIf(connectionString === undefined)(
         const paid = acceptedPresentations[0]!.response;
         const paidPayload = acceptedPresentations[0]!.payload;
         expect(paid.json()).toMatchObject({ ok: true, commandId: paidPayload.commandId });
+        const paidBearerState = await reopened
+          .transaction()
+          .execute((transaction) => loadCompanyAggregate(transaction, worldId, owner.companyId));
+        const paidBearerWallet = paidBearerState?.economy.finance.wallets.find(
+          (wallet) => wallet.walletId === bearerWalletBefore.walletId,
+        );
+        expect(paidBearerWallet?.cashQ).toBe(
+          (BigInt(bearerWalletBefore.cashQ) + BigInt(huntProfile.rewardQ)).toString(),
+        );
         const unreceiptedPayload = refusedPresentations[0]!.payload;
         expect(
           await reopened
@@ -5267,6 +5513,36 @@ it.skipIf(connectionString === undefined)(
         });
         expect(paidAgain.json()).toEqual(paid.json());
         expect((await readContract(owner)).contract.knownState).toBe('SETTLED');
+        const settledView = await readContract(owner);
+        const alreadyPresented = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: settledView.publicRevision,
+          type: 'PRESENT',
+          payload: { instanceId: 'ci.m1.wolf-trail.01' },
+        } as const;
+        const beforeAlreadyPresented = await proofConservationState();
+        const refusedAlreadyPresented = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: alreadyPresented,
+        });
+        expect(refusedAlreadyPresented.statusCode).toBe(409);
+        expect(refusedAlreadyPresented.json()).toMatchObject({
+          ok: false,
+          code: 'NOT_AVAILABLE',
+        });
+        expect(await proofConservationState()).toEqual(beforeAlreadyPresented);
+        expect(
+          await reopened
+            .selectFrom('company_receipts')
+            .select('command_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', owner.companyId)
+            .where('command_id', '=', alreadyPresented.commandId)
+            .execute(),
+        ).toEqual([]);
         const outsiderAccountId = randomUUID();
         const outsiderToken = randomUUID();
         const outsiderTokenDigest = createHash('sha256').update(outsiderToken).digest();
