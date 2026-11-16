@@ -70,6 +70,7 @@ import {
 import {
   ensureFirstHuntGenesisInTransaction,
   ensureHuntGenesisInTransaction,
+  isAvailableHuntHostile,
   selectHuntWorldRow,
   readHuntWorldState,
   updateHuntWorldRow,
@@ -321,14 +322,14 @@ async function readGates(
   const clock = await readWorldClock(transaction, worldId);
   const foulWellOutcome = await readFoulWellOutcome(transaction, worldId);
   const herbalistExiled = foulWellHerbalistRemoved(foulWellOutcome, clock.tick);
-  const allDead = (state: { readonly hostiles: readonly FirstHuntHostileState[] }) =>
-    state.hostiles.every((hostile) => hostile.currentPools['health'] === 0);
+  const allDefeated = (state: { readonly hostiles: readonly FirstHuntHostileState[] }) =>
+    !state.hostiles.some(isAvailableHuntHostile);
   const raiders = await ensureFirstHuntGenesisInTransaction(transaction, worldId);
   const beast = await ensureHuntGenesisInTransaction(transaction, worldId, MILL_BEAST);
   return {
     DAYLIGHT: readWorldLight(clock).phase === 'DAY',
-    RAIDERS_DEFEATED: allDead(raiders),
-    BEAST_DEFEATED: allDead(beast),
+    RAIDERS_DEFEATED: allDefeated(raiders),
+    BEAST_DEFEATED: allDefeated(beast),
     HERBALIST_PRESENT: !herbalistExiled,
     HERBALIST_EXILED: herbalistExiled,
   };

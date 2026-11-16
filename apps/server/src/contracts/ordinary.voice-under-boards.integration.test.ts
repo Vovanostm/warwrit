@@ -7,7 +7,6 @@ import {
   COMPANY_SCHEMA_VERSION,
   MILL_DESCENT_KIT_INITIAL_STOCK,
   MILL_DESCENT_KIT_PRICE_Q,
-  MILL_DESCENT_KIT_SITE,
   ordinaryContractGenesis,
   ordinaryContractProfile,
   ordinaryContractTerms,
@@ -281,6 +280,131 @@ afterAll(async () => {
       });
     }
   await database?.destroy();
+});
+
+describe('ordinary rescue battle gates (isolated PostgreSQL)', () => {
+  it.each(['active', 'surrendered', 'dead'] as const)(
+    'uses the retained %s raider outcome for the cellar release gate',
+    async (outcome) => {
+      if (!database) return;
+      const worldId = randomUUID();
+      const companyId = randomUUID();
+      const accountId = randomUUID();
+      const sessionToken = randomUUID();
+      const profile = ordinaryContractProfile('ci.m1.cellar-rescue.01')!;
+      const app = createApp(worldId);
+      apps.push(app);
+      testScopes.push({ worldId, accountId });
+      await seedCompany({
+        worldId,
+        companyId,
+        accountId,
+        sessionToken,
+        state: aggregateAt(worldId, companyId, issuer),
+      });
+      await database
+        .insertInto('world_campaign_clocks')
+        .values({ world_id: worldId, epoch_ms: String(Date.now()), starting_tick: '1000' })
+        .execute();
+      const headers = { cookie: `warwrit_session=${sessionToken}` };
+      const initial = await app.inject({ method: 'GET', url: '/contracts/board', headers });
+      expect(initial.statusCode, initial.body).toBe(200);
+      const accepted = prepareOrdinaryContractCommand(
+        profile,
+        ordinaryContractGenesis(profile),
+        { type: 'ACCEPT' },
+        {
+          companyId,
+          standingAt: issuer,
+          atTick: '1000',
+          expectedRevision: '0',
+          sourceEventId: 'fixture-cellar-accept',
+          gates: {
+            DAYLIGHT: true,
+            RAIDERS_DEFEATED: false,
+            BEAST_DEFEATED: false,
+            HERBALIST_PRESENT: true,
+            HERBALIST_EXILED: false,
+          },
+        },
+      );
+      if (accepted.kind !== 'PREPARED') throw new Error('Cellar fixture acceptance failed');
+      await database
+        .updateTable('ordinary_contracts')
+        .set({ revision: accepted.next.revision, state: accepted.next })
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      const initialRaiders = await database
+        .selectFrom('world_first_hunt_state')
+        .select('hostiles')
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      const hostiles = (initialRaiders.hostiles as readonly Record<string, unknown>[]).map(
+        (hostile) => ({
+          ...hostile,
+          ...(outcome === 'surrendered' ? { disposition: 'surrendered' } : {}),
+          ...(outcome === 'dead'
+            ? { currentPools: { ...(hostile['currentPools'] as object), health: 0 } }
+            : {}),
+        }),
+      );
+      await database
+        .updateTable('world_first_hunt_state')
+        .set({ hostiles: JSON.stringify(hostiles) })
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      await setCompanyPlace(worldId, companyId, {
+        siteId: 'staraya-melnitsa',
+        areaId: 'staraya-melnitsa-yard',
+      });
+      const board = await app.inject({ method: 'GET', url: '/contracts/board', headers });
+      expect(board.statusCode, board.body).toBe(200);
+      const contract = board
+        .json()
+        .contracts.find((entry: { instanceId: string }) => entry.instanceId === profile.instanceId);
+      const release = contract.steps.find(
+        (entry: { stepId: string }) => entry.stepId === 'release',
+      );
+      expect(release.blocker).toBe(outcome === 'active' ? 'CONDITION_NOT_MET' : null);
+      const commandId = randomUUID();
+      const response = await app.inject({
+        method: 'POST',
+        url: '/contracts/ordinary/commands',
+        headers: { ...headers, origin: 'http://127.0.0.1:3107' },
+        payload: {
+          schemaVersion: 1,
+          commandId,
+          instanceId: profile.instanceId,
+          expectedRevision: accepted.next.revision,
+          type: 'STEP',
+          stepId: 'release',
+        },
+      });
+      expect(response.json().ok, response.body).toBe(outcome !== 'active');
+      const saved = await database
+        .selectFrom('ordinary_contracts')
+        .select('state')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', profile.instanceId)
+        .executeTakeFirstOrThrow();
+      if (outcome === 'active') {
+        expect(saved.state).toEqual(accepted.next);
+      } else {
+        expect(saved.state).toMatchObject({
+          custody: expect.arrayContaining([
+            expect.objectContaining({ personId: 'person.cellar-captive.01', companyId }),
+          ]),
+        });
+      }
+      const retainedRaiders = await database
+        .selectFrom('world_first_hunt_state')
+        .select('hostiles')
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
+      expect(retainedRaiders.hostiles).toEqual(hostiles);
+    },
+  );
 });
 
 describe('voice-under-boards kit purchase (isolated PostgreSQL)', () => {

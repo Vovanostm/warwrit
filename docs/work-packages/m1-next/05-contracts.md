@@ -163,3 +163,29 @@ unavailable/dead-target handling. The separate approved «Голос из-под
 implementation and its quiet-release equipment purchase do not substitute for
 these original scenes. Neither another full success replay nor a new mill
 implementation is required by this reconciliation.
+
+## Surrendered raiders and rescue access — 2026-11-16
+
+FIXED / LOCAL. Source inspection found a concrete C05 access regression.
+The ordinary gate requires every raider's health to be zero, although the saved
+surrender disposition already makes a living hostile unavailable for a new hunt.
+A victorious company can therefore remain blocked from Demyan's cellar after
+the band surrenders. The correction reuses the existing isAvailableHuntHostile
+policy for defeated-source gates. Live available raiders retain the refusal.
+
+The focused isolated PostgreSQL check exercises the public board and release
+command for active, surrendered and dead raider fixtures, preserving the saved
+hostile pools and disposition. Before the correction, the surrendered case
+failed at the gate while the active/dead cases passed. Afterward all three cases
+and the existing complete descent-kit rescue passed (4/4). The first fixture
+attempt lacked a compatible campaign clock and was corrected before the isolated
+regression run. Server types, scoped ESLint/format and diff checks passed.
+An existing unused test import was removed. Logs are
+`output/m1-cellar-gate-before-corrected-20261116.log` and
+`output/m1-cellar-gate-after-20261116.log`.
+
+The player's path remains physical arrival at the mill, lawful release, then
+live delivery to Marfa. This correction reuses the same saved availability rule
+as hunt admission and preserves old rows without a disposition. It does not
+create a captive-death source or complete the remaining C05 native journey.
+Publication/merge and native C05 are NOT_RUN for this correction.
