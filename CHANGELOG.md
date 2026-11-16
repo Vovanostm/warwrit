@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record native STOP/reroute/offline arrival and focused
+  travel persistence checks. Remote map selection preserves actual place access,
+  completing T025. [N07](docs/work-packages/m1-next/07-world.md#focused-travel-persistence-and-remote-place-boundary--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: align active style-profile constraints and example prompts
   with the accepted reference-adaptation rule. [Quest art record](docs/work-packages/M1-QUESTS.md#active-generation-constraint-correction--2026-11-16). LOCAL.
 

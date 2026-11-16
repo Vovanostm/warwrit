@@ -14,11 +14,14 @@ last known position. Fresh browser/SQL conformance checks are NOT_RUN.
 
 ## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; N07 observer, travel and offline acceptance remains open.
-The dated marker projection is implemented; the full two-observer/native
-day-night journey and fresh browser/SQL conformance are NOT_RUN here. Continue
-with the accepted observation → leave visibility → changed second observer →
-return and refresh scenario.
+IN_PROGRESS / LOCAL; N07 observer, travel and offline acceptance remains open.
+The dated marker projection is implemented, and a native owner route now covers
+reroute, S-key STOP, a new route from the stopped position, tab close/reopen and
+arrival. T025's remote-selection place boundary is demonstrated. The full
+two-observer/native day-night journey and post-reroute stale-arrival check remain
+open. Focused PostgreSQL checks and their limits are recorded below.
+Continue with the accepted observation → leave visibility → changed second
+observer → return and refresh scenario.
 
 ### Known-route search — 2026-11-16
 
@@ -95,6 +98,32 @@ The independently created helper received the real refusal for an Old Mill
 route crossing unexplored terrain, then accepted a nearby visible-frontier
 movement order. The destination marker alone did not disclose the intervening
 route. The complete three-state/dating/two-observer acceptance remains open.
+
+### Native reroute, STOP and return — 2026-11-16
+
+The retained N02 owner issued MOVE_TO Gat at epoch 49, campaign tick 82963,
+from `81920000/33751040`. A reroute to North at tick 82968 advanced to epoch 50
+from the then-current position `88879953/19418612`. Pressing S at tick 82976
+returned ACCEPTED, advanced to epoch 51 and left the company stationary at
+terrain point `73389256/59117948`. A new North route at tick 82977 used that exact
+point as `plan.from`, targeted `-15597568/75038720`, and recorded duration
+`344159593` microseconds. This demonstrates that reroute and STOP retain the
+actual traversed position and that the next route starts there.
+
+The game tab closed at 05:06:55 UTC and reopened at 05:23:02 UTC; no QA-clock
+advance was applied while it was closed. On reopening, ordinary arrival at North
+retained `438.71`; the Scout and RoadTracks were paid. The return report spans
+campaign ticks 82928–83025 (97 ticks, including prior play), records `1.94` in
+wages and zero ration units. Separate API-process restart evidence for a saved
+in-flight route at epoch 61 is recorded in
+[N11 DUR-2](11-durability.md).
+
+PASS — this native owner control sequence covers reroute → STOP → new route from
+the stopped point → tab close/reopen → arrival and the associated return report.
+No speed/profile change or Light-phase boundary was recorded. This does not
+claim a stale-arrival or exact-retry attempt; N07's paired-observer/day-night
+journey and those stale-arrival/exact-retry checks remain open. No stale-arrival
+run was performed here.
 
 The player must distinguish what a map describes, where the company has been,
 what it sees now, and what someone merely reported. A chosen route must stop,
@@ -195,3 +224,29 @@ The explicit circular hit area still selects the place, and keyboard selection
 remains available. After reload the same helper clicked terrain beside the Mill label. The actual
 `TERRAIN (20,-153)` request returned HTTP 200 ACCEPTED, revision 100, epoch 43,
 with a 41-second route. Full Old Mill arrival remains pending. LOCAL.
+
+## Focused travel persistence and remote-place boundary — 2026-11-16
+
+LOCAL. Five selected PostgreSQL regressions passed on disposable per-file clones
+(25 unrelated cases skipped): concurrent STOP/MOVE_TO admits one intent, a due
+STOP settles once with site-anchor classification, a V2 itinerary continues and
+completes after offline boundaries, masked cartography respects company scope and
+exact movement replay, and accepted hunt grants expose the destination without
+its hidden road. Both clones were disposed. The output is retained at
+`output/m1-travel-focused-20261116.log` in the integration worktree. These cases
+do not submit an obsolete arrival candidate after a reroute.
+
+For T025, the ordinary map selected distant Каменный Брод while the company
+remained camped at Северный Двор. The Path panel named the selected destination;
+opening Место still showed «Локация: Северный Двор», «Ваш отряд здесь» and the
+actual local entrances. No movement command was sent and cash remained 438.71.
+Captures are `.playwright-cli/page-2026-11-16T05-57-47-344Z.png` and
+`.playwright-cli/page-2026-11-16T05-58-09-652Z.png`. Three focused GameShell cases
+also passed for distant selection and arrival disagreement. This closes T025's
+bounded ordinary local-access check. Building entry remains a client-side
+context under its existing contract.
+
+T023 still needs a direct before/after reentry observation of both Campaign and
+Light time. T024's paired changed-observation sequence and N07's post-reroute
+stale-arrival case remain open. No speed-selection control is required by the
+accepted MOVE_TO/STOP interface.
