@@ -133,6 +133,8 @@ export interface FirstHuntCommandRejectedDto {
     | 'INCOMPATIBLE_ACTIVITY'
     | 'CAPACITY'
     | 'INSUFFICIENT_FUNDS';
+  /** Additional public detail for a known reason behind an otherwise generic activity refusal. */
+  readonly reason?: 'INCOMPLETE_WEAPON_PAIR';
 }
 
 /** A one-time issuer refusal is a rejected service result with a durable replay receipt. */

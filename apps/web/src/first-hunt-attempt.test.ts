@@ -161,6 +161,32 @@ describe('FIRST HUNT browser command attempts', () => {
         'accept-once',
       ),
     ).toMatchObject({ ok: false, code: 'CAPACITY' });
+    expect(
+      readFirstHuntCommandResponse(
+        {
+          schemaVersion: 1,
+          commandId: 'accept-once',
+          ok: false,
+          code: 'INCOMPATIBLE_ACTIVITY',
+          reason: 'INCOMPLETE_WEAPON_PAIR',
+          publicRevision: '4',
+        },
+        'accept-once',
+      ),
+    ).toMatchObject({ ok: false, code: 'INCOMPATIBLE_ACTIVITY', reason: 'INCOMPLETE_WEAPON_PAIR' });
+    expect(
+      readFirstHuntCommandResponse(
+        {
+          schemaVersion: 1,
+          commandId: 'accept-once',
+          ok: false,
+          code: 'CAPACITY',
+          reason: 'INCOMPLETE_WEAPON_PAIR',
+          publicRevision: '4',
+        },
+        'accept-once',
+      ),
+    ).toBeUndefined();
     const refusal = {
       schemaVersion: 1,
       commandId: 'offer-once',
@@ -454,6 +480,9 @@ describe('FIRST HUNT browser command attempts', () => {
     expect(rejection).toBe('Для всех участников не хватает места в бою.');
     expect(firstHuntCommandError('INCOMPATIBLE_ACTIVITY')).toBe(
       'Состав компании не может сейчас участвовать в этом действии.',
+    );
+    expect(firstHuntCommandError('INCOMPATIBLE_ACTIVITY', 'INCOMPLETE_WEAPON_PAIR')).toBe(
+      'У бойца вашей компании не хватает обязательного предмета для оружия. Подготовьте снаряжение перед вступлением в бой.',
     );
     expect(firstHuntReadyView(offer, undefined, rejection)).toMatchObject({
       status: 'ready',

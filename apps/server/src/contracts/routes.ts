@@ -224,12 +224,14 @@ async function executeContractCommand(input: {
           { readonly ok: false; readonly code: string }
         >['code'],
         revision = '0',
+        reason?: 'INCOMPLETE_WEAPON_PAIR',
       ): FirstHuntCommandResponseDto => ({
         schemaVersion: 1,
         commandId: request.commandId,
         ok: false,
         publicRevision: revision,
         code,
+        ...(reason ? { reason } : {}),
       });
 
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
@@ -898,6 +900,11 @@ async function executeContractCommand(input: {
         commandType === 'JOIN' &&
         proposedContract.owner_join !== null &&
         (proposedContract.helper_company_id === null || proposedContract.helper_join !== null);
+      const equipmentRejection = shouldActivate
+        ? firstHuntOwnEquipmentRejection(state, companyId)
+        : undefined;
+      if (equipmentRejection)
+        return reject('INCOMPATIBLE_ACTIVITY', contract.revision, equipmentRejection);
       const activeEncounterId = shouldActivate
         ? await admitFirstHuntInTransaction({
             transaction,
@@ -955,6 +962,48 @@ async function executeContractCommand(input: {
       result.ok ||
       ('result' in result && result.result === 'ISSUER_REFUSED_OFFER' && !!result.receiptId),
   );
+}
+
+/** Diagnose a missing enabled off-hand requirement in the requesting company's party. */
+export function firstHuntOwnEquipmentRejection(
+  state: CompanyCombatAggregateState,
+  requestingCompanyId: string,
+): 'INCOMPLETE_WEAPON_PAIR' | undefined {
+  const lifecycle = state.economy.lifecycle;
+  if (lifecycle.companyId !== requestingCompanyId || !state.economy.physical) return undefined;
+  const party = lifecycle.parties[0];
+  if (!party) return undefined;
+
+  const physical = state.economy.physical;
+  for (const character of lifecycle.characters) {
+    if (character.presence.fieldPartyId !== party.partyId || !canPerform(character, 'travel'))
+      continue;
+    const equipped = physical.items.filter(
+      (item) =>
+        item.tombstone === null && item.equipped?.characterId === character.identity.characterId,
+    );
+    const mains = equipped.filter((item) => item.equipped!.slots.includes('MAIN_HAND'));
+    if (mains.length !== 1) continue;
+    const weapon = COMPANY_CATALOGUE.items.find((item) => item.id === mains[0]!.definitionId);
+    if (
+      weapon?.enabled !== true ||
+      weapon.kind !== 'weapon' ||
+      weapon.hands !== 1 ||
+      mains[0]!.equipped!.slots.length !== 1 ||
+      !weapon.requiresOffHand
+    )
+      continue;
+    const requiredOffHand = COMPANY_CATALOGUE.items.find(
+      (item) => item.id === weapon.requiresOffHand,
+    );
+    if (requiredOffHand?.enabled !== true || requiredOffHand.slot !== 'OFF_HAND') continue;
+    const hasRequiredOffHand = equipped.some(
+      (item) =>
+        item.definitionId === requiredOffHand.id && item.equipped!.slots.includes('OFF_HAND'),
+    );
+    if (!hasRequiredOffHand) return 'INCOMPLETE_WEAPON_PAIR';
+  }
+  return undefined;
 }
 
 async function persistWhoseWolvesStateCommand(input: {

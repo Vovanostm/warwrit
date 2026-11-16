@@ -323,9 +323,12 @@ export function readFirstHuntCommandResponse(
     return value as unknown as FirstHuntCommandResponseDto;
   if (
     value['ok'] === false &&
-    Object.keys(value).length === 5 &&
     typeof value['code'] === 'string' &&
-    rejectedCodes.has(value['code'])
+    rejectedCodes.has(value['code']) &&
+    ((Object.keys(value).length === 5 && !Object.hasOwn(value, 'reason')) ||
+      (Object.keys(value).length === 6 &&
+        value['code'] === 'INCOMPATIBLE_ACTIVITY' &&
+        value['reason'] === 'INCOMPLETE_WEAPON_PAIR'))
   )
     return value as unknown as FirstHuntCommandResponseDto;
   return undefined;

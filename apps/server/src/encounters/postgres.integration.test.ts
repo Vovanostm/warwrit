@@ -1775,6 +1775,189 @@ describe('persistent fixture encounters (PostgreSQL)', () => {
   );
 
   it.skipIf(connectionString === undefined)(
+    'returns private incomplete-weapon-pair detail without consuming the completing JOIN',
+    async () => {
+      const database = databases[0];
+      if (database === undefined) throw new Error('database missing');
+      const scenario = await seedFirstHuntJoinScenario(database);
+      const { owner, helper, worldId, app } = scenario;
+      try {
+        const helperRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: helper.headers,
+        });
+        const helperJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: helperRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const helperResponse = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: helper.headers,
+          payload: helperJoin,
+        });
+        expect(helperResponse.statusCode, helperResponse.body).toBe(200);
+
+        const physical = owner.initial.economy.physical;
+        if (!physical) throw new Error('FIRST HUNT owner physical state is missing');
+        const sword = physical.items.find(
+          (item) => item.definitionId === 'sword' && item.equipped?.slots.includes('MAIN_HAND'),
+        );
+        const characterId = sword?.equipped?.characterId;
+        if (!characterId) throw new Error('FIRST HUNT owner sword bearer is missing');
+        const withoutRequiredOffHand = (item: (typeof physical.items)[number]) =>
+          item.definitionId === 'shield' && item.equipped?.characterId === characterId;
+        const incomplete = combat.readCompanyCombatAggregateState({
+          ...owner.initial,
+          economy: {
+            ...owner.initial.economy,
+            physical: {
+              ...physical,
+              items: physical.items.filter((item) => !withoutRequiredOffHand(item)),
+              knowledge: {
+                ...physical.knowledge,
+                itemSnapshots: physical.knowledge.itemSnapshots.filter(
+                  (item) => !withoutRequiredOffHand(item),
+                ),
+              },
+            },
+          },
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: incomplete })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', owner.companyId)
+          .executeTakeFirstOrThrow();
+
+        const ownerRead = await app.inject({
+          method: 'GET',
+          url: '/contracts/first-hunt',
+          headers: owner.headers,
+        });
+        const ownerJoin = {
+          schemaVersion: 1,
+          commandId: randomUUID(),
+          expectedPublicRevision: ownerRead.json().publicRevision,
+          type: 'JOIN',
+          payload: { instanceId: 'ci.m1.raider-standard.01' },
+        } as const;
+        const before = await database.transaction().execute(async (transaction) => {
+          const contract = await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow();
+          const ownerState = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const admission = await transaction
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute();
+          const receipt = await transaction
+            .selectFrom('company_receipts')
+            .select('command_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', owner.companyId)
+            .where('command_id', '=', ownerJoin.commandId)
+            .executeTakeFirst();
+          return { contract, ownerState, admission, receipt };
+        });
+        const rejected = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: ownerJoin,
+        });
+        expect(rejected.statusCode).toBe(409);
+        expect(rejected.json()).toMatchObject({
+          ok: false,
+          code: 'INCOMPATIBLE_ACTIVITY',
+          reason: 'INCOMPLETE_WEAPON_PAIR',
+        });
+        const afterRejection = await database.transaction().execute(async (transaction) => {
+          const contract = await transaction
+            .selectFrom('contract_instances')
+            .select(['revision', 'owner_join', 'helper_join'])
+            .where('world_id', '=', worldId)
+            .where('instance_id', '=', 'ci.m1.raider-standard.01')
+            .executeTakeFirstOrThrow();
+          const ownerState = await loadCompanyAggregate(transaction, worldId, owner.companyId);
+          const admission = await transaction
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute();
+          const receipt = await transaction
+            .selectFrom('company_receipts')
+            .select('command_id')
+            .where('world_id', '=', worldId)
+            .where('company_id', '=', owner.companyId)
+            .where('command_id', '=', ownerJoin.commandId)
+            .executeTakeFirst();
+          return { contract, ownerState, admission, receipt };
+        });
+        expect(afterRejection).toEqual(before);
+        expect(before.receipt).toBeUndefined();
+
+        const partyMemberIds = new Set(
+          owner.initial.economy.lifecycle.characters
+            .filter((character) => character.presence.fieldPartyId === owner.partyId)
+            .map((character) => String(character.identity.characterId)),
+        );
+        const isHandItemOnParty = (item: (typeof physical.items)[number]) =>
+          item.equipped !== null &&
+          partyMemberIds.has(String(item.equipped.characterId)) &&
+          item.equipped.slots.some((slot) => slot === 'MAIN_HAND' || slot === 'OFF_HAND');
+        const unarmed = combat.readCompanyCombatAggregateState({
+          ...owner.initial,
+          economy: {
+            ...owner.initial.economy,
+            physical: {
+              ...physical,
+              items: physical.items.filter((item) => !isHandItemOnParty(item)),
+              knowledge: {
+                ...physical.knowledge,
+                itemSnapshots: physical.knowledge.itemSnapshots.filter(
+                  (item) => !isHandItemOnParty(item),
+                ),
+              },
+            },
+          },
+        });
+        await database
+          .updateTable('company_snapshots')
+          .set({ state: unarmed })
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', owner.companyId)
+          .executeTakeFirstOrThrow();
+        const retried = await app.inject({
+          method: 'POST',
+          url: '/contracts/commands',
+          headers: owner.headers,
+          payload: ownerJoin,
+        });
+        expect(retried.statusCode, retried.body).toBe(200);
+        expect(retried.json()).toMatchObject({ ok: true, commandId: ownerJoin.commandId });
+        expect(
+          await database
+            .selectFrom('encounter_admissions')
+            .select('encounter_id')
+            .where('world_id', '=', worldId)
+            .execute(),
+        ).toHaveLength(1);
+      } finally {
+        await cleanupFirstHuntJoinScenario(database, worldId, [owner, helper]);
+      }
+    },
+  );
+
+  it.skipIf(connectionString === undefined)(
     'catches both FIRST HUNT companies up and activates one encounter across separate JOIN ticks',
     async () => {
       const database = databases[0];

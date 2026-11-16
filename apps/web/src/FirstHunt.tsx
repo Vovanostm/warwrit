@@ -49,14 +49,16 @@ function storage(): FirstHuntStorage | undefined {
   }
 }
 
-export function firstHuntCommandError(code: unknown): string {
+export function firstHuntCommandError(code: unknown, reason?: unknown): string {
   switch (code) {
     case 'STALE_REVISION':
       return 'Состояние контракта изменилось. Данные обновлены; проверьте условия перед новым действием.';
     case 'TERMS_CHANGED':
       return 'Условия изменились; контракт не принят.';
     case 'INCOMPATIBLE_ACTIVITY':
-      return 'Состав компании не может сейчас участвовать в этом действии.';
+      return reason === 'INCOMPLETE_WEAPON_PAIR'
+        ? 'У бойца вашей компании не хватает обязательного предмета для оружия. Подготовьте снаряжение перед вступлением в бой.'
+        : 'Состав компании не может сейчас участвовать в этом действии.';
     case 'CAPACITY':
       return 'Для всех участников не хватает места в бою.';
     case 'INSUFFICIENT_FUNDS':
@@ -212,7 +214,10 @@ export function FirstHunt(
             await refresh();
             return;
           }
-          const error = firstHuntCommandError('code' in result ? result.code : result.result);
+          const error = firstHuntCommandError(
+            'code' in result ? result.code : result.result,
+            'reason' in result ? result.reason : undefined,
+          );
           setView((state) => {
             const { attempt: _attempt, ...withoutAttempt } = state;
             return { ...withoutAttempt, pending: false, error };

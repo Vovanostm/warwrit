@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: explain an incomplete required off-hand item when the
+  requesting company sends the completing FIRST HUNT JOIN, while keeping other
+  activity refusals generic and unarmed admission available. [JOIN feedback](docs/work-packages/m1-next/02-next-contract.md#incomplete-weapon-pair-join-feedback--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: reconcile the quest summary with the integrated eleven
   implementations and explicit remaining report/playthrough checks. [Quest status](docs/work-packages/M1-QUESTS.md). LOCAL.
 - 2026-11-16 — Rehearsed the production server against an isolated database:

@@ -91,6 +91,36 @@ Physical helper presence and consent remain required where applicable. No second
 reward is inferred for the helper. Save task facts, custody, proof ownership,
 receipts, casualties, balances and released encounter bindings together as owned.
 
+### Incomplete weapon-pair JOIN feedback — 2026-11-16
+
+Player goal: join an already-consented FIRST HUNT battle and understand a refusal
+caused by the requesting company's own incomplete equipment. Normal path: a helper
+records JOIN consent, then the owner sends the completing JOIN from the contract
+interface. If an eligible fighter in the requesting company's field party has an
+enabled weapon whose catalogue definition requires an enabled OFF_HAND item, and
+that item is missing, refuse activation with `INCOMPATIBLE_ACTIVITY` plus the
+optional `INCOMPLETE_WEAPON_PAIR` reason. The browser explains the missing required
+equipment only for that reason; other `INCOMPATIBLE_ACTIVITY` replies keep the
+established generic text.
+
+The check reads only the requesting company's eligible party and canonical
+catalogue definitions. It does not inspect a partner's equipment. Unarmed fighters
+remain eligible, and no combat or loadout rule changes. On refusal, preserve JOIN
+intent, contract revision, company state, balance, items and the owner's receipt
+absence so the same request can be retried after preparation. The observable
+outcome is either the precise refusal or normal admission after the requesting
+party is unarmed / has its required item. The route regression now checks these
+saved-state effects with a disposable PostgreSQL database.
+
+Checks: server/web typechecks, protocol/game-core builds, focused UI/helper tests
+(18 passed), targeted ESLint, Prettier and `git diff --check` passed. The
+disposable PostgreSQL route regression passed (1 passed; 28 unrelated cases
+skipped), including exact retry with the same command after removing hand gear.
+A prior run's OBSERVE payload assertion failure was not reproduced by the current
+focused UI test run. This is LOCAL route and response-mapper evidence; a native
+browser/player admission journey was not run and remains separate from N02's open
+contract objectives.
+
 ## Implementation boundary
 
 IN: smallest reproduced blockers in the existing journal/issuer/contract/travel/
