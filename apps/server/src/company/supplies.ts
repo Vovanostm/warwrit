@@ -7,6 +7,7 @@ import {
   supplySpendableCashQ,
 } from '@warwrit/game-core';
 import type { Kysely, Transaction } from 'kysely';
+import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { DatabaseSchema } from '../db/database.js';
 import type { SupplyShopDto } from '@warwrit/protocol';
 import { lockCompanyAggregate } from './repository.js';
@@ -76,6 +77,36 @@ export async function readCarriedSupplyPurse(
     .where('consumed_at', 'is not', null)
     .executeTakeFirst();
   return validatedCarriedPurse(opening?.evidence, worldId, companyId);
+}
+
+/** Relocate only the opening-attested company purse that still backs the local pool. */
+export function locateCarriedCompanyPurse(
+  state: CompanyCombatAggregateState,
+  carriedPurse: { readonly walletId: string; readonly partyId: string } | undefined,
+): CompanyCombatAggregateState {
+  const { lifecycle, finance } = state.economy;
+  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
+  if (!carriedPurse || party?.location.kind !== 'AT' || carriedPurse.partyId !== party.partyId)
+    return state;
+  const location = party.location;
+  const pool = finance.pools.find((entry) => entry.poolId === 'local');
+  return {
+    ...state,
+    economy: {
+      ...state.economy,
+      finance: {
+        ...finance,
+        wallets: finance.wallets.map((wallet) =>
+          wallet.walletId === carriedPurse.walletId &&
+          wallet.walletId === pool?.walletId &&
+          wallet.owner.kind === 'COMPANY' &&
+          wallet.owner.id === lifecycle.companyId
+            ? { ...wallet, location: { ...location } }
+            : wallet,
+        ),
+      },
+    },
+  };
 }
 
 function validatedCarriedPurse(value: unknown, worldId: string, companyId: string) {

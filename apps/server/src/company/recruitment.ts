@@ -159,36 +159,6 @@ function offerGenesis(worldId: string, profile: (typeof profiles)[number]) {
   return { offerId, characterId, genesisId, candidate, vitals, wallet, location };
 }
 
-/** The opening attests this exact field purse, as for ordinary supply purchases. */
-export function locateRecruitCarriedPurse(
-  state: CompanyCombatAggregateState,
-  carriedPurse: { readonly walletId: string; readonly partyId: string } | undefined,
-): CompanyCombatAggregateState {
-  const { lifecycle, finance } = state.economy;
-  const party = lifecycle.parties.length === 1 ? lifecycle.parties[0] : undefined;
-  if (!carriedPurse || party?.location.kind !== 'AT' || carriedPurse.partyId !== party.partyId)
-    return state;
-  const location = party.location;
-  const pool = finance.pools.find((entry) => entry.poolId === 'local');
-  return {
-    ...state,
-    economy: {
-      ...state.economy,
-      finance: {
-        ...finance,
-        wallets: finance.wallets.map((wallet) =>
-          wallet.walletId === carriedPurse.walletId &&
-          wallet.walletId === pool?.walletId &&
-          wallet.owner.kind === 'COMPANY' &&
-          wallet.owner.id === lifecycle.companyId
-            ? { ...wallet, location: { ...location } }
-            : wallet,
-        ),
-      },
-    },
-  };
-}
-
 export function localCompanyContacts(
   state: CompanyCombatAggregateState,
   companyId: string,
