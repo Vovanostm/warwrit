@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the native two-company defeat and preserved
+  pre-battle restore copy, clarify equipment refusal and cover RECOVERY members.
+  [Native attempt and limits](docs/work-packages/m1-next/02-next-contract.md#native-ownerhelper-attempt--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: explain an incomplete required off-hand item when the
   requesting company sends the completing FIRST HUNT JOIN, while keeping other
   activity refusals generic and unarmed admission available. [JOIN feedback](docs/work-packages/m1-next/02-next-contract.md#incomplete-weapon-pair-join-feedback--2026-11-16). LOCAL.

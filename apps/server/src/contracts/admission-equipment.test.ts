@@ -31,6 +31,21 @@ it('reports only an incomplete weapon pair on the requesting company, while allo
     },
   };
   expect(firstHuntOwnEquipmentRejection(incomplete, companyId)).toBe('INCOMPLETE_WEAPON_PAIR');
+  const recovering = {
+    ...incomplete,
+    economy: {
+      ...incomplete.economy,
+      lifecycle: {
+        ...incomplete.economy.lifecycle,
+        characters: incomplete.economy.lifecycle.characters.map((character) =>
+          character.identity.characterId === characterId
+            ? { ...character, presence: { ...character.presence, assignment: 'RECOVERY' as const } }
+            : character,
+        ),
+      },
+    },
+  };
+  expect(firstHuntOwnEquipmentRejection(recovering, companyId)).toBe('INCOMPLETE_WEAPON_PAIR');
 
   const noHandGear = {
     ...valid,

@@ -482,7 +482,7 @@ describe('FIRST HUNT browser command attempts', () => {
       'Состав компании не может сейчас участвовать в этом действии.',
     );
     expect(firstHuntCommandError('INCOMPATIBLE_ACTIVITY', 'INCOMPLETE_WEAPON_PAIR')).toBe(
-      'У бойца вашей компании не хватает обязательного предмета для оружия. Подготовьте снаряжение перед вступлением в бой.',
+      'Бойцу с мечом нужен щит. Дайте ему щит или уберите меч в обоз.',
     );
     expect(firstHuntReadyView(offer, undefined, rejection)).toMatchObject({
       status: 'ready',

@@ -1,6 +1,19 @@
 # N02 — Finish the same company's next contract
 
-## Current result — 2026-11-15
+## Current result — 2026-11-16
+
+IN_PROGRESS / LOCAL. Both naturally reached companies physically joined HUNT-03
+at Old Mill. The native battle ended at revision 135/round 16 with all six allied
+fighters dead and all three hostiles standing. No manual battle order was sent
+before timeout handling took over. Terminal company effects still await the
+no-successor path, which is under diagnosis. The failed source state is retained.
+
+A consistent backup captured before JOIN is restored into the separately owned
+`m1_restore_current_20261116` database for R5 and continued control checks. Its
+provenance and later divergence are recorded in N11. The contract objectives,
+payment and manual-control acceptance remain open.
+
+### Earlier restore checkpoint — 2026-11-15
 
 IN_PROGRESS / LOCAL. T002 provenance is established on the owned restored N02
 copy in `codex/m1-completion-20261115`. Company
@@ -170,3 +183,33 @@ payout/custody transaction; UI checks for actual refusal/retry defects.
 Unsupported source policy blocks its branch only. If the genuine target becomes
 unavailable, record the real result; use another naturally reached test world for
 success coverage, preserving both. No forced-win battle or SQL health repair.
+
+### Native owner/helper attempt — 2026-11-16
+
+The helper's ordinary route reached the east bridge and Old Mill after the
+marker hit-area correction and known-route search. Both parties had three living
+field members, and the helper accepted JOIN first. Owner JOIN initially returned
+NOT_AVAILABLE because Rell retained a sword after his shield was sold. A
+rollback-only diagnostic located the existing sword/shield projection requirement.
+The diagnostic committed no admission or state changes.
+
+The owner travelled normally to Kamenny Brod, bought 20 rations for 80 crowns
+(318.71 crowns remained), and transferred Rell's sword into the caravan through
+the ordinary item controls. This retained ownership and enabled the existing
+unarmed combat profile. The return to Old Mill and JOIN were accepted normally,
+with contract revision 4 and encounter `b8df737c-e46e-443a-852b-6447258f592f`.
+QA time advancement shortened travel waits.
+
+The first projection showed three controlled owner units and six other units;
+the helper saw its separate three units. Later private-grant refreshes showed
+zero controls during other actors' turns. The runners spent the human deadlines
+inspecting and coordinating instead of sending orders. The battle proceeded via
+timeout handling and ended in defeat, with six dead and zero fled/surrendered.
+Manual control and victory were not demonstrated. The original outcome and its
+pending company consequences remain intact. Evidence includes
+`output/playwright/m1-original-defeat-20261116.png` and the matching snapshot.
+
+The equipment refusal now states the actual shield requirement and the existing
+caravan-transfer alternative. Its own-company check also covers available FIELD
+or RECOVERY members admitted under the current immobility rules. Parent server/web typechecks and 18 focused tests passed after the correction.
+Prettier and scoped diff checks passed. LOCAL.

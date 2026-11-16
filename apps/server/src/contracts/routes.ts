@@ -976,7 +976,11 @@ export function firstHuntOwnEquipmentRejection(
 
   const physical = state.economy.physical;
   for (const character of lifecycle.characters) {
-    if (character.presence.fieldPartyId !== party.partyId || !canPerform(character, 'travel'))
+    if (
+      character.presence.fieldPartyId !== party.partyId ||
+      character.presence.availability !== 'AVAILABLE' ||
+      character.presence.encounterBindingId !== null
+    )
       continue;
     const equipped = physical.items.filter(
       (item) =>

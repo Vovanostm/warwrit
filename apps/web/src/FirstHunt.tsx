@@ -57,7 +57,7 @@ export function firstHuntCommandError(code: unknown, reason?: unknown): string {
       return 'Условия изменились; контракт не принят.';
     case 'INCOMPATIBLE_ACTIVITY':
       return reason === 'INCOMPLETE_WEAPON_PAIR'
-        ? 'У бойца вашей компании не хватает обязательного предмета для оружия. Подготовьте снаряжение перед вступлением в бой.'
+        ? 'Бойцу с мечом нужен щит. Дайте ему щит или уберите меч в обоз.'
         : 'Состав компании не может сейчас участвовать в этом действии.';
     case 'CAPACITY':
       return 'Для всех участников не хватает места в бою.';
