@@ -419,6 +419,11 @@ export interface DatabaseSchema {
 
 export function createDatabase(connectionString: string): Kysely<DatabaseSchema> {
   const pool = new Pool({ connectionString, max: 5 });
+  // pg removes its idle listener while a client is checked out. Query and
+  // transaction promises report the failure, while this handles its error event.
+  pool.on('connect', (client) => {
+    client.on('error', () => {});
+  });
   // pg removes the failed idle client. Handle its event so readiness can report
   // the outage and the pool can reconnect when PostgreSQL returns.
   pool.on('error', () => {

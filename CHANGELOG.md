@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: handle checked-out PostgreSQL client errors while retaining
+  rejected query/transaction results. The crash regression and independent
+  production recovery/login drill pass, completing T030. [N12](docs/work-packages/m1-next/12-release-preparation.md#checked-out-postgresql-connection-failure--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: PostgreSQL proof-refusal/conservation and absent-helper
   JOIN checks, completing T012/T013 with existing native arrival/control evidence.
   [Terms](docs/work-packages/M1-CONTRACT-TERMS.md#ordinary-proof-refusal-and-bearer-payout--2026-11-16), [N02](docs/work-packages/m1-next/02-next-contract.md#absent-helper-admission-and-ordinary-proof-refusal--2026-11-16). LOCAL.

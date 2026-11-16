@@ -168,6 +168,47 @@ The Compose project name is the checkout directory name, so two checkouts get
 separate volumes but share the published ports; stop one stack before starting
 another.
 
+## Local production-artifact rehearsal
+
+Use the existing isolated rehearsal database and a private environment file
+outside version control, mode 0600. Set its `DATABASE_URL`, complete OIDC
+configuration, `PUBLIC_ORIGIN`, `OIDC_REDIRECT_URI`, `HOST`, `PORT` and
+`ENCOUNTER_REALTIME_PORT` for that rehearsal. The registered OIDC callback must
+match the web origin. Remove development Playground flags from this environment.
+Keep the ordinary development runtime stopped while reusing its ports.
+
+Build once from the repository root with the pinned toolchain:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+Start the compiled API in one terminal. Replace the environment-file placeholder
+with the private file prepared for the isolated database:
+
+```bash
+NODE_ENV=production node --env-file=/absolute/path/m1-runtime.env apps/server/dist/index.js
+```
+
+Start the compiled web preview in a second terminal. This local example uses
+the existing rehearsal callback on port 5335, API port 3035 and realtime 3036:
+
+```bash
+API_PROXY_TARGET=http://127.0.0.1:3035 ENCOUNTER_REALTIME_PROXY_TARGET=http://127.0.0.1:3036 pnpm --filter @warwrit/web preview --host 127.0.0.1 --port 5335 --strictPort
+```
+
+Open `http://127.0.0.1:5335`, use ordinary **Войти**, and verify the saved company.
+Check `/health/live` and `/health/ready` on the API. For the readiness drill,
+route only this rehearsal API through an owned local TCP proxy to PostgreSQL.
+Stopping that proxy must yield liveness 200 and readiness 503. Restart it, wait
+for readiness 200, and repeat ordinary login. Keep the shared database and Dex
+running. Stop the two owned application terminals with `Ctrl+C`, then restart
+against the same private environment and verify the same company again.
+
+The detailed current result and restore link belong to
+[N12](../work-packages/m1-next/12-release-preparation.md).
+
 ## Verification pipeline
 
 `pnpm verify` runs in this order:

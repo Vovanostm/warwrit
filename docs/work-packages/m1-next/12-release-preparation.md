@@ -2,11 +2,12 @@
 
 ## Current result — 2026-11-16
 
-SCOPED LOCAL release-artifact and PostgreSQL-readiness rehearsal passed. N12 is
-not complete: normal OIDC login/company re-entry, backup/restore, compatible
-rollback, capacity measurement and full M1 evidence join remain NOT_RUN. No
-deployment, paid provisioning, pilot audience/size or reduced M1 acceptance is
-authorized by this package.
+PARTIAL / LOCAL. T030 is complete. The current integrated production artifacts
+pass another executor's ordinary OIDC login, restart/re-entry and DB-loss recovery
+on the retained R5 restore. The drill exposed and then verified the fix for an
+API exit on checked-out PostgreSQL connection loss. N11 owns the completed R5
+restore. Compatible rollback, capacity measurement and full M1 acceptance remain
+open. No deployment, paid provisioning or pilot audience/size is authorized.
 [Common contract](COMMON.md). [Prompt](prompts/12-release-preparation.md).
 
 Earlier status on 2026-11-08: SPECIFIED / LOCAL; the fresh release rehearsal had
@@ -160,6 +161,77 @@ large-chunk advisory (main bundle about 7.82 MB, gzip 1.79 MB); load performance
 is not inferred from build success. Output is retained at
 `output/m1-production-build-20261116.log`.
 
-This supplies the current artifact for the second executor's launch/login
-rehearsal. That rehearsal and source-runtime restoration are pending here;
-T030 and the broader N12 acceptance stay open.
+At this build checkpoint, the second executor's launch/login rehearsal and
+source-runtime restoration were pending. Their later failure, correction and
+T030 completion follow below; broader N12 acceptance remains open.
+
+## Checked-out PostgreSQL connection failure — 2026-11-16
+
+LOCAL. Following the documented production-artifact rehearsal, another executor
+used ordinary Dex login on the retained R5 target and saw «Дозор помощника» with
+800 crowns. Production stop/start and saved-company re-entry also passed.
+`/dev/playground/api` and its maps route returned 404. The target used the
+current integration artifact, production environment and the owned local proxy
+54922 → shared PostgreSQL tunnel 54921.
+
+Stopping only the proxy terminated a checked-out connection. The API exited
+with `Connection terminated unexpectedly`, so liveness 200/readiness 503 was
+FAILED. The existing pool error handler covers idle clients; pg removes that
+listener while a client is checked out. The generic idle-loss warning was absent
+from the failure log. Source development was restored against
+`m1_restore_current_20261116`, with liveness/readiness/web all 200; the target
+restore, source records, PostgreSQL and Dex were preserved.
+
+The fix registers a per-client error-event listener when pg creates a connection.
+Query and transaction promises still reject and their owners handle those
+failures. The existing idle-pool error reporting remains. A new real PostgreSQL
+regression terminates only its own transaction backend in a disposable clone,
+expects the transaction to reject, and verifies liveness plus a fresh ready
+connection. Before the fix its assertions passed but two unhandled errors caused
+exit 1. After the fix it passed cleanly 1/1; the clone was disposed. The existing
+three database unit cases, scoped ESLint, Prettier, server typecheck and server
+production rebuild also passed. No migration, canonical rule or automatic retry
+was introduced.
+
+Failure/recovery logs are `output/t030-r5-api-restart-20261116.log` and
+`output/t030-source-restore-20261116.log`. Regression logs are
+`output/m1-checked-out-connection-{before,after}-20261116.log`; the rebuilt server
+log is `output/m1-server-connection-fix-build-20261116.log`. The next action is
+the same production proxy-loss/recovery/login drill on the corrected artifact.
+T030 stays open until that result is directly checked and source is restored.
+
+## Corrected production recovery and T030 completion — 2026-11-16
+
+COMPLETED / LOCAL for T030. The same independent executor repeated the documented
+rehearsal on the corrected integration server artifact and the existing built
+web artifact, using the retained R5 database. Ordinary Dex login showed
+«Дозор помощника», 800 crowns and Campaign Day 84 tick 58. Prior production
+stop/start and re-entry evidence remains applicable; the server was rebuilt
+with the connection fix. The actual development Playground API returned 404.
+
+After stopping only the owned TCP proxy, three consecutive samples returned
+liveness 200/readiness 503. The same API PID 60099 retained both listeners
+3035/3036 throughout. Restoring the forward to the shared PostgreSQL tunnel
+returned readiness 200 on the first probe. The executor then logged out and
+completed another ordinary Dex login, retaining the same company and 800 crowns
+at day 84 tick 65. This checks actual recovery after disconnection rather than
+only an initially missing database.
+
+The executor closed its isolated browser and stopped its target API, preview and
+proxy. Exactly one source development runtime was restored against
+`m1_restore_current_20261116`, directly through 54921: API PID 61958, web PID
+61947; liveness/readiness/web all returned 200. No 54922 listener remained.
+No retained data, identity, migration or story outcome was repaired or reset.
+The [R5 restoration and continuation](11-durability.md) supplies the linked
+independent restore evidence for SC-008.
+
+Logs are `output/t030-r5-api-fixed-20261116.log`,
+`output/t030-r5-web-fixed-20261116.log`,
+`output/t030-r5-proxy-fixed-20261116.log`,
+`output/t030-r5-proxy-return-20261116.log` and
+`output/t030-source-restored-after-client-fix-20261116.log`. Independent Luna
+source review found no actionable defect in pg query rejection, Kysely
+transaction error propagation or failed-client disposal. The regression does
+not assert rollback of a mutation; it asserts rejection and reconnection.
+N12's hosted rollout, compatible rollback, capacity and full M1 acceptance
+retain their separate open criteria.
