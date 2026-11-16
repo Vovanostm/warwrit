@@ -41,6 +41,51 @@ function response(status: number, value: unknown): Response {
 }
 
 describe('company roster command attempts', () => {
+  it('persists and retries equipment with a native JSON-shaped item identifier', async () => {
+    const storage = new MemoryStorage();
+    const itemId = JSON.stringify([
+      JSON.stringify([
+        'first-hunt-hostile-gear-v1',
+        'world.porechye.atlas-v1',
+        'encounter-id',
+        'source',
+      ]),
+      'world.raider.old-mill.heavy.01',
+      'great-weapon',
+    ]);
+    expect(itemId.length).toBeGreaterThan(128);
+    const equipment = {
+      ...request,
+      type: 'EquipItem' as const,
+      payload: { characterId: 'fighter', itemId, slotId: 'MAIN_HAND' as const },
+    };
+    const saved = persistCompanyRosterAttempt(storage, scope, equipment);
+    expect(saved.kind).toBe('SAVED');
+    const restored = readCompanyRosterAttempt(storage, scope, 'EquipItem');
+    expect(restored?.request).toEqual(equipment);
+    const bodies: string[] = [];
+    const lostReply: typeof fetch = async (_input, init) => {
+      bodies.push(String(init?.body));
+      throw new Error('connection lost');
+    };
+    expect(await postCompanyRosterAttempt('/api', restored!, lostReply)).toBe('UNKNOWN');
+    const retry: typeof fetch = async (_input, init) => {
+      bodies.push(String(init?.body));
+      return response(200, { commandId: equipment.commandId, ok: true, publicRevision: '8' });
+    };
+    expect(await postCompanyRosterAttempt('/api', restored!, retry)).toBe('ACCEPTED');
+    expect(bodies).toEqual([JSON.stringify(equipment), JSON.stringify(equipment)]);
+    expect(clearCompanyRosterAttempt(storage, restored!)).toBe(true);
+    for (const invalid of ['x'.repeat(257), 'bad\u0000item', ' padded ']) {
+      expect(() =>
+        createCompanyRosterAttempt(scope, {
+          ...equipment,
+          payload: { ...equipment.payload, itemId: invalid },
+        }),
+      ).toThrow('Invalid company roster request');
+    }
+  });
+
   it('uses an unsafe-place reason only for a matching camp rejection', async () => {
     const action = { ...request, type: 'BeginFieldCamp' as const, payload: {} };
     const attempt = createCompanyRosterAttempt(scope, action);

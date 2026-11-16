@@ -233,6 +233,13 @@ describe('hostile loot routes (isolated PostgreSQL)', () => {
       );
       expect(await snapshot(database, worldId, first.companyId)).toEqual(beforeCapacity);
 
+      await database
+        .updateTable('world_campaign_clocks')
+        .set({
+          starting_tick: (BigInt(first.state.economy.lifecycle.campaignTick) + 1n).toString(),
+        })
+        .where('world_id', '=', worldId)
+        .executeTakeFirstOrThrow();
       const beforeRace = await snapshot(database, worldId, first.companyId);
       const race = await Promise.all([
         pickup(app, first, first.companyId, requestFor(first, loot!.itemId, 'claim-first')),

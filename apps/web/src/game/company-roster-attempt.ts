@@ -1,5 +1,6 @@
 import {
   isRecord,
+  isCompanyEntityId,
   isTransportId as isId,
   type OrdinaryPlayerCompanyCommandV2Dto,
 } from '@warwrit/protocol';
@@ -95,7 +96,7 @@ function isRosterCommand(
     return (
       Object.keys(payload).length === 3 &&
       isId(payload['characterId']) &&
-      isId(payload['itemId']) &&
+      isCompanyEntityId(payload['itemId']) &&
       ['HEAD', 'BODY', 'MAIN_HAND', 'OFF_HAND', 'BELT'].includes(String(payload['slotId']))
     );
   if (type === 'SetAssignment')

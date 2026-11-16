@@ -15,7 +15,7 @@
   - [ ] [World, contracts and physical battle joins](roadmap/m1-world.md)
   - [ ] [Multi-side battle engine and campaign S4](../work-packages/M1-CAMPAIGN-BATTLE.md)
   - [ ] [Ordinary contract terms](../work-packages/M1-CONTRACT-TERMS.md)
-  - [ ] [Loot sale to the town trader](../work-packages/M1-LOOT-SALE.md)
+  - [x] [Loot sale to the town trader](../work-packages/M1-LOOT-SALE.md)
   - [x] [Return report](../work-packages/M1-OFFLINE-REPORT.md)
   - [ ] [Twenty quests, four moral choices](../work-packages/M1-QUESTS.md)
   - [x] [N01 integrated candidate](../work-packages/m1-next/01-integration.md)

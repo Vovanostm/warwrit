@@ -20,6 +20,7 @@ import {
 import type { CompanyCommand } from '@warwrit/game-core';
 import type { HostileLootPickupRequestDto } from '@warwrit/protocol';
 import type { FirstHuntHostileState } from './first-hunt-runtime.js';
+import { prepareStationaryFoodFacts } from '../company/travel-food.js';
 
 export type HostileLootPickupPreparation =
   | {
@@ -71,8 +72,7 @@ export function prepareHostileLootPickup(input: {
   const activeCharacterIds = new Set(
     lifecycle.memberships
       .filter(
-        (membership) =>
-          membership.endedAt === null && membership.companyId === lifecycle.companyId,
+        (membership) => membership.endedAt === null && membership.companyId === lifecycle.companyId,
       )
       .map((membership) => String(membership.characterId)),
   );
@@ -121,7 +121,9 @@ export function prepareHostileLootPickup(input: {
       ...previous.economy,
       physical: {
         ...physical,
-        containers: existingSource ? physical.containers : [...physical.containers, sourceContainer],
+        containers: existingSource
+          ? physical.containers
+          : [...physical.containers, sourceContainer],
         items: [...physical.items, item],
         knowledge: {
           ...physical.knowledge,
@@ -172,6 +174,8 @@ export function prepareHostileLootPickup(input: {
     fromContainerIds: [sourceContainer.containerId],
     ownerAfter: { kind: 'COMPANY', id: lifecycle.companyId },
   };
+  const food = prepareStationaryFoodFacts(previous, input.campaignTick, input.request.commandId);
+  if (food.kind !== 'PREPARED') return { kind: 'REJECTED', code: 'NOT_AVAILABLE' };
   const parsed = parseCompanyCommand({
     schemaVersion: COMPANY_COMMAND_SCHEMA_VERSION,
     commandId: input.request.commandId,
@@ -202,7 +206,7 @@ export function prepareHostileLootPickup(input: {
     contactIds: [operator.identity.characterId],
     facts: [],
     financeFacts: [],
-    physicalFacts: [access, authorization],
+    physicalFacts: [...food.facts, access, authorization],
     practiceFacts: [],
   });
   if (prepared.kind !== 'PREPARED' || prepared.replayed) {

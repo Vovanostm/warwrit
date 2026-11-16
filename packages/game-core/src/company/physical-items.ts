@@ -549,7 +549,6 @@ export function claimLoot(
     const ownerFact: OwnershipAuthorizationEvidence = {
       ...authorization,
       kind: 'OWNERSHIP_AUTHORIZATION',
-      id: physicalId(authorization.id, entry.itemId, 'loot-owner'),
       itemId: entry.itemId,
       quantity: entry.quantity,
       fromOwner: item.owner,

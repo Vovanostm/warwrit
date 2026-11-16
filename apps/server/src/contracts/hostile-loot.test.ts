@@ -142,6 +142,34 @@ describe('hostile loot pickup preparation', () => {
     );
   });
 
+  it('settles elapsed food from owned stock in the same loot preparation', () => {
+    const previous = stateAtObjective();
+    const hostile = deadHostile();
+    const atTick = (BigInt(previous.economy.lifecycle.campaignTick) + 1000n).toString();
+    const rationCount = (state: typeof previous) =>
+      state.economy
+        .physical!.items.filter((item) => item.definitionId === 'ration' && item.tombstone === null)
+        .reduce((sum, item) => sum + item.quantity, 0);
+    const prepared = prepareHostileLootPickup({
+      previous,
+      accountId: 'owner-account',
+      request: request(hostile.gear!.items[0]!.itemId),
+      worldId,
+      profile,
+      hostile,
+      terminalSourceId,
+      terminalRevision,
+      campaignTick: atTick,
+    });
+    expect(prepared.kind).toBe('PREPARED');
+    if (prepared.kind !== 'PREPARED') throw new Error(prepared.code);
+    expect(prepared.next.economy.lifecycle.campaignTick).toBe(atTick);
+    expect(prepared.next.economy.physical!.food.some((entry) => entry.toTick === atTick)).toBe(
+      true,
+    );
+    expect(rationCount(prepared.next)).toBeLessThan(rationCount(previous));
+  });
+
   it('requires a loot operator to have active membership in the owning company', () => {
     const state = stateAtObjective();
     const lifecycle = state.economy.lifecycle;

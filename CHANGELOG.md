@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: native hostile loot pickup and equipment accept long
+  company item IDs and settle elapsed food. The retained company sold real
+  raider loot in town. [T022](docs/work-packages/M1-LOOT-SALE.md#native-loot-equipment-and-sale-completion--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: companies continue after more than 1,000 observed events
   by comparing owned economy projections with the existing state budget.
   [N11](docs/work-packages/m1-next/11-durability.md#long-observed-history-blocked-movement--2026-11-16). LOCAL.

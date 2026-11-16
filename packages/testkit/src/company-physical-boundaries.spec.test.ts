@@ -145,6 +145,46 @@ describe('WP-02.4 — cross-component physical boundaries', () => {
     expect(result.state).toBe(state);
   });
 
+  it.each([
+    { name: 'a maximum-length item ID', itemId: 'i'.repeat(256), authorizationId: 'claim-proof' },
+    {
+      name: 'a maximum-length authorization ID',
+      itemId: 'loot-item',
+      authorizationId: 'a'.repeat(256),
+    },
+  ])('claims loot with $name and replays once', ({ itemId, authorizationId }) => {
+    let state = economy([], 10n, 0);
+    state = addContainer(state, container('loot', { kind: 'WORLD', id: 'world' }, 30000));
+    const sourceItem = item(itemId, 'ration', { kind: 'WORLD', id: 'world' }, 'loot');
+    state = addItem(state, sourceItem);
+    const cmd = command(state, 'ClaimLoot', {
+      outcomeId: 'battle-outcome',
+      itemQuantities: [{ itemId, quantity: 1 }],
+      toContainerId: 'fixture-supply',
+      accessEvidenceId: 'loot-access',
+      claimAuthorizationId: authorizationId,
+    });
+    const proof: PhysicalEvidence = {
+      ...physicalScope(state, authorizationId),
+      sourceEventId: 'bounded-loot-source',
+      kind: 'LOOT_AUTHORIZATION',
+      outcomeId: 'battle-outcome',
+      itemIds: [itemId],
+      fromContainerIds: ['loot'],
+      ownerAfter: { kind: 'COMPANY', id: 'company' },
+    };
+    const access = itemAccess(state, 'loot-access', 'LOOT', ['loot', 'fixture-supply'], [itemId]);
+    const claimed = prepared(
+      prepareCompanyEconomy(state, cmd, context(state, cmd, [], [], [access, proof])),
+    ).next;
+    expect(claimed.physical!.items.filter((entry) => entry.itemId === itemId)).toEqual([
+      { ...sourceItem, owner: { kind: 'COMPANY', id: 'company' }, containerId: 'fixture-supply' },
+    ]);
+    const replay = prepared(prepareCompanyEconomy(claimed, cmd, context(claimed, cmd)));
+    expect(replay.replayed).toBe(true);
+    expect(replay.next).toEqual(claimed);
+  });
+
   it('P1/P2/P8: due loot is local, capacity-bound and source-once; container retirement preserves causal history', () => {
     let state = economy([], 10n, 0);
     state = addContainer(state, container('loot', { kind: 'WORLD', id: 'world' }, 30000));

@@ -1,9 +1,9 @@
 # M1 loot sale to the town trader
 
-Status **PARTIALLY IMPLEMENTED / LOCAL**, checked 2026-11-15.
+Status **IMPLEMENTED / LOCAL**, checked 2026-11-16.
 Sale policy accepted by the owner on November 9,
 class-price approach selected November 13. Initial values retain their playtest
-status below. The full battle-loot-to-town journey remains open.
+status below. The native battle-loot-to-town sale is recorded below.
 Rules: [m1-spec §7](m1-next/06-company-capabilities.md).
 
 ## Player outcome
@@ -11,7 +11,7 @@ Rules: [m1-spec §7](m1-next/06-company-capabilities.md).
 After a battle the company takes enemy equipment and sells it to the trader
 in Каменный Брод at a fixed price.
 
-- Normal path: win a battle → take enemy gear → travel to town → trader →
+- Normal path: finish a battle with accessible enemy gear → take it → travel to town → trader →
   sell → exact crowns added, item removed.
 - Choices: which items to sell or keep and equip.
 - Alternatives/refusals: not at the town, item not owned, item is a contract
@@ -19,7 +19,7 @@ in Каменный Брод at a fixed price.
 - Saved consequences: ownership transfer to the trader and an exact cash receipt;
   repeated commands do not pay twice.
 
-Simplest try: win the mill raiders battle, sell one taken weapon, reload and
+Simplest try: recover available mill-raider gear, sell one taken item, reload and
 see the cash and inventory unchanged from after the sale.
 
 ## Current state (checked 2026-11-09)
@@ -110,3 +110,69 @@ passes the separate PostgreSQL regression recorded in N06.
 The full native win → pickup → town → sale journey remains NOT_RUN. T022 remains
 open. Publication and merge are NOT_RUN. Balance and owner enjoyment are
 NOT_MEASURED.
+
+## Native loot identifier refusal — 2026-11-16
+
+FIXED / LOCAL. The fresh native HUNT-03 defeat retained the heavy raider's
+real dead-hostile weapon and coat and offered both through the loot controls.
+The two UI pickup attempts retained both items at the world source. The captured
+coat response refused with NOT_AVAILABLE. A pure reproduction at both the stored tick and the current tick isolates INVALID_SOURCE
+in ClaimLoot's temporary per-item ownership identifier. Concatenating the valid
+199-character item ID with the authorization ID and JSON escaping exceeds the
+256-character entity-ID limit. The source item and custody remain retained.
+
+The correction reuses the already validated authorization identity for its
+local ownership projection. The actual item ID, source, condition and public
+receipt remain canonical. Maximum-length item/authorization regressions failed
+before the correction and pass through ClaimLoot and exact replay afterward.
+
+After the identifier correction, the saved pure replay also exposed missing
+elapsed-food evidence at a later campaign tick. Pickup now supplies the existing
+prepareStationaryFoodFacts result to the same pure ClaimLoot candidate. Time,
+owned stock and the new item settle atomically in the pickup transaction.
+The isolated PostgreSQL case advances the server clock beyond the company root
+while retaining its competing-claim, rejection rollback and late-replay checks.
+
+## Native loot, equipment and sale completion — 2026-11-16
+
+COMPLETED / LOCAL for T022. The retained owner picked up the heavy raider's
+weapon with e741f64e-ef94-423e-b094-b416b017dfe5 and coat with
+75c05f8d-bafe-45dc-af8a-a1e355401573. The latter returned receipt
+6e7a977c-35c7-464e-b0d6-024ad20170d8 at public revision 1085. Both actual items
+appeared after reload. An immediately following coat click first retained the
+item in the offered list; a later refreshed request succeeded. That first
+response was not captured. No item was fabricated.
+
+The native equipment button then failed before transport because its persisted
+roster request used the 128-unit transport guard for the longer company item ID.
+That field now reuses isCompanyEntityId. The new regression failed before the
+fix and checks saved exact-body retry plus oversized/control-character refusal.
+The native weapon transfer and equip succeeded through ordinary controls,
+including equip fb4b5f72-0ff1-4e6b-8ee9-c35da941b55c. Rell keeps the weapon.
+Dozor and Rell also recovered and equipped their own retained coats.
+
+After ordinary travel to Kamenny Brod, the market quoted the spare coat at the
+accepted light-armor class price of 5 crowns, including its actual 0% condition.
+Sale ca2d7a2c-1d4c-46fc-a60a-deca5b661563 returned saved success at revision 1137.
+Company cash changed 438.71→443.71 and merchant cash 277→272. Read-only SQL found
+the original item in world-owned settlement_equipment, unchanged condition 0,
+and zero canonical or observed company copies. Reload retained its absence.
+Buying 25 rations then cost 100 crowns, leaving 343.71 and 30 carried rations.
+
+This journey recovered loot after a defeat in which a hostile died. The accepted
+pickup rule covers locally accessible dead/surrendered-hostile gear. The earlier
+example's victory wording narrowed that rule and is corrected above. Native hunt victory and reward remain under T014.
+
+The integrated morale/loot/roster focused union passed 54/54. The dedicated
+m1_loot_clock_20261116 PostgreSQL case passed 1/1, with elapsed-time pickup,
+competing claims, refusal rollback and late replay. Its log is
+output/m1-loot-clock-pg-20261116-rerun.log. Core/protocol builds and server/web
+types passed. Earlier native sale and isolated market refusal/retry evidence
+above remain applicable. Publication/merge and owner balance acceptance remain
+NOT_RUN/NOT_MEASURED.
+
+Bounded identifier follow-up found partial-stack core fallback IDs can also
+exceed 256 when composing valid long IDs. Current HTTP TransferItem supplies a
+bounded splitItemId, and hostile pickup claims whole items. A future direct
+partial-stack caller still needs compatible bounded identity treatment under
+N06/I1. That fallback was not changed by this slice.
