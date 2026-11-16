@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record a successful current integrated production build
+  and an additional provisional Place performance sample. [N12](docs/work-packages/m1-next/12-release-preparation.md#current-integrated-production-build--2026-11-16), [N10](docs/work-packages/m1-next/10-desktop-performance.md#additional-source-place-sample--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: record native STOP/reroute/offline arrival and focused
   travel persistence checks. Remote map selection preserves actual place access,
   completing T025. [N07](docs/work-packages/m1-next/07-world.md#focused-travel-persistence-and-remote-place-boundary--2026-11-16). LOCAL.

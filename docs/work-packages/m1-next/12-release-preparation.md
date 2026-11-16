@@ -148,3 +148,18 @@ artifact/browser drill; real migration checks only for schema changes.
 Missing domain/provider/budget blocks external application, not preparation.
 A failed advisory full suite is reported honestly; it does not justify a silent
 scope cut or force another infrastructure project before useful local work.
+
+## Current integrated production build — 2026-11-16
+
+LOCAL. A single root `pnpm build` completed successfully in the integration
+worktree after all tracked art was present. The source includes the founder
+observation fix in `e1efaa24`; the command began at `8691a7fd`. No application
+source changed during the build. Game-core, protocol, testkit, server and web
+artifacts completed in the workspace build. The web build retains Vite's
+large-chunk advisory (main bundle about 7.82 MB, gzip 1.79 MB); load performance
+is not inferred from build success. Output is retained at
+`output/m1-production-build-20261116.log`.
+
+This supplies the current artifact for the second executor's launch/login
+rehearsal. That rehearsal and source-runtime restoration are pending here;
+T030 and the broader N12 acceptance stay open.

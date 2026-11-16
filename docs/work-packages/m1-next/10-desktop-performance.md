@@ -118,3 +118,19 @@ Focused renderer/component regressions only for concrete defects plus actual
 browser/device measurements. Without the named device, complete code fixes and
 provisional evidence, then mark target-device rows NOT_RUN/READY_FOR_OWNER_TEST.
 Do not buy a device/service or change platform scope to obtain a PASS.
+
+## Additional source Place sample — 2026-11-16
+
+LOCAL / provisional. A second executor measured the owner's ordinary Place tab
+at Северный Двор in the current development runtime. Viewport was 1200×757 CSS
+pixels, DPR 2; body/document width both 1200. The user agent reported Chrome
+157.0.0.0 on macOS 10.15.7. Shared-context `performance.memory` reported 77.3 MB
+used, 143.7 MB total and 4.40 GB limit. The session also retained an inactive
+combat Playground tab. Across 120 requestAnimationFrame callbacks (119 intervals),
+median callback spacing was 8.3 ms, p95 10.2 ms, range 6.4–16.8 ms.
+
+These are callback-pacing and shared-context heap samples. The earlier Old Mill
+sample had a different scene and context workload, so no before/after memory or
+rendering improvement is claimed. Whole-journey production performance,
+renderer-resource counts, target-device acceptance and the owner-selected budget
+remain NOT_MEASURED/NOT_RUN under DESK-1–DESK-6.
