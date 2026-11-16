@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: accept fed safe-camp morale recovery at 10 per campaign
+  day up to 50. The existing rest/time path is being extended.
+  [N06](docs/work-packages/m1-next/06-company-capabilities.md#safe-camp-morale-recovery--owner-decision-2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: first trusted practice can initialize an eligible absent
   zero-level skill. The saved native battle now applies its pending effects and
   releases both companies. [N11](docs/work-packages/m1-next/11-durability.md#native-retry-pending-on-first-skill-practice--2026-11-16). LOCAL.

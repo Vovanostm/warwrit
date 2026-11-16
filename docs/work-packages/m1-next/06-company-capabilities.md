@@ -429,3 +429,20 @@ Build output retains the existing large-chunk advisory. Logs are
 `output/m1-owned-recovery-build-20261116.log`. Native snapshots include
 `.playwright-cli/page-2026-11-16T11-15-04-551Z.yml`. Publication/merge are NOT_RUN.
 This recovery slice does not close the remaining native hunt or N1 journey.
+
+## Safe-camp morale recovery — owner decision 2026-11-16
+
+The owner accepted safe-camp recovery after the native low-morale retry.
+While resting in a safe camp with food, a fighter regains 10 morale per campaign
+day up to the opening value of 50. Existing values above 50 remain intact.
+Recovery uses eligible elapsed time and saved fractional progress, with the
+same result for split intervals and one combined interval. Moving, combat,
+unsafe camping and uncovered food intervals grant no recovery.
+
+Player goal is to return frightened survivors to effective duty. The normal
+path is arrival at a safe place, available food, pitching camp and resting,
+then checking morale before breaking camp and taking the next task. The player
+can interrupt rest and retain the progress earned so far. Reload and exact
+command retries retain one saved result. Older vitals without fractional morale
+progress remain readable. Implementation is IN_PROGRESS / LOCAL in the isolated
+morale worktree. The saved native battle and its pending effects remain under N08/N11.
