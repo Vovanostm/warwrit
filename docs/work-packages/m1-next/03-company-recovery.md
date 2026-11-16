@@ -1,11 +1,14 @@
 # N03 — Recover and replace company members after loss
 
-## Current result — 2026-11-08
+## Current result — 2026-11-16
 
-SPECIFIED / LOCAL; treatment/replacement journey NOT_RUN here. Rest/recovery and
-recruitment already exist; WLC-08 did not prove medical treatment because its
-physician died and survivors had no treatable condition.
-Next: confirm lawful patient/provider/access on the integrated candidate.
+PARTIAL / LOCAL. On the separate restored continuation, ordinary camp and rest
+raised three naturally damaged survivors from 60/58/60 to 100/100 over accepted
+campaign time. All three returned to FIELD through normal commands. They had
+no treatable wounds or diseases, so physician treatment and actual replacement
+remain open under REC-2/REC-4. Earlier WLC-08 did not prove medical treatment.
+Next: use an actually treatable condition or local recruitment offer through its
+existing command, preserving the real provider, price and source.
 [Common contract](COMMON.md). [Prompt](prompts/03-company-recovery.md).
 
 ## Player problem and observable result
@@ -103,3 +106,14 @@ crowns. The offer showed10 Campaign Days for the three living field members.
 The later course/retraining check retains all three living members and15
 rations, with398.71 crowns. Natural treatable injury, physician care and an actual
 replacement remain NOT_RUN here. REC-2/REC-4 and the whole package remain open.
+
+## Restored post-defeat rest — 2026-11-16
+
+The N02 owner survived the restored battle with health 60/58/60 and no observed
+wounds/diseases. Normal Каменный Брод camp and three rest commands succeeded.
+A protected QA-world advance of 1,000 campaign ticks followed by ordinary
+condition refresh showed 100/100 for all three. Three FIELD assignments and
+camp closure succeeded with HTTP 200, keeping 398.71 crowns. The game retained
+food history and prior wage debt. This demonstrates timed recovery and return
+to duty, while care consumables, an eligible physician and a replacement remain
+unverified. No health or resource value was edited outside ordinary commands.

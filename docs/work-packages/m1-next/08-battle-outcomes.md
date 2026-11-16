@@ -1,5 +1,14 @@
 # N08 — Terminal battles release the company and preserve truth
 
+## Current result — 2026-11-16
+
+PARTIAL / LOCAL. Both native defeats have applied their terminal effects. The
+original six-death attempt leaves both companies GAME_OVER. The separate
+restored attempt leaves both companies ACTIVE, with two dead, three surrendered
+and one retreated fighter. Both bindings released. The restored owner then
+completed the scout delivery and ordinary camp recovery. The required native
+hostile escape and ordinary hunt retry remain open under OUT-3.
+
 ## Scope reconciliation — 2026-11-13
 
 The November 9 owner answer requires S4 panic/surrender in campaign combat.
@@ -9,7 +18,7 @@ O5's remaining captivity/property-policy questions must be assessed separately
 from the accepted tactical surrender behavior. Carrying wounded follows M1.
 Fresh executable and terminal-path checks in this reconciliation are NOT_RUN.
 
-## Current result — 2026-11-15
+## Earlier implementation checkpoint — 2026-11-15
 
 IN_PROGRESS / LOCAL on `codex/m1-completion-20261115`. New schema3/bridge-v6
 admission, replay, independent company control, terminal effects and release
@@ -174,3 +183,29 @@ an absent acknowledgment column, then the read was corrected to the actual
 Performance and human acceptance are NOT_MEASURED. T007 remains open for the
 other required native outcomes. Continue success-path checks on the separately
 restored pre-battle database recorded by N11.
+
+### Restored native surrender and continuation — 2026-11-16
+
+Encounter `77ac1437-4895-4954-b2ed-528e65bf6fb7` resolved at revision 66,
+round 7. Its terminal effects applied at 02:09:09.391 UTC. Read-only PostgreSQL
+inspection confirms three surrendered allies, one retreated ally and two dead
+helper companions. Both companies have `active: null` and run status ACTIVE.
+The retained journal has fourteen account commands, including primary manual
+orders from both accounts and one-action autoplay. Timeout commands and stale
+reconnects also occurred. The later flee attempt sent no command before resolution.
+
+The owner's two surrendered fighters left five equipped items in two world-
+custodied ground bundles at Old Mill. Its retreated Kest retained his two items;
+Rell's previously stored sword stayed in the caravan. The helper's surrendered
+leader left four items in a third ground bundle. Its deceased companions' five
+items remain in two world-custodied corpse containers at Old Mill. Source item
+IDs and company ownership are retained. Personal wallets were not moved.
+
+The ordinary company view shows surviving members without the surrendered gear
+in their hands. Its retained non-carried items use the corrected heading from
+N06. Owner travel, scout delivery, camp/rest, FIELD return and camp closure
+succeeded afterward. The helper travelled back to the bodies, observed its death
+wage claims, and returned to town. Its kin payment currently reveals a separate
+carried-purse access defect tracked in N04. Full OUT-3 and fresh native combat
+with the later accepted-revision UI gate remain NOT_RUN. These results preserve
+both defeats and do not establish native hostile escape or victory.

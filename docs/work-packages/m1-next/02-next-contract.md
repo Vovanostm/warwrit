@@ -2,16 +2,19 @@
 
 ## Current result — 2026-11-16
 
-IN_PROGRESS / LOCAL. Both naturally reached companies physically joined HUNT-03
-at Old Mill. The native battle ended at revision 135/round 16 with all six allied
-fighters dead and all three hostiles standing. No manual battle order was sent
-before timeout handling took over. Terminal company effects still await the
-no-successor path, which is under diagnosis. The failed source state is retained.
+IN_PROGRESS / LOCAL. The original HUNT-03 attempt ended with all six allied
+fighters dead. Its terminal effects have now applied and both companies are
+GAME_OVER, with no active binding. That database remains preserved. The separate
+pre-JOIN restored copy also lost its battle, with two deaths, three surrenders
+and one retreat. Both restored companies remain ACTIVE and their bindings are
+released. The restored attempt included manual account orders from both players
+and one-action autoplay, alongside timeout and reconnect handling.
 
-A consistent backup captured before JOIN is restored into the separately owned
-`m1_restore_current_20261116` database for R5 and continued control checks. Its
-provenance and later divergence are recorded in N11. The contract objectives,
-payment and manual-control acceptance remain open.
+On that restored copy, the owner completed «Пропавший разведчик» through normal
+search, living custody, physical return and issuer delivery, receiving 80 crowns.
+The same company then camped in Каменный Брод, rested its three survivors and
+returned them to FIELD at 100/100. HUNT-03 remains unfinished. Full reward/proof,
+helper retry and native control acceptance keep their individual criteria below.
 
 ### Earlier restore checkpoint — 2026-11-15
 
@@ -247,3 +250,21 @@ and after a company change, alongside its unchanged rejected completing JOIN
 and exact re-consent path. It passes (1 passed,28 skipped), and its disposable
 database was disposed. Server typecheck and scoped formatting pass. Native
 re-confirmation and the restored battle remain pending at this checkpoint.
+
+### Scout delivery and subsequent recovery — 2026-11-16
+
+LOCAL on `m1_restore_current_20261116`. The owner travelled to Тихая Гать,
+searched the bank, took living Ивашка Рябой into contract custody, returned to
+Каменный Брод, entered Караульня and chose «Передать результат заказчику».
+The command returned HTTP 200. Company cash changed from 318.71 to 398.71
+crowns, custody cleared and the ordinary board displayed completion paid to
+this company. HUNT-03 granted no reward after defeat.
+
+The next lawful action, «Разбить лагерь» at Каменный Брод, returned HTTP 200.
+Three ordinary rest assignments also returned 200, retaining initial health
+60/58/60. One protected QA-world +1,000-tick advance and ordinary refresh showed
+all three at 100/100. Three «Вернуть в строй» commands and «Свернуть лагерь»
+returned 200. The campaign computes food and wage consequences normally;
+historical unpaid wages remain company debt. No casualty or resource was repaired.
+The return/re-entry follow-up and remaining contract criteria are recorded when
+actually checked. This closes T011's ordinary objective, not the full N02 journey.

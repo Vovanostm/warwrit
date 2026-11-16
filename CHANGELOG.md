@@ -9,6 +9,11 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: record the restored scout delivery and 80-crown payout,
+  timed camp recovery and preserved surrender equipment. [N02](docs/work-packages/m1-next/02-next-contract.md#scout-delivery-and-subsequent-recovery--2026-11-16), [N08](docs/work-packages/m1-next/08-battle-outcomes.md#restored-native-surrender-and-continuation--2026-11-16). LOCAL.
+- 2026-11-16 — Changed: reconcile durability criteria with current PostgreSQL
+  evidence and the retained route process restart. [N11](docs/work-packages/m1-next/11-durability.md#current-status--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: observe own deaths at the actual body location and refresh
   the deceased-wage quote after company observations. [N04](docs/work-packages/m1-next/04-deceased-payroll.md#native-death-observation-and-quote-refresh--2026-11-16). LOCAL.
 - 2026-11-16 — Fixed: use neutral turn feedback while a private grant is pending

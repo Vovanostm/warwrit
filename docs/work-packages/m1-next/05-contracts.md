@@ -121,3 +121,15 @@ Focused changed contract tests, real SQL for custody/claim transactions, ordinar
 browser scenes, wording/lore checks for changed text. Mark absent human/device
 evidence separately. Missing accepted custody/target policy blocks that leaf;
 continue ready leaves. Unsupported surrender is not fixed by minting hunt proof.
+
+## C06 native scout delivery — 2026-11-16
+
+LOCAL. The restored N02 owner accepted «Пропавший разведчик», searched the bank
+at Тихая Гать, acquired living Ивашка Рябой in custody, physically returned to
+Каменный Брод and delivered through Караульня. The accepted command paid
+80 crowns once in this journey, raising cash 318.71→398.71, cleared custody and
+showed completion paid to this company. The same company then camped and rested
+through ordinary controls. Details and remaining re-entry/retry evidence belong
+to [N02](02-next-contract.md#scout-delivery-and-subsequent-recovery--2026-11-16).
+The unavailable/dead-target branch and the rest of the eight-contract/eleven-scene
+matrix remain open.
