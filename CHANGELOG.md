@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: accept physical recovery of owned dropped gear after
+  combat, including places with surviving enemies. Existing transfer controls
+  will implement the rule. [N06](docs/work-packages/m1-next/06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: complete T024 with two-company co-location, departure,
   changed current location, retained old dates and lawful refresh after return.
   [N07](docs/work-packages/m1-next/07-world.md#paired-observers-and-dated-knowledge--2026-11-16). LOCAL.

@@ -230,3 +230,15 @@ not turn R2 into R5 or infer native control acceptance from the editor.
 OUT-3 still needs an actual native hostile escape followed by ordinary retry.
 Fresh MULTI-7 campaign continuation after the UI revision gate remains under
 T010; native hunt victory/proof/payment remains under T014. N08 is PARTIAL.
+
+## Own-property recovery after combat — owner decision 2026-11-16
+
+After its battle has ended, a company physically present at the dropped items
+may recover its own property, including while living enemies remain at that
+place. This follows the owner's explicit answer in the implementation chat.
+Surrender still drops equipped gear into the actual world bundle, and recovery
+moves the existing item to an authorized carried container. Ownership,
+condition, source and quantity remain attached to that item. Existing authority
+checks handle other people's property, remote access and active encounters.
+The implementation and native result belong to
+[N06](06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16).

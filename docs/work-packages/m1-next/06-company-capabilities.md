@@ -371,3 +371,40 @@ and corpse containers, so its previous «Обоз» heading misrepresented surre
 gear after the restored defeat. Item ownership and custody keep their existing
 canonical rules. Web typecheck and scoped ESLint passed. A dedicated native
 location-specific transfer check remains NOT_RUN.
+
+## Returning owned equipment — owner decision 2026-11-16
+
+The owner approved recovering the company's own items at their physical location
+once its battle has ended, including a place where living enemies remain.
+Ordinary item ownership remains the authority for whose property can be moved.
+The local party needs an available capable operator outside an active encounter.
+Foreign property, remote containers and active-battle access retain their
+existing guards. Recovery moves the actual item with its condition and quantity.
+
+Player goal: re-equip surviving members using retained property. Normal path:
+arrive at the item's location → Company transfer controls → select the owned
+local ground source → move into an accessible bag/caravan → equip. The player
+chooses which items to recover and who carries them. Missing local access,
+foreign ownership, stale state, capacity or active combat gives the actual
+refusal. Exact retries return the original result; reload retains the single
+item, owner, destination and condition. One observable result is Dozor's existing
+sword and shield returning from the Old Mill bundle to his bag after surrender.
+
+The native preparation reproduced the missing command/projection path. At Old
+Mill both companies had ended combat and retained ownership, but world-custodied
+bundles were excluded from ordinary transfer options. The hunt-loot path only
+handles its verified hostile sources. The owner company's five dropped items and the
+helper's retained equipment could be seen in holdings but had no transfer source.
+Rell's separate caravan sword was transferred/equipped normally, then stowed
+because his matching shield was unavailable. Current source cash is 438.71 and
+715.86; rations are 14 and 8. Three owner members remain at 100/100, helper Dozor
+at 36/100 and Ratko at 100/100. Kest's retained raider weapon/padded coat is the
+only currently equipped kit. No new battle was started during preparation.
+
+Implementation is IN_PROGRESS / LOCAL through existing TransferItem authority,
+transaction/receipt and controls. Keep recoverable world sources distinct from
+valid owned destinations. The accepted rule grants physical recovery and leaves
+personal-estate ownership with its existing owner. No shop profile or purchase
+price is approved by this decision. Native captures are
+`.playwright-cli/page-2026-11-16T09-45-47-054Z.png` and
+`.playwright-cli/page-2026-11-16T09-46-01-584Z.png`.

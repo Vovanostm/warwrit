@@ -170,6 +170,11 @@ A surrendering enemy drops its gear and leaves the field. Dropped gear follows
 post-M1. An incapacitated fighter lies down and skips remaining turns under
 the campaign S4 policy. Battle chronicle remains post-M1.
 
+Owner amendment 2026-11-16: after its battle ends, a company physically present
+at its own dropped gear may recover it, including while enemies remain at the
+place. The existing item, ownership and condition are retained through the
+ordinary transfer path. [Owning rule and implementation](m1-next/06-company-capabilities.md#returning-owned-equipment--owner-decision-2026-11-16).
+
 ## Current implementation — 2026-11-15
 
 T001 complete. Live origin/main is `4a9c3af9`; the original sprite checkout
