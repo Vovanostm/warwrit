@@ -5,10 +5,12 @@
 PARTIAL / LOCAL. On the separate restored continuation, ordinary camp and rest
 raised three naturally damaged survivors from 60/58/60 to 100/100 over accepted
 campaign time. All three returned to FIELD through normal commands. They had
-no treatable wounds or diseases, so physician treatment and actual replacement
-remain open under REC-2/REC-4. Earlier WLC-08 did not prove medical treatment.
-Next: use an actually treatable condition or local recruitment offer through its
-existing command, preserving the real provider, price and source.
+no treatable wounds or diseases. The restored helper then hired Ratko normally
+for 50 crowns, assigned him to FIELD and retained him after ordinary logout/login.
+This completes T015's bounded recovery/replacement journey. Physician treatment
+and replacement equipment/departure remain open under REC-2/REC-4. Earlier
+WLC-08 did not prove medical treatment. Next: equip the replacement from actually
+owned accessible gear and try an ordinary departure.
 [Common contract](COMMON.md). [Prompt](prompts/03-company-recovery.md).
 
 ## Player problem and observable result
@@ -78,7 +80,7 @@ new services, automatic inheritance, N04's disposition policy.
       and required provider/resources without leaking another company's facts.
 - [ ] REC-2 A naturally acquired treatable condition receives actual eligible care;
       real resource/time/payment effects and resulting condition are demonstrated.
-- [ ] REC-3 Recovery/assignment and return-to-duty follow capability rules;
+- [x] REC-3 Recovery/assignment and return-to-duty follow capability rules;
       no instantaneous healing or dead-member restoration is introduced.
 - [ ] REC-4 A lawful replacement is recruited, equipped and assigned without
       duplicate identity/item or invented starting funds; subsequent departure works.
@@ -117,3 +119,25 @@ camp closure succeeded with HTTP 200, keeping 398.71 crowns. The game retained
 food history and prior wage debt. This demonstrates timed recovery and return
 to duty, while care consumables, an eligible physician and a replacement remain
 unverified. No health or resource value was edited outside ordinary commands.
+
+## Native replacement and ordinary re-entry — 2026-11-16
+
+LOCAL. After normally paying both deceased companions' wages, the helper company
+hired Ratko from the actual Kamenny Brod offer for 50 crowns. Cash changed
+767.55 → 717.55. The normal FIELD assignment retained him alive at 100/100;
+he received no invented equipment. Targeted payroll later paid 1.69 crowns,
+leaving 715.86. Guard service entry, elapsed coverage, exit and reload then
+retained the founder and Ratko, as recorded in N06.
+
+A second executor used ordinary logout and Dex login again. The same saved
+company showed the founder at 36/100, Ratko at 100/100 in the party, treasury
+715.86 and inactive guard service. Capture is
+`.playwright-cli/page-2026-11-16T06-12-11-786Z.png`. Existing recruitment
+PostgreSQL evidence covers the local price, missing-contact refusal, competing
+hire/out-of-stock rejection without loser mutation, exact retry, one signing
+movement and lawful FIELD assignment.
+
+Together with the owner's timed recovery and FIELD return, this completes
+T015's alternative recovery/replacement path and REC-3. A naturally treatable
+wound, physician care and the equipped-replacement departure required by the
+broader REC-2/REC-4 remain NOT_RUN. N03 remains PARTIAL.

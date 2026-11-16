@@ -18,8 +18,8 @@ IN_PROGRESS / LOCAL; N07 observer, travel and offline acceptance remains open.
 The dated marker projection is implemented, and a native owner route now covers
 reroute, S-key STOP, a new route from the stopped position, tab close/reopen and
 arrival. T025's remote-selection place boundary is demonstrated. The full
-two-observer/native day-night journey and post-reroute stale-arrival check remain
-open. Focused PostgreSQL checks and their limits are recorded below.
+two-observer/native day-night journey remains open. Focused PostgreSQL checks,
+including the obsolete-arrival worker regression, are recorded below.
 Continue with the accepted observation → leave visibility → changed second
 observer → return and refresh scenario.
 
@@ -246,7 +246,39 @@ also passed for distant selection and arrival disagreement. This closes T025's
 bounded ordinary local-access check. Building entry remains a client-side
 context under its existing contract.
 
-T023 still needs a direct before/after reentry observation of both Campaign and
-Light time. T024's paired changed-observation sequence and N07's post-reroute
-stale-arrival case remain open. No speed-selection control is required by the
+T023's remaining direct Campaign/Light reentry observation follows below.
+T024's paired changed-observation sequence remains open; the separate
+post-reroute stale-arrival worker result follows below. No speed-selection control is required by the
 accepted MOVE_TO/STOP interface.
+
+## Independent clocks across ordinary re-entry — 2026-11-16
+
+LOCAL. The helper's normal logout/login showed Campaign Day 85 tick 154 before
+logout and tick 158 after login. Light remained at night, its countdown moving
+from 4:04 to 2:50. No Light-phase boundary was crossed. The return report covered
+its own longer saved absence window (0.012 campaign days), recording zero ration
+units, 0.12 crowns newly accrued wages and 1.41 unpaid. That report interval is
+not identical to the two captured UI timestamps.
+
+The same saved company, local position, Ratko's FIELD membership, 715.86 crowns
+and inactive service were retained. This directly observes independent Campaign
+and Light progression through normal re-entry, complementing the earlier owner
+STOP/reroute/offline-arrival and saved-route restart evidence. T023's bounded
+movement/time journey is complete. N07's complete paired-observer/day-night
+matrix retains its own open rows. The obsolete-arrival worker check follows.
+
+## Obsolete arrival candidate after reroute — 2026-11-16
+
+LOCAL. The new focused public-executor PostgreSQL regression starts movement,
+retains its worker candidate and original arrival time, stops partway and
+reroutes to a later destination. Processing the earlier candidate at its former
+due time leaves the company snapshot, complete current route row and receipt
+count unchanged. The worker rereads the current route rather than applying the
+previous segment. This closes the specific stale-arrival regression gap without
+adding a transport action or changing production behavior.
+
+The selected case passed 1/1 (13 unrelated cases skipped); its per-file clone
+was disposed. Output is retained at `output/m1-stale-arrival-20261116.log`.
+Scoped ESLint, Prettier, server typecheck and diff checks passed.
+The earlier five-case movement/privacy union remains applicable. N07's broader
+preview, paired-observer and day/night criteria remain separately open.

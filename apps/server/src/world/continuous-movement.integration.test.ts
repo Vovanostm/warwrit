@@ -321,6 +321,99 @@ describe('continuous movement executor (PostgreSQL)', () => {
   );
 
   it.skipIf(database === undefined)(
+    'ignores an old arrival candidate after STOP and reroute',
+    async () => {
+      const db = requireDatabase();
+      const scenario = createScenario();
+      await seedScenario(db, [scenario]);
+      try {
+        const started = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          moveRequest(scenario, 'stale-arrival-start', { xFp: 128, zFp: -64 }),
+        );
+        if (!started.plan) throw new Error('Movement plan missing');
+        const oldArrivalMs = Number(started.plan.arrivesAtMs);
+        const stoppedAt = new Date(
+          Number(started.plan.startedAtMs) +
+            Math.floor((oldArrivalMs - Number(started.plan.startedAtMs)) / 2),
+        );
+        const candidate = {
+          companyId: scenario.companyId,
+          partyId: scenario.state.economy.lifecycle.parties[0]!.partyId,
+          acceptedByAccountId: scenario.accountId,
+        };
+        const stopped = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          {
+            schemaVersion: 2,
+            commandId: 'stale-arrival-stop',
+            expectedPublicRevision: started.publicRevision,
+            expectedMovementEpoch: started.movementEpoch,
+            action: { kind: 'STOP' },
+          },
+          undefined,
+          stoppedAt,
+        );
+        expect(stopped.mode).toMatch(/^STATIONARY_/);
+        const rerouted = await executeContinuousMovement(
+          db,
+          scenario.worldId,
+          scenario.accountId,
+          scenario.companyId,
+          {
+            ...moveRequest(scenario, 'stale-arrival-reroute', { xFp: 128, zFp: -64 }),
+            expectedPublicRevision: stopped.publicRevision,
+            expectedMovementEpoch: stopped.movementEpoch,
+            action: {
+              kind: 'MOVE_TO',
+              mapEdition: MAP_EDITION,
+              target: { kind: 'SITE', siteId: 'tikhaya-gat' },
+            },
+          },
+          undefined,
+          new Date(stoppedAt.getTime() + 1),
+        );
+        if (!rerouted.plan) throw new Error('Reroute plan missing');
+        expect(Number(rerouted.plan.arrivesAtMs)).toBeGreaterThan(oldArrivalMs);
+
+        const beforeCandidate = await readSnapshot(db, scenario);
+        const routeBeforeCandidate = await db
+          .selectFrom('world_party_routes')
+          .selectAll()
+          .where('world_id', '=', scenario.worldId)
+          .where('company_id', '=', scenario.companyId)
+          .executeTakeFirstOrThrow();
+        const receiptsBeforeCandidate = await routeReceiptCount(db, scenario);
+        await processContinuousMovementCandidate(
+          db,
+          scenario.worldId,
+          candidate,
+          new Date(oldArrivalMs),
+        );
+
+        expect(await readSnapshot(db, scenario)).toEqual(beforeCandidate);
+        expect(
+          await db
+            .selectFrom('world_party_routes')
+            .selectAll()
+            .where('world_id', '=', scenario.worldId)
+            .where('company_id', '=', scenario.companyId)
+            .executeTakeFirstOrThrow(),
+        ).toEqual(routeBeforeCandidate);
+        expect(await routeReceiptCount(db, scenario)).toBe(receiptsBeforeCandidate);
+      } finally {
+        await cleanupScenario(db, [scenario]);
+      }
+    },
+  );
+
+  it.skipIf(database === undefined)(
     'rejects blocked and dangerous intents without changing the company root or route receipts',
     async () => {
       const db = requireDatabase();

@@ -9,6 +9,14 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Added: a PostgreSQL regression retaining position, route and
+  receipts when an old arrival candidate runs after STOP/reroute.
+  [N07](docs/work-packages/m1-next/07-world.md#obsolete-arrival-candidate-after-reroute--2026-11-16). LOCAL.
+
+- 2026-11-16 — Changed: complete T015's recovered/replacement-company journey
+  and T023's independent-clock re-entry check through ordinary login.
+  [N03](docs/work-packages/m1-next/03-company-recovery.md#native-replacement-and-ordinary-re-entry--2026-11-16), [N07](docs/work-packages/m1-next/07-world.md#independent-clocks-across-ordinary-re-entry--2026-11-16). LOCAL.
+
 - 2026-11-16 — Changed: reconcile original contract coverage with inherited
   mill success and new paid journeys, retaining named source/branch gaps.
   [N05](docs/work-packages/m1-next/05-contracts.md#inherited-mill-result-and-remaining-branches--2026-11-16). LOCAL.
