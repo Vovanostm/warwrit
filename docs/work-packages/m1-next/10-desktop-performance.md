@@ -1,8 +1,15 @@
 # N10 — Coherent desktop presentation and measured performance
 
-## Current result — 2026-11-16
+## Current result — 2026-11-17
 
-IN_PROGRESS / LOCAL. The 36-figure Playground was inspected by day/night at
+IN_PROGRESS / LOCAL. The latest untraced Babylon engine control completed
+30-second day/night samples with all 36 sprites active, minimum 97/99 completed
+frames per second at DPR 2. The traced samples and production settlement's
+first-scroll dip remain documented below. Whole-route 60-FPS compliance and human
+acceptance are open. The owner agreed to a local playtest on 2026-11-17, with
+entry prepared under [N09](09-player-experience.md#owner-playtest-preparation--2026-11-17).
+
+The 36-figure Playground was inspected by day/night at
 1200×757 CSS px, DPR 2. Canvas CSS bounds were 1136×740 and document scroll width
 matched the 1200px viewport. Home overview, all three side markers and initiative
 were visible. Screenshots are retained under `output/playwright/m1-multiside-*`.
@@ -130,8 +137,69 @@ Raw frame exports and independently recomputed bins are
 Place raw frames, summaries and scripts use `output/m1-production-place-*` and
 `output/m1-production-place-warm-*`. These intervals cover a terminal
 six-survivor scene, moving atlas and settlement panning. Active combat, the
-36-figure workload and a continuous whole-journey capture remain NOT_MEASURED.
+36-figure workload were outside those captures. The separate 36-figure control
+follows below. A continuous whole-journey capture remains NOT_MEASURED.
 T028 and whole-route target acceptance stay open.
+
+## Actual 36-figure engine controls — 2026-11-17
+
+LOCAL / PARTIAL. A separate saved sandbox was created through the normal imported
+scenario path, using `output/playwright/m1-scenario-roundtrip.json`. Sandbox
+`3d673f6c-f60f-45b9-9ec3-4798595326b5` has 36 units, three sides of 12 and
+four parties (6+6+12+12). The two player parties obey the six-person cap. NPC
+parties use their accepted larger profile. Encounter
+`6658e3b2-f89a-4c5c-b8d9-81b94acdfce3` remained manual at revision 0.
+The saved command count remained zero throughout these measurements.
+
+The real browser used the Mac/Chrome device identified above, 1200×757 CSS px,
+DPR 2, scale 1. Canvas backing is 2272×1480, CSS 1136×740. This is the Vite
+DEV source runtime on port 5331, confirmed by `/@vite/client` and `/src/main.tsx`.
+An earlier agent message named the DHU production artifact, then corrected that
+claim after inspecting loaded scripts. These controls measure the development
+runtime. Production up-to-36 combat remains NOT_MEASURED.
+
+Initial CDP traces recorded minima 51/50/48 drawn frames per second over three
+30-second windows. They emitted approximately 1.35–4.98 million trace events per
+window. The trace volume raised a measurement-overhead question. The parent then
+pressed the normal «Обзор поля» control and attached lightweight observers to the
+already loaded Babylon engine's `onBeginFrameObservable`/`onEndFrameObservable`.
+Observers store timestamps and CPU wall durations, and are removed after 30s.
+The exact loaded Babylon module was reused, so only the live engine was observed.
+Tracing was disabled for these controls.
+
+| View           | Duration | Completed engine frames | Minimum complete 1s FPS | Frame interval p50 / p95 | Engine CPU wall p50 / p95 |
+| -------------- | -------- | ----------------------- | ----------------------- | ------------------------ | ------------------------- |
+| Day overview   | 30.001s  | 3550                    | 97                      | 8.3 / 9.3ms              | 1.8 / 3.2ms               |
+| Night overview | 30.002s  | 3417                    | 99                      | 8.6 / 10.8ms             | 2.7 / 3.7ms               |
+
+Both controls report 36 sprite meshes and 36 active sprite meshes. Native day and
+night overview captures show the full three-row arrangement, unit letters/numbers,
+initiative and current-unit action panels. The canvas was then scrolled fully
+into the viewport at x32/y16.96. Different trace method, overview state and
+background-canvas conditions prevent a causal before/after speedup claim.
+These are completed engine-frame rates. GPU timing and presented-frame pacing
+for the untraced controls remain NOT_MEASURED.
+
+Before these controls, both matrix companies had actually returned to idle atlas
+views with zero canvases. Attempts to minimize their windows did not establish
+successful minimization. A later camera-motion control was NOT_RUN when the
+original named browser session became unavailable. Its saved sandbox and evidence
+remain intact. Renderer source stayed at the existing implementation during
+these controls.
+
+The source investigation found per-frame marker reservation/layout serialization
+in `sprite-battle-scene.ts` and repeated vitals projection/style updates in
+`battle-field-vitals.ts`. Their measured contribution is NOT_MEASURED. React
+updates and texture creation remain in their existing event/revision paths.
+
+Evidence is `output/m1-36-{frame,frame-repeat,frame-control}-*20261117.*`,
+`output/m1-36-provenance-20261117.log`,
+`output/m1-36-engine-{control,night-control}-20261117.log`, their summary JSONs
+and `output/playwright/m1-36-{overview-visible,night-overview-visible}-20261117.png`.
+The public observer script is `output/m1-36-engine-control-20261117.js`.
+T028 remains open for the representative whole route with active combat,
+settlement first-scroll investigation, remaining presentation/input checks and
+target acceptance. The owner budget stays minimum 60 FPS.
 
 ## Player goal and trial
 

@@ -1,15 +1,60 @@
 # N09 — Understandable decisions and meaningful tactics
 
-## Current result — 2026-11-16
+## Current result — 2026-11-17
 
 PARTIAL / LOCAL. Native preparation, recovery, trade and contract controls have
 saved journeys under N02/N06. The corrected lookup now exposes retry after a
 stalled request. A subsequent ordinary two-account HUNT-03 run accepts manual
 Defend and one-action autoplay from both companies, with nine account orders and
 zero timeout orders, then wins and returns to a paid persistent company. [N02](02-next-contract.md#native-hunt-03-completion--2026-11-16)
-owns that complete journey and its diagnostic assistance. Agreed-player
-observation, subjective comprehension/enjoyment and full tactical handoff
+owns that complete journey and its diagnostic assistance. The owner agreed to
+play on 2026-11-17. The prepared entry and route are below.
+Player feedback, subjective comprehension/enjoyment and full tactical handoff
 acceptance remain NOT_RUN/NOT_MEASURED. T027 stays open.
+
+## Owner playtest preparation — 2026-11-17
+
+READY_FOR_OWNER_TEST / LOCAL. The owner accepted the short native trial. The
+retained matrix runtime returned to development on port 5333 for its existing
+quick-login. The prepared headed browser is `m1-owner-playtest-20261117`, tab 0.
+The owner may also open `http://127.0.0.1:5333` in Chrome and choose
+«Войти за компанию 3». Browser control is now reserved for the owner.
+
+The existing company retains its three living equipped people, each 60/100
+health, morale 50, 21 rations and 970 crowns in its company treasury. The treasury's
+physical wallet remains at Северный Двор. The parent moved the company through
+a normal accepted route to Березняк (`0894b9fd-5fe4-4141-85ed-9a8cc88ecaea`)
+and used the existing protected +100-tick UI once
+(`eb345bd9-d102-4013-91cf-d68e0c3832bc`) to shorten preparation. Saved health, company balance and enemy pools retain
+their ordinary gameplay provenance.
+
+The earlier parent-accepted HUNT-04 was withdrawn through its ordinary pre-battle
+control (`86665273-b031-41a9-8e17-b3a622f4be76`). Readback shows OFFERED,
+no owner/helper and an enabled «Договориться и взять поручение» button. The parent
+opened its issuer meeting and left acceptance to the owner. The older HUNT-02 is
+still held by the two previously defeated QA companies, with its helper slot
+occupied. It was unsuitable for this trial, so HUNT-04 was selected.
+
+The trial starts at «Место» → «Дом старейшины» → «Вожак с рваным ухом».
+The owner reads and accepts the 60-crown terms, travels to Тихая Гать using the
+ordinary map, enters the battle, chooses actions, collects its actual trophy after
+a victory and returns to Савва in Березняк. The issuer and objective remain those
+shown in the current contract. The parent offered optional test-clock assistance
+for travel when requested. Battle entry remains available for the owner.
+
+Entry, travel, squad, clock, withdrawal and enabled-offer readbacks are
+`output/m1-owner-playtest-*-20261117.log`. The exact final entry is
+`output/m1-owner-playtest-final-entry-20261117.log`. The owner received the URL,
+account number, route, 60/100-health condition and preparation assistance.
+
+During the trial record the owner's own account of the objective, tactical
+choice, losses and next step. Also verify return to manual control after autoplay
+and the saved result. Those observations and the owner’s enjoyment assessment remain NOT_RUN. This
+preparation keeps T027/T036 open.
+
+Closeout checks cover the prepared account, location, squad and enabled offer,
+plus 50 local documentation links, wording/source consistency and scoped diff.
+Formatting passes. Game tests for this documentation update are NOT_RUN.
 
 ## Leadership lookup after applied outcomes — 2026-11-17
 

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-17 — Changed: prepare the agreed owner trial with a verified HUNT-04
+  offer and record untraced 36-figure day/night engine samples at 97/99 FPS minimum.
+  [Playtest](docs/engineering/M1_LOCAL_PLAYTEST.md), [N10](docs/work-packages/m1-next/10-desktop-performance.md#actual-36-figure-engine-controls--2026-11-17). LOCAL.
+
 - 2026-11-17 — Changed: close the original eight-contract matrix after Senka's
   physical return, saved 80-crown payout and unchanged exact delivery replay.
   [N05](docs/work-packages/m1-next/05-contracts.md#acceptance-evidence-reconciliation--2026-11-17). LOCAL.

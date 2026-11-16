@@ -12,6 +12,19 @@ open. No deployment, paid provisioning or pilot audience/size is authorized.
 
 ### Current local runtime pointers — 2026-11-16
 
+For the agreed owner trial on 2026-11-17 the matrix returned to development
+on the same API 3033/realtime 3034/web 5333 ports and retained database. Production
+terminals 89293/32452 stopped through their owned Ctrl-C controls, exit 130.
+The restarted development runtime uses the existing private 0600
+`output/m1-matrix-runtime-20261116.env`, owned terminal 44883 and append-preserved
+`output/m1-matrix-dev-20261116.log`. Listener readback gives API/realtime PID 94029
+and web PID 94016, readiness 200. This restores the existing four local quick-logins.
+The owner trial uses company 3 in Березняк and the offered HUNT-04, with its enabled
+acceptance button directly checked. [N09](09-player-experience.md#owner-playtest-preparation--2026-11-17)
+owns preparation and assistance. The browser is reserved for the owner.
+
+The preceding compiled production checkpoint follows.
+
 On 2026-11-17 the QA matrix continued in the compiled production runtime on the
 same `m1_control_sync_20261116` database. API 3033/realtime 3034 and preview 5333
 use private mode 0600 `output/m1-matrix-production-runtime-20261117.env`, with
@@ -22,13 +35,14 @@ terminal 87509 stopped normally. Its private configuration remains available.
 
 Both pre-existing QA3/QA4 sessions restored their actual companies and consent in
 `index-CFWbcjwC.js`. This is session restoration using the local QA identities.
-N05 owns the successful real HUNT-01, living worker release and pending return.
+N05 owns the successful real HUNT-01, living worker return and both saved payouts.
 N10 owns the measured atlas/result intervals for this exact artifact. The preview
 subsequently served `index-DBR1Y_I3.js` after the leadership poll correction. A
 fresh native terminal check on that later client is NOT_RUN.
 Ordinary QA3 reload on `index-DBR1Y_I3.js` now retains completed HUNT-01,
-890 crowns and living Senka at Gat. The helper keeps its already loaded client
-until ordinary reload. The current focused web build is `index-DHU6DWGG.js` after
+890 crowns and living Senka at Gat. Later DHU re-entry retains 970 crowns
+and Senka returned to Северный Двор, as recorded in N05. The current focused web
+build is `index-DHU6DWGG.js` after
 the three hunt-guidance wording corrections. Web types/build and six existing
 components pass; the build log is `output/m1-hunt-copy-web-build-20261117.log`.
 The canonical server artifact comes from the preceding successful root build.
