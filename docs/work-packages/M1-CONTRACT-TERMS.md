@@ -124,3 +124,10 @@ The web typecheck remains blocked by existing `EquipmentTrader.tsx` references
 to `EquipmentMarketDto.publicRevision` and `EquipmentMarketItemDto.interruptsLearning`;
 these files are outside this slice. Browser/native play and database checks are
 NOT_RUN. This is local evidence, not player acceptance or full M1 acceptance.
+
+### Combined hunt-card correction — 2026-11-16
+
+Native readback after quest integration showed the reward and destination
+guidance twice on HUNT cards. Removed the duplicated block, retaining the
+issuer-refusal and spared-pack conditions and grammatical destination guidance.
+Focused checks and native readback are recorded with the integration result. LOCAL.

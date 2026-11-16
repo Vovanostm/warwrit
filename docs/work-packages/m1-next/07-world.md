@@ -180,4 +180,6 @@ Two native helper terrain clicks near `(32,-160)` and `(-32,-160)` posted
 `SITE staraya-melnitsa` because the multiline label bounding box intercepted
 them. Marker groups and labels now pass pointer input through to the map.
 The explicit circular hit area still selects the place, and keyboard selection
-remains available. Native repeat and final arrival are pending. LOCAL.
+remains available. After reload the same helper clicked terrain beside the Mill label. The actual
+`TERRAIN (20,-153)` request returned HTTP 200 ACCEPTED, revision 100, epoch 43,
+with a 41-second route. Full Old Mill arrival remains pending. LOCAL.

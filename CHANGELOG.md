@@ -9,6 +9,9 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: remove repeated reward and destination paragraphs from
+  integrated hunt cards. [Native card correction](docs/work-packages/M1-CONTRACT-TERMS.md#combined-hunt-card-correction--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: reconcile the combined quest catalogue, rescue projections
   and guard-service fixtures, retaining existing custody returns and known-map
   movement. [Integration checks](docs/work-packages/M1-QUESTS.md#combined-quest-integration--2026-11-16). LOCAL.

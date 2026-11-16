@@ -390,17 +390,6 @@ export function FirstHunt(
             </p>
           </div>
           {huntText.brief && <p className="contract-brief">{huntText.brief}</p>}
-          <p>Награда: {rewardLabel(contract.terms.rewardQ)}. Принятые условия фиксированы.</p>
-          {contract.knownState !== 'SETTLED' && (
-            <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
-              <summary>Куда идти и что потребуется?</summary>
-              <p>
-                Место задания — «{locationLabel(contract.terms.objectiveLocation.siteId)}»,{' '}
-                {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед дорогой пополните запас
-                еды.
-              </p>
-            </details>
-          )}
           {contract.issuerRefusedOffer && (
             <p className="state-note">
               Кондрат отворачивается к амбару: «Работу ищите в другом месте».
@@ -454,9 +443,9 @@ export function FirstHunt(
               <details className="contract-conversation" open={contract.yourRole !== 'NONE'}>
                 <summary>Куда идти и что потребуется?</summary>
                 <p>
-                  Цель: добраться до {locationLabel(contract.terms.objectiveLocation.siteId)}, район{' '}
-                  {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед опасным переходом
-                  убедитесь, что у отряда есть провизия.
+                  Место задания — «{locationLabel(contract.terms.objectiveLocation.siteId)}»,{' '}
+                  {areaLabel(contract.terms.objectiveLocation.areaId)}. Перед дорогой пополните
+                  запас еды.
                 </p>
               </details>
             )}
