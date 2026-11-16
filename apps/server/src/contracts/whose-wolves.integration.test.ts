@@ -9,6 +9,7 @@ import {
 } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState, ContractPlace } from '@warwrit/game-core';
 import { createCompanyCombatAggregateFixture } from '@warwrit/testkit';
+import { sql } from 'kysely';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { buildApp } from '../app.js';
@@ -232,6 +233,100 @@ afterAll(async () => {
 });
 
 describe('whose-wolves ordinary issuer refusal (isolated PostgreSQL)', () => {
+  it.skipIf(database === undefined)(
+    'does not hold shared hunt rows while its company snapshot is blocked',
+    async () => {
+      if (!database) throw new Error('company test database missing');
+      const worldId = randomUUID();
+      const accountId = randomUUID();
+      const companyId = randomUUID();
+      const sessionToken = randomUUID();
+      const app = createApp(worldId);
+      apps.push(app);
+      await seedCompany({
+        worldId,
+        companyId,
+        accountId,
+        sessionToken,
+        state: aggregateAt(worldId, companyId, 'ww-lock-order', issuer),
+        issuer: `whose-wolves-lock-order-${accountId}`,
+        subject: accountId,
+      });
+
+      // Create the normal board genesis rows before the lock interleaving.
+      await ordinaryBoard(app, sessionToken);
+      await database
+        .selectFrom('world_hunt_states')
+        .select('instance_id')
+        .where('world_id', '=', worldId)
+        .where('instance_id', '=', 'ci.m1.mill-beast.01')
+        .executeTakeFirstOrThrow();
+
+      let releaseSnapshot!: () => void;
+      const snapshotHeld = new Promise<void>((resolve) => {
+        releaseSnapshot = resolve;
+      });
+      let signalSnapshotHeld!: (pid: number) => void;
+      const snapshotHolderReady = new Promise<number>((resolve) => {
+        signalSnapshotHeld = resolve;
+      });
+      const snapshotHolder = database.transaction().execute(async (transaction) => {
+        await transaction
+          .selectFrom('company_snapshots')
+          .select('company_id')
+          .where('world_id', '=', worldId)
+          .where('company_id', '=', companyId)
+          .forUpdate()
+          .executeTakeFirstOrThrow();
+        const backend = await sql<{ readonly pid: number }>`select pg_backend_pid() as pid`.execute(
+          transaction,
+        );
+        signalSnapshotHeld(backend.rows[0]!.pid);
+        await snapshotHeld;
+      });
+
+      const holderPid = await snapshotHolderReady;
+      const boardRequest = ordinaryBoard(app, sessionToken);
+      const boardSettled = boardRequest.then(
+        () => undefined,
+        () => undefined,
+      );
+      try {
+        const deadline = Date.now() + 3_000;
+        let blockedByHolder = false;
+        while (Date.now() < deadline) {
+          const activity = await sql<{ readonly blocked: boolean }>`
+            select exists (
+              select 1
+              from pg_stat_activity a
+              where a.datname = current_database()
+                and a.pid <> pg_backend_pid()
+                and ${holderPid} = any(pg_blocking_pids(a.pid))
+            ) as blocked
+          `.execute(database);
+          if (activity.rows[0]?.blocked) {
+            blockedByHolder = true;
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+        expect(blockedByHolder).toBe(true);
+
+        await sql`
+          select instance_id
+          from world_hunt_states
+          where world_id = ${worldId} and instance_id = 'ci.m1.mill-beast.01'
+          for update nowait
+        `.execute(database);
+      } finally {
+        releaseSnapshot();
+        await snapshotHolder;
+        await boardSettled;
+      }
+      await boardRequest;
+    },
+  );
+
   it.skipIf(database === undefined)(
     'refuses Kondrat’s next ordinary offer once, replays exactly, and keeps the refusal private',
     async () => {

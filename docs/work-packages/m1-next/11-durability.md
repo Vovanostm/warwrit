@@ -110,8 +110,7 @@ Dex form as the source company's player-one owner. The restored UI showed compan
 Дозор N01 (`eb855f6f-ab02-42ca-9eef-a82b2c6830bf`), 318.71 crowns, 32 rations,
 three members with equipment, the helper, known map markers, accepted HUNT-03 and
 the pending return report. The report was closed through its ordinary control.
-API readiness and web entry returned 200 on ports 3035 and 5335; realtime is on
-3036. Read-only SQL showed company snapshot schema 1 at public/canonical revisions
+API readiness and web entry returned 200 on ports 3035 and 5335; realtime is on 3036. Read-only SQL showed company snapshot schema 1 at public/canonical revisions
 707/718, the current resolved mill-beast encounter with terminal effects applied,
 and an ARRIVED route row (`free-atlas-walk-v1` / `porechye-atlas-lab-v1`). After
 the initial “Сверяем положение отряда…” state, `/api/world/free-movement` returned
@@ -194,19 +193,19 @@ and JSON values, with no timestamp exclusions. For these selected immutable
 receipt/event/history tables, every baseline row is an exact target match by the
 verified primary key: changed and missing baseline rows are zero in every table.
 
-| Table | Baseline | Target | Exact baseline rows | Changed | Missing | Added |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `company_audit_events` | 1,083 | 1,170 | 1,083 | 0 | 0 | 87 |
-| `company_receipts` | 822 | 915 | 822 | 0 | 0 | 93 |
-| `encounter_commands` | 115 | 181 | 115 | 0 | 0 | 66 |
-| `encounter_events` | 320 | 493 | 320 | 0 | 0 | 173 |
-| `encounter_leadership_choices` | 1 | 1 | 1 | 0 | 0 | 0 |
-| `encounter_receipts` | 115 | 181 | 115 | 0 | 0 | 66 |
-| `ordinary_contract_receipts` | 6 | 6 | 6 | 0 | 0 | 0 |
-| `story_command_receipts` | 21 | 21 | 21 | 0 | 0 | 0 |
-| `world_route_receipts` | 114 | 115 | 114 | 0 | 0 | 1 |
-| `company_map_grants` | 7 | 7 | 7 | 0 | 0 | 0 |
-| `world_proof_claims` | 1 | 1 | 1 | 0 | 0 | 0 |
+| Table                          | Baseline | Target | Exact baseline rows | Changed | Missing | Added |
+| ------------------------------ | -------: | -----: | ------------------: | ------: | ------: | ----: |
+| `company_audit_events`         |    1,083 |  1,170 |               1,083 |       0 |       0 |    87 |
+| `company_receipts`             |      822 |    915 |                 822 |       0 |       0 |    93 |
+| `encounter_commands`           |      115 |    181 |                 115 |       0 |       0 |    66 |
+| `encounter_events`             |      320 |    493 |                 320 |       0 |       0 |   173 |
+| `encounter_leadership_choices` |        1 |      1 |                   1 |       0 |       0 |     0 |
+| `encounter_receipts`           |      115 |    181 |                 115 |       0 |       0 |    66 |
+| `ordinary_contract_receipts`   |        6 |      6 |                   6 |       0 |       0 |     0 |
+| `story_command_receipts`       |       21 |     21 |                  21 |       0 |       0 |     0 |
+| `world_route_receipts`         |      114 |    115 |                 114 |       0 |       0 |     1 |
+| `company_map_grants`           |        7 |      7 |                   7 |       0 |       0 |     0 |
+| `world_proof_claims`           |        1 |      1 |                   1 |       0 |       0 |     0 |
 
 In the owner snapshot, all 19 learning-task rows, including all three rows with a
 stop record, match exactly. Snapshot arrays were keyed by task ID, claim ID,
@@ -339,7 +338,7 @@ sessions. This meets DUR-4's normal-login, lawful-continuation and saved-readbac
 step and the public uncertain-reply part of DUR-2. It does not measure RPO/RTO or
 capacity.
 
-After the player check, another agent ran the lock-order PostgreSQL regression
+Separately, another agent ran the lock-order PostgreSQL regression
 against this target in two isolated UUID test worlds; no existing player-world
 rows were touched. Treat those rows as later test activity. The full 56-table
 equality remains evidence from before any application or test writer connected.
@@ -445,3 +444,39 @@ Unavailable source-owner permission, unknown restore target, real data-loss risk
 or new unsupported policy blocks only that operation. Prepare scripts/runbook and
 independent tests first; recommend a fresh owned restore target. Do not ask for
 blanket destructive authority or replace failed transactional proof with mocks.
+
+## Native board deadlock and lock ordering — 2026-11-16
+
+The ordinary source browser journeys repeatedly received HTTP 500 from the
+board. Retained PostgreSQL server logs show the cycle across company snapshot,
+world-clock and shared hunt-state locks. At 04:17:03 UTC, PID 224543 waited on
+224117 for a company snapshot, 224117 waited on 222930 for the world clock, and
+222930 waited on 224543 for a hunt state. The same relation cycle appeared at
+04:13:03 and 04:15:03. The board read gates held shared hunt rows before the
+company snapshot, reversing the company/clock/hunt order used by commands.
+
+The board now locks the existing Empty Watch contract row, then its own company
+snapshot, before reading gates. It reuses that snapshot for projection and
+preserves the existing unlocked clock read. The global ordinary-contract row
+keeps its prior ordering relative to company writes. No retry loop, migration,
+receipt rewrite or economic policy was added.
+
+The parent reproduced the old ordering in a disposable PostgreSQL clone: while
+an actual board GET waited for the held company snapshot, NOWAIT acquisition of
+the Mill Beast hunt row failed. With the route correction, both tests in the
+focused Whose Wolves file passed, including the existing one-time refusal,
+private disclosure and replay case. The clone was disposed. Scoped ESLint,
+server typecheck, formatting and diff checks passed. The resumed native source
+also loaded its company, report and ordinary contract views after the correction.
+This change preserves stored data and the compatibility of the preceding R1–R5
+checks. T029 is complete on this integrated local candidate.
+
+During the runtime return, the parent overwrote the preceding development
+stdout log by reusing its output filename. The original file is unavailable.
+Canonical saves, receipts and the retained PostgreSQL server log remain
+available. The resumed source log is now
+`output/m1-source-resumed-20261116-0742.log`. The source runtime uses the original
+private environment and ports 3035/3036/5335. The first temporary target startup
+used port 5331 and failed on the existing listener; an explicit environment
+passed to the child processes started the intended 5335 runtime. These local
+startup failures did not change player state.

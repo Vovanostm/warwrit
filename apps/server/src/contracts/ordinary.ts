@@ -1063,9 +1063,19 @@ export function registerOrdinaryContractRoutes(
     const body = await database.transaction().execute(async (transaction) => {
       await ensureOrdinaryGenesis(transaction, worldId);
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
-      const company = companyId
-        ? await loadCompanyAggregate(transaction, worldId, companyId)
-        : undefined;
+      let company: Awaited<ReturnType<typeof loadCompanyAggregate>> | undefined;
+      if (companyId) {
+        // Keep the global contract row before the company snapshot, matching contract commands.
+        // Then lock the snapshot before readGates acquires shared hunt-state rows.
+        await transaction
+          .selectFrom('ordinary_contracts')
+          .select('instance_id')
+          .where('world_id', '=', worldId)
+          .where('instance_id', '=', 'ci.m1.empty-watch-record.01')
+          .forUpdate()
+          .executeTakeFirstOrThrow();
+        company = await lockCompanyAggregate(transaction, worldId, companyId);
+      }
       const clock = await readWorldClock(transaction, worldId);
       const gates = await readGates(transaction, worldId);
       const kitStockRow = await transaction
@@ -1099,19 +1109,9 @@ export function registerOrdinaryContractRoutes(
           !(await voiceUnderBoardsUnlocked(transaction, worldId))
         )
           continue;
-        let row = rows.find((entry) => entry.instance_id === profile.instanceId);
+        const row = rows.find((entry) => entry.instance_id === profile.instanceId);
         if (!row) continue;
-        let projectedCompany = company;
-        if (profile.instanceId === 'ci.m1.empty-watch-record.01' && companyId) {
-          row = await transaction
-            .selectFrom('ordinary_contracts')
-            .select(['instance_id', 'profile_id', 'wallet_id', 'state'])
-            .where('world_id', '=', worldId)
-            .where('instance_id', '=', profile.instanceId)
-            .forUpdate()
-            .executeTakeFirstOrThrow();
-          projectedCompany = await lockCompanyAggregate(transaction, worldId, companyId);
-        }
+        const projectedCompany = company;
         const profileVersion = ordinaryContractProfileVersion(profile.instanceId, row.profile_id);
         if (!profileVersion)
           throw new TypeError('Ordinary contract row has no retained immutable profile version');

@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Fixed: order board snapshot/hunt locks consistently after native
+  PostgreSQL deadlocks; complete R1–R5 with independent restored continuation.
+  [N11](docs/work-packages/m1-next/11-durability.md#native-board-deadlock-and-lock-ordering--2026-11-16). LOCAL.
+
 - 2026-11-16 — Added: retained Savva hunt proof/outcome regression and reconciled
   completion of all eleven approved quest implementations under T032.
   [Quest result](docs/work-packages/M1-QUESTS.md#t032-completion-and-saved-savva-outcome--2026-11-16). LOCAL.
