@@ -209,3 +209,24 @@ wage claims, and returned to town. Its kin payment currently reveals a separate
 carried-purse access defect tracked in N04. Full OUT-3 and fresh native combat
 with the later accepted-revision UI gate remain NOT_RUN. These results preserve
 both defeats and do not establish native hostile escape or victory.
+
+## T007 outcome-composition completion — 2026-11-16
+
+COMPLETED / LOCAL for T007. The integrated editor/replay evidence retains all
+three side identities after middle is eliminated and north/south continue
+(revision 330). The restored native campaign battle records three surrenders,
+one retreat and two deaths; both companies remain ACTIVE and their bindings
+are released. Surrendered equipment remains in its real ground bundles; actual
+retreat/death policy and item identities are preserved. The separate original
+six-death defeat retains both companies GAME_OVER with released bindings.
+
+[N11 R2](11-durability.md#current-status--2026-11-16) supplies the real PostgreSQL
+pending-outcome/rollback/restart/worker evidence, permanent successor wait,
+once-only application and release. The constructed leadership preparer above
+adds deterministic policy evidence. Together these cover T007's side history,
+continuation, terminal effects, leadership and release requirements. This does
+not turn R2 into R5 or infer native control acceptance from the editor.
+
+OUT-3 still needs an actual native hostile escape followed by ordinary retry.
+Fresh MULTI-7 campaign continuation after the UI revision gate remains under
+T010; native hunt victory/proof/payment remains under T014. N08 is PARTIAL.

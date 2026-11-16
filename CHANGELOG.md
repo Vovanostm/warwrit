@@ -9,6 +9,10 @@ requests.
 
 ## Unreleased
 
+- 2026-11-16 — Changed: reconcile T007 completion with demonstrated side history,
+  native surrender/death/retreat effects and R2 atomic recovery. Native hostile
+  escape/retry remains open. [N08](docs/work-packages/m1-next/08-battle-outcomes.md#t007-outcome-composition-completion--2026-11-16). LOCAL.
+
 - 2026-11-16 — Fixed: handle checked-out PostgreSQL client errors while retaining
   rejected query/transaction results. The crash regression and independent
   production recovery/login drill pass, completing T030. [N12](docs/work-packages/m1-next/12-release-preparation.md#checked-out-postgresql-connection-failure--2026-11-16). LOCAL.
