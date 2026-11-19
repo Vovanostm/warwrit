@@ -91,7 +91,7 @@ export { WORLD_LAB_PURSUIT_ORDER_HEADER, worldLabPursuitToken } from './world-la
 
 export type { WorldLabCartographyDto, WorldLabKnownSiteDto } from './world-cartography.js';
 
-export { isRecord, isTransportId } from './value-guards.js';
+export { isRecord, isTransportId, isCompanyEntityId } from './value-guards.js';
 
 export * from './playground.js';
 

@@ -133,6 +133,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     mode: choice('DEFAULT', 'TARGETED'),
     payeeId: optional(id),
   }),
+  PayDeceasedWages: command('PLAYER', { characterId: id }),
   GrantFarewell: command('PLAYER', {
     membershipId: id,
     quoteRevision: unsigned,
@@ -292,6 +293,7 @@ export const COMPANY_COMMAND_INPUTS = freezeRegistry({
     ownershipReceiptId: optional(id),
     splitItemId: optional(id),
   }),
+  SellItem: command('PLAYER', { siteId: id, itemId: id, shopRevision: unsigned }),
   EquipItem: command('PLAYER', {
     characterId: id,
     itemId: id,
@@ -481,6 +483,8 @@ function argumentsValid(command: CompanyCommand): boolean {
         old !== undefined &&
         next !== undefined &&
         old.id !== next.id &&
+        ((old.id === 'blades-25-a' && next.id === 'blades-25-b') ||
+          (old.id === 'blades-25-b' && next.id === 'blades-25-a')) &&
         old.skillId === next.skillId &&
         old.milestone === next.milestone
       );

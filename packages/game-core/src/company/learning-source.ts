@@ -19,11 +19,13 @@ export interface LearningSourceEvidence {
   readonly location: AtLocation;
   readonly resourceIds: readonly string[];
   readonly sourceVersion: string;
-  readonly kind: 'COURSE' | 'SELF_STUDY';
+  readonly kind: 'COURSE' | 'RETRAINING' | 'SELF_STUDY';
   readonly methodId: 'funded-practice' | 'book-study';
   readonly skillId?: string;
   /** Required for new course task admission, not inferred from the learner's level. */
   readonly challengeLevel?: number;
+  readonly oldPerkId?: string;
+  readonly newPerkId?: string;
   readonly providerId?: string;
   readonly mentorId?: string;
   readonly poolId?: string;
@@ -58,33 +60,34 @@ function sameIds(left: readonly string[], right: readonly string[]) {
 
 export function admitLearningSource(
   root: MaterializedCompanyState,
-  command: CommandOf<'StartLearning'>,
+  command: CommandOf<'StartLearning' | 'StartRetraining'>,
   context: LearningSourceContext,
 ): LearningSourceEvidence {
-  const payload = command.payload;
-  const learner = person(root.lifecycle, payload.characterId);
+  const learning = command.type === 'StartLearning' ? command.payload : undefined;
+  const retraining = command.type === 'StartRetraining' ? command.payload : undefined;
+  const characterId = command.payload.characterId;
+  const learner = person(root.lifecycle, characterId);
   requireEconomy(
     root.lifecycle.campaignTick === context.atTick &&
       root.finance.processedTick === context.atTick &&
       root.physical.processedTick === context.atTick &&
-      activeMembership(root.lifecycle, payload.characterId)?.companyId ===
-        root.lifecycle.companyId &&
-      context.contactIds.includes(payload.characterId) &&
+      activeMembership(root.lifecycle, characterId)?.companyId === root.lifecycle.companyId &&
+      context.contactIds.includes(characterId) &&
       learner.presence.location.kind === 'AT' &&
       canPerform(learner, 'study') &&
-      !coveredByMaintenance(root, payload.characterId, BigInt(context.atTick)),
+      !coveredByMaintenance(root, characterId, BigInt(context.atTick)),
     'INCOMPATIBLE_ACTIVITY',
   );
 
   const method = COMPANY_CATALOGUE.methods.find(
-    (entry) => entry.id === payload.methodId && entry.enabled,
+    (entry) => entry.id === (learning?.methodId ?? 'funded-practice') && entry.enabled,
   );
   requireEconomy(method, 'INVALID_SOURCE');
   const matches = context.learningFacts.filter(
     (source) =>
-      source.learnerId === payload.characterId &&
-      source.methodId === payload.methodId &&
-      sameIds(source.resourceIds, payload.resourceIds),
+      source.learnerId === characterId &&
+      source.methodId === (learning?.methodId ?? 'funded-practice') &&
+      sameIds(source.resourceIds, learning ? learning.resourceIds : []),
   );
   requireEconomy(matches.length === 1, 'INVALID_SOURCE');
   const source = matches[0]!;
@@ -97,7 +100,13 @@ export function admitLearningSource(
       source.atTick === context.atTick &&
       isExactInteger(source.expiresAt) &&
       BigInt(source.expiresAt) > BigInt(context.atTick) &&
-      source.resourceIds.length > 0 &&
+      (retraining
+        ? source.kind === 'RETRAINING' &&
+          source.id === retraining?.mentorEvidenceId &&
+          source.oldPerkId === retraining?.oldPerkId &&
+          source.newPerkId === retraining?.newPerkId &&
+          source.resourceIds.length === 0
+        : source.resourceIds.length > 0) &&
       source.resourceIds.every((id) => isEntityId(id)) &&
       new Set(source.resourceIds).size === source.resourceIds.length,
     'INVALID_SOURCE',

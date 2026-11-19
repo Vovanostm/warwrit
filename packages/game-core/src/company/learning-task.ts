@@ -17,6 +17,7 @@ import type { ValueOf } from './input.js';
 import { learningInputsInput, validateLearningInputs } from './learning-inputs.js';
 import type { LearningTaskQuote } from './learning-quote.js';
 import type { CommandOf } from './lifecycle-types.js';
+import { COMPANY_CATALOGUE } from './definitions.js';
 
 const nil = { schema: { type: 'null' }, read: (value: unknown): value is null => value === null };
 const positive = {
@@ -71,6 +72,7 @@ const startInput = object({
   quote: quoteInput,
   studyIntervalId: optional(id),
   inputs: optional(learningInputsInput),
+  retraining: optional(object({ oldPerkId: id, newPerkId: id })),
 });
 const taskInput = object({
   schemaVersion: choice(1),
@@ -89,12 +91,20 @@ const taskInput = object({
   ),
 });
 const stateInput = object({ schemaVersion: choice(1), tasks: array(taskInput) });
-export type LearningTaskStart = Omit<ValueOf<typeof startInput>, 'command' | 'quote'> & {
-  readonly command: CommandOf<'StartLearning'>;
+export type LearningTaskStart<
+  C extends CommandOf<'StartLearning' | 'StartRetraining'> = CommandOf<'StartLearning'>,
+> = Omit<ValueOf<typeof startInput>, 'command' | 'quote'> & {
+  /** Keep the submitted command identity for retries and retained tasks. */
+  readonly command: C;
   readonly quote: LearningTaskQuote;
 };
+export function learningStartResourceIds(
+  start: LearningTaskStart<CommandOf<'StartLearning' | 'StartRetraining'>>,
+): readonly string[] {
+  return 'resourceIds' in start.command.payload ? start.command.payload.resourceIds : [];
+}
 export type LearningTask = Omit<ValueOf<typeof taskInput>, 'start' | 'stop'> & {
-  readonly start: LearningTaskStart;
+  readonly start: LearningTaskStart<CommandOf<'StartLearning' | 'StartRetraining'>>;
   readonly stop?: CommandOf<'StopLearning'>;
 };
 export interface LearningTaskState {
@@ -131,24 +141,44 @@ export function readLearningTaskState(value: unknown): LearningTaskState {
   for (const task of tasks) {
     const { start, stop, terminal } = task;
     const parsed = parseCompanyCommand(start.command);
-    requireEconomy(parsed.ok && parsed.command.type === 'StartLearning', 'INVALID_STATE');
+    if (
+      !parsed.ok ||
+      (parsed.command.type !== 'StartLearning' && parsed.command.type !== 'StartRetraining')
+    )
+      throw new RangeError('INVALID_STATE');
     const command = parsed.command;
-    if (start.inputs) validateLearningInputs(start.inputs, command, start.quote);
-    const previousEnd = learnerEnds.get(command.payload.characterId);
+    const characterId = command.payload.characterId;
+    if (command.type === 'StartLearning') {
+      requireEconomy(start.retraining === undefined, 'INVALID_STATE');
+      if (start.inputs) validateLearningInputs(start.inputs, command, start.quote);
+    } else {
+      requireEconomy(
+        start.retraining?.oldPerkId === command.payload.oldPerkId &&
+          start.retraining.newPerkId === command.payload.newPerkId &&
+          start.inputs?.kind === 'COURSE' &&
+          start.inputs.skillId ===
+            COMPANY_CATALOGUE.perks.find((perk) => perk.id === command.payload.oldPerkId)?.skillId,
+        'INVALID_STATE',
+      );
+      if (start.inputs) validateLearningInputs(start.inputs, command, start.quote);
+    }
+    const maxTicks =
+      command.type === 'StartLearning' ? command.payload.goal.maxTicks : start.quote.maxTicks;
+    const previousEnd = learnerEnds.get(characterId);
     requireEconomy(
       command.actorRef.kind === 'PLAYER' &&
-        command.payload.resourceIds.length > 0 &&
+        (command.type === 'StartRetraining' || command.payload.resourceIds.length > 0) &&
         !taskIds.has(start.taskId) &&
         !commandIds.has(command.commandId) &&
         (previousEnd === undefined ||
           (previousEnd !== null && BigInt(command.campaignTick) >= BigInt(previousEnd))) &&
-        start.quote.coefficients.holderId === command.payload.characterId &&
+        start.quote.coefficients.holderId === characterId &&
         BigInt(task.completedTicks) <= BigInt(start.quote.maxTicks) &&
         (task.processedThroughTick === undefined ||
           (BigInt(task.processedThroughTick) >= BigInt(command.campaignTick) &&
             BigInt(task.processedThroughTick) - BigInt(command.campaignTick) >=
               BigInt(task.completedTicks))) &&
-        BigInt(start.quote.maxTicks) <= BigInt(command.payload.goal.maxTicks),
+        BigInt(start.quote.maxTicks) <= BigInt(maxTicks),
       'INVALID_STATE',
     );
     taskIds.add(start.taskId);
@@ -208,13 +238,17 @@ export function readLearningTaskInputs(task: LearningTask) {
 /** C04a owns an already-admitted start; C04b alone composes physical access and the quote. */
 export function startLearningTask(
   stateValue: LearningTaskState,
-  startValue: LearningTaskStart,
+  startValue: LearningTaskStart<CommandOf<'StartLearning' | 'StartRetraining'>>,
 ): LearningTaskTransition {
   const state = readLearningTaskState(stateValue);
   const start = snapshotJson(startValue);
   requireEconomy(startInput.read(start), 'INVALID_ARGUMENT');
   const parsed = parseCompanyCommand(start.command);
-  requireEconomy(parsed.ok && parsed.command.type === 'StartLearning', 'INVALID_ARGUMENT');
+  if (
+    !parsed.ok ||
+    (parsed.command.type !== 'StartLearning' && parsed.command.type !== 'StartRetraining')
+  )
+    throw new RangeError('INVALID_ARGUMENT');
   const command = parsed.command;
   const previous = state.tasks.find(
     (task) => task.start.taskId === start.taskId || usedCommand(task, command.commandId),

@@ -47,33 +47,54 @@ function ratio(value: ExactBps) {
 /** C03 only: detached finite quote; no interval, debit, task state or StartLearning activation. */
 export function quoteLearningTask(
   root: MaterializedCompanyState,
-  command: CommandOf<'StartLearning'>,
+  command: CommandOf<'StartLearning' | 'StartRetraining'>,
   context: LearningQuoteContext,
 ): LearningTaskQuote {
-  const p = command.payload;
-  const learner = person(root.lifecycle, p.characterId);
-  const requested = BigInt(p.goal.maxTicks);
-  requireEconomy(requested > 0n, 'INVALID_SOURCE');
+  const learning = command.type === 'StartLearning' ? command.payload : undefined;
+  const retraining = command.type === 'StartRetraining' ? command.payload : undefined;
+  const characterId = command.payload.characterId;
+  const learner = person(root.lifecycle, characterId);
+  const requested = learning ? BigInt(learning.goal.maxTicks) : undefined;
+  if (requested !== undefined) requireEconomy(requested > 0n, 'INVALID_SOURCE');
   const method = COMPANY_CATALOGUE.methods.find(
-    (entry) => entry.id === p.methodId && entry.enabled,
+    (entry) => entry.id === (learning?.methodId ?? 'funded-practice') && entry.enabled,
   );
   requireEconomy(method, 'INVALID_SOURCE');
   const source = admitLearningSource(root, command, context);
+  if (retraining) {
+    const oldPerk = COMPANY_CATALOGUE.perks.find((perk) => perk.id === retraining.oldPerkId);
+    requireEconomy(
+      oldPerk &&
+        learner.perks.includes(oldPerk.id) &&
+        !learner.perks.includes(retraining.newPerkId) &&
+        skillLevel(learner.skills[oldPerk.skillId] ?? 0) >= oldPerk.milestone,
+      'INCOMPATIBLE_ACTIVITY',
+    );
+  }
   const coefficients = evaluatePerkEffects(root, {
     kind: 'CHARACTER',
-    characterId: p.characterId,
-    task: source.kind === 'COURSE' ? 'TRAINING' : 'STUDY',
+    characterId,
+    task: source.kind === 'SELF_STUDY' ? 'STUDY' : 'TRAINING',
   });
   let maxTicks: bigint;
   let funding: LearningTaskQuote['funding'] = null;
 
-  if (source.kind === 'COURSE') {
+  if (source.kind === 'COURSE' || source.kind === 'RETRAINING') {
     requireEconomy(
       source.methodId === 'funded-practice' &&
         method.interval === 'CAMPAIGN_DAY' &&
-        'skillId' in p.goal &&
-        source.skillId === p.goal.skillId &&
-        source.poolId === p.budgetPoolId &&
+        source.skillId !== undefined &&
+        (retraining
+          ? source.kind === 'RETRAINING' &&
+            source.oldPerkId === retraining.oldPerkId &&
+            source.newPerkId === retraining.newPerkId &&
+            source.skillId ===
+              COMPANY_CATALOGUE.perks.find((perk) => perk.id === retraining.oldPerkId)?.skillId
+          : learning !== undefined &&
+            source.kind === 'COURSE' &&
+            'skillId' in learning.goal &&
+            source.skillId === learning.goal.skillId) &&
+        source.poolId === command.payload.budgetPoolId &&
         source.providerId !== undefined &&
         source.mentorId !== undefined &&
         source.providerWalletId !== undefined &&
@@ -84,14 +105,18 @@ export function quoteLearningTask(
         BigInt(source.costQPerDay) > 0n &&
         isExactInteger(source.maxTicks) &&
         BigInt(source.maxTicks) > 0n &&
+        (!retraining ||
+          (source.costQPerDay === (5n * BigInt(COMPANY_RULES.moneyQPerCrown)).toString() &&
+            BigInt(source.maxTicks) === 3n * BigInt(COMPANY_RULES.ticksPerDay))) &&
         COMPANY_CATALOGUE.skills.some((skill) => skill.id === source.skillId && skill.enabled),
       'INVALID_SOURCE',
     );
-    requireEconomy(
-      p.goal.targetLevel === undefined ||
-        p.goal.targetLevel > skillLevel(learner.skills[source.skillId] ?? 0),
-      'INCOMPATIBLE_ACTIVITY',
-    );
+    if (learning && 'skillId' in learning.goal)
+      requireEconomy(
+        learning.goal.targetLevel === undefined ||
+          learning.goal.targetLevel > skillLevel(learner.skills[source.skillId] ?? 0),
+        'INCOMPATIBLE_ACTIVITY',
+      );
     for (const id of [source.providerId, source.mentorId]) {
       const provider = person(root.lifecycle, id);
       requireEconomy(
@@ -113,12 +138,29 @@ export function quoteLearningTask(
         sameLocation(recipient.location, source.location),
       'CONTACT_OR_ACCESS_REQUIRED',
     );
-    const authorized = min(BigInt(p.maxBudgetQ), spendableQ(root.finance, payer.walletId));
-    requireEconomy(BigInt(p.maxBudgetQ) > 0n && authorized > 0n, 'UNPAID_OBLIGATIONS');
-    const cost = ratio(coefficients.task.trainingCostBps);
+    const spendable = spendableQ(root.finance, payer.walletId);
+    const authorized = retraining
+      ? ceilDiv(
+          BigInt(source.costQPerDay) * BigInt(source.maxTicks),
+          BigInt(COMPANY_RULES.ticksPerDay),
+        )
+      : min(BigInt(learning!.maxBudgetQ), spendable);
+    requireEconomy(
+      (retraining !== undefined || (learning !== undefined && BigInt(learning.maxBudgetQ) > 0n)) &&
+        authorized > 0n,
+      'UNPAID_OBLIGATIONS',
+    );
+    const cost = retraining
+      ? { numerator: 1n, denominator: 1n }
+      : ratio(coefficients.task.trainingCostBps);
     const rate = BigInt(source.costQPerDay) * cost.numerator;
     const affordable = (authorized * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
-    maxTicks = min(requested, BigInt(source.maxTicks), affordable);
+    const currentlyAffordable =
+      (spendable * BigInt(COMPANY_RULES.ticksPerDay) * cost.denominator) / rate;
+    requireEconomy((retraining ? currentlyAffordable : affordable) > 0n, 'UNPAID_OBLIGATIONS');
+    maxTicks = retraining
+      ? BigInt(source.maxTicks)
+      : min(requested!, BigInt(source.maxTicks), affordable);
     requireEconomy(maxTicks > 0n, 'UNPAID_OBLIGATIONS');
     funding = {
       poolId: source.poolId,
@@ -128,11 +170,12 @@ export function quoteLearningTask(
       costQPerDay: { numerator: rate.toString(), denominator: cost.denominator.toString() },
     };
   } else {
+    requireEconomy(command.type === 'StartLearning', 'INVALID_SOURCE');
     requireEconomy(
       source.methodId === 'book-study' &&
         method.interval === 'FINITE_SECTION' &&
-        'workId' in p.goal &&
-        BigInt(p.maxBudgetQ) === 0n &&
+        'workId' in learning!.goal &&
+        BigInt(learning!.maxBudgetQ) === 0n &&
         source.workId !== undefined &&
         source.sectionId !== undefined,
       'INVALID_SOURCE',
@@ -141,7 +184,9 @@ export function quoteLearningTask(
       (entry) => entry.id === source.workId && entry.sectionId === source.sectionId,
     );
     requireEconomy(
-      work && p.goal.workId === work.id && (p.goal.sectionId ?? work.sectionId) === work.sectionId,
+      work &&
+        learning!.goal.workId === work.id &&
+        (learning!.goal.sectionId ?? work.sectionId) === work.sectionId,
       'INVALID_SOURCE',
     );
     for (const id of source.resourceIds) {
@@ -155,7 +200,7 @@ export function quoteLearningTask(
     }
     const duration = ratio(coefficients.task.studyDurationBps);
     maxTicks = min(
-      requested,
+      requested!,
       ceilDiv(BigInt(work.durationTicks) * duration.numerator, duration.denominator),
     );
   }
@@ -164,7 +209,7 @@ export function quoteLearningTask(
     sourceId: source.id,
     sourceVersion: source.sourceVersion,
     maxTicks: maxTicks.toString(),
-    mentorId: source.kind === 'COURSE' ? source.mentorId : null,
+    mentorId: source.kind === 'SELF_STUDY' ? null : (source.mentorId ?? null),
     funding,
     coefficients,
   });

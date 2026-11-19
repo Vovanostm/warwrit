@@ -14,6 +14,7 @@ import { checkFreshCompanyRevision, guardCompanyCommand } from './guards.js';
 import { canonicalJson } from './input.js';
 import type { LearningQuoteContext } from './learning-quote.js';
 import { readLearningTaskInputs, readLearningTaskState } from './learning-task.js';
+import { learningStartResourceIds } from './learning-task.js';
 import type { LearningTask } from './learning-task.js';
 import { person, sameLocation } from './lifecycle-state.js';
 import { isEntityId, isExactInteger, moneyQ } from './values.js';
@@ -39,6 +40,7 @@ export function admitLearningFunding(
   requireEconomy(
     [
       'StartLearning',
+      'StartRetraining',
       'StopLearning',
       'AdvanceCampaign',
       'TransferItem',
@@ -66,7 +68,7 @@ export function admitLearningFunding(
     start.command.companyId === context.companyId && start.command.worldId === context.worldId,
     'AUTHORIZATION',
   );
-  if (command.type === 'StartLearning')
+  if (command.type === 'StartLearning' || command.type === 'StartRetraining')
     requireEconomy(canonicalJson(command) === canonicalJson(start.command), 'IDEMPOTENCY_CONFLICT');
   if (command.type === 'StopLearning')
     requireEconomy(command.payload.taskId === start.taskId, 'INVALID_SOURCE');
@@ -85,7 +87,7 @@ export function admitLearningFunding(
   const inputs = readLearningTaskInputs(task);
   if (command.type === 'TransferItem')
     requireEconomy(
-      inputs.kind === 'BOOK' && start.command.payload.resourceIds.includes(command.payload.itemId),
+      inputs.kind === 'BOOK' && learningStartResourceIds(start).includes(command.payload.itemId),
       'UNSUPPORTED_ACTION',
     );
   if (command.type === 'SetAssignment')
@@ -97,6 +99,13 @@ export function admitLearningFunding(
   requireEconomy(matches.length === 1, 'INVALID_SOURCE');
   const source = own(matches[0]!);
   const payload = start.command.payload;
+  const retraining = start.command.type === 'StartRetraining';
+  const resourceIds = learningStartResourceIds(start);
+  const methodId =
+    start.command.type === 'StartLearning' ? start.command.payload.methodId : 'funded-practice';
+  const budgetWithinRequest =
+    start.command.type !== 'StartLearning' ||
+    BigInt(quote.funding?.authorizedBudgetQ ?? '0') <= BigInt(start.command.payload.maxBudgetQ);
   requireEconomy(
     source.companyId === context.companyId &&
       source.worldId === context.worldId &&
@@ -106,9 +115,8 @@ export function admitLearningFunding(
       isExactInteger(source.expiresAt) &&
       BigInt(source.expiresAt) > BigInt(source.atTick) &&
       source.learnerId === payload.characterId &&
-      source.methodId === payload.methodId &&
-      canonicalJson([...source.resourceIds].sort()) ===
-        canonicalJson([...payload.resourceIds].sort()),
+      source.methodId === methodId &&
+      canonicalJson([...source.resourceIds].sort()) === canonicalJson([...resourceIds].sort()),
     'INVALID_SOURCE',
   );
   const funding = quote.funding;
@@ -124,9 +132,9 @@ export function admitLearningFunding(
   }
   requireEconomy(
     inputs.kind === 'COURSE' &&
-      source.kind === 'COURSE' &&
+      source.kind === (retraining ? 'RETRAINING' : 'COURSE') &&
       source.skillId === inputs.skillId &&
-      source.challengeLevel === inputs.challengeLevel &&
+      (source.challengeLevel ?? 0) === inputs.challengeLevel &&
       source.poolId === funding.poolId &&
       funding.poolId === payload.budgetPoolId &&
       source.providerWalletId === funding.providerWalletId &&
@@ -136,14 +144,19 @@ export function admitLearningFunding(
       isExactInteger(source.costQPerDay) &&
       isExactInteger(source.maxTicks) &&
       BigInt(quote.maxTicks) <= BigInt(source.maxTicks) &&
-      BigInt(funding.authorizedBudgetQ) <= BigInt(payload.maxBudgetQ),
+      budgetWithinRequest,
     'INVALID_SOURCE',
   );
   // Validate the retained quotation against its original price; never re-quote today's perks.
   const cost = quote.coefficients.task.trainingCostBps;
   requireEconomy(
-    BigInt(funding.costQPerDay.numerator) * 10000n * BigInt(cost.denominator) ===
-      BigInt(source.costQPerDay) * BigInt(cost.numerator) * BigInt(funding.costQPerDay.denominator),
+    retraining
+      ? BigInt(funding.costQPerDay.numerator) ===
+          BigInt(source.costQPerDay) * BigInt(funding.costQPerDay.denominator)
+      : BigInt(funding.costQPerDay.numerator) * 10000n * BigInt(cost.denominator) ===
+          BigInt(source.costQPerDay) *
+            BigInt(cost.numerator) *
+            BigInt(funding.costQPerDay.denominator),
     'INVALID_SOURCE',
   );
   const access = requirePoolAccess(root, funding.poolId, context);
