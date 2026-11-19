@@ -1,0 +1,475 @@
+--- a/apps/web/src/game/PaintedMapCanvas.tsx
++++ b/apps/web/src/game/PaintedMapCanvas.tsx
+@@ -39,6 +39,247 @@
+   y: sheet.height / 2 - Number(point.zMicroFp) / 65536 / sheet.fpPerPixel,
+ });
+ 
++type PaintedMapProps = {
++  readonly companyId: string;
++  readonly cartography: PaintedCartography;
++  readonly sites: readonly MapSite[];
++  readonly current: WorldFreeMovementV2ResponseDto | null;
++  readonly clock: { readonly serverMs: number; readonly receivedAt: number };
++  readonly night: boolean;
++  readonly onPosition?: (point: { xFp: number; zFp: number } | null) => void;
++  readonly onMove: (action: WorldFreeMovementV2RequestDto['action']) => void;
++  readonly onSelectSite: (id: string) => void;
++};
++
++type MapRef<T> = { current: T };
++type PaintedMapRefs = {
++  readonly map: MapRef<SVGSVGElement | null>;
++  readonly tileLayer: MapRef<SVGGElement | null>;
++  readonly knowledgeOverlay: MapRef<SVGImageElement | null>;
++  readonly revealMask: MapRef<SVGImageElement | null>;
++  readonly visibleFrontier: MapRef<SVGPathElement | null>;
++  readonly party: MapRef<SVGGElement | null>;
++  readonly camera: MapRef<MapView | undefined>;
++  readonly zoomTarget: MapRef<MapView | undefined>;
++  readonly cartographyView: MapRef<ReturnType<typeof createCartographyView> | undefined>;
++  readonly latest: MapRef<PaintedMapProps>;
++};
++
++type MapFrameContext = {
++  readonly svg: SVGSVGElement;
++  readonly latest: MapRef<PaintedMapProps>;
++  readonly camera: MapRef<MapView | undefined>;
++  readonly zoomTarget: MapRef<MapView | undefined>;
++  readonly party: MapRef<SVGGElement | null>;
++  readonly movement: ReturnType<typeof bindMapPanKeys>;
++  readonly drag: ReturnType<typeof bindMapPanDrag>;
++  readonly updateView: (view: MapView) => void;
++  readonly updateSiteMarkerScale: () => void;
++  readonly lastLayout: MapRef<number>;
++};
++
++function updateMapCameraFrame(context: MapFrameContext, elapsed: number) {
++  const current = context.camera.current;
++  if (!current) return;
++  if (context.zoomTarget.current) {
++    const next = advanceMapView(current, context.zoomTarget.current, elapsed);
++    if (next === context.zoomTarget.current) context.zoomTarget.current = undefined;
++    context.updateView(next);
++  }
++  if (context.movement.held.size && !context.drag.isDragging()) {
++    context.zoomTarget.current = undefined;
++    context.updateView(
++      panMapView(
++        context.camera.current ?? current,
++        context.movement.direction(),
++        elapsed,
++        context.latest.current.cartography.sheet,
++      ),
++    );
++  }
++}
++
++function updateMapPartyFrame(context: MapFrameContext, now: number) {
++  const point = continuousMovementPositionAt(
++    context.latest.current.current,
++    context.latest.current.clock.serverMs + now - context.latest.current.clock.receivedAt,
++  );
++  const party = context.party.current;
++  if (!point || !party) {
++    if (party) party.setAttribute('visibility', 'hidden');
++    context.latest.current.onPosition?.(null);
++    return;
++  }
++  const position = toPixel(point, context.latest.current.cartography.sheet);
++  party.setAttribute('transform', `translate(${position.x} ${position.y})`);
++  party.setAttribute('visibility', 'visible');
++  context.latest.current.onPosition?.({
++    xFp: Number(point.xMicroFp) / 65536,
++    zFp: Number(point.zMicroFp) / 65536,
++  });
++}
++
++function advancePaintedMapFrame(context: MapFrameContext, now: number, elapsed: number) {
++  updateMapCameraFrame(context, elapsed);
++  updateMapPartyFrame(context, now);
++  if (now - context.lastLayout.current > 180) {
++    context.lastLayout.current = now;
++    context.updateSiteMarkerScale();
++    layoutMapLabels(context.svg, (context.camera.current?.width ?? 0) > 2304);
++  }
++}
++
++function mountPaintedMap(refs: PaintedMapRefs, setTileError: (error: boolean) => void) {
++  const svg = refs.map.current;
++  const tiles = refs.tileLayer.current;
++  const knowledge = refs.knowledgeOverlay.current;
++  const reveal = refs.revealMask.current;
++  const frontier = refs.visibleFrontier.current;
++  if (!svg || !tiles || !knowledge || !reveal || !frontier) return undefined;
++
++  const updateSiteMarkerScale = () => {
++    const scale = 1 / (svg.getScreenCTM()?.a ?? 1);
++    for (const marker of svg.querySelectorAll<SVGGElement>('.painted-site'))
++      marker.setAttribute(
++        'transform',
++        `translate(${marker.dataset['x']} ${marker.dataset['y']}) scale(${scale})`,
++      );
++  };
++  const updateView = (view: MapView) => {
++    refs.camera.current = boundedMapView(view, refs.latest.current.cartography.sheet);
++    svg.setAttribute(
++      'viewBox',
++      `${refs.camera.current.x} ${refs.camera.current.y} ${refs.camera.current.width} ${refs.camera.current.height}`,
++    );
++    updateSiteMarkerScale();
++    refs.cartographyView.current?.sync(refs.latest.current.cartography, refs.camera.current);
++  };
++  const viewLayer = createCartographyView(tiles, knowledge, reveal, frontier, {
++    loadTile: async (revision, x, y, signal) => {
++      const response = await fetch(
++        `${apiBaseUrl}/world/cartography/tiles/${encodeURIComponent(revision)}/${x}/${y}.png`,
++        {
++          credentials: 'same-origin',
++          cache: 'no-store',
++          headers: { [WORLD_EXPECTED_COMPANY_ID_HEADER]: refs.latest.current.companyId },
++          signal,
++        },
++      );
++      if (!response.ok) throw new Error(`Map tile request failed (${response.status}).`);
++      const url = URL.createObjectURL(await response.blob());
++      return { url, dispose: () => URL.revokeObjectURL(url) };
++    },
++    onTileError: () => setTileError(true),
++  });
++  refs.cartographyView.current = viewLayer;
++  const initial = fittedView(
++    refs.latest.current.cartography,
++    (svg.clientWidth || 3) / (svg.clientHeight || 2),
++  );
++  updateView(initial);
++  viewLayer.render(refs.latest.current.cartography);
++
++  const lastLayout = { current: 0 };
++  const drag = bindMapPanDrag(svg, {
++    getView: () => refs.camera.current ?? initial,
++    setView: updateView,
++    cancelZoom: () => (refs.zoomTarget.current = undefined),
++  });
++  const movement = bindMapPanKeys(
++    svg,
++    () => {
++      if (refs.latest.current.current?.mode === 'MOVING') refs.latest.current.onMove({ kind: 'STOP' });
++    },
++    () => {
++      if (refs.latest.current.current?.mode === 'MOVING') refs.latest.current.onMove({ kind: 'STOP' });
++    },
++  );
++  const onWheel = (event: WheelEvent) => {
++    event.preventDefault();
++    svg.focus({ preventScroll: true });
++    const transform = svg.getScreenCTM();
++    if (!transform || !refs.camera.current) return;
++    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(transform.inverse());
++    refs.zoomTarget.current = zoomMapView(
++      refs.zoomTarget.current ?? refs.camera.current,
++      [
++        (point.x - refs.camera.current.x) / refs.camera.current.width,
++        (point.y - refs.camera.current.y) / refs.camera.current.height,
++      ],
++      wheelPixels(event.deltaY, event.deltaMode, svg.clientHeight),
++      refs.latest.current.cartography.sheet,
++    );
++  };
++  const onContextMenu = (event: MouseEvent) => {
++    event.preventDefault();
++    const transform = svg.getScreenCTM();
++    if (!transform) return;
++    svg.focus({ preventScroll: true });
++    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(transform.inverse());
++    const target =
++      event.target instanceof Element ? event.target.closest<SVGGElement>('[data-site-id]') : null;
++    const siteId = target?.dataset['siteId'];
++    const cartography = refs.latest.current.cartography;
++    const site = cartography.sites.find((entry) => entry.siteId === siteId);
++    refs.latest.current.onMove({
++      kind: 'MOVE_TO',
++      mapEdition: cartography.mapEdition,
++      target:
++        site && refs.latest.current.sites.some((entry) => entry.siteId === site.siteId)
++          ? { kind: 'SITE', siteId: site.siteId }
++          : {
++              kind: 'TERRAIN',
++              xFp: Math.round((point.x - cartography.sheet.width / 2) * cartography.sheet.fpPerPixel),
++              zFp: Math.round((cartography.sheet.height / 2 - point.y) * cartography.sheet.fpPerPixel),
++            },
++    });
++  };
++  svg.addEventListener('wheel', onWheel, { passive: false });
++  svg.addEventListener('contextmenu', onContextMenu);
++
++  let frame = 0;
++  let previous = performance.now();
++  const frameContext: MapFrameContext = {
++    svg,
++    latest: refs.latest,
++    camera: refs.camera,
++    zoomTarget: refs.zoomTarget,
++    party: refs.party,
++    movement,
++    drag,
++    updateView,
++    updateSiteMarkerScale,
++    lastLayout,
++  };
++  const animate = (now: number) => {
++    advancePaintedMapFrame(frameContext, now, now - previous);
++    previous = now;
++    frame = requestAnimationFrame(animate);
++  };
++  frame = requestAnimationFrame(animate);
++  const resize = new ResizeObserver(() => {
++    refs.zoomTarget.current = undefined;
++    if (refs.camera.current)
++      updateView({
++        ...refs.camera.current,
++        height: (refs.camera.current.width * svg.clientHeight) / Math.max(1, svg.clientWidth),
++      });
++  });
++  resize.observe(svg);
++
++  return () => {
++    cancelAnimationFrame(frame);
++    resize.disconnect();
++    movement.destroy();
++    drag.destroy();
++    svg.removeEventListener('wheel', onWheel);
++    svg.removeEventListener('contextmenu', onContextMenu);
++    viewLayer.clear();
++    refs.cartographyView.current = undefined;
++    refs.camera.current = undefined;
++  };
++}
++
+ function fittedView(cartography: PaintedCartography, aspect: number): MapView {
+   const bounds = knownCartographyBounds(cartography);
+   let width = Math.max(1, bounds.right - bounds.left + 520);
+@@ -56,17 +297,7 @@
+   );
+ }
+ 
+-export function PaintedMapCanvas(props: {
+-  readonly companyId: string;
+-  readonly cartography: PaintedCartography;
+-  readonly sites: readonly MapSite[];
+-  readonly current: WorldFreeMovementV2ResponseDto | null;
+-  readonly clock: { readonly serverMs: number; readonly receivedAt: number };
+-  readonly night: boolean;
+-  readonly onPosition?: (point: { xFp: number; zFp: number } | null) => void;
+-  readonly onMove: (action: WorldFreeMovementV2RequestDto['action']) => void;
+-  readonly onSelectSite: (id: string) => void;
+-}) {
++export function PaintedMapCanvas(props: PaintedMapProps) {
+   const map = useRef<SVGSVGElement>(null);
+   const tileLayer = useRef<SVGGElement>(null);
+   const knowledgeOverlay = useRef<SVGImageElement>(null);
+@@ -80,186 +311,26 @@
+   const [tileError, setTileError] = useState(false);
+   latest.current = props;
+ 
+-  useEffect(() => {
+-    const svg = map.current;
+-    const tiles = tileLayer.current;
+-    const knowledge = knowledgeOverlay.current;
+-    const reveal = revealMask.current;
+-    const frontier = visibleFrontier.current;
+-    if (!svg || !tiles || !knowledge || !reveal || !frontier) return;
+-    const updateSiteMarkerScale = () => {
+-      const scale = 1 / (svg.getScreenCTM()?.a ?? 1);
+-      for (const marker of svg.querySelectorAll<SVGGElement>('.painted-site'))
+-        marker.setAttribute(
+-          'transform',
+-          `translate(${marker.dataset['x']} ${marker.dataset['y']}) scale(${scale})`,
+-        );
+-    };
+-    const updateView = (view: MapView) => {
+-      camera.current = boundedMapView(view, latest.current.cartography.sheet);
+-      svg.setAttribute(
+-        'viewBox',
+-        `${camera.current.x} ${camera.current.y} ${camera.current.width} ${camera.current.height}`,
+-      );
+-      updateSiteMarkerScale();
+-      cartographyView.current?.sync(latest.current.cartography, camera.current);
+-    };
+-    const viewLayer = createCartographyView(tiles, knowledge, reveal, frontier, {
+-      loadTile: async (revision, x, y, signal) => {
+-        const response = await fetch(
+-          `${apiBaseUrl}/world/cartography/tiles/${encodeURIComponent(revision)}/${x}/${y}.png`,
+-          {
+-            credentials: 'same-origin',
+-            cache: 'no-store',
+-            headers: { [WORLD_EXPECTED_COMPANY_ID_HEADER]: latest.current.companyId },
+-            signal,
+-          },
+-        );
+-        if (!response.ok) throw new Error(`Map tile request failed (${response.status}).`);
+-        const url = URL.createObjectURL(await response.blob());
+-        return { url, dispose: () => URL.revokeObjectURL(url) };
+-      },
+-      onTileError: () => setTileError(true),
+-    });
+-    cartographyView.current = viewLayer;
+-    const initial = fittedView(
+-      latest.current.cartography,
+-      (svg.clientWidth || 3) / (svg.clientHeight || 2),
+-    );
+-    updateView(initial);
+-    viewLayer.render(latest.current.cartography);
+-
+-    let lastLayout = 0;
+-    const drag = bindMapPanDrag(svg, {
+-      getView: () => camera.current ?? initial,
+-      setView: updateView,
+-      cancelZoom: () => (zoomTarget.current = undefined),
+-    });
+-    const movement = bindMapPanKeys(
+-      svg,
+-      () => {
+-        if (latest.current.current?.mode === 'MOVING') latest.current.onMove({ kind: 'STOP' });
+-      },
+-      () => {
+-        if (latest.current.current?.mode === 'MOVING') latest.current.onMove({ kind: 'STOP' });
+-      },
+-    );
+-    const onWheel = (event: WheelEvent) => {
+-      event.preventDefault();
+-      svg.focus({ preventScroll: true });
+-      const transform = svg.getScreenCTM();
+-      if (!transform || !camera.current) return;
+-      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(transform.inverse());
+-      zoomTarget.current = zoomMapView(
+-        zoomTarget.current ?? camera.current,
+-        [
+-          (point.x - camera.current.x) / camera.current.width,
+-          (point.y - camera.current.y) / camera.current.height,
+-        ],
+-        wheelPixels(event.deltaY, event.deltaMode, svg.clientHeight),
+-        latest.current.cartography.sheet,
+-      );
+-    };
+-    const onContextMenu = (event: MouseEvent) => {
+-      event.preventDefault();
+-      const transform = svg.getScreenCTM();
+-      if (!transform) return;
+-      svg.focus({ preventScroll: true });
+-      const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(transform.inverse());
+-      const target =
+-        event.target instanceof Element
+-          ? event.target.closest<SVGGElement>('[data-site-id]')
+-          : null;
+-      const siteId = target?.dataset['siteId'];
+-      const cartography = latest.current.cartography;
+-      const site = cartography.sites.find((entry) => entry.siteId === siteId);
+-      latest.current.onMove({
+-        kind: 'MOVE_TO',
+-        mapEdition: cartography.mapEdition,
+-        target:
+-          site && latest.current.sites.some((entry) => entry.siteId === site.siteId)
+-            ? { kind: 'SITE', siteId: site.siteId }
+-            : {
+-                kind: 'TERRAIN',
+-                xFp: Math.round(
+-                  (point.x - cartography.sheet.width / 2) * cartography.sheet.fpPerPixel,
+-                ),
+-                zFp: Math.round(
+-                  (cartography.sheet.height / 2 - point.y) * cartography.sheet.fpPerPixel,
+-                ),
+-              },
+-      });
+-    };
+-    svg.addEventListener('wheel', onWheel, { passive: false });
+-    svg.addEventListener('contextmenu', onContextMenu);
+-    let frame = 0;
+-    let previous = performance.now();
+-    const animate = (now: number) => {
+-      const current = camera.current;
+-      if (current && zoomTarget.current) {
+-        const next = advanceMapView(current, zoomTarget.current, now - previous);
+-        if (next === zoomTarget.current) zoomTarget.current = undefined;
+-        updateView(next);
+-      }
+-      if (current && movement.held.size && !drag.isDragging()) {
+-        zoomTarget.current = undefined;
+-        updateView(
+-          panMapView(
+-            camera.current ?? current,
+-            movement.direction(),
+-            now - previous,
+-            latest.current.cartography.sheet,
+-          ),
+-        );
+-      }
+-      const point = continuousMovementPositionAt(
+-        latest.current.current,
+-        latest.current.clock.serverMs + now - latest.current.clock.receivedAt,
+-      );
+-      if (party.current && point) {
+-        const position = toPixel(point, latest.current.cartography.sheet);
+-        party.current.setAttribute('transform', `translate(${position.x} ${position.y})`);
+-        latest.current.onPosition?.({
+-          xFp: Number(point.xMicroFp) / 65536,
+-          zFp: Number(point.zMicroFp) / 65536,
+-        });
+-      } else {
+-        if (party.current) party.current.setAttribute('visibility', 'hidden');
+-        latest.current.onPosition?.(null);
+-      }
+-      if (party.current && point) party.current.setAttribute('visibility', 'visible');
+-      if (now - lastLayout > 180) {
+-        lastLayout = now;
+-        updateSiteMarkerScale();
+-        layoutMapLabels(svg, (camera.current?.width ?? 0) > 2304);
+-      }
+-      previous = now;
+-      frame = requestAnimationFrame(animate);
+-    };
+-    frame = requestAnimationFrame(animate);
+-    const resize = new ResizeObserver(() => {
+-      zoomTarget.current = undefined;
+-      if (camera.current)
+-        updateView({
+-          ...camera.current,
+-          height: (camera.current.width * svg.clientHeight) / Math.max(1, svg.clientWidth),
+-        });
+-    });
+-    resize.observe(svg);
++  useEffect(
++    () =>
++      mountPaintedMap(
++        {
++          map,
++          tileLayer,
++          knowledgeOverlay,
++          revealMask,
++          visibleFrontier,
++          party,
++          camera,
++          zoomTarget,
++          cartographyView,
++          latest,
++        },
++        setTileError,
++      ),
++    [props.cartography.mapEdition],
++  );
+ 
+-    return () => {
+-      cancelAnimationFrame(frame);
+-      resize.disconnect();
+-      movement.destroy();
+-      drag.destroy();
+-      svg.removeEventListener('wheel', onWheel);
+-      svg.removeEventListener('contextmenu', onContextMenu);
+-      viewLayer.clear();
+-      cartographyView.current = undefined;
+-      camera.current = undefined;
+-    };
+-  }, [props.cartography.mapEdition]);
+-
+   useEffect(() => {
+     setTileError(false);
+   }, [props.cartography.revision]);

@@ -1,4 +1,5 @@
 import type { Unit } from './battle-presentation.js';
+import { FEMALE_SPRITES } from './female-sprite-assets.js';
 
 export interface StaticSpriteArt {
   readonly id: string;
@@ -9,7 +10,7 @@ export interface StaticSpriteArt {
   readonly bodyHeight: number;
   readonly footX: number;
   readonly footY: number;
-  /** Opaque art bounds plus a small source-pixel safety margin; UI never crops anatomy. */
+  /** Source-pixel [x, y, width, height], including the opaque art and safety margin. */
   readonly visibleBounds: readonly [number, number, number, number];
 }
 
@@ -19,16 +20,22 @@ export function spriteScale(art: StaticSpriteArt): number {
   return (body * 0.82) / art.bodyHeight;
 }
 
+export function spriteVisibleExtents(art: StaticSpriteArt) {
+  const [left, top, width, height] = art.visibleBounds;
+  return { left, top, right: left + width, bottom: top + height };
+}
+
 export function spriteGeometry(art: StaticSpriteArt) {
   const factor = spriteScale(art);
   const width = art.width * factor;
+  const bounds = spriteVisibleExtents(art);
   return {
     width,
     height: art.height * factor,
     anchorX: (art.footX / art.width - 0.5) * width,
     footY: (art.footY - art.height / 2) * factor,
-    corners: [art.visibleBounds[0], art.visibleBounds[2]].flatMap((x) =>
-      [art.visibleBounds[1], art.visibleBounds[3], art.footY].map((y) => ({
+    corners: [bounds.left, bounds.right].flatMap((x) =>
+      [bounds.top, bounds.bottom, art.footY].map((y) => ({
         x: (x - art.footX) * factor,
         up: (art.footY - y) * factor,
       })),
@@ -40,16 +47,14 @@ export function spriteGeometry(art: StaticSpriteArt) {
 // comparative body height and foot baseline; in-game creature scale remains unmeasured.
 const art = {
   W01: {
-    url: new URL(
-      '../../../../assets/art/combat/stage1-2026-10-09/roster/w01/sprite.png',
-      import.meta.url,
-    ).href,
-    width: 1240,
-    height: 1269,
-    bodyHeight: 1236,
-    footX: 641.75,
-    footY: 1207.5,
-    visibleBounds: [234, 14, 759, 1251],
+    url: new URL('../../../../assets/art/combat/ink-fighters-2026-10-27/sword.png', import.meta.url)
+      .href,
+    width: 1330,
+    height: 1183,
+    bodyHeight: 1096,
+    footX: 658,
+    footY: 1142,
+    visibleBounds: [256, 40, 841, 1110],
   },
   W02: {
     url: new URL(
@@ -77,27 +82,27 @@ const art = {
   },
   W04: {
     url: new URL(
-      '../../../../assets/art/combat/stage1-2026-10-09/roster/w04/sprite.png',
+      '../../../../assets/art/combat/ink-roster-2026-10-27/spear-veteran.png',
       import.meta.url,
     ).href,
-    width: 1254,
-    height: 1254,
-    bodyHeight: 825,
-    footX: 526,
-    footY: 1044.5,
-    visibleBounds: [122, 164, 1034, 928],
+    width: 1375,
+    height: 1144,
+    bodyHeight: 1039,
+    footX: 555,
+    footY: 1109,
+    visibleBounds: [67, 64, 1283, 1051],
   },
   W05: {
     url: new URL(
-      '../../../../assets/art/combat/stage1-2026-10-09/roster/w05/sprite.png',
+      '../../../../assets/art/combat/ink-roster-2026-10-27/bow-youth.png',
       import.meta.url,
     ).href,
-    width: 1254,
-    height: 1254,
-    bodyHeight: 1177,
-    footX: 660.75,
-    footY: 1162.5,
-    visibleBounds: [233, 32, 708, 1191],
+    width: 1199,
+    height: 1312,
+    bodyHeight: 1065,
+    footX: 563,
+    footY: 1265,
+    visibleBounds: [159, 2, 1020, 1270],
   },
   W06: {
     url: new URL(
@@ -288,6 +293,19 @@ const byWeapon: Readonly<Record<string, SpriteId>> = {
   bow: 'W05',
 };
 
+function femaleSpriteForWeapon(weaponId: Unit['weaponId']) {
+  switch (weaponId) {
+    case 'sword-shield':
+      return FEMALE_SPRITES.W01;
+    case 'spear':
+      return FEMALE_SPRITES.W04;
+    case 'bow':
+      return FEMALE_SPRITES.W05;
+    default:
+      return undefined;
+  }
+}
+
 const UNARMED_W01: StaticSpriteArt = {
   id: 'W01-unarmed',
   url: new URL(
@@ -315,7 +333,7 @@ const creatureNames: ReadonlyArray<readonly [RegExp, SpriteId]> = [
   [/mill|мельнич/i, 'B053'],
 ];
 
-const UNKNOWN_COMBATANT: StaticSpriteArt = {
+const UNKNOWN_UNIT_ART: StaticSpriteArt = {
   id: 'unknown-combatant',
   url: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 512%22%3E%3Cpath fill=%22%231d201f%22 stroke=%22%23b4a990%22 stroke-width=%228%22 d=%22M128 22c-39 0-65 34-65 76s26 73 65 73 65-31 65-73-26-76-65-76Zm-75 180L20 440h66l16-109 11 159h43l11-159 16 109h66l-33-238-39-28H99Z%22/%3E%3C/svg%3E',
   width: 256,
@@ -328,17 +346,27 @@ const UNKNOWN_COMBATANT: StaticSpriteArt = {
 
 export function spriteForUnit(unit: Unit): StaticSpriteArt {
   const identity = `${unit.profileId ?? ''} ${unit.name ?? ''} ${unit.id}`;
+  if (unit.visualKind === 'creature') {
+    const token = identity.toUpperCase().match(/\bB\d{3}\b/)?.[0] as SpriteId | undefined;
+    if (token && token in art) return { id: token, ...art[token] };
+    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+    return { id, ...art[id] };
+  }
+
+  if (unit.sex !== undefined) {
+    if (unit.sex === 'female') {
+      return femaleSpriteForWeapon(unit.weaponId) ?? UNKNOWN_UNIT_ART;
+    }
+    if (unit.sex !== 'male') return UNKNOWN_UNIT_ART;
+  }
+
   if (unit.weaponId === 'fists') return UNARMED_W01;
   const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
   if (token && token in art) return { id: token, ...art[token] };
   if (unit.visualKind === 'human') {
-    if (!unit.weaponId) return UNKNOWN_COMBATANT;
+    if (!unit.weaponId) return UNKNOWN_UNIT_ART;
     const id = byWeapon[unit.weaponId];
-    return id ? { id, ...art[id] } : UNKNOWN_COMBATANT;
+    return id ? { id, ...art[id] } : UNKNOWN_UNIT_ART;
   }
-  if (unit.visualKind === 'creature') {
-    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
-    return { id, ...art[id] };
-  }
-  return UNKNOWN_COMBATANT;
+  return UNKNOWN_UNIT_ART;
 }

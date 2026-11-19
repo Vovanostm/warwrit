@@ -2,7 +2,8 @@ import { expect, it } from 'vitest';
 import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
 
 it.each([
-  ['W01', 'sword-shield', 'human', 1.4, 1236],
+  ['W01', 'sword-shield', 'human', 1.4, 1096],
+  ['B001', undefined, 'creature', 0.73, 293],
   ['B002', undefined, 'creature', 1.62, 951],
   ['B053', undefined, 'creature', 1.62, 1206],
   ['W01', 'fists', 'human', 1.4, 1241],
@@ -19,7 +20,9 @@ it.each([
     expect(geometry.anchorX).toBe((art.footX / art.width - 0.5) * (art.width * scale));
     expect(geometry.footY).toBe((art.footY - art.height / 2) * scale);
     expect(geometry.corners).toHaveLength(6);
-    const [left, top, right, bottom] = art.visibleBounds;
+    const [left, top, width, height] = art.visibleBounds;
+    const right = left + width;
+    const bottom = top + height;
     expect(geometry.corners).toEqual([
       { x: (left - art.footX) * scale, up: (art.footY - top) * scale },
       { x: (left - art.footX) * scale, up: (art.footY - bottom) * scale },

@@ -30,7 +30,7 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
+import { spriteForUnit, spriteGeometry, spriteScale, spriteVisibleExtents } from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
@@ -52,7 +52,7 @@ const millFieldUrl = new URL(
 ).href;
 
 const siteGroundUrl = new URL(
-  '../../../../assets/art/combat/readable-terrain-2026-10-16/field-ground.png',
+  '../../../../assets/art/combat/style-variants-2026-10-27/slate-ground-v2.png',
   import.meta.url,
 ).href;
 
@@ -388,7 +388,7 @@ export async function mountSpriteBattleScene(
   const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
     texture: texture(siteGroundUrl),
     center: new Vector2(perspective.targetX, 0),
-    size: new Vector2(groundCompositionWidth, (groundCompositionWidth * 941) / 1672),
+    size: new Vector2(groundCompositionWidth, (groundCompositionWidth * 2) / 3),
     reference: new Vector2(perspective.targetX, perspective.distance),
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
@@ -854,7 +854,7 @@ export async function mountSpriteBattleScene(
         const art = spriteForUnit(unit);
         const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
-        const [left, top, right, lower] = art.visibleBounds;
+        const { left, top, right, bottom: lower } = spriteVisibleExtents(art);
         const center = new Vector3(
           point.x + ((left + right) / 2 - art.footX) * scale,
           groundYFor(unit.position),

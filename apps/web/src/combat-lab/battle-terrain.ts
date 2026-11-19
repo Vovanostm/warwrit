@@ -100,7 +100,7 @@ function groundMaterial(
           float siteLuma=max(dot(siteColor,vec3(0.2126,0.7152,0.0722)),0.01);
           vec3 wash=mix(vec3(1.0),siteColor/siteLuma,siteWeight*0.08);
           float tone=mix(1.0,clamp(siteLuma/0.11,0.75,1.25),siteWeight*0.5);
-          vec3 baseGround=earth*wash*tone*earthTint;
+          vec3 baseGround=mix(earth*wash*tone*earthTint,siteColor*earthTint,siteWeight*0.8);
           color=mix(baseGround,color*tint,coverage);
           // The finite field carries its shared-corner relief. Keep the camera-facing apron at its flat base value.
           vec3 surfaceNormal=normalize(worldNormal);

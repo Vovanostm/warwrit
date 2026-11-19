@@ -134,6 +134,7 @@ function readCompany(value: unknown): CompanySummaryDto | null | undefined {
       isObject(character) &&
       typeof character['characterId'] === 'string' &&
       typeof character['name'] === 'string' &&
+      (character['sex'] === undefined || typeof character['sex'] === 'string') &&
       (character['nicknameTextKey'] === null || typeof character['nicknameTextKey'] === 'string') &&
       ['AVAILABLE', 'IN_ENCOUNTER', 'OUT_OF_CONTACT', 'CAPTIVE', 'DEAD'].includes(
         String(character['knownStatus']),
@@ -1578,6 +1579,11 @@ export function App() {
                   character.characterId,
                   character.name,
                 ]),
+              )}
+              unitSexes={Object.fromEntries(
+                journey.company.characters.flatMap(({ characterId, sex }) =>
+                  sex === undefined ? [] : [[characterId, sex] as const],
+                ),
               )}
               scope={scope}
               onUnauthorized={() => void restoreJourney()}

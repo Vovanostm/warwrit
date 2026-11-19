@@ -1,0 +1,234 @@
+diff --git a/apps/server/src/company/routes.ts b/apps/server/src/company/routes.ts
+index 3f9c76f9..45e2c6d4 100644
+--- a/apps/server/src/company/routes.ts
++++ b/apps/server/src/company/routes.ts
+@@ -83,6 +83,12 @@ export function registerCompanyRoutes(
+       // Lifecycle knowledge refreshes only through observations; the owner always knows its
+       // own company's current leader and whether its run has ended.
+       const own = state.economy.lifecycle.company;
++      const observedSexByCharacterId = new Map(
++        state.economy.lifecycle.knowledge.characters.map((character) => [
++          character.identity.characterId,
++          character.identity.sex,
++        ] as const),
++      );
+       return {
+         holdings: projectCompanyHoldings(
+           state,
+@@ -95,13 +101,17 @@ export function registerCompanyRoutes(
+           companyPresentation: view.companyPresentation,
+           leaderId: own ? (own.actingLeaderId ?? own.currentLeaderId) : view.leaderId,
+           runStatus: own?.runStatus ?? view.runStatus,
+-          characters: view.characters.map((character) => ({
+-            characterId: character.characterId,
+-            name: character.name,
+-            nicknameTextKey: character.nicknameTextKey,
+-            perkIds: [...character.perkIds],
+-            knownStatus: character.knownStatus,
+-          })),
++          characters: view.characters.map((character) => {
++            const sex = observedSexByCharacterId.get(character.characterId);
++            return {
++              characterId: character.characterId,
++              name: character.name,
++              ...(sex === undefined ? {} : { sex }),
++              nicknameTextKey: character.nicknameTextKey,
++              perkIds: [...character.perkIds],
++              knownStatus: character.knownStatus,
++            };
++          }),
+         },
+       };
+     });
+diff --git a/apps/web/src/App.tsx b/apps/web/src/App.tsx
+index 6d5d208a..4a6f0e40 100644
+--- a/apps/web/src/App.tsx
++++ b/apps/web/src/App.tsx
+@@ -134,6 +134,7 @@ function readCompany(value: unknown): CompanySummaryDto | null | undefined {
+       isObject(character) &&
+       typeof character['characterId'] === 'string' &&
+       typeof character['name'] === 'string' &&
++      (character['sex'] === undefined || typeof character['sex'] === 'string') &&
+       (character['nicknameTextKey'] === null || typeof character['nicknameTextKey'] === 'string') &&
+       ['AVAILABLE', 'IN_ENCOUNTER', 'OUT_OF_CONTACT', 'CAPTIVE', 'DEAD'].includes(
+         String(character['knownStatus']),
+@@ -1579,6 +1580,11 @@ export function App() {
+                   character.name,
+                 ]),
+               )}
++              unitSexes={Object.fromEntries(
++                journey.company.characters.flatMap(({ characterId, sex }) =>
++                  sex === undefined ? [] : [[characterId, sex] as const],
++                ),
++              )}
+               scope={scope}
+               onUnauthorized={() => void restoreJourney()}
+               onTerminal={() => setContractRefreshGeneration((generation) => generation + 1)}
+diff --git a/apps/web/src/EncounterPanel.tsx b/apps/web/src/EncounterPanel.tsx
+index 735d6b38..fa0ed911 100644
+--- a/apps/web/src/EncounterPanel.tsx
++++ b/apps/web/src/EncounterPanel.tsx
+@@ -71,6 +71,7 @@ function healthLabel(unit: EncounterPublicProjectionDto['units'][number]): strin
+ export function EncounterPanel(props: {
+   readonly hideWhenIdle?: boolean;
+   readonly unitNames?: Readonly<Record<string, string>>;
++  readonly unitSexes?: Readonly<Record<string, string>>;
+   readonly scope: EncounterScope;
+   readonly onUnauthorized: () => void;
+   readonly onTerminal?: () => void;
+@@ -226,6 +227,7 @@ export function EncounterPanel(props: {
+         currentGrant,
+         (unit) => encounterUnitLabel(unit, ourNames),
+         Object.keys(ourNames),
++        props.unitSexes,
+       )
+     : undefined;
+   const isFullscreen = presentation !== undefined;
+diff --git a/apps/web/src/combat-lab/battle-presentation.ts b/apps/web/src/combat-lab/battle-presentation.ts
+index f390ae77..4a7b03ae 100644
+--- a/apps/web/src/combat-lab/battle-presentation.ts
++++ b/apps/web/src/combat-lab/battle-presentation.ts
+@@ -18,6 +18,7 @@ export type BattlePresentationUnit = Omit<
+ > & {
+   readonly profileId?: string;
+   readonly weaponId?: CombatLabUnit['weaponId'] | 'fists';
++  readonly sex?: string;
+   readonly visualKind?: 'human' | 'creature' | 'unknown';
+   readonly pools: ResourcePools;
+   readonly initiative?: number;
+diff --git a/apps/web/src/encounter/battle-presentation.ts b/apps/web/src/encounter/battle-presentation.ts
+index 81637919..beacc281 100644
+--- a/apps/web/src/encounter/battle-presentation.ts
++++ b/apps/web/src/encounter/battle-presentation.ts
+@@ -11,6 +11,7 @@ export function toEncounterBattlePresentation(
+   grant: EncounterControlGrantDto | undefined,
+   labelForUnit: (unit: EncounterPublicProjectionDto['units'][number]) => string,
+   knownOwnUnitIds: readonly string[] = [],
++  knownOwnUnitSexes: Readonly<Record<string, string>> = {},
+ ): BattlePresentationView {
+   const matchingGrant = matchingEncounterGrant(projection, grant);
+   const visibleIds = new Set(projection.units.map(({ id }) => id));
+@@ -21,6 +22,10 @@ export function toEncounterBattlePresentation(
+   const controlledSideId = controlledSide(projection, controlledIds, knownOwnUnitIds);
+   const tactical = matchingTacticalGrant(projection, matchingGrant, controlledIds);
+   const unitsById = new Map(projection.units.map((unit) => [unit.id, unit]));
++  const knownOwnIds = new Set(knownOwnUnitIds);
++  const observedOwnSexById = new Map(
++    Object.entries(knownOwnUnitSexes).filter(([id]) => knownOwnIds.has(id)),
++  );
+ 
+   return {
+     sceneKey: `encounter:${projection.encounterId}`,
+@@ -42,7 +47,7 @@ export function toEncounterBattlePresentation(
+     ...(projection.turnIndex !== undefined ? { turnIndex: projection.turnIndex } : {}),
+     ...(projection.outcome !== undefined ? { outcome: projection.outcome } : {}),
+     units: projection.units.map((unit) =>
+-      presentationUnit(unit, unitsById, labelForUnit, controlledIds),
++      presentationUnit(unit, unitsById, labelForUnit, controlledIds, observedOwnSexById),
+     ),
+     sides: [...new Set(projection.units.map(({ sideId }) => sideId))].map((id) => ({ id })),
+     activation:
+@@ -131,8 +136,10 @@ function presentationUnit(
+   unitsById: ReadonlyMap<string, EncounterPublicProjectionDto['units'][number]>,
+   labelForUnit: (unit: EncounterPublicProjectionDto['units'][number]) => string,
+   controlledIds: ReadonlySet<string>,
++  observedOwnSexById: ReadonlyMap<string, string>,
+ ): Unit {
+   const target = unit.threat ? unitsById.get(unit.threat.targetId) : undefined;
++  const sex = observedOwnSexById.get(unit.id);
+   return {
+     id: unit.id,
+     name: labelForUnit(unit),
+@@ -140,6 +147,7 @@ function presentationUnit(
+     position: { q: unit.q, r: unit.r },
+     status: unit.status,
+     visualKind: visualKind(unit, controlledIds),
++    ...(sex === undefined ? {} : { sex }),
+     ...(unit.weaponId !== undefined ? { weaponId: unit.weaponId } : {}),
+     ...(unit.weaponReach ? { weaponReach: unit.weaponReach } : {}),
+     ...(unit.guarding !== undefined ? { guarding: unit.guarding } : {}),
+diff --git a/packages/protocol/src/company.ts b/packages/protocol/src/company.ts
+index b46d1213..652292c7 100644
+--- a/packages/protocol/src/company.ts
++++ b/packages/protocol/src/company.ts
+@@ -85,6 +85,8 @@ export interface CompanySummaryDto {
+   readonly characters: readonly {
+     readonly characterId: string;
+     readonly name: string;
++    /** Optional last-known identity field; absent on responses predating this observation. */
++    readonly sex?: string;
+     readonly nicknameTextKey: string | null;
+     readonly perkIds: readonly string[];
+     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';
+--- a/apps/web/src/combat-lab/sprite-art.ts
++++ b/apps/web/src/combat-lab/sprite-art.ts
+@@ -1,4 +1,5 @@
+ import type { Unit } from './battle-presentation.js';
++import { FEMALE_SPRITES } from './female-sprite-assets.js';
+ 
+ export interface StaticSpriteArt {
+   readonly id: string;
+@@ -291,6 +292,19 @@
+   spear: 'W04',
+   bow: 'W05',
+ };
++
++function femaleSpriteForWeapon(weaponId: Unit['weaponId']) {
++  switch (weaponId) {
++    case 'sword-shield':
++      return FEMALE_SPRITES.W01;
++    case 'spear':
++      return FEMALE_SPRITES.W04;
++    case 'bow':
++      return FEMALE_SPRITES.W05;
++    default:
++      return undefined;
++  }
++}
+ 
+ const UNARMED_W01: StaticSpriteArt = {
+   id: 'W01-unarmed',
+@@ -319,7 +333,7 @@
+   [/mill|мельнич/i, 'B053'],
+ ];
+ 
+-const UNKNOWN_COMBATANT: StaticSpriteArt = {
++const UNKNOWN_UNIT_ART: StaticSpriteArt = {
+   id: 'unknown-combatant',
+   url: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 512%22%3E%3Cpath fill=%22%231d201f%22 stroke=%22%23b4a990%22 stroke-width=%228%22 d=%22M128 22c-39 0-65 34-65 76s26 73 65 73 65-31 65-73-26-76-65-76Zm-75 180L20 440h66l16-109 11 159h43l11-159 16 109h66l-33-238-39-28H99Z%22/%3E%3C/svg%3E',
+   width: 256,
+@@ -332,17 +346,27 @@
+ 
+ export function spriteForUnit(unit: Unit): StaticSpriteArt {
+   const identity = `${unit.profileId ?? ''} ${unit.name ?? ''} ${unit.id}`;
++  if (unit.visualKind === 'creature') {
++    const token = identity.toUpperCase().match(/\bB\d{3}\b/)?.[0] as SpriteId | undefined;
++    if (token && token in art) return { id: token, ...art[token] };
++    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
++    return { id, ...art[id] };
++  }
++
++  if (unit.sex !== undefined) {
++    if (unit.sex === 'female') {
++      return femaleSpriteForWeapon(unit.weaponId) ?? UNKNOWN_UNIT_ART;
++    }
++    if (unit.sex !== 'male') return UNKNOWN_UNIT_ART;
++  }
++
+   if (unit.weaponId === 'fists') return UNARMED_W01;
+   const token = identity.toUpperCase().match(/\b(?:W\d{2}|B\d{3})\b/)?.[0] as SpriteId | undefined;
+   if (token && token in art) return { id: token, ...art[token] };
+   if (unit.visualKind === 'human') {
+-    if (!unit.weaponId) return UNKNOWN_COMBATANT;
++    if (!unit.weaponId) return UNKNOWN_UNIT_ART;
+     const id = byWeapon[unit.weaponId];
+-    return id ? { id, ...art[id] } : UNKNOWN_COMBATANT;
++    return id ? { id, ...art[id] } : UNKNOWN_UNIT_ART;
+   }
+-  if (unit.visualKind === 'creature') {
+-    const id = creatureNames.find(([pattern]) => pattern.test(identity))?.[1] ?? 'B001';
+-    return { id, ...art[id] };
+-  }
+-  return UNKNOWN_COMBATANT;
++  return UNKNOWN_UNIT_ART;
+ }

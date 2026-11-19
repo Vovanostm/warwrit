@@ -18,6 +18,7 @@ export type BattlePresentationUnit = Omit<
 > & {
   readonly profileId?: string;
   readonly weaponId?: CombatLabUnit['weaponId'] | 'fists';
+  readonly sex?: string;
   readonly visualKind?: 'human' | 'creature' | 'unknown';
   readonly pools: ResourcePools;
   readonly initiative?: number;

@@ -71,6 +71,7 @@ function healthLabel(unit: EncounterPublicProjectionDto['units'][number]): strin
 export function EncounterPanel(props: {
   readonly hideWhenIdle?: boolean;
   readonly unitNames?: Readonly<Record<string, string>>;
+  readonly unitSexes?: Readonly<Record<string, string>>;
   readonly scope: EncounterScope;
   readonly onUnauthorized: () => void;
   readonly onTerminal?: () => void;
@@ -226,6 +227,7 @@ export function EncounterPanel(props: {
         currentGrant,
         (unit) => encounterUnitLabel(unit, ourNames),
         Object.keys(ourNames),
+        props.unitSexes,
       )
     : undefined;
   const isFullscreen = presentation !== undefined;

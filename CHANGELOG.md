@@ -9,6 +9,15 @@ requests.
 
 ## Unreleased
 
+### Port accepted ink combat presentation to the ordinary renderer
+
+- 2026-10-29, branch `codex/game-combat-ink`, local implementation in progress
+  under the owner's map/combat/wiki request. Reuse inspected `648830d8` art
+  and material techniques in the existing observed-state battle renderer;
+  preserve ordinary geography, arbitrary rosters, canonical quotes and camera.
+  [Bounded contract](docs/wiki/battlefield-test-maps.md#обновление-существующей-боёвки--поручение-2026-10-29).
+  Source/runtime/independent acceptance pending; no merge/deployment/paid/Orca.
+
 ### Road diagnostics publication activation
 
 - 2026-10-28, branch `codex/map-road-diagnostics`, published in

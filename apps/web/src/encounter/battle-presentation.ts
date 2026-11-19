@@ -11,6 +11,7 @@ export function toEncounterBattlePresentation(
   grant: EncounterControlGrantDto | undefined,
   labelForUnit: (unit: EncounterPublicProjectionDto['units'][number]) => string,
   knownOwnUnitIds: readonly string[] = [],
+  knownOwnUnitSexes: Readonly<Record<string, string>> = {},
 ): BattlePresentationView {
   const matchingGrant = matchingEncounterGrant(projection, grant);
   const visibleIds = new Set(projection.units.map(({ id }) => id));
@@ -21,6 +22,10 @@ export function toEncounterBattlePresentation(
   const controlledSideId = controlledSide(projection, controlledIds, knownOwnUnitIds);
   const tactical = matchingTacticalGrant(projection, matchingGrant, controlledIds);
   const unitsById = new Map(projection.units.map((unit) => [unit.id, unit]));
+  const knownOwnIds = new Set(knownOwnUnitIds);
+  const observedOwnSexById = new Map(
+    Object.entries(knownOwnUnitSexes).filter(([id]) => knownOwnIds.has(id)),
+  );
 
   return {
     sceneKey: `encounter:${projection.encounterId}`,
@@ -42,7 +47,7 @@ export function toEncounterBattlePresentation(
     ...(projection.turnIndex !== undefined ? { turnIndex: projection.turnIndex } : {}),
     ...(projection.outcome !== undefined ? { outcome: projection.outcome } : {}),
     units: projection.units.map((unit) =>
-      presentationUnit(unit, unitsById, labelForUnit, controlledIds),
+      presentationUnit(unit, unitsById, labelForUnit, controlledIds, observedOwnSexById),
     ),
     sides: [...new Set(projection.units.map(({ sideId }) => sideId))].map((id) => ({ id })),
     activation:
@@ -131,8 +136,10 @@ function presentationUnit(
   unitsById: ReadonlyMap<string, EncounterPublicProjectionDto['units'][number]>,
   labelForUnit: (unit: EncounterPublicProjectionDto['units'][number]) => string,
   controlledIds: ReadonlySet<string>,
+  observedOwnSexById: ReadonlyMap<string, string>,
 ): Unit {
   const target = unit.threat ? unitsById.get(unit.threat.targetId) : undefined;
+  const sex = observedOwnSexById.get(unit.id);
   return {
     id: unit.id,
     name: labelForUnit(unit),
@@ -140,6 +147,7 @@ function presentationUnit(
     position: { q: unit.q, r: unit.r },
     status: unit.status,
     visualKind: visualKind(unit, controlledIds),
+    ...(sex === undefined ? {} : { sex }),
     ...(unit.weaponId !== undefined ? { weaponId: unit.weaponId } : {}),
     ...(unit.weaponReach ? { weaponReach: unit.weaponReach } : {}),
     ...(unit.guarding !== undefined ? { guarding: unit.guarding } : {}),

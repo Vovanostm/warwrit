@@ -1,5 +1,22 @@
 # Warwrit current delivery plan
 
+## Ordinary combat ink presentation — 2026-10-29, LOCAL IN PROGRESS
+
+Parent owns integration/docs/validation/commits; branch codex/game-combat-ink at48d8a2ae.
+Owner requests existing combat update, fully painted map and unified wiki.
+[Active bounded contract](../wiki/battlefield-test-maps.md#обновление-существующей-боёвки--поручение-2026-10-29).
+One delegated editor owns finite renderer/sprite/terrain and reused-asset paths.
+Reuse inspected648830d8 ink humans/slate floor; preserve actual ordinary map/actors/quotes.
+No fixed mill/96cells/practice engine/core rules/protocol/camera/dependency change.
+Current wolf/unknown/fists/other-weapon branches must remain supported.
+Source implementation in progress; ordinary journey and independent visual/source acceptance pending.
+Parent alone runs proportional checks; no tests/builds/services assigned to editor.
+Painted-map integration is a separate uncommitted branch; other trees/data/stands retained.
+No main merge/deploy/paid/Orca authority. No claim of full game completion.
+Next: freeze editor delta, inspect source and actual ordinary battle, then correct and review.
+
+## Dated history
+
 ## Road diagnostics PR delivery — 2026-10-28, PUBLISHED / LOCAL CHECKPOINT
 
 Coordinator/sole writer/validation owner: parent; branch `codex/map-road-diagnostics`.
