@@ -420,6 +420,16 @@ function parseOrdinaryCompanyCommandV2(
       Number(payload['quantity']) < 1
     )
       return undefined;
+  } else if (value['type'] === 'ApplyCare') {
+    if (
+      canonicalJson(Object.keys(payload).sort()) !==
+        canonicalJson(['characterId', 'conditionId', 'providerId', 'resourceItemId']) ||
+      !isEntityId(payload['characterId']) ||
+      !isEntityId(payload['conditionId']) ||
+      !isEntityId(payload['providerId']) ||
+      !isEntityId(payload['resourceItemId'])
+    )
+      return undefined;
   }
 
   return value as unknown as OrdinaryPlayerCompanyCommandV2Dto;

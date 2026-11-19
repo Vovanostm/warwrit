@@ -15,6 +15,8 @@ export function ordinaryCommandIntent(
   ids: OrdinaryIds & {
     readonly siteEligibilityId: string | undefined;
     readonly accessEvidenceId: string | undefined;
+    readonly careEvidenceId: string | undefined;
+    readonly careDefinitionId: string | undefined;
   },
 ) {
   switch (request.type) {
@@ -49,6 +51,16 @@ export function ordinaryCommandIntent(
           ...request.payload,
           accessEvidenceId: ids.accessEvidenceId,
           splitItemId: request.commandId,
+        },
+      };
+    case 'ApplyCare':
+      return {
+        type: request.type,
+        payload: {
+          characterId: request.payload.characterId,
+          conditionId: request.payload.conditionId,
+          careDefinitionId: ids.careDefinitionId,
+          resourceOrProviderReceiptId: ids.careEvidenceId,
         },
       };
     default:
@@ -104,6 +116,16 @@ function requestedEffectPresent(
             item.containerId === request.payload.toContainerId &&
             item.quantity === request.payload.quantity &&
             item.tombstone === null,
+        ) ?? false
+      );
+    case 'ApplyCare':
+      return (
+        prepared.next.physical?.conditions.some(
+          (condition) =>
+            condition.conditionId === request.payload.conditionId &&
+            condition.characterId === request.payload.characterId &&
+            condition.care?.providerId === request.payload.providerId &&
+            condition.care?.channel === 'MATERIAL',
         ) ?? false
       );
     case 'RenameCompany':

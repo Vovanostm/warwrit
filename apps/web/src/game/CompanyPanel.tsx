@@ -2,6 +2,7 @@ import type { CompanyHoldingsDto, CompanySummaryDto } from '@warwrit/protocol';
 
 import { conditionLabel, formatCrowns, itemLabel, statusLabel } from './format.js';
 import { ItemTransferPanel } from './ItemTransferPanel.js';
+import { CompanyCarePanel } from './CompanyCarePanel.js';
 
 type HeldItem = CompanyHoldingsDto['items'][number];
 
@@ -141,6 +142,12 @@ export function CompanyPanel(props: {
           <ItemTransferPanel
             accountId={props.accountId}
             company={company}
+            onRefresh={props.onRefreshItems}
+          />
+          <CompanyCarePanel
+            accountId={props.accountId}
+            company={company}
+            holdings={holdings}
             onRefresh={props.onRefreshItems}
           />
           <h3 className="panel-subtitle">Обоз</h3>

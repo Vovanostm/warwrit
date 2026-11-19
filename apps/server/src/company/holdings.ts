@@ -3,6 +3,7 @@ import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 import { projectPayroll } from './payroll-view.js';
 import { itemTransferOptions } from './item-transfer.js';
+import { companyCareOptions } from './care.js';
 
 /** Owner-private read model of money, carried items and bodily state; never sent to other accounts. */
 export function projectCompanyHoldings(
@@ -69,7 +70,7 @@ export function projectCompanyHoldings(
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
-      conditions: (physical?.conditions ?? [])
+      conditions: (physical?.knowledge.conditionSnapshots ?? [])
         .filter(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
         )
@@ -128,6 +129,7 @@ export function projectCompanyHoldings(
   };
   const accessible = itemTransferOptions(state);
   return {
+    care: companyCareOptions(state),
     ...(accessible
       ? {
           transfer: {

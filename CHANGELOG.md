@@ -9,6 +9,16 @@ requests.
 
 ## Unreleased
 
+### Activate company doctor care
+
+- 2026-10-29, branch `codex/game-company-care`, local activation under the
+  autonomous game mission. Record the owner's explicit provisional challenge
+  profile approval (wound-care5/stabilize10) and material-only company doctor
+  path in [WP-02.4](docs/work-packages/WP-02.4.md#company-doctor-activation--2026-10-29).
+  Existing core owns XP and recovery. Scope: protocol/private holdings, trusted
+  server fulfillment and minimal company UI with exact retry. Implementation,
+  SQL/browser/source acceptance and PR pending; no merge or deployment.
+
 ### Complete the local item-transfer path and repeated splitting
 
 - 2026-10-28, branch `codex/game-item-transfer`, local implementation for #171:

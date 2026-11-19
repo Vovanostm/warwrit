@@ -1,0 +1,21 @@
+.company-care {
+  display: grid;
+  gap: 0.65rem;
+  margin-block: 1rem;
+  padding-block: 0.85rem;
+  border-block: 1px solid rgb(188 168 134 / 28%);
+}
+
+.company-care-fields {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.company-care-fields label {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.company-care-fields select {
+  width: 100%;
+}

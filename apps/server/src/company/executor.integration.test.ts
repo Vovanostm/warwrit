@@ -8,6 +8,7 @@ import {
   campaignTick,
   canonicalJson,
   canonicalRevision,
+  createCompanyPhysicalState,
   initialSkillProgress,
   parseCompanyCommand,
   preparePartyTravelArrival,
@@ -532,6 +533,84 @@ describe('trusted company command executor (PostgreSQL)', () => {
 // These are real executor/transaction scenarios: no prepared draft or persistence is mocked.
 describe('ordinary company command executor (PostgreSQL)', () => {
   it.skipIf(database === undefined)(
+    'applies local material care and medicine practice once, replays exactly, and rejects inaccessible care atomically',
+    async () => {
+      await withOrdinaryScenario(async (scenario) => {
+        const patientId = 'worker-0';
+        const providerId = scenario.priorState.economy.lifecycle.company!.currentLeaderId!;
+        const request = ordinaryRequest(scenario, {
+          type: 'ApplyCare',
+          payload: {
+            characterId: patientId,
+            conditionId: 'care-instance',
+            providerId,
+            resourceItemId: 'care-medical-unit',
+          },
+        });
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, providerId: 'remote-doctor' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+        await rejectOrdinaryUnchanged(
+          scenario,
+          {
+            ...request,
+            commandId: randomUUID(),
+            payload: { ...request.payload, resourceItemId: 'remote-medical-unit' },
+          },
+          'CONTACT_OR_ACCESS_REQUIRED',
+        );
+
+        const beforeMedicine = canonicalJson(
+          scenario.priorState.economy.lifecycle.characters.find(
+            (person) => person.identity.characterId === providerId,
+          )!.skills['medicine'],
+        );
+        const response = await executeOrdinary(scenario, request);
+        expect(response.kind).toBe('COMMITTED');
+        const stored = await readOrdinaryPersistence(scenario);
+        const cared = stored.state.economy.physical!.conditions.find(
+          (condition) => condition.conditionId === 'care-instance',
+        )!;
+        expect(cared.care).toMatchObject({ providerId, channel: 'MATERIAL' });
+        expect(
+          stored.state.economy.physical!.items.find((item) => item.itemId === 'care-medical-unit'),
+        ).toMatchObject({ quantity: 1, tombstone: null });
+        expect(
+          canonicalJson(
+            stored.state.economy.lifecycle.characters.find(
+              (person) => person.identity.characterId === providerId,
+            )!.skills['medicine'],
+          ),
+        ).not.toBe(beforeMedicine);
+        expect(await executeOrdinary(scenario, request)).toEqual(response);
+        expect(await readOrdinaryPersistence(scenario)).toEqual(stored);
+      }, withCareState);
+
+      await withOrdinaryScenario(
+        async (scenario) => {
+          const request = ordinaryRequest(scenario, {
+            type: 'ApplyCare',
+            payload: {
+              characterId: 'worker-0',
+              conditionId: 'care-instance',
+              providerId: scenario.priorState.economy.lifecycle.company!.currentLeaderId!,
+              resourceItemId: 'care-medical-unit',
+            },
+          });
+          await rejectOrdinaryUnchanged(scenario, request, 'CONTACT_OR_ACCESS_REQUIRED');
+        },
+        (state) => withCareState(state, true),
+      );
+    },
+  );
+
+  it.skipIf(database === undefined)(
     'moves existing property once between local containers and rejects inaccessible transfers',
     async () => {
       await withOrdinaryScenario(async (scenario) => {
@@ -811,12 +890,16 @@ function ordinaryRequest<Intent extends OrdinaryIntent>(
   };
 }
 
-async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) {
+async function withOrdinaryScenario(
+  run: (scenario: Scenario) => Promise<void>,
+  prepareState: (state: CompanyCombatAggregateState) => CompanyCombatAggregateState = (state) =>
+    state,
+) {
   if (!database) throw new Error('company test database missing');
   const base = createDepartureScenario(randomUUID(), '1000');
   const economy = base.priorState.economy;
   const characterId = economy.lifecycle.company!.currentLeaderId!;
-  const priorState = readCompanyCombatAggregateState({
+  const ordinaryState = readCompanyCombatAggregateState({
     ...base.priorState,
     economy: {
       ...economy,
@@ -839,6 +922,7 @@ async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) 
       },
     },
   });
+  const priorState = prepareState(ordinaryState);
   const scenario = { ...base, priorState };
   await seedScenario(database, scenario);
   try {
@@ -854,6 +938,90 @@ async function withOrdinaryScenario(run: (scenario: Scenario) => Promise<void>) 
       .execute();
     await cleanupScenario(database, scenario);
   }
+}
+
+function withCareState(
+  state: CompanyCombatAggregateState,
+  expiredCritical = false,
+): CompanyCombatAggregateState {
+  const root = state.economy;
+  const patientId = 'worker-0';
+  const providerId = root.lifecycle.company!.currentLeaderId!;
+  const onsetTick = expiredCritical
+    ? campaignTick(BigInt(root.lifecycle.campaignTick) - 251n)
+    : campaignTick(root.lifecycle.campaignTick);
+  const binding = {
+    characterId: patientId,
+    definitionId: expiredCritical ? 'critical-bleed' : 'severe-stable-wound',
+    conditionId: 'care-instance',
+    sourceEventId: 'care-condition-source',
+    causeId: 'care-condition-cause',
+    onsetTick,
+    ...(expiredCritical ? { deadlineTick: campaignTick(BigInt(onsetTick) + 250n) } : {}),
+  };
+  const actualCharacters = root.lifecycle.characters.map((character) => ({
+    ...character,
+    ...(character.identity.characterId === patientId
+      ? { conditionIds: [...character.conditionIds, binding.definitionId] }
+      : {}),
+    ...(character.identity.characterId === providerId
+      ? {
+          skills: { ...character.skills, medicine: initialSkillProgress(5, 'care-doctor') },
+          aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+        }
+      : {}),
+  }));
+  const knownCharacters = root.lifecycle.knowledge.characters.map((character) => ({
+    ...character,
+    ...(character.identity.characterId === patientId
+      ? { conditionIds: [...character.conditionIds, binding.definitionId] }
+      : {}),
+    ...(character.identity.characterId === providerId
+      ? {
+          skills: { ...character.skills, medicine: 5 },
+          aptitudeBySkill: { ...character.aptitudeBySkill, medicine: 10000 },
+        }
+      : {}),
+  }));
+  const lifecycle = {
+    ...root.lifecycle,
+    characters: actualCharacters,
+    knowledge: { ...root.lifecycle.knowledge, characters: knownCharacters },
+  };
+  const loaded = createCompanyPhysicalState(lifecycle, {
+    conditionBindings: [binding],
+    knownConditionBindings: [binding],
+  });
+  const medical = {
+    itemId: 'care-medical-unit',
+    definitionId: 'medical-unit',
+    owner: { kind: 'COMPANY' as const, id: root.lifecycle.companyId },
+    containerId: 'fixture-supply',
+    quantity: 2,
+    currentCondition: 10000,
+    maximumCondition: 10000,
+    contentRevision: '1',
+    provenance: { sourceId: 'care-test-item', parentItemId: null, ordinal: 0 },
+    equipped: null,
+    tombstone: null,
+  };
+  return readCompanyCombatAggregateState({
+    ...state,
+    economy: {
+      ...root,
+      lifecycle,
+      physical: {
+        ...root.physical!,
+        conditions: loaded.conditions,
+        items: [...root.physical!.items, medical],
+        knowledge: {
+          ...root.physical!.knowledge,
+          conditionSnapshots: loaded.knowledge.conditionSnapshots,
+          itemSnapshots: [...root.physical!.knowledge.itemSnapshots, medical],
+        },
+      },
+    },
+  });
 }
 
 async function executeOrdinary(
