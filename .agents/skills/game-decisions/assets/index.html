@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Направление игры</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/">Лаборатория<span>концептов</span></a>
+      <div class="project-label">ПРОЕКТ</div>
+      <div id="project" class="project-name">Загрузка…</div>
+      <nav id="questions" aria-label="Вопросы для выбора"></nav>
+      <button class="history-link" id="history-button" type="button">
+        История решений <span>↗</span>
+      </button>
+      <div class="sidebar-bottom">
+        <div class="progress-track"><div id="progress-fill"></div></div>
+        <p id="progress"></p>
+      </div>
+    </aside>
+    <main>
+      <header class="toolbar">
+        <span class="local-label"><i></i>Локальная мастерская</span>
+        <div>
+          <a class="quiet-button" href="/api/export.zip" download="game-specification.zip"
+            >ТЗ и референсы ZIP ↗</a
+          >
+          <a class="quiet-button" href="/api/specification.md" download="specification.md"
+            >ТЗ Markdown ↗</a
+          >
+          <a class="quiet-button" href="/api/project" download="project.json">Проект JSON ↗</a>
+          <button class="quiet-button" id="refresh" type="button">Обновить ↻</button>
+        </div>
+      </header>
+      <div id="notice" role="status" aria-live="polite"></div>
+      <div id="pending" class="pending" hidden>
+        <span>Сохранение выбора ещё не подтверждено.</span>
+        <button id="retry" type="button">Повторить сохранение</button>
+      </div>
+      <section class="heading">
+        <p id="topic" class="eyebrow"></p>
+        <h1 id="title">Загружаем карточки</h1>
+        <p id="context" class="context"></p>
+        <div class="heading-footer">
+          <p id="instruction"></p>
+          <span id="edition"></span>
+        </div>
+      </section>
+      <details id="brief" class="brief" hidden>
+        <summary>Бриф части игры</summary>
+        <pre id="brief-content"></pre>
+      </details>
+      <section id="cards" class="cards" aria-label="Варианты направления"></section>
+      <section id="interview" class="document-panel" hidden></section>
+      <form id="refinement" class="refinement" hidden>
+        <h2>Что перенести в следующий раунд?</h2>
+        <label for="feedback-notes">Какие черты взять из выбранных концептов — по желанию</label>
+        <textarea
+          id="feedback-notes"
+          rows="4"
+          placeholder="Из первого — ракурс и силуэты, из третьего — материалы. Сделать HUD компактнее."
+        ></textarea>
+        <div class="refinement-actions">
+          <label for="next-count">Новых концептов</label>
+          <input id="next-count" type="number" min="1" value="3" required />
+          <button id="save-feedback" class="vote" type="submit">Уточнить выбранное</button>
+        </div>
+        <p id="feedback-state" class="context"></p>
+        <div id="round-links" class="round-links"></div>
+      </form>
+      <section id="master" class="master" hidden>
+        <h2>Принятый концепт</h2>
+        <p id="master-title"></p>
+        <details>
+          <summary>Исходный промпт изображения</summary>
+          <pre id="master-prompt"></pre>
+        </details>
+        <button id="revoke-master" class="quiet-button" type="button">Отозвать утверждение</button>
+      </section>
+      <section id="documentation" class="document-panel" hidden></section>
+      <section id="history" class="history" aria-label="История решений" hidden></section>
+      <p class="saved-note" id="saved-note"></p>
+    </main>
+    <dialog id="image-dialog">
+      <button id="close-image" type="button" aria-label="Закрыть изображение">Закрыть ×</button>
+      <img id="large-image" alt="" />
+      <p id="image-caption"></p>
+    </dialog>
+  </body>
+</html>

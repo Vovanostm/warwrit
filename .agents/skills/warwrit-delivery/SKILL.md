@@ -5,103 +5,64 @@ description: Validate and deliver a Warwrit slice, publish a PR, perform an expl
 
 # Deliver exact code and a usable continuation
 
+For substantive change records, read [project record](references/project-record.md).
+Current AGENTS.md makes CI/full suites/audits advisory and independent reviews
+optional; older work-package gate wording does not override those policies.
+
 Follow [AGENTS.md](../../../AGENTS.md) and the active contract. Reuse the same
 PR for corrections. One writer owns the source tree; do not launch overlapping
 writers or regenerate already approved source catalogues.
-
-Owner policy — 2026-11-08: current AGENTS.md supersedes older mandatory
-CI, independent-review and critic gates below. CI/audits/full suites and
-independent reviewers are advisory/optional. Self-review is required. A concrete
-UI defect blocks its affected journey, not unrelated development; missing broad
-visual evidence is not a global BLOCKED state. Merge still requires explicit
-current permission and expected-head protection.
-
-## Step commits
-
-Run the smallest relevant checks explicitly and keep failures visible. The Git
-hook checks staged whitespace only. It does not run tests, regenerate coverage
-or merge runtime reports. Commit finished steps and verify exit status/new HEAD.
-Full-route PR CI owns coverage and the introduced-findings audit. Documentation-only
-PRs use the existing scoped CI route. Local audit
-is an explicit diagnostic when relevant, never a hidden commit prerequisite.
-Keep the current checkpoint short and consult historical entries only as needed.
-
-## Player result
-
-Before a native scenario, check its public prerequisites and a viable normal
-route to them. Care needs a living capable provider and a treatable patient.
-A new company can encounter an existing shared battle. If the current save lacks
-an essential capability, identify the next authorized product prerequisite before
-repeating combat for a random outcome. Preserve the result and open criterion.
-Finish setup/research before entering a timed battle, then keep native control
-continuous until a terminal result or an actual supported pause.
-
-For a gameplay slice, read back the assigned acceptance checklist against the
-normal entry point. Record the observed player/saved result, relevant revision
-and actual check for each closed item. Carry the next failing item forward.
-Source review and unit checks retain their own scope. Player comprehension,
-visual coherence and enjoyment require their applicable journey/critic/owner
-observations for the specified scope. Use [VISUAL_CRITIQUE](../../../docs/engineering/VISUAL_CRITIQUE.md)
-for affected presentation; missing unrelated scene comparisons do not block delivery.
-Keep required feature criteria open until their evidence passes. Report
-passed substeps separately from complete slice acceptance. Avoid a fresh whole-game
-readiness audit for unchanged evidence.
 
 ## Freeze and verify
 
 1. Finish source, regression and necessary documentation edits. Read the staged
    diff for scope, secret leakage, leftovers and changed semantics. Run focused
-   checks while editing; fix tool environment issues without weakening the gate.
-   Check an edited CURRENT_PLAN with `bash scripts/check-current-plan.sh` before
-   publication. The focused local validator checks committed changes to that path.
-2. Record `git rev-parse HEAD HEAD^{tree}` and base. Use the repository-pinned
-   toolchain and frozen lockfile. The existing clean-checkout gate is owned by
-   AGENTS.md / `scripts/bootstrap.sh`; do not copy it into another workflow.
-3. Publish once; CI is advisory and may be skipped. If citing it, read actual logs
-   and conclusion. A synthetic PR merge ref is not
-   an executed merge. Verify its tree equals the reviewed tree. Reuse exact
-   evidence on an unchanged tree; new code invalidates prior-tree evidence.
+   checks while editing; fix observed defects and record unavailable checks.
+2. Record the reviewed branch/head and base. Use the repository-pinned toolchain
+   and frozen lockfile. Do not compute routine tree/hash manifests; full
+   clean-checkout/bootstrap checks remain optional under AGENTS.md.
+3. Publish once; CI may be skipped or ignored under AGENTS.md. If using CI
+   evidence, read its actual logs/conclusion and identify the checked revision.
+   A synthetic PR merge ref is not an executed merge; do not reuse old evidence
+   as proof of changed code.
 
 ## Merge only when authorized
 
 Before merging read live head/base, reviews, unresolved threads and applicable
-CI evidence, including the `PR scope` check. Require no unresolved blocking
-defect and current explicit permission under
-[AGENTS permission policy](../../../AGENTS.md#permission-policy--current-as-of-2026-10-25).
-Historical merge-on-gates permission never restarts a cancelled mission.
-Independent review is optional. Pass the expected head SHA to the merge operation. Do not dismiss a
+CI evidence. Require no unresolved blocking defect and explicit permission for
+this PR. Pass the expected head SHA to the merge operation. Do not dismiss a
 review or force a ref to bypass a failure. Read back merged status, actual merge
 SHA/tree, default-branch ref and linked issue state. A failed tool call is not a
 merge. Auto-merge, deployment and purchases are separate operations.
 
 ## Handoff
 
-Update the owning specification once with the player result against the expected
-improvement, actual checks/revision, remaining defects and next task. Keep the
-operational checkpoint and PR summary short and link that result. Do not create
-parallel evidence inventories or mandatory handoff templates.
+PR descriptions state scope, actual checks, migration impact and remaining risks.
 
-For a material correction, record its cause with the affected evidence. For a
-harness evaluation, use [HARNESS_EVAL](../../../docs/engineering/HARNESS_EVAL.md#task-quality-assessment--2026-11-05)
-to include first-submission/eventual acceptance, failed/unfinished attempts and
-available parent/child effort. Keep missing measurements explicit and reuse logs.
+Persist a detailed result once, with short operational pointers elsewhere:
 
-When external writes are authorized, write/read back the issue or PR. Close
-only issues whose individual criteria passed; related issue links do not prove
-acceptance. Size is advisory; semantic review must assess cohesion and rollback. Update the canonical Airtable checkpoint and an Empirical
-`Warwrit` event at a milestone or when the owner asks, not for every slice.
-Preserve older dated evidence as history. Do not announce a milestone or M1
-complete because one slice passed.
+```text
+Task / contract / source edition / versions:
+Branch / base / reviewed head / tree / actual merge (or NOT_MERGED):
+Implemented effects / finite residual requirements:
+Postulate -> public specification -> actual result:
+Commands / exit result / run+job / logs / checked tree:
+Author vs external review / limitations:
+One next step:
+```
 
-Before stopping preserve WIP and a short checkpoint under
-[AGENTS orchestration](../../../AGENTS.md#orchestration). A delegated editor
-returns its diff to the parent; a branch owner commits finished steps. Do not
-push or write external records without current permission, especially after stop.
+Record status, checks, limits and permissions in the owning task document.
+Update the [roadmap](../../../docs/engineering/ROADMAP.md) checkbox only when
+its done criterion changes. Add a short entry using
+[warwrit-changelog](../warwrit-changelog/SKILL.md); do not update the old plan.
+Write/read back the issue or PR when publishing. Preserve older dated evidence
+as history. Do not announce full WP-02 or M1 complete because one slice passed.
 
 ## Next AI task
 
-Use the actual integrated interfaces and remaining product requirements. Complete
-or link the owning feature specification under AGENTS before feature code, then
-split it into cohesive player results with dependencies and direct checks. Pin the
-base in the task, not reusable skills. Creating a task does not start an agent or
-expand the current assignment.
+Use the actual merged interfaces and remaining requirements as input. Specify
+mission, IN/OUT, sources+precedence, finite trust contracts, compatibility, ordered
+phases, stable behavior postulates and the existing gate. Pin the verified base
+in the issue/checkpoint rather than in every reusable skill. Distinguish completed
+source/code review from unimplemented next-slice tests. Creating a task does not
+start an agent. Do not implement the successor slice during this delivery.

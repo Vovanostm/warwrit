@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Game Decisions'
+  short_description: 'Choose concepts and export reviewed specs and AI prompts'
+  default_prompt: 'Use $game-decisions to clarify my request, generate concepts in parallel, and turn my choice into a reviewed specification and working prompt.'
