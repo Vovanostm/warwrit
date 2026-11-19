@@ -11,9 +11,11 @@ description: Write or rewrite Warwrit quest and player text in Russian by a fixe
 Правила языка — [Как писать](../../../docs/wiki/world/writing.md), голос —
 [литературный слог](../../../docs/wiki/world/literary-style.md), канон —
 [Поречье](../../../docs/wiki/world/porechye.md) и `docs/content/world/*.csv`.
-Ориентир устройства квеста — «Ведьмак 3»
-([разбор](../../../.studioigor/research/witcher-quest-writing.md)): берём
-приёмы, не тексты, имена и сюжеты.
+Квесты и сюжеты «Ведьмака 3» можно использовать как референсы
+([разбор](../../../.studioigor/research/witcher-quest-writing.md), решение владельца
+2026-11-14). Изучай конкретную историю, мотивы, находки, поворот, выбор
+и последствия, затем адаптируй сюжет к миру и механикам Warwrit.
+Использованный квест-референс и взятые за основу решения отмечай в заметках автора.
 
 Перед письмом прочитай [ТЗ на квест](references/quest-spec.md),
 [критерии качества](references/quality.md) и [словарь](references/plain-russian.md).

@@ -1,20 +1,16 @@
 ---
 name: warwrit-review
-description: Review Warwrit game rules and player-facing changes for invariants, knowledge leaks, quest-state consistency and actionable UX defects. Use for an assigned review or reproduced bug.
+description: Review Warwrit domain code for SSOT, SRP, KISS/YAGNI, conservation, temporal causality and hidden-state leaks. Use for PR review or a reproduced bug; not blanket test counts, cosmetic rewrites or balance approval.
 ---
 
 # Review executable game invariants
 
+For review or simplification, read [review rules](references/review-rules.md)
+for SSOT/SRP boundaries, findings and observer-appropriate evidence.
+
 Read the exact active contract and actual diff/callers, not only the PR description.
 Follow [AGENTS.md](../../../AGENTS.md). A separate author pass is still author
 review; do not claim another agent's approval.
-
-Owner policy — 2026-11-08: current AGENTS.md supersedes older mandatory
-CI, independent-review and critic gates below. CI/audits/full suites and
-independent reviewers are advisory/optional. Self-review is required. A concrete
-UI defect blocks its affected journey, not unrelated development; missing broad
-visual evidence is not a global BLOCKED state. Merge still requires explicit
-current permission and expected-head protection.
 
 ## Counterexample pass
 
@@ -38,23 +34,6 @@ Independent oracles must not call the helper under test to calculate expectation
 A small enumeration is suitable for a tiny C04 oracle, never production monetary
 allocation. Assert observable allocations, balances, custody, deadlines and
 rejections rather than helper call order or catalogue snapshots.
-
-## Player-facing changes
-
-For narrative, quest flow, UI or battle feedback, read the matching section of
-[player-facing review](references/player-facing-review.md). Use accepted facts,
-the affected state transitions and the actual player view as evidence. Text and
-visual critics own their applicable final acceptance.
-
-## Acceptance evidence
-
-For disputed or repaired checks, trace assertions to the accepted requirement.
-Locate whether failure occurs in setup, product behavior or the grader. Review
-changed fixtures and assertions together so a passing rerun still exercises the
-intended command and invariant. Accept valid implementation alternatives. Require
-specific call order or helper names only when the contract makes them observable.
-For changed grading logic, use a known-valid and relevant known-bad result when
-available. Missing scenario evidence remains open even when another check passes.
 
 ## Structure pass
 
@@ -92,7 +71,7 @@ optional advice, separate from defects.
 Tool pointers, not verdicts: `pnpm exec fallow review --base <ref> --brief` for
 changed-file dead code, complexity and clones; `pnpm exec ast-grep scan <paths>`
 for code-shape warnings. A clone or warning is a lead; confirm the shared rule
-and all consumers before consolidating (see [Simple design](../../../AGENTS.md#simple-design)).
+and all consumers before consolidating (see [review rules](references/review-rules.md)).
 
 ## Worked example
 
@@ -115,8 +94,8 @@ Limit: proves this preparer only; other helpers need their own check
 
 ## Exit
 
-For a read-only assignment, return findings and missing evidence to the author.
-When implementation is assigned, run the smallest regression for the old defect,
-apply the fix and check affected specifications/types. Preserve the sole regression
-of each old defect. Delivery owns the final integrated gate. Report the actual
-boundary demonstrated by each check and the remaining player/SQL observations.
+Run the smallest regressions that disprove the old implementation, apply the
+fix, then check affected existing specifications and types. Preserve the sole
+regression of each old defect. Delivery reuses relevant evidence; full gates
+remain optional under AGENTS.md, and repeated unchanged runs add no evidence. Report test scope honestly: pure
+roundtrip is not SQL crash recovery; headless combat is not player enjoyment.
