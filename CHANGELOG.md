@@ -9,6 +9,13 @@ requests.
 
 ## Unreleased
 
+### Art skill filenames — 2026-10-26, LOCAL
+
+- Branch `Vovanostm/Fix-images`. Owner: git is the version history, so quest
+  art filenames stay stable. `warwrit-art` no longer tells agents to save
+  `-v2`/`-v3` siblings. Image bytes for the quest lab live on
+  `codex/mission-novel-lab`.
+
 ### Familiar map movement controls
 
 - 2026-10-26, branch `codex/map-controls-hint`, local: owner requested further

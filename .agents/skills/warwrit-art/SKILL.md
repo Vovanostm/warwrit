@@ -53,7 +53,7 @@ has Pillow (pyenv on the director's Mac); it is a tool, not game runtime.
 
 ## Record and gate
 
-- Save every version as a sibling file (`-v2`, `-v3`); never overwrite.
+- Keep one stable path per asset and overwrite it. Git stores earlier pixels. Do not add `-v2` or `-v3` filename suffixes.
 - `provenance.json`: tool and model, inputs with roles, each iteration with its
   prompt file, operation, regions and the critic verdict.
 - Visual critic (`warwrit-visual-critic`): pass images, not conclusions; full
