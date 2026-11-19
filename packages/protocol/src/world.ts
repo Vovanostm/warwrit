@@ -1,3 +1,8 @@
+import type { WorldLabCartographyDto } from './world-cartography.js';
+import type { WorldPointFpDto, WorldPointMicroFpDto } from './world-point.js';
+
+export type { WorldPointFpDto, WorldPointMicroFpDto } from './world-point.js';
+
 export const WORLD_EXPECTED_COMPANY_ID_HEADER = 'x-warwrit-expected-company-id' as const;
 
 export interface WorldAvailableDepartureDto {
@@ -181,16 +186,6 @@ export interface WorldFreeMovementRejectionDto {
     | 'UNSUPPORTED_ACTION';
 }
 
-export interface WorldPointFpDto {
-  readonly xFp: number;
-  readonly zFp: number;
-}
-
-export interface WorldPointMicroFpDto {
-  readonly xMicroFp: string;
-  readonly zMicroFp: string;
-}
-
 export type WorldFreeMovementTargetDto =
   | { readonly kind: 'TERRAIN'; readonly xFp: number; readonly zFp: number }
   | { readonly kind: 'SITE'; readonly siteId: string };
@@ -272,6 +267,7 @@ export interface WorldFreeMovementV2RejectionDto {
     | 'TARGET_BLOCKED'
     | 'OUT_OF_BOUNDS'
     | 'NO_PATH'
+    | 'MAP_INFORMATION_REQUIRED'
     | 'ROUTE_TOO_COMPLEX'
     | 'MOVEMENT_NOT_ALLOWED'
     | 'ROUTE_FORBIDDEN'
@@ -328,6 +324,7 @@ export interface WorldSurroundingsDto {
     readonly regionVersion: string;
     readonly regionName: string;
     readonly continuous?: WorldContinuousMapDto;
+    readonly cartography?: WorldLabCartographyDto & { readonly mapEdition: string };
     readonly sites: readonly {
       readonly siteId: string;
       readonly name: string;

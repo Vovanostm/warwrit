@@ -1,5 +1,6 @@
 import { WORLD_LAB_PURSUIT_ORDER_HEADER } from '@warwrit/protocol';
 import { createHash, randomBytes } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { matchMaker, Server } from '@colyseus/core';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import { fastifyCookie } from '@fastify/cookie';
@@ -13,18 +14,10 @@ import { sql, type Kysely } from 'kysely';
 
 import { isSessionTokenActive, resolveSessionPrincipalFromCookieHeader } from '../auth/session.js';
 import type { DatabaseSchema } from '../db/database.js';
-import {
-  handleContinuousMovementPost,
-  MovementRejection,
-  readContinuousMovementSnapshot,
-} from '../world/continuous-movement.js';
+import { handleContinuousMovementPost, MovementRejection } from '../world/continuous-movement.js';
 import { startWorldRouteWorker } from '../world/route-worker.js';
 import { roomTicketFromReservation } from '../room-ticket.js';
-import {
-  PAINTED_ATLAS_REGION,
-  buildNavigationField,
-  paintedAtlasNearbySite,
-} from '@warwrit/game-core';
+import { PAINTED_ATLAS_REGION, mergeExploredBits } from '@warwrit/game-core';
 import { startWorldLabNpcWorker } from './npc-worker.js';
 import { readWorldLabSlotByAccount, readWorldLabState } from './state.js';
 import { createWorldLabRoomClass } from './room.js';
@@ -36,9 +29,18 @@ import {
   parseWorldLabPursuit,
   startWorldLabPursuitWorker,
 } from './pursuit.js';
+import { renderCartographyTile } from './cartography-raster.js';
+import { recordWorldLabPlaceVisit } from './cartography-progress.js';
 
 const SESSION_LIFETIME_MS = 24 * 60 * 60 * 1000;
-const navigationField = buildNavigationField(PAINTED_ATLAS_REGION);
+class VisitRejection extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+  }
+}
 const SCENE_IMAGES: Readonly<Record<string, string>> = {
   bereznyak: '/assets/art/m1/places/settlements-v2/bereznyak-painting.png',
   'kamenny-brod': '/assets/art/m1/places/settlements-v2/kamenny-brod-painting.png',
@@ -184,6 +186,7 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
   let stopRoutes: (() => Promise<void>) | undefined;
   let stopPursuit: (() => Promise<void>) | undefined;
   let stopNpc: (() => Promise<void>) | undefined;
+  let stopCartography: (() => Promise<void>) | undefined;
 
   app.addHook('onReady', async () => {
     stopRoutes = startWorldRouteWorker(
@@ -203,9 +206,41 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
     stopPursuit = startWorldLabPursuitWorker(options, (error) =>
       app.log.error({ err: error, event: 'world_lab.pursuit.failed' }),
     );
+    // Progress does not depend on a connected browser. Retained plans allow catch-up after restart.
+    let stopped = false;
+    let active: Promise<void> | undefined;
+    const run = () => {
+      if (stopped || active) return;
+      active = (async () => {
+        for (const fixture of options.fixtures) {
+          if (stopped) return;
+          await readWorldLabState(
+            options.database,
+            options.worldId,
+            options.fixtures,
+            fixture.accountId,
+            options.now,
+            options.timeScale,
+          );
+        }
+      })()
+        .catch((error) => app.log.error({ err: error, event: 'world_lab.cartography.failed' }))
+        .finally(() => {
+          active = undefined;
+        });
+    };
+    const timer = setInterval(run, 1000);
+    timer.unref();
+    run();
+    stopCartography = async () => {
+      stopped = true;
+      clearInterval(timer);
+      await active;
+    };
     await realtime.listen(options.realtimePort, options.host);
   });
   app.addHook('onClose', async () => {
+    await stopCartography?.();
     await stopPursuit?.();
     await stopRoutes?.();
     await stopNpc?.();
@@ -263,19 +298,74 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
     return reply.header('Cache-Control', 'no-store').send(response);
   });
 
-  app.get('/world-lab/state', async (request, reply) => {
-    const auth = await requireAuthenticatedFixture(request, reply, options, false);
-    if (!auth) return;
-    const state = await readWorldLabState(
+  const readAccountState = (accountId: string) =>
+    readWorldLabState(
       options.database,
       options.worldId,
       options.fixtures,
-      auth.principal.accountId,
-      options.now ?? (() => new Date()),
-      options.timeScale ?? 1,
+      accountId,
+      options.now,
+      options.timeScale,
     );
+
+  app.get('/world-lab/state', async (request, reply) => {
+    const auth = await requireAuthenticatedFixture(request, reply, options, false);
+    if (!auth) return;
+    const state = await readAccountState(auth.principal.accountId);
     return reply.header('Cache-Control', 'no-store').send(state);
   });
+
+  app.get<{ Params: { tileX: string; tileY: string } }>(
+    '/world-lab/map/:tileX/:tileY.png',
+    async (request, reply) => {
+      const auth = await requireAuthenticatedFixture(request, reply, options, false);
+      if (!auth) return;
+      const { tileX, tileY } = request.params;
+      if (
+        !/^(0|[1-9]\d?)$/u.test(tileX) ||
+        !/^(0|[1-9]\d?)$/u.test(tileY) ||
+        Number(tileX) >= 12 ||
+        Number(tileY) >= 8
+      )
+        return reply.code(404).header('Cache-Control', 'no-store').send();
+      const state = await readAccountState(auth.fixture.accountId);
+      if (!state) return reply.code(404).send();
+      const cartography = state.cartography;
+      const bytes = await renderCartographyTile({
+        tileX: Number(tileX),
+        tileY: Number(tileY),
+        tileSize: cartography.imageTileSize,
+        sheet: cartography.sheet,
+        grid: cartography.grid,
+        knownBits: mergeExploredBits(
+          Buffer.from(cartography.charted, 'base64'),
+          Buffer.from(cartography.explored, 'base64'),
+        ),
+      });
+      if (!bytes) return reply.code(404).header('Cache-Control', 'no-store').send();
+      return reply
+        .type('image/png')
+        .header('Cache-Control', 'private, no-store')
+        .header('X-Content-Type-Options', 'nosniff')
+        .send(bytes);
+    },
+  );
+
+  app.get<{ Params: { siteId: string } }>(
+    '/world-lab/place/:siteId.png',
+    async (request, reply) => {
+      const auth = await requireAuthenticatedFixture(request, reply, options, false);
+      if (!auth) return;
+      const state = await readAccountState(auth.fixture.accountId);
+      const site = state?.cartography.sites.find(
+        (entry) => entry.siteId === request.params.siteId && entry.visited,
+      );
+      const image = site && SCENE_IMAGES[site.siteId];
+      if (!image) return reply.code(404).header('Cache-Control', 'no-store').send();
+      const bytes = await readFile(new URL(`../../../..${image}`, import.meta.url));
+      return reply.type('image/png').header('Cache-Control', 'private, no-store').send(bytes);
+    },
+  );
 
   app.post('/world-lab/movement', { bodyLimit: 2_048 }, async (request, reply) => {
     const auth = await requireAuthenticatedFixture(request, reply, options);
@@ -325,27 +415,45 @@ export function registerWorldLab(app: FastifyInstance, options: WorldLabOptions)
     const body = request.body;
     if (!isRecord(body) || Object.keys(body).length !== 1 || typeof body['siteId'] !== 'string')
       return reply.code(400).send({ error: 'invalid visit request' });
-    const image = SCENE_IMAGES[body['siteId']];
-    if (!image) return reply.code(404).send({ error: 'place scene unavailable' });
-    const movement = await readContinuousMovementSnapshot(
-      options.database,
-      options.worldId,
-      auth.principal.accountId,
-      PAINTED_ATLAS_REGION,
-      options.now ?? (() => new Date()),
-      auth.fixture.companyId,
-    );
-    if (movement.mode === 'MOVING') return reply.code(409).send({ error: 'stop before entering' });
-    const nearest = paintedAtlasNearbySite(navigationField, movement.point);
-    if (nearest?.siteId !== body['siteId'])
-      return reply.code(422).send({ error: 'place is out of reach' });
-    const result: WorldLabVisitDto = {
-      schemaVersion: 1,
-      siteId: nearest.siteId,
-      name: nearest.name,
-      image,
-    };
-    return reply.header('Cache-Control', 'no-store').send(result);
+    const siteId = body['siteId'];
+    try {
+      const result = await options.database.transaction().execute(async (transaction) => {
+        const state = await readWorldLabState(
+          transaction,
+          options.worldId,
+          options.fixtures,
+          auth.principal.accountId,
+          options.now,
+          options.timeScale,
+        );
+        const image =
+          state?.cartography.sites.some((site) => site.siteId === siteId) && SCENE_IMAGES[siteId];
+        if (!state || !image) throw new VisitRejection(404, 'place scene unavailable');
+        if (state.own.movement.mode === 'MOVING')
+          throw new VisitRejection(409, 'stop before entering');
+        const nearest = state.nearbySite;
+        if (!nearest || nearest.siteId !== siteId)
+          throw new VisitRejection(422, 'place is out of reach');
+        await recordWorldLabPlaceVisit(
+          transaction,
+          options.worldId,
+          auth.fixture,
+          nearest.siteId,
+          state.own.movement.serverTimeMs,
+        );
+        return {
+          schemaVersion: 1,
+          siteId: nearest.siteId,
+          name: nearest.name,
+          image: `/world-lab-api/world-lab/place/${nearest.siteId}.png`,
+        } satisfies WorldLabVisitDto;
+      });
+      return reply.header('Cache-Control', 'no-store').send(result);
+    } catch (error) {
+      if (error instanceof VisitRejection)
+        return reply.code(error.status).send({ error: error.message });
+      throw error;
+    }
   });
 
   app.post('/world-lab/room-ticket', { bodyLimit: 512 }, async (request, reply) => {

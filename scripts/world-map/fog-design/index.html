@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Туман войны · 10 примеров — Warwrit</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <span class="eyebrow">WARWRIT / ПРОЕКТ МЕХАНИКИ</span>
+        <h1>Что знает ваша компания</h1>
+      </div>
+      <a href="../world-lab.html">К сетевой карте ↗</a>
+    </header>
+    <main>
+      <nav aria-label="Десять примеров тумана войны" id="examples"></nav>
+      <article>
+        <div class="heading">
+          <span id="number" class="eyebrow"></span>
+          <h2 id="title"></h2>
+          <p id="description"></p>
+        </div>
+        <div class="controls" role="group" aria-label="Состояние примера">
+          <button id="before" type="button" aria-pressed="true"></button>
+          <button id="after" type="button" aria-pressed="false"></button>
+          <span id="conditions"></span>
+        </div>
+        <figure>
+          <svg
+            id="map"
+            viewBox="0 0 960 640"
+            role="img"
+            aria-label="Схема области наблюдения"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+          <figcaption>
+            <span class="legend live">Видно сейчас</span
+            ><span class="legend memory">Изучено ранее</span
+            ><span class="legend unknown">Неизвестно</span><span class="legend own">Ваш отряд</span
+            ><span id="obstacle-legend" hidden></span>
+          </figcaption>
+        </figure>
+        <p id="result" role="status" aria-live="polite"></p>
+        <p id="intel" hidden></p>
+        <details>
+          <summary>Код примера и разрешённые данные</summary>
+          <div class="technical">
+            <section>
+              <h3>Исполняемый код примера</h3>
+              <pre><code id="code"></code></pre>
+            </section>
+            <section>
+              <h3>Пример ответа для клиента</h3>
+              <pre id="payload"></pre>
+            </section>
+          </div>
+        </details>
+        <p class="disclaimer">
+          Учебная схема на открытых вымышленных данных. Расположение мест условное. Это проект
+          механики, не подключённый к игровому серверу туман войны.
+        </p>
+      </article>
+    </main>
+    <script type="module" src="./view.ts"></script>
+  </body>
+</html>

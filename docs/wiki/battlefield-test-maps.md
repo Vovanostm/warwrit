@@ -5369,3 +5369,14 @@ Coordinator validator passed 9/9 before integrating JOIN main. Fresh integrated
 validation and independent evaluator/absolute visual ACCEPT remain pending;
 legacy live substitution and measured performance remain NOT_RUN/NOT_MEASURED.
 Local evidence: `.orca/uix-affordability-bands/report.md`.
+
+## Обновление существующей боёвки — поручение 2026-10-29
+
+Владелец поручил обновить существующий бой вместе с картой и wiki.
+[Предварительная визуальная база и статус](vision.md#единая-визуальная-база-и-интеграция--поручение-2026-10-29):
+локальная практика высот у мельницы из648830d8, рисованные бойцы и
+читаемый предпросмотр. Кадр — предложение интеграции, не объявление
+готового сетевого боя или новой утверждённой камеры. Переносить подачу
+в текущий игровой вход с прежними владельцами команд/состояния;
+синхронизацию, сохранение, AI и возврат в мир проверять в реальном пути.
+Не превращать отдельный preview в ещё одну параллельную боёвку.

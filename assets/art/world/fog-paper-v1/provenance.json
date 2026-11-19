@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-28",
+  "branch": "codex/world-map-fog-design",
+  "status": "local; independent integrated visual ACCEPT on third full pass, all applicable criteria 2; owner visual acceptance not measured",
+  "tool": "built-in image_gen.imagegen",
+  "model": "configured tool model; exact model not returned",
+  "asset": "unknown-paper.png",
+  "purpose": "Opaque non-geographic material for unknown map areas; no world layout input",
+  "references": [
+    {
+      "path": "../../styles/references/graphic-novel/forest.png",
+      "role": "director-inspected style/material authority; subject not copied; no image input passed to generator"
+    },
+    {
+      "path": "../../m1/style/unit-c-ink.png",
+      "role": "director-inspected ink/material reference; no image input passed to generator"
+    }
+  ],
+  "iterations": [
+    {
+      "revision": 1,
+      "operation": "new blank material image generation; no image editing or world geometry input",
+      "prompt": "prompt-tool.txt",
+      "designBrief": "prompt.txt",
+      "transparentBackground": false,
+      "toolOutput": "/Users/vovanostm/.codex/generated_images/01a172f4-f5d7-7b33-b107-c8d3a73702a0/exec-e951cd64-879b-43df-9e70-b7307fbb9734.png",
+      "authorInspection": "blank charcoal/umber paper, no geographic objects or writing; integrated third visual pass ACCEPT"
+    }
+  ],
+  "visualReview": {
+    "result": "ACCEPT",
+    "reviewer": "warwrit_visual_critic",
+    "evidence": "output/playwright/fog-accept/ (local ignored evidence)",
+    "limits": "independent input replay NOT_RUN; residual close-view mask steps, paper grain and dense but distinct badges"
+  }
+}

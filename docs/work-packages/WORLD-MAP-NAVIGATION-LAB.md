@@ -265,95 +265,173 @@ runtime folders retain past failures; owned launcher/API/web cleanup waits and
 removes only its PID file. Source concerns closed, provisional infrastructure
 ACCEPT. Normal commit/exact-head review and hosted CI still pending.
 
-## Raster road continuity amendment — 2026-10-28
+### Networked delivery readback — 2026-10-27
 
-Owner requests the two pictured road breaks fixed, tested, published and normally
-merged, then cleanup of this task's worktree. Branch `codex/map-road-continuity`.
-Retain historical atlas art; repair only the Brod eastern field approach and
-Tikhaya southern forest approach. Both lab image consumers use version6; old v5
-remains historical. Exact prompts/blend bounds and the road-tracing rule live
-beside the asset. Trace through-roads across the whole affected field/forest/tile
-join at native/game scale, overview/close, day/night. Fields and hedges must end
-at the shoulders; no unexplained road stub. Independent visual critique required.
-No movement cost/terrain/server/schema change or deployment authorization.
-[Current results and delivery](../wiki/world/map.md#исправление-обрывов-дорог--2026-10-28).
+[PR330](https://github.com/Vovanostm/warwrit/pull/330) MERGED as `5ecb4eb3`,
+expected head `74e4a584`, base `e4876962`. Independent infrastructure/integration
+ACCEPT on clean expected head. CI40557403570 SUCCESS (full bootstrap/stress/SQL,
+unit coverage, installed browser, six real native journeys, source-checked merge
+and unchanged audit); latest scope40560485057 SUCCESS. No blocking reviews/threads.
+Actual merged tree equals checked head; local main/origin main both `5ecb4eb3`.
+Earlier source/pending statuses above are historical and superseded by delivery.
+Post-merge main CI40560746226 was still running at readback; no duplicate gate.
+This documentation closeout is local; source changes are merged. Primary WIP and
+persistent lab data preserved; no deployment, automation or full-MMO acceptance.
 
-## Road navigation amendment — 2026-10-28
+## Fog design amendment — 2026-10-27
 
-Owner follow-up: retain the worktree; road nodes and pathfinding must work on the
-repaired road links. This supersedes the image-only boundary for this correction.
-One shared atlas region owns road polygons and authored stations. Both labs and
-the server compile their fields from it; no separate client road map or new
-pathfinding algorithm. Replace the eastern shortcut through crops, connect the
-southern forest approach and use one shared junction with Tikhaya's road.
-Use existing dirt-road/trail profiles. Keep map coordinates, water/bridges and
-accepted plans' frozen path/speed spans/timing; only new plans/replans use the
-corrected field. Geometry is rebuilt on module/process load; old live processes
-are not silently updated. No database reset, migrations or deployment.
-Acceptance: sampled painted road points resolve to the road overlay; the former
-field shortcut loses its road bonus; actual planned routes take the drawn bends
-and beat the straight off-road cut. Existing bridge/water/frame tests continue.
-Author verifies the two paths in the browser with current captures and an
-independent read-only playable/visual critic. Retain the original mission's
-PR/normal-merge permission and proportional gates; do not remove the worktree.
+Owner asks for server-authoritative visibility shaped by terrain/weather/light, a public
+strategic chart and progressive company exploration. This cycle's DoD is specification
+and ten paired visual/executable-code examples. [Owning proposal](../wiki/world/fog-of-war.md).
+Branch `codex/world-map-fog-design`; parent owns all source/docs/resources/validation.
+Write scope: dedicated `scripts/world-map/fog-design/`, focused model tests, discovery
+configuration and owning records. No production core/server/protocol/SQL or map controls.
+Synthetic public fixtures cannot demonstrate protected production transport; the spec
+requires private asset delivery as well as entity filtering. Preserve persistent lab DB.
+Try on5338 at `/scripts/world-map/fog-design/index.html`; both phases of all ten scenes
+must match their named rule, with actual browser evidence and independent visual critique.
+No new art, paid services, publication/merge, deployment, Orca or automation activation.
 
-### Navigation PR CI correction
+Design checkpoint: ten pairs/20 native states and six model cases PASS; types/lint,
+architecture/format and source-checked changed-code audit PASS. First visual pass
+rejected missing provenance/age and unclear terrain cues; full repeated critique
+ACCEPT after fixes (four applicable scores2). Independent input replay NOT_RUN.
+DoD complete for local specification/examples only; server fog, private chunks,
+SQL/offline/reconnect integration and performance remain NOT_RUN/NOT_MEASURED.
 
-CI40676883813 passed verify1206/stress but SQL73/74 failed the bridge-v5 bow
-terminal scenario. That test omitted a legitimate successor-selection step,
-which adjacent cases already exercise via the real leadership API. Correct only
-that test's orchestration; retain terminal/replay/idempotency assertions and all
-existing gates. No combat production-policy change. The observed null marker does
-not by itself prove the leader's fate; source establishes the unsupported test
-assumption. Focused actual isolated PostgreSQL case and independent source review
-are required, then current-head hosted CI. Existing map visual evidence remains
-applicable because navigation code/art are unchanged by this correction.
+## Company home-region amendment — 2026-10-28
 
-Delivery readback2026-10-28: current-head CI40680047382 PASS (verify/coverage1206,
-84 unit skips, stress10000, migration smoke, SQL74, actual browser journeys and
-normal audit); final scope40681842613 PASS. PR332 merged normally as `caee351b`
-with expected head `52bd78253958f0951613e765c24d379f7711749d`. Live PR/main
-and merge tree read back; tested and merged trees match. This documentation
-checkpoint is local; implementation is merged. Retain this worktree and stand5346;
-older running servers need an updated process reload. No deployment performed.
+Owner: the company starts with a chart of its home region only; many regions
+exist, and further charts must be purchased or the land explored personally.
+This supersedes the globally public strategic-chart proposal above. Acquired
+chart coverage, personal exploration and live observation remain separate.
+Scope: update the owning fog specification and example09, plus one meaningful
+regional-projection regression; no economic/server/world-content implementation.
+Parent remains sole writer/validator, current branch `codex/world-map-fog-design`.
+Unacquired regions must not reveal towns via the atlas, search, routes or assets;
+border crossing only reveals observed terrain. Prices/trade details remain open.
+No publication/merge/deploy or automation activation.
 
-## Road diagnostics amendment — 2026-10-28
+Home-region correction: seven model cases, both script typechecks, scoped lint/format,
+20 native states and source-checked audit PASS. Affected example09 visual ACCEPT,
+four applicable scores2; independent input replay and actual server purchases NOT_RUN.
+Local requirement/example correction complete; production integration remains separate.
 
-Owner: implement the recommended first cycle, preserving agent freedom and avoiding
-excess instructions/waste. Add local map-lab inspection of the compiled road-only
-graph and checks for the two repaired connections. A disconnected declared link
-must fail even when the general planner finds a walkable field bypass. Display
-actual nodes/edges and affected check endpoints; ordinary dead ends are permitted.
-Do not claim all atlas roads verified from these two expectations. Default overlay
-off; map input, day/night and journeys stay usable. No runtime/game-rule change,
-new dependency, external publication or deployment. Shorten the art skill to the
-required synchronized result and leave implementation/check selection to the author.
-Use focused checks and a native journey; independent visual critique remains.
+## Cartography implementation activation — 2026-10-28
 
-Local result: code `dea28641`; map23/types/scoped lint/format, skill schema and
-normal commit audit PASS. Initial broad connectivity accepted an alternate-road
-bypass; checking the declared corridor now detects a shifted station despite a
-valid free-movement route. Native overlay toggle/Space/day-night/zoom/arrival PASS.
-Independent absolute visual ACCEPT, five applicable scores2, after paired evidence
-closed the initial missing-input block; independent replay NOT_RUN. Full game/SQL
-gates NOT_RUN for this lab-only slice. No publication/deployment; retain worktree.
+Owner: “Implement with subagents”. Local implementation of company cartographic
+knowledge and authoritative fog. Source/owner rules: current fog specification,
+home-region starting chart, purchased information subsets, personal visit discovery,
+quest MARK/TEXT separation, observed-hostile last-place pursuit. No new prices,
+merchant transaction UI or external services are invented; durable trusted grants
+are the producer seam for a separately priced merchant implementation.
 
-## Road diagnostics PR activation — 2026-10-28
+Done: server terrain/light/weather sight, personalized visible groups and known
+places, durable sparse exploration/visit records, restart/reconnect retention,
+masked authenticated map imagery and closed private source/asset paths on the
+world-lab origin. Preserve movement/STOP/pursuit/input controls and existing saves.
+No client full atlas/POI catalogue; no hidden target data through movement errors,
+nearby, static files, bitmap gutters or stale-session state. Existing authored
+terrain owns sight inputs; no inferred geometry from image pixels.
 
-Owner: «ok, pr, merge». Publish the current cohesive map-diagnostics/skill slice
-and normally merge after current-head applicable CI/scope and independent review.
-Branch `codex/map-road-diagnostics`, live base `caee351b`. Reuse unchanged code
-and visual evidence from `dea28641`; publication documents change no behavior.
-Includes source research and the measured field-shortcut explanation, not a new
-cropland type, speed change or pathfinder replacement. Retain the worktree; no
-deployment, automation, auto/admin merge or database reset. Read back actual PR
-head/base before the expected-head merge and record its actual result.
+Three delegated editors in separate persistent worktrees: new pure sight module,
+new cartography store/migration0018, client rendering/state. Parent owns protocol,
+server integration/producers, raster/Vite access, shared docs and all execution.
+Frozen state v2/cartography DTO: packages/protocol/src/world-cartography.ts.
+Parent runs focused types/core/real SQL/native, one full existing final game gate,
+independent diff and visual/playable critique before declaring locally complete.
+Persistent lab database must be preserved; no PR/merge/deploy/Orca activation.
 
-CI40703225465 correction: bootstrap passed, but coverage timed out the negative
-road test at7793ms against the unchanged5000ms budget. Reuse the already compiled
-real atlas field and remove one existing bidirectional road edge in a copied map.
-Keep the actual grid/terrain, public planner bypass assertion, continuity failure,
-missing-anchor case and DOM toggle checks; assert the removed edge existed both
-ways. No timeout increase or production change. Focused V8 coverage3 PASS with
-37ms test bodies locally; independent test correction SOURCE ACCEPT. New hosted
-CI required before merge. Prior visual/native evidence remains applicable.
+### Cartography local result — 2026-10-28
+
+Server-authoritative observation, company chart/explored chunks and explicit visit
+records are integrated. The client receives lawful sites and authenticated,
+byte-masked PNG tiles, with no private source/raw atlas on the world-lab origin.
+Known-area fit, soft paper reveal, preserved map controls and session/stale cleanup
+are usable on5338. Three delegated slices and the final quality refactor retain
+one parent integration/validation owner. [Detailed result and checks](../wiki/world/fog-of-war.md#серверная-реализация-стенда--2026-10-28).
+Clean verify1222/stress10000/migration smoke PASS; full SQL78 PASS, old migration-list
+case corrected and separately PASS. Third absolute visual ACCEPT, eight criteria2;
+independent input replay NOT_RUN. Final refactor: isolated SQL10, native9 plus
+actual API restart, related1007/71 skipped, types/lint/format and source-matched
+normal audit PASS. Bounded source readback found no concrete defect; no gate
+thresholds or suppressions changed. Local source commit `a2388f57`; normal hook/audit PASS, no bypass.
+One-time owner-approved fixture ration top-up retained positions/discoveries/money.
+No merchant economy UI, multi-region travel, production rollout or new PR/merge.
+
+## Ordinary game painted-map activation — 2026-10-29
+
+Owner explicitly requests the existing game's map use the fully painted atlas
+from thread01a172f4-f5d7-7b33-b107-c8d3a73702a0, update existing combat and
+unify wiki/docs. Preliminary mapv6/combat-heightfield/graphic-novel images were
+shown; this cycle implements the first actual map path in the ordinary shell.
+No merge/deployment/paid/Orca authority. Preserve original databases and WIP.
+
+One observable result: ordinary OIDC → company → painted map → nearby movement
+→ arrival/reload, existing Company/Place/encounter entry preserved. Map image
+v6, geography/road definitions from current main48d8a2ae; reuse fog source
+974a87e1/a2388f57 (local lab only until this integration is accepted). Source
+worktree game-painted-map/codex/game-painted-map integrates both histories.
+
+Existing V5 worlds, terrain locations and accepted routes retain their frame
+and frozen schedules. A server-owned explicit painted world/cohort is selected
+for the first integration; it must never reinterpret old world data. Thread one
+region context through surroundings, movement GET/POST and route worker, using
+existing atlas profile, real clock and existing ordinary company/place/contract
+commands. No fixture identity, laboratory timeScale, resource grant or synthetic
+position. Extra atlas POIs do not acquire invented services or aliases.
+
+Use the existing versioned cartography store, trusted home grant, exploration
+and server-masked raster, authenticated company binding and private no-store
+transport. Do not send the full authored terrain/catalogue as a fallback. New
+ordinary surroundings has optional map.cartography, existing cartography DTO
+plus explicit mapEdition; legacy map.continuous remains legacy-only. Tile route
+/world/cartography/tiles/:revision/:x/:y.png uses ordinary login/company scope.
+All art consumers usev6; no raw atlas/source-route access on game origin.
+Acquired chart, explored and live visible masks remain distinct; existing
+provisional sight/weather coefficients stay provisional, no new balancing.
+
+Parent owns server/protocol/region integration, docs, resources and all checks.
+One isolated delegated UI editor owns web PaintedMapCanvas/renderer and finite
+shared cartography/camera seams, GameShell selection, scoped CSS and necessary
+lab import adjustments. UI consumes only lawful DTOs, derives no hidden POIs.
+Keep current movement display interpolation including planVersion3; game S/Space
+stop mapping is coherent and camera listeners/tiles dispose across remount.
+
+Parent validates frozen union: types/lint, meaningful existing core/map plus
+actual SQL/auth privacy/retry and browser normal journey. Independent source
+and absolute visual critic use current images. Existing full gate runs once
+for final integrated delivery, not per editor. New acceptance NOT_RUN.
+
+### Ordinary integration checkpoint — 2026-10-29
+
+Ordinary server chooses one immutable world/region context across surroundings,
+movement and worker. No prior coordinate/route migration. map.cartography
+contains only lawful knowledge; private authenticated v6 tiles replace full
+authored terrain transport. Existing Company/Place/encounter slots retained.
+Client shares cartography, symbols, camera and exact V3 display interpolation
+with existing owners; no second simulation or fixture login.
+
+Parent fixed projection return/destructuring and receipt import after initial
+type failures. Initial SQL assertion incorrectly required JSON object-key order;
+full semantic payload/state equality now preserves every returned value. Added
+known-mill fixture originally omitted its name via navigation-only site data;
+corrected to the named catalogue, no production rule/test weakening.
+Final ordinary PG1 PASS/14 filtered SKIP, including SITE/exact-TERRAIN gate
+and no mutation. Source backend ACCEPT with explicit empty-danger-polygons limit.
+Client review found painted V3 parser rejection, capture stealing click, same-
+revision live fog staleness, missing major-label metadata, viewport ratio reset
+and resize-during-zoom race. All six source fixes independently ACCEPT.
+Web types/client-map-state30/scoped lint PASS. Server types/protocol/core/
+testkit builds and config/cartography9 PASS. First web build PASS with old
+large-chunk warning, before final six UI fixes; no private atlas/catalogue
+markers matched its JS/maps. New source invalidates affected build acceptance.
+
+Runtime QA: API3228/realtime3229/UI5228/Dex5618, PostgreSQL32787 database
+warwrit_painted_gameqa_20261029; validation ww_integration_painted_game_20261029.
+Both newly created18migration databases; old stands/volumes retained.
+Native ordinary login blocked twice by automatic approval review for lack of
+explicit fixture-credential submission permission. Owner question pending;
+no browser/visual/input acceptance or workaround. Local code only, no PR/main
+merge/deployment. Next: approved ordinary native journey, visual critique,
+normal commit and applicable hosted gate, then existing combat integration.

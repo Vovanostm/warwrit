@@ -1,3 +1,5 @@
+import { worldNavigationRegion, PAINTED_GAME_WORLD_ID } from './map-context.js';
+import { executePaintedMovement, registerPaintedCartographyRoutes } from './cartography.js';
 import {
   handleContinuousMovementRead,
   handleContinuousMovementPost,
@@ -126,9 +128,10 @@ function registerWorldFreeMovementRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  const region = worldNavigationRegion(worldId);
   app.get('/world/free-movement', async (request, reply) => {
     if (!isRecord(request.query) || request.query['schemaVersion'] !== '1')
-      return handleContinuousMovementRead(request, reply, { database, worldId });
+      return handleContinuousMovementRead(request, reply, { database, worldId, region });
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
     const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
@@ -272,7 +275,17 @@ function registerWorldFreeMovementRoutes(
 
   app.post('/world/free-movement', { bodyLimit: 2048 }, async (request, reply) => {
     if (isRecord(request.body) && request.body['schemaVersion'] === 2)
-      return handleContinuousMovementPost(request, reply, { database, worldId });
+      return handleContinuousMovementPost(request, reply, {
+        database,
+        worldId,
+        region,
+        ...(worldId === PAINTED_GAME_WORLD_ID
+          ? {
+              execute: (input, accountId, expectedCompanyId) =>
+                executePaintedMovement({ database, worldId }, accountId, expectedCompanyId, input),
+            }
+          : {}),
+      });
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
     const input = parseFreeMovementRequest(request.body);
@@ -345,6 +358,24 @@ export function registerWorldRoutes(
   { database, worldId }: CompanyRoutesOptions,
 ): void {
   registerWorldSurroundingsRoute(app, { database, worldId });
+  if (worldId === PAINTED_GAME_WORLD_ID) {
+    registerPaintedCartographyRoutes(app, { database, worldId });
+    app.addHook('preHandler', async (request, reply) => {
+      const path = request.url.split('?')[0];
+      const oldFreeRead =
+        path === '/world/free-movement' &&
+        request.method === 'GET' &&
+        isRecord(request.query) &&
+        request.query['schemaVersion'] === '1';
+      const oldFreePost =
+        path === '/world/free-movement' &&
+        request.method === 'POST' &&
+        isRecord(request.body) &&
+        request.body['schemaVersion'] === 1;
+      if (path?.startsWith('/world/travel') || oldFreeRead || oldFreePost)
+        return reply.code(409).send({ code: 'MAP_EDITION_MISMATCH' });
+    });
+  }
 
   registerWorldFreeMovementRoutes(app, { database, worldId });
   app.post('/world/travel/preview', { bodyLimit: 2048 }, async (request, reply) => {

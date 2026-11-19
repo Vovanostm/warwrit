@@ -1,3 +1,5 @@
+import { readPaintedCartography } from './cartography.js';
+import { PAINTED_GAME_WORLD_ID } from './map-context.js';
 import {
   compareNavigationOverlays,
   CONTINUOUS_WORLD_REGION,
@@ -67,6 +69,7 @@ export function registerWorldSurroundingsRoute(
     const body = await database.transaction().execute(async (transaction) => {
       const clock = await readWorldClock(transaction, worldId);
       const companyId = await findOwnedCompanyId(transaction, worldId, accountId);
+      if (worldId === PAINTED_GAME_WORLD_ID && companyId === undefined) return null;
       const observerSiteId =
         companyId === undefined
           ? null
@@ -120,18 +123,33 @@ export function registerWorldSurroundingsRoute(
           });
         }
       }
+      const painted =
+        worldId === PAINTED_GAME_WORLD_ID && companyId !== undefined
+          ? await readPaintedCartography(transaction, worldId, accountId, companyId)
+          : undefined;
       const response: WorldSurroundingsDto = {
         schemaVersion: 1,
         serverTimeMs: clock.nowMs,
         campaign: { tick: clock.tick, msPerTick: MS_PER_TICK, ticksPerDay: TICKS_PER_DAY },
         light: readWorldLight(clock),
-        map: { ...PUBLIC_MAP, continuous: PUBLIC_CONTINUOUS_MAP },
+        map: painted
+          ? {
+              regionVersion: painted.cartography.mapEdition,
+              regionName: SEROE_PORECHYE.name,
+              sites: PUBLIC_MAP.sites.filter((site) =>
+                painted.cartography.sites.some((known) => known.siteId === site.siteId),
+              ),
+              edges: [],
+              cartography: painted.cartography,
+            }
+          : { ...PUBLIC_MAP, continuous: PUBLIC_CONTINUOUS_MAP },
         observerSiteId,
         observedCompanies,
         observedHostiles,
       };
       return response;
     });
+    if (body === null) return reply.code(403).send({ error: 'company required' });
     reply.header('cache-control', 'no-store');
     return body;
   });

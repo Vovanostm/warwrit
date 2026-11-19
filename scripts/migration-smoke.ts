@@ -20,6 +20,7 @@ const client = new Client({ connectionString });
 /** Roll back the migrations after 0010 so the older rollback checks start from 0010. */
 async function downToFirstHunt(): Promise<void> {
   for (const name of [
+    '0018_company_cartography',
     '0017_world_lab_pursuit_order_ids',
     '0016_world_lab_pursuits',
     '0015_world_lab_npc_groups',
@@ -55,6 +56,7 @@ try {
     '0015_world_lab_npc_groups',
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
   ]);
 
   const firstUp = await runMigrations(client, 'up');
@@ -76,8 +78,31 @@ try {
     '0015_world_lab_npc_groups',
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
   ]);
 
+  const smokeMapId = 'migration-smoke-cartography';
+  await client.query(
+    `insert into world_map_editions
+      (map_id, edition, region_id, grid_edition, grid_columns, grid_rows,
+       origin_x_q, origin_z_q, cell_size_fp, coverage_snapshot, site_snapshot)
+     values ($1, '1', 'smoke-region', 'smoke-grid-v1', 1, 1, 0, 0, 64, $2, '[]'::jsonb)`,
+    [smokeMapId, Buffer.from([1])],
+  );
+  await assert.rejects(
+    runMigrations(client, 'down'),
+    /Cannot roll back company cartography while map or knowledge data exists/u,
+  );
+  const retainedMap = await client.query<{ edition: string }>(
+    'select edition from world_map_editions where map_id = $1',
+    [smokeMapId],
+  );
+  assert.deepEqual(retainedMap.rows, [{ edition: '1' }]);
+  await client.query('delete from world_map_editions where map_id = $1 and edition = $2', [
+    smokeMapId,
+    '1',
+  ]);
+  assert.deepEqual((await runMigrations(client, 'down')).applied, ['0018_company_cartography']);
   assert.deepEqual((await runMigrations(client, 'down')).applied, [
     '0017_world_lab_pursuit_order_ids',
   ]);
@@ -108,6 +133,7 @@ try {
     '0015_world_lab_npc_groups',
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
   ]);
   assert.deepEqual((await runMigrations(client, 'up')).applied, []);
 
@@ -207,6 +233,7 @@ try {
     '0015_world_lab_npc_groups',
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
   ]);
 
   const company = createCompanyStorageFixture();
@@ -527,6 +554,7 @@ try {
     '0015_world_lab_npc_groups',
     '0016_world_lab_pursuits',
     '0017_world_lab_pursuit_order_ids',
+    '0018_company_cartography',
   ]);
   const preservedLegacyEncounter = await client.query<{
     readonly status: string;

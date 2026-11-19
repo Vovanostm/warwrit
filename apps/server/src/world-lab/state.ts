@@ -1,9 +1,9 @@
 import {
   PAINTED_ATLAS_REGION,
-  buildNavigationField,
   paintedAtlasNearbySite,
+  sightHasCell,
+  worldSightIndex,
 } from '@warwrit/game-core';
-import type { PointFp } from '@warwrit/game-core';
 import type { WorldLabObservedGroupDto, WorldLabSlot, WorldLabStateDto } from '@warwrit/protocol';
 import { sql, type Kysely, type Transaction } from 'kysely';
 
@@ -17,10 +17,8 @@ import { readWorldLabNpcGroups } from './npc-store.js';
 import { worldLabNpcObservation } from './npc-worker.js';
 import type { WorldLabFixture } from './model.js';
 import { readWorldLabPursuit } from './pursuit-store.js';
-
-// Explicitly oversized for the six-group mechanics lab; this is not an MMO sight rule.
-const LAB_SIGHT_RADIUS_FP = 1_024;
-const navigationField = buildNavigationField(PAINTED_ATLAS_REGION);
+import { readWorldLabCartography } from './cartography.js';
+import { navigationField, sightField } from './cartography-field.js';
 
 interface SlotRow {
   readonly slot: WorldLabSlot;
@@ -57,7 +55,7 @@ async function observeNearbyPlayers(
   worldId: string,
   fixtures: readonly WorldLabFixture[],
   ownAccountId: string,
-  ownPoint: PointFp,
+  visible: Uint8Array,
   now: Date | (() => Date),
 ): Promise<WorldLabObservedGroupDto[]> {
   const groups: WorldLabObservedGroupDto[] = [];
@@ -71,10 +69,13 @@ async function observeNearbyPlayers(
       now,
     );
     if (
-      Math.hypot(
-        Number(movement.point.xMicroFp) / 65_536 - ownPoint.xFp,
-        Number(movement.point.zMicroFp) / 65_536 - ownPoint.zFp,
-      ) <= LAB_SIGHT_RADIUS_FP
+      sightHasCell(
+        visible,
+        worldSightIndex(sightField, {
+          xFp: Number(movement.point.xMicroFp) / 65_536,
+          zFp: Number(movement.point.zMicroFp) / 65_536,
+        }),
+      )
     )
       groups.push({
         id: other.companyId,
@@ -114,35 +115,53 @@ export async function readWorldLabState(
     now,
     ownFixture.companyId,
   );
-  const ownPoint = {
-    xFp: Number(ownMovement.point.xMicroFp) / 65_536,
-    zFp: Number(ownMovement.point.zMicroFp) / 65_536,
-  };
-  const groups = await observeNearbyPlayers(database, worldId, fixtures, accountId, ownPoint, now);
-  // Sample time after the stored plans: concurrent NPC decisions can start
-  // a new plan after the observation request began.
+  // Use one authoritative instant for own sight, targets and world conditions.
   const npcGroups = await readWorldLabNpcGroups(database, worldId);
-  const observedNow = typeof now === 'function' ? now() : now;
+  const observedNow = new Date(Number(ownMovement.serverTimeMs));
   const clock = await readWorldClock(database as Transaction<DatabaseSchema>, worldId, observedNow);
   const light = readWorldLight(clock).phase;
+  const cartography = await readWorldLabCartography(
+    database as Transaction<DatabaseSchema>,
+    worldId,
+    ownFixture,
+    ownMovement,
+    clock,
+  );
+  const visible = Buffer.from(cartography.visible, 'base64');
+  const groups = await observeNearbyPlayers(
+    database,
+    worldId,
+    fixtures,
+    accountId,
+    visible,
+    observedNow,
+  );
   for (const group of npcGroups) {
     if (group.mapEdition !== PAINTED_ATLAS_REGION.mapEdition)
       throw new TypeError('World lab NPC map edition does not match the active atlas');
     if (group.kind === 'CREATURE' && light !== 'NIGHT') continue;
     const observed = worldLabNpcObservation(group, clock.nowMs);
     if (
-      Math.hypot(
-        Number(observed.point.xMicroFp) / 65_536 - ownPoint.xFp,
-        Number(observed.point.zMicroFp) / 65_536 - ownPoint.zFp,
-      ) <= LAB_SIGHT_RADIUS_FP
+      sightHasCell(
+        visible,
+        worldSightIndex(sightField, {
+          xFp: Number(observed.point.xMicroFp) / 65_536,
+          zFp: Number(observed.point.zMicroFp) / 65_536,
+        }),
+      )
     )
       groups.push({ ...observed, pursuable: group.kind !== 'PATROL' });
   }
   groups.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  const nearby = paintedAtlasNearbySite(navigationField, ownMovement.point);
+  const candidate = paintedAtlasNearbySite(navigationField, ownMovement.point);
+  const nearby =
+    candidate && cartography.sites.some((site) => site.siteId === candidate.siteId)
+      ? candidate
+      : undefined;
   const ownPartyId = ownFixture.partyId;
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    cartography,
     worldId,
     mapEdition: PAINTED_ATLAS_REGION.mapEdition,
     // Own movement is read first. Later queries must not give an earlier
