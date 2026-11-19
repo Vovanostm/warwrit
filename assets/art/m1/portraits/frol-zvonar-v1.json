@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "art.m1.portrait.frol-zvonar",
+  "path": "assets/art/m1/portraits/frol-zvonar-v1.png",
+  "generatedAt": "2026-11-15",
+  "tool": "image_gen built-in",
+  "prompt": "Create one square 1024x1024 head-and-shoulders dialogue portrait for Warwrit. Serious grounded low fantasy in the project's selected restrained graphic-novel direction. Confident irregular dark ink contours around major forms, broad matte flat colour washes, coherent shadow masses and calm secondary surfaces. Selective interior strokes, readable warm skin, desaturated slate/soot/umber with restrained ochre. Opaque quiet charcoal-grey backdrop, soft overcast light from upper left. Entire head and crown within the canvas, generous top and side margins. Distinct realistic human face, legible at 120px. Practical worn linen, wool, leather and plain iron as appropriate to the subject. One single portrait, no text, lettering, heraldry, watermark, frame, scenery, collage or other people. Avoid glamour, photorealistic skin microtexture, smooth CGI and cartoon exaggeration. Facial features and noncanonical ages below are production interpretations, not new story facts. Frol Zvonar, elderly keeper at Tikhaya Gat who buried the dead after the battle. Around seventy, thin angular face, sunken cheeks, long nose, sparse white hair and short white beard. Worn slate-grey wool outer garment over rough linen, plain dark collar. Listening with steady tired eyes, looking slightly left. Stooped shoulders but a clear readable gaze, an ordinary old man.",
+  "transparentBackground": false,
+  "actualDimensions": {
+    "width": 1254,
+    "height": 1254
+  },
+  "style": "graphic-novel",
+  "references": [
+    "assets/art/styles/references/graphic-novel/character.png",
+    "assets/art/m1/style/unit-c-ink.png",
+    "assets/art/m1/places/severny-dvor.png"
+  ],
+  "adaptation": "Adapted the selected reference contour hierarchy, muted flat washes and practical costume materials to a distinct dialogue portrait. Facial features and unstated ages are production interpretations. Senka remains sixteen as authored.",
+  "canonicalSource": "docs/content/world/characters.csv",
+  "status": "LOCAL production candidate, owner visual acceptance pending"
+}

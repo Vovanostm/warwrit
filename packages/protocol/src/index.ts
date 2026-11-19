@@ -21,6 +21,7 @@ export function envelope<Data>(data: Data): ApiEnvelope<Data> {
 
 export type {
   CompanyOpeningOptionsResponseDto,
+  CompanyCourseResponseDto,
   LocalRecruitOfferDto,
   LocalRecruitOffersResponseDto,
   CompanyCommandAcceptedDto,
@@ -101,3 +102,4 @@ export type {
   EquipmentSaleRequestDto,
   EquipmentSaleResponseDto,
 } from './equipment-market.js';
+export type { DeceasedWageQuoteDto } from './deceased-wages.js';

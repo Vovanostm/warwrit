@@ -250,6 +250,7 @@ export const ORDINARY_PLAYER_COMPANY_COMMAND_TYPES = [
   'SetAssignment',
   'RequestDeparture',
   'PayClaims',
+  'PayDeceasedWages',
   'GrantFarewell',
   'TransferFunds',
   'BeginFieldCamp',
@@ -287,6 +288,8 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly mode: 'DEFAULT' | 'TARGETED';
     readonly payeeId?: string;
   };
+  /** Settle a known deceased member's earned wages to the accepted local external sink. */
+  readonly PayDeceasedWages: { readonly characterId: string };
   readonly Recruit: { readonly offerId: string; readonly offerRevision: string };
   readonly JoinFieldParty: { readonly characterId: string };
   readonly BuySupplies: {
@@ -332,6 +335,14 @@ export interface OrdinaryPlayerCompanyPayloads {
     readonly characterId: string;
     readonly assignment: 'FIELD' | 'RECOVERY';
   };
+  /** Start the one currently offered local course; the server supplies all teaching terms. */
+  readonly StartLearning: {
+    readonly courseId: string;
+    readonly characterId: string;
+    readonly resourceIds: readonly string[];
+  };
+  /** Stop the caller's active course; settlement uses server-observed elapsed time. */
+  readonly StopLearning: { readonly taskId: string };
 }
 
 export interface LocalRecruitOfferDto {
@@ -351,6 +362,31 @@ export interface LocalRecruitOfferDto {
 
 export interface LocalRecruitOffersResponseDto {
   readonly offers: readonly LocalRecruitOfferDto[];
+}
+
+export interface CompanyCourseResponseDto {
+  readonly course: {
+    readonly courseId: string;
+    readonly providerId: string;
+    readonly skillId: string;
+    readonly durationTicks: string;
+    readonly costQPerDay: string;
+    readonly status: 'AVAILABLE' | 'IN_PROGRESS' | 'COMPLETE' | 'UNAVAILABLE';
+    readonly unavailableReason?:
+      'NOT_LOCAL' | 'NO_RESOURCE' | 'NO_ELIGIBLE_LEARNER' | 'OTHER_LEARNING';
+    readonly learners: readonly {
+      readonly characterId: string;
+      readonly currentLevel: number;
+      readonly resourceIds: readonly string[];
+    }[];
+    readonly progress?: {
+      readonly taskId: string;
+      readonly learnerId: string;
+      readonly acceptedTicks: string;
+      readonly remainingTicks: string;
+      readonly chargedQ: string;
+    };
+  };
 }
 
 export type EnabledOrdinaryPlayerCompanyCommandType = keyof OrdinaryPlayerCompanyPayloads;

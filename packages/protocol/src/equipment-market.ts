@@ -6,11 +6,13 @@ export interface EquipmentMarketItemDto {
   readonly currentCondition: number;
   readonly maximumCondition: number;
   readonly equipped: boolean;
+  readonly interruptsLearning: boolean;
   readonly canSell: boolean;
   readonly refusal: 'INSUFFICIENT_FUNDS' | null;
 }
 
 export interface EquipmentMarketDto {
+  readonly publicRevision: string;
   readonly siteId: string;
   readonly revision: string;
   readonly merchantCashQ: string;
