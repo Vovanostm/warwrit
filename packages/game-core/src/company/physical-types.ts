@@ -97,6 +97,8 @@ export interface PhysicalVitals {
   readonly staminaCarry: string;
   /** Explicit persistent morale; missing legacy data is unknown, never a default pool. */
   readonly morale?: number;
+  /** Eligible rest time below opening morale; missing legacy data means no prior carry. */
+  readonly moraleCarry?: string;
 }
 export interface ConditionInstance {
   readonly conditionId: string;

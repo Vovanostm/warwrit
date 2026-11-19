@@ -126,6 +126,11 @@ export function CompanyPanel(props: {
                   kind="stamina"
                 />
               )}
+              {body && body.currentMorale !== null && body.maximumMorale !== null && (
+                <p className="person-status">
+                  Мораль: {body.currentMorale}/{body.maximumMorale}
+                </p>
+              )}
               {body && body.conditions.length > 0 && (
                 <p className="person-conditions">
                   {body.conditions.map(conditionLabel).join(', ')}

@@ -1274,7 +1274,7 @@ function vitalsShapeForBinding(value: unknown): boolean {
         'currentStamina',
         'staminaCarry',
       ],
-      ['morale'],
+      ['morale', 'moraleCarry'],
     ) &&
     ['characterId', 'sourceId'].every((key) => isEntityId(value[key])) &&
     ['maximumHealth', 'currentHealth', 'maximumStamina', 'currentStamina'].every((key) =>
@@ -1282,7 +1282,9 @@ function vitalsShapeForBinding(value: unknown): boolean {
     ) &&
     isExactInteger(value['healthCarry']) &&
     isExactInteger(value['staminaCarry']) &&
-    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale']))
+    (!Object.hasOwn(value, 'morale') || Number.isSafeInteger(value['morale'])) &&
+    (!Object.hasOwn(value, 'moraleCarry') ||
+      (Object.hasOwn(value, 'morale') && isExactInteger(value['moraleCarry'])))
   );
 }
 function projectionShape(value: unknown): boolean {

@@ -1,4 +1,4 @@
-import { COMPANY_CATALOGUE, COMPANY_RULES } from '@warwrit/game-core';
+import { COMPANY_CATALOGUE, COMPANY_RULES, PHYSICAL_RULES } from '@warwrit/game-core';
 import type { CompanyCombatAggregateState } from '@warwrit/game-core';
 import type { CompanyHoldingsDto } from '@warwrit/protocol';
 import { projectPayroll } from './payroll-view.js';
@@ -85,6 +85,8 @@ export function projectCompanyHoldings(
       maximumHealth: vitals?.maximumHealth ?? null,
       currentStamina: vitals?.currentStamina ?? null,
       maximumStamina: vitals?.maximumStamina ?? null,
+      currentMorale: vitals?.morale ?? null,
+      maximumMorale: vitals?.morale === undefined ? null : PHYSICAL_RULES.maximumMorale,
       conditions: (physical?.knowledge.conditionSnapshots ?? [])
         .filter(
           (condition) => condition.characterId === characterId && condition.resolvedAt === null,
