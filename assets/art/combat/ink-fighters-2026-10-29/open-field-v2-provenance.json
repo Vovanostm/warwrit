@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-29",
+  "tool": "image_gen.imagegen",
+  "model": "not exposed by built-in tool",
+  "asset": "open-field-v2.png",
+  "prompt": "open-field-v2-prompt.txt",
+  "outputBasename": "exec-b5f427af-c31f-447e-a5b7-53135f986573.png",
+  "inputs": [
+    {
+      "path": "open-field-v1.png",
+      "role": "edit target; simplify dense gravel/grass"
+    },
+    {
+      "path": "../../styles/references/graphic-novel/field.png",
+      "role": "selected broad ink-and-wash style"
+    }
+  ],
+  "operation": "whole ground-only simplification; no geography or navigation change",
+  "critic": "REJECT in repeated integrated critique: ground rendering language1; retained as history, superseded locally by unaccepted v3 candidate"
+}

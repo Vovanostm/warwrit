@@ -85,6 +85,8 @@ export interface CompanySummaryDto {
   readonly characters: readonly {
     readonly characterId: string;
     readonly name: string;
+    /** Optional last-known identity field; absent on responses predating this observation. */
+    readonly sex?: string;
     readonly nicknameTextKey: string | null;
     readonly perkIds: readonly string[];
     readonly knownStatus: 'AVAILABLE' | 'IN_ENCOUNTER' | 'OUT_OF_CONTACT' | 'CAPTIVE' | 'DEAD';

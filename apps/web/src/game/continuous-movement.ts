@@ -12,7 +12,7 @@ const decimal = (v: unknown): v is string => typeof v === 'string' && /^(0|[1-9]
 function fractionDigits(t: { numerator: string; denominator: string }): boolean {
   return /^(0|[1-9]\d{0,18})$/.test(t.numerator) && /^[1-9]\d{0,18}$/.test(t.denominator);
 }
-function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto | undefined {
+export function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
   const v = value as WorldFreeMovementV2ResponseDto;
   const point = (p: WorldFreeMovementV2ResponseDto['point']) =>
@@ -38,15 +38,18 @@ function readContinuousMovement(value: unknown): WorldFreeMovementV2ResponseDto 
       (p.planVersion !== 2 && p.planVersion !== 3) ||
       (p.planVersion === 3 &&
         (p.navigationVersion !== 'polygon-v1' ||
-          p.mapEdition !== 'seroe-porechye-continuous-v5')) ||
+          !['seroe-porechye-continuous-v5', 'porechye-atlas-lab-v1'].includes(p.mapEdition))) ||
       (p.planVersion === 2 &&
-        (p.navigationVersion !== undefined || p.mapEdition === 'seroe-porechye-continuous-v5')) ||
+        (p.navigationVersion !== undefined ||
+          p.mapEdition === 'seroe-porechye-continuous-v5' ||
+          p.mapEdition === 'porechye-atlas-lab-v1')) ||
       ![
         'seroe-porechye-continuous-v1',
         'seroe-porechye-continuous-v2',
         'seroe-porechye-continuous-v3',
         'seroe-porechye-continuous-v4',
         'seroe-porechye-continuous-v5',
+        'porechye-atlas-lab-v1',
       ].includes(p.mapEdition) ||
       typeof p.planId !== 'string' ||
       typeof p.speedProfileId !== 'string' ||

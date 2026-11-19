@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-29",
+  "tool": "image_gen.imagegen",
+  "model": "not exposed by built-in tool",
+  "asset": "open-field-v1.png",
+  "prompt": "open-field-v1-prompt.txt",
+  "outputBasename": "exec-f76502e1-0858-43c7-8db9-7a901a18fdb6.png",
+  "inputs": [
+    {
+      "path": "../../styles/references/graphic-novel/field.png",
+      "role": "ink, wash and palette; horizon/fence not transferred"
+    },
+    {
+      "path": "../style-variants-2026-10-27/slate-ground-v2.png",
+      "role": "ground-only framing/projection"
+    },
+    {
+      "path": "../../m1/style/unit-c-ink.png",
+      "role": "historical material compatibility"
+    }
+  ],
+  "scope": "flat meadow/soil decoration only; existing tile heights, mud, fire, blocked cells remain server-owned",
+  "critic": "PENDING integrated scene"
+}

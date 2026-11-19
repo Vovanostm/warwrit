@@ -44,6 +44,7 @@ export function BattleView(props: BattleViewProps) {
     fullGrid,
     setFullGrid,
     sceneError,
+    sceneReady,
     hoveredTarget,
     initiativeHover,
     setInitiativePointer,
@@ -61,6 +62,7 @@ export function BattleView(props: BattleViewProps) {
       onAct,
       onRefusal,
       selectedSkillId,
+      showGroundOverlays: props.showGroundOverlays,
     },
     battleViewRef,
   );
@@ -97,10 +99,16 @@ export function BattleView(props: BattleViewProps) {
       <div className="battle-board-frame">
         <canvas
           ref={canvasRef}
-          className="battle-board-canvas"
+          className={`battle-board-canvas${sceneReady ? '' : ' battle-board-canvas--loading'}`}
+          aria-busy={!sceneReady}
           aria-label="Поле боя с выбором бойца или клетки"
           tabIndex={0}
         />
+        {!sceneReady && !sceneError && (
+          <p className="battle-scene-loading" role="status">
+            Подготовка поля боя…
+          </p>
+        )}
         {sceneError && (
           <p className="battle-scene-error" role="alert">
             {sceneError}

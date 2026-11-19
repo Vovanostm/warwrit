@@ -51,6 +51,14 @@ describe('authenticated company read (PostgreSQL)', () => {
         ...fixture,
         economy: {
           ...fixture.economy,
+          lifecycle: {
+            ...fixture.economy.lifecycle,
+            // A newer private identity must not replace the retained observation.
+            characters: fixture.economy.lifecycle.characters.map((character) => ({
+              ...character,
+              identity: { ...character.identity, sex: 'unobserved-canonical-value' },
+            })),
+          },
           finance: {
             ...fixture.economy.finance,
             claims: [
@@ -176,6 +184,9 @@ describe('authenticated company read (PostgreSQL)', () => {
             characters: view.characters.map((character) => ({
               characterId: character.characterId,
               name: character.name,
+              sex: lifecycle.knowledge.characters.find(
+                (observation) => observation.identity.characterId === character.characterId,
+              )!.identity.sex,
               nicknameTextKey: character.nicknameTextKey,
               perkIds: character.perkIds,
               knownStatus: character.knownStatus,

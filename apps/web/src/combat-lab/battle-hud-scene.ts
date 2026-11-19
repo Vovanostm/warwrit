@@ -13,11 +13,13 @@ export function useBattleScene(
     onAct,
     onRefusal,
     selectedSkillId = null,
+    showGroundOverlays = true,
   }: Pick<BattleViewProps, 'selectedUnitId' | 'selectedHex' | 'onSelectUnit' | 'onSelectHex'> & {
     view: BattlePresentationView;
     onAct: BattleViewProps['onAct'];
     onRefusal: BattleViewProps['onRefusal'];
     selectedSkillId: BattleViewProps['selectedSkillId'];
+    showGroundOverlays: BattleViewProps['showGroundOverlays'];
   },
   battleViewRef: RefObject<HTMLElement | null>,
 ) {
@@ -27,6 +29,8 @@ export function useBattleScene(
   const pendingOverview = useRef(false);
   const [tooltipInput, setTooltipInput] = useState<'pointer' | 'keyboard'>('pointer');
   const [sceneError, setSceneError] = useState('');
+  const [readySceneKey, setReadySceneKey] = useState<string | null>(null);
+  const sceneMountKey = `${normalizedView.sceneKey}:${showGroundOverlays}`;
   const [night, setNight] = useState(false);
   const [fullGrid, setFullGrid] = useState(false);
   const {
@@ -79,6 +83,7 @@ export function useBattleScene(
       },
       night,
       abort.signal,
+      showGroundOverlays,
     )
       .then((scene) =>
         receiveScene(scene, abort.signal, (readyScene) => {
@@ -98,6 +103,7 @@ export function useBattleScene(
           if (pendingFocus.current) readyScene.focusUnit(pendingFocus.current);
           pendingFocus.current = null;
           setSceneError('');
+          setReadySceneKey(sceneMountKey);
         }),
       )
       .catch(() => {
@@ -111,7 +117,7 @@ export function useBattleScene(
       pendingFocus.current = null;
       pendingOverview.current = false;
     };
-  }, [normalizedView.sceneKey]);
+  }, [normalizedView.sceneKey, showGroundOverlays]);
   useEffect(() => {
     sceneRef.current?.update(
       normalizedView,
@@ -143,6 +149,7 @@ export function useBattleScene(
     fullGrid,
     setFullGrid,
     sceneError,
+    sceneReady: readySceneKey === sceneMountKey,
     hoveredTarget,
     initiativeHover,
     setInitiativePointer,

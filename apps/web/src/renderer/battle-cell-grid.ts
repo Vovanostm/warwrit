@@ -193,14 +193,8 @@ export function createBattleCellGrid(
   const fills = new Map<string, Mesh>();
   const hatches = new Map<string, Mesh>();
   const edges = new Map<string, { cells: string[]; start: Vector3; end: Vector3 }>();
-  const neighbours = [
-    [0, 1],
-    [-1, 1],
-    [-1, 0],
-    [0, -1],
-    [1, -1],
-    [1, 0],
-  ] as const;
+  const pointKey = (point: Vector3) =>
+    [point.x, point.y, point.z].map((value) => Math.round(value * 1e6)).join(',');
   for (const tile of tiles) {
     const cellKey = key(tile);
     const surface = terrain.get(cellKey)!;
@@ -212,9 +206,10 @@ export function createBattleCellGrid(
     fills.set(cellKey, fill);
     hatches.set(cellKey, createMovementHatch(scene, cellKey, surface, fill));
     for (let side = 0; side < 6; side++) {
-      const [dq, dr] = neighbours[side]!;
-      const neighbourKey = key({ q: tile.q + dq, r: tile.r + dr });
-      const edgeKey = [cellKey, neighbourKey].sort().join('|');
+      const start = surface.corners[side]!.add(new Vector3(0, 0.045, 0));
+      const end = surface.corners[(side + 1) % 6]!.add(new Vector3(0, 0.045, 0));
+      // Same-level neighbors share one line; a height change has two real top edges.
+      const edgeKey = [pointKey(start), pointKey(end)].sort().join('|');
       const existing = edges.get(edgeKey);
       if (existing) {
         existing.cells.push(cellKey);
@@ -222,28 +217,33 @@ export function createBattleCellGrid(
       }
       edges.set(edgeKey, {
         cells: [cellKey],
-        start: surface.corners[side]!.add(new Vector3(0, 0.045, 0)),
-        end: surface.corners[(side + 1) % 6]!.add(new Vector3(0, 0.045, 0)),
+        start,
+        end,
       });
     }
   }
   const edgeList = [...edges.values()];
-  const positions: number[] = [];
-  const indices: number[] = [];
-  for (const edge of edgeList) {
-    const direction = edge.end.subtract(edge.start);
-    const offset = new Vector3(-direction.z, 0, direction.x).normalize().scale(0.014);
-    const first = positions.length / 3;
-    for (const point of [
-      edge.start.add(offset),
-      edge.end.add(offset),
-      edge.end.subtract(offset),
-      edge.start.subtract(offset),
-    ]) {
-      positions.push(point.x, point.y, point.z);
+  const indices = edgeList.flatMap((_, index) => {
+    const first = index * 4;
+    return [first, first + 1, first + 2, first, first + 2, first + 3];
+  });
+  const borderPositions = (halfWidth: number) => {
+    const positions: number[] = [];
+    for (const edge of edgeList) {
+      const direction = edge.end.subtract(edge.start);
+      const offset = new Vector3(-direction.z, 0, direction.x).normalize().scale(halfWidth);
+      for (const point of [
+        edge.start.add(offset),
+        edge.end.add(offset),
+        edge.end.subtract(offset),
+        edge.start.subtract(offset),
+      ]) {
+        positions.push(point.x, point.y, point.z);
+      }
     }
-    indices.push(first, first + 1, first + 2, first, first + 2, first + 3);
-  }
+    return positions;
+  };
+  const positions = borderPositions(0.014);
   const borders = new Mesh('tactical-grid', scene);
   const data = new VertexData();
   data.positions = positions;
@@ -263,6 +263,18 @@ export function createBattleCellGrid(
   material.disableDepthWrite = true;
   material.transparencyMode = StandardMaterial.MATERIAL_ALPHABLEND;
   borders.material = material;
+  let gridHalfWidth = 0.014;
+  scene.onBeforeRenderObservable.add(() => {
+    const camera = scene.activeCamera;
+    const engine = scene.getEngine();
+    const heightCss = engine.getRenderHeight() * engine.getHardwareScalingLevel();
+    const orthoTop = camera?.orthoTop;
+    if (!orthoTop || heightCss <= 0) return;
+    const nextHalfWidth = (1.5 * orthoTop) / heightCss;
+    if (Math.abs(nextHalfWidth - gridHalfWidth) < 0.0001) return;
+    gridHalfWidth = nextHalfWidth;
+    borders.updateVerticesData(VertexBuffer.PositionKind, borderPositions(gridHalfWidth));
+  });
 
   // The clipped strips still own terrain/depth. Shade fine broken ink inside them:
   // derivatives cap close strokes in screen pixels without fading overview marks.
@@ -281,6 +293,7 @@ export function createBattleCellGrid(
       fragmentSource: `#extension GL_OES_standard_derivatives : enable
         precision highp float;
         varying vec2 ground;
+        uniform float hatchOpacity;
         void main() {
           float level = (ground.x + ground.y) / ${hatchPitch};
           float stroke = floor(level + 0.5);
@@ -294,39 +307,51 @@ export function createBattleCellGrid(
             min(0.034, pixel * 1.1) + pixel * 0.5, distance);
           float dash = fract(along / 0.9 + stroke * 0.37);
           float ink = 1.0 - smoothstep(0.68, 0.78, dash);
-          gl_FragColor = vec4(vec3(mix(0.08, 0.62, core)), support * ink * 0.85);
+          gl_FragColor = vec4(vec3(mix(0.08, 0.48, core)), support * ink * hatchOpacity);
         }`,
     },
-    { attributes: ['position'], uniforms: ['worldViewProjection'], needAlphaBlending: true },
+    {
+      attributes: ['position'],
+      uniforms: ['worldViewProjection', 'hatchOpacity'],
+      needAlphaBlending: true,
+    },
   );
+  hatchMaterial.setFloat('hatchOpacity', 0.45);
   hatchMaterial.disableDepthWrite = true;
   hatchMaterial.backFaceCulling = false;
   for (const hatch of hatches.values()) hatch.material = hatchMaterial;
 
+  let night = false;
+  let currentStyles: ReadonlyMap<string, BattleCellStyle> = new Map();
+  const paint = (styles: ReadonlyMap<string, BattleCellStyle>) => {
+    currentStyles = styles;
+    for (const [cellKey, fill] of fills) {
+      const style = styles.get(cellKey);
+      fill.material = style?.fill ?? null;
+      fill.setEnabled(style?.fill != null);
+      hatches.get(cellKey)?.setEnabled(style?.hatch === true);
+    }
+    const colours: number[] = [];
+    for (const edge of edgeList) {
+      const style = edge.cells
+        .map((cell) => styles.get(cell))
+        .filter((value): value is BattleCellStyle => value !== undefined && value.border !== null)
+        .sort((a, b) => b.priority - a.priority)[0];
+      const base = style?.border ?? new Color3(0.28, 0.29, 0.3);
+      const alpha = style?.border ? 1 : night ? 0.28 : 0.22;
+      for (let vertex = 0; vertex < 4; vertex++)
+        colours.push(base.r, base.g, base.b, alpha);
+    }
+    borders.updateVerticesData(VertexBuffer.ColorKind, colours);
+  };
+
   return {
-    paint(styles: ReadonlyMap<string, BattleCellStyle>) {
-      for (const [cellKey, fill] of fills) {
-        const style = styles.get(cellKey);
-        fill.material = style?.fill ?? null;
-        fill.setEnabled(style?.fill != null);
-        hatches.get(cellKey)?.setEnabled(style?.hatch === true);
-      }
-      const colours: number[] = [];
-      for (const edge of edgeList) {
-        const style = edge.cells
-          .map((cell) => styles.get(cell))
-          .filter((value): value is BattleCellStyle => value !== undefined && value.border !== null)
-          .sort((a, b) => b.priority - a.priority)[0];
-        for (let vertex = 0; vertex < 4; vertex++) {
-          colours.push(
-            style?.border?.r ?? 0,
-            style?.border?.g ?? 0,
-            style?.border?.b ?? 0,
-            style?.border ? 1 : 0,
-          );
-        }
-      }
-      borders.updateVerticesData(VertexBuffer.ColorKind, colours);
+    setNight(isNight: boolean) {
+      night = isNight;
+      material.alpha = night ? 0.5 : 0.8;
+      hatchMaterial.setFloat('hatchOpacity', night ? 0.24 : 0.45);
+      paint(currentStyles);
     },
+    paint,
   };
 }

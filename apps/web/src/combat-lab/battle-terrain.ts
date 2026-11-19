@@ -21,6 +21,7 @@ import cobbleDetail from '../../../../assets/art/combat/readable-terrain-2026-10
 import dirt from '../../../../assets/art/combat/readable-terrain-2026-10-16/ink-yard-earth.png';
 import rubbleUrl from '../../../../assets/art/combat/readable-terrain-2026-10-16/yard-fringe.png';
 import {
+  createBattleSideSurface,
   createBattleSurface,
   createBattleTerrain as createTerrainMap,
   type BattleTerrainCell,
@@ -36,9 +37,12 @@ type GroundComposition = {
   readonly texture: Texture;
   readonly center: Vector2;
   readonly size: Vector2;
+  /** Orthographic target in world X/Z; used for image-plane ground registration. */
   readonly reference: Vector2;
   readonly crop: Vector4;
   readonly amount: number;
+  readonly paintedGroundStrength?: number;
+  readonly paintedPatchWorldSize?: number;
   readonly elevation?: number | undefined;
 };
 
@@ -64,14 +68,13 @@ function groundMaterial(
         void main(){ worldPoint=(world*vec4(position,1.0)).xyz; worldNormal=(world*vec4(normal,0.0)).xyz; cellPoint=position.xz; reliefStrength=relief; gl_Position=worldViewProjection*vec4(position,1.0); }`,
       fragmentSource: `precision highp float;
         varying vec3 worldPoint,worldNormal; varying vec2 cellPoint; varying float reliefStrength; uniform sampler2D terrainMap,earthMap,detailMap,siteMap;
-        uniform vec3 tint,lighting,earthTint,cameraEye; uniform float detailScale,blendSurface,siteAmount;
-        uniform vec2 siteCenter,siteSize,siteReference; uniform vec4 siteCrop;
+        uniform vec3 tint,lighting,earthTint; uniform float detailScale,blendSurface,siteAmount,sitePaintStrength,sitePatchSize;
+        uniform vec2 siteCenter,siteSize,siteTarget; uniform vec4 siteCrop;
         ${naturalTextureShader}
         ${inkEarthShader}
         void main(){
           // Real earth carries its material up the bank; only the painted apron projects onto y=0.
-          vec3 ray=worldPoint-cameraEye;
-          vec2 projectedGround=(cameraEye+ray*(-cameraEye.y/min(ray.y,-0.001))).xz;
+          vec2 projectedGround=vec2(worldPoint.x,worldPoint.z+worldPoint.y/${Math.tan(CAMERA_ELEVATION)});
           vec2 groundUv=mix(projectedGround,worldPoint.xz,reliefStrength)/${GROUND_TEXTURE_WORLD_SIZE};
           vec2 worldUv=groundUv*detailScale;
           // Two independent world scales break repeated motifs without stretching ink marks.
@@ -81,17 +84,21 @@ function groundMaterial(
           vec2 point=abs(cellPoint);
           float edge=max(point.x,point.x*0.5+point.y*0.8660254)/${BATTLE_LAYOUT.spacing / 2};
           float coverage=(1.0-smoothstep(0.60,1.05,edge+(landNoise(groundUv*9.0)-0.5)*0.28))*(1.0-smoothstep(0.95,1.0,edge))*blendSurface;
-          float imageScale=siteReference.y/max(dot(ray,vec3(0.0,-${Math.sin(CAMERA_ELEVATION)},${Math.cos(CAMERA_ELEVATION)})),0.001);
-          vec2 imagePoint=vec2(siteReference.x+ray.x*imageScale,
-            dot(ray,vec3(0.0,${Math.cos(CAMERA_ELEVATION)},${Math.sin(CAMERA_ELEVATION)}))*imageScale);
+          vec2 imagePoint=vec2(worldPoint.x,
+            worldPoint.y*${Math.cos(CAMERA_ELEVATION)}+(worldPoint.z-siteTarget.y)*${Math.sin(CAMERA_ELEVATION)});
           vec2 siteUv=(imagePoint-siteCenter)/siteSize+0.5;
           float siteEdge=min(min(siteUv.x,1.0-siteUv.x),min(siteUv.y,1.0-siteUv.y));
           float siteCoverage=smoothstep(0.0,0.14,siteEdge+(landNoise(groundUv*0.8)-0.5)*0.04)*smoothstep(0.0,0.03,siteEdge);
           siteUv=mix(siteCrop.xy,siteCrop.zw,clamp(siteUv,0.0,1.0));
           // Authored cool stone/warm soil masses choose local materials, rather than stretching painted objects.
           vec3 siteSample=textureLod(siteMap,siteUv,3.0).rgb;
-          vec3 siteColor=linearizeRGB(siteSample);
-          float siteWeight=siteAmount*siteCoverage;
+          // Field tufts are a fixed-size ground material, not objects stretched across the board.
+          // Keep their baked upper-left lighting; only the older soil textures rotate patches.
+          bool tiledSite=sitePatchSize>0.0;
+          vec3 siteColor=tiledSite
+            ? naturalTile(siteMap,groundUv*${GROUND_TEXTURE_WORLD_SIZE}/max(sitePatchSize,0.001),0.0)
+            : linearizeRGB(siteSample);
+          float siteWeight=siteAmount*(tiledSite?1.0:siteCoverage);
           float pavingMass=landNoise(groundUv*0.7+vec2(4.2,17.5));
           float authoredStone=smoothstep(0.72,0.88,siteSample.g/max(siteSample.r,0.01));
           float detailWeight=mix(smoothstep(0.58,0.8,pavingMass)*0.75,
@@ -100,11 +107,11 @@ function groundMaterial(
           float siteLuma=max(dot(siteColor,vec3(0.2126,0.7152,0.0722)),0.01);
           vec3 wash=mix(vec3(1.0),siteColor/siteLuma,siteWeight*0.08);
           float tone=mix(1.0,clamp(siteLuma/0.11,0.75,1.25),siteWeight*0.5);
-          vec3 baseGround=earth*wash*tone*earthTint;
+          vec3 baseGround=mix(earth*wash*tone*earthTint,siteColor*earthTint,siteWeight*sitePaintStrength);
           color=mix(baseGround,color*tint,coverage);
           // The finite field carries its shared-corner relief. Keep the camera-facing apron at its flat base value.
           vec3 surfaceNormal=normalize(worldNormal);
-          surfaceNormal*=sign(surfaceNormal.y);
+          if(abs(surfaceNormal.y)>0.01) surfaceNormal*=sign(surfaceNormal.y);
           vec3 upperLeftLight=normalize(vec3(-0.46,0.82,0.34));
           float slopeWeight=reliefStrength;
           float flatLight=dot(vec3(0.0,1.0,0.0),upperLeftLight);
@@ -126,7 +133,6 @@ function groundMaterial(
       uniforms: [
         'worldViewProjection',
         'world',
-        'cameraEye',
         'tint',
         'lighting',
         'detailScale',
@@ -134,9 +140,11 @@ function groundMaterial(
         'blendSurface',
         'siteCenter',
         'siteSize',
-        'siteReference',
+        'siteTarget',
         'siteCrop',
         'siteAmount',
+        'sitePaintStrength',
+        'sitePatchSize',
       ],
       samplers: ['terrainMap', 'earthMap', 'detailMap', 'siteMap'],
     },
@@ -147,9 +155,11 @@ function groundMaterial(
   result.setTexture('siteMap', composition.texture);
   result.setVector2('siteCenter', composition.center);
   result.setVector2('siteSize', composition.size);
-  result.setVector2('siteReference', composition.reference);
+  result.setVector2('siteTarget', composition.reference);
   result.setVector4('siteCrop', composition.crop);
   result.setFloat('siteAmount', composition.amount);
+  result.setFloat('sitePaintStrength', composition.paintedGroundStrength ?? 0.8);
+  result.setFloat('sitePatchSize', composition.paintedPatchWorldSize ?? 0);
   result.setFloat('blendSurface', surface === 'plain' ? 0 : 1);
   result.setColor3('tint', palette.day);
   result.setColor3('lighting', Color3.White());
@@ -220,6 +230,7 @@ export function mountBattleTerrain(
   readonly apron: Mesh;
   readonly terrainByHex: ReadonlyMap<string, BattleTerrainCell>;
   setNight(night: boolean): void;
+  setCompositionFrame(center: Vector2, size: Vector2): void;
 } {
   const CAMERA_ELEVATION = composition?.elevation ?? DEFAULT_ELEVATION;
   const terrainByHex = createTerrainMap(tiles, BATTLE_LAYOUT);
@@ -279,10 +290,15 @@ export function mountBattleTerrain(
       site,
     ),
   };
-  scene.onBeforeCameraRenderObservable.add((camera) => {
-    for (const material of Object.values(groundMaterials))
-      material.setVector3('cameraEye', camera.position);
-  });
+  const exposedGroundMaterial = groundMaterial(
+    'battle-ground:exposed-earth',
+    dirtTexture,
+    palettes.plain,
+    'plain',
+    scene,
+    earthTextures,
+    { ...site, texture: dirtTexture, amount: 0, paintedGroundStrength: 0, paintedPatchWorldSize: 0 },
+  );
   const centres = tiles.map(battleHexToWorld);
   const minX = Math.min(0, ...centres.map(({ x }) => x)) - BATTLE_HEX_RADIUS;
   const maxX = Math.max(0, ...centres.map(({ x }) => x)) + BATTLE_HEX_RADIUS;
@@ -335,6 +351,13 @@ export function mountBattleTerrain(
     ground.isPickable = true;
     ground.renderingGroupId = 0;
     ground.metadata = { combatHex: { q: tile.q, r: tile.r } };
+    for (const side of cell.exposedSides) {
+      const face = createBattleSideSurface(`ground-side:${tileKey}:${side.side}`, side, scene);
+      face.setVerticesData('relief', new Float32Array(face.getTotalVertices()).fill(1), false, 1);
+      face.material = exposedGroundMaterial;
+      face.renderingGroupId = 0;
+      face.metadata = { ...ground.metadata, combatLowerHex: side.lowerHex };
+    }
 
     if (tile.blocked) {
       const rubbleWidth = 3;
@@ -413,9 +436,22 @@ export function mountBattleTerrain(
       groundMaterials[surface].setColor3('earthTint', palettes.plain[phase]);
       groundMaterials[surface].setColor3('lighting', light.terrain);
     }
+    exposedGroundMaterial.setColor3('tint', palettes.plain[phase]);
+    exposedGroundMaterial.setColor3('earthTint', palettes.plain[phase]);
+    exposedGroundMaterial.setColor3('lighting', light.terrain);
     rubbleMaterial.emissiveColor = light.rubble;
     for (const material of emberMaterials) material.emissiveColor = light.embers;
   };
   setNight(initialNight);
-  return { apron, terrainByHex, setNight };
+  return {
+    apron,
+    terrainByHex,
+    setNight,
+    setCompositionFrame(center: Vector2, size: Vector2) {
+      for (const material of [...Object.values(groundMaterials), exposedGroundMaterial]) {
+        material.setVector2('siteCenter', center);
+        material.setVector2('siteSize', size);
+      }
+    },
+  };
 }

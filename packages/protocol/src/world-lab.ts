@@ -1,3 +1,4 @@
+import type { WorldLabCartographyDto } from './world-cartography.js';
 import type { EncounterRoomTicketDto } from './encounter.js';
 import type { WorldFreeMovementV2ResponseDto, WorldPointMicroFpDto } from './world.js';
 
@@ -37,7 +38,8 @@ export interface WorldLabPursuitRequestDto {
 }
 
 export interface WorldLabStateDto {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
+  readonly cartography: WorldLabCartographyDto;
   readonly worldId: string;
   readonly mapEdition: string;
   readonly sequence: string;

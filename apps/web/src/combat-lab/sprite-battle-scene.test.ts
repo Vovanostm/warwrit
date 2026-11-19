@@ -44,9 +44,14 @@ it('initially shows every standing ally and each nearest standing threat, exclud
   expect(initialFrameUnits({ ...view, units: [] } as never)).toEqual([]);
 });
 
-it.each(['W01', 'B002', 'B053'])(
+it.each([
+  ['W01', 1.4],
+  ['B001', 0.73],
+  ['B002', 1.62],
+  ['B053', 1.62],
+] as const)(
   'contains all padded %s corners near/far and on raised ground',
-  (profileId) => {
+  (profileId, bodyHeight) => {
     for (const position of [
       { q: 0, r: 0 },
       { q: 14, r: 10 },
@@ -54,13 +59,14 @@ it.each(['W01', 'B002', 'B053'])(
       for (const groundY of [0, 0.2, 0.4]) {
         const unit = { id: profileId, profileId, position } as never;
         const art = spriteForUnit(unit);
-        const scale = ((profileId === 'W01' ? 1.4 : 1.62) * 0.82) / art.bodyHeight;
+        const scale = (bodyHeight * 0.82) / art.bodyHeight;
         const foot = battleHexToWorld(position);
         const project = (point: { x: number; y: number; z: number }) =>
           projectCameraPoint(point, { targetX: 24, targetZ: 11, distance: 41.6 }, CAMERA_ELEVATION);
         const bounds = spriteFigureBounds(unit, groundY, project);
-        for (const x of [art.visibleBounds[0], art.visibleBounds[2]]) {
-          for (const y of [art.visibleBounds[1], art.visibleBounds[3], art.footY]) {
+        const [left, top, width, height] = art.visibleBounds;
+        for (const x of [left, left + width]) {
+          for (const y of [top, top + height, art.footY]) {
             const up = (art.footY - y) * scale;
             const point = project({
               x: foot.x + (x - art.footX) * scale,

@@ -18,6 +18,7 @@ export type BattlePresentationUnit = Omit<
 > & {
   readonly profileId?: string;
   readonly weaponId?: CombatLabUnit['weaponId'] | 'fists';
+  readonly sex?: string;
   readonly visualKind?: 'human' | 'creature' | 'unknown';
   readonly pools: ResourcePools;
   readonly initiative?: number;
@@ -88,12 +89,18 @@ export function isBattlePresentationView(
   return 'sceneKey' in view;
 }
 
-export function fromCombatLabView(view: CombatLabView): BattlePresentationView {
+export function fromCombatLabView(
+  view: CombatLabView,
+  sceneEnvironment: BattlePresentationView['sceneEnvironment'] = 'old-mill',
+): BattlePresentationView {
   return {
     ...view,
     sceneKey: `${view.sessionId}:${view.battleId}`,
-    label: view.map.name ?? view.battle?.map.name ?? 'Бой',
-    sceneEnvironment: 'old-mill',
+    label:
+      sceneEnvironment === 'open-field'
+        ? 'Открытое поле · проверка изображения'
+        : (view.map.name ?? view.battle?.map.name ?? 'Бой'),
+    sceneEnvironment,
     sourceNote: '15 × 11 гексов · без сохранения кампании',
     controlledUnitIds: view.units
       .filter((unit) => unit.sideId === view.controlledSideId)

@@ -2,7 +2,7 @@ import { sql } from 'kysely';
 import type { Kysely } from 'kysely';
 import type { DatabaseSchema } from '../db/database.js';
 import type { NavigationRegion } from '@warwrit/game-core';
-import { CONTINUOUS_WORLD_REGION } from '@warwrit/game-core';
+import { worldNavigationRegion } from './map-context.js';
 import { processContinuousMovementCandidate } from './continuous-movement.js';
 import { processWorldRouteCandidate } from './routes.js';
 
@@ -18,7 +18,7 @@ export function startWorldRouteWorker(
   worldId: string,
   onError: (error: unknown) => void,
   intervalMs = 1_000,
-  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+  region: NavigationRegion = worldNavigationRegion(worldId),
   now: () => Date = () => new Date(),
 ): () => Promise<void> {
   let stopped = false;

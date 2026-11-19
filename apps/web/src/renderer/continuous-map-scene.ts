@@ -21,6 +21,7 @@ import type {
   WorldSurroundingsDto,
 } from '@warwrit/protocol';
 import { acquireCanvasEngine, releaseCanvasEngine } from './canvas-engine.js';
+import { continuousMovementPositionAt } from './continuous-movement-display.js';
 import { mountThreeQuarterCamera } from './three-quarter-camera.js';
 import {
   MAP_ART,
@@ -145,18 +146,6 @@ function pickedTerrainPoint(hit: PickingInfo | null, canvasWidth: number, unitsP
     xFp: Math.round(hit.pickedPoint.x / unitsPerFp),
     zFp: Math.round(hit.pickedPoint.z / unitsPerFp),
   };
-}
-
-type PublicPlan = NonNullable<WorldFreeMovementV2ResponseDto['plan']>;
-function spanInterpolation(p: PublicPlan, span: PublicPlan['speedSpans'][number], t: number) {
-  const geometry = p.planVersion === 3 ? span.geometry : undefined;
-  if (!geometry) return { from: span.from, to: span.to, along: t };
-  const from = p.path[geometry.segmentIndex]!,
-    to = p.path[geometry.segmentIndex + 1]!;
-  const a = Number(geometry.fromT.numerator) / Number(geometry.fromT.denominator);
-  const b = Number(geometry.toT.numerator) / Number(geometry.toT.denominator);
-  const along = a + (b - a) * t;
-  return { from, to, along };
 }
 
 function createSiteMarker(
@@ -400,30 +389,11 @@ export function mountContinuousMapScene(
   const position = (now: number) => {
     if (!view) return null;
     if (!view.plan) return { point: view.point, spanIndex: -1 };
-    const p = view.plan,
-      elapsed = Math.max(0, (now - Number(p.startedAtMs)) * 1000);
-    const spanIndex = p.speedSpans.findIndex((s) => elapsed < Number(s.endOffsetUs));
-    const span = p.speedSpans[spanIndex];
-    if (!span) return { point: p.goal, spanIndex: p.speedSpans.length };
-    const t = Math.min(
-      1,
-      Math.max(
-        0,
-        (elapsed - Number(span.startOffsetUs)) /
-          (Number(span.endOffsetUs) - Number(span.startOffsetUs)),
-      ),
-    );
-    const { from, to, along } = spanInterpolation(p, span, t);
+    const elapsed = Math.max(0, (now - Number(view.plan.startedAtMs)) * 1000);
+    const spanIndex = view.plan.speedSpans.findIndex((span) => elapsed < Number(span.endOffsetUs));
     return {
-      spanIndex,
-      point: {
-        xMicroFp: String(
-          Number(from.xMicroFp) + (Number(to.xMicroFp) - Number(from.xMicroFp)) * along,
-        ),
-        zMicroFp: String(
-          Number(from.zMicroFp) + (Number(to.zMicroFp) - Number(from.zMicroFp)) * along,
-        ),
-      },
+      point: continuousMovementPositionAt(view, now) ?? view.plan.goal,
+      spanIndex: spanIndex < 0 ? view.plan.speedSpans.length : spanIndex,
     };
   };
   const render = () => {

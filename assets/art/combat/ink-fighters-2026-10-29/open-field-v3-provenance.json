@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-30",
+  "asset": "open-field-v3.png",
+  "status": "local_integrated_not_accepted",
+  "tool": "image_gen.imagegen",
+  "model": "not exposed by built-in tool",
+  "prompt": "open-field-v3-prompt.txt",
+  "operation": "new authored ground-only plate followed by rendering-technique correction; no geography or navigation change",
+  "requestedDimensions": [3072, 2048],
+  "iterations": [
+    {
+      "iteration": 1,
+      "operation": "new generation; no image arguments",
+      "exactPrompt": "Use case: stylized-concept.\nAsset type: one opaque, full-bleed, horizonless ground-only painting for Warwrit's existing tactical battle renderer. New independently authored plate, landscape 3:2, requested 3072x2048 pixels. This is a floor material composition, not a landscape view or a new location map.\n\nSubject and physical scale: a roughly thirty-to-forty-metre-wide patch of ordinary late-autumn open ground: subdued dry ochre grass, flattened straw-coloured stems and compacted umber soil. All traversable flat decoration. No fixed road or path. No new terrain feature that implies an obstacle or a game rule.\n\nCamera/registration: look down onto an uninterrupted ground plane at the same consistently oblique angle throughout. Ground fills every pixel; absolutely no sky, horizon, skyline, hills, distant landscape, visible board edge, perspective vanishing point or change in scale toward the top. The painting will be projected onto the already defined floor; do not bake a hexagonal board, tile grid, raised rim or diorama into it. Keep a common ground orientation and soft upper-left daylight.\n\nRendering technique: mature, restrained graphic-novel ink and flat matte wash. Confident irregular dark-brown/charcoal contours describe selected grass clumps and the broken edges where thin turf meets pressed earth. A small number of definite, angular hand-brushed shadow shapes make material boundaries legible. Broad washes stay calm and subordinate, with clean hard transitions where inked forms require them. Do not merely sharpen a soft watercolor wash: actually draw recognisable small tufts, short bent grass stems and irregular flattened turf islands. No smooth CGI or photorealistic material.\n\nTwo deliberate scales of detail: first, a few irregular calm ochre and cool umber ground masses, roughly one to three metres across, which read at a 1000-pixel entire-board view. Second, sparse groups of short crisp ink strokes and restrained hatching that describe small trampled grass tufts and compressed earth at close view, when human sprites appear about eighty pixels tall. Grass tufts are hand-sized or smaller in world scale, never shrubs or giant blades. Place selected linework through the middle as well as at the edges, so the centre is genuinely drawn but still easy to read behind people. Leave connected quiet patches between those groups. Avoid a uniformly blank centre, avoid outlines around every stem, and avoid evenly sprinkled pebbles, stipple or grain.\n\nPalette and hierarchy: desaturated ochre, faded straw, slate-tinted umber, soot brown and small restrained moss-olive accents. Moderate value range: neither bright yellow lawn nor black carpet. Ink is selective and crisp, strongest where a tuft meets earth; it must not become an all-over high-contrast noise field. The ground should belong to the same matte irregular hand-inked world as adult mercenary sprites, while the figures remain the main focal silhouettes. No vignette, fog, blur, depth of field or baked night filter.\n\nConstraints: one coherent fully opaque image, edge to edge. No people, animals, creatures, buildings, fences, trees, rocks, gravel field, water, puddles, holes, trenches, fire, smoke, blood, flowers, emblems or narrative props. No pronounced pair of wagon ruts, no long crossing trail or road. No text, letters, numbers, runes, symbols, labels, HUD, hexes, borders, collage, variants or watermark. No tile repetition or seams. Do not create new lore, geography, factions, gods, magic or historical evidence. Existing game overlays own actual mud, blocked cells, fire and heights.\n",
+      "output": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-1e93a70d-b432-4e40-9d5e-bae5f1dd2cf9.png",
+      "authorInspection": "Too much engraved/granular soil; new clump structures present, selected flat-wash style not yet met. Not selected for integration.",
+      "generationInputs": []
+    },
+    {
+      "iteration": 2,
+      "date": "2026-10-30",
+      "operation": "rendering-technique edit of new v3 candidate; actual selected field style pixels supplied",
+      "prompt": "open-field-v3-prompt.txt",
+      "output": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-7071be1f-4a2a-490c-a071-e59314eb777c.png",
+      "actualDimensions": [1536, 1024],
+      "authorInspection": "Selected candidate: discrete crisp grass-clump silhouettes and matte earth masses replace granular engraving. No sky/road/figures/text observed. Actual game-scale density, close sampling, day/night and readability remain unverified."
+    }
+  ],
+  "generationInputs": [
+    {
+      "path": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-1e93a70d-b432-4e40-9d5e-bae5f1dd2cf9.png",
+      "role": "new v3 candidate edit target; not v2"
+    },
+    {
+      "path": "../../styles/references/graphic-novel/field.png",
+      "role": "actual pixel input: selected rendering style only; no scene geometry copied"
+    }
+  ],
+  "inspectedContext": [
+    {
+      "path": "open-field-v2.png",
+      "role": "existing rejected material/scale context only; not a tool edit target"
+    },
+    {
+      "path": "../../styles/references/graphic-novel/character.png",
+      "role": "selected rendering family and focal hierarchy"
+    },
+    {
+      "path": "../../m1/style/unit-c-ink.png",
+      "role": "existing character material/proportions"
+    },
+    {
+      "path": "../../m1/places/bereznyak.png",
+      "role": "established inhabited-place material reference"
+    },
+    {
+      "path": "/Users/vovanostm/.codex/worktrees/game-combat-ink/warwrit/output/painted-combat-native-20261029/",
+      "role": "actual captures42/46/49/58 for real-scale inspection; not sent as scene edit targets"
+    }
+  ],
+  "canonicalLimits": "Generic traversable open ground, no new named location, road, obstacles or narrative facts. Existing authoritative overlays own heights/mud/fire/blocked cells.",
+  "integratedVisualCritique": "NOT_RUN",
+  "runtimeIntegration": "source URL wired; native/browser validation NOT_RUN",
+  "dayNightOverviewClose": "NOT_RUN",
+  "startedLocalDate": "2026-10-29",
+  "actualDimensions": [1536, 1024],
+  "png": {
+    "bitDepth": 8,
+    "colourType": 2,
+    "fileBytes": 3243164
+  },
+  "outputBasename": "exec-7071be1f-4a2a-490c-a071-e59314eb777c.png",
+  "outputSourcePath": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-7071be1f-4a2a-490c-a071-e59314eb777c.png",
+  "authorInspection": {
+    "status": "candidate_only",
+    "strengths": [
+      "Ground-only full bleed and 3:2 aspect retained",
+      "Sharper drawn tuft silhouettes and distinct contact masses",
+      "Soil simplified compared with first generated candidate"
+    ],
+    "remainingRisks": [
+      "Actual output1536x1024, below requested3072x2048",
+      "Clump density/scale behind current human sprites NOT_MEASURED",
+      "Night hierarchy and current-renderer close sampling NOT_RUN"
+    ]
+  }
+}

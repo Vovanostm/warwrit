@@ -1,3 +1,5 @@
+import { worldNavigationRegion, PAINTED_GAME_WORLD_ID } from './map-context.js';
+import { executePaintedMovement, registerPaintedCartographyRoutes } from './cartography.js';
 import {
   handleContinuousMovementRead,
   handleContinuousMovementPost,
@@ -55,6 +57,7 @@ import type {
   WorldTravelV2ResponseDto,
   WorldTravelRejectionDto,
   WorldTravelPreviewResponseDto,
+  WorldTravelPreviewRequestDto,
   WorldFreeMovementRequestDto,
   WorldFreeMovementResponseDto,
   WorldFreeMovementPreviewRequestDto,
@@ -126,9 +129,10 @@ function registerWorldFreeMovementRoutes(
   app: FastifyInstance,
   { database, worldId }: CompanyRoutesOptions,
 ): void {
+  const region = worldNavigationRegion(worldId);
   app.get('/world/free-movement', async (request, reply) => {
     if (!isRecord(request.query) || request.query['schemaVersion'] !== '1')
-      return handleContinuousMovementRead(request, reply, { database, worldId });
+      return handleContinuousMovementRead(request, reply, { database, worldId, region });
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
     const expectedCompanyId = readExpectedCompanyId(request.raw.rawHeaders);
@@ -272,7 +276,17 @@ function registerWorldFreeMovementRoutes(
 
   app.post('/world/free-movement', { bodyLimit: 2048 }, async (request, reply) => {
     if (isRecord(request.body) && request.body['schemaVersion'] === 2)
-      return handleContinuousMovementPost(request, reply, { database, worldId });
+      return handleContinuousMovementPost(request, reply, {
+        database,
+        worldId,
+        region,
+        ...(worldId === PAINTED_GAME_WORLD_ID
+          ? {
+              execute: (input, accountId, expectedCompanyId) =>
+                executePaintedMovement({ database, worldId }, accountId, expectedCompanyId, input),
+            }
+          : {}),
+      });
     const accountId = await resolveSessionAccount(request, database);
     if (accountId === undefined) return reply.code(401).send({ error: 'authentication required' });
     const input = parseFreeMovementRequest(request.body);
@@ -345,6 +359,24 @@ export function registerWorldRoutes(
   { database, worldId }: CompanyRoutesOptions,
 ): void {
   registerWorldSurroundingsRoute(app, { database, worldId });
+  if (worldId === PAINTED_GAME_WORLD_ID) {
+    registerPaintedCartographyRoutes(app, { database, worldId });
+    app.addHook('preHandler', async (request, reply) => {
+      const path = request.url.split('?')[0];
+      const oldFreeRead =
+        path === '/world/free-movement' &&
+        request.method === 'GET' &&
+        isRecord(request.query) &&
+        request.query['schemaVersion'] === '1';
+      const oldFreePost =
+        path === '/world/free-movement' &&
+        request.method === 'POST' &&
+        isRecord(request.body) &&
+        request.body['schemaVersion'] === 1;
+      if (path?.startsWith('/world/travel') || oldFreeRead || oldFreePost)
+        return reply.code(409).send({ code: 'MAP_EDITION_MISMATCH' });
+    });
+  }
 
   registerWorldFreeMovementRoutes(app, { database, worldId });
   app.post('/world/travel/preview', { bodyLimit: 2048 }, async (request, reply) => {
@@ -380,42 +412,18 @@ export function registerWorldRoutes(
         toTick: clock.tick,
       });
       if (!offerState) return undefined;
-      const region = requireRegion();
-      const matchedEdges = input.edgeIds.map((edgeId) =>
-        region.edges.filter((edge) => edge.edgeId === edgeId),
-      );
-      if (
-        matchedEdges.some((matches) => matches.length !== 1) ||
-        !isContinuousRoute(
-          matchedEdges.map((matches) => matches[0]!),
-          partyLocation.siteId,
-        )
-      )
-        return undefined;
-      const route = matchedEdges.map((matches) => matches[0]!);
-      const isDangerous = route.some((edge) => edge.danger === 'DANGEROUS');
-      const membership = isDangerous
-        ? await readDangerousRouteMembership(transaction, worldId, companyId)
-        : undefined;
-      if (isDangerous && !membership) return undefined;
-      try {
-        prepareOfferRouteDeparture({
-          state: offerState,
-          partyId: party.partyId,
-          edgeIds: input.edgeIds,
-          edges: route,
-          purpose: input.purpose,
-          atTick: clock.tick,
-          routeEpoch: routeRow?.route_epoch ?? '0',
-          ...(membership ? { contractMembership: membership } : {}),
-        });
-      } catch (error) {
-        if (
-          !(error instanceof RoutePreparationError) ||
-          error.code !== 'KNOWN_DANGEROUS_SUPPLY_SHORTAGE'
-        )
-          return undefined;
-      }
+      const route = await preparePreviewRoute({
+        transaction,
+        worldId,
+        companyId,
+        request: input,
+        state: offerState,
+        partyId: party.partyId,
+        fromSiteId: partyLocation.siteId,
+        atTick: clock.tick,
+        routeEpoch: routeRow?.route_epoch ?? '0',
+      });
+      if (!route) return undefined;
       const dueTick = (
         BigInt(clock.tick) +
         route.reduce((sum, edge) => sum + BigInt(edge.provisionalTravelTicks), 0n)
@@ -1775,6 +1783,56 @@ function listAvailableDepartures(
     }
   }
   return departures;
+}
+
+async function preparePreviewRoute(input: {
+  readonly transaction: Parameters<typeof prepareTrustedCompanyCommand>[0]['transaction'];
+  readonly worldId: string;
+  readonly companyId: string;
+  readonly request: WorldTravelPreviewRequestDto;
+  readonly state: CompanyCombatAggregateState;
+  readonly partyId: string;
+  readonly fromSiteId: string;
+  readonly atTick: string;
+  readonly routeEpoch: string;
+}): Promise<readonly WorldRegionEdge[] | undefined> {
+  const region = requireRegion();
+  const matchedEdges = input.request.edgeIds.map((edgeId) =>
+    region.edges.filter((edge) => edge.edgeId === edgeId),
+  );
+  if (
+    matchedEdges.some((matches) => matches.length !== 1) ||
+    !isContinuousRoute(
+      matchedEdges.map((matches) => matches[0]!),
+      input.fromSiteId,
+    )
+  )
+    return undefined;
+  const route = matchedEdges.map((matches) => matches[0]!);
+  const isDangerous = route.some((edge) => edge.danger === 'DANGEROUS');
+  const membership = isDangerous
+    ? await readDangerousRouteMembership(input.transaction, input.worldId, input.companyId)
+    : undefined;
+  if (isDangerous && !membership) return undefined;
+  try {
+    prepareOfferRouteDeparture({
+      state: input.state,
+      partyId: input.partyId,
+      edgeIds: input.request.edgeIds,
+      edges: route,
+      purpose: input.request.purpose,
+      atTick: input.atTick,
+      routeEpoch: input.routeEpoch,
+      ...(membership ? { contractMembership: membership } : {}),
+    });
+  } catch (error) {
+    if (
+      !(error instanceof RoutePreparationError) ||
+      error.code !== 'KNOWN_DANGEROUS_SUPPLY_SHORTAGE'
+    )
+      return undefined;
+  }
+  return route;
 }
 
 function prepareOfferRouteDeparture(input: {

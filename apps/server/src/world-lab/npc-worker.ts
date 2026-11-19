@@ -99,7 +99,12 @@ export function worldLabNpcObservation(
     kind: group.kind,
     name: state.name,
     point: location,
-    state: state.plan ? 'MOVING' : 'IDLE',
+    state:
+      state.plan &&
+      BigInt(nowMs) >= BigInt(state.plan.startedAtMs) &&
+      BigInt(nowMs) < BigInt(state.plan.arrivesAtMs)
+        ? 'MOVING'
+        : 'IDLE',
     observedAtMs: nowMs,
     movementEpoch: state.movementEpoch,
   };

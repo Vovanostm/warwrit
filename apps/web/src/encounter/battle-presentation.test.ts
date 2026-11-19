@@ -206,3 +206,16 @@ it('keeps lab-only provenance on lab views while persistent views use their own 
     'sourceNote',
   );
 });
+
+it('joins observed identity only to known own unit IDs without enriching other public units', () => {
+  const view = toEncounterBattlePresentation(projection, grant(), label, ['company.fists'], {
+    'company.fists': 'female',
+    'world.wolf.leader.01': 'private-foreign-value',
+    'not-in-projection': 'male',
+  });
+  expect(view.units[0]?.sex).toBe('female');
+  expect(view.units[1]).not.toHaveProperty('sex');
+  expect(toEncounterBattlePresentation(projection, grant(), label).units[0]).not.toHaveProperty(
+    'sex',
+  );
+});

@@ -1,3 +1,4 @@
+import { worldNavigationField } from './navigation-field.js';
 import { readDangerousRouteMembership } from '../contracts/repository.js';
 import { randomUUID } from 'node:crypto';
 import type { FastifyRequest, FastifyReply } from 'fastify';
@@ -11,7 +12,6 @@ import {
   PAINTED_ATLAS_REGION_VERSION,
   TRAVEL_RULES,
   WORLD_REGION_VERSION,
-  buildNavigationField,
   campaignTick,
   campaignTickAt,
   canonicalJson,
@@ -37,7 +37,6 @@ import type {
   CompanyCombatAggregateState,
   ContinuousCompanyExecution,
   FreeMovementExecution,
-  NavigationField,
   NavigationRegion,
   TrustedTransitSegment,
 } from '@warwrit/game-core';
@@ -92,18 +91,8 @@ interface StoredContinuousMovement {
   readonly status: 'MOVING' | 'STOPPED' | 'ARRIVED';
   readonly lastBoundaryMs?: string;
 }
-const field = buildNavigationField(CONTINUOUS_WORLD_REGION);
-const fieldCache = new WeakMap<NavigationRegion, NavigationField>([
-  [CONTINUOUS_WORLD_REGION, field],
-]);
-function navigationField(region: NavigationRegion): NavigationField {
-  let cached = fieldCache.get(region);
-  if (!cached) {
-    cached = buildNavigationField(region);
-    fieldCache.set(region, cached);
-  }
-  return cached;
-}
+// Retain legacy startup warmup instead of compiling the field inside the first command.
+worldNavigationField(CONTINUOUS_WORLD_REGION);
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value);
 const exact = (value: Record<string, unknown>, keys: readonly string[]) =>
@@ -453,7 +442,7 @@ function responseFor(
   commandId?: string,
   region: NavigationRegion = CONTINUOUS_WORLD_REGION,
 ): WorldFreeMovementV2ResponseDto {
-  const field = navigationField(region);
+  const field = worldNavigationField(region);
   const party = state.economy.lifecycle.parties[0];
   const moving = stored?.status === 'MOVING';
   const point = moving
@@ -761,6 +750,26 @@ export async function readContinuousMovementSnapshot(
   });
 }
 
+/** Capture another authorized company's route before sampling a shared observation clock. */
+export async function prepareContinuousMovementProjection(
+  database: Transaction<DatabaseSchema>,
+  worldId: string,
+  companyId: string,
+  region: NavigationRegion = CONTINUOUS_WORLD_REGION,
+) {
+  const state = await loadCompanyAggregate(database, worldId, companyId);
+  const party = state?.economy.lifecycle.parties[0];
+  if (!state || !party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
+  const row = await readPartyRoute(database, worldId, companyId, party.partyId);
+  const stored = readContinuous(row);
+  if (stored && stored.execution.plan.mapEdition !== region.mapEdition)
+    throw new MovementRejection('MAP_EDITION_MISMATCH');
+  return (clock: WorldClockReading) => ({
+    partyId: party.partyId,
+    movement: responseFor(state, stored, row?.route_epoch ?? '0', clock, undefined, region),
+  });
+}
+
 /** Server-only location projection for another already-authorized world observer. */
 export async function readContinuousMovementProjection(
   database: Kysely<DatabaseSchema>,
@@ -773,18 +782,14 @@ export async function readContinuousMovementProjection(
   readonly movement: WorldFreeMovementV2ResponseDto;
 }> {
   return movementTransaction(database, async (transaction) => {
-    const state = await loadCompanyAggregate(transaction, worldId, companyId);
-    const party = state?.economy.lifecycle.parties[0];
-    if (!state || !party) throw new MovementRejection('MOVEMENT_NOT_ALLOWED');
-    const row = await readPartyRoute(transaction, worldId, companyId, party.partyId);
+    const project = await prepareContinuousMovementProjection(
+      transaction,
+      worldId,
+      companyId,
+      region,
+    );
     const clock = await readWorldClock(transaction, worldId, movementNow(now));
-    const stored = readContinuous(row);
-    if (stored && stored.execution.plan.mapEdition !== region.mapEdition)
-      throw new MovementRejection('MAP_EDITION_MISMATCH');
-    return {
-      partyId: party.partyId,
-      movement: responseFor(state, stored, row?.route_epoch ?? '0', clock, undefined, region),
-    };
+    return project(clock);
   });
 }
 
@@ -947,7 +952,7 @@ export async function executeContinuousMovement(
           });
         return response;
       }
-      const field = navigationField(region);
+      const field = worldNavigationField(region);
       if (!isContinuousPointWalkable(field, goal)) throw new MovementRejection('TARGET_BLOCKED');
       const path = findTravelPath(
         field,

@@ -1,6 +1,7 @@
 import { WorldAmbience } from './WorldAmbience.js';
 import { MovementTerrain } from './MovementTerrain.js';
 import { ContinuousMapCanvas } from './ContinuousMapCanvas.js';
+import { PaintedMapCanvas } from './PaintedMapCanvas.js';
 import { useContinuousMovement } from './continuous-movement.js';
 import './game.css';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -63,18 +64,22 @@ export function GameShell(props: {
   readonly placeSlot: (context: ContractVisitProps) => ReactNode;
   readonly battleSlot: ReactNode;
 }) {
+  const surroundings = useSurroundings(
+    `${props.world.publicRevision}:${props.world.party?.routeEpoch ?? ''}:${props.world.party?.location ?? ''}`,
+  );
+  const cartography =
+    surroundings.status === 'ready' ? surroundings.reading.dto.map.cartography : undefined;
   const movement = useContinuousMovement(
     props.freeMovementScope,
     props.onRefreshWorld,
     props.world.party?.movementVersion !== 1 &&
       (props.world.schemaVersion === 1
         ? !props.world.route
-        : !props.world.execution || props.world.execution.phase === 'COMPLETE'),
+        : !props.world.execution || props.world.execution.phase === 'COMPLETE') &&
+      (Boolean(cartography) ||
+        (surroundings.status === 'ready' && Boolean(surroundings.reading.dto.map.continuous))),
   );
   const party = props.world.party;
-  const surroundings = useSurroundings(
-    `${props.world.publicRevision}:${party?.routeEpoch ?? ''}:${party?.location ?? ''}`,
-  );
   const now = useNow(1000);
   const soundPoint = useRef<{ xFp: number; zFp: number } | null>(null);
   const [tab, setTab] = useState<Tab>('travel');
@@ -135,6 +140,16 @@ export function GameShell(props: {
   }
   const reading = surroundings.reading;
   const map = reading.dto.map;
+  const paintedPlayable =
+    Boolean(cartography) &&
+    props.world.party?.movementVersion !== 1 &&
+    !legacyRoute &&
+    (!execution || execution.phase === 'COMPLETE');
+  const continuousPlayable =
+    Boolean(map.continuous) &&
+    props.world.party?.movementVersion !== 1 &&
+    !legacyRoute &&
+    (!execution || execution.phase === 'COMPLETE');
   const tick = estimatedTick(reading, now);
   const light = estimatedLight(reading, now);
   const msPerTick = Number(reading.dto.campaign.msPerTick);
@@ -288,10 +303,22 @@ export function GameShell(props: {
               onEquipment={() => setTab('company')}
             />
           )}
-          {map.continuous &&
-          props.world.party?.movementVersion !== 1 &&
-          !legacyRoute &&
-          (!execution || execution.phase === 'COMPLETE') ? (
+          {paintedPlayable ? (
+            <PaintedMapCanvas
+              key={`${props.company.companyId}:${cartography!.mapEdition}`}
+              companyId={props.company.companyId}
+              cartography={cartography!}
+              sites={map.sites}
+              current={movement.current}
+              clock={movement.clock.current}
+              night={light.phase === 'NIGHT'}
+              onPosition={(point) => {
+                soundPoint.current = point;
+              }}
+              onMove={movement.send}
+              onSelectSite={selectSite}
+            />
+          ) : continuousPlayable && map.continuous ? (
             <ContinuousMapCanvas
               region={map.continuous}
               sites={map.sites}
@@ -353,7 +380,7 @@ export function GameShell(props: {
             </>
           )}
           <p className="map-legend" hidden={Boolean(visiting)}>
-            {map.regionName} · ПКМ — идти · S — остановиться · зажать ЛКМ — двигать карту
+            {map.regionName} · ПКМ — идти · S или пробел — остановиться · зажать ЛКМ — двигать карту
           </p>
         </div>
 
@@ -370,10 +397,7 @@ export function GameShell(props: {
             </TabButton>
           </nav>
           <div hidden={tab !== 'travel'}>
-            {map.continuous &&
-            props.world.party?.movementVersion !== 1 &&
-            !legacyRoute &&
-            (!execution || execution.phase === 'COMPLETE') ? (
+            {paintedPlayable || (continuousPlayable && map.continuous) ? (
               <section className="panel travel-panel" aria-label="Путешествие">
                 <h2 className="panel-title">Путь</h2>
                 <p className="travel-status">
@@ -390,15 +414,17 @@ export function GameShell(props: {
                         ? 'Отряд остановился в местности.'
                         : 'Сверяем положение отряда…'}
                 </p>
-                <MovementTerrain
-                  current={movement.current}
-                  region={map.continuous}
-                  serverMs={
-                    movement.clock.current.serverMs +
-                    performance.now() -
-                    movement.clock.current.receivedAt
-                  }
-                />
+                {map.continuous && (
+                  <MovementTerrain
+                    current={movement.current}
+                    region={map.continuous}
+                    serverMs={
+                      movement.clock.current.serverMs +
+                      performance.now() -
+                      movement.clock.current.receivedAt
+                    }
+                  />
+                )}
                 {movement.current?.mode === 'MOVING' && (
                   <button
                     className="action"

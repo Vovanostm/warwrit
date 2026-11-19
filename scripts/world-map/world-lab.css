@@ -186,7 +186,31 @@ dd {
   display: flex;
   gap: 7px;
 }
+#map .unmapped-ground {
+  fill: #292d2a;
+}
 #map image {
+  pointer-events: none;
+}
+#unknown-paper {
+  image-rendering: auto;
+  opacity: 0.8;
+  filter: saturate(0.4) brightness(0.7);
+}
+#map-tiles image {
+  image-rendering: auto;
+}
+#knowledge-overlay,
+#terrain-reveal-mask-image {
+  image-rendering: auto;
+}
+#visible-frontier {
+  fill: none;
+  stroke: #c8b991;
+  stroke-width: 1.2;
+  stroke-opacity: 0.3;
+  stroke-linejoin: round;
+  filter: blur(1px);
   pointer-events: none;
 }
 #own-route {
@@ -214,8 +238,38 @@ dd {
 .observed:focus-visible {
   outline: none;
 }
-#map.night image {
-  filter: saturate(0.5) brightness(0.55);
+#map.night #map-tiles image,
+#map.night #knowledge-overlay {
+  filter: saturate(0.5) brightness(0.7);
+}
+.fog-legend {
+  display: grid;
+  gap: 6px;
+  font-size: 10px;
+  color: #b0b5aa;
+}
+.fog-legend span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.fog-legend i {
+  width: 12px;
+  height: 12px;
+  border: 1px solid #6c756a;
+  border-radius: 2px;
+}
+.legend-charted {
+  background: #b69652;
+}
+.legend-explored {
+  background: #59635e;
+}
+.legend-visible {
+  background: #d1d0b7;
+}
+.legend-unknown {
+  background: #292d2a;
 }
 .site-label {
   fill: #eee2bf;
@@ -284,6 +338,17 @@ body[data-connection='stale'] .observed {
 .site-marker:hover .site-disc {
   stroke: #f4e3bc;
   fill: #414638;
+}
+.site-marker[data-source='chart'] {
+  color: #d8bf83;
+}
+.site-marker.site-visited .site-disc {
+  fill: #4a513f;
+  stroke: #b8c08b;
+}
+.site-marker[data-coincident-own='true'] .site-disc,
+.site-marker[data-coincident-own='true'] .map-icon {
+  visibility: hidden;
 }
 .icon-credit a {
   font: inherit;
@@ -369,25 +434,17 @@ dialog h2 {
   cursor: crosshair;
 }
 
-/* Minor POIs recede on the atlas overview; settlements retain priority. */
-.map-overview .site-minor {
-  color: #c0b793;
-}
-.map-overview .site-minor .site-disc {
-  r: 10px;
-  fill: #272e29;
-  stroke: #8d8266;
-  stroke-width: 1px;
-}
-.map-overview .site-minor .map-icon {
-  transform: scale(0.76);
-}
-.map-overview .site-minor:hover .site-disc {
-  stroke: #eed9a8;
-}
 .site-leader {
   stroke: #b9aa82;
   stroke-width: 1px;
   opacity: 0.65;
+  pointer-events: none;
+}
+
+.group-leader {
+  stroke: #c4b58e;
+  stroke-width: 1px;
+  stroke-dasharray: 2 3;
+  opacity: 0.72;
   pointer-events: none;
 }

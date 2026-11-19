@@ -7,6 +7,7 @@ import {
   type CombatLabSkillId,
 } from '@warwrit/protocol';
 import { BattleView } from './BattleView.js';
+import { fromCombatLabView } from './battle-presentation.js';
 import { BattleEditor } from './BattleEditor.js';
 import { validateBattleDraft } from './editor-model.js';
 import {
@@ -737,7 +738,16 @@ export function CombatLab() {
       {view && (
         <>
           <BattleView
-            view={view}
+            view={fromCombatLabView(
+              view,
+              new URLSearchParams(globalThis.location?.search ?? '').get('environment') ===
+                'open-field'
+                ? 'open-field'
+                : 'old-mill',
+            )}
+            showGroundOverlays={
+              new URLSearchParams(globalThis.location?.search ?? '').get('overlays') !== 'off'
+            }
             selectedUnitId={selectedUnitId}
             selectedHex={selectedHex}
             onSelectUnit={(id) => {

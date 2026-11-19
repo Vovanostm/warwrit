@@ -1,0 +1,29 @@
+{
+  "tool": "image_gen.imagegen",
+  "model": "not exposed by built-in tool",
+  "date": "2026-10-29",
+  "asset": "female-spear-v1.png",
+  "prompt": "female-spear-v1-prompt.txt",
+  "operation": "precise-object-edit",
+  "outputBasename": "exec-2e8e3d52-2d60-4bf4-8e0e-02d2cf8b8aef.png",
+  "inputs": [
+    {
+      "path": "../ink-roster-2026-10-27/spear-veteran.png",
+      "role": "edit target: spear, pose, projection and light"
+    },
+    {
+      "path": "../ink-roster-2026-10-27/sword-grey-bob.png",
+      "role": "female fighter/style reference"
+    },
+    {
+      "path": "../../styles/references/graphic-novel/character.png",
+      "role": "selected graphic-novel style"
+    },
+    {
+      "path": "../../m1/style/unit-c-ink.png",
+      "role": "historical proportions/material"
+    }
+  ],
+  "alpha": "genuine generated RGBA retained unchanged",
+  "critic": "PENDING; integrated scene acceptance required"
+}

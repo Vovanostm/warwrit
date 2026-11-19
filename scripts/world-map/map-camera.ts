@@ -31,11 +31,11 @@ export function zoomMapView(
   delta: number,
   extent: MapExtent,
 ): MapView {
-  const width = Math.max(
-    extent.width * 0.18,
-    Math.min(extent.width, target.width * Math.exp(delta * 0.0015)),
-  );
-  const height = (width * extent.height) / extent.width;
+  const heightPerWidth = target.height / target.width;
+  const maxWidth = Math.min(extent.width, extent.height / heightPerWidth);
+  const minWidth = Math.min(extent.width * 0.18, maxWidth);
+  const width = Math.max(minWidth, Math.min(maxWidth, target.width * Math.exp(delta * 0.0015)));
+  const height = width * heightPerWidth;
   return boundedMapView(
     {
       x: target.x + cursorFraction[0] * (target.width - width),

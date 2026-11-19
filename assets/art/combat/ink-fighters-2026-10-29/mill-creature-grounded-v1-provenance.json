@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-30",
+  "asset": "mill-creature-grounded-v1.png",
+  "status": "candidate_with_framing_limits_not_integrated",
+  "tool": "image_gen.imagegen",
+  "model": "not exposed by built-in tool",
+  "prompt": "mill-creature-grounded-v1-prompt.txt",
+  "transparentBackgroundRequested": true,
+  "requestedDimensions": [1024, 1024],
+  "operation": "pose-only redraw of existing B053 into weight-bearing static stance; anatomy/identity preserved, no new lore",
+  "iterations": [
+    {
+      "iteration": 1,
+      "exactPrompt": "Use case: identity-preserve / precise-object-edit.\nAsset type: ONE static transparent full-body battle sprite, square canvas requested1024x1024, for Warwrit B053 Night mill beast. Input1 is the existing B053 sprite and the anatomy/identity authority to redraw. Input2 graphic-novel/character.png is the CURRENT approved irregular ink / matte wash rendering authority ONLY: do not copy the human or its scenery. Input3 graphic-novel/field.png supplies the same restrained palette and graphic rendering family ONLY, not ground, scenery or horizon.\n\nEssential change: redraw the SAME four-limbed beast in a clearly grounded HEAVY IDLE STANCE. Its current spread, dangling claws read as a leap. This must look like a massive body resting its weight on a stable support polygon, not leaping, pouncing, attacking, balancing on claw tips or levitating. Keep exactly two long heavy forelimbs and two sturdy bent hind legs. Lower the body between flexed joints; visibly compress the shoulder/forearm stance under weight. Plant both broad hind feet solidly. Plant at least the near forelimb firmly through its broad palm/knuckles, with its long curved claws resting forward close to the same implied ground. Prefer the far forelimb also planted, slightly behind, rather than floating forward. Show the joints and fur masses visibly bearing the body. No air gap beneath the supporting palm and hind soles in the implied flat stance; no invented floor is needed to communicate the weight.\n\nMaintain the character: massive front-heavy hunched shaggy body and very high sloping shoulders; tiny low blunt animal head nestled into those shoulders; long thick coarse angular charcoal/peat fur; muted taupe/brown broken accents and deep irregular black masses. Existing dull worn grey-horn claws, not shiny ivory. Existing tiny pale eye fleck only, no glow/aura or new ability. No new horns, antlers, ears, tail, wings, armor, weapons, anatomy or story facts. Do not turn it into a human, wolf, bear or gorilla with a different identity.\n\nProjection: preserve the fixed elevated three-quarter battle viewpoint and approximate SCREEN UPPER-RIGHT / northeast facing of input1, with crown, shoulder tops and back readable. Do not mirror baked light. Soft restrained light from upper-left. Keep all four limbs legible. The two nearest support pads should lie on a common shallow lower baseline; the far supports may sit only slightly higher to suggest depth on the SAME imagined flat ground plane. Do not leave one large clawed limb hanging far below the others. Keep the compact planted silhouette readable beside80px human sprites; creature scale is set separately by the renderer, not by extra occupied cells.\n\nDrawing: mature restrained graphic-novel irregular ink contours, selective interior hatching and broad matte earthy washes, consistent with input2. Retain the shaggy angular identity without airbrushed photoreal fur, glossy CGI or bright repetitive cream chevrons. Dark silhouette with sufficiently distinct joint and paw masses.\n\nFraming and alpha: exactly one complete isolated creature, generous clear padding on all four sides including every claw, full back, muzzle, feet and fur tips. True alpha transparency, crisp opaque figure edges with ordinary antialiasing. Absolutely NO ground patch, painted floor, cast/contact shadow, dark oval, platform, pedestal, fog, backdrop, checkerboard, white/grey matte or halo. No scenery, other subjects, text, symbols, numbers, runes, labels, UI, border, collage, sprite sheet, logo or watermark. Preserve existing creature identity and four-limbed anatomy; change pose only as needed for clearly planted weight-bearing contact.\n",
+      "output": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-cf734e88-c5a8-4b56-a493-ebc818763558.png",
+      "authorInspection": "Not selected: still retains widely spread hanging claws and insufficient change to support pose. No integrated acceptance.",
+      "generationInputs": [
+        {
+          "path": "assets/art/combat/stage1-2026-10-09/roster/b053/sprite.png",
+          "role": "existing target and visible anatomy/identity authority"
+        },
+        {
+          "path": "assets/art/styles/references/graphic-novel/character.png",
+          "role": "current rendering style only"
+        },
+        {
+          "path": "assets/art/styles/references/graphic-novel/field.png",
+          "role": "current palette/rendering family only"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "prompt": "mill-creature-grounded-v1-prompt.txt",
+      "operation": "substantial weight-bearing pose correction of first candidate",
+      "output": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-a613db65-fb3d-47ef-adc0-9731f492eaf8.png",
+      "authorInspection": "Selected bounded candidate: lower compact stance, four existing limbs with broader lower palm/foot shapes and less downward-dangling near claws. Identity, shaggy hump, small blunt head and upper-right facing retained. Generous horizontal padding not achieved; no integrated acceptance."
+    }
+  ],
+  "generationInputs": [
+    {
+      "path": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-cf734e88-c5a8-4b56-a493-ebc818763558.png",
+      "role": "first new B053 candidate edit target; same visible anatomy/identity"
+    },
+    {
+      "path": "../../styles/references/graphic-novel/character.png",
+      "role": "selected current rendering style only"
+    }
+  ],
+  "inspectedContext": [
+    "../../combat/stage1-2026-10-09/roster/b053/sprite.png",
+    "../../styles/references/graphic-novel/field.png",
+    "../../m1/style/unit-c-ink.png",
+    "../../m1/battle/unit-mill-beast.png",
+    "../../combat/stage1-2026-10-09/creature-b053/night-mill-beast-concept-v2.png",
+    "../../combat/stage1-2026-10-09/keyart/battle-ux-v3.png",
+    "../../m1/places/settlements-v2/staraya-melnitsa.png"
+  ],
+  "sourceAuthority": [
+    "docs/wiki/bestiary/creatures/b053.md: existing production silhouette owns anatomy; profile remains review draft",
+    "assets/art/combat/stage1-2026-10-09/roster/BRIEF.md",
+    "docs/engineering/ART_LORE_POLICY.md",
+    "assets/art/styles/graphic-novel.json"
+  ],
+  "limits": [
+    "One static pose only; no new species, abilities, canonical anatomy or movement rules",
+    "Renderer scale remains parent-owned; existing B053 bodyHeight1206 and scale1.62*.82/bodyHeight describe only old asset",
+    "No scene/code/docs edits, commits or publication by artist"
+  ],
+  "integratedVisualAcceptance": "NOT_RUN",
+  "runtimeIntegration": "NOT_RUN",
+  "dayNightGameScale": "NOT_RUN",
+  "actualDimensions": [1254, 1254],
+  "png": {
+    "bitDepth": 8,
+    "colourType": 6,
+    "fileBytes": 2325642
+  },
+  "outputSourcePath": "/Users/vovanostm/.codex/generated_images/01a1896e-e9f0-7e62-97ff-118dc7360cc3/exec-a613db65-fb3d-47ef-adc0-9731f492eaf8.png",
+  "outputBasename": "exec-a613db65-fb3d-47ef-adc0-9731f492eaf8.png",
+  "observedAlpha": {
+    "min": 0,
+    "max": 255,
+    "clearPixels": 706902,
+    "opaque255Pixels": 646,
+    "partialPixels": 864968,
+    "dominantBodyAlphaValues": [252, 253],
+    "boundsAtAlpha64XYWH": [11, 83, 1238, 1067],
+    "marginsAtAlpha64": {
+      "left": 11,
+      "right": 5,
+      "top": 83,
+      "bottom": 104
+    },
+    "method": "existing pinned pngjs7 PNG.sync.read and direct alpha scan; no pixel modification"
+  },
+  "geometrySuggestions": {
+    "alphaBaselineFallback": {
+      "footX": 629.5,
+      "footY": 1149,
+      "bodyHeightFromVisibleTopToBaseline": 1066
+    },
+    "meaning": "Only a derived alpha-bound fallback for parent inspection, not measured anatomical sole contact. Per-paw support pivots NOT_MEASURED; actual floor/camera and scale acceptance remain parent-owned."
+  },
+  "remainingConcerns": [
+    "Only5px right and11px left opaque-silhouette margin, below requested generous padding; do not claim production framing acceptance",
+    "Body alpha modes252–253 rather than fully255; background genuinely reaches0",
+    "Static pose has not been tested against actual floor projection or dense/night gameplay",
+    "Generated output1254x1254 differs from requested1024x1024; use actual dimensions"
+  ],
+  "checks": {
+    "sourceAndReferenceInspection": "PASS: existing sprite/production anatomy, selected graphic-novel images, roster brief and B053 card inspected",
+    "generatedImageInspection": "Both outputs personally inspected; second remains candidate only",
+    "metadataAndAlphaScan": "PASS: actual1254x1254 RGBA with genuine clear background; framing/near-opacity limits recorded",
+    "independentVisualAcceptance": "NOT_RUN",
+    "gameRuntime": "NOT_RUN",
+    "tests": "NOT_RUN: asset-only assignment"
+  }
+}

@@ -1,8 +1,18 @@
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
+import { clientFileAccess } from '../../scripts/vite-file-access.js';
 
 const workspaceRoot = fileURLToPath(new URL('../..', import.meta.url));
+
+function privateAtlasPathAllowed(path: string): boolean {
+  return !(
+    path.includes('/assets/art/world/porechye-atlas-v1/') ||
+    /\/scripts\/world-map\/(?:navigation-maps|navigation-lab|porechye-navigation|fog-design|world-lab)(?:[/.])/u.test(
+      path,
+    )
+  );
+}
 
 export default defineConfig(({ mode }) => {
   const settings = {
@@ -23,7 +33,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
     },
     envDir: '../..',
-    plugins: [react()],
+    plugins: [clientFileAccess('private-authored-atlas', privateAtlasPathAllowed), react()],
     server: {
       port,
       ...(combatLabEnabled || settings['WEB_PORT'] !== undefined

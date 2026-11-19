@@ -83,6 +83,11 @@ export function registerCompanyRoutes(
       // Lifecycle knowledge refreshes only through observations; the owner always knows its
       // own company's current leader and whether its run has ended.
       const own = state.economy.lifecycle.company;
+      const observedSexByCharacterId = new Map(
+        state.economy.lifecycle.knowledge.characters.map(
+          (character) => [character.identity.characterId, character.identity.sex] as const,
+        ),
+      );
       return {
         holdings: projectCompanyHoldings(
           state,
@@ -95,13 +100,17 @@ export function registerCompanyRoutes(
           companyPresentation: view.companyPresentation,
           leaderId: own ? (own.actingLeaderId ?? own.currentLeaderId) : view.leaderId,
           runStatus: own?.runStatus ?? view.runStatus,
-          characters: view.characters.map((character) => ({
-            characterId: character.characterId,
-            name: character.name,
-            nicknameTextKey: character.nicknameTextKey,
-            perkIds: [...character.perkIds],
-            knownStatus: character.knownStatus,
-          })),
+          characters: view.characters.map((character) => {
+            const sex = observedSexByCharacterId.get(character.characterId);
+            return {
+              characterId: character.characterId,
+              name: character.name,
+              ...(sex === undefined ? {} : { sex }),
+              nicknameTextKey: character.nicknameTextKey,
+              perkIds: [...character.perkIds],
+              knownStatus: character.knownStatus,
+            };
+          }),
         },
       };
     });

@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { sql } from 'kysely';
 import { Client } from 'pg';
 import { afterAll, expect, it, vi } from 'vitest';
 import { PAINTED_ATLAS_REGION, paintedAtlasPoint } from '@warwrit/game-core';
 import type { WorldFreeMovementV2RequestDto, WorldLabPursuitRequestDto } from '@warwrit/protocol';
 import { worldLabPursuitToken } from '@warwrit/protocol';
 import { createDatabase } from '../../apps/server/src/db/database.js';
-import { runMigrations } from '../../apps/server/src/db/migrator.js';
 import { readWorldLabState } from '../../apps/server/src/world-lab/state.js';
 import { readWorldLabPursuit } from '../../apps/server/src/world-lab/pursuit-store.js';
 import {
@@ -34,6 +35,22 @@ async function scenario() {
   let time = Number(clock.epoch_ms) + 600_000;
   const context = { database, worldId, fixtures, now: () => new Date(time) };
   const own = fixtures[0]!;
+  // These pursuit fixtures are nearby, genuinely observable threats. The
+  // production forest/mill seeds intentionally need not be visible at night.
+  const origin = paintedAtlasPoint([1731, 1244]);
+  const nearby = { xFp: origin.xFp + 112, zFp: origin.zFp };
+  const farther = { xFp: origin.xFp + 144, zFp: origin.zFp };
+  for (const group of await readWorldLabNpcGroups(database, worldId)) {
+    if (!['lab-bandits', 'lab-night-creature'].includes(group.groupId)) continue;
+    const home = { ...group.home, point: nearby, routePoints: [nearby, farther] };
+    const state = { ...group.state, point: nearby, plan: null, routeIndex: 1 };
+    await sql`
+      update world_lab_npc_groups
+         set home = ${JSON.stringify(home)}::jsonb,
+             state = ${JSON.stringify(state)}::jsonb
+       where world_id = ${worldId} and group_id = ${group.groupId}
+    `.execute(database);
+  }
   const state = () =>
     readWorldLabState(database, worldId, fixtures, own.accountId, context.now).then((value) => {
       if (!value) throw Error('Missing lab state');
@@ -203,24 +220,8 @@ it.skipIf(!database)(
   'freezes the last observed destination when the night creature disappears',
   async () => {
     const s = await scenario();
-    await ground(s, {
-      kind: 'MOVE_TO',
-      mapEdition: PAINTED_ATLAS_REGION.mapEdition,
-      target: { kind: 'SITE', siteId: 'staraya-melnitsa' },
-    });
-    const route = (await s.state()).own.movement.plan!;
-    const arrival = Number(route.arrivesAtMs);
-    // Seeded light starts NIGHT at epoch+600000. Choose the next such boundary after arrival.
-    const clock = await database!
-      .selectFrom('world_campaign_clocks')
-      .select('epoch_ms')
-      .where('world_id', '=', s.context.worldId)
-      .executeTakeFirstOrThrow();
-    const night =
-      Number(clock.epoch_ms) +
-      Math.ceil((arrival - Number(clock.epoch_ms)) / 900_000) * 900_000 +
-      600_000;
-    s.advance(night - s.context.now().getTime());
+    // The nearby trusted creature fixture is visible at epoch+600000 NIGHT;
+    // no player order or chart is fabricated to reveal the remote mill.
     const started = await follow(s, 'lab-night-creature');
     const observedPoint = (await s.state()).pursuit!.lastPoint;
     s.advance(300_000);
@@ -247,7 +248,7 @@ it.skipIf(!database)(
 );
 
 it.skipIf(!database)(
-  'refuses migration rollback while a pursuit is persisted',
+  'refuses the pursuit migration rollback while a pursuit is persisted',
   async () => {
     // Only the integration runner may own schema operations, never the persistent lab.
     if (!url || !new URL(url).pathname.startsWith('/ww_integration_'))
@@ -257,13 +258,25 @@ it.skipIf(!database)(
     const client = new Client({ connectionString: url });
     await client.connect();
     try {
-      await expect(runMigrations(client, 'down')).rejects.toThrow(
+      // Exercise the original pursuit guard directly. The latest migration
+      // now has its own independent cartography-data rollback guard.
+      const migration = await readFile(
+        new URL(
+          '../../apps/server/migrations/0017_world_lab_pursuit_order_ids.down.sql',
+          import.meta.url,
+        ),
+        'utf8',
+      );
+      await client.query('begin');
+      await expect(client.query(migration)).rejects.toThrow(
         'refusing to delete persisted world lab pursuits',
       );
+      await client.query('rollback');
       expect(
         (await readWorldLabPursuit(database!, s.context.worldId, s.own.companyId))?.targetId,
       ).toBe('lab-bandits');
     } finally {
+      await client.query('rollback');
       await client.end();
     }
   },

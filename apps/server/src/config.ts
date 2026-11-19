@@ -1,6 +1,8 @@
+import { gameWorldId } from './world/map-context.js';
 import { invariant } from '@warwrit/game-core';
 
 export interface ServerConfig {
+  readonly worldId: string;
   readonly host: string;
   readonly port: number;
   readonly databaseUrl?: string;
@@ -135,6 +137,7 @@ export function loadServerConfig(environment: NodeJS.ProcessEnv = process.env): 
     };
   }
   return {
+    worldId: gameWorldId(environment['WORLD_MAP']?.trim()),
     host,
     port,
     ...(databaseUrl ? { databaseUrl } : {}),

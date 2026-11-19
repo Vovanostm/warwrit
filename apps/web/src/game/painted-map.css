@@ -1,0 +1,173 @@
+.painted-map-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 26rem;
+}
+
+.painted-world-map {
+  flex: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 26rem;
+  background: #27241e;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+
+.painted-world-map:active {
+  cursor: grabbing;
+}
+
+.painted-world-map:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -3px;
+}
+
+.painted-map-tiles image {
+  image-rendering: auto;
+}
+
+.painted-map-ground {
+  fill: #292d2a;
+}
+
+.painted-map-unknown {
+  opacity: 0.8;
+  filter: saturate(0.4) brightness(0.7);
+  pointer-events: none;
+}
+
+.painted-world-map-night .painted-map-tiles image {
+  filter: brightness(0.7) saturate(0.76) sepia(0.16);
+}
+
+.painted-world-map-night .painted-map-knowledge {
+  filter: saturate(0.5) brightness(0.7);
+}
+
+.painted-map-knowledge {
+  pointer-events: none;
+}
+
+.painted-map-frontier {
+  fill: none;
+  stroke: #c7ba9a;
+  stroke-width: 1.3;
+  stroke-dasharray: 8 7;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.painted-site {
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: var(--painted-marker-scale, 1);
+  cursor: pointer;
+}
+
+.painted-site[role='img'] {
+  cursor: default;
+}
+
+.painted-site .site-hit {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.painted-site .site-disc {
+  fill: #302a21;
+  fill-opacity: 0.91;
+  stroke: #cfb57f;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.painted-site[data-source='observed'] .site-disc {
+  stroke: #e8ddc7;
+  stroke-dasharray: 2 2;
+}
+
+.painted-site.site-visited .site-disc {
+  fill: #5f4b2d;
+}
+
+.painted-site .site-label {
+  fill: #f0e4cc;
+  paint-order: stroke;
+  stroke: rgb(20 18 15 / 90%);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  font:
+    600 15px Georgia,
+    'Times New Roman',
+    serif;
+  pointer-events: none;
+}
+
+.painted-site .site-leader {
+  stroke: #d0b981;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.painted-site[role='button']:focus-visible .site-disc,
+.painted-site[role='button']:hover .site-disc {
+  stroke: #fff0c5;
+  stroke-width: 2.5;
+}
+
+.painted-site .map-icon,
+.painted-map-party use {
+  color: #e0cfa1;
+  fill: currentColor;
+  stroke: none;
+  pointer-events: none;
+}
+
+.painted-map-route {
+  fill: none;
+  stroke: #f3db9c;
+  stroke-width: 4;
+  stroke-dasharray: 9 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.painted-map-party {
+  pointer-events: none;
+}
+
+.painted-map-party circle {
+  fill: rgb(28 24 18 / 88%);
+  stroke: #ffe29b;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.painted-map-party use {
+  color: #ffe29b;
+}
+
+.painted-map-party use {
+  filter: drop-shadow(0 1px 2px #1b1710);
+}
+
+.painted-map-error {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  max-width: 25rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--blood);
+  background: rgb(22 21 20 / 94%);
+  color: #f0b3a8;
+}

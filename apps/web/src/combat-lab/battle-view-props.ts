@@ -16,6 +16,8 @@ export interface BattleViewProps {
   readonly onRestart?: () => void;
   readonly onEditor?: () => void;
   readonly busy?: boolean;
+  /** Presentation diagnostic only; authority and commands are unchanged. */
+  readonly showGroundOverlays?: boolean;
   readonly selectedSkillId?: CombatLabSkillId | null;
   readonly onSelectSkill?: (id: CombatLabSkillId) => void;
   readonly skillDisabledReason?: string;

@@ -1,6 +1,7 @@
 import {
   Color3,
   Color4,
+  type Camera,
   DynamicTexture,
   HemisphericLight,
   Mesh,
@@ -30,18 +31,25 @@ import {
 import { actorMarkerKey, markerPlan, unitEdgeTone } from './sprite-scene-markers.js';
 import { createReachContour } from './sprite-reach-contour.js';
 import { eventFeedback } from './sprite-scene-feedback.js';
-import { spriteForUnit, spriteGeometry, spriteScale } from './sprite-art.js';
+import {
+  spriteForUnit,
+  spriteGeometry,
+  spriteGroundContacts,
+  spriteScale,
+  spriteVisibleExtents,
+} from './sprite-art.js';
 import {
   SPRITE_MASK_SIZE,
   SPRITE_VISUAL_SIZE,
   SPRITE_VISUAL_OUTLINE_SIZE,
+  SPRITE_OUTLINE_RADIUS,
+  SPRITE_FAR_NIGHT_OUTLINE_RADIUS,
   spriteOutlinePixels,
 } from './sprite-outline.js';
 import { BATTLE_LAYOUT, battleHexToWorld } from './battle-layout.js';
 import { createBattleBackdropMaterial } from './battle-backdrop.js';
 import { mountBattleTerrain } from './battle-terrain.js';
 import { mountBattleScenery } from './battle-scenery.js';
-import { projectCameraPoint } from '../renderer/camera-projection.js';
 import { battleFrameBounds, battleCameraLimits } from './battle-framing.js';
 import { mountBattleFieldVitals } from './battle-field-vitals.js';
 import { createBattleCellGrid, type BattleCellStyle } from '../renderer/battle-cell-grid.js';
@@ -52,7 +60,12 @@ const millFieldUrl = new URL(
 ).href;
 
 const siteGroundUrl = new URL(
-  '../../../../assets/art/combat/readable-terrain-2026-10-16/field-ground.png',
+  '../../../../assets/art/combat/style-variants-2026-10-27/slate-ground-v2.png',
+  import.meta.url,
+).href;
+
+const openFieldGroundUrl = new URL(
+  '../../../../assets/art/combat/ink-fighters-2026-10-29/open-field-v3.png',
   import.meta.url,
 ).href;
 
@@ -62,7 +75,7 @@ const b023FixtureUrl = new URL(
 ).href;
 
 const AXIAL_TO_WORLD = battleHexToWorld;
-const CAMERA_ELEVATION = Math.PI / 6;
+const CAMERA_ELEVATION = (35 * Math.PI) / 180;
 const HEX_KEY = ({ q, r }: CombatLabHex) => `${q},${r}`;
 
 interface SpriteBattleScene {
@@ -87,14 +100,12 @@ export interface BattleFieldTarget {
 }
 
 type SceneMapBounds = Readonly<{ minX: number; maxX: number; minZ: number; maxZ: number }>;
-type ScenePerspective = Readonly<{ targetX: number; distance: number }>;
 
 function mountBattleEnvironment({
   scene,
   sceneEnvironment,
   tiles,
   mapBounds,
-  perspective,
   centerZ,
   initialNight,
   texture,
@@ -103,7 +114,6 @@ function mountBattleEnvironment({
   sceneEnvironment: BattlePresentationView['sceneEnvironment'];
   tiles: ReturnType<typeof tilesFor>;
   mapBounds: SceneMapBounds;
-  perspective: ScenePerspective;
   centerZ: number;
   initialNight: boolean;
   texture: (url: string, sharp?: boolean) => Texture;
@@ -124,15 +134,12 @@ function mountBattleEnvironment({
     scene,
   );
   background.rotation.x = CAMERA_ELEVATION;
-  const backdropScale = (perspective.distance + backdropDepth) / perspective.distance;
   const backdropUp = backgroundUp - (centerZ + 2) * Math.sin(CAMERA_ELEVATION);
-  background.scaling.set(backdropScale, backdropScale, 1);
   background.position.set(
-    perspective.targetX + (backgroundX - 1.1 - perspective.targetX) * backdropScale,
-    backdropUp * backdropScale * Math.cos(CAMERA_ELEVATION) -
-      backdropDepth * Math.sin(CAMERA_ELEVATION),
+    backgroundX - 1.1,
+    backdropUp * Math.cos(CAMERA_ELEVATION) - backdropDepth * Math.sin(CAMERA_ELEVATION),
     centerZ +
-      backdropUp * backdropScale * Math.sin(CAMERA_ELEVATION) +
+      backdropUp * Math.sin(CAMERA_ELEVATION) +
       backdropDepth * Math.cos(CAMERA_ELEVATION),
   );
   background.isPickable = false;
@@ -166,6 +173,7 @@ export async function mountSpriteBattleScene(
   },
   initialNight = false,
   signal?: AbortSignal,
+  showGroundOverlays = true,
 ): Promise<SpriteBattleScene> {
   // Geometric plane hits include transparent canvas margins. Reuse a small alpha mask
   // for input only, so visibly empty corners do not steal neighbouring hex clicks.
@@ -223,13 +231,12 @@ export async function mountSpriteBattleScene(
     maxZ: Math.max(...points.map((point) => point.z)),
   };
   const centerZ = (mapBounds.minZ + mapBounds.maxZ) / 2;
-  const perspective = {
+  const cameraTarget = {
     targetX: (mapBounds.minX + mapBounds.maxX) / 2,
     targetZ: centerZ,
-    distance: 16 * BATTLE_LAYOUT.spacing,
   };
   const project = (point: { x: number; y: number; z: number }) =>
-    projectCameraPoint(point, perspective, CAMERA_ELEVATION);
+    ({ x: point.x, z: point.z + point.y / Math.tan(CAMERA_ELEVATION) });
   let currentView = initialView;
   let selectedId = selectedUnitId;
   let selectedSkill: CombatLabSkillId | null = null;
@@ -242,8 +249,8 @@ export async function mountSpriteBattleScene(
   const unitMeshes = new Map<string, Mesh>();
   const unitMaterials = new Map<string, StandardMaterial>();
   const unitEdges = new Map<string, Mesh>();
-  const unitOutlineTextures = new Map<string, readonly [Texture, Texture]>();
-  const contactShadows = new Map<string, Mesh>();
+  const unitOutlineTextures = new Map<string, readonly [Texture, Texture, Texture]>();
+  const contactShadows = new Map<string, Mesh[]>();
   const contactMaterial = new StandardMaterial('unit-ground-contact', scene);
   contactMaterial.diffuseColor = Color3.Black();
   contactMaterial.specularColor = Color3.Black();
@@ -252,11 +259,11 @@ export async function mountSpriteBattleScene(
   const unitPresentationModes = [
     {
       sampling: Texture.BILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.46, 0.5, 0.58)],
+      colors: [Color3.White(), new Color3(0.68, 0.73, 0.8)],
     },
     {
       sampling: Texture.TRILINEAR_SAMPLINGMODE,
-      colors: [Color3.White(), new Color3(0.4, 0.44, 0.52)],
+      colors: [Color3.White(), new Color3(0.62, 0.68, 0.76)],
     },
   ];
   scene.onBeforeCameraRenderObservable.add((camera) => {
@@ -268,10 +275,12 @@ export async function mountSpriteBattleScene(
       material.emissiveColor = presentation.colors[Number(isNight)]!;
       const far = Number(pixelsPerWorld < 64);
       const edge = unitEdges.get(id)!;
-      (edge.material as StandardMaterial).diffuseTexture = unitOutlineTextures.get(id)![far]!;
-      const padding = SPRITE_VISUAL_OUTLINE_SIZE - SPRITE_VISUAL_SIZE;
+      const radius = far && isNight ? SPRITE_FAR_NIGHT_OUTLINE_RADIUS : SPRITE_OUTLINE_RADIUS;
+      const textureIndex = far ? (isNight ? 2 : 1) : 0;
+      (edge.material as StandardMaterial).diffuseTexture =
+        unitOutlineTextures.get(id)![textureIndex]!;
       const outlineScale = far
-        ? (SPRITE_MASK_SIZE + padding) /
+        ? (SPRITE_MASK_SIZE + radius * 2) /
           SPRITE_MASK_SIZE /
           (SPRITE_VISUAL_OUTLINE_SIZE / SPRITE_VISUAL_SIZE)
         : 1;
@@ -309,7 +318,6 @@ export async function mountSpriteBattleScene(
     sceneEnvironment: initialView.sceneEnvironment,
     tiles: initialTiles,
     mapBounds,
-    perspective,
     centerZ,
     initialNight,
     texture,
@@ -362,15 +370,15 @@ export async function mountSpriteBattleScene(
   const selectionMaterial = new StandardMaterial('selection-ochre', scene);
   selectionMaterial.disableLighting = true;
   selectionMaterial.emissiveColor = new Color3(0.68, 0.48, 0.19);
-  selectionMaterial.alpha = 0.42;
+  selectionMaterial.alpha = initialNight ? 0.065 : 0.1;
   const previewMaterial = new StandardMaterial('movement-preview', scene);
   previewMaterial.disableLighting = true;
   previewMaterial.emissiveColor = new Color3(0.4, 0.49, 0.52);
-  previewMaterial.alpha = 0.2;
+  previewMaterial.alpha = initialNight ? 0.065 : 0.1;
   const movementAreaMaterial = new StandardMaterial('reachable-movement-area', scene);
   movementAreaMaterial.disableLighting = true;
   movementAreaMaterial.emissiveColor = new Color3(0.25, 0.45, 0.5);
-  movementAreaMaterial.alpha = 0.13;
+  movementAreaMaterial.alpha = initialNight ? 0.08 : 0.1;
   const targetMaterial = new StandardMaterial('attack-target', scene);
   targetMaterial.disableLighting = true;
   targetMaterial.emissiveColor = new Color3(0.83, 0.48, 0.29);
@@ -384,27 +392,30 @@ export async function mountSpriteBattleScene(
   enemyRingMaterial.disableLighting = true;
   enemyRingMaterial.emissiveColor = new Color3(0.56, 0.3, 0.22);
 
-  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + 40;
+  const oldMill = initialView.sceneEnvironment === 'old-mill';
+  const groundCompositionWidth = mapBounds.maxX - mapBounds.minX + (oldMill ? 40 : 12);
   const terrain = mountBattleTerrain(scene, initialTiles, initialNight, {
-    texture: texture(siteGroundUrl),
-    center: new Vector2(perspective.targetX, 0),
-    size: new Vector2(groundCompositionWidth, (groundCompositionWidth * 941) / 1672),
-    reference: new Vector2(perspective.targetX, perspective.distance),
+    texture: texture(oldMill ? siteGroundUrl : openFieldGroundUrl),
+    center: new Vector2(cameraTarget.targetX, 0),
+    size: new Vector2(groundCompositionWidth, (groundCompositionWidth * 2) / 3),
+    reference: new Vector2(cameraTarget.targetX, cameraTarget.targetZ),
     crop: new Vector4(0, 0, 1, 1),
     amount: 1,
+    paintedGroundStrength: oldMill ? 0.8 : 1,
+    paintedPatchWorldSize: oldMill ? 0 : 2.6,
     elevation: CAMERA_ELEVATION,
   });
   // A quiet continuation sits behind the bounded painting; it must not bury its architecture.
   const apronDepth = environment.apronDepth;
-  const apronScale = (perspective.distance + apronDepth) / perspective.distance;
   terrain.apron.rotation.x = CAMERA_ELEVATION - Math.PI / 2;
-  terrain.apron.scaling.set(apronScale, 1, apronScale * Math.sin(CAMERA_ELEVATION));
+  terrain.apron.scaling.set(1, 1, Math.sin(CAMERA_ELEVATION));
   terrain.apron.position.set(
-    perspective.targetX,
+    cameraTarget.targetX,
     -apronDepth * Math.sin(CAMERA_ELEVATION),
     centerZ + apronDepth * Math.cos(CAMERA_ELEVATION),
   );
   const cellGrid = createBattleCellGrid(scene, initialTiles, terrain.terrainByHex);
+  cellGrid.setNight(initialNight);
   const tileInfo = new Map(initialTiles.map((tile) => [HEX_KEY(tile), tile]));
   const groundYFor = (hex: CombatLabHex) =>
     (tileInfo.get(HEX_KEY(hex))?.height ?? 0) * BATTLE_LAYOUT.heightStep;
@@ -435,12 +446,21 @@ export async function mountSpriteBattleScene(
       label.setEnabled(false);
     });
 
-  const outlineTexture = (sprite: ReturnType<typeof spriteForUnit>, size = SPRITE_VISUAL_SIZE) => {
-    const key = `${size}:${sprite.url}`;
+  const outlineTexture = (
+    sprite: ReturnType<typeof spriteForUnit>,
+    size = SPRITE_VISUAL_SIZE,
+    radius = SPRITE_OUTLINE_RADIUS,
+  ) => {
+    const key = `${size}:${radius}:${sprite.url}`;
     let edgeTexture = edgeTextures.get(key);
     if (!edgeTexture) {
-      const outlineSize = size + SPRITE_VISUAL_OUTLINE_SIZE - SPRITE_VISUAL_SIZE;
-      edgeTexture = new DynamicTexture(`ink-edge:${size}:${sprite.id}`, outlineSize, scene, false);
+      const outlineSize = size + radius * 2;
+      edgeTexture = new DynamicTexture(
+        `ink-edge:${size}:${radius}:${sprite.id}`,
+        outlineSize,
+        scene,
+        false,
+      );
       edgeTexture.hasAlpha = true;
       const context = edgeTexture.getContext() as unknown as CanvasRenderingContext2D;
       const pixels = context.createImageData(outlineSize, outlineSize);
@@ -449,7 +469,7 @@ export async function mountSpriteBattleScene(
       const maskContext = surface.getContext('2d', { willReadFrequently: true })!;
       maskContext.drawImage(spriteSources.get(sprite.url)!, 0, 0, size, size);
       const mask = maskContext.getImageData(0, 0, size, size).data;
-      pixels.data.set(spriteOutlinePixels(mask, size));
+      pixels.data.set(spriteOutlinePixels(mask, size, radius));
       context.putImageData(pixels, 0, 0);
       edgeTexture.update();
       edgeTextures.set(key, edgeTexture);
@@ -476,7 +496,11 @@ export async function mountSpriteBattleScene(
     mesh.renderingGroupId = 1;
     mesh.alphaIndex = 1;
     const edgeTexture = outlineTexture(sprite);
-    unitOutlineTextures.set(unit.id, [edgeTexture, outlineTexture(sprite, SPRITE_MASK_SIZE)]);
+    unitOutlineTextures.set(unit.id, [
+      edgeTexture,
+      outlineTexture(sprite, SPRITE_MASK_SIZE),
+      outlineTexture(sprite, SPRITE_MASK_SIZE, SPRITE_FAR_NIGHT_OUTLINE_RADIUS),
+    ]);
     const outlineScale = SPRITE_VISUAL_OUTLINE_SIZE / SPRITE_VISUAL_SIZE;
     const edge = MeshBuilder.CreatePlane(
       `unit-edge:${unit.id}`,
@@ -496,27 +520,31 @@ export async function mountSpriteBattleScene(
     edge.renderingGroupId = 1;
     edge.alphaIndex = 0;
     unitEdges.set(unit.id, edge);
-    const shadow = MeshBuilder.CreateDisc(
-      `contact:${unit.id}`,
-      { radius: 0.21, tessellation: 16 },
-      scene,
-    );
-    shadow.rotation.x = Math.PI / 2;
-    shadow.scaling.x = 1.25;
-    shadow.scaling.y = 0.55;
-    // A small feathered contact wash, rather than a hard black oval under the whole sprite.
-    const shadowPositions = shadow.getVerticesData(VertexBuffer.PositionKind)!;
-    const shadowColours: number[] = [];
-    for (let vertex = 0; vertex < shadowPositions.length; vertex += 3) {
-      const radius = Math.hypot(shadowPositions[vertex]!, shadowPositions[vertex + 1]!);
-      shadowColours.push(0, 0, 0, radius < 0.01 ? 1 : 0);
-    }
-    shadow.setVerticesData(VertexBuffer.ColorKind, shadowColours);
-    shadow.hasVertexAlpha = true;
-    shadow.useVertexColors = true;
-    shadow.material = contactMaterial;
-    shadow.isPickable = false;
-    contactShadows.set(unit.id, shadow);
+    const scale = spriteScale(sprite);
+    const shadows = spriteGroundContacts(sprite).map((contact, index) => {
+      const shadow = MeshBuilder.CreateDisc(
+        `contact:${unit.id}:${index}`,
+        { radius: contact.radius * scale, tessellation: 16 },
+        scene,
+      );
+      shadow.rotation.x = Math.PI / 2;
+      shadow.scaling.x = 1.25;
+      shadow.scaling.y = 0.55;
+      // Feather small ground contacts beneath each visible support point.
+      const shadowPositions = shadow.getVerticesData(VertexBuffer.PositionKind)!;
+      const shadowColours: number[] = [];
+      for (let vertex = 0; vertex < shadowPositions.length; vertex += 3) {
+        const radius = Math.hypot(shadowPositions[vertex]!, shadowPositions[vertex + 1]!);
+        shadowColours.push(0, 0, 0, radius < 0.01 ? 1 : 0);
+      }
+      shadow.setVerticesData(VertexBuffer.ColorKind, shadowColours);
+      shadow.hasVertexAlpha = true;
+      shadow.useVertexColors = true;
+      shadow.material = contactMaterial;
+      shadow.isPickable = false;
+      return shadow;
+    });
+    contactShadows.set(unit.id, shadows);
     unitMeshes.set(unit.id, mesh);
     unitMaterials.set(unit.id, material);
     return { mesh, material };
@@ -545,7 +573,7 @@ export async function mountSpriteBattleScene(
       mesh.dispose(false, false);
       unitMeshes.delete(id);
       unitMaterials.delete(id);
-      contactShadows.get(id)?.dispose();
+      contactShadows.get(id)?.forEach((shadow) => shadow.dispose());
       contactShadows.delete(id);
       const edge = unitEdges.get(id);
       edge?.material?.dispose(false, false);
@@ -569,7 +597,6 @@ export async function mountSpriteBattleScene(
       footY * Math.cos(CAMERA_ELEVATION) + groundHeight,
       z + footY * Math.sin(CAMERA_ELEVATION),
     );
-    contactShadows.get(unit.id)?.position.set(x, groundHeight + 0.02, z);
     mesh.metadata = {
       combatUnitId: unit.id,
       combatHex: unit.position,
@@ -585,7 +612,7 @@ export async function mountSpriteBattleScene(
     const standing = unit.status === 'active';
     mesh.setEnabled(standing);
     mesh.isPickable = standing;
-    contactShadows.get(unit.id)?.setEnabled(standing);
+    contactShadows.get(unit.id)?.forEach((shadow) => shadow.setEnabled(standing));
     material.alpha = 1;
     if (!standing) addStatusMarker(unit, x, z, groundHeight);
   };
@@ -595,6 +622,41 @@ export async function mountSpriteBattleScene(
     for (const unit of view.units) syncUnit(unit);
     fieldVitals.update(view);
   };
+
+  scene.onBeforeCameraRenderObservable.add((camera: Camera) => {
+    const viewport = camera.viewport.toGlobal(engine.getRenderWidth(), engine.getRenderHeight());
+    for (const unit of currentView.units) {
+      const sprite = spriteForUnit(unit);
+      const scale = spriteScale(sprite);
+      const point = AXIAL_TO_WORLD(unit.position);
+      const groundY = groundYFor(unit.position);
+      const floorY = groundY + 0.02;
+      const shadows = contactShadows.get(unit.id) ?? [];
+      for (const [index, contact] of spriteGroundContacts(sprite).entries()) {
+        const supportPoint = new Vector3(
+          point.x + (contact.x - sprite.footX) * scale,
+          groundY + (sprite.footY - contact.y) * scale * Math.cos(CAMERA_ELEVATION),
+          point.z + (sprite.footY - contact.y) * scale * Math.sin(CAMERA_ELEVATION),
+        );
+        const screenPoint = Vector3.Project(
+          supportPoint,
+          Matrix.Identity(),
+          scene.getTransformMatrix(),
+          viewport,
+        );
+        const hardwareScale = engine.getHardwareScalingLevel();
+        const ray = scene.createPickingRay(
+          screenPoint.x * hardwareScale,
+          screenPoint.y * hardwareScale,
+          Matrix.Identity(),
+          camera,
+        );
+        if (Math.abs(ray.direction.y) < 1e-6) continue;
+        const distance = (floorY - ray.origin.y) / ray.direction.y;
+        shadows[index]?.position.copyFrom(ray.origin.add(ray.direction.scale(distance)));
+      }
+    }
+  });
 
   const upAxis = new Vector3(0, Math.cos(CAMERA_ELEVATION), Math.sin(CAMERA_ELEVATION));
   let renderedEventRevision: number | null = null;
@@ -650,12 +712,13 @@ export async function mountSpriteBattleScene(
   const previewMeshes: Mesh[] = [];
   const reachContourMaterial = new StandardMaterial('weapon-skill-reach-contour', scene);
   reachContourMaterial.disableLighting = true;
-  reachContourMaterial.emissiveColor = new Color3(0.92, 0.73, 0.4);
+  reachContourMaterial.emissiveColor = new Color3(0.62, 0.53, 0.35);
+  reachContourMaterial.alpha = initialNight ? 0.3 : 0.5;
   reachContourMaterial.backFaceCulling = false;
   reachContourMaterial.disableDepthWrite = true;
   const pathMaterial = new StandardMaterial('route-ochre', scene);
   pathMaterial.disableLighting = true;
-  pathMaterial.emissiveColor = new Color3(0.86, 0.71, 0.42);
+  pathMaterial.emissiveColor = new Color3(0.64, 0.54, 0.35);
   const threatMaterial = new StandardMaterial('prepared-threat-rust', scene);
   threatMaterial.disableLighting = true;
   threatMaterial.emissiveColor = new Color3(0.89, 0.32, 0.18);
@@ -821,7 +884,7 @@ export async function mountSpriteBattleScene(
         priority: style.priority,
         hatch: style.fill === 'movement-only',
       });
-    cellGrid.paint(styles);
+    cellGrid.paint(showGroundOverlays ? styles : new Map());
   };
 
   const reachContour = createReachContour(
@@ -854,7 +917,7 @@ export async function mountSpriteBattleScene(
         const art = spriteForUnit(unit);
         const scale = spriteScale(art);
         const point = AXIAL_TO_WORLD(unit.position);
-        const [left, top, right, lower] = art.visibleBounds;
+        const { left, top, right, bottom: lower } = spriteVisibleExtents(art);
         const center = new Vector3(
           point.x + ((left + right) / 2 - art.footX) * scale,
           groundYFor(unit.position),
@@ -1009,7 +1072,11 @@ export async function mountSpriteBattleScene(
     refreshFigureMarkers(plan);
     syncActorMarker(plan.actor);
     applyCellStyles(plan.cells);
-    reachContour.setCells(plan.reachCells);
+    reachContour.setCells(showGroundOverlays ? plan.reachCells : []);
+    if (!showGroundOverlays) {
+      for (const mesh of previewMeshes) mesh.setEnabled(false);
+      actorMarker?.ring.setEnabled(false);
+    }
   };
 
   const pickFrom = (hit: PickingInfo | null) => {
@@ -1201,7 +1268,6 @@ export async function mountSpriteBattleScene(
   const cameraLimits = { maxZoom: 17, bounds: { ...mapBounds } };
   const camera = mountThreeQuarterCamera(scene, engine, canvas, {
     elevation: CAMERA_ELEVATION,
-    perspective,
     bounds: cameraLimits.bounds,
     get maxZoom() {
       return cameraLimits.maxZoom;
@@ -1243,7 +1309,7 @@ export async function mountSpriteBattleScene(
     return { viewport, safeTop, safeBottom };
   };
   const projectedField = scene.meshes
-    .filter((mesh) => mesh.name.startsWith('ground:'))
+    .filter((mesh) => mesh.name.startsWith('ground:') || mesh.name.startsWith('ground-side:'))
     .flatMap((mesh) => {
       const vertices = mesh.getVerticesData(VertexBuffer.PositionKind)!;
       const world = mesh.computeWorldMatrix(true);
@@ -1257,6 +1323,19 @@ export async function mountSpriteBattleScene(
     minZ: Math.min(...projectedField.map((point) => point.z)),
     maxZ: Math.max(...projectedField.map((point) => point.z)),
   };
+  if (!oldMill) {
+    // Register a ground-only painting to the orthographic image-plane footprint.
+    const fittedWidth = fieldBounds.maxX - fieldBounds.minX + 1.5;
+    const fittedHeight = (fieldBounds.maxZ - fieldBounds.minZ) * Math.sin(CAMERA_ELEVATION) + 1.5;
+    const width = Math.max(fittedWidth, fittedHeight * 1.5);
+    terrain.setCompositionFrame(
+      new Vector2(
+        (fieldBounds.minX + fieldBounds.maxX) / 2,
+        ((fieldBounds.minZ + fieldBounds.maxZ) / 2 - centerZ) * Math.sin(CAMERA_ELEVATION),
+      ),
+      new Vector2(width, width / 1.5),
+    );
+  }
   // fallow-ignore-next-line complexity
   const overviewBounds = (units = currentView.units, fullField = true) => {
     const { viewport, safeTop, safeBottom } = cameraOpening();
@@ -1280,23 +1359,19 @@ export async function mountSpriteBattleScene(
     // Extend only the quiet camera-facing apron; projected artwork/terrain stay registered.
     const base = terrain.apron.getBoundingInfo().boundingBox.extendSize;
     terrain.apron.scaling.set(
-      ((limits.bounds.maxX - limits.bounds.minX) * apronScale) / (2 * base.x),
+      (limits.bounds.maxX - limits.bounds.minX) / (2 * base.x),
       1,
-      ((limits.bounds.maxZ - limits.bounds.minZ) * apronScale * Math.sin(CAMERA_ELEVATION)) /
+      ((limits.bounds.maxZ - limits.bounds.minZ) * Math.sin(CAMERA_ELEVATION)) /
         (2 * base.z),
     );
     const up =
       ((limits.bounds.minZ + limits.bounds.maxZ) / 2 - centerZ) * Math.sin(CAMERA_ELEVATION);
     terrain.apron.position.set(
       (limits.bounds.minX + limits.bounds.maxX) / 2,
-      up * apronScale * Math.cos(CAMERA_ELEVATION) - apronDepth * Math.sin(CAMERA_ELEVATION),
+      up * Math.cos(CAMERA_ELEVATION) - apronDepth * Math.sin(CAMERA_ELEVATION),
       centerZ +
-        up * apronScale * Math.sin(CAMERA_ELEVATION) +
-        apronDepth * Math.cos(CAMERA_ELEVATION),
+        up * Math.sin(CAMERA_ELEVATION) + apronDepth * Math.cos(CAMERA_ELEVATION),
     );
-    // Apron x must use the same reference projection as its vertical displacement.
-    terrain.apron.position.x =
-      perspective.targetX + (terrain.apron.position.x - perspective.targetX) * apronScale;
     return frame;
   };
   let overview = false;
@@ -1305,20 +1380,23 @@ export async function mountSpriteBattleScene(
       overview ? currentView.units : initialFrameUnits(currentView),
       overview,
     );
-    if (!bounds) return;
-    if (overview) {
-      camera.fit(bounds, 0);
-      return;
-    }
-    const mid = (bounds.minZ + bounds.maxZ) / 2;
-    const half = ((bounds.maxZ - bounds.minZ) / 2) * 0.86;
-    camera.fit({ ...bounds, minZ: mid - half, maxZ: mid + half }, 0);
+    if (bounds) camera.fit(bounds, 0);
   };
   let focusedId: string | null = null;
   const focusUnit = (id: string) => {
     const unit = currentView.units.find((candidate) => candidate.id === id);
     if (!unit) return;
-    const bounds = overviewBounds([unit], false);
+    const anchor = AXIAL_TO_WORLD(unit.position);
+    // Include nearby figures when fitting the focus above the command dock.
+    const subjects =
+      unit.status === 'active'
+        ? currentView.units.filter((candidate) => {
+            if (candidate.status !== 'active') return false;
+            const at = AXIAL_TO_WORLD(candidate.position);
+            return Math.hypot(at.x - anchor.x, at.z - anchor.z) < BATTLE_LAYOUT.spacing * 2.1;
+          })
+        : [unit];
+    const bounds = overviewBounds(subjects, false);
     if (!bounds) return;
     camera.fit(bounds, 0);
     focusedId = id;
@@ -1440,14 +1518,21 @@ export async function mountSpriteBattleScene(
     light.intensity = values.intensity;
     environment.setNight(night);
     terrain.setNight(night);
+    cellGrid.setNight(night);
+    selectionMaterial.alpha = night ? 0.065 : 0.1;
+    previewMaterial.alpha = night ? 0.065 : 0.1;
+    movementAreaMaterial.alpha = night ? 0.08 : 0.1;
+    reachContourMaterial.alpha = night ? 0.3 : 0.5;
   };
   const followActivation = (previousActor: string | undefined) => {
     const actorId = currentView.activation?.actorId;
-    if (actorId && actorId !== previousActor) {
-      cameraMoved = false;
-      focusUnit(actorId);
+    if (actorId && actorId !== previousActor && !cameraMoved) {
+      focusedId = null;
+      frameBattle();
     }
   };
+  await scene.whenReadyAsync();
+  ensureMountAllowed(signal);
   return {
     focusUnit,
     showOverview,
