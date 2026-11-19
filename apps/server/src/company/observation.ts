@@ -230,7 +230,6 @@ function payrollObservationDue(
   const { lifecycle, finance } = state.economy;
   return finance.accounts.some(
     (account) =>
-      account.schedule !== null &&
       !account.knownDeath &&
       BigInt(account.confirmedAt) < BigInt(tick) &&
       lifecycle.memberships.some(

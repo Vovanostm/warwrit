@@ -45,8 +45,11 @@ describe('local guard service (PostgreSQL)', () => {
       const sessionA = randomUUID();
       const sessionB = randomUUID();
       const issuer = `guard-service-test-${randomUUID()}`;
-      const stateA = serviceCompanyState(worldId, companyA);
+      const stateA = serviceCompanyState(worldId, companyA, false, true);
       const stateB = serviceCompanyState(worldId, companyB, true);
+      expect(
+        stateA.economy.finance.accounts.find((account) => account.schedule === null)?.confirmedAt,
+      ).toBe('500');
       const config = loadServerConfig({
         DATABASE_URL: connectionString,
         OIDC_ISSUER: 'http://127.0.0.1:5557/dex',
@@ -142,6 +145,11 @@ describe('local guard service (PostgreSQL)', () => {
         expect(quote).toMatchObject({ local: true, providerName: 'Гордей Лапа' });
         expect(quote.offer?.beneficiaryIds).toContain('a-leader');
         expect(quote.offer?.beneficiaryIds).toContain('a-worker-0');
+        const afterQuote = await readCompanyState(worldId, companyA);
+        expect(
+          afterQuote.economy.finance.accounts.find((account) => account.schedule === null)
+            ?.confirmedAt,
+        ).toBe('1000');
 
         const accept = {
           schemaVersion: 2,
@@ -394,6 +402,7 @@ function serviceCompanyState(
   worldId: string,
   companyId: string,
   overdueWage = false,
+  staleFounderContact = false,
 ): CompanyCombatAggregateState {
   const fixture = createCompanyCombatAggregateFixture().state;
   const initial = JSON.parse(
@@ -425,6 +434,13 @@ function serviceCompanyState(
       },
       finance: {
         ...initial.economy.finance,
+        accounts: staleFounderContact
+          ? initial.economy.finance.accounts.map((account) =>
+              account.schedule === null
+                ? { ...account, confirmedAt: campaignTick('500') }
+                : account,
+            )
+          : initial.economy.finance.accounts,
         wallets: initial.economy.finance.wallets.map((wallet) => ({
           ...wallet,
           location: guardLocation,

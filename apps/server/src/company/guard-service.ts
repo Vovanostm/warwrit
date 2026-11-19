@@ -20,6 +20,7 @@ import { findOwnedCompanyId, lockCompanyAggregate } from './repository.js';
 import { localCompanyContacts } from './recruitment.js';
 import { ensureCourseProvider, KAMENNY_BROD_GUARD_COURSE } from './courses.js';
 import { localSiteHasHostiles } from './local-safe-place.js';
+import { observeLocalCompanyConditions } from './observation.js';
 
 export const GUARD_SERVICE_TERMS_VERSION = 'kamenny-brod-guard-service-v1';
 export const GUARD_SERVICE_PROVIDER_NAME = 'Гордей Лапа' as const;
@@ -194,7 +195,8 @@ export function registerGuardServiceRoute(
           return reply.code(409).send({ error: 'company scope changed' });
         let state = await lockCompanyAggregate(transaction, worldId, companyId);
         if (!state) throw new Error('Owned company snapshot is unavailable');
-        const clock = await readWorldClock(transaction, worldId, new Date(), true);
+        const now = new Date();
+        const clock = await readWorldClock(transaction, worldId, now, true);
         if (
           state.encounter.active === null &&
           BigInt(clock.tick) > BigInt(state.economy.finance.processedTick)
@@ -210,17 +212,19 @@ export function registerGuardServiceRoute(
           if (!caughtUp) return reply.code(503).send({ error: 'guard service offer unavailable' });
           state = caughtUp;
         }
+        const location = KAMENNY_BROD_GUARD_COURSE.location;
+        const atGuard = state.economy.lifecycle.parties.some(
+          (party) =>
+            party.location.kind === 'AT' &&
+            party.location.siteId === location.siteId &&
+            party.location.areaId === location.areaId,
+        );
+        if (atGuard) state = await observeLocalCompanyConditions(transaction, state, now);
         const offerId = guardServiceOfferId(
           worldId,
           companyId,
           state.economy.lifecycle.knowledge.revision,
           clock.tick,
-        );
-        const atGuard = state.economy.lifecycle.parties.some(
-          (party) =>
-            party.location.kind === 'AT' &&
-            party.location.siteId === KAMENNY_BROD_GUARD_COURSE.location.siteId &&
-            party.location.areaId === KAMENNY_BROD_GUARD_COURSE.location.areaId,
         );
         const unsafe =
           atGuard &&
