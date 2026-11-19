@@ -112,6 +112,18 @@ function playerSource(command: CompanyCommand) {
         command.payload.claimAuthorizationId,
         ...command.payload.itemQuantities.map((entry) => entry.itemId).sort(),
       ];
+    case 'StartRetraining':
+      return [
+        `retraining:${command.commandId}`,
+        command.payload.characterId,
+        command.payload.oldPerkId,
+        command.payload.newPerkId,
+        command.payload.mentorEvidenceId,
+      ];
+    case 'StartLearning':
+      return [`course:${command.commandId}`, command.payload.characterId];
+    case 'StopLearning':
+      return [command.payload.taskId, command.payload.reason];
     case 'TransferItem':
       return command.payload.ownershipReceiptId
         ? [command.payload.ownershipReceiptId, command.payload.itemId]

@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   createLearningTaskState,
+  calculateRetrainingProgress,
   evaluatePerkEffects,
+  initialSkillProgress,
   readLearningTaskState,
   startLearningTask,
   stopLearningTask,
 } from '@warwrit/game-core';
 import type { CommandOf, CompanyEconomyState, LearningTaskStart } from '@warwrit/game-core';
-import { command, economy, tick } from './company-economy-fixture.js';
+import { cash, command, economy, tick } from './company-economy-fixture.js';
 
 const reload = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const root = economy([1n], 100n, 10) as Required<CompanyEconomyState>;
@@ -49,6 +51,55 @@ function stop(
   ) as CommandOf<'StopLearning'>;
 }
 const active = () => startLearningTask(createLearningTaskState(), seed());
+function retrainingSeed(
+  taskId = 'retrain-task',
+  commandId = 'retrain-start',
+): LearningTaskStart<CommandOf<'StartRetraining'>> {
+  const payload = {
+    characterId: 'leader',
+    oldPerkId: 'blades-25-a',
+    newPerkId: 'blades-25-b',
+    mentorEvidenceId: 'guard-mentor',
+    budgetPoolId: 'local',
+  };
+  return reload({
+    taskId,
+    command: command(root, 'StartRetraining', payload, commandId) as CommandOf<'StartRetraining'>,
+    quote: {
+      sourceId: 'guard-retraining',
+      sourceVersion: 'guard-v1',
+      maxTicks: '3000',
+      mentorId: 'guard',
+      funding: {
+        poolId: 'local',
+        walletId: 'wallet-local',
+        providerWalletId: 'wallet-guard',
+        authorizedBudgetQ: cash(15_000_000),
+        costQPerDay: { numerator: '5000000', denominator: '1' },
+      },
+      coefficients: evaluatePerkEffects(root, {
+        kind: 'CHARACTER',
+        characterId: 'leader',
+        task: 'TRAINING',
+      }),
+    },
+    inputs: {
+      schemaVersion: 1,
+      rulesVersion: 's02-progression-parameters-1',
+      kind: 'COURSE',
+      skillId: 'blades',
+      levelAtStart: 25,
+      aptitudeAtStartBps: 10000,
+      coursePolicyVersion: 's02-course-effort-1',
+      ticksPerDay: '1000',
+      baseMilliXpPerDay: '0',
+      challengeLevel: 0,
+      challengeBps: 10000,
+      outcomeBps: 10000,
+    },
+    retraining: { oldPerkId: 'blades-25-a', newPerkId: 'blades-25-b' },
+  });
+}
 
 describe('C04a — finite learning task state and lifecycle', () => {
   it('owns nested snapshots and replays after progress and JSON reload', () => {
@@ -174,5 +225,50 @@ describe('C04a — finite learning task state and lifecycle', () => {
     expect(() => readLearningTaskState({ ...state, tasks: [task, another] })).toThrow(
       'INVALID_STATE',
     );
+  });
+
+  it('retains the original retraining command and preserves its slot pair on stop', () => {
+    const input = retrainingSeed();
+    const started = startLearningTask(createLearningTaskState(), input);
+    expect(started.task.start.command).toEqual(input.command);
+    expect(startLearningTask(started.state, retrainingSeed())).toEqual({
+      ...started,
+      replayed: true,
+    });
+    const stopped = stopLearningTask(
+      started.state,
+      command(
+        root,
+        'StopLearning',
+        { taskId: input.taskId, reason: 'PLAYER' },
+        'retrain-stop',
+        'PLAYER',
+        tick(3000),
+      ) as CommandOf<'StopLearning'>,
+    );
+    expect(stopped.task.start.retraining).toEqual({
+      oldPerkId: 'blades-25-a',
+      newPerkId: 'blades-25-b',
+    });
+    expect(stopped.task.start.command).toEqual(input.command);
+  });
+
+  it('uses accepted retraining time without granting skill XP before the perk swap', () => {
+    const learner = root.lifecycle.characters.find(
+      (entry) => entry.identity.characterId === 'leader',
+    )!;
+    Object.assign(learner, {
+      skills: { ...learner.skills, blades: initialSkillProgress(25, 'retraining-fixture') },
+      perks: ['blades-25-a'],
+    });
+    const task = startLearningTask(createLearningTaskState(), retrainingSeed()).task;
+    const result = calculateRetrainingProgress(task, root.lifecycle, '3000');
+    expect(result).toMatchObject({
+      appliedElapsedTicks: '3000',
+      goalReached: true,
+      skillId: 'blades',
+      nextSkill: initialSkillProgress(25, 'retraining-fixture'),
+    });
+    expect(learner.perks).toEqual(['blades-25-a']);
   });
 });

@@ -4,8 +4,9 @@ import { prepareLearningBacking } from './learning-backing.js';
 import type { LearningBackingRequest } from './learning-backing.js';
 import { admitLearningTask } from './learning-admission.js';
 import type { LearningTaskAdmission } from './learning-admission.js';
-import { calculateCourseProgress } from './course-progress.js';
+import { calculateCourseProgress, calculateRetrainingProgress } from './course-progress.js';
 import { readLearningTaskState, stopLearningTask } from './learning-task.js';
+import { learningStartResourceIds } from './learning-task.js';
 import type { LearningTaskState } from './learning-task.js';
 import { prepareLearningTime } from './learning-time.js';
 import { readLearningTimeIntervals } from './learning-time.js';
@@ -26,6 +27,7 @@ import type { CommandOf } from './lifecycle-types.js';
 import { creditProgression } from './progression.js';
 import { readSkillProgress } from './skill-progress.js';
 import { parseCompanyCommand } from './commands.js';
+import { COMPANY_CATALOGUE } from './definitions.js';
 import type { LearningCause, TrustedLearningCauseManifest } from './learning-time.js';
 
 export type LearningCompositionRequest =
@@ -390,7 +392,9 @@ function prepareLearningAdvance(
   let requestedTicks = BigInt(time.eligibleTicks);
   let goalReached: boolean;
   if (inputs.kind === 'COURSE') {
-    const course = calculateCourseProgress(target, stateValue.lifecycle, requestedTicks.toString());
+    const course = target.start.retraining
+      ? calculateRetrainingProgress(target, stateValue.lifecycle, requestedTicks.toString())
+      : calculateCourseProgress(target, stateValue.lifecycle, requestedTicks.toString());
     requestedTicks = BigInt(course.appliedElapsedTicks);
     goalReached = course.goalReached;
   } else {
@@ -403,7 +407,7 @@ function prepareLearningAdvance(
         interval.characterId === characterId &&
         interval.workId === inputs.workId &&
         interval.sectionId === inputs.sectionId &&
-        start.command.payload.resourceIds.includes(interval.itemId),
+        learningStartResourceIds(start).includes(interval.itemId),
       'CONTACT_OR_ACCESS_REQUIRED',
     );
     for (const segment of time.intervals) {
@@ -527,21 +531,52 @@ function prepareLearningAdvance(
       ),
     };
   } else if (acceptedDelta > 0n && inputs.kind === 'COURSE') {
-    const progress = calculateCourseProgress(
-      target,
-      stateValue.lifecycle,
-      acceptedDelta.toString(),
-    );
+    const progress = target.start.retraining
+      ? calculateRetrainingProgress(target, stateValue.lifecycle, acceptedDelta.toString())
+      : calculateCourseProgress(target, stateValue.lifecycle, acceptedDelta.toString());
     const learner = person(lifecycle, characterId);
-    lifecycle = {
-      ...lifecycle,
-      characters: lifecycle.characters.map((entry) =>
-        entry === learner
-          ? { ...entry, skills: { ...entry.skills, [progress.skillId]: progress.nextSkill } }
-          : entry,
-      ),
-    };
+    if (!target.start.retraining)
+      lifecycle = {
+        ...lifecycle,
+        characters: lifecycle.characters.map((entry) =>
+          entry === learner
+            ? { ...entry, skills: { ...entry.skills, [progress.skillId]: progress.nextSkill } }
+            : entry,
+        ),
+      };
     goalReached = progress.goalReached;
+    if (goalReached && target.start.retraining) {
+      const { oldPerkId, newPerkId } = target.start.retraining;
+      const oldPerk = COMPANY_CATALOGUE.perks.find((entry) => entry.id === oldPerkId);
+      const newPerk = COMPANY_CATALOGUE.perks.find((entry) => entry.id === newPerkId);
+      const learner = person(lifecycle, characterId);
+      const matchingSlot = learner.perks.filter((perkId) => {
+        const perk = COMPANY_CATALOGUE.perks.find((entry) => entry.id === perkId);
+        return perk?.skillId === oldPerk?.skillId && perk?.milestone === oldPerk?.milestone;
+      });
+      requireEconomy(
+        oldPerk !== undefined &&
+          newPerk !== undefined &&
+          oldPerk.id !== newPerk.id &&
+          oldPerk.skillId === newPerk.skillId &&
+          oldPerk.milestone === newPerk.milestone &&
+          matchingSlot.length === 1 &&
+          matchingSlot[0] === oldPerkId &&
+          !learner.perks.includes(newPerkId),
+        'INVALID_STATE',
+      );
+      lifecycle = {
+        ...lifecycle,
+        characters: lifecycle.characters.map((entry) =>
+          entry === learner
+            ? {
+                ...entry,
+                perks: entry.perks.map((perkId) => (perkId === oldPerkId ? newPerkId : perkId)),
+              }
+            : entry,
+        ),
+      };
+    }
   }
   let nextState =
     lifecycle === financeState.lifecycle ? financeState : { ...financeState, lifecycle };

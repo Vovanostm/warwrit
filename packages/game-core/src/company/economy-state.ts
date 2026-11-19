@@ -1022,6 +1022,9 @@ function wageScheduleShape(value: unknown): boolean {
   );
 }
 function learningStartShape(value: unknown): boolean {
+  return legacyLearningStartShape(value) || currentLearningStartShape(value);
+}
+function legacyLearningStartShape(value: unknown): boolean {
   if (!shape(value, ['taskId', 'quote'], ['inputs'])) return false;
   const quote = value['quote'];
   if (
@@ -1049,11 +1052,95 @@ function learningStartShape(value: unknown): boolean {
   const inputs = value['inputs'];
   return (
     inputs === undefined ||
-    (shape(inputs, ['kind']) &&
-      (inputs['kind'] === 'BOOK' ||
-        (inputs['kind'] === 'COURSE' &&
-          shape(inputs, ['kind', 'ticksPerDay']) &&
-          isExactInteger(inputs['ticksPerDay']))))
+    (shape(inputs, ['kind']) && inputs['kind'] === 'BOOK') ||
+    (shape(inputs, ['kind', 'ticksPerDay']) &&
+      inputs['kind'] === 'COURSE' &&
+      isExactInteger(inputs['ticksPerDay']))
+  );
+}
+function currentLearningStartShape(value: unknown): boolean {
+  if (
+    !shape(value, ['taskId', 'command', 'quote'], ['inputs', 'studyIntervalId', 'retraining']) ||
+    !plainObject(value['command'])
+  )
+    return false;
+  const quote = value['quote'];
+  if (
+    !shape(quote, [
+      'sourceId',
+      'sourceVersion',
+      'maxTicks',
+      'mentorId',
+      'funding',
+      'coefficients',
+    ]) ||
+    !isEntityId(quote['sourceId']) ||
+    !isEntityId(quote['sourceVersion']) ||
+    !(quote['mentorId'] === null || isEntityId(quote['mentorId'])) ||
+    !isExactInteger(quote['maxTicks']) ||
+    !plainObject(quote['coefficients'])
+  )
+    return false;
+  const funding = quote['funding'];
+  if (
+    funding !== null &&
+    (!shape(funding, [
+      'poolId',
+      'walletId',
+      'providerWalletId',
+      'authorizedBudgetQ',
+      'costQPerDay',
+    ]) ||
+      !['poolId', 'walletId', 'providerWalletId'].every((key) => isEntityId(funding[key])) ||
+      !isExactInteger(funding['authorizedBudgetQ']) ||
+      !shape(funding['costQPerDay'], ['numerator', 'denominator']))
+  )
+    return false;
+  const inputs = value['inputs'];
+  const validInputs =
+    inputs === undefined ||
+    (plainObject(inputs) &&
+      (inputs['kind'] === 'BOOK'
+        ? shape(inputs, [
+            'kind',
+            'schemaVersion',
+            'rulesVersion',
+            'skillId',
+            'levelAtStart',
+            'aptitudeAtStartBps',
+            'workId',
+            'workVersion',
+            'sectionId',
+            'durationTicks',
+            'finiteMilliXp',
+            'factId',
+          ])
+        : inputs['kind'] === 'COURSE' &&
+          shape(
+            inputs,
+            [
+              'kind',
+              'schemaVersion',
+              'rulesVersion',
+              'skillId',
+              'levelAtStart',
+              'aptitudeAtStartBps',
+              'ticksPerDay',
+              'baseMilliXpPerDay',
+              'challengeLevel',
+              'challengeBps',
+              'outcomeBps',
+            ],
+            ['coursePolicyVersion'],
+          ) &&
+          isExactInteger(inputs['ticksPerDay'])));
+  const retraining = value['retraining'];
+  return (
+    validInputs &&
+    (retraining === undefined ||
+      (shape(retraining, ['oldPerkId', 'newPerkId']) &&
+        isEntityId(retraining['oldPerkId']) &&
+        isEntityId(retraining['newPerkId'])))
   );
 }
 function economyRequirementShape(value: unknown): boolean {

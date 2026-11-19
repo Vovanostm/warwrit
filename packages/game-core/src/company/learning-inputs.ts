@@ -52,13 +52,13 @@ export type LearningInputs = ValueOf<typeof learningInputsInput>;
 /** Fresh, already-admitted source only. Never use this to repair a historical start. */
 export function captureLearningInputs(
   root: MaterializedCompanyState,
-  command: CommandOf<'StartLearning'>,
+  command: CommandOf<'StartLearning' | 'StartRetraining'>,
   source: LearningSourceEvidence,
 ): LearningInputs {
   const work = COMPANY_CATALOGUE.works.find(
     (entry) => entry.id === source.workId && entry.sectionId === source.sectionId,
   );
-  const skillId = source.kind === 'COURSE' ? source.skillId : work?.skillId;
+  const skillId = source.kind !== 'SELF_STUDY' ? source.skillId : work?.skillId;
   requireEconomy(skillId !== undefined, 'INVALID_SOURCE');
   const learner = person(root.lifecycle, command.payload.characterId);
   const progress = learner.skills[skillId];
@@ -75,14 +75,14 @@ export function captureLearningInputs(
     aptitudeAtStartBps: aptitude,
   };
   let inputs: unknown;
-  if (source.kind === 'COURSE') {
+  if (source.kind === 'COURSE' || source.kind === 'RETRAINING') {
     const method = COMPANY_CATALOGUE.methods.find(
       (entry) => entry.id === source.methodId && entry.enabled,
     );
     requireEconomy(
       method?.interval === 'CAMPAIGN_DAY' &&
         method.xp !== undefined &&
-        level.read(source.challengeLevel),
+        (command.type === 'StartRetraining' || level.read(source.challengeLevel)),
       'INVALID_SOURCE',
     );
     inputs = {
@@ -91,8 +91,8 @@ export function captureLearningInputs(
       coursePolicyVersion: 's02-course-effort-1',
       ticksPerDay: String(COMPANY_RULES.ticksPerDay),
       baseMilliXpPerDay: xpToMilliXp(method.xp),
-      challengeLevel: source.challengeLevel,
-      challengeBps: progressionChallengeBps(source.challengeLevel, initial.levelAtStart),
+      challengeLevel: source.challengeLevel ?? 0,
+      challengeBps: progressionChallengeBps(source.challengeLevel ?? 0, initial.levelAtStart),
       outcomeBps: PROGRESSION_RULES.outcomeBps.success,
     };
   } else {
@@ -116,9 +116,20 @@ export function captureLearningInputs(
 /** Stored bindings, not a new quote or a lookup of today's learner/catalogue values. */
 export function validateLearningInputs(
   inputs: LearningInputs,
-  command: CommandOf<'StartLearning'>,
+  command: CommandOf<'StartLearning' | 'StartRetraining'>,
   quote: LearningTaskQuote,
 ): void {
+  if (command.type === 'StartRetraining') {
+    requireEconomy(
+      inputs.kind === 'COURSE' &&
+        quote.coefficients.taskScope === 'TRAINING' &&
+        quote.funding !== null &&
+        inputs.skillId ===
+          COMPANY_CATALOGUE.perks.find((perk) => perk.id === command.payload.oldPerkId)?.skillId,
+      'INVALID_STATE',
+    );
+    return;
+  }
   const { goal, methodId } = command.payload;
   const matches =
     inputs.kind === 'BOOK'

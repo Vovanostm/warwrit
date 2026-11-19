@@ -21,6 +21,7 @@ export function calculateCourseProgress(
   const task = readLearningTaskState({ schemaVersion: 1, tasks: [taskValue] }).tasks[0]!;
   const inputs = readLearningTaskInputs(task);
   const { command, quote } = task.start;
+  requireEconomy(command.type === 'StartLearning', 'INVALID_ARGUMENT');
   const goal = command.payload.goal;
   requireEconomy(inputs.kind === 'COURSE' && 'skillId' in goal, 'INVALID_ARGUMENT');
   requireEconomy(
@@ -86,6 +87,44 @@ export function calculateCourseProgress(
     nextSkill,
     goalReached: reached(nextSkill.amount),
     // The saved quote may incorporate a funding cap; this is not a fresh FUNDS/TIME cause.
+    quotedLimitReached: BigInt(task.completedTicks) + used === BigInt(quote.maxTicks),
+  });
+}
+
+/** Retraining consumes eligible course time but never grants the trained skill again. */
+export function calculateRetrainingProgress(
+  taskValue: LearningTask,
+  lifecycle: LifecycleState,
+  eligibleTicksValue: string,
+) {
+  const task = readLearningTaskState({ schemaVersion: 1, tasks: [taskValue] }).tasks[0]!;
+  const { command, quote } = task.start;
+  const inputs = readLearningTaskInputs(task);
+  requireEconomy(
+    command.type === 'StartRetraining' &&
+      task.start.retraining?.oldPerkId === command.payload.oldPerkId &&
+      task.start.retraining.newPerkId === command.payload.newPerkId &&
+      inputs.kind === 'COURSE',
+    'INVALID_STATE',
+  );
+  requireEconomy(
+    lifecycle.companyId === command.companyId && lifecycle.worldId === command.worldId,
+    'AUTHORIZATION',
+  );
+  requireEconomy(unsigned.read(eligibleTicksValue), 'INVALID_TIME');
+  const remaining = BigInt(quote.maxTicks) - BigInt(task.completedTicks);
+  const requested = BigInt(eligibleTicksValue);
+  const used = requested < remaining ? requested : remaining;
+  const previous = readSkillProgress(
+    person(lifecycle, command.payload.characterId).skills[inputs.skillId],
+  );
+  return Object.freeze({
+    taskId: task.start.taskId,
+    characterId: command.payload.characterId,
+    skillId: inputs.skillId,
+    appliedElapsedTicks: used.toString(),
+    nextSkill: previous,
+    goalReached: used === remaining,
     quotedLimitReached: BigInt(task.completedTicks) + used === BigInt(quote.maxTicks),
   });
 }
