@@ -35,7 +35,11 @@ function consumeRations(
         COMPANY_CATALOGUE.items.find((definition) => definition.id === entry.definitionId)
           ?.foodUnits === 1,
     )
-    .sort((a, b) => (a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : 0))) {
+    .sort((a, b) => {
+      const containerOrder =
+        containerIds.indexOf(a.containerId!) - containerIds.indexOf(b.containerId!);
+      return containerOrder || (a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : 0);
+    })) {
     if (remaining === 0n) break;
     const take = remaining < BigInt(item.quantity) ? remaining : BigInt(item.quantity);
     physical = consumePhysicalQuantity(
@@ -160,7 +164,8 @@ function settleStockFood(
     physical.foodCarry.find((entry) => entry.membershipId === requirement.membershipId)
       ?.tickUnits ?? '0',
   );
-  requirePhysical(prior >= 0n && prior < divisor && demand > 0n, 'INVALID_STATE');
+  requirePhysical(prior >= 0n && prior < divisor && demand >= 0n, 'INVALID_STATE');
+  if (demand === 0n) return { physical, unitsConsumed: 0n };
   const total = prior + demand;
   // Open a real ration before granting any fraction of coverage. A nonzero carry is
   // already-used time in that debited ration, never an unfunded promise of future food.
@@ -168,6 +173,18 @@ function settleStockFood(
     requirement,
     foodCarryUnits(physical, requirement.membershipId),
   );
+  if (units === 0n) {
+    return {
+      physical: {
+        ...physical,
+        foodCarry: [
+          ...physical.foodCarry.filter((entry) => entry.membershipId !== requirement.membershipId),
+          { membershipId: requirement.membershipId, tickUnits: (total % divisor).toString() },
+        ],
+      },
+      unitsConsumed: 0n,
+    };
+  }
   let next = consumeRations(physical, containerIds, units, sourceEventId, atTick, companyId);
   next = {
     ...next,
@@ -381,27 +398,64 @@ export function settleFoodConsumption(
         fact.moneyAccessEvidenceId === undefined,
       'INVALID_SOURCE',
     );
-    const containerIds: string[] = [];
-    if (fact.containerId !== undefined) {
-      const container = physicalContainer(physical, fact.containerId);
-      requirePhysical(sameLocation(container.location, fact.location), 'INVALID_SOURCE');
-      containerIds.push(container.containerId);
-    } else {
-      // An already opened ration needs no new stock access until its funded time is exhausted.
+    requirePhysical(
+      (fact.containerId === undefined || fact.containerIds === undefined) &&
+        (fact.containerIds === undefined || fact.containerIds.length > 0),
+      'INVALID_SOURCE',
+    );
+    const containerIds = fact.containerIds
+      ? [...fact.containerIds]
+      : fact.containerId !== undefined
+        ? [fact.containerId]
+        : [];
+    requirePhysical(new Set(containerIds).size === containerIds.length, 'INVALID_SOURCE');
+    for (const containerId of containerIds) {
+      const container = physicalContainer(physical, containerId);
       requirePhysical(
-        stockUnitsForRequirement(
-          requirement,
-          foodCarryUnits(physical, requirement.membershipId),
-        ) === 0n,
+        sameLocation(container.location, fact.location) &&
+          container.custodian.kind === 'COMPANY' &&
+          container.custodian.id === root.lifecycle.companyId &&
+          container.access === 'COMPANY',
+        'INVALID_SOURCE',
+      );
+    }
+    const uncovered = BigInt(fact.uncoveredTickUnits ?? '0');
+    const duration = BigInt(requirement.toTick) - BigInt(requirement.fromTick);
+    requirePhysical(
+      isExactInteger(fact.uncoveredTickUnits ?? '0') && uncovered >= 0n && uncovered <= duration,
+      'INVALID_SOURCE',
+    );
+    const uncoveredDemand = uncovered * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay);
+    requirePhysical(uncoveredDemand <= BigInt(requirement.tickUnits), 'INVALID_SOURCE');
+    requirePhysical(
+      BigInt(requirement.tickUnits) ===
+        duration * BigInt(COMPANY_RULES.economy.foodUnitsPerPersonDay),
+      'INVALID_SOURCE',
+    );
+    const coveredRequirement = {
+      ...requirement,
+      tickUnits: (BigInt(requirement.tickUnits) - uncoveredDemand).toString(),
+    };
+    if (coveredRequirement.tickUnits === '0') {
+      requirePhysical(containerIds.length === 0, 'INVALID_SOURCE');
+    }
+    if (containerIds.length === 0) {
+      requirePhysical(
+        coveredRequirement.tickUnits === '0' ||
+          stockUnitsForRequirement(
+            coveredRequirement,
+            foodCarryUnits(physical, requirement.membershipId),
+          ) === 0n,
         'INVALID_SOURCE',
       );
     }
     const settled = settleStockFood(
-      requirement,
+      coveredRequirement,
       physical,
       containerIds,
       fact.sourceEventId,
       context.atTick,
+      root.lifecycle.companyId,
     );
     physical = settled.physical;
     units = settled.unitsConsumed;
@@ -409,6 +463,8 @@ export function settleFoodConsumption(
     requirePhysical(
       fact.channel === 'PROVIDER' &&
         fact.containerId === undefined &&
+        fact.containerIds === undefined &&
+        fact.uncoveredTickUnits === undefined &&
         fact.providerId !== undefined &&
         fact.poolId !== undefined &&
         fact.providerWalletId !== undefined &&
@@ -447,6 +503,9 @@ export function settleFoodConsumption(
         membershipId: requirement.membershipId,
         fromTick: requirement.fromTick,
         toTick: requirement.toTick,
+        ...(fact.uncoveredTickUnits !== undefined
+          ? { uncoveredTickUnits: fact.uncoveredTickUnits }
+          : {}),
         channel: fact.channel,
         unitsConsumed: units.toString(),
       },
@@ -466,7 +525,10 @@ export function foodCovered(
   const segments = [
     ...root.physical.food
       .filter((entry) => entry.membershipId === membershipId)
-      .map((entry) => ({ from: BigInt(entry.fromTick), to: BigInt(entry.toTick) })),
+      .map((entry) => ({
+        from: BigInt(entry.fromTick),
+        to: BigInt(entry.toTick) - BigInt(entry.uncoveredTickUnits ?? '0'),
+      })),
     ...root.finance.maintenanceReceipts
       .filter((entry) => entry.beneficiaryId === member.characterId)
       .map((entry) => ({ from: BigInt(entry.fromTick), to: BigInt(entry.toTick) })),

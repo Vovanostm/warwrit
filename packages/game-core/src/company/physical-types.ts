@@ -133,6 +133,8 @@ export interface FoodFulfillment {
   readonly membershipId: string;
   readonly fromTick: CampaignTick;
   readonly toTick: CampaignTick;
+  /** Unfed suffix of a stationary catch-up interval; legacy rows omit this and mean zero. */
+  readonly uncoveredTickUnits?: string;
   readonly channel: 'STOCK' | 'PROVIDER';
   /** Inventory rations debited. Provider fulfillment uses its paid interval, not stock units. */
   readonly unitsConsumed: string;
@@ -280,6 +282,10 @@ export interface FoodFulfillmentEvidence extends PhysicalScope {
   readonly channel: 'STOCK' | 'PROVIDER';
   readonly location: LocationRef;
   readonly containerId?: string;
+  /** Stationary allocation may draw deterministically from several accessible containers. */
+  readonly containerIds?: readonly string[];
+  /** Unfed suffix for stationary catch-up only. */
+  readonly uncoveredTickUnits?: CampaignTick;
   readonly providerId?: string;
   readonly poolId?: string;
   readonly providerWalletId?: string;
